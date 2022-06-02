@@ -30,6 +30,7 @@
 		"BlockBehaviourMixin",
 		"BlockStateBaseMixin",
 		"ChunkGeneratorMixin",
+		"MappedRegistryMixin",
 		"WorldGenRegionMixin",
 		"DiggerItemAccessor",
 		"DimensionTypeMixin",

@@ -33,7 +33,7 @@ public class BCLRecipeManager {
 			list.sort((v1, v2) -> {
 				boolean b1 = v1.getId().getNamespace().equals(MINECRAFT);
 				boolean b2 = v2.getId().getNamespace().equals(MINECRAFT);
-				return b1 ^ b2 ? (b1 ? 1 : -1) : 0;
+				return b1 ^ b2 ? (b1 ? 1 : -1) : v1.getId().compareTo(v2.getId());
 			});
 			return ImmutableList.copyOf(list);
 		});

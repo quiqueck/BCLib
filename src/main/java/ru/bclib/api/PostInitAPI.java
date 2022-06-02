@@ -55,10 +55,6 @@ public class PostInitAPI {
 	 * @param isClient {@code boolean}, {@code true} for client, {@code false} for server.
 	 */
 	public static void postInit(boolean isClient) {
-		if (postInitFunctions == null) {
-			return;
-		}
-		postInitFunctions.forEach(function -> function.accept(isClient));
 		Registry.BLOCK.forEach(block -> {
 			processBlockCommon(block);
 			if (isClient) {
@@ -66,11 +62,15 @@ public class PostInitAPI {
 			}
 		});
 		
-		
 		Registry.ITEM.forEach(item -> {
 			processItemCommon(item);
 		});
-		postInitFunctions = null;
+		
+		if (postInitFunctions != null) {
+			postInitFunctions.forEach(function -> function.accept(isClient));
+			postInitFunctions = null;
+		}
+		
 		blockTags = null;
 		itemTags = null;
 		BiomeAPI.loadFabricAPIBiomes();

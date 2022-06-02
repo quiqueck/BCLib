@@ -4,7 +4,23 @@ import net.minecraft.world.level.biome.Biome;
 import ru.bclib.config.Configs;
 
 public class BCLBiomeSettings {
-	public static Builder createBCL(){
+	float terrainHeight;
+	float fogDensity;
+	float genChance;
+	int edgeSize;
+	boolean vertical;
+	BCLBiome edge;
+	
+	protected BCLBiomeSettings() {
+		this.terrainHeight = 0.1F;
+		this.fogDensity = 1.0F;
+		this.genChance = 1.0F;
+		this.edgeSize = 0;
+		this.vertical = false;
+		this.edge = null;
+	}
+	
+	public static Builder createBCL() {
 		return new Builder();
 	}
 	
@@ -13,9 +29,10 @@ public class BCLBiomeSettings {
 			super(new BCLBiomeSettings());
 		}
 	}
+	
 	public static class CommonBuilder<T extends BCLBiomeSettings, R extends CommonBuilder>{
 		private final T storage;
-		CommonBuilder(T storage){
+		CommonBuilder(T storage) {
 			this.storage = storage;
 		}
 		
@@ -91,23 +108,6 @@ public class BCLBiomeSettings {
 			return (R)this;
 		}
 	}
-	
-	protected BCLBiomeSettings(){
-		this.terrainHeight = 0.1F;
-		this.fogDensity = 1.0F;
-		this.genChance = 1.0F;
-		this.edgeSize = 0;
-		this.vertical = false;
-		this.edge = null;
-	}
-	
-	float terrainHeight;
-	float fogDensity;
-	float genChance;
-	int edgeSize;
-	boolean vertical;
-	BCLBiome edge;
-	
 	
 	/**
 	 * Getter for biome generation chance, used in {@link ru.bclib.world.generator.BiomePicker} and in custom generators.

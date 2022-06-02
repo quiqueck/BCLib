@@ -430,19 +430,28 @@ public class BiomeAPI {
 	public static void loadFabricAPIBiomes() {
 		FabricBiomesData.NETHER_BIOMES.forEach((key) -> {
 			if (!hasBiome(key.location())) {
-				registerNetherBiome(BuiltinRegistries.BIOME.get(key));
+				Optional<Holder<Biome>> optional = BuiltinRegistries.BIOME.getHolder(key);
+				if (optional.isPresent()) {
+					registerNetherBiome(optional.get().value());
+				}
 			}
 		});
 		
 		FabricBiomesData.END_LAND_BIOMES.forEach((key, weight) -> {
 			if (!hasBiome(key.location())) {
-				registerEndLandBiome(BuiltinRegistries.BIOME.getHolder(key).orElseThrow(), weight);
+				Optional<Holder<Biome>> optional = BuiltinRegistries.BIOME.getHolder(key);
+				if (optional.isPresent()) {
+					registerEndLandBiome(optional.get(), weight);
+				}
 			}
 		});
 		
 		FabricBiomesData.END_VOID_BIOMES.forEach((key, weight) -> {
 			if (!hasBiome(key.location())) {
-				registerEndVoidBiome(BuiltinRegistries.BIOME.getOrCreateHolder(key), weight);
+				Optional<Holder<Biome>> optional = BuiltinRegistries.BIOME.getHolder(key);
+				if (optional.isPresent()) {
+					registerEndVoidBiome(optional.get(), weight);
+				}
 			}
 		});
 	}
