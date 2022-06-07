@@ -8,14 +8,14 @@ BCLib is a library mod for BetterX team mods, developed for Fabric, MC 1.19
 
 You can easily include BCLib into your own mod by adding the following to your `build.gradle`:
 
-```json
+```
 repositories {
     ...
     maven { url 'https://jitpack.io' } 
 }
 ```
 
-```json
+```
 dependencies {
     ...
     modImplementation "com.github.quiqueck:BCLib:${project.bclib_version}"
