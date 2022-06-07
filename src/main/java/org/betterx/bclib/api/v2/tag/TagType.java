@@ -16,6 +16,7 @@ import com.google.common.collect.Sets;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -106,6 +107,9 @@ public class TagType<T> {
     }
 
     public Set<TagEntry> getSetForTag(TagKey<T> tag) {
+        if (tag==null) {
+            return new HashSet<>();
+        }
         return getSetForTag(tag.location());
     }
 

@@ -11,6 +11,7 @@ import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadType;
 
 import com.mojang.serialization.Codec;
 import org.betterx.bclib.api.v2.levelgen.structures.BCLStructureBuilder;
+import org.betterx.bclib.api.v2.tag.TagAPI;
 import org.betterx.bclib.util.MHelper;
 
 import java.util.function.Function;
@@ -63,7 +64,8 @@ public class BCLStructure<S extends Structure> extends org.betterx.bclib.api.v2.
                 separation,
                 adaptNoise,
                 Structure.simpleCodec(structureBuilder),
-                null);
+                TagAPI.makeStructureTag(id.getNamespace(), id.getPath())
+        );
     }
 
     @Deprecated(forRemoval = true)
