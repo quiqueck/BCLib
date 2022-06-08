@@ -22,6 +22,7 @@ import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.PalettedContainer;
 import net.minecraft.world.level.chunk.PalettedContainerRO;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.GenerationStep.Decoration;
@@ -727,9 +728,11 @@ public class BiomeAPI {
     public static void setBiome(ChunkAccess chunk, BlockPos pos, Holder<Biome> biome) {
         int sectionY = (pos.getY() - chunk.getMinBuildHeight()) >> 4;
         PalettedContainerRO<Holder<Biome>> biomes = chunk.getSection(sectionY).getBiomes();
-        //TODO: 1.19 This will disable cave generation the end, Structure was made RO, so we have to find another way to handle this
-        //biomes.set((pos.getX() & 15) >> 2, (pos.getY() & 15) >> 2, (pos.getZ() & 15) >> 2, biome);
-        BCLib.LOGGER.warning("Unable to change Biome at " + pos);
+        if (biomes instanceof PalettedContainer<Holder<Biome>> palette) {
+            palette.set((pos.getX() & 15) >> 2, (pos.getY() & 15) >> 2, (pos.getZ() & 15) >> 2, biome);
+        } else {
+            BCLib.LOGGER.warning("Unable to change Biome at " + pos);
+        }
     }
 
     /**
