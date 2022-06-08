@@ -1,5 +1,6 @@
 package org.betterx.bclib.api.v2;
 
+import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.world.level.storage.LevelStorageSource.LevelStorageAccess;
@@ -125,13 +126,21 @@ public class WorldDataAPI {
      * @param modID {@link String} mod ID.
      */
     public static void saveFile(String modID) {
+
         try {
             if (!dataDir.exists()) {
                 dataDir.mkdirs();
             }
             CompoundTag tag = getRootTag(modID);
             tag.putString(TAG_MODIFIED, ModUtil.getModVersion(modID));
-            NbtIo.writeCompressed(tag, new File(dataDir, modID + ".nbt"));
+
+
+            final File tempFile =new File(dataDir, modID + ".nbt_temp");
+            NbtIo.writeCompressed(tag, tempFile);
+
+            final File oldFile = new File(dataDir, modID + ".nbt_old");
+            final File dataFile = new File(dataDir, modID + ".nbt");
+            Util.safeReplaceFile(dataFile, tempFile, oldFile);
         } catch (IOException e) {
             BCLib.LOGGER.error("World data saving failed", e);
         }
