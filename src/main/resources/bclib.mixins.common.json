@@ -27,7 +27,6 @@
     "NoiseBasedChunkGeneratorMixin",
     "NoiseGeneratorSettingsMixin",
     "PistonBaseBlockMixin",
-    "PoiTypesMixin",
     "PortalShapeMixin",
     "PotionBrewingAccessor",
     "PresetEditorMixin",
