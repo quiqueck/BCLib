@@ -30,7 +30,7 @@ public abstract class BaseButtonBlock extends ButtonBlock implements BlockModelP
     private final Block parent;
 
     protected BaseButtonBlock(Block parent, Properties properties, boolean sensitive) {
-        super(sensitive, properties);
+        super(sensitive, properties.noCollission());
         this.parent = parent;
     }
 
