@@ -74,7 +74,7 @@ public class WorldDataAPI {
      * @param modID - {@link String} modID.
      */
     public static void registerModCache(String modID) {
-        if (MODS.contains(modID))
+        if (!MODS.contains(modID))
             MODS.add(modID);
     }
 
