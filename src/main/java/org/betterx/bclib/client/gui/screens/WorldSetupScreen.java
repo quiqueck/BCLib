@@ -26,7 +26,7 @@ public class WorldSetupScreen extends BCLibScreen {
     private final CreateWorldScreen createWorldScreen;
 
     public WorldSetupScreen(@Nullable CreateWorldScreen parent, WorldCreationContext context) {
-        super(parent, Component.translatable("title.screen.bclib.worldgen.main"), 10, false);
+        super(parent, Component.translatable("title.screen.bclib.worldgen.main"), 10, true);
         this.context = context;
         this.createWorldScreen = parent;
     }
@@ -67,8 +67,9 @@ public class WorldSetupScreen extends BCLibScreen {
 
         var mainSettingsRow = colNether.addRow();
         mainSettingsRow.addSpacer(16);
+        colNether.addSpacerRow(2);
         row = colNether.addRow();
-        row.addSpacer(32);
+        row.addSpacer(20);
         netherLegacy = row.addCheckbox(Component.translatable("title.screen.bclib.worldgen.legacy_square"),
                 endVersion == BCLBiomeSource.BIOME_SOURCE_VERSION_SQUARE,
                 1.0,
@@ -91,8 +92,9 @@ public class WorldSetupScreen extends BCLibScreen {
 
         mainSettingsRow = colEnd.addRow();
         mainSettingsRow.addSpacer(16);
+        colEnd.addSpacerRow(2);
         row = colEnd.addRow();
-        row.addSpacer(32);
+        row.addSpacer(20);
 
         endLegacy = row.addCheckbox(Component.translatable("title.screen.bclib.worldgen.legacy_square"),
                 endVersion == BCLBiomeSource.BIOME_SOURCE_VERSION_SQUARE,
@@ -110,7 +112,7 @@ public class WorldSetupScreen extends BCLibScreen {
                     endLegacy.setEnabled(state);
                 });
 
-        grid.addSpacerRow(15);
+        grid.addSpacerRow(36);
         row = grid.addRow();
         row.addFiller();
         row.addButton(CommonComponents.GUI_DONE, BUTTON_HEIGHT, font, (button) -> {
