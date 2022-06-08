@@ -1,5 +1,9 @@
 package org.betterx.bclib.config;
 
+import org.betterx.bclib.api.v2.dataexchange.handler.autosync.FileContentWrapper;
+import org.betterx.bclib.util.JsonFactory;
+import org.betterx.bclib.util.Pair;
+
 import net.minecraft.util.GsonHelper;
 
 import com.google.common.collect.Maps;
@@ -7,9 +11,6 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.betterx.bclib.api.v2.dataexchange.handler.autosync.FileContentWrapper;
-import org.betterx.bclib.util.JsonFactory;
-import org.betterx.bclib.util.Pair;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;

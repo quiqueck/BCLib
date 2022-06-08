@@ -1,5 +1,10 @@
 package org.betterx.bclib.api.v2.levelgen.surface;
 
+import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
+import org.betterx.bclib.api.v2.levelgen.surface.rules.Conditions;
+import org.betterx.bclib.api.v2.levelgen.surface.rules.DoubleBlockSurfaceNoiseCondition;
+import org.betterx.bclib.api.v2.levelgen.surface.rules.NoiseCondition;
+
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
@@ -9,10 +14,6 @@ import net.minecraft.world.level.levelgen.placement.CaveSurface;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.betterx.bclib.api.v2.levelgen.surface.rules.DoubleBlockSurfaceNoiseCondition;
-import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
-import org.betterx.bclib.api.v2.levelgen.surface.rules.Conditions;
-import org.betterx.bclib.api.v2.levelgen.surface.rules.NoiseCondition;
 
 import java.util.Collections;
 import java.util.List;
@@ -96,8 +97,10 @@ public class SurfaceRuleBuilder {
      * @return same {@link SurfaceRuleBuilder} instance.
      */
     public SurfaceRuleBuilder filler(BlockState state) {
-        entryInstance = getFromCache("fill_" + state.toString(),
-                () -> new SurfaceRuleEntry(10, SurfaceRules.state(state)));
+        entryInstance = getFromCache(
+                "fill_" + state.toString(),
+                () -> new SurfaceRuleEntry(10, SurfaceRules.state(state))
+        );
         rules.add(entryInstance);
         return this;
     }
@@ -126,16 +129,22 @@ public class SurfaceRuleBuilder {
      * @return same {@link SurfaceRuleBuilder} instance.
      */
     public SurfaceRuleBuilder belowFloor(BlockState state, int height, NoiseCondition noise) {
-        entryInstance = getFromCache("below_floor_" + height + "_" + state.toString() + "_" + noise.getClass()
-                                                                                                   .getSimpleName(),
+        entryInstance = getFromCache(
+                "below_floor_" + height + "_" + state.toString() + "_" + noise.getClass()
+                                                                              .getSimpleName(),
                 () -> {
                     RuleSource rule = SurfaceRules.state(state);
-                    rule = SurfaceRules.ifTrue(SurfaceRules.stoneDepthCheck(height,
+                    rule = SurfaceRules.ifTrue(
+                            SurfaceRules.stoneDepthCheck(
+                                    height,
                                     false,
-                                    CaveSurface.FLOOR),
-                            SurfaceRules.ifTrue(noise, rule));
+                                    CaveSurface.FLOOR
+                            ),
+                            SurfaceRules.ifTrue(noise, rule)
+                    );
                     return new SurfaceRuleEntry(3, rule);
-                });
+                }
+        );
         rules.add(entryInstance);
         return this;
     }
@@ -250,39 +259,49 @@ public class SurfaceRuleBuilder {
      * @return same {@link SurfaceRuleBuilder} instance.
      */
     public SurfaceRuleBuilder chancedFloor(BlockState surfaceBlockA, BlockState surfaceBlockB, NoiseCondition noise) {
-        entryInstance = getFromCache("chancedFloor_" + surfaceBlockA + "_" + surfaceBlockB + "_" + noise.getClass()
-                                                                                                        .getSimpleName(),
+        entryInstance = getFromCache(
+                "chancedFloor_" + surfaceBlockA + "_" + surfaceBlockB + "_" + noise.getClass()
+                                                                                   .getSimpleName(),
                 () -> {
                     RuleSource rule =
-                            SurfaceRules.ifTrue(SurfaceRules.ON_FLOOR,
+                            SurfaceRules.ifTrue(
+                                    SurfaceRules.ON_FLOOR,
                                     SurfaceRules.sequence(
-                                            SurfaceRules.ifTrue(noise,
+                                            SurfaceRules.ifTrue(
+                                                    noise,
                                                     SurfaceRules.state(
-                                                            surfaceBlockA)),
+                                                            surfaceBlockA)
+                                            ),
                                             SurfaceRules.state(surfaceBlockB)
                                     )
                             );
                     return new SurfaceRuleEntry(4, rule);
-                });
+                }
+        );
         rules.add(entryInstance);
         return this;
     }
 
     public SurfaceRuleBuilder chancedFloor(BlockState surfaceBlockA, RuleSource surfaceBlockB, NoiseCondition noise) {
-        entryInstance = getFromCache("chancedFloor_" + surfaceBlockA + "_" + surfaceBlockB + "_" + noise.getClass()
-                                                                                                        .getSimpleName(),
+        entryInstance = getFromCache(
+                "chancedFloor_" + surfaceBlockA + "_" + surfaceBlockB + "_" + noise.getClass()
+                                                                                   .getSimpleName(),
                 () -> {
                     RuleSource rule =
-                            SurfaceRules.ifTrue(SurfaceRules.ON_FLOOR,
+                            SurfaceRules.ifTrue(
+                                    SurfaceRules.ON_FLOOR,
                                     SurfaceRules.sequence(
-                                            SurfaceRules.ifTrue(noise,
+                                            SurfaceRules.ifTrue(
+                                                    noise,
                                                     SurfaceRules.state(
-                                                            surfaceBlockA)),
+                                                            surfaceBlockA)
+                                            ),
                                             surfaceBlockB
                                     )
                             );
                     return new SurfaceRuleEntry(4, rule);
-                });
+                }
+        );
         rules.add(entryInstance);
         return this;
     }

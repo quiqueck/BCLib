@@ -16,20 +16,24 @@ public class GridMessageCell extends GridCell {
     private MultiLineLabel lastLabel;
     private GridTransform lastTransform;
 
-    GridMessageCell(double width,
-                    GridLayout.GridValueType widthType,
-                    GridLayout.Alignment contentAlignment,
-                    Font font,
-                    Component text) {
+    GridMessageCell(
+            double width,
+            GridLayout.GridValueType widthType,
+            GridLayout.Alignment contentAlignment,
+            Font font,
+            Component text
+    ) {
         this(width, widthType, contentAlignment, font, text, GridLayout.COLOR_WHITE);
     }
 
-    GridMessageCell(double width,
-                    GridLayout.GridValueType widthType,
-                    GridLayout.Alignment contentAlignment,
-                    Font font,
-                    Component text,
-                    int color) {
+    GridMessageCell(
+            double width,
+            GridLayout.GridValueType widthType,
+            GridLayout.Alignment contentAlignment,
+            Font font,
+            Component text,
+            int color
+    ) {
         super(width, -1, widthType, null, null);
         this.font = font;
         this.text = text;
@@ -37,11 +41,13 @@ public class GridMessageCell extends GridCell {
         customRender = (poseStack, transform, context) -> {
             //MultiLineLabel label = (MultiLineLabel) context;
             if (contentAlignment == GridLayout.Alignment.CENTER) {
-                lastLabel.renderCentered(poseStack,
+                lastLabel.renderCentered(
+                        poseStack,
                         transform.width / 2 + transform.left,
                         transform.top,
                         font.lineHeight,
-                        color);
+                        color
+                );
             } else if (contentAlignment == GridLayout.Alignment.LEFT) {
                 lastLabel.renderLeftAligned(poseStack, transform.left, transform.top, font.lineHeight, color);
             }

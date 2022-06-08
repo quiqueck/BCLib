@@ -1,5 +1,7 @@
 package org.betterx.bclib.util;
 
+import org.betterx.bclib.api.v2.tag.CommonBlockTags;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
@@ -16,7 +18,6 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.LavaFluid;
 
 import com.google.common.collect.Maps;
-import org.betterx.bclib.api.v2.tag.CommonBlockTags;
 
 import java.util.Map;
 import java.util.Optional;
@@ -197,10 +198,12 @@ public class BlocksHelper {
         }
     }
 
-    public static Optional<BlockPos> findSurfaceBelow(LevelAccessor level,
-                                                      BlockPos startPos,
-                                                      int minY,
-                                                      Predicate<BlockState> surface) {
+    public static Optional<BlockPos> findSurfaceBelow(
+            LevelAccessor level,
+            BlockPos startPos,
+            int minY,
+            Predicate<BlockState> surface
+    ) {
         final MutableBlockPos POS = new MutableBlockPos(startPos.getX(), startPos.getY(), startPos.getZ());
         for (int y = startPos.getY(); y >= minY; y--) {
             POS.setY(y);
@@ -209,11 +212,13 @@ public class BlocksHelper {
         return Optional.empty();
     }
 
-    public static boolean findSurface(LevelAccessor level,
-                                      MutableBlockPos startPos,
-                                      Direction dir,
-                                      int length,
-                                      Predicate<BlockState> surface) {
+    public static boolean findSurface(
+            LevelAccessor level,
+            MutableBlockPos startPos,
+            Direction dir,
+            int length,
+            Predicate<BlockState> surface
+    ) {
         for (int len = 0; len < length; len++) {
             if (surface.test(level.getBlockState(startPos))) return true;
             startPos.move(dir, 1);
@@ -221,11 +226,13 @@ public class BlocksHelper {
         return false;
     }
 
-    public static boolean findOnSurroundingSurface(LevelAccessor level,
-                                                   MutableBlockPos startPos,
-                                                   Direction dir,
-                                                   int length,
-                                                   Predicate<BlockState> surface) {
+    public static boolean findOnSurroundingSurface(
+            LevelAccessor level,
+            MutableBlockPos startPos,
+            Direction dir,
+            int length,
+            Predicate<BlockState> surface
+    ) {
         for (int len = 0; len < length; len++) {
             if (surface.test(level.getBlockState(startPos))) {
                 if (len == 0) { //we started inside of the surface
@@ -246,11 +253,13 @@ public class BlocksHelper {
         return false;
     }
 
-    public static boolean findSurroundingSurface(LevelAccessor level,
-                                                 MutableBlockPos startPos,
-                                                 Direction dir,
-                                                 int length,
-                                                 Predicate<BlockState> surface) {
+    public static boolean findSurroundingSurface(
+            LevelAccessor level,
+            MutableBlockPos startPos,
+            Direction dir,
+            int length,
+            Predicate<BlockState> surface
+    ) {
         BlockState beforeState = null;
         BlockState nowState;
         for (int len = 0; len < length; len++) {
@@ -279,11 +288,13 @@ public class BlocksHelper {
     }
 
 
-    public static boolean isFreeSpace(LevelAccessor level,
-                                      BlockPos startPos,
-                                      Direction dir,
-                                      int length,
-                                      Predicate<BlockState> freeSurface) {
+    public static boolean isFreeSpace(
+            LevelAccessor level,
+            BlockPos startPos,
+            Direction dir,
+            int length,
+            Predicate<BlockState> freeSurface
+    ) {
         MutableBlockPos POS = startPos.mutable();
         for (int len = 0; len < length; len++) {
             if (!freeSurface.test(level.getBlockState(POS))) {
@@ -294,11 +305,13 @@ public class BlocksHelper {
         return true;
     }
 
-    public static int blockCount(LevelAccessor level,
-                                 BlockPos startPos,
-                                 Direction dir,
-                                 int length,
-                                 Predicate<BlockState> freeSurface) {
+    public static int blockCount(
+            LevelAccessor level,
+            BlockPos startPos,
+            Direction dir,
+            int length,
+            Predicate<BlockState> freeSurface
+    ) {
         MutableBlockPos POS = startPos.mutable();
         for (int len = 0; len < length; len++) {
             if (!freeSurface.test(level.getBlockState(POS))) {

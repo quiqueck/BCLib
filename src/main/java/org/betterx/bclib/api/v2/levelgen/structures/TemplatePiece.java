@@ -1,5 +1,7 @@
 package org.betterx.bclib.api.v2.levelgen.structures;
 
+import org.betterx.bclib.BCLib;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
@@ -17,19 +19,21 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlac
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 
-import org.betterx.bclib.BCLib;
-
 public class TemplatePiece extends TemplateStructurePiece {
-    public static final StructurePieceType INSTANCE = setTemplatePieceId(TemplatePiece::new,
-            "template_piece");
+    public static final StructurePieceType INSTANCE = setTemplatePieceId(
+            TemplatePiece::new,
+            "template_piece"
+    );
 
 
     private static StructurePieceType setFullContextPieceId(StructurePieceType structurePieceType, String id) {
         return Registry.register(Registry.STRUCTURE_PIECE, BCLib.makeID(id), structurePieceType);
     }
 
-    private static StructurePieceType setTemplatePieceId(StructurePieceType.StructureTemplateType structureTemplateType,
-                                                         String string) {
+    private static StructurePieceType setTemplatePieceId(
+            StructurePieceType.StructureTemplateType structureTemplateType,
+            String string
+    ) {
         return setFullContextPieceId(structureTemplateType, string);
     }
 
@@ -38,32 +42,40 @@ public class TemplatePiece extends TemplateStructurePiece {
     }
 
 
-    public TemplatePiece(StructureTemplateManager structureTemplateManager,
-                         ResourceLocation resourceLocation,
-                         BlockPos centerPos,
-                         Rotation rotation,
-                         Mirror mirror,
-                         BlockPos halfSize) {
-        super(INSTANCE,
+    public TemplatePiece(
+            StructureTemplateManager structureTemplateManager,
+            ResourceLocation resourceLocation,
+            BlockPos centerPos,
+            Rotation rotation,
+            Mirror mirror,
+            BlockPos halfSize
+    ) {
+        super(
+                INSTANCE,
                 0,
                 structureTemplateManager,
                 resourceLocation,
                 resourceLocation.toString(),
                 makeSettings(rotation, mirror, halfSize),
-                shiftPos(rotation, mirror, halfSize, centerPos));
+                shiftPos(rotation, mirror, halfSize, centerPos)
+        );
     }
 
     public TemplatePiece(StructureTemplateManager structureTemplateManager, CompoundTag compoundTag) {
-        super(INSTANCE,
+        super(
+                INSTANCE,
                 compoundTag,
                 structureTemplateManager,
-                (ResourceLocation resourceLocation) -> makeSettings(compoundTag));
+                (ResourceLocation resourceLocation) -> makeSettings(compoundTag)
+        );
     }
 
-    private static BlockPos shiftPos(Rotation rotation,
-                                     Mirror mirror,
-                                     BlockPos halfSize,
-                                     BlockPos pos) {
+    private static BlockPos shiftPos(
+            Rotation rotation,
+            Mirror mirror,
+            BlockPos halfSize,
+            BlockPos pos
+    ) {
         halfSize = StructureTemplate.transform(halfSize, mirror, rotation, halfSize);
         return pos.offset(-halfSize.getX(), 0, -halfSize.getZ());
     }
@@ -72,7 +84,8 @@ public class TemplatePiece extends TemplateStructurePiece {
         return makeSettings(
                 Rotation.valueOf(compoundTag.getString("R")),
                 Mirror.valueOf(compoundTag.getString("M")),
-                new BlockPos(compoundTag.getInt("RX"), compoundTag.getInt("RY"), compoundTag.getInt("RZ")));
+                new BlockPos(compoundTag.getInt("RX"), compoundTag.getInt("RY"), compoundTag.getInt("RZ"))
+        );
 
     }
 
@@ -84,8 +97,10 @@ public class TemplatePiece extends TemplateStructurePiece {
     }
 
     @Override
-    protected void addAdditionalSaveData(StructurePieceSerializationContext structurePieceSerializationContext,
-                                         CompoundTag tag) {
+    protected void addAdditionalSaveData(
+            StructurePieceSerializationContext structurePieceSerializationContext,
+            CompoundTag tag
+    ) {
         super.addAdditionalSaveData(structurePieceSerializationContext, tag);
         tag.putString("R", this.placeSettings.getRotation().name());
         tag.putString("M", this.placeSettings.getMirror().name());
@@ -95,11 +110,13 @@ public class TemplatePiece extends TemplateStructurePiece {
     }
 
     @Override
-    protected void handleDataMarker(String string,
-                                    BlockPos blockPos,
-                                    ServerLevelAccessor serverLevelAccessor,
-                                    RandomSource randomSource,
-                                    BoundingBox boundingBox) {
+    protected void handleDataMarker(
+            String string,
+            BlockPos blockPos,
+            ServerLevelAccessor serverLevelAccessor,
+            RandomSource randomSource,
+            BoundingBox boundingBox
+    ) {
 
     }
 }

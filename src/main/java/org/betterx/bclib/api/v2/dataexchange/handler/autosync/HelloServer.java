@@ -1,5 +1,12 @@
 package org.betterx.bclib.api.v2.dataexchange.handler.autosync;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
+import org.betterx.bclib.api.v2.dataexchange.DataHandler;
+import org.betterx.bclib.api.v2.dataexchange.DataHandlerDescriptor;
+import org.betterx.bclib.config.Configs;
+import org.betterx.bclib.util.ModUtil;
+
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -8,13 +15,6 @@ import net.minecraft.world.entity.player.Player;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
-
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
-import org.betterx.bclib.api.v2.dataexchange.DataHandler;
-import org.betterx.bclib.api.v2.dataexchange.DataHandlerDescriptor;
-import org.betterx.bclib.config.Configs;
-import org.betterx.bclib.util.ModUtil;
 
 import java.io.File;
 
@@ -60,11 +60,15 @@ import java.io.File;
  * </table>
  */
 public class HelloServer extends DataHandler.FromClient {
-    public static final DataHandlerDescriptor DESCRIPTOR = new DataHandlerDescriptor(new ResourceLocation(BCLib.MOD_ID,
-                                                                                                          "hello_server"),
-                                                                                     HelloServer::new,
-                                                                                     true,
-                                                                                     false);
+    public static final DataHandlerDescriptor DESCRIPTOR = new DataHandlerDescriptor(
+            new ResourceLocation(
+                    BCLib.MOD_ID,
+                    "hello_server"
+            ),
+            HelloServer::new,
+            true,
+            false
+    );
 
     protected String bclibVersion = "0.0.0";
 

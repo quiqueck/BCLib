@@ -1,5 +1,13 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.api.v2.levelgen.features.BCLFeature;
+import org.betterx.bclib.client.models.BasePatterns;
+import org.betterx.bclib.client.models.ModelsHelper;
+import org.betterx.bclib.client.models.PatternsHelper;
+import org.betterx.bclib.client.render.BCLRenderLayer;
+import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.bclib.interfaces.RenderLayerProvider;
+
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -25,14 +33,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
-import org.betterx.bclib.api.v2.levelgen.features.BCLFeature;
-import org.betterx.bclib.client.models.BasePatterns;
-import org.betterx.bclib.client.models.ModelsHelper;
-import org.betterx.bclib.client.models.PatternsHelper;
-import org.betterx.bclib.client.render.BCLRenderLayer;
-import org.betterx.bclib.interfaces.BlockModelProvider;
-import org.betterx.bclib.interfaces.RenderLayerProvider;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -44,28 +44,32 @@ public class FeatureSaplingBlock extends SaplingBlock implements RenderLayerProv
     private final Function<BlockState, BCLFeature> feature;
 
     public FeatureSaplingBlock(Function<BlockState, BCLFeature> featureSupplier) {
-        this(FabricBlockSettings.of(Material.PLANT)
-                                .collidable(false)
-                                .instabreak()
-                                .sound(SoundType.GRASS)
-                                .randomTicks(),
+        this(
+                FabricBlockSettings.of(Material.PLANT)
+                                   .collidable(false)
+                                   .instabreak()
+                                   .sound(SoundType.GRASS)
+                                   .randomTicks(),
                 featureSupplier
         );
     }
 
     public FeatureSaplingBlock(int light, Function<BlockState, BCLFeature> featureSupplier) {
-        this(FabricBlockSettings.of(Material.PLANT)
-                                .collidable(false)
-                                .luminance(light)
-                                .instabreak()
-                                .sound(SoundType.GRASS)
-                                .randomTicks(),
+        this(
+                FabricBlockSettings.of(Material.PLANT)
+                                   .collidable(false)
+                                   .luminance(light)
+                                   .instabreak()
+                                   .sound(SoundType.GRASS)
+                                   .randomTicks(),
                 featureSupplier
         );
     }
 
-    public FeatureSaplingBlock(BlockBehaviour.Properties properties,
-                               Function<BlockState, BCLFeature> featureSupplier) {
+    public FeatureSaplingBlock(
+            BlockBehaviour.Properties properties,
+            Function<BlockState, BCLFeature> featureSupplier
+    ) {
         super(null, properties);
         this.feature = featureSupplier;
     }
@@ -80,12 +84,14 @@ public class FeatureSaplingBlock extends SaplingBlock implements RenderLayerProv
     }
 
     @Override
-    public BlockState updateShape(BlockState state,
-                                  Direction facing,
-                                  BlockState neighborState,
-                                  LevelAccessor world,
-                                  BlockPos pos,
-                                  BlockPos neighborPos) {
+    public BlockState updateShape(
+            BlockState state,
+            Direction facing,
+            BlockState neighborState,
+            LevelAccessor world,
+            BlockPos pos,
+            BlockPos neighborPos
+    ) {
         if (!canSurvive(state, world, pos)) return Blocks.AIR.defaultBlockState();
         else return state;
     }

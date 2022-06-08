@@ -1,11 +1,11 @@
 package org.betterx.bclib.recipes;
 
+import org.betterx.bclib.config.PathConfig;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.ItemLike;
-
-import org.betterx.bclib.config.PathConfig;
 
 public class FurnaceRecipe {
     private static final FurnaceRecipe INSTANCE = new FurnaceRecipe();

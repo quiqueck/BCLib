@@ -1,16 +1,17 @@
 package org.betterx.bclib.api.v2.generator.map.square;
 
-import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.levelgen.LegacyRandomSource;
-import net.minecraft.world.level.levelgen.WorldgenRandom;
-
-import com.google.common.collect.Maps;
 import org.betterx.bclib.api.v2.generator.BiomePicker;
 import org.betterx.bclib.interfaces.BiomeChunk;
 import org.betterx.bclib.interfaces.BiomeMap;
 import org.betterx.bclib.interfaces.TriConsumer;
 import org.betterx.bclib.noise.OpenSimplexNoise;
 import org.betterx.bclib.util.MHelper;
+
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.levelgen.LegacyRandomSource;
+import net.minecraft.world.level.levelgen.WorldgenRandom;
+
+import com.google.common.collect.Maps;
 
 import java.util.Map;
 
@@ -124,8 +125,10 @@ public class SquareBiomeMap implements BiomeMap {
             z += (ix / 2) & 1;
         }
 
-        ChunkPos cpos = new ChunkPos(MHelper.floor(x / SquareBiomeChunk.WIDTH),
-                MHelper.floor(z / SquareBiomeChunk.WIDTH));
+        ChunkPos cpos = new ChunkPos(
+                MHelper.floor(x / SquareBiomeChunk.WIDTH),
+                MHelper.floor(z / SquareBiomeChunk.WIDTH)
+        );
         SquareBiomeChunk chunk = maps.get(cpos);
         if (chunk == null) {
             synchronized (random) {

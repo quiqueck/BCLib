@@ -1,5 +1,8 @@
 package org.betterx.bclib.recipes;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.config.PathConfig;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -8,9 +11,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.UpgradeRecipe;
 import net.minecraft.world.level.ItemLike;
-
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.config.PathConfig;
 
 public class SmithingTableRecipe {
 

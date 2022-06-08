@@ -1,5 +1,7 @@
 package org.betterx.bclib.api.v2.generator;
 
+import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
+
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
@@ -7,7 +9,6 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
 
 import com.google.common.collect.Sets;
-import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 
 import java.util.Comparator;
 import java.util.List;
@@ -35,10 +36,12 @@ public abstract class BCLBiomeSource extends BiomeSource {
         return biomes;
     }
 
-    protected BCLBiomeSource(Registry<Biome> biomeRegistry,
-                             List<Holder<Biome>> list,
-                             long seed,
-                             Optional<Integer> biomeSourceVersion) {
+    protected BCLBiomeSource(
+            Registry<Biome> biomeRegistry,
+            List<Holder<Biome>> list,
+            long seed,
+            Optional<Integer> biomeSourceVersion
+    ) {
         super(preInit(biomeRegistry, list));
 
         this.biomeRegistry = biomeRegistry;
@@ -88,10 +91,12 @@ public abstract class BCLBiomeSource extends BiomeSource {
         boolean isValid(Holder<Biome> biome, ResourceLocation location);
     }
 
-    protected static List<Holder<Biome>> getBiomes(Registry<Biome> biomeRegistry,
-                                                   List<String> exclude,
-                                                   List<String> include,
-                                                   BCLibNetherBiomeSource.ValidBiomePredicate test) {
+    protected static List<Holder<Biome>> getBiomes(
+            Registry<Biome> biomeRegistry,
+            List<String> exclude,
+            List<String> include,
+            BCLibNetherBiomeSource.ValidBiomePredicate test
+    ) {
         return biomeRegistry.stream()
                             .filter(biome -> biomeRegistry.getResourceKey(biome).isPresent())
 

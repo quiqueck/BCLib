@@ -1,5 +1,9 @@
 package org.betterx.bclib.api.v2.levelgen.structures;
 
+import org.betterx.bclib.util.BlocksHelper;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -12,9 +16,6 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
 import com.google.common.collect.Maps;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import org.betterx.bclib.util.BlocksHelper;
 
 import java.util.Map;
 
@@ -62,29 +63,35 @@ public class StructureWorldNBT extends StructureNBT {
         return create(location, offsetY, type, 1.0f);
     }
 
-    public static StructureWorldNBT create(ResourceLocation location,
-                                           int offsetY,
-                                           StructurePlacementType type,
-                                           float chance) {
+    public static StructureWorldNBT create(
+            ResourceLocation location,
+            int offsetY,
+            StructurePlacementType type,
+            float chance
+    ) {
         String key = location.toString() + "::" + offsetY + "::" + type.getSerializedName();
         return READER_CACHE.computeIfAbsent(key, r -> new StructureWorldNBT(location, offsetY, type, chance));
     }
 
-    public boolean generateIfPlaceable(ServerLevelAccessor level,
-                                       BlockPos pos,
-                                       RandomSource random
+    public boolean generateIfPlaceable(
+            ServerLevelAccessor level,
+            BlockPos pos,
+            RandomSource random
     ) {
-        return generateIfPlaceable(level,
+        return generateIfPlaceable(
+                level,
                 pos,
                 getRandomRotation(random),
                 getRandomMirror(random)
         );
     }
 
-    public boolean generateIfPlaceable(ServerLevelAccessor level,
-                                       BlockPos pos,
-                                       Rotation r,
-                                       Mirror m) {
+    public boolean generateIfPlaceable(
+            ServerLevelAccessor level,
+            BlockPos pos,
+            Rotation r,
+            Mirror m
+    ) {
         if (canGenerate(level, pos, r)) {
             return generate(level, pos, r, m);
         }

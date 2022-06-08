@@ -1,5 +1,6 @@
 package org.betterx.bclib.api.v2.levelgen.features.config;
 
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.random.SimpleWeightedRandomList;
@@ -10,8 +11,6 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStateProvider;
-
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import java.util.List;
 
@@ -70,8 +69,10 @@ public abstract class PlaceBlockFeatureConfig implements FeatureConfiguration {
     }
 
 
-    protected abstract boolean placeBlock(FeaturePlaceContext<? extends PlaceBlockFeatureConfig> ctx,
-                                          WorldGenLevel level,
-                                          BlockPos pos,
-                                          BlockState targetState);
+    protected abstract boolean placeBlock(
+            FeaturePlaceContext<? extends PlaceBlockFeatureConfig> ctx,
+            WorldGenLevel level,
+            BlockPos pos,
+            BlockState targetState
+    );
 }

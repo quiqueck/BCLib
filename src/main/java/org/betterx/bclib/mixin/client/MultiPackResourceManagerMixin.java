@@ -1,14 +1,15 @@
 package org.betterx.bclib.mixin.client;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.ModIntegrationAPI;
+import org.betterx.bclib.client.render.EmissiveTextureInfo;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.FallbackResourceManager;
 import net.minecraft.server.packs.resources.MultiPackResourceManager;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.ModIntegrationAPI;
-import org.betterx.bclib.client.render.EmissiveTextureInfo;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -28,8 +29,10 @@ public class MultiPackResourceManagerMixin {
     private final ResourceLocation bclib_alphaEmissionMaterial = BCLib.makeID("materialmaps/block/alpha_emission.json");
 
     @Inject(method = "getResource", at = @At("HEAD"), cancellable = true)
-    private void bclib_getResource(ResourceLocation resourceLocation,
-                                   CallbackInfoReturnable<Resource> info) throws IOException {
+    private void bclib_getResource(
+            ResourceLocation resourceLocation,
+            CallbackInfoReturnable<Resource> info
+    ) throws IOException {
         if (!ModIntegrationAPI.hasCanvas()) {
             return;
         }

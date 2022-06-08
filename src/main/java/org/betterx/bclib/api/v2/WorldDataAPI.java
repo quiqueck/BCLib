@@ -1,5 +1,9 @@
 package org.betterx.bclib.api.v2;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.datafixer.DataFixerAPI;
+import org.betterx.bclib.util.ModUtil;
+
 import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
@@ -10,9 +14,6 @@ import net.fabricmc.loader.api.ModContainer;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.datafixer.DataFixerAPI;
-import org.betterx.bclib.util.ModUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -135,7 +136,7 @@ public class WorldDataAPI {
             tag.putString(TAG_MODIFIED, ModUtil.getModVersion(modID));
 
 
-            final File tempFile =new File(dataDir, modID + "_temp.nbt");
+            final File tempFile = new File(dataDir, modID + "_temp.nbt");
             NbtIo.writeCompressed(tag, tempFile);
 
             final File oldFile = new File(dataDir, modID + "_old.nbt");

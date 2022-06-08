@@ -1,7 +1,7 @@
 {
-	"parent": "block/chain",
-	"textures": {
-		"particle": "%modid%:block/%texture%",
-		"all": "%modid%:block/%texture%"
-	}
+  "parent": "block/chain",
+  "textures": {
+    "particle": "%modid%:block/%texture%",
+    "all": "%modid%:block/%texture%"
+  }
 }

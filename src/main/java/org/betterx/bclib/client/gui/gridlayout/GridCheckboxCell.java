@@ -12,13 +12,15 @@ import java.util.function.Consumer;
 class SignalingCheckBox extends Checkbox {
     private final Consumer<Boolean> onChange;
 
-    public SignalingCheckBox(int left,
-                             int top,
-                             int width,
-                             int height,
-                             Component component,
-                             boolean checked,
-                             Consumer<Boolean> onChange) {
+    public SignalingCheckBox(
+            int left,
+            int top,
+            int width,
+            int height,
+            Component component,
+            boolean checked,
+            Consumer<Boolean> onChange
+    ) {
         super(left, top, width, height, component, checked);
         this.onChange = onChange;
         if (onChange != null)
@@ -40,22 +42,26 @@ public class GridCheckboxCell extends GridCell implements GridWidgetWithEnabledS
     private boolean enabled;
     private final float alpha;
 
-    GridCheckboxCell(Component text,
-                     boolean checked,
-                     float alpha,
-                     double width,
-                     GridLayout.GridValueType widthType,
-                     double height) {
+    GridCheckboxCell(
+            Component text,
+            boolean checked,
+            float alpha,
+            double width,
+            GridLayout.GridValueType widthType,
+            double height
+    ) {
         this(text, checked, alpha, width, widthType, height, null);
     }
 
-    GridCheckboxCell(Component text,
-                     boolean checked,
-                     float alpha,
-                     double width,
-                     GridLayout.GridValueType widthType,
-                     double height,
-                     Consumer<Boolean> onChange) {
+    GridCheckboxCell(
+            Component text,
+            boolean checked,
+            float alpha,
+            double width,
+            GridLayout.GridValueType widthType,
+            double height,
+            Consumer<Boolean> onChange
+    ) {
         super(width, height, widthType, null, null);
         lastCheckbox = null;
         enabled = true;

@@ -1,5 +1,17 @@
 package org.betterx.bclib.api.v2.generator;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.generator.map.MapStack;
+import org.betterx.bclib.api.v2.generator.map.hex.HexBiomeMap;
+import org.betterx.bclib.api.v2.generator.map.square.SquareBiomeMap;
+import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
+import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
+import org.betterx.bclib.config.ConfigKeeper.StringArrayEntry;
+import org.betterx.bclib.config.Configs;
+import org.betterx.bclib.interfaces.BiomeMap;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.RegistryOps;
@@ -11,18 +23,7 @@ import net.minecraft.world.level.biome.Climate;
 
 import net.fabricmc.fabric.impl.biome.NetherBiomeData;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.apache.commons.lang3.function.TriFunction;
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.generator.map.MapStack;
-import org.betterx.bclib.api.v2.generator.map.hex.HexBiomeMap;
-import org.betterx.bclib.api.v2.generator.map.square.SquareBiomeMap;
-import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
-import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
-import org.betterx.bclib.config.ConfigKeeper.StringArrayEntry;
-import org.betterx.bclib.config.Configs;
-import org.betterx.bclib.interfaces.BiomeMap;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +34,8 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource {
     private static int worldHeight;
     public static final Codec<BCLibNetherBiomeSource> CODEC = RecordCodecBuilder
             .create(instance -> instance
-                    .group(RegistryOps
+                    .group(
+                            RegistryOps
                                     .retrieveRegistry(Registry.BIOME_REGISTRY)
                                     .forGetter(source -> source.biomeRegistry),
                             Codec
@@ -62,18 +64,22 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource {
         this(biomeRegistry, seed, version, true);
     }
 
-    private BCLibNetherBiomeSource(Registry<Biome> biomeRegistry,
-                                   long seed,
-                                   Optional<Integer> version,
-                                   boolean initMaps) {
+    private BCLibNetherBiomeSource(
+            Registry<Biome> biomeRegistry,
+            long seed,
+            Optional<Integer> version,
+            boolean initMaps
+    ) {
         this(biomeRegistry, getBiomes(biomeRegistry), seed, version, initMaps);
     }
 
-    private BCLibNetherBiomeSource(Registry<Biome> biomeRegistry,
-                                   List<Holder<Biome>> list,
-                                   long seed,
-                                   Optional<Integer> version,
-                                   boolean initMaps) {
+    private BCLibNetherBiomeSource(
+            Registry<Biome> biomeRegistry,
+            List<Holder<Biome>> list,
+            long seed,
+            Optional<Integer> version,
+            boolean initMaps
+    ) {
         super(biomeRegistry, list, seed, version);
 
         biomePicker = new BiomePicker(biomeRegistry);
@@ -103,11 +109,13 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource {
 
     protected BCLBiomeSource cloneForDatapack(Set<Holder<Biome>> datapackBiomes) {
         datapackBiomes.addAll(getBclBiomes(this.biomeRegistry));
-        return new BCLibNetherBiomeSource(this.biomeRegistry,
+        return new BCLibNetherBiomeSource(
+                this.biomeRegistry,
                 datapackBiomes.stream().toList(),
                 this.currentSeed,
                 Optional.of(biomeSourceVersion),
-                true);
+                true
+        );
     }
 
     /**
@@ -196,9 +204,11 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource {
                     mapConstructor
             );
         } else {
-            this.biomeMap = mapConstructor.apply(seed,
+            this.biomeMap = mapConstructor.apply(
+                    seed,
                     GeneratorOptions.getBiomeSizeNether(),
-                    biomePicker);
+                    biomePicker
+            );
         }
     }
 

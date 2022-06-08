@@ -37,12 +37,14 @@ public class CommonBlockTags {
         TagAPI.BLOCKS.add(END_STONES, Blocks.END_STONE);
         TagAPI.BLOCKS.addOtherTags(NETHER_STONES, BlockTags.BASE_STONE_NETHER);
 
-        TagAPI.BLOCKS.add(NETHERRACK,
+        TagAPI.BLOCKS.add(
+                NETHERRACK,
                 Blocks.NETHERRACK,
                 Blocks.NETHER_QUARTZ_ORE,
                 Blocks.NETHER_GOLD_ORE,
                 Blocks.CRIMSON_NYLIUM,
-                Blocks.WARPED_NYLIUM);
+                Blocks.WARPED_NYLIUM
+        );
 
         TagAPI.BLOCKS.add(NETHER_ORES, Blocks.NETHER_QUARTZ_ORE, Blocks.NETHER_GOLD_ORE);
         TagAPI.BLOCKS.add(SOUL_GROUND, Blocks.SOUL_SAND, Blocks.SOUL_SOIL);
@@ -53,7 +55,8 @@ public class CommonBlockTags {
         TagAPI.BLOCKS.addOtherTags(MYCELIUM, NETHER_MYCELIUM);
 
 
-        TagAPI.BLOCKS.add(TERRAIN,
+        TagAPI.BLOCKS.add(
+                TERRAIN,
                 Blocks.MAGMA_BLOCK,
                 Blocks.GRAVEL,
                 Blocks.SAND,
@@ -62,7 +65,8 @@ public class CommonBlockTags {
                 Blocks.BONE_BLOCK,
                 Blocks.SCULK
         );
-        TagAPI.BLOCKS.addOtherTags(TERRAIN,
+        TagAPI.BLOCKS.addOtherTags(
+                TERRAIN,
                 BlockTags.DRIPSTONE_REPLACEABLE,
                 BlockTags.BASE_STONE_OVERWORLD,
                 BlockTags.NYLIUM,
@@ -71,6 +75,7 @@ public class CommonBlockTags {
                 SOUL_GROUND,
                 NETHER_MYCELIUM,
                 MYCELIUM,
-                END_STONES);
+                END_STONES
+        );
     }
 }

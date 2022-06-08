@@ -1,5 +1,13 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.api.v2.tag.NamedBlockTags;
+import org.betterx.bclib.api.v2.tag.NamedItemTags;
+import org.betterx.bclib.client.render.BCLRenderLayer;
+import org.betterx.bclib.interfaces.RenderLayerProvider;
+import org.betterx.bclib.interfaces.TagProvider;
+import org.betterx.bclib.interfaces.tools.AddMineableHoe;
+import org.betterx.bclib.interfaces.tools.AddMineableShears;
+
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -9,14 +17,6 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-
-import org.betterx.bclib.api.v2.tag.NamedBlockTags;
-import org.betterx.bclib.api.v2.tag.NamedItemTags;
-import org.betterx.bclib.client.render.BCLRenderLayer;
-import org.betterx.bclib.interfaces.RenderLayerProvider;
-import org.betterx.bclib.interfaces.TagProvider;
-import org.betterx.bclib.interfaces.tools.AddMineableHoe;
-import org.betterx.bclib.interfaces.tools.AddMineableShears;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class SimpleLeavesBlock extends BaseBlockNotFull implements RenderLayerPr
                         .isValidSpawn((state, world, pos, type) -> false)
                         .isSuffocating((state, world, pos) -> false)
                         .isViewBlocking((state, world, pos) -> false)
-            );
+        );
     }
 
     public SimpleLeavesBlock(MaterialColor color, int light) {
@@ -47,7 +47,7 @@ public class SimpleLeavesBlock extends BaseBlockNotFull implements RenderLayerPr
                         .isValidSpawn((state, world, pos, type) -> false)
                         .isSuffocating((state, world, pos) -> false)
                         .isViewBlocking((state, world, pos) -> false)
-            );
+        );
     }
 
     public SimpleLeavesBlock(BlockBehaviour.Properties properties) {

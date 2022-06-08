@@ -1,13 +1,5 @@
 package org.betterx.bclib.api.v2.dataexchange.handler.autosync;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
-
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.dataexchange.DataHandler;
 import org.betterx.bclib.api.v2.dataexchange.DataHandlerDescriptor;
@@ -16,6 +8,14 @@ import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.util.Pair;
 import org.betterx.bclib.util.PathUtil;
 import org.betterx.bclib.util.Triple;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,11 +26,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class SendFiles extends DataHandler.FromServer {
-    public static final DataHandlerDescriptor DESCRIPTOR = new DataHandlerDescriptor(new ResourceLocation(BCLib.MOD_ID,
-            "send_files"),
+    public static final DataHandlerDescriptor DESCRIPTOR = new DataHandlerDescriptor(
+            new ResourceLocation(
+                    BCLib.MOD_ID,
+                    "send_files"
+            ),
             SendFiles::new,
             false,
-            false);
+            false
+    );
 
     protected List<AutoFileSyncEntry> files;
     private String token;
@@ -172,8 +176,10 @@ public class SendFiles extends DataHandler.FromServer {
                     path = PathUtil.MOD_FOLDER.resolve(name);
                 }
                 count++;
-                name = prefix + mase.modID + "_" + mase.version.replace(".", "_") + "__" + String.format("%03d",
-                        count) + ".jar";
+                name = prefix + mase.modID + "_" + mase.version.replace(".", "_") + "__" + String.format(
+                        "%03d",
+                        count
+                ) + ".jar";
             } while (path.toFile().exists());
         }
 

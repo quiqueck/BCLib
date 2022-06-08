@@ -1,16 +1,5 @@
 package org.betterx.bclib.api.v2.dataexchange.handler.autosync;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.fabricmc.loader.api.metadata.ModEnvironment;
-
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
 import org.betterx.bclib.api.v2.dataexchange.DataHandler;
@@ -24,6 +13,17 @@ import org.betterx.bclib.config.ServerConfig;
 import org.betterx.bclib.util.ModUtil;
 import org.betterx.bclib.util.ModUtil.ModInfo;
 import org.betterx.bclib.util.PathUtil;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.fabricmc.loader.api.metadata.ModEnvironment;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,11 +47,15 @@ public class HelloClient extends DataHandler.FromServer {
     public static class ServerModMap extends HashMap<String, OfferedModInfo> implements IServerModMap {
     }
 
-    public static final DataHandlerDescriptor DESCRIPTOR = new DataHandlerDescriptor(new ResourceLocation(BCLib.MOD_ID,
-            "hello_client"),
+    public static final DataHandlerDescriptor DESCRIPTOR = new DataHandlerDescriptor(
+            new ResourceLocation(
+                    BCLib.MOD_ID,
+                    "hello_client"
+            ),
             HelloClient::new,
             false,
-            false);
+            false
+    );
 
     public HelloClient() {
         super(DESCRIPTOR.IDENTIFIER);
@@ -217,8 +221,10 @@ public class HelloClient extends DataHandler.FromServer {
     }
 
     @Environment(EnvType.CLIENT)
-    private void processAutoSyncFolder(final List<AutoSyncID> filesToRequest,
-                                       final List<AutoSyncID.ForDirectFileRequest> filesToRemove) {
+    private void processAutoSyncFolder(
+            final List<AutoSyncID> filesToRequest,
+            final List<AutoSyncID.ForDirectFileRequest> filesToRemove
+    ) {
         if (!Configs.CLIENT_CONFIG.isAcceptingFiles()) {
             return;
         }
@@ -249,7 +255,8 @@ public class HelloClient extends DataHandler.FromServer {
                                                                                            .filter(desc::acceptChildElements)
                                                                                            .map(absPath -> new AutoSyncID.ForDirectFileRequest(
                                                                                                    desc.folderID,
-                                                                                                   absPath.toFile()))
+                                                                                                   absPath.toFile()
+                                                                                           ))
                                                                                            .collect(Collectors.toList());
 
                     additionalFiles.forEach(aid -> BCLib.LOGGER.info("	   * " + desc.localFolder.relativize(aid.relFile.toPath()) + " (missing on server)"));
@@ -264,16 +271,20 @@ public class HelloClient extends DataHandler.FromServer {
                             //the file exists locally, check if the hashes match
                             if (!localSubFile.hash.equals(subFile.hash)) {
                                 BCLib.LOGGER.info("	   * " + subFile.relPath + " (changed)");
-                                filesToRequest.add(new AutoSyncID.ForDirectFileRequest(desc.folderID,
-                                        new File(subFile.relPath)));
+                                filesToRequest.add(new AutoSyncID.ForDirectFileRequest(
+                                        desc.folderID,
+                                        new File(subFile.relPath)
+                                ));
                             } else {
                                 BCLib.LOGGER.info("	   * " + subFile.relPath);
                             }
                         } else {
                             //the file is missing locally
                             BCLib.LOGGER.info("	   * " + subFile.relPath + " (missing on client)");
-                            filesToRequest.add(new AutoSyncID.ForDirectFileRequest(desc.folderID,
-                                    new File(subFile.relPath)));
+                            filesToRequest.add(new AutoSyncID.ForDirectFileRequest(
+                                    desc.folderID,
+                                    new File(subFile.relPath)
+                            ));
                         }
                     });
 
@@ -309,10 +320,12 @@ public class HelloClient extends DataHandler.FromServer {
                 if (contentWrapper.getRawContent() == null) {
                     filesToRequest.add(new AutoSyncID(e.serverHash.modID, e.serverHash.uniqueID));
                 } else {
-                    filesToRequest.add(new AutoSyncID.WithContentOverride(e.serverHash.modID,
+                    filesToRequest.add(new AutoSyncID.WithContentOverride(
+                            e.serverHash.modID,
                             e.serverHash.uniqueID,
                             contentWrapper,
-                            e.localMatch.fileName));
+                            e.localMatch.fileName
+                    ));
                 }
             }
 
@@ -389,12 +402,14 @@ public class HelloClient extends DataHandler.FromServer {
             showSyncFilesScreen(client, filesToRequest, filesToRemove);
             return;
         } else if (serverPublishedModInfo && mismatchingMods.size() > 0 && Configs.CLIENT_CONFIG.isShowingModInfo()) {
-            client.setScreen(new ModListScreen(client.screen,
+            client.setScreen(new ModListScreen(
+                    client.screen,
                     Component.translatable("title.bclib.modmissmatch"),
                     Component.translatable("message.bclib.modmissmatch"),
                     CommonComponents.GUI_PROCEED,
                     ModUtil.getMods(),
-                    modVersion));
+                    modVersion
+            ));
             return;
         }
     }
@@ -415,9 +430,11 @@ public class HelloClient extends DataHandler.FromServer {
     }
 
     @Environment(EnvType.CLIENT)
-    protected void showSyncFilesScreen(Minecraft client,
-                                       List<AutoSyncID> files,
-                                       final List<AutoSyncID.ForDirectFileRequest> filesToRemove) {
+    protected void showSyncFilesScreen(
+            Minecraft client,
+            List<AutoSyncID> files,
+            final List<AutoSyncID.ForDirectFileRequest> filesToRemove
+    ) {
         int configFiles = 0;
         int singleFiles = 0;
         int folderFiles = 0;
@@ -435,7 +452,8 @@ public class HelloClient extends DataHandler.FromServer {
             }
         }
 
-        client.setScreen(new SyncFilesScreen(modFiles,
+        client.setScreen(new SyncFilesScreen(
+                modFiles,
                 configFiles,
                 singleFiles,
                 folderFiles,
@@ -468,7 +486,8 @@ public class HelloClient extends DataHandler.FromServer {
                     }
 
                     this.onCloseSyncFilesScreen();
-                }));
+                }
+        ));
     }
 
     @Environment(EnvType.CLIENT)
@@ -498,9 +517,11 @@ public class HelloClient extends DataHandler.FromServer {
     private void requestFileDownloads(List<AutoSyncID> files) {
         BCLib.LOGGER.info("Starting download of Files:" + files.size());
 
-        final ProgressScreen progress = new ProgressScreen(null,
+        final ProgressScreen progress = new ProgressScreen(
+                null,
                 Component.translatable("title.bclib.filesync.progress"),
-                Component.translatable("message.bclib.filesync.progress"));
+                Component.translatable("message.bclib.filesync.progress")
+        );
         progress.progressStart(Component.translatable("message.bclib.filesync.progress.stage.empty"));
         ChunkerProgress.setProgressScreen(progress);
 

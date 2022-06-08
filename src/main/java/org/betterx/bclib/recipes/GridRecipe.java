@@ -1,5 +1,7 @@
 package org.betterx.bclib.recipes;
 
+import org.betterx.bclib.config.PathConfig;
+
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -9,7 +11,6 @@ import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.ItemLike;
 
 import com.google.common.collect.Maps;
-import org.betterx.bclib.config.PathConfig;
 
 import java.util.Arrays;
 import java.util.Map;

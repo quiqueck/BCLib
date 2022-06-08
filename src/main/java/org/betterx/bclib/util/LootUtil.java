@@ -1,5 +1,8 @@
 package org.betterx.bclib.util;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.interfaces.LootPoolAccessor;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
@@ -13,18 +16,17 @@ import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.interfaces.LootPoolAccessor;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class LootUtil {
-    public static Optional<List<ItemStack>> getDrops(BlockBehaviour block,
-                                                     BlockState state,
-                                                     LootContext.Builder builder) {
+    public static Optional<List<ItemStack>> getDrops(
+            BlockBehaviour block,
+            BlockState state,
+            LootContext.Builder builder
+    ) {
         ResourceLocation tableID = block.getLootTable();
         if (tableID == BuiltInLootTables.EMPTY) {
             return Optional.empty();

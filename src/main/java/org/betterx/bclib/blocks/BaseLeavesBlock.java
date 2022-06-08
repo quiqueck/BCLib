@@ -1,5 +1,16 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.api.v2.tag.NamedBlockTags;
+import org.betterx.bclib.api.v2.tag.NamedItemTags;
+import org.betterx.bclib.client.render.BCLRenderLayer;
+import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.bclib.interfaces.RenderLayerProvider;
+import org.betterx.bclib.interfaces.TagProvider;
+import org.betterx.bclib.interfaces.tools.AddMineableHoe;
+import org.betterx.bclib.interfaces.tools.AddMineableShears;
+import org.betterx.bclib.items.tool.BaseShearsItem;
+import org.betterx.bclib.util.MHelper;
+
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -19,16 +30,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import com.google.common.collect.Lists;
-import org.betterx.bclib.api.v2.tag.NamedBlockTags;
-import org.betterx.bclib.api.v2.tag.NamedItemTags;
-import org.betterx.bclib.client.render.BCLRenderLayer;
-import org.betterx.bclib.interfaces.BlockModelProvider;
-import org.betterx.bclib.interfaces.RenderLayerProvider;
-import org.betterx.bclib.interfaces.TagProvider;
-import org.betterx.bclib.interfaces.tools.AddMineableHoe;
-import org.betterx.bclib.interfaces.tools.AddMineableShears;
-import org.betterx.bclib.items.tool.BaseShearsItem;
-import org.betterx.bclib.util.MHelper;
 
 import java.util.Collections;
 import java.util.List;
@@ -52,10 +53,12 @@ public class BaseLeavesBlock extends LeavesBlock implements BlockModelProvider, 
         this.sapling = sapling;
     }
 
-    public BaseLeavesBlock(Block sapling,
-                           MaterialColor color,
-                           int light,
-                           Consumer<FabricBlockSettings> customizeProperties) {
+    public BaseLeavesBlock(
+            Block sapling,
+            MaterialColor color,
+            int light,
+            Consumer<FabricBlockSettings> customizeProperties
+    ) {
         super(BaseBlock.acceptAndReturn(customizeProperties, makeLeaves(color).luminance(light)));
         this.sapling = sapling;
     }
@@ -81,11 +84,13 @@ public class BaseLeavesBlock extends LeavesBlock implements BlockModelProvider, 
         return BaseLeavesBlock.getLeaveDrops(this, this.sapling, builder, 16, 16);
     }
 
-    public static List<ItemStack> getLeaveDrops(ItemLike leaveBlock,
-                                                Block sapling,
-                                                LootContext.Builder builder,
-                                                int fortuneRate,
-                                                int dropRate) {
+    public static List<ItemStack> getLeaveDrops(
+            ItemLike leaveBlock,
+            Block sapling,
+            LootContext.Builder builder,
+            int fortuneRate,
+            int dropRate
+    ) {
         ItemStack tool = builder.getParameter(LootContextParams.TOOL);
         if (tool != null) {
             if (BaseShearsItem.isShear(tool) || EnchantmentHelper.getItemEnchantmentLevel(

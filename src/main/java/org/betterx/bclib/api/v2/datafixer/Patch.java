@@ -1,12 +1,12 @@
 package org.betterx.bclib.api.v2.datafixer;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-
 import org.betterx.bclib.api.v2.WorldDataAPI;
 import org.betterx.bclib.interfaces.PatchBiFunction;
 import org.betterx.bclib.interfaces.PatchFunction;
 import org.betterx.bclib.util.ModUtil;
+
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 
 import java.util.ArrayList;
 import java.util.HashMap;

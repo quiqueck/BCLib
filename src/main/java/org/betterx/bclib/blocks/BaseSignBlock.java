@@ -1,5 +1,11 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.blockentities.BaseSignBlockEntity;
+import org.betterx.bclib.client.models.ModelsHelper;
+import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.bclib.interfaces.CustomItemProvider;
+import org.betterx.bclib.util.BlocksHelper;
+
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -36,12 +42,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-
-import org.betterx.bclib.blockentities.BaseSignBlockEntity;
-import org.betterx.bclib.client.models.ModelsHelper;
-import org.betterx.bclib.interfaces.BlockModelProvider;
-import org.betterx.bclib.interfaces.CustomItemProvider;
-import org.betterx.bclib.util.BlocksHelper;
 
 import java.util.Collections;
 import java.util.List;
@@ -100,12 +100,14 @@ public class BaseSignBlock extends SignBlock implements BlockModelProvider, Cust
     }
 
     @Override
-    public BlockState updateShape(BlockState state,
-                                  Direction facing,
-                                  BlockState neighborState,
-                                  LevelAccessor world,
-                                  BlockPos pos,
-                                  BlockPos neighborPos) {
+    public BlockState updateShape(
+            BlockState state,
+            Direction facing,
+            BlockState neighborState,
+            LevelAccessor world,
+            BlockPos pos,
+            BlockPos neighborPos
+    ) {
         if (state.getValue(WATERLOGGED)) {
             world.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
         }

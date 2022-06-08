@@ -1,5 +1,12 @@
 package org.betterx.bclib.api.v2.levelgen.features.config;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.blocks.BlockProperties;
+import org.betterx.bclib.util.BlocksHelper;
+
+import com.mojang.datafixers.util.Function15;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.ConstantInt;
@@ -9,13 +16,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
-
-import com.mojang.datafixers.util.Function15;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.blocks.BlockProperties;
-import org.betterx.bclib.util.BlocksHelper;
 
 import java.util.Optional;
 
@@ -41,21 +41,23 @@ public abstract class ScatterFeatureConfig implements FeatureConfiguration {
 
     public final boolean growWhileFree;
 
-    public ScatterFeatureConfig(BlockStateProvider clusterBlock,
-                                Optional<BlockStateProvider> tipBlock,
-                                Optional<BlockStateProvider> bottomBlock,
-                                Optional<BlockState> baseState,
-                                float baseReplaceChance,
-                                float chanceOfDirectionalSpread,
-                                float chanceOfSpreadRadius2,
-                                float chanceOfSpreadRadius3,
-                                int minHeight,
-                                int maxHeight,
-                                float maxSpread,
-                                float sizeVariation,
-                                float floorChance,
-                                boolean growWhileFree,
-                                IntProvider spreadCount) {
+    public ScatterFeatureConfig(
+            BlockStateProvider clusterBlock,
+            Optional<BlockStateProvider> tipBlock,
+            Optional<BlockStateProvider> bottomBlock,
+            Optional<BlockState> baseState,
+            float baseReplaceChance,
+            float chanceOfDirectionalSpread,
+            float chanceOfSpreadRadius2,
+            float chanceOfSpreadRadius3,
+            int minHeight,
+            int maxHeight,
+            float maxSpread,
+            float sizeVariation,
+            float floorChance,
+            boolean growWhileFree,
+            IntProvider spreadCount
+    ) {
         this.clusterBlock = clusterBlock;
         this.tipBlock = tipBlock.orElse(clusterBlock);
         this.bottomBlock = bottomBlock.orElse(clusterBlock);
@@ -84,7 +86,8 @@ public abstract class ScatterFeatureConfig implements FeatureConfiguration {
 
     public static <T extends ScatterFeatureConfig> Codec<T> buildCodec(Instancer<T> instancer) {
         return RecordCodecBuilder.create((instance) -> instance
-                .group(BlockStateProvider.CODEC
+                .group(
+                        BlockStateProvider.CODEC
                                 .fieldOf("cluster_block")
                                 .forGetter((T cfg) -> cfg.clusterBlock),
                         BlockStateProvider.CODEC
@@ -281,22 +284,28 @@ public abstract class ScatterFeatureConfig implements FeatureConfiguration {
         }
 
 
-        public Builder<T> generateBaseBlock(BlockState baseState,
-                                            float chanceOfDirectionalSpread,
-                                            float chanceOfSpreadRadius2,
-                                            float chanceOfSpreadRadius3) {
-            return generateBaseBlock(baseState,
+        public Builder<T> generateBaseBlock(
+                BlockState baseState,
+                float chanceOfDirectionalSpread,
+                float chanceOfSpreadRadius2,
+                float chanceOfSpreadRadius3
+        ) {
+            return generateBaseBlock(
+                    baseState,
                     1,
                     chanceOfDirectionalSpread,
                     chanceOfSpreadRadius2,
-                    chanceOfSpreadRadius3);
+                    chanceOfSpreadRadius3
+            );
         }
 
-        public Builder<T> generateBaseBlock(BlockState baseState,
-                                            float baseReplaceChance,
-                                            float chanceOfDirectionalSpread,
-                                            float chanceOfSpreadRadius2,
-                                            float chanceOfSpreadRadius3) {
+        public Builder<T> generateBaseBlock(
+                BlockState baseState,
+                float baseReplaceChance,
+                float chanceOfDirectionalSpread,
+                float chanceOfSpreadRadius2,
+                float chanceOfSpreadRadius3
+        ) {
             if (this.baseState.isPresent() && this.baseReplaceChance == 0) {
                 BCLib.LOGGER.error("Base generation was already selected.");
             }
@@ -367,22 +376,25 @@ public abstract class ScatterFeatureConfig implements FeatureConfiguration {
     public static class OnSolid extends ScatterFeatureConfig {
         public static final Codec<OnSolid> CODEC = buildCodec(OnSolid::new);
 
-        protected OnSolid(BlockStateProvider clusterBlock,
-                          Optional<BlockStateProvider> tipBlock,
-                          Optional<BlockStateProvider> bottomBlock,
-                          Optional<BlockState> baseState,
-                          float baseReplaceChance,
-                          float chanceOfDirectionalSpread,
-                          float chanceOfSpreadRadius2,
-                          float chanceOfSpreadRadius3,
-                          int minHeight,
-                          int maxHeight,
-                          float maxSpread,
-                          float sizeVariation,
-                          float floorChance,
-                          boolean growWhileFree,
-                          IntProvider spreadCount) {
-            super(clusterBlock,
+        protected OnSolid(
+                BlockStateProvider clusterBlock,
+                Optional<BlockStateProvider> tipBlock,
+                Optional<BlockStateProvider> bottomBlock,
+                Optional<BlockState> baseState,
+                float baseReplaceChance,
+                float chanceOfDirectionalSpread,
+                float chanceOfSpreadRadius2,
+                float chanceOfSpreadRadius3,
+                int minHeight,
+                int maxHeight,
+                float maxSpread,
+                float sizeVariation,
+                float floorChance,
+                boolean growWhileFree,
+                IntProvider spreadCount
+        ) {
+            super(
+                    clusterBlock,
                     tipBlock,
                     bottomBlock,
                     baseState,
@@ -396,7 +408,8 @@ public abstract class ScatterFeatureConfig implements FeatureConfiguration {
                     sizeVariation,
                     floorChance,
                     growWhileFree,
-                    spreadCount);
+                    spreadCount
+            );
         }
 
 
@@ -423,22 +436,25 @@ public abstract class ScatterFeatureConfig implements FeatureConfiguration {
     public static class ExtendTop extends ScatterFeatureConfig {
         public static final Codec<ExtendTop> CODEC = buildCodec(ExtendTop::new);
 
-        protected ExtendTop(BlockStateProvider clusterBlock,
-                            Optional<BlockStateProvider> tipBlock,
-                            Optional<BlockStateProvider> bottomBlock,
-                            Optional<BlockState> baseState,
-                            float baseReplaceChance,
-                            float chanceOfDirectionalSpread,
-                            float chanceOfSpreadRadius2,
-                            float chanceOfSpreadRadius3,
-                            int minHeight,
-                            int maxHeight,
-                            float maxSpread,
-                            float sizeVariation,
-                            float floorChance,
-                            boolean growWhileFree,
-                            IntProvider spreadCount) {
-            super(clusterBlock,
+        protected ExtendTop(
+                BlockStateProvider clusterBlock,
+                Optional<BlockStateProvider> tipBlock,
+                Optional<BlockStateProvider> bottomBlock,
+                Optional<BlockState> baseState,
+                float baseReplaceChance,
+                float chanceOfDirectionalSpread,
+                float chanceOfSpreadRadius2,
+                float chanceOfSpreadRadius3,
+                int minHeight,
+                int maxHeight,
+                float maxSpread,
+                float sizeVariation,
+                float floorChance,
+                boolean growWhileFree,
+                IntProvider spreadCount
+        ) {
+            super(
+                    clusterBlock,
                     tipBlock,
                     bottomBlock,
                     baseState,
@@ -452,7 +468,8 @@ public abstract class ScatterFeatureConfig implements FeatureConfiguration {
                     sizeVariation,
                     floorChance,
                     growWhileFree,
-                    spreadCount);
+                    spreadCount
+            );
         }
 
 
@@ -477,22 +494,25 @@ public abstract class ScatterFeatureConfig implements FeatureConfiguration {
     public static class ExtendBottom extends ScatterFeatureConfig {
         public static final Codec<ExtendBottom> CODEC = buildCodec(ExtendBottom::new);
 
-        protected ExtendBottom(BlockStateProvider clusterBlock,
-                               Optional<BlockStateProvider> tipBlock,
-                               Optional<BlockStateProvider> bottomBlock,
-                               Optional<BlockState> baseState,
-                               float baseReplaceChance,
-                               float chanceOfDirectionalSpread,
-                               float chanceOfSpreadRadius2,
-                               float chanceOfSpreadRadius3,
-                               int minHeight,
-                               int maxHeight,
-                               float maxSpread,
-                               float sizeVariation,
-                               float floorChance,
-                               boolean growWhileFree,
-                               IntProvider spreadCount) {
-            super(clusterBlock,
+        protected ExtendBottom(
+                BlockStateProvider clusterBlock,
+                Optional<BlockStateProvider> tipBlock,
+                Optional<BlockStateProvider> bottomBlock,
+                Optional<BlockState> baseState,
+                float baseReplaceChance,
+                float chanceOfDirectionalSpread,
+                float chanceOfSpreadRadius2,
+                float chanceOfSpreadRadius3,
+                int minHeight,
+                int maxHeight,
+                float maxSpread,
+                float sizeVariation,
+                float floorChance,
+                boolean growWhileFree,
+                IntProvider spreadCount
+        ) {
+            super(
+                    clusterBlock,
                     tipBlock,
                     bottomBlock,
                     baseState,
@@ -506,7 +526,8 @@ public abstract class ScatterFeatureConfig implements FeatureConfiguration {
                     sizeVariation,
                     floorChance,
                     growWhileFree,
-                    spreadCount);
+                    spreadCount
+            );
         }
 
 

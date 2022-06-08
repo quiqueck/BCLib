@@ -1,5 +1,7 @@
 package org.betterx.bclib.util;
 
+import org.betterx.bclib.BCLib;
+
 import net.fabricmc.loader.api.*;
 import net.fabricmc.loader.api.metadata.*;
 
@@ -7,7 +9,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
-import org.betterx.bclib.BCLib;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,8 +53,10 @@ public class ModUtil {
     }
 
     private static ModMetadata readJSON(InputStream is, String sourceFile) throws IOException {
-        try (com.google.gson.stream.JsonReader reader = new JsonReader(new InputStreamReader(is,
-                StandardCharsets.UTF_8))) {
+        try (com.google.gson.stream.JsonReader reader = new JsonReader(new InputStreamReader(
+                is,
+                StandardCharsets.UTF_8
+        ))) {
             JsonObject data = JsonParser.parseReader(reader)
                                         .getAsJsonObject();
             Version ver;

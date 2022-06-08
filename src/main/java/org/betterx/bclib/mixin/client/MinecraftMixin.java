@@ -1,12 +1,13 @@
 package org.betterx.bclib.mixin.client;
 
+import org.betterx.bclib.interfaces.CustomColorProvider;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.client.main.GameConfig;
 import net.minecraft.core.Registry;
 
-import org.betterx.bclib.interfaces.CustomColorProvider;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

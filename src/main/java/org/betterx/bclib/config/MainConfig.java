@@ -3,16 +3,20 @@ package org.betterx.bclib.config;
 import org.betterx.bclib.BCLib;
 
 public class MainConfig extends NamedPathConfig {
-    public static final ConfigToken<Boolean> APPLY_PATCHES = ConfigToken.Boolean(true,
-                                                                                 "applyPatches",
-                                                                                 Configs.MAIN_PATCH_CATEGORY);
+    public static final ConfigToken<Boolean> APPLY_PATCHES = ConfigToken.Boolean(
+            true,
+            "applyPatches",
+            Configs.MAIN_PATCH_CATEGORY
+    );
 
     @ConfigUI(leftPadding = 8)
-    public static final ConfigToken<Boolean> REPAIR_BIOMES = DependendConfigToken.Boolean(true,
-                                                                                          "repairBiomesOnLoad",
-                                                                                          Configs.MAIN_PATCH_CATEGORY,
-                                                                                          (config) -> config.get(
-                                                                                                  APPLY_PATCHES));
+    public static final ConfigToken<Boolean> REPAIR_BIOMES = DependendConfigToken.Boolean(
+            true,
+            "repairBiomesOnLoad",
+            Configs.MAIN_PATCH_CATEGORY,
+            (config) -> config.get(
+                    APPLY_PATCHES)
+    );
 
     public MainConfig() {
         super(BCLib.MOD_ID, "main", true, true);

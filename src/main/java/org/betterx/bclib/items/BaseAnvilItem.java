@@ -1,5 +1,9 @@
 package org.betterx.bclib.items;
 
+import org.betterx.bclib.blocks.BaseAnvilBlock;
+import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.bclib.interfaces.ItemModelProvider;
+
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
@@ -15,10 +19,6 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
-import org.betterx.bclib.blocks.BaseAnvilBlock;
-import org.betterx.bclib.interfaces.BlockModelProvider;
-import org.betterx.bclib.interfaces.ItemModelProvider;
 
 import java.util.List;
 import java.util.Locale;
@@ -53,10 +53,12 @@ public class BaseAnvilItem extends BlockItem implements ItemModelProvider {
 
     @Override
     @Environment(EnvType.CLIENT)
-    public void appendHoverText(ItemStack itemStack,
-                                @Nullable Level level,
-                                List<Component> list,
-                                TooltipFlag tooltipFlag) {
+    public void appendHoverText(
+            ItemStack itemStack,
+            @Nullable Level level,
+            List<Component> list,
+            TooltipFlag tooltipFlag
+    ) {
         int destruction = itemStack.getOrCreateTag().getInt(DESTRUCTION);
         if (destruction > 0) {
             BaseAnvilBlock block = (BaseAnvilBlock) ((BaseAnvilItem) itemStack.getItem()).getBlock();

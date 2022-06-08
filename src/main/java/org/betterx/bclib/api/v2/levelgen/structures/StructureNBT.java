@@ -1,5 +1,7 @@
 package org.betterx.bclib.api.v2.levelgen.structures;
 
+import org.betterx.bclib.BCLib;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Vec3i;
@@ -17,7 +19,6 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlac
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 
 import com.google.common.collect.Maps;
-import org.betterx.bclib.BCLib;
 
 import java.io.IOException;
 import java.io.InputStream;

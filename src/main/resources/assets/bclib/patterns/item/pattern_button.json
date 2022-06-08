@@ -1,6 +1,6 @@
 {
-	"parent": "block/button_inventory",
-	"textures": {
-		"texture": "%modid%:block/%texture%"
-	}
+  "parent": "block/button_inventory",
+  "textures": {
+    "texture": "%modid%:block/%texture%"
+  }
 }

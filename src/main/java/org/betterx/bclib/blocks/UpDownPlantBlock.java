@@ -1,5 +1,11 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.client.render.BCLRenderLayer;
+import org.betterx.bclib.interfaces.RenderLayerProvider;
+import org.betterx.bclib.interfaces.tools.AddMineableHoe;
+import org.betterx.bclib.interfaces.tools.AddMineableShears;
+import org.betterx.bclib.items.tool.BaseShearsItem;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
@@ -24,11 +30,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import com.google.common.collect.Lists;
-import org.betterx.bclib.client.render.BCLRenderLayer;
-import org.betterx.bclib.interfaces.RenderLayerProvider;
-import org.betterx.bclib.interfaces.tools.AddMineableHoe;
-import org.betterx.bclib.interfaces.tools.AddMineableShears;
-import org.betterx.bclib.items.tool.BaseShearsItem;
 
 import java.util.List;
 
@@ -37,10 +38,10 @@ public abstract class UpDownPlantBlock extends BaseBlockNotFull implements Rende
 
     public UpDownPlantBlock() {
         this(FabricBlockSettings
-                     .of(Material.PLANT)
-                     .sound(SoundType.GRASS)
-                     .noCollission()
-            );
+                .of(Material.PLANT)
+                .sound(SoundType.GRASS)
+                .noCollission()
+        );
     }
 
     public UpDownPlantBlock(BlockBehaviour.Properties properties) {
@@ -69,12 +70,14 @@ public abstract class UpDownPlantBlock extends BaseBlockNotFull implements Rende
 
     @Override
     @SuppressWarnings("deprecation")
-    public BlockState updateShape(BlockState state,
-                                  Direction facing,
-                                  BlockState neighborState,
-                                  LevelAccessor world,
-                                  BlockPos pos,
-                                  BlockPos neighborPos) {
+    public BlockState updateShape(
+            BlockState state,
+            Direction facing,
+            BlockState neighborState,
+            LevelAccessor world,
+            BlockPos pos,
+            BlockPos neighborPos
+    ) {
         if (!canSurvive(state, world, pos)) {
             return Blocks.AIR.defaultBlockState();
         } else {
@@ -88,7 +91,7 @@ public abstract class UpDownPlantBlock extends BaseBlockNotFull implements Rende
         if (tool != null && BaseShearsItem.isShear(tool) || EnchantmentHelper.getItemEnchantmentLevel(
                 Enchantments.SILK_TOUCH,
                 tool
-                                                                                                     ) > 0) {
+        ) > 0) {
             return Lists.newArrayList(new ItemStack(this));
         } else {
             return Lists.newArrayList();
@@ -101,12 +104,14 @@ public abstract class UpDownPlantBlock extends BaseBlockNotFull implements Rende
     }
 
     @Override
-    public void playerDestroy(Level world,
-                              Player player,
-                              BlockPos pos,
-                              BlockState state,
-                              BlockEntity blockEntity,
-                              ItemStack stack) {
+    public void playerDestroy(
+            Level world,
+            Player player,
+            BlockPos pos,
+            BlockState state,
+            BlockEntity blockEntity,
+            ItemStack stack
+    ) {
         super.playerDestroy(world, player, pos, state, blockEntity, stack);
         world.neighborChanged(pos, Blocks.AIR, pos.below());
     }

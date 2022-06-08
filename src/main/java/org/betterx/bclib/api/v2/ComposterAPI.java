@@ -1,10 +1,10 @@
 package org.betterx.bclib.api.v2;
 
+import org.betterx.bclib.mixin.common.ComposterBlockAccessor;
+
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
-
-import org.betterx.bclib.mixin.common.ComposterBlockAccessor;
 
 public class ComposterAPI {
     public static Block allowCompost(float chance, Block block) {

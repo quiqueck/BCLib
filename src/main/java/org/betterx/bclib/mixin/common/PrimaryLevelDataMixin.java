@@ -1,5 +1,11 @@
 package org.betterx.bclib.mixin.common;
 
+import org.betterx.bclib.api.v2.LifeCycleAPI;
+import org.betterx.bclib.api.v2.generator.BCLChunkGenerator;
+
+import com.mojang.datafixers.DataFixer;
+import com.mojang.serialization.Dynamic;
+import com.mojang.serialization.Lifecycle;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
@@ -8,11 +14,6 @@ import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.storage.LevelVersion;
 import net.minecraft.world.level.storage.PrimaryLevelData;
 
-import com.mojang.datafixers.DataFixer;
-import com.mojang.serialization.Dynamic;
-import com.mojang.serialization.Lifecycle;
-import org.betterx.bclib.api.v2.LifeCycleAPI;
-import org.betterx.bclib.api.v2.generator.BCLChunkGenerator;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -40,15 +41,17 @@ public class PrimaryLevelDataMixin {
     }
 
     @Inject(method = "parse", at = @At("HEAD"))
-    private static void bcl_parse(Dynamic<Tag> dynamic,
-                                  DataFixer dataFixer,
-                                  int i,
-                                  @Nullable CompoundTag compoundTag,
-                                  LevelSettings levelSettings,
-                                  LevelVersion levelVersion,
-                                  WorldGenSettings worldGenSettings,
-                                  Lifecycle lifecycle,
-                                  CallbackInfoReturnable<PrimaryLevelData> cir) {
+    private static void bcl_parse(
+            Dynamic<Tag> dynamic,
+            DataFixer dataFixer,
+            int i,
+            @Nullable CompoundTag compoundTag,
+            LevelSettings levelSettings,
+            LevelVersion levelVersion,
+            WorldGenSettings worldGenSettings,
+            Lifecycle lifecycle,
+            CallbackInfoReturnable<PrimaryLevelData> cir
+    ) {
         if (dynamic.getOps() instanceof RegistryOps<Tag> regOps) {
             bcl_lastRegistryAccess.set(Optional.of(regOps));
         }

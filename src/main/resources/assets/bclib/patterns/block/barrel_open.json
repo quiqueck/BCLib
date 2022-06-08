@@ -1,8 +1,8 @@
 {
-	"parent": "block/cube_bottom_top",
-	"textures": {
-		"bottom": "%modid%:block/%texture%_bottom",
-		"side": "%modid%:block/%texture%_side",
-		"top": "%modid%:block/%texture%_top_open"
-	}
+  "parent": "block/cube_bottom_top",
+  "textures": {
+    "bottom": "%modid%:block/%texture%_bottom",
+    "side": "%modid%:block/%texture%_side",
+    "top": "%modid%:block/%texture%_top_open"
+  }
 }

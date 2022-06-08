@@ -1,5 +1,20 @@
 package org.betterx.bclib.api.v2.levelgen;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.WorldDataAPI;
+import org.betterx.bclib.api.v2.generator.BCLBiomeSource;
+import org.betterx.bclib.api.v2.generator.BCLChunkGenerator;
+import org.betterx.bclib.api.v2.generator.BCLibEndBiomeSource;
+import org.betterx.bclib.api.v2.generator.BCLibNetherBiomeSource;
+import org.betterx.bclib.mixin.common.RegistryOpsAccessor;
+import org.betterx.bclib.presets.worldgen.BCLWorldPresetSettings;
+import org.betterx.bclib.presets.worldgen.BCLWorldPresets;
+import org.betterx.bclib.presets.worldgen.WorldPresetSettings;
+import org.betterx.bclib.util.ModUtil;
+
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Dynamic;
+import com.mojang.serialization.Lifecycle;
 import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
@@ -21,21 +36,6 @@ import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
-import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.Dynamic;
-import com.mojang.serialization.Lifecycle;
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.WorldDataAPI;
-import org.betterx.bclib.api.v2.generator.BCLBiomeSource;
-import org.betterx.bclib.api.v2.generator.BCLChunkGenerator;
-import org.betterx.bclib.api.v2.generator.BCLibEndBiomeSource;
-import org.betterx.bclib.api.v2.generator.BCLibNetherBiomeSource;
-import org.betterx.bclib.mixin.common.RegistryOpsAccessor;
-import org.betterx.bclib.presets.worldgen.BCLWorldPresetSettings;
-import org.betterx.bclib.presets.worldgen.BCLWorldPresets;
-import org.betterx.bclib.presets.worldgen.WorldPresetSettings;
-import org.betterx.bclib.util.ModUtil;
-
 import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +43,7 @@ import org.jetbrains.annotations.NotNull;
 public class LevelGenUtil {
     private static final String TAG_VERSION = "version";
     private static final String TAG_BN_GEN_VERSION = "generator_version";
-    private static String TAG_GENERATOR = "generator";
+    private static final String TAG_GENERATOR = "generator";
 
     @NotNull
     public static LevelStem getBCLNetherLevelStem(Context context, Optional<Integer> version) {
@@ -58,7 +58,8 @@ public class LevelGenUtil {
                         context.structureSets,
                         context.noiseParameters,
                         biomeSource,
-                        context.generatorSettings)
+                        context.generatorSettings
+                )
         );
     }
 
@@ -70,7 +71,8 @@ public class LevelGenUtil {
                         context.structureSets,
                         context.noiseParameters,
                         biomeSource,
-                        context.generatorSettings)
+                        context.generatorSettings
+                )
         );
     }
 
@@ -88,8 +90,10 @@ public class LevelGenUtil {
      * @see BCLChunkGenerator#injectNoiseSettings(WorldGenSettings)  for the correcponding behaviour
      * for new worlds
      */
-    public static WorldGenSettings fixSettingsInCurrentWorld(Optional<RegistryOps<Tag>> registryOps,
-                                                             WorldGenSettings settings) {
+    public static WorldGenSettings fixSettingsInCurrentWorld(
+            Optional<RegistryOps<Tag>> registryOps,
+            WorldGenSettings settings
+    ) {
         if (registryOps.orElse(null) instanceof RegistryOpsAccessor acc) {
             return getWorldSettings().repairSettingsOnLoad(acc.bcl_getRegistryAccess(), settings);
         } else {
@@ -98,11 +102,13 @@ public class LevelGenUtil {
         return settings;
     }
 
-    public static WorldGenSettings createWorldFromPreset(ResourceKey<WorldPreset> preset,
-                                                         RegistryAccess registryAccess,
-                                                         long seed,
-                                                         boolean generateStructures,
-                                                         boolean generateBonusChest) {
+    public static WorldGenSettings createWorldFromPreset(
+            ResourceKey<WorldPreset> preset,
+            RegistryAccess registryAccess,
+            long seed,
+            boolean generateStructures,
+            boolean generateBonusChest
+    ) {
         WorldGenSettings settings = registryAccess
                 .registryOrThrow(Registry.WORLD_PRESET_REGISTRY)
                 .getHolderOrThrow(preset)
@@ -118,15 +124,19 @@ public class LevelGenUtil {
         return settings;
     }
 
-    public static WorldGenSettings createDefaultWorldFromPreset(RegistryAccess registryAccess,
-                                                                long seed,
-                                                                boolean generateStructures,
-                                                                boolean generateBonusChest) {
-        return createWorldFromPreset(BCLWorldPresets.DEFAULT.orElseThrow(),
+    public static WorldGenSettings createDefaultWorldFromPreset(
+            RegistryAccess registryAccess,
+            long seed,
+            boolean generateStructures,
+            boolean generateBonusChest
+    ) {
+        return createWorldFromPreset(
+                BCLWorldPresets.DEFAULT.orElseThrow(),
                 registryAccess,
                 seed,
                 generateStructures,
-                generateBonusChest);
+                generateBonusChest
+        );
     }
 
     public static Pair<WorldGenSettings, RegistryAccess.Frozen> defaultWorldDataSupplier(RegistryAccess.Frozen frozen) {
@@ -157,11 +167,13 @@ public class LevelGenUtil {
                 worldGenSettings.generateStructures(),
                 worldGenSettings.generateStructures()
         );
-        return replaceGenerator(dimensionKey,
+        return replaceGenerator(
+                dimensionKey,
                 dimensionTypeKey,
                 registryAccess,
                 worldGenSettings,
-                oLevelStem.map(l -> l.value().generator()).orElseThrow());
+                oLevelStem.map(l -> l.value().generator()).orElseThrow()
+        );
     }
 
     public static WorldGenSettings replaceGenerator(
@@ -172,15 +184,19 @@ public class LevelGenUtil {
             ChunkGenerator generator
     ) {
         Registry<DimensionType> dimensionTypeRegistry = registryAccess.registryOrThrow(Registry.DIMENSION_TYPE_REGISTRY);
-        Registry<LevelStem> newDimensions = withDimension(dimensionKey,
+        Registry<LevelStem> newDimensions = withDimension(
+                dimensionKey,
                 dimensionTypeKey,
                 dimensionTypeRegistry,
                 worldGenSettings.dimensions(),
-                generator);
-        return new WorldGenSettings(worldGenSettings.seed(),
+                generator
+        );
+        return new WorldGenSettings(
+                worldGenSettings.seed(),
                 worldGenSettings.generateStructures(),
                 worldGenSettings.generateBonusChest(),
-                newDimensions);
+                newDimensions
+        );
     }
 
     public static WorldGenSettings replaceStem(
@@ -188,20 +204,26 @@ public class LevelGenUtil {
             WorldGenSettings worldGenSettings,
             LevelStem levelStem
     ) {
-        Registry<LevelStem> newDimensions = withDimension(dimensionKey,
+        Registry<LevelStem> newDimensions = withDimension(
+                dimensionKey,
                 worldGenSettings.dimensions(),
-                levelStem);
-        return new WorldGenSettings(worldGenSettings.seed(),
+                levelStem
+        );
+        return new WorldGenSettings(
+                worldGenSettings.seed(),
                 worldGenSettings.generateStructures(),
                 worldGenSettings.generateBonusChest(),
-                newDimensions);
+                newDimensions
+        );
     }
 
-    public static Registry<LevelStem> withDimension(ResourceKey<LevelStem> dimensionKey,
-                                                    ResourceKey<DimensionType> dimensionTypeKey,
-                                                    Registry<DimensionType> dimensionTypeRegistry,
-                                                    Registry<LevelStem> inputDimensions,
-                                                    ChunkGenerator generator) {
+    public static Registry<LevelStem> withDimension(
+            ResourceKey<LevelStem> dimensionKey,
+            ResourceKey<DimensionType> dimensionTypeKey,
+            Registry<DimensionType> dimensionTypeRegistry,
+            Registry<LevelStem> inputDimensions,
+            ChunkGenerator generator
+    ) {
 
         LevelStem levelStem = inputDimensions.get(dimensionKey);
         Holder<DimensionType> dimensionType = levelStem == null
@@ -210,21 +232,29 @@ public class LevelGenUtil {
         return withDimension(dimensionKey, inputDimensions, new LevelStem(dimensionType, generator));
     }
 
-    public static Registry<LevelStem> withDimension(ResourceKey<LevelStem> dimensionKey,
-                                                    Registry<LevelStem> inputDimensions,
-                                                    LevelStem levelStem) {
-        MappedRegistry<LevelStem> writableRegistry = new MappedRegistry<>(Registry.LEVEL_STEM_REGISTRY,
+    public static Registry<LevelStem> withDimension(
+            ResourceKey<LevelStem> dimensionKey,
+            Registry<LevelStem> inputDimensions,
+            LevelStem levelStem
+    ) {
+        MappedRegistry<LevelStem> writableRegistry = new MappedRegistry<>(
+                Registry.LEVEL_STEM_REGISTRY,
                 Lifecycle.experimental(),
-                null);
-        writableRegistry.register(dimensionKey,
+                null
+        );
+        writableRegistry.register(
+                dimensionKey,
                 levelStem,
-                Lifecycle.stable());
+                Lifecycle.stable()
+        );
         for (Map.Entry<ResourceKey<LevelStem>, LevelStem> entry : inputDimensions.entrySet()) {
             ResourceKey<LevelStem> resourceKey = entry.getKey();
             if (resourceKey == dimensionKey) continue;
-            writableRegistry.register(resourceKey,
+            writableRegistry.register(
+                    resourceKey,
                     entry.getValue(),
-                    inputDimensions.lifecycle(entry.getValue()));
+                    inputDimensions.lifecycle(entry.getValue())
+            );
         }
         return writableRegistry;
     }
@@ -248,20 +278,23 @@ public class LevelGenUtil {
                     registryAccess,
                     seed,
                     generateStructures,
-                    generateBonusChest);
+                    generateBonusChest
+            );
         } else if (biomeSourceVersion == BCLBiomeSource.BIOME_SOURCE_VERSION_SQUARE) {
             referenceSettings = createWorldFromPreset(
                     BCLWorldPresets.BCL_WORLD_17,
                     registryAccess,
                     seed,
                     generateStructures,
-                    generateBonusChest);
+                    generateBonusChest
+            );
         } else {
             referenceSettings = createDefaultWorldFromPreset(
                     registryAccess,
                     seed,
                     generateStructures,
-                    generateBonusChest);
+                    generateBonusChest
+            );
         }
         return referenceSettings.dimensions().getHolder(dimensionKey);
     }
@@ -272,8 +305,10 @@ public class LevelGenUtil {
         return settingsNbt.getInt(key.location().toString());
     }
 
-    private static int getDimensionVersion(WorldGenSettings settings,
-                                           ResourceKey<LevelStem> key) {
+    private static int getDimensionVersion(
+            WorldGenSettings settings,
+            ResourceKey<LevelStem> key
+    ) {
         var dimension = settings.dimensions().getHolder(key);
         if (dimension.isPresent()) {
             return getBiomeVersionForGenerator(dimension.get().value().generator());
@@ -282,9 +317,11 @@ public class LevelGenUtil {
         }
     }
 
-    private static void writeDimensionVersion(WorldGenSettings settings,
-                                              CompoundTag generatorSettings,
-                                              ResourceKey<LevelStem> key) {
+    private static void writeDimensionVersion(
+            WorldGenSettings settings,
+            CompoundTag generatorSettings,
+            ResourceKey<LevelStem> key
+    ) {
         generatorSettings.putInt(key.location().toString(), getDimensionVersion(settings, key));
     }
 
@@ -363,10 +400,12 @@ public class LevelGenUtil {
         public final Registry<NormalNoise.NoiseParameters> noiseParameters;
         public final Holder<NoiseGeneratorSettings> generatorSettings;
 
-        public StemContext(Holder<DimensionType> dimension,
-                           Registry<StructureSet> structureSets,
-                           Registry<NormalNoise.NoiseParameters> noiseParameters,
-                           Holder<NoiseGeneratorSettings> generatorSettings) {
+        public StemContext(
+                Holder<DimensionType> dimension,
+                Registry<StructureSet> structureSets,
+                Registry<NormalNoise.NoiseParameters> noiseParameters,
+                Holder<NoiseGeneratorSettings> generatorSettings
+        ) {
             this.dimension = dimension;
             this.structureSets = structureSets;
             this.noiseParameters = noiseParameters;
@@ -377,10 +416,12 @@ public class LevelGenUtil {
     public static class Context extends StemContext {
         public final Registry<Biome> biomes;
 
-        public Context(Registry<Biome> biomes, Holder<DimensionType> dimension,
-                       Registry<StructureSet> structureSets,
-                       Registry<NormalNoise.NoiseParameters> noiseParameters,
-                       Holder<NoiseGeneratorSettings> generatorSettings) {
+        public Context(
+                Registry<Biome> biomes, Holder<DimensionType> dimension,
+                Registry<StructureSet> structureSets,
+                Registry<NormalNoise.NoiseParameters> noiseParameters,
+                Holder<NoiseGeneratorSettings> generatorSettings
+        ) {
             super(dimension, structureSets, noiseParameters, generatorSettings);
             this.biomes = biomes;
         }

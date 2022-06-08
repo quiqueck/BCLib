@@ -1,14 +1,17 @@
 package org.betterx.bclib.api.v2.levelgen.surface.rules;
 
-import com.mojang.serialization.Codec;
 import org.betterx.bclib.interfaces.NumericProvider;
 import org.betterx.bclib.mixin.common.SurfaceRulesContextAccessor;
 import org.betterx.bclib.util.MHelper;
 
+import com.mojang.serialization.Codec;
+
 public class NetherNoiseCondition implements NumericProvider {
     public static final Codec<NetherNoiseCondition> CODEC = Codec.BYTE.fieldOf("nether_noise")
-                                                                      .xmap((obj) -> (NetherNoiseCondition) Conditions.NETHER_NOISE,
-                                                                              obj -> (byte) 0)
+                                                                      .xmap(
+                                                                              (obj) -> (NetherNoiseCondition) Conditions.NETHER_NOISE,
+                                                                              obj -> (byte) 0
+                                                                      )
                                                                       .codec();
 
 
@@ -26,9 +29,11 @@ public class NetherNoiseCondition implements NumericProvider {
         final int x = context.getBlockX();
         final int y = context.getBlockY();
         final int z = context.getBlockZ();
-        double value = Conditions.NETHER_VOLUME_NOISE.noiseContext.noise.eval(x * Conditions.NETHER_VOLUME_NOISE.scaleX,
+        double value = Conditions.NETHER_VOLUME_NOISE.noiseContext.noise.eval(
+                x * Conditions.NETHER_VOLUME_NOISE.scaleX,
                 y * Conditions.NETHER_VOLUME_NOISE.scaleY,
-                z * Conditions.NETHER_VOLUME_NOISE.scaleZ);
+                z * Conditions.NETHER_VOLUME_NOISE.scaleZ
+        );
 
         int offset = Conditions.NETHER_VOLUME_NOISE.noiseContext.random.nextInt(20) == 0 ? 3 : 0;
 

@@ -1,12 +1,13 @@
 package org.betterx.bclib.mixin.common;
 
+import org.betterx.bclib.api.v2.tag.CommonBlockTags;
+
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.level.block.CraftingTableBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
-import org.betterx.bclib.api.v2.tag.CommonBlockTags;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

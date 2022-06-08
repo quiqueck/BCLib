@@ -1,5 +1,9 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.client.render.BCLRenderLayer;
+import org.betterx.bclib.interfaces.RenderLayerProvider;
+import org.betterx.bclib.items.tool.BaseShearsItem;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -31,9 +35,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import com.google.common.collect.Lists;
-import org.betterx.bclib.client.render.BCLRenderLayer;
-import org.betterx.bclib.interfaces.RenderLayerProvider;
-import org.betterx.bclib.items.tool.BaseShearsItem;
 
 import java.util.List;
 import java.util.function.Function;
@@ -48,11 +49,11 @@ public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements R
     public UnderwaterPlantBlock(Function<Properties, Properties> propMod) {
         this(
                 propMod.apply(FabricBlockSettings
-                                      .of(Material.WATER_PLANT)
-                                      .sound(SoundType.WET_GRASS)
-                                      .noCollission()
-                                      .offsetType(BlockBehaviour.OffsetType.XZ))
-            );
+                        .of(Material.WATER_PLANT)
+                        .sound(SoundType.WET_GRASS)
+                        .noCollission()
+                        .offsetType(BlockBehaviour.OffsetType.XZ))
+        );
     }
 
     public UnderwaterPlantBlock(int light) {
@@ -62,12 +63,12 @@ public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements R
     public UnderwaterPlantBlock(int light, Function<Properties, Properties> propMod) {
         this(
                 propMod.apply(FabricBlockSettings
-                                      .of(Material.WATER_PLANT)
-                                      .luminance(light)
-                                      .sound(SoundType.WET_GRASS)
-                                      .noCollission()
-                                      .offsetType(BlockBehaviour.OffsetType.XZ))
-            );
+                        .of(Material.WATER_PLANT)
+                        .luminance(light)
+                        .sound(SoundType.WET_GRASS)
+                        .noCollission()
+                        .offsetType(BlockBehaviour.OffsetType.XZ))
+        );
     }
 
     public UnderwaterPlantBlock(Properties settings) {
@@ -93,12 +94,14 @@ public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements R
 
     @Override
     @SuppressWarnings("deprecation")
-    public BlockState updateShape(BlockState state,
-                                  Direction facing,
-                                  BlockState neighborState,
-                                  LevelAccessor world,
-                                  BlockPos pos,
-                                  BlockPos neighborPos) {
+    public BlockState updateShape(
+            BlockState state,
+            Direction facing,
+            BlockState neighborState,
+            LevelAccessor world,
+            BlockPos pos,
+            BlockPos neighborPos
+    ) {
         if (!canSurvive(state, world, pos)) {
             world.destroyBlock(pos, true);
             return Blocks.WATER.defaultBlockState();
@@ -113,7 +116,7 @@ public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements R
         if (tool != null && BaseShearsItem.isShear(tool) || EnchantmentHelper.getItemEnchantmentLevel(
                 Enchantments.SILK_TOUCH,
                 tool
-                                                                                                     ) > 0) {
+        ) > 0) {
             return Lists.newArrayList(new ItemStack(this));
         } else {
             return Lists.newArrayList();

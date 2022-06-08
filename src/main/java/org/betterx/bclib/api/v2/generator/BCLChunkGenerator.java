@@ -1,5 +1,13 @@
 package org.betterx.bclib.api.v2.generator;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
+import org.betterx.bclib.api.v2.levelgen.surface.SurfaceRuleUtil;
+import org.betterx.bclib.interfaces.NoiseGeneratorSettingsProvider;
+import org.betterx.bclib.interfaces.SurfaceRuleProvider;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.RegistryOps;
@@ -14,14 +22,6 @@ import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
-
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
-import org.betterx.bclib.api.v2.levelgen.surface.SurfaceRuleUtil;
-import org.betterx.bclib.interfaces.NoiseGeneratorSettingsProvider;
-import org.betterx.bclib.interfaces.SurfaceRuleProvider;
 
 import java.util.List;
 import java.util.Optional;
@@ -53,10 +53,12 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator {
             });
 
 
-    public BCLChunkGenerator(Registry<StructureSet> registry,
-                             Registry<NormalNoise.NoiseParameters> registry2,
-                             BiomeSource biomeSource,
-                             Holder<NoiseGeneratorSettings> holder) {
+    public BCLChunkGenerator(
+            Registry<StructureSet> registry,
+            Registry<NormalNoise.NoiseParameters> registry2,
+            BiomeSource biomeSource,
+            Holder<NoiseGeneratorSettings> holder
+    ) {
         super(registry, registry2, biomeSource, holder);
         System.out.println("Chunk Generator: " + this);
     }
@@ -65,8 +67,10 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator {
         BCLChunkGenerator.injectNoiseSettings(settings, BCLChunkGenerator.ALL_DIMENSIONS);
     }
 
-    public static void injectNoiseSettings(ResourceKey<LevelStem> dimensionKey,
-                                           ChunkGenerator loadedChunkGenerator) {
+    public static void injectNoiseSettings(
+            ResourceKey<LevelStem> dimensionKey,
+            ChunkGenerator loadedChunkGenerator
+    ) {
         BCLib.LOGGER.debug("Checking Noise Settings for " + dimensionKey.location().toString());
         final BiomeSource loadedBiomeSource = loadedChunkGenerator.getBiomeSource();
         InternalBiomeAPI.applyModifications(loadedBiomeSource, dimensionKey);
@@ -121,9 +125,11 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator {
 
     public static RandomState createRandomState(ServerLevel level, ChunkGenerator generator) {
         if (generator instanceof NoiseBasedChunkGenerator noiseBasedChunkGenerator) {
-            return RandomState.create(noiseBasedChunkGenerator.generatorSettings().value(),
+            return RandomState.create(
+                    noiseBasedChunkGenerator.generatorSettings().value(),
                     level.registryAccess().registryOrThrow(Registry.NOISE_REGISTRY),
-                    level.getSeed());
+                    level.getSeed()
+            );
         } else {
             return RandomState.create(level.registryAccess(), NoiseGeneratorSettings.OVERWORLD, level.getSeed());
         }

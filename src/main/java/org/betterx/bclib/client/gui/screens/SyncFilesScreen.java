@@ -1,17 +1,17 @@
 package org.betterx.bclib.client.gui.screens;
 
+import org.betterx.bclib.api.v2.dataexchange.handler.autosync.HelloClient;
+import org.betterx.bclib.client.gui.gridlayout.GridCheckboxCell;
+import org.betterx.bclib.client.gui.gridlayout.GridLayout;
+import org.betterx.bclib.client.gui.gridlayout.GridRow;
+import org.betterx.bclib.util.ModUtil;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
-import org.betterx.bclib.api.v2.dataexchange.handler.autosync.HelloClient;
-import org.betterx.bclib.client.gui.gridlayout.GridCheckboxCell;
-import org.betterx.bclib.client.gui.gridlayout.GridLayout;
-import org.betterx.bclib.client.gui.gridlayout.GridRow;
-import org.betterx.bclib.util.ModUtil;
 
 @Environment(EnvType.CLIENT)
 public class SyncFilesScreen extends BCLibScreen {
@@ -23,13 +23,15 @@ public class SyncFilesScreen extends BCLibScreen {
     private final boolean shouldDelete;
     private final HelloClient.IServerModMap serverInfo;
 
-    public SyncFilesScreen(int modFiles,
-                           int configFiles,
-                           int singleFiles,
-                           int folderFiles,
-                           int deleteFiles,
-                           HelloClient.IServerModMap serverInfo,
-                           Listener listener) {
+    public SyncFilesScreen(
+            int modFiles,
+            int configFiles,
+            int singleFiles,
+            int folderFiles,
+            int deleteFiles,
+            HelloClient.IServerModMap serverInfo,
+            Listener listener
+    ) {
         super(Component.translatable("title.bclib.syncfiles"));
 
         this.serverInfo = serverInfo;
@@ -55,10 +57,12 @@ public class SyncFilesScreen extends BCLibScreen {
 
         final GridCheckboxCell mods;
         row = grid.addRow();
-        mods = row.addCheckbox(Component.translatable("message.bclib.syncfiles.mods"),
+        mods = row.addCheckbox(
+                Component.translatable("message.bclib.syncfiles.mods"),
                 hasMods,
                 BUTTON_HEIGHT,
-                this.font);
+                this.font
+        );
         mods.setEnabled(hasMods);
 
         row.addSpacer();
@@ -78,10 +82,12 @@ public class SyncFilesScreen extends BCLibScreen {
 
         final GridCheckboxCell configs;
         row = grid.addRow();
-        configs = row.addCheckbox(Component.translatable("message.bclib.syncfiles.configs"),
+        configs = row.addCheckbox(
+                Component.translatable("message.bclib.syncfiles.configs"),
                 hasConfigFiles,
                 BUTTON_HEIGHT,
-                this.font);
+                this.font
+        );
         configs.setEnabled(hasConfigFiles);
 
         grid.addSpacerRow();
@@ -89,18 +95,22 @@ public class SyncFilesScreen extends BCLibScreen {
         row = grid.addRow();
 
         final GridCheckboxCell folder;
-        folder = row.addCheckbox(Component.translatable("message.bclib.syncfiles.folders"),
+        folder = row.addCheckbox(
+                Component.translatable("message.bclib.syncfiles.folders"),
                 hasFiles,
                 BUTTON_HEIGHT,
-                this.font);
+                this.font
+        );
         folder.setEnabled(hasFiles);
         row.addSpacer();
 
         GridCheckboxCell delete;
-        delete = row.addCheckbox(Component.translatable("message.bclib.syncfiles.delete"),
+        delete = row.addCheckbox(
+                Component.translatable("message.bclib.syncfiles.delete"),
                 shouldDelete,
                 BUTTON_HEIGHT,
-                this.font);
+                this.font
+        );
         delete.setEnabled(shouldDelete);
 
 

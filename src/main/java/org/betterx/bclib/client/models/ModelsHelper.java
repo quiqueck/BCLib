@@ -1,5 +1,6 @@
 package org.betterx.bclib.client.models;
 
+import com.mojang.math.Transformation;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.MultiVariant;
 import net.minecraft.client.renderer.block.model.Variant;
@@ -17,7 +18,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import com.google.common.collect.Lists;
-import com.mojang.math.Transformation;
 
 import java.util.List;
 import java.util.Optional;
@@ -47,9 +47,11 @@ public class ModelsHelper {
         return fromPattern(pattern);
     }
 
-    public static MultiVariant createMultiVariant(ResourceLocation resourceLocation,
-                                                  Transformation transform,
-                                                  boolean uvLock) {
+    public static MultiVariant createMultiVariant(
+            ResourceLocation resourceLocation,
+            Transformation transform,
+            boolean uvLock
+    ) {
         Variant variant = new Variant(resourceLocation, transform, uvLock, 1);
         return new MultiVariant(Lists.newArrayList(variant));
     }
@@ -58,10 +60,12 @@ public class ModelsHelper {
         return createMultiVariant(resourceLocation, Transformation.identity(), false);
     }
 
-    public static MultiVariant createFacingModel(ResourceLocation resourceLocation,
-                                                 Direction facing,
-                                                 boolean uvLock,
-                                                 boolean inverted) {
+    public static MultiVariant createFacingModel(
+            ResourceLocation resourceLocation,
+            Direction facing,
+            boolean uvLock,
+            boolean inverted
+    ) {
         if (inverted) {
             facing = facing.getOpposite();
         }
@@ -90,7 +94,7 @@ public class ModelsHelper {
                 new Variant(resourceLocation, BlockModelRotation.X0_Y90.getRotation(), false, 1),
                 new Variant(resourceLocation, BlockModelRotation.X0_Y180.getRotation(), false, 1),
                 new Variant(resourceLocation, BlockModelRotation.X0_Y270.getRotation(), false, 1)
-                                                  ));
+        ));
     }
 
     public static class MultiPartBuilder {

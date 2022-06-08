@@ -1,9 +1,9 @@
 {
-	"parent": "block/orientable_with_bottom",
-	"textures": {
-		"top": "%modid%:block/%top%",
-		"front": "%modid%:block/%front%",
-		"side": "%modid%:block/%side%",
-		"bottom": "%modid%:block/%top%"
-	}
+  "parent": "block/orientable_with_bottom",
+  "textures": {
+    "top": "%modid%:block/%top%",
+    "front": "%modid%:block/%front%",
+    "side": "%modid%:block/%side%",
+    "bottom": "%modid%:block/%top%"
+  }
 }

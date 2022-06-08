@@ -1,11 +1,11 @@
 package org.betterx.bclib.api.v2.dataexchange.handler.autosync;
 
+import org.betterx.bclib.client.gui.screens.ProgressScreen;
+
 import net.minecraft.util.ProgressListener;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
-import org.betterx.bclib.client.gui.screens.ProgressScreen;
 
 @Environment(EnvType.CLIENT)
 public class ChunkerProgress {

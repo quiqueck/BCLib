@@ -1,8 +1,8 @@
 package org.betterx.bclib.api.v2.generator;
 
-import net.minecraft.util.Mth;
-
 import org.betterx.bclib.config.Configs;
+
+import net.minecraft.util.Mth;
 
 import java.awt.*;
 import java.util.function.Function;
@@ -22,9 +22,11 @@ public class GeneratorOptions {
 
     public static void init() {
         biomeSizeNether = Configs.GENERATOR_CONFIG.getInt("nether.biomeMap", "biomeSize", 256);
-        biomeVSizeNether = Configs.GENERATOR_CONFIG.getInt("nether.biomeMap",
+        biomeVSizeNether = Configs.GENERATOR_CONFIG.getInt(
+                "nether.biomeMap",
                 "biomeVerticalSize(onlyInTallNether)",
-                86);
+                86
+        );
         biomeSizeEndLand = Configs.GENERATOR_CONFIG.getInt("end.biomeMap", "biomeSizeLand", 256);
         biomeSizeEndVoid = Configs.GENERATOR_CONFIG.getInt("end.biomeMap", "biomeSizeVoid", 256);
         customNetherBiomeSource = Configs.GENERATOR_CONFIG.getBoolean("options", "customNetherBiomeSource", true);

@@ -1,5 +1,10 @@
 package org.betterx.bclib.util;
 
+import org.betterx.bclib.sdf.SDF;
+import org.betterx.bclib.sdf.operator.SDFUnion;
+import org.betterx.bclib.sdf.primitive.SDFLine;
+
+import com.mojang.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.util.Mth;
@@ -8,10 +13,6 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
 
 import com.google.common.collect.Lists;
-import com.mojang.math.Vector3f;
-import org.betterx.bclib.sdf.SDF;
-import org.betterx.bclib.sdf.operator.SDFUnion;
-import org.betterx.bclib.sdf.primitive.SDFLine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,10 +79,12 @@ public class SplineHelper {
         }
     }
 
-    public static SDF buildSDF(List<Vector3f> spline,
-                               float radius1,
-                               float radius2,
-                               Function<BlockPos, BlockState> placerFunction) {
+    public static SDF buildSDF(
+            List<Vector3f> spline,
+            float radius1,
+            float radius2,
+            Function<BlockPos, BlockState> placerFunction
+    ) {
         int count = spline.size();
         float max = count - 2;
         SDF result = null;
@@ -99,9 +102,11 @@ public class SplineHelper {
         return result;
     }
 
-    public static SDF buildSDF(List<Vector3f> spline,
-                               Function<Float, Float> radiusFunction,
-                               Function<BlockPos, BlockState> placerFunction) {
+    public static SDF buildSDF(
+            List<Vector3f> spline,
+            Function<Float, Float> radiusFunction,
+            Function<BlockPos, BlockState> placerFunction
+    ) {
         int count = spline.size();
         float max = count - 2;
         SDF result = null;
@@ -119,11 +124,13 @@ public class SplineHelper {
         return result;
     }
 
-    public static boolean fillSpline(List<Vector3f> spline,
-                                     WorldGenLevel world,
-                                     BlockState state,
-                                     BlockPos pos,
-                                     Function<BlockState, Boolean> replace) {
+    public static boolean fillSpline(
+            List<Vector3f> spline,
+            WorldGenLevel world,
+            BlockState state,
+            BlockPos pos,
+            Function<BlockState, Boolean> replace
+    ) {
         Vector3f startPos = spline.get(0);
         for (int i = 1; i < spline.size(); i++) {
             Vector3f endPos = spline.get(i);
@@ -136,11 +143,13 @@ public class SplineHelper {
         return true;
     }
 
-    public static void fillSplineForce(List<Vector3f> spline,
-                                       WorldGenLevel world,
-                                       BlockState state,
-                                       BlockPos pos,
-                                       Function<BlockState, Boolean> replace) {
+    public static void fillSplineForce(
+            List<Vector3f> spline,
+            WorldGenLevel world,
+            BlockState state,
+            BlockPos pos,
+            Function<BlockState, Boolean> replace
+    ) {
         Vector3f startPos = spline.get(0);
         for (int i = 1; i < spline.size(); i++) {
             Vector3f endPos = spline.get(i);
@@ -149,12 +158,14 @@ public class SplineHelper {
         }
     }
 
-    public static boolean fillLine(Vector3f start,
-                                   Vector3f end,
-                                   WorldGenLevel world,
-                                   BlockState state,
-                                   BlockPos pos,
-                                   Function<BlockState, Boolean> replace) {
+    public static boolean fillLine(
+            Vector3f start,
+            Vector3f end,
+            WorldGenLevel world,
+            BlockState state,
+            BlockPos pos,
+            Function<BlockState, Boolean> replace
+    ) {
         float dx = end.x() - start.x();
         float dy = end.y() - start.y();
         float dz = end.z() - start.z();
@@ -202,12 +213,14 @@ public class SplineHelper {
         }
     }
 
-    public static void fillLineForce(Vector3f start,
-                                     Vector3f end,
-                                     WorldGenLevel world,
-                                     BlockState state,
-                                     BlockPos pos,
-                                     Function<BlockState, Boolean> replace) {
+    public static void fillLineForce(
+            Vector3f start,
+            Vector3f end,
+            WorldGenLevel world,
+            BlockState state,
+            BlockPos pos,
+            Function<BlockState, Boolean> replace
+    ) {
         float dx = end.x() - start.x();
         float dy = end.y() - start.y();
         float dz = end.z() - start.z();
@@ -250,11 +263,13 @@ public class SplineHelper {
         }
     }
 
-    public static boolean canGenerate(List<Vector3f> spline,
-                                      float scale,
-                                      BlockPos start,
-                                      WorldGenLevel world,
-                                      Function<BlockState, Boolean> canReplace) {
+    public static boolean canGenerate(
+            List<Vector3f> spline,
+            float scale,
+            BlockPos start,
+            WorldGenLevel world,
+            Function<BlockState, Boolean> canReplace
+    ) {
         int count = spline.size();
         Vector3f vec = spline.get(0);
         MutableBlockPos mut = new MutableBlockPos();
@@ -285,10 +300,12 @@ public class SplineHelper {
         return true;
     }
 
-    public static boolean canGenerate(List<Vector3f> spline,
-                                      BlockPos start,
-                                      WorldGenLevel world,
-                                      Function<BlockState, Boolean> canReplace) {
+    public static boolean canGenerate(
+            List<Vector3f> spline,
+            BlockPos start,
+            WorldGenLevel world,
+            Function<BlockState, Boolean> canReplace
+    ) {
         int count = spline.size();
         Vector3f vec = spline.get(0);
         MutableBlockPos mut = new MutableBlockPos();

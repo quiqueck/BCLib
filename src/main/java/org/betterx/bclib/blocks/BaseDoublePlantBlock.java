@@ -1,5 +1,10 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.client.render.BCLRenderLayer;
+import org.betterx.bclib.interfaces.RenderLayerProvider;
+import org.betterx.bclib.items.tool.BaseShearsItem;
+import org.betterx.bclib.util.BlocksHelper;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -32,10 +37,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import com.google.common.collect.Lists;
-import org.betterx.bclib.client.render.BCLRenderLayer;
-import org.betterx.bclib.interfaces.RenderLayerProvider;
-import org.betterx.bclib.items.tool.BaseShearsItem;
-import org.betterx.bclib.util.BlocksHelper;
 
 import java.util.List;
 
@@ -50,7 +51,7 @@ public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements R
                                    .sound(SoundType.GRASS)
                                    .noCollission()
                                    .offsetType(BlockBehaviour.OffsetType.XZ)
-            );
+        );
     }
 
     public BaseDoublePlantBlock(int light) {
@@ -60,7 +61,7 @@ public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements R
                                    .lightLevel((state) -> state.getValue(TOP) ? light : 0)
                                    .noCollission()
                                    .offsetType(BlockBehaviour.OffsetType.XZ)
-            );
+        );
     }
 
     public BaseDoublePlantBlock(BlockBehaviour.Properties properties) {
@@ -98,12 +99,14 @@ public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements R
 
     @Override
     @SuppressWarnings("deprecation")
-    public BlockState updateShape(BlockState state,
-                                  Direction facing,
-                                  BlockState neighborState,
-                                  LevelAccessor world,
-                                  BlockPos pos,
-                                  BlockPos neighborPos) {
+    public BlockState updateShape(
+            BlockState state,
+            Direction facing,
+            BlockState neighborState,
+            LevelAccessor world,
+            BlockPos pos,
+            BlockPos neighborPos
+    ) {
         if (!canStayAt(state, world, pos)) {
             return Blocks.AIR.defaultBlockState();
         } else {
@@ -121,7 +124,7 @@ public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements R
         if (tool != null && BaseShearsItem.isShear(tool) || EnchantmentHelper.getItemEnchantmentLevel(
                 Enchantments.SILK_TOUCH,
                 tool
-                                                                                                     ) > 0) {
+        ) > 0) {
             return Lists.newArrayList(new ItemStack(this));
         } else {
             return Lists.newArrayList();

@@ -1,5 +1,7 @@
 package org.betterx.bclib.registry;
 
+import org.betterx.bclib.config.PathConfig;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -9,7 +11,6 @@ import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.betterx.bclib.config.PathConfig;
 
 import java.util.List;
 import java.util.Map;

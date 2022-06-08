@@ -27,7 +27,7 @@ public class LayerLightSectionStorageMixin {
                     SectionPos.sectionRelative(BlockPos.getX(blockPos)),
                     SectionPos.sectionRelative(BlockPos.getY(blockPos)),
                     SectionPos.sectionRelative(BlockPos.getZ(blockPos))
-                                             ));
+            ));
         } catch (Exception e) {
             info.setReturnValue(0);
         }

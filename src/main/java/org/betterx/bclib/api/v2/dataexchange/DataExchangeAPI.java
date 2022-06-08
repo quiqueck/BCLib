@@ -1,17 +1,18 @@
 package org.betterx.bclib.api.v2.dataexchange;
 
-import net.minecraft.network.FriendlyByteBuf;
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
-import com.google.common.collect.Lists;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.dataexchange.handler.DataExchange;
 import org.betterx.bclib.api.v2.dataexchange.handler.autosync.AutoSync;
 import org.betterx.bclib.api.v2.dataexchange.handler.autosync.AutoSyncID;
 import org.betterx.bclib.config.Config;
 import org.betterx.bclib.util.ModUtil;
+
+import net.minecraft.network.FriendlyByteBuf;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+import com.google.common.collect.Lists;
 
 import java.io.File;
 import java.util.List;
@@ -167,10 +168,12 @@ public class DataExchangeAPI extends DataExchange {
      * @param fileName     The name of the File
      * @param needTransfer If the predicate returns true, the file needs to get copied to the server.
      */
-    public static void addAutoSyncFile(String modID,
-                                       String uniqueID,
-                                       File fileName,
-                                       AutoSync.NeedTransferPredicate needTransfer) {
+    public static void addAutoSyncFile(
+            String modID,
+            String uniqueID,
+            File fileName,
+            AutoSync.NeedTransferPredicate needTransfer
+    ) {
         AutoSync.addAutoSyncFileData(modID, uniqueID, fileName, true, needTransfer);
     }
 

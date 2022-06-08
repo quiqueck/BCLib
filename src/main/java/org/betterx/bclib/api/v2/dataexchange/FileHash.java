@@ -1,8 +1,8 @@
 package org.betterx.bclib.api.v2.dataexchange;
 
-import net.minecraft.network.FriendlyByteBuf;
-
 import org.betterx.bclib.BCLib;
+
+import net.minecraft.network.FriendlyByteBuf;
 
 import java.io.File;
 import java.io.IOException;

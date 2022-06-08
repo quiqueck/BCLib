@@ -1,9 +1,9 @@
 package org.betterx.bclib.api.v2;
 
+import org.betterx.bclib.mixin.common.ShovelItemAccessor;
+
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-
-import org.betterx.bclib.mixin.common.ShovelItemAccessor;
 
 import java.util.Map;
 

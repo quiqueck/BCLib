@@ -20,11 +20,13 @@ public class GridColumn extends GridContainer {
     }
 
     public GridRow addRow(GridLayout.VerticalAlignment align) {
-        GridRow row = new GridRow(1.0,
+        GridRow row = new GridRow(
+                1.0,
                 widthType == GridLayout.GridValueType.INHERIT
                         ? GridLayout.GridValueType.INHERIT
                         : GridLayout.GridValueType.PERCENTAGE,
-                align);
+                align
+        );
         this.cells.add(row);
         return row;
     }

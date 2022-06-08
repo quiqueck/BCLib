@@ -8,4 +8,5 @@ import java.lang.annotation.Target;
 // Included from "Inventory Profiles Next" (https://github.com/blackd/Inventory-Profiles)
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface IPNIgnore {}
+public @interface IPNIgnore {
+}

@@ -1,5 +1,7 @@
 package org.betterx.bclib.api.v2.levelgen.features.features;
 
+import org.betterx.bclib.api.v2.levelgen.features.config.ConditionFeatureConfig;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.util.RandomSource;
@@ -8,8 +10,6 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementContext;
-
-import org.betterx.bclib.api.v2.levelgen.features.config.ConditionFeatureConfig;
 
 import java.util.Optional;
 import java.util.stream.Stream;

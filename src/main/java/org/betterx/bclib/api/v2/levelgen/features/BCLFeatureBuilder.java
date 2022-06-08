@@ -1,5 +1,8 @@
 package org.betterx.bclib.api.v2.levelgen.features;
 
+import org.betterx.bclib.api.v2.levelgen.features.placement.*;
+import org.betterx.bclib.api.v2.tag.CommonBlockTags;
+
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
@@ -18,16 +21,13 @@ import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvi
 import net.minecraft.world.level.levelgen.placement.*;
 import net.minecraft.world.level.material.Material;
 
-import org.betterx.bclib.api.v2.levelgen.features.placement.*;
-import org.betterx.bclib.api.v2.tag.CommonBlockTags;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class BCLFeatureBuilder<FC extends FeatureConfiguration, F extends Feature<FC>> {
     private final List<PlacementModifier> modifications = new ArrayList<>(5);
-    private ResourceLocation featureID;
+    private final ResourceLocation featureID;
     private Decoration decoration = Decoration.VEGETAL_DECORATION;
     private final F feature;
     private BlockStateProvider provider;
@@ -48,18 +48,24 @@ public class BCLFeatureBuilder<FC extends FeatureConfiguration, F extends Featur
         return new BCLFeatureBuilder(featureID, feature);
     }
 
-    public static BCLFeatureBuilder<SimpleBlockConfiguration, SimpleBlockFeature> start(ResourceLocation featureID,
-                                                                                        Block block) {
+    public static BCLFeatureBuilder<SimpleBlockConfiguration, SimpleBlockFeature> start(
+            ResourceLocation featureID,
+            Block block
+    ) {
         return start(featureID, BlockStateProvider.simple(block));
     }
 
-    public static BCLFeatureBuilder<SimpleBlockConfiguration, SimpleBlockFeature> start(ResourceLocation featureID,
-                                                                                        BlockState state) {
+    public static BCLFeatureBuilder<SimpleBlockConfiguration, SimpleBlockFeature> start(
+            ResourceLocation featureID,
+            BlockState state
+    ) {
         return start(featureID, BlockStateProvider.simple(state));
     }
 
-    public static BCLFeatureBuilder<SimpleBlockConfiguration, SimpleBlockFeature> start(ResourceLocation featureID,
-                                                                                        BlockStateProvider provider) {
+    public static BCLFeatureBuilder<SimpleBlockConfiguration, SimpleBlockFeature> start(
+            ResourceLocation featureID,
+            BlockStateProvider provider
+    ) {
         BCLFeatureBuilder<SimpleBlockConfiguration, SimpleBlockFeature> builder = new BCLFeatureBuilder(
                 featureID,
                 Feature.SIMPLE_BLOCK

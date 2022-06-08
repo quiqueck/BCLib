@@ -1,5 +1,8 @@
 package org.betterx.bclib.client.models;
 
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.ModelState;
@@ -7,10 +10,6 @@ import net.minecraft.core.Direction;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
 
 @Environment(EnvType.CLIENT)
 public class UnbakedQuad {

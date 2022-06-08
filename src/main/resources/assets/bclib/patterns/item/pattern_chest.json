@@ -1,6 +1,6 @@
 {
-	"parent": "bclib:block/chest_item",
-	"textures": {
-		"texture": "%modid%:entity/chest/%texture%"
-	}
+  "parent": "bclib:block/chest_item",
+  "textures": {
+    "texture": "%modid%:entity/chest/%texture%"
+  }
 }

@@ -1,5 +1,9 @@
 package org.betterx.bclib.api.v2.generator;
 
+import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
+import org.betterx.bclib.util.WeighTree;
+import org.betterx.bclib.util.WeightedList;
+
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -7,9 +11,6 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 
 import com.google.common.collect.Lists;
-import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
-import org.betterx.bclib.util.WeighTree;
-import org.betterx.bclib.util.WeightedList;
 
 import java.util.HashMap;
 import java.util.List;

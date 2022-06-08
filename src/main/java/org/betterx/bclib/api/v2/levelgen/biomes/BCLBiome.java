@@ -1,5 +1,10 @@
 package org.betterx.bclib.api.v2.levelgen.biomes;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.levelgen.surface.SurfaceRuleUtil;
+import org.betterx.bclib.api.v2.tag.TagAPI;
+import org.betterx.bclib.util.WeightedList;
+
 import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -13,10 +18,6 @@ import net.minecraft.world.level.levelgen.WorldgenRandom;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.levelgen.surface.SurfaceRuleUtil;
-import org.betterx.bclib.api.v2.tag.TagAPI;
-import org.betterx.bclib.util.WeightedList;
 
 import java.util.List;
 import java.util.Map;

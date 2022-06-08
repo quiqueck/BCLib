@@ -1,5 +1,9 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.bclib.util.LootUtil;
+import org.betterx.bclib.util.MHelper;
+
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -19,10 +23,6 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-
-import org.betterx.bclib.interfaces.BlockModelProvider;
-import org.betterx.bclib.util.LootUtil;
-import org.betterx.bclib.util.MHelper;
 
 import java.util.Collections;
 import java.util.List;
@@ -47,19 +47,21 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
                         .explosionResistance(9F)
                         .sound(SoundType.STONE),
                 drop, minCount, maxCount, experience, miningLevel
-            );
+        );
     }
 
     public BaseOreBlock(Properties properties, Supplier<Item> drop, int minCount, int maxCount, int experience) {
         this(properties, drop, minCount, maxCount, experience, 0);
     }
 
-    public BaseOreBlock(Properties properties,
-                        Supplier<Item> drop,
-                        int minCount,
-                        int maxCount,
-                        int experience,
-                        int miningLevel) {
+    public BaseOreBlock(
+            Properties properties,
+            Supplier<Item> drop,
+            int minCount,
+            int maxCount,
+            int experience,
+            int miningLevel
+    ) {
         super(properties, UniformInt.of(experience > 0 ? 1 : 0, experience));
         this.dropItem = drop;
         this.minCount = minCount;
@@ -73,23 +75,27 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
         return LootUtil
                 .getDrops(this, state, builder)
                 .orElseGet(
-                        () -> BaseOreBlock.getDroppedItems(this,
-                                                           dropItem.get(),
-                                                           maxCount,
-                                                           minCount,
-                                                           miningLevel,
-                                                           state,
-                                                           builder)
-                          );
+                        () -> BaseOreBlock.getDroppedItems(
+                                this,
+                                dropItem.get(),
+                                maxCount,
+                                minCount,
+                                miningLevel,
+                                state,
+                                builder
+                        )
+                );
     }
 
-    public static List<ItemStack> getDroppedItems(ItemLike block,
-                                                  Item dropItem,
-                                                  int maxCount,
-                                                  int minCount,
-                                                  int miningLevel,
-                                                  BlockState state,
-                                                  LootContext.Builder builder) {
+    public static List<ItemStack> getDroppedItems(
+            ItemLike block,
+            Item dropItem,
+            int maxCount,
+            int minCount,
+            int miningLevel,
+            BlockState state,
+            LootContext.Builder builder
+    ) {
         ItemStack tool = builder.getParameter(LootContextParams.TOOL);
         if (tool != null && tool.isCorrectToolForDrops(state)) {
             boolean canMine = miningLevel == 0;

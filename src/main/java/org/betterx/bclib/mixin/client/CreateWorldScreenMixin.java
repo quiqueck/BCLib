@@ -1,5 +1,11 @@
 package org.betterx.bclib.mixin.client;
 
+import org.betterx.bclib.api.v2.LifeCycleAPI;
+import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
+import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
+import org.betterx.bclib.presets.worldgen.BCLWorldPresets;
+
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.client.gui.screens.worldselection.WorldGenSettingsComponent;
@@ -11,11 +17,6 @@ import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.storage.LevelStorageSource;
 
-import com.mojang.datafixers.util.Pair;
-import org.betterx.bclib.api.v2.LifeCycleAPI;
-import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
-import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
-import org.betterx.bclib.presets.worldgen.BCLWorldPresets;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -34,10 +35,12 @@ public class CreateWorldScreenMixin {
     public WorldGenSettingsComponent worldGenSettingsComponent;
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void bcl_init(Screen screen,
-                          DataPackConfig dataPackConfig,
-                          WorldGenSettingsComponent worldGenSettingsComponent,
-                          CallbackInfo ci) {
+    private void bcl_init(
+            Screen screen,
+            DataPackConfig dataPackConfig,
+            WorldGenSettingsComponent worldGenSettingsComponent,
+            CallbackInfo ci
+    ) {
         InternalBiomeAPI.initRegistry(worldGenSettingsComponent.registryHolder());
     }
 

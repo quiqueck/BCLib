@@ -1,5 +1,8 @@
 package org.betterx.bclib.mixin.client;
 
+import org.betterx.bclib.client.render.CustomFogRenderer;
+import org.betterx.bclib.util.BackgroundInfo;
+
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
@@ -10,8 +13,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.FogType;
 
-import org.betterx.bclib.client.render.CustomFogRenderer;
-import org.betterx.bclib.util.BackgroundInfo;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,12 +29,14 @@ public class FogRendererMixin {
     private static float fogBlue;
 
     @Inject(method = "setupColor", at = @At("RETURN"))
-    private static void bclib_onRender(Camera camera,
-                                       float tickDelta,
-                                       ClientLevel world,
-                                       int i,
-                                       float f,
-                                       CallbackInfo info) {
+    private static void bclib_onRender(
+            Camera camera,
+            float tickDelta,
+            ClientLevel world,
+            int i,
+            float f,
+            CallbackInfo info
+    ) {
         FogType fogType = camera.getFluidInCamera();
         if (fogType != FogType.WATER && world.dimension().equals(Level.END)) {
             Entity entity = camera.getEntity();
@@ -55,12 +58,14 @@ public class FogRendererMixin {
     }
 
     @Inject(method = "setupFog", at = @At("HEAD"), cancellable = true)
-    private static void bclib_fogDensity(Camera camera,
-                                         FogRenderer.FogMode fogMode,
-                                         float viewDistance,
-                                         boolean thickFog,
-                                         float g,
-                                         CallbackInfo ci) {
+    private static void bclib_fogDensity(
+            Camera camera,
+            FogRenderer.FogMode fogMode,
+            float viewDistance,
+            boolean thickFog,
+            float g,
+            CallbackInfo ci
+    ) {
         if (CustomFogRenderer.applyFogDensity(camera, viewDistance, thickFog)) {
             ci.cancel();
         }

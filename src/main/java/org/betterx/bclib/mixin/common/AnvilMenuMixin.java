@@ -1,5 +1,10 @@
 package org.betterx.bclib.mixin.common;
 
+import org.betterx.bclib.blocks.BaseAnvilBlock;
+import org.betterx.bclib.blocks.LeveledAnvilBlock;
+import org.betterx.bclib.interfaces.AnvilScreenHandlerExtended;
+import org.betterx.bclib.recipes.AnvilRecipe;
+
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -9,10 +14,6 @@ import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
-import org.betterx.bclib.blocks.BaseAnvilBlock;
-import org.betterx.bclib.blocks.LeveledAnvilBlock;
-import org.betterx.bclib.interfaces.AnvilScreenHandlerExtended;
-import org.betterx.bclib.recipes.AnvilRecipe;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -39,10 +40,12 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu implements AnvilSc
     @Shadow
     private DataSlot cost;
 
-    public AnvilMenuMixin(@Nullable MenuType<?> menuType,
-                          int i,
-                          Inventory inventory,
-                          ContainerLevelAccess containerLevelAccess) {
+    public AnvilMenuMixin(
+            @Nullable MenuType<?> menuType,
+            int i,
+            Inventory inventory,
+            ContainerLevelAccess containerLevelAccess
+    ) {
         super(menuType, i, inventory, containerLevelAccess);
     }
 

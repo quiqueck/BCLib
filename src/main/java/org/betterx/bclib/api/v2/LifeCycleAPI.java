@@ -1,5 +1,11 @@
 package org.betterx.bclib.api.v2;
 
+import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
+import org.betterx.bclib.api.v2.datafixer.DataFixerAPI;
+import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
+import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
+import org.betterx.bclib.mixin.common.RegistryOpsAccessor;
+
 import net.minecraft.client.gui.screens.worldselection.WorldGenSettingsComponent;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
@@ -15,12 +21,6 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.ServerLevelData;
-
-import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
-import org.betterx.bclib.api.v2.datafixer.DataFixerAPI;
-import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
-import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
-import org.betterx.bclib.mixin.common.RegistryOpsAccessor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +40,10 @@ public class LifeCycleAPI {
         InternalBiomeAPI.initRegistry(access);
     }
 
-    public static void newWorldSetup(LevelStorageSource.LevelStorageAccess levelStorageAccess,
-                                     WorldGenSettings settings) {
+    public static void newWorldSetup(
+            LevelStorageSource.LevelStorageAccess levelStorageAccess,
+            WorldGenSettings settings
+    ) {
         DataExchangeAPI.prepareServerside();
         InternalBiomeAPI.prepareNewLevel();
 
@@ -49,9 +51,11 @@ public class LifeCycleAPI {
         _runBeforeLevelLoad();
     }
 
-    public static void newWorldSetup(String levelID,
-                                     WorldGenSettings worldGenSettings,
-                                     LevelStorageSource levelSource) {
+    public static void newWorldSetup(
+            String levelID,
+            WorldGenSettings worldGenSettings,
+            LevelStorageSource levelSource
+    ) {
         DataExchangeAPI.prepareServerside();
         InternalBiomeAPI.prepareNewLevel();
 
@@ -81,8 +85,10 @@ public class LifeCycleAPI {
         }
     }
 
-    public static void worldCreationStarted(Optional<LevelStorageSource.LevelStorageAccess> levelStorageAccess,
-                                            WorldGenSettingsComponent worldGenSettingsComponent) {
+    public static void worldCreationStarted(
+            Optional<LevelStorageSource.LevelStorageAccess> levelStorageAccess,
+            WorldGenSettingsComponent worldGenSettingsComponent
+    ) {
         worldCreationStarted(worldGenSettingsComponent.registryHolder());
 
         if (levelStorageAccess.isPresent()) {
@@ -142,18 +148,21 @@ public class LifeCycleAPI {
      * @param list
      * @param bl2
      */
-    public static void _runLevelLoad(ServerLevel world,
-                                     MinecraftServer minecraftServer,
-                                     Executor executor,
-                                     LevelStorageSource.LevelStorageAccess levelStorageAccess,
-                                     ServerLevelData serverLevelData,
-                                     ResourceKey<Level> resourceKey,
-                                     ChunkProgressListener chunkProgressListener,
-                                     boolean bl,
-                                     long l,
-                                     List<CustomSpawner> list,
-                                     boolean bl2) {
-        onLoadLevel.forEach(c -> c.onLoad(world,
+    public static void _runLevelLoad(
+            ServerLevel world,
+            MinecraftServer minecraftServer,
+            Executor executor,
+            LevelStorageSource.LevelStorageAccess levelStorageAccess,
+            ServerLevelData serverLevelData,
+            ResourceKey<Level> resourceKey,
+            ChunkProgressListener chunkProgressListener,
+            boolean bl,
+            long l,
+            List<CustomSpawner> list,
+            boolean bl2
+    ) {
+        onLoadLevel.forEach(c -> c.onLoad(
+                world,
                 minecraftServer,
                 executor,
                 levelStorageAccess,
@@ -163,7 +172,8 @@ public class LifeCycleAPI {
                 bl,
                 l,
                 list,
-                bl2));
+                bl2
+        ));
 
         final long seed = world.getSeed();
         final Registry<Biome> biomeRegistry = world.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY);
@@ -188,16 +198,18 @@ public class LifeCycleAPI {
      * A callback function that is used for each new ServerLevel instance
      */
     public interface LevelLoadCall {
-        void onLoad(ServerLevel world,
-                    MinecraftServer minecraftServer,
-                    Executor executor,
-                    LevelStorageSource.LevelStorageAccess levelStorageAccess,
-                    ServerLevelData serverLevelData,
-                    ResourceKey<Level> resourceKey,
-                    ChunkProgressListener chunkProgressListener,
-                    boolean bl,
-                    long l,
-                    List<CustomSpawner> list,
-                    boolean bl2);
+        void onLoad(
+                ServerLevel world,
+                MinecraftServer minecraftServer,
+                Executor executor,
+                LevelStorageSource.LevelStorageAccess levelStorageAccess,
+                ServerLevelData serverLevelData,
+                ResourceKey<Level> resourceKey,
+                ChunkProgressListener chunkProgressListener,
+                boolean bl,
+                long l,
+                List<CustomSpawner> list,
+                boolean bl2
+        );
     }
 }

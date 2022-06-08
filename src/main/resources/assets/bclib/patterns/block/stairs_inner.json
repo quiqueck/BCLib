@@ -1,8 +1,8 @@
 {
-	"parent": "block/inner_stairs",
-	"textures": {
-		"bottom": "%modid%:block/%texture%",
-		"side": "%modid%:block/%texture%",
-		"top": "%modid%:block/%texture%"
-	}
+  "parent": "block/inner_stairs",
+  "textures": {
+    "bottom": "%modid%:block/%texture%",
+    "side": "%modid%:block/%texture%",
+    "top": "%modid%:block/%texture%"
+  }
 }

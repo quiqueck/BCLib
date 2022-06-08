@@ -1,5 +1,15 @@
 package org.betterx.bclib.api.v2.levelgen.biomes;
 
+import org.betterx.bclib.api.v2.levelgen.features.BCLFeature;
+import org.betterx.bclib.api.v2.levelgen.structures.BCLStructure;
+import org.betterx.bclib.api.v2.levelgen.surface.SurfaceRuleBuilder;
+import org.betterx.bclib.entity.BCLEntityWrapper;
+import org.betterx.bclib.mixin.common.BiomeGenerationSettingsAccessor;
+import org.betterx.bclib.util.CollectionsUtil;
+import org.betterx.bclib.util.ColorUtil;
+import org.betterx.bclib.util.Pair;
+import org.betterx.bclib.util.TriFunction;
+
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.particles.ParticleOptions;
@@ -29,15 +39,6 @@ import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.betterx.bclib.api.v2.levelgen.features.BCLFeature;
-import org.betterx.bclib.api.v2.levelgen.structures.BCLStructure;
-import org.betterx.bclib.api.v2.levelgen.surface.SurfaceRuleBuilder;
-import org.betterx.bclib.entity.BCLEntityWrapper;
-import org.betterx.bclib.mixin.common.BiomeGenerationSettingsAccessor;
-import org.betterx.bclib.util.CollectionsUtil;
-import org.betterx.bclib.util.ColorUtil;
-import org.betterx.bclib.util.Pair;
-import org.betterx.bclib.util.TriFunction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,8 +53,10 @@ public class BCLBiomeBuilder {
     }
 
     private static final BCLBiomeBuilder INSTANCE = new BCLBiomeBuilder();
-    private static final SurfaceRules.ConditionSource SURFACE_NOISE = SurfaceRules.noiseCondition(Noises.SOUL_SAND_LAYER,
-            -0.012);
+    private static final SurfaceRules.ConditionSource SURFACE_NOISE = SurfaceRules.noiseCondition(
+            Noises.SOUL_SAND_LAYER,
+            -0.012
+    );
 
     private final List<Pair<GenerationStep.Carving, Holder<? extends ConfiguredWorldCarver<?>>>> carvers = new ArrayList<>(
             1);
@@ -64,7 +67,7 @@ public class BCLBiomeBuilder {
     private Precipitation precipitation;
     private ResourceLocation biomeID;
 
-    private Set<TagKey<Biome>> tags = Sets.newHashSet();
+    private final Set<TagKey<Biome>> tags = Sets.newHashSet();
 
     private final List<Climate.ParameterPoint> parameters = Lists.newArrayList();
 
@@ -152,12 +155,16 @@ public class BCLBiomeBuilder {
      * @param maxGroupCount maximum mobs in group.
      * @return same {@link BCLBiomeBuilder} instance.
      */
-    public <M extends Mob> BCLBiomeBuilder spawn(EntityType<M> entityType,
-                                                 int weight,
-                                                 int minGroupCount,
-                                                 int maxGroupCount) {
-        getSpawns().addSpawn(entityType.getCategory(),
-                new SpawnerData(entityType, weight, minGroupCount, maxGroupCount));
+    public <M extends Mob> BCLBiomeBuilder spawn(
+            EntityType<M> entityType,
+            int weight,
+            int minGroupCount,
+            int maxGroupCount
+    ) {
+        getSpawns().addSpawn(
+                entityType.getCategory(),
+                new SpawnerData(entityType, weight, minGroupCount, maxGroupCount)
+        );
         return this;
     }
 
@@ -170,10 +177,12 @@ public class BCLBiomeBuilder {
      * @param maxGroupCount maximum mobs in group.
      * @return same {@link BCLBiomeBuilder} instance.
      */
-    public <M extends Mob> BCLBiomeBuilder spawn(BCLEntityWrapper<M> wrapper,
-                                                 int weight,
-                                                 int minGroupCount,
-                                                 int maxGroupCount) {
+    public <M extends Mob> BCLBiomeBuilder spawn(
+            BCLEntityWrapper<M> wrapper,
+            int weight,
+            int minGroupCount,
+            int maxGroupCount
+    ) {
         if (wrapper.canSpawn()) {
             return spawn(wrapper.type(), weight, minGroupCount, maxGroupCount);
         }
@@ -618,9 +627,11 @@ public class BCLBiomeBuilder {
         final ResourceLocation immutableID = biomeID;
         var oKey = carver.unwrapKey();
         if (oKey.isPresent()) {
-            BiomeModifications.addCarver(ctx -> ctx.getBiomeKey().location().equals(immutableID),
+            BiomeModifications.addCarver(
+                    ctx -> ctx.getBiomeKey().location().equals(immutableID),
                     step,
-                    (ResourceKey<ConfiguredWorldCarver<?>>) oKey.get());
+                    (ResourceKey<ConfiguredWorldCarver<?>>) oKey.get()
+            );
         }
         //carvers.add(new Pair<>(step, carver));
         return this;

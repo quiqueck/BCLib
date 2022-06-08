@@ -1,9 +1,9 @@
 package org.betterx.bclib.config;
 
+import org.betterx.bclib.BCLib;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
-import org.betterx.bclib.BCLib;
 
 import java.util.Collections;
 
@@ -30,13 +30,21 @@ public class Configs {
     }
 
     static {
-        BIOMES_CONFIG.keeper.registerEntry(new ConfigKey("end_land_biomes", "force_include"),
-                                           new ConfigKeeper.StringArrayEntry(Collections.EMPTY_LIST));
-        BIOMES_CONFIG.keeper.registerEntry(new ConfigKey("end_void_biomes", "force_include"),
-                                           new ConfigKeeper.StringArrayEntry(Collections.EMPTY_LIST));
-        BIOMES_CONFIG.keeper.registerEntry(new ConfigKey("nether_biomes", "force_include"),
-                                           new ConfigKeeper.StringArrayEntry(Collections.EMPTY_LIST));
-        BIOMES_CONFIG.keeper.registerEntry(new ConfigKey("nether_biomes", "force_exclude"),
-                                           new ConfigKeeper.StringArrayEntry(Collections.EMPTY_LIST));
+        BIOMES_CONFIG.keeper.registerEntry(
+                new ConfigKey("end_land_biomes", "force_include"),
+                new ConfigKeeper.StringArrayEntry(Collections.EMPTY_LIST)
+        );
+        BIOMES_CONFIG.keeper.registerEntry(
+                new ConfigKey("end_void_biomes", "force_include"),
+                new ConfigKeeper.StringArrayEntry(Collections.EMPTY_LIST)
+        );
+        BIOMES_CONFIG.keeper.registerEntry(
+                new ConfigKey("nether_biomes", "force_include"),
+                new ConfigKeeper.StringArrayEntry(Collections.EMPTY_LIST)
+        );
+        BIOMES_CONFIG.keeper.registerEntry(
+                new ConfigKey("nether_biomes", "force_exclude"),
+                new ConfigKeeper.StringArrayEntry(Collections.EMPTY_LIST)
+        );
     }
 }

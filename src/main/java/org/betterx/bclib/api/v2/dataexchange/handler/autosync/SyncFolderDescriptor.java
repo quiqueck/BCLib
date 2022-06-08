@@ -1,13 +1,13 @@
 package org.betterx.bclib.api.v2.dataexchange.handler.autosync;
 
-import net.minecraft.network.FriendlyByteBuf;
-
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.dataexchange.DataHandler;
 import org.betterx.bclib.api.v2.dataexchange.FileHash;
 import org.betterx.bclib.api.v2.dataexchange.handler.autosync.AutoSyncID.ForDirectFileRequest;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.util.PathUtil;
+
+import net.minecraft.network.FriendlyByteBuf;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -110,9 +110,11 @@ public class SyncFolderDescriptor {
     public void loadCache() {
         if (fileCache == null) {
             fileCache = new ArrayList<>(8);
-            PathUtil.fileWalker(localFolder.toFile(), p -> fileCache.add(new SubFile(localFolder.relativize(p)
-                                                                                                .toString(),
-                                                                                     FileHash.create(p.toFile()))));
+            PathUtil.fileWalker(localFolder.toFile(), p -> fileCache.add(new SubFile(
+                    localFolder.relativize(p)
+                               .toString(),
+                    FileHash.create(p.toFile())
+            )));
 			
 			/*//this tests if we can trick the system to load files that are not beneath the base-folder
 			if (!BCLib.isClient()) {
@@ -145,14 +147,16 @@ public class SyncFolderDescriptor {
 
         final SyncFolderDescriptor desc;
         if (localDescriptor != null) {
-            desc = new SyncFolderDescriptor(folderID,
-                                            localDescriptor.localFolder,
-                                            localDescriptor.removeAdditionalFiles && remAddFiles);
+            desc = new SyncFolderDescriptor(
+                    folderID,
+                    localDescriptor.localFolder,
+                    localDescriptor.removeAdditionalFiles && remAddFiles
+            );
             desc.fileCache = new ArrayList<>(count);
         } else {
             BCLib.LOGGER.warning(BCLib.isClient()
-                                         ? "Client"
-                                         : "Server" + " does not know Sync-Folder ID '" + folderID + "'");
+                    ? "Client"
+                    : "Server" + " does not know Sync-Folder ID '" + folderID + "'");
             desc = null;
         }
 

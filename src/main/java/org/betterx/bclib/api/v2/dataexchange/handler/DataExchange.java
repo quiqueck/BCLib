@@ -1,13 +1,13 @@
 package org.betterx.bclib.api.v2.dataexchange.handler;
 
+import org.betterx.bclib.api.v2.dataexchange.*;
+
 import net.minecraft.resources.ResourceLocation;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-
-import org.betterx.bclib.api.v2.dataexchange.*;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -1,5 +1,8 @@
 package org.betterx.bclib.util;
 
+import org.betterx.bclib.BCLib;
+
+import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
@@ -13,8 +16,6 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.impl.client.indigo.renderer.helper.ColorHelper;
 
 import com.google.common.collect.Maps;
-import com.mojang.blaze3d.platform.NativeImage;
-import org.betterx.bclib.BCLib;
 
 import java.io.IOException;
 import java.util.ArrayList;

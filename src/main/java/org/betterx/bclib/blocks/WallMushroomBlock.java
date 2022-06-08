@@ -26,7 +26,7 @@ public abstract class WallMushroomBlock extends BaseWallPlantBlock {
                         .sound(SoundType.GRASS)
                         .sound(SoundType.WOOD)
                         .noCollission()
-            );
+        );
     }
 
     public WallMushroomBlock(BlockBehaviour.Properties properties) {

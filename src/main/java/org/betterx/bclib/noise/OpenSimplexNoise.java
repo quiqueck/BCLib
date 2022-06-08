@@ -2122,7 +2122,7 @@ public class OpenSimplexNoise {
                     dy_ext0,
                     dz_ext0,
                     dw_ext0
-                                                        );
+            );
         }
 
         // Second extra vertex
@@ -2138,7 +2138,7 @@ public class OpenSimplexNoise {
                     dy_ext1,
                     dz_ext1,
                     dw_ext1
-                                                        );
+            );
         }
 
         // Third extra vertex
@@ -2154,7 +2154,7 @@ public class OpenSimplexNoise {
                     dy_ext2,
                     dz_ext2,
                     dw_ext2
-                                                        );
+            );
         }
 
         return value / NORM_CONSTANT_4D;

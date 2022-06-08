@@ -1,5 +1,7 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.util.BlocksHelper;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -19,7 +21,6 @@ import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import org.betterx.bclib.util.BlocksHelper;
 
 import java.util.EnumMap;
 
@@ -29,7 +30,7 @@ public abstract class BaseWallPlantBlock extends BasePlantBlock {
             Direction.SOUTH, box(1, 1, 0, 15, 15, 8),
             Direction.WEST, box(8, 1, 1, 16, 15, 15),
             Direction.EAST, box(0, 1, 1, 8, 15, 15)
-                                                                                                ));
+    ));
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
     public BaseWallPlantBlock() {
@@ -39,7 +40,7 @@ public abstract class BaseWallPlantBlock extends BasePlantBlock {
                         .sound(SoundType.GRASS)
                         .noCollission()
                         .offsetType(BlockBehaviour.OffsetType.NONE)
-            );
+        );
     }
 
     public BaseWallPlantBlock(int light) {
@@ -50,7 +51,7 @@ public abstract class BaseWallPlantBlock extends BasePlantBlock {
                         .sound(SoundType.GRASS)
                         .noCollission()
                         .offsetType(BlockBehaviour.OffsetType.NONE)
-            );
+        );
     }
 
     public BaseWallPlantBlock(Properties settings) {
@@ -98,12 +99,14 @@ public abstract class BaseWallPlantBlock extends BasePlantBlock {
     }
 
     @Override
-    public BlockState updateShape(BlockState state,
-                                  Direction facing,
-                                  BlockState neighborState,
-                                  LevelAccessor world,
-                                  BlockPos pos,
-                                  BlockPos neighborPos) {
+    public BlockState updateShape(
+            BlockState state,
+            Direction facing,
+            BlockState neighborState,
+            LevelAccessor world,
+            BlockPos pos,
+            BlockPos neighborPos
+    ) {
         if (!canSurvive(state, world, pos)) {
             return Blocks.AIR.defaultBlockState();
         } else {

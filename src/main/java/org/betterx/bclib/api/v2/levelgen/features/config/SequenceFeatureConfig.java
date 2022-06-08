@@ -1,14 +1,14 @@
 package org.betterx.bclib.api.v2.levelgen.features.config;
 
+import org.betterx.bclib.api.v2.levelgen.features.BCLFeature;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
-
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import org.betterx.bclib.api.v2.levelgen.features.BCLFeature;
 
 import java.util.List;
 

@@ -1,5 +1,11 @@
 package org.betterx.bclib.client.models;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.util.BlocksHelper;
+import org.betterx.bclib.util.MHelper;
+
+import com.mojang.datafixers.util.Pair;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
@@ -18,11 +24,6 @@ import net.fabricmc.api.Environment;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.mojang.datafixers.util.Pair;
-import com.mojang.math.Vector3f;
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.util.BlocksHelper;
-import org.betterx.bclib.util.MHelper;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -50,12 +51,14 @@ public class OBJBlockModel implements UnbakedModel, BakedModel {
     protected boolean useShading;
     protected byte particleIndex;
 
-    public OBJBlockModel(ResourceLocation location,
-                         Vector3f offset,
-                         boolean useCulling,
-                         boolean useShading,
-                         byte particleIndex,
-                         ResourceLocation... textureIDs) {
+    public OBJBlockModel(
+            ResourceLocation location,
+            Vector3f offset,
+            boolean useCulling,
+            boolean useShading,
+            byte particleIndex,
+            ResourceLocation... textureIDs
+    ) {
         for (Direction dir : BlocksHelper.DIRECTIONS) {
             quadsUnbakedMap.put(dir, Lists.newArrayList());
             quadsBakedMap.put(dir, Lists.newArrayList());
@@ -83,17 +86,21 @@ public class OBJBlockModel implements UnbakedModel, BakedModel {
     }
 
     @Override
-    public Collection<Material> getMaterials(Function<ResourceLocation, UnbakedModel> function,
-                                             Set<Pair<String, String>> set) {
+    public Collection<Material> getMaterials(
+            Function<ResourceLocation, UnbakedModel> function,
+            Set<Pair<String, String>> set
+    ) {
         return materials;
     }
 
     @Nullable
     @Override
-    public BakedModel bake(ModelBakery modelBakery,
-                           Function<Material, TextureAtlasSprite> textureGetter,
-                           ModelState modelState,
-                           ResourceLocation resourceLocation) {
+    public BakedModel bake(
+            ModelBakery modelBakery,
+            Function<Material, TextureAtlasSprite> textureGetter,
+            ModelState modelState,
+            ResourceLocation resourceLocation
+    ) {
         for (int i = 0; i < sprites.length; i++) {
             sprites[i] = textureGetter.apply(materials.get(i));
         }
@@ -111,9 +118,11 @@ public class OBJBlockModel implements UnbakedModel, BakedModel {
     // Baked Model //
 
     @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState blockState,
-                                    @Nullable Direction direction,
-                                    RandomSource random) {
+    public List<BakedQuad> getQuads(
+            @Nullable BlockState blockState,
+            @Nullable Direction direction,
+            RandomSource random
+    ) {
         return direction == null ? quadsBaked : quadsBakedMap.get(direction);
     }
 

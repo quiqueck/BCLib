@@ -1,5 +1,13 @@
 package org.betterx.bclib.complexmaterials;
 
+import org.betterx.bclib.api.v2.tag.TagAPI;
+import org.betterx.bclib.complexmaterials.entry.BlockEntry;
+import org.betterx.bclib.complexmaterials.entry.ItemEntry;
+import org.betterx.bclib.complexmaterials.entry.RecipeEntry;
+import org.betterx.bclib.config.PathConfig;
+import org.betterx.bclib.registry.BlockRegistry;
+import org.betterx.bclib.registry.ItemRegistry;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -11,13 +19,6 @@ import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.betterx.bclib.api.v2.tag.TagAPI;
-import org.betterx.bclib.complexmaterials.entry.BlockEntry;
-import org.betterx.bclib.complexmaterials.entry.ItemEntry;
-import org.betterx.bclib.complexmaterials.entry.RecipeEntry;
-import org.betterx.bclib.config.PathConfig;
-import org.betterx.bclib.registry.BlockRegistry;
-import org.betterx.bclib.registry.ItemRegistry;
 
 import java.util.Collection;
 import java.util.List;

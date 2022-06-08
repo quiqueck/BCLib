@@ -1,11 +1,12 @@
 package org.betterx.bclib.integration.modmenu;
 
+import org.betterx.bclib.integration.modmenu.ModMenuIntegration.ModMenuScreenFactory;
+
 import net.minecraft.client.gui.screens.Screen;
 
 import com.google.common.collect.ImmutableMap;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
-import org.betterx.bclib.integration.modmenu.ModMenuIntegration.ModMenuScreenFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -38,7 +39,8 @@ class ModMenuScreenFactoryImpl {
         Object o = Proxy.newProxyInstance(
                 ModMenuIntegration.class.getClassLoader(),
                 new Class[]{iConfigScreenFactory, ModMenuScreenFactory.class},
-                new ScreenFactoryInvocationHandler(act));
+                new ScreenFactoryInvocationHandler(act)
+        );
 
         return (ModMenuScreenFactory) o;
     }
@@ -90,7 +92,8 @@ public abstract class ModMenuIntegration {
         Object o = Proxy.newProxyInstance(
                 ModMenuIntegration.class.getClassLoader(),
                 new Class[]{iModMenuAPI},
-                new BCLibModMenuInvocationHandler(target));
+                new BCLibModMenuInvocationHandler(target)
+        );
 
         return (ModMenuApi) o;
     }

@@ -1,5 +1,8 @@
 package org.betterx.bclib.api.v2.tag;
 
+import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
+import org.betterx.bclib.mixin.common.DiggerItemAccessor;
+
 import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -16,8 +19,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
 import com.google.common.collect.Maps;
-import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
-import org.betterx.bclib.mixin.common.DiggerItemAccessor;
 
 import java.util.List;
 import java.util.Map;
@@ -28,9 +29,11 @@ public class TagAPI {
 
     public static TagType.RegistryBacked<Block> BLOCKS = registerType(Registry.BLOCK);
     public static TagType.RegistryBacked<Item> ITEMS = registerType(Registry.ITEM);
-    public static TagType.Simple<Biome> BIOMES = registerType(Registry.BIOME_REGISTRY,
+    public static TagType.Simple<Biome> BIOMES = registerType(
+            Registry.BIOME_REGISTRY,
             "tags/worldgen/biome",
-            b -> BiomeAPI.getBiomeID(b));
+            b -> BiomeAPI.getBiomeID(b)
+    );
 
     public static <T> TagType.RegistryBacked<T> registerType(DefaultedRegistry<T> registry) {
         TagType<T> type = new TagType.RegistryBacked<>(registry);
@@ -41,13 +44,19 @@ public class TagAPI {
         return registerType(registry.key(), directory, (o) -> registry.getKey(o));
     }
 
-    public static <T> TagType.Simple<T> registerType(ResourceKey<? extends Registry<T>> registry,
-                                                     String directory,
-                                                     Function<T, ResourceLocation> locationProvider) {
-        return (TagType.Simple<T>) TYPES.computeIfAbsent(directory,
-                (dir) -> new TagType.Simple<>(registry,
+    public static <T> TagType.Simple<T> registerType(
+            ResourceKey<? extends Registry<T>> registry,
+            String directory,
+            Function<T, ResourceLocation> locationProvider
+    ) {
+        return (TagType.Simple<T>) TYPES.computeIfAbsent(
+                directory,
+                (dir) -> new TagType.Simple<>(
+                        registry,
                         dir,
-                        locationProvider));
+                        locationProvider
+                )
+        );
     }
 
     public static <T> TagType.UnTyped<T> registerType(ResourceKey<? extends Registry<T>> registry, String directory) {
@@ -237,8 +246,10 @@ public class TagAPI {
      * @param tagsMap   The map that will hold the registered Tags
      * @return The {@code tagsMap} Parameter.
      */
-    public static <T> Map<ResourceLocation, List<TagLoader.EntryWithSource>> apply(String directory,
-                                                                                   Map<ResourceLocation, List<TagLoader.EntryWithSource>> tagsMap) {
+    public static <T> Map<ResourceLocation, List<TagLoader.EntryWithSource>> apply(
+            String directory,
+            Map<ResourceLocation, List<TagLoader.EntryWithSource>> tagsMap
+    ) {
 
         TagType<?> type = TYPES.get(directory);
         if (type != null) {

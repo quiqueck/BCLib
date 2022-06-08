@@ -1,16 +1,5 @@
 package org.betterx.bclib;
 
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.ai.village.poi.PoiType;
-import net.minecraft.world.entity.ai.village.poi.PoiTypes;
-import net.minecraft.world.level.block.Blocks;
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.loader.api.FabricLoader;
-
 import org.betterx.bclib.api.v2.WorldDataAPI;
 import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
 import org.betterx.bclib.api.v2.dataexchange.handler.autosync.*;
@@ -30,6 +19,17 @@ import org.betterx.bclib.recipes.CraftingRecipes;
 import org.betterx.bclib.registry.BaseBlockEntities;
 import org.betterx.bclib.registry.BaseRegistry;
 import org.betterx.bclib.util.Logger;
+
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.ai.village.poi.PoiType;
+import net.minecraft.world.entity.ai.village.poi.PoiTypes;
+import net.minecraft.world.level.block.Blocks;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
 
 import java.util.List;
 import java.util.Set;
@@ -58,13 +58,13 @@ public class BCLib implements ModInitializer {
         CommandRegistry.register();
 
         DataExchangeAPI.registerDescriptors(List.of(
-                                                    HelloClient.DESCRIPTOR,
-                                                    HelloServer.DESCRIPTOR,
-                                                    RequestFiles.DESCRIPTOR,
-                                                    SendFiles.DESCRIPTOR,
-                                                    Chunker.DESCRIPTOR
-                                                   )
-                                           );
+                        HelloClient.DESCRIPTOR,
+                        HelloServer.DESCRIPTOR,
+                        RequestFiles.DESCRIPTOR,
+                        SendFiles.DESCRIPTOR,
+                        Chunker.DESCRIPTOR
+                )
+        );
 
         BCLibPatch.register();
         TemplatePiece.ensureStaticInitialization();

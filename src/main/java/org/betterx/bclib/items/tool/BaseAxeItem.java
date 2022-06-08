@@ -1,5 +1,8 @@
 package org.betterx.bclib.items.tool;
 
+import org.betterx.bclib.client.models.ModelsHelper;
+import org.betterx.bclib.interfaces.ItemModelProvider;
+
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.AxeItem;
@@ -7,9 +10,6 @@ import net.minecraft.world.item.Tier;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
-import org.betterx.bclib.client.models.ModelsHelper;
-import org.betterx.bclib.interfaces.ItemModelProvider;
 
 public class BaseAxeItem extends AxeItem implements ItemModelProvider {
     public BaseAxeItem(Tier material, float attackDamage, float attackSpeed, Properties settings) {

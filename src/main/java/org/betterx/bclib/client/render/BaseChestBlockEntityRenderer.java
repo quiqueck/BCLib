@@ -1,5 +1,11 @@
 package org.betterx.bclib.client.render;
 
+import org.betterx.bclib.blockentities.BaseChestBlockEntity;
+import org.betterx.bclib.client.models.BaseChestBlockModel;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -20,13 +26,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import com.google.common.collect.Maps;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
-import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
 import it.unimi.dsi.fastutil.ints.Int2IntFunction;
-import org.betterx.bclib.blockentities.BaseChestBlockEntity;
-import org.betterx.bclib.client.models.BaseChestBlockModel;
 
 import java.util.HashMap;
 
@@ -46,19 +46,21 @@ public class BaseChestBlockEntityRenderer implements BlockEntityRenderer<BaseChe
         chestModel = new BaseChestBlockModel(BaseChestBlockModel.getTexturedModelData().bakeRoot());
     }
 
-    public void render(BaseChestBlockEntity entity,
-                       float tickDelta,
-                       PoseStack matrices,
-                       MultiBufferSource vertexConsumers,
-                       int light,
-                       int overlay) {
+    public void render(
+            BaseChestBlockEntity entity,
+            float tickDelta,
+            PoseStack matrices,
+            MultiBufferSource vertexConsumers,
+            int light,
+            int overlay
+    ) {
         Level world = entity.getLevel();
         boolean worldExists = world != null;
         BlockState blockState = worldExists ? entity.getBlockState() : Blocks.CHEST.defaultBlockState()
                                                                                    .setValue(
                                                                                            ChestBlock.FACING,
                                                                                            Direction.SOUTH
-                                                                                            );
+                                                                                   );
         ChestType chestType = blockState.hasProperty(ChestBlock.TYPE)
                 ? blockState.getValue(ChestBlock.TYPE)
                 : ChestType.SINGLE;
@@ -102,7 +104,7 @@ public class BaseChestBlockEntityRenderer implements BlockEntityRenderer<BaseChe
                             pitch,
                             blockLight,
                             overlay
-                               );
+                    );
                 } else {
                     renderParts(
                             matrices,
@@ -113,7 +115,7 @@ public class BaseChestBlockEntityRenderer implements BlockEntityRenderer<BaseChe
                             pitch,
                             blockLight,
                             overlay
-                               );
+                    );
                 }
             } else {
                 renderParts(
@@ -125,21 +127,23 @@ public class BaseChestBlockEntityRenderer implements BlockEntityRenderer<BaseChe
                         pitch,
                         blockLight,
                         overlay
-                           );
+                );
             }
 
             matrices.popPose();
         }
     }
 
-    private void renderParts(PoseStack matrices,
-                             VertexConsumer vertices,
-                             ModelPart modelPart,
-                             ModelPart modelPart2,
-                             ModelPart modelPart3,
-                             float pitch,
-                             int light,
-                             int overlay) {
+    private void renderParts(
+            PoseStack matrices,
+            VertexConsumer vertices,
+            ModelPart modelPart,
+            ModelPart modelPart2,
+            ModelPart modelPart3,
+            float pitch,
+            int light,
+            int overlay
+    ) {
         modelPart.xRot = -(pitch * 1.5707964F);
         modelPart2.xRot = modelPart.xRot;
         modelPart.render(matrices, vertices, light, overlay);
@@ -168,12 +172,16 @@ public class BaseChestBlockEntityRenderer implements BlockEntityRenderer<BaseChe
                 block,
                 new RenderType[]{
                         RenderType.entityCutout(new ResourceLocation(modId, "textures/entity/chest/" + path + ".png")),
-                        RenderType.entityCutout(new ResourceLocation(modId,
-                                                                     "textures/entity/chest/" + path + "_left.png")),
-                        RenderType.entityCutout(new ResourceLocation(modId,
-                                                                     "textures/entity/chest/" + path + "_right.png"))
+                        RenderType.entityCutout(new ResourceLocation(
+                                modId,
+                                "textures/entity/chest/" + path + "_left.png"
+                        )),
+                        RenderType.entityCutout(new ResourceLocation(
+                                modId,
+                                "textures/entity/chest/" + path + "_right.png"
+                        ))
                 }
-                  );
+        );
     }
 
     static {

@@ -1,10 +1,10 @@
 package org.betterx.bclib.api.v2.levelgen.features.features;
 
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+import org.betterx.bclib.api.v2.levelgen.features.config.PlaceBlockFeatureConfig;
 
 import com.mojang.serialization.Codec;
-import org.betterx.bclib.api.v2.levelgen.features.config.PlaceBlockFeatureConfig;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 
 public class PlaceBlockFeature<FC extends PlaceBlockFeatureConfig> extends Feature<FC> {
     public PlaceBlockFeature(Codec<FC> codec) {

@@ -1,10 +1,11 @@
 package org.betterx.bclib.mixin.common;
 
+import org.betterx.bclib.presets.worldgen.BCLWorldPresets;
+
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.dedicated.DedicatedServerProperties;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 
-import org.betterx.bclib.presets.worldgen.BCLWorldPresets;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;

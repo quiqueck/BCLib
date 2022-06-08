@@ -1,5 +1,10 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.blocks.BlockProperties.TripleShape;
+import org.betterx.bclib.client.models.BasePatterns;
+import org.betterx.bclib.client.models.ModelsHelper;
+import org.betterx.bclib.client.models.PatternsHelper;
+
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.MultiVariant;
 import net.minecraft.client.renderer.block.model.Variant;
@@ -29,10 +34,6 @@ import net.fabricmc.api.Environment;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.betterx.bclib.blocks.BlockProperties.TripleShape;
-import org.betterx.bclib.client.models.BasePatterns;
-import org.betterx.bclib.client.models.ModelsHelper;
-import org.betterx.bclib.client.models.PatternsHelper;
 
 import java.util.List;
 import java.util.Map;
@@ -67,12 +68,14 @@ public class TripleTerrainBlock extends BaseTerrainBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState state,
-                                 Level world,
-                                 BlockPos pos,
-                                 Player player,
-                                 InteractionHand hand,
-                                 BlockHitResult hit) {
+    public InteractionResult use(
+            BlockState state,
+            Level world,
+            BlockPos pos,
+            Player player,
+            InteractionHand hand,
+            BlockHitResult hit
+    ) {
         TripleShape shape = state.getValue(SHAPE);
         if (shape == TripleShape.BOTTOM) {
             return super.use(state, world, pos, player, hand, hit);
@@ -142,9 +145,11 @@ public class TripleTerrainBlock extends BaseTerrainBlock {
 
     @Override
     @Environment(EnvType.CLIENT)
-    public UnbakedModel getModelVariant(ResourceLocation stateId,
-                                        BlockState blockState,
-                                        Map<ResourceLocation, UnbakedModel> modelCache) {
+    public UnbakedModel getModelVariant(
+            ResourceLocation stateId,
+            BlockState blockState,
+            Map<ResourceLocation, UnbakedModel> modelCache
+    ) {
         boolean isMiddle = isMiddle(blockState);
         String middle = isMiddle ? "_middle" : "";
         ResourceLocation modelId = new ResourceLocation(stateId.getNamespace(), "block/" + stateId.getPath() + middle);
@@ -166,7 +171,7 @@ public class TripleTerrainBlock extends BaseTerrainBlock {
                     new Variant(modelId, BlockModelRotation.X180_Y90.getRotation(), false, 1),
                     new Variant(modelId, BlockModelRotation.X180_Y180.getRotation(), false, 1),
                     new Variant(modelId, BlockModelRotation.X180_Y270.getRotation(), false, 1)
-                                                      ));
+            ));
         }
         return ModelsHelper.createRandomTopModel(modelId);
     }

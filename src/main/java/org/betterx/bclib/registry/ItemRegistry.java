@@ -1,5 +1,18 @@
 package org.betterx.bclib.registry;
 
+import org.betterx.bclib.api.v2.tag.CommonItemTags;
+import org.betterx.bclib.api.v2.tag.NamedToolTags;
+import org.betterx.bclib.api.v2.tag.TagAPI;
+import org.betterx.bclib.config.PathConfig;
+import org.betterx.bclib.items.BaseDiscItem;
+import org.betterx.bclib.items.BaseDrinkItem;
+import org.betterx.bclib.items.BaseSpawnEggItem;
+import org.betterx.bclib.items.ModelProviderItem;
+import org.betterx.bclib.items.tool.BaseAxeItem;
+import org.betterx.bclib.items.tool.BaseHoeItem;
+import org.betterx.bclib.items.tool.BasePickaxeItem;
+import org.betterx.bclib.items.tool.BaseShearsItem;
+
 import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
@@ -14,19 +27,6 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.DispenserBlock;
-
-import org.betterx.bclib.api.v2.tag.CommonItemTags;
-import org.betterx.bclib.api.v2.tag.NamedToolTags;
-import org.betterx.bclib.api.v2.tag.TagAPI;
-import org.betterx.bclib.config.PathConfig;
-import org.betterx.bclib.items.BaseDiscItem;
-import org.betterx.bclib.items.BaseDrinkItem;
-import org.betterx.bclib.items.BaseSpawnEggItem;
-import org.betterx.bclib.items.ModelProviderItem;
-import org.betterx.bclib.items.tool.BaseAxeItem;
-import org.betterx.bclib.items.tool.BaseHoeItem;
-import org.betterx.bclib.items.tool.BasePickaxeItem;
-import org.betterx.bclib.items.tool.BaseShearsItem;
 
 public class ItemRegistry extends BaseRegistry<Item> {
     public ItemRegistry(CreativeModeTab creativeTab, PathConfig config) {
@@ -102,7 +102,7 @@ public class ItemRegistry extends BaseRegistry<Item> {
                         MobSpawnType.DISPENSER,
                         direction != Direction.UP,
                         false
-                                );
+                );
                 stack.shrink(1);
                 return stack;
             }

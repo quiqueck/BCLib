@@ -1,5 +1,8 @@
 package org.betterx.bclib.api.v2.tag;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
+
 import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -13,8 +16,6 @@ import net.minecraft.world.level.biome.Biome;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
 
 import java.util.HashSet;
 import java.util.List;
@@ -56,9 +57,11 @@ public class TagType<T> {
     }
 
     public static class Simple<T> extends TagType<T> {
-        Simple(ResourceKey<? extends Registry<T>> registry,
-               String directory,
-               Function<T, ResourceLocation> locationProvider) {
+        Simple(
+                ResourceKey<? extends Registry<T>> registry,
+                String directory,
+                Function<T, ResourceLocation> locationProvider
+        ) {
             super(registry, directory, locationProvider);
         }
 
@@ -82,8 +85,10 @@ public class TagType<T> {
     }
 
     public static class UnTyped<T> extends TagType<T> {
-        UnTyped(ResourceKey<? extends Registry<T>> registry,
-                String directory) {
+        UnTyped(
+                ResourceKey<? extends Registry<T>> registry,
+                String directory
+        ) {
             super(registry, directory, (t) -> {
                 throw new RuntimeException("Using Untyped TagType with Type-Dependant access. ");
             });
@@ -95,15 +100,17 @@ public class TagType<T> {
     public final ResourceKey<? extends Registry<T>> registryKey;
     private final Function<T, ResourceLocation> locationProvider;
 
-    private TagType(ResourceKey<? extends Registry<T>> registry,
-                    String directory,
-                    Function<T, ResourceLocation> locationProvider) {
+    private TagType(
+            ResourceKey<? extends Registry<T>> registry,
+            String directory,
+            Function<T, ResourceLocation> locationProvider
+    ) {
         this.registryKey = registry;
         this.directory = directory;
         this.locationProvider = locationProvider;
     }
 
-    protected void initializeTag(ResourceLocation tagID){
+    protected void initializeTag(ResourceLocation tagID) {
         getSetForTag(tagID);
     }
 
@@ -112,7 +119,7 @@ public class TagType<T> {
     }
 
     public Set<TagEntry> getSetForTag(TagKey<T> tag) {
-        if (tag==null) {
+        if (tag == null) {
             return new HashSet<>();
         }
         return getSetForTag(tag.location());
@@ -225,9 +232,11 @@ public class TagType<T> {
         this.forEach((id, ids) -> apply(id, tagsMap.computeIfAbsent(id, key -> Lists.newArrayList()), ids));
     }
 
-    private static List<TagLoader.EntryWithSource> apply(ResourceLocation id,
-                                                         List<TagLoader.EntryWithSource> builder,
-                                                         Set<TagEntry> ids) {
+    private static List<TagLoader.EntryWithSource> apply(
+            ResourceLocation id,
+            List<TagLoader.EntryWithSource> builder,
+            Set<TagEntry> ids
+    ) {
         ids.forEach(value -> builder.add(new TagLoader.EntryWithSource(value, BCLib.MOD_ID)));
         return builder;
     }

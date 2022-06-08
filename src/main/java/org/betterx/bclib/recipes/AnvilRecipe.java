@@ -1,5 +1,13 @@
 package org.betterx.bclib.recipes;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.tag.CommonItemTags;
+import org.betterx.bclib.config.PathConfig;
+import org.betterx.bclib.interfaces.UnknownReceipBookCategory;
+import org.betterx.bclib.util.ItemUtil;
+import org.betterx.bclib.util.RecipeHelper;
+
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
@@ -25,13 +33,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import com.google.gson.JsonObject;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.tag.CommonItemTags;
-import org.betterx.bclib.config.PathConfig;
-import org.betterx.bclib.interfaces.UnknownReceipBookCategory;
-import org.betterx.bclib.util.ItemUtil;
-import org.betterx.bclib.util.RecipeHelper;
 
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +44,7 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
             BCLib.MOD_ID,
             GROUP,
             new Serializer()
-                                                                                   );
+    );
     public final static ResourceLocation ID = BCLib.makeID(GROUP);
 
     public static void register() {
@@ -58,13 +59,15 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
     private final int anvilLevel;
     private final int inputCount;
 
-    public AnvilRecipe(ResourceLocation identifier,
-                       Ingredient input,
-                       ItemStack output,
-                       int inputCount,
-                       int toolLevel,
-                       int anvilLevel,
-                       int damage) {
+    public AnvilRecipe(
+            ResourceLocation identifier,
+            Ingredient input,
+            ItemStack output,
+            int inputCount,
+            int toolLevel,
+            int anvilLevel,
+            int damage
+    ) {
         this.id = identifier;
         this.input = input;
         this.output = output;
@@ -180,7 +183,7 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
                                                      .filter(hammer -> ((TieredItem) hammer).getTier()
                                                                                             .getLevel() >= toolLevel)
                                                      .map(ItemStack::new))
-                         );
+        );
         defaultedList.add(input);
         return defaultedList;
     }
@@ -313,8 +316,10 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
                 BCLib.LOGGER.debug("Can't add Anvil recipe {}! Ingeredient or output not exists.", id);
                 return;
             }
-            BCLRecipeManager.addRecipe(TYPE,
-                                       new AnvilRecipe(id, input, output, inputCount, toolLevel, anvilLevel, damage));
+            BCLRecipeManager.addRecipe(
+                    TYPE,
+                    new AnvilRecipe(id, input, output, inputCount, toolLevel, anvilLevel, damage)
+            );
         }
     }
 

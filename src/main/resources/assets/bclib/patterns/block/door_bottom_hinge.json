@@ -1,7 +1,7 @@
 {
-	"parent": "bclib:block/sided_door_bottom_rh",
-	"textures": {
-		"facade": "%modid%:block/%texture%_bottom",
-		"side": "%modid%:block/%texture%_side"
-	}
+  "parent": "bclib:block/sided_door_bottom_rh",
+  "textures": {
+    "facade": "%modid%:block/%texture%_bottom",
+    "side": "%modid%:block/%texture%_side"
+  }
 }

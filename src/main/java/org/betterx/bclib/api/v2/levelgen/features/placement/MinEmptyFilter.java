@@ -1,5 +1,9 @@
 package org.betterx.bclib.api.v2.levelgen.features.placement;
 
+import org.betterx.bclib.util.BlocksHelper;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -8,13 +12,9 @@ import net.minecraft.world.level.levelgen.placement.PlacementFilter;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import org.betterx.bclib.util.BlocksHelper;
-
 public class MinEmptyFilter extends PlacementFilter {
-    private static MinEmptyFilter DOWN = new MinEmptyFilter(Direction.DOWN, 2);
-    private static MinEmptyFilter UP = new MinEmptyFilter(Direction.UP, 2);
+    private static final MinEmptyFilter DOWN = new MinEmptyFilter(Direction.DOWN, 2);
+    private static final MinEmptyFilter UP = new MinEmptyFilter(Direction.UP, 2);
     public static final Codec<MinEmptyFilter> CODEC = RecordCodecBuilder.create((instance) -> instance
             .group(
                     Direction.CODEC.fieldOf("dir").orElse(Direction.DOWN).forGetter((p) -> p.direction),

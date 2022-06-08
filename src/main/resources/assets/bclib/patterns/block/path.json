@@ -1,8 +1,8 @@
 {
-	"parent": "bclib:block/path",
-	"textures": {
-		"top": "%modid%:block/%top%",
-		"side": "%modid%:block/%side%",
-		"bottom": "%bottom%"
-	}
+  "parent": "bclib:block/path",
+  "textures": {
+    "top": "%modid%:block/%top%",
+    "side": "%modid%:block/%side%",
+    "bottom": "%bottom%"
+  }
 }

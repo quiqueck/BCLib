@@ -1,14 +1,13 @@
 package org.betterx.bclib.api.v2.levelgen.features.placement;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.placement.PlacementContext;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
-
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,9 +44,11 @@ public class Stencil extends PlacementModifier {
     }
 
     @Override
-    public Stream<BlockPos> getPositions(PlacementContext placementContext,
-                                         RandomSource randomSource,
-                                         BlockPos blockPos) {
+    public Stream<BlockPos> getPositions(
+            PlacementContext placementContext,
+            RandomSource randomSource,
+            BlockPos blockPos
+    ) {
         List<BlockPos> pos = new ArrayList<>(16 * 16);
         for (int x = 0; x < 16; x++) {
             for (int y = 0; y < 16; y++) {

@@ -1,14 +1,14 @@
 package org.betterx.bclib.client.gui.gridlayout;
 
+import org.betterx.bclib.client.gui.gridlayout.GridLayout.GridValueType;
+import org.betterx.bclib.interfaces.TriConsumer;
+import org.betterx.bclib.util.Pair;
+
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.AbstractWidget;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
-import com.mojang.blaze3d.vertex.PoseStack;
-import org.betterx.bclib.client.gui.gridlayout.GridLayout.GridValueType;
-import org.betterx.bclib.interfaces.TriConsumer;
-import org.betterx.bclib.util.Pair;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -35,12 +35,14 @@ abstract class GridCellDefinition {
         }
     }
 
-    final GridElement buildElement(final int parentWidth,
-                                   final int autoWidth,
-                                   final float autoWidthSum,
-                                   int left,
-                                   final int top,
-                                   final List<GridElement> collector) {
+    final GridElement buildElement(
+            final int parentWidth,
+            final int autoWidth,
+            final float autoWidthSum,
+            int left,
+            final int top,
+            final List<GridElement> collector
+    ) {
         final int width = widthType == GridValueType.FILL
                 ? (int) ((this.width / autoWidthSum) * autoWidth)
                 : calculateWidth(parentWidth);
@@ -61,12 +63,14 @@ class GridElement extends GridTransform {
     final TriConsumer<PoseStack, GridTransform, Object> customRender;
     Object renderContext;
 
-    GridElement(int left,
-                int top,
-                int width,
-                int height,
-                Function<GridTransform, Object> componentPlacer,
-                TriConsumer<PoseStack, GridTransform, Object> customRender) {
+    GridElement(
+            int left,
+            int top,
+            int width,
+            int height,
+            Function<GridTransform, Object> componentPlacer,
+            TriConsumer<PoseStack, GridTransform, Object> customRender
+    ) {
         super(left, top, width, height);
         this.componentPlacer = componentPlacer;
         this.customRender = customRender;
@@ -181,9 +185,11 @@ public class GridLayout extends GridColumn {
         elements
                 .stream()
                 .filter(element -> element.customRender != null)
-                .forEach(element -> element.customRender.accept(poseStack,
+                .forEach(element -> element.customRender.accept(
+                        poseStack,
                         element.transformWithPadding(sidePadding, topPadding),
-                        element.renderContext));
+                        element.renderContext
+                ));
     }
 
 

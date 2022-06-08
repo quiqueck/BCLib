@@ -1,5 +1,10 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.client.models.BasePatterns;
+import org.betterx.bclib.client.models.ModelsHelper;
+import org.betterx.bclib.client.models.PatternsHelper;
+import org.betterx.bclib.interfaces.BlockModelProvider;
+
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.UnbakedModel;
@@ -14,11 +19,6 @@ import net.minecraft.world.level.storage.loot.LootContext;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
-import org.betterx.bclib.client.models.BasePatterns;
-import org.betterx.bclib.client.models.ModelsHelper;
-import org.betterx.bclib.client.models.PatternsHelper;
-import org.betterx.bclib.interfaces.BlockModelProvider;
 
 import java.util.Collections;
 import java.util.List;
@@ -56,16 +56,18 @@ public abstract class BaseButtonBlock extends ButtonBlock implements BlockModelP
                 ? PatternsHelper.createJson(
                 BasePatterns.BLOCK_BUTTON_PRESSED,
                 parentId
-                                           )
+        )
                 : PatternsHelper.createJson(BasePatterns.BLOCK_BUTTON, parentId);
         return ModelsHelper.fromPattern(pattern);
     }
 
     @Override
     @Environment(EnvType.CLIENT)
-    public UnbakedModel getModelVariant(ResourceLocation stateId,
-                                        BlockState blockState,
-                                        Map<ResourceLocation, UnbakedModel> modelCache) {
+    public UnbakedModel getModelVariant(
+            ResourceLocation stateId,
+            BlockState blockState,
+            Map<ResourceLocation, UnbakedModel> modelCache
+    ) {
         String powered = blockState.getValue(POWERED) ? "_powered" : "";
         ResourceLocation modelId = new ResourceLocation(stateId.getNamespace(), "block/" + stateId.getPath() + powered);
         registerBlockModel(stateId, modelId, blockState, modelCache);

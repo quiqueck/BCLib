@@ -1,5 +1,7 @@
 package org.betterx.bclib.client.gui.gridlayout;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -11,9 +13,6 @@ import net.minecraft.util.Mth;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -49,11 +48,13 @@ public abstract class GridScreen extends Screen {
         this(null, title, topPadding, sidePadding, centerVertically);
     }
 
-    public GridScreen(@Nullable Screen parent,
-                      Component title,
-                      int topPadding,
-                      int sidePadding,
-                      boolean centerVertically) {
+    public GridScreen(
+            @Nullable Screen parent,
+            Component title,
+            int topPadding,
+            int sidePadding,
+            boolean centerVertically
+    ) {
         super(title);
 
         this.parent = parent;

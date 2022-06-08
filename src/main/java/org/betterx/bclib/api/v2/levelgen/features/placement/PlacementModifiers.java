@@ -1,65 +1,78 @@
 package org.betterx.bclib.api.v2.levelgen.features.placement;
 
+import org.betterx.bclib.BCLib;
+
+import com.mojang.serialization.Codec;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 
-import com.mojang.serialization.Codec;
-import org.betterx.bclib.BCLib;
-
 public class PlacementModifiers {
     public static final PlacementModifierType<IsEmptyAboveSampledFilter> IS_EMPTY_ABOVE_SAMPLED_FILTER = register(
             "is_empty_above_sampled_filter",
-            IsEmptyAboveSampledFilter.CODEC);
+            IsEmptyAboveSampledFilter.CODEC
+    );
 
     public static final PlacementModifierType<MinEmptyFilter> MIN_EMPTY_FILTER = register(
             "min_empty_filter",
-            MinEmptyFilter.CODEC);
+            MinEmptyFilter.CODEC
+    );
 
     public static final PlacementModifierType<FindSolidInDirection> SOLID_IN_DIR = register(
             "solid_in_dir",
-            FindSolidInDirection.CODEC);
+            FindSolidInDirection.CODEC
+    );
 
     public static final PlacementModifierType<Stencil> STENCIL = register(
             "stencil",
-            Stencil.CODEC);
+            Stencil.CODEC
+    );
 
     public static final PlacementModifierType<All> ALL = register(
             "all",
-            All.CODEC);
+            All.CODEC
+    );
 
     public static final PlacementModifierType<IsBasin> IS_BASIN = register(
             "is_basin",
-            IsBasin.CODEC);
+            IsBasin.CODEC
+    );
 
     public static final PlacementModifierType<Is> IS = register(
             "is",
-            Is.CODEC);
+            Is.CODEC
+    );
 
     public static final PlacementModifierType<Offset> OFFSET = register(
             "offset",
-            Offset.CODEC);
+            Offset.CODEC
+    );
 
     public static final PlacementModifierType<Extend> EXTEND = register(
             "extend",
-            Extend.CODEC);
+            Extend.CODEC
+    );
 
     public static final PlacementModifierType<OnEveryLayer> ON_EVERY_LAYER = register(
             "on_every_layer",
-            OnEveryLayer.CODEC);
+            OnEveryLayer.CODEC
+    );
 
     public static final PlacementModifierType<UnderEveryLayer> UNDER_EVERY_LAYER = register(
             "under_every_layer",
-            UnderEveryLayer.CODEC);
+            UnderEveryLayer.CODEC
+    );
 
 
     private static <P extends PlacementModifier> PlacementModifierType<P> register(String path, Codec<P> codec) {
         return register(BCLib.makeID(path), codec);
     }
 
-    public static <P extends PlacementModifier> PlacementModifierType<P> register(ResourceLocation location,
-                                                                                  Codec<P> codec) {
+    public static <P extends PlacementModifier> PlacementModifierType<P> register(
+            ResourceLocation location,
+            Codec<P> codec
+    ) {
         return Registry.register(Registry.PLACEMENT_MODIFIERS, location, () -> codec);
     }
 

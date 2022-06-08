@@ -1,5 +1,14 @@
 package org.betterx.bclib.api.v2.levelgen.biomes;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.levelgen.features.BCLFeature;
+import org.betterx.bclib.api.v2.tag.CommonBiomeTags;
+import org.betterx.bclib.api.v2.tag.TagAPI;
+import org.betterx.bclib.interfaces.SurfaceMaterialProvider;
+import org.betterx.bclib.mixin.common.BiomeGenerationSettingsAccessor;
+import org.betterx.bclib.mixin.common.MobSpawnSettingsAccessor;
+import org.betterx.bclib.util.CollectionsUtil;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -40,14 +49,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.levelgen.features.BCLFeature;
-import org.betterx.bclib.api.v2.tag.CommonBiomeTags;
-import org.betterx.bclib.api.v2.tag.TagAPI;
-import org.betterx.bclib.interfaces.SurfaceMaterialProvider;
-import org.betterx.bclib.mixin.common.BiomeGenerationSettingsAccessor;
-import org.betterx.bclib.mixin.common.MobSpawnSettingsAccessor;
-import org.betterx.bclib.util.CollectionsUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -95,7 +96,7 @@ public class BiomeAPI {
         @Override
         public String toString() {
             String str = debugName;
-            if (parentOrNull != null) str += " -> " + parentOrNull.toString();
+            if (parentOrNull != null) str += " -> " + parentOrNull;
             return str;
         }
     }
@@ -115,12 +116,16 @@ public class BiomeAPI {
     public static final BCLBiome BASALT_DELTAS_BIOME = registerNetherBiome(getFromRegistry(Biomes.BASALT_DELTAS).value());
 
     public static final BCLBiome THE_END = registerEndLandBiome(getFromRegistry(Biomes.THE_END));
-    public static final BCLBiome END_MIDLANDS = registerSubBiome(THE_END,
+    public static final BCLBiome END_MIDLANDS = registerSubBiome(
+            THE_END,
             getFromRegistry(Biomes.END_MIDLANDS).value(),
-            0.5F);
-    public static final BCLBiome END_HIGHLANDS = registerSubBiome(THE_END,
+            0.5F
+    );
+    public static final BCLBiome END_HIGHLANDS = registerSubBiome(
+            THE_END,
             getFromRegistry(Biomes.END_HIGHLANDS).value(),
-            0.5F);
+            0.5F
+    );
 
     public static final BCLBiome END_BARRENS = registerEndVoidBiome(getFromRegistry(new ResourceLocation("end_barrens")));
     public static final BCLBiome SMALL_END_ISLANDS = registerEndVoidBiome(getFromRegistry(new ResourceLocation(
@@ -155,16 +160,20 @@ public class BiomeAPI {
     }
 
     public static BCLBiome registerSubBiome(BCLBiome parent, BCLBiome subBiome) {
-        return registerSubBiome(parent,
+        return registerSubBiome(
+                parent,
                 subBiome,
-                BiomeType.BIOME_TYPE_MAP.getOrDefault(parent.getID(), BiomeType.NONE));
+                BiomeType.BIOME_TYPE_MAP.getOrDefault(parent.getID(), BiomeType.NONE)
+        );
     }
 
     public static BCLBiome registerSubBiome(BCLBiome parent, Biome subBiome, float genChance) {
-        return registerSubBiome(parent,
+        return registerSubBiome(
+                parent,
                 subBiome,
                 genChance,
-                BiomeType.BIOME_TYPE_MAP.getOrDefault(parent.getID(), BiomeType.NONE));
+                BiomeType.BIOME_TYPE_MAP.getOrDefault(parent.getID(), BiomeType.NONE)
+        );
     }
 
     public static BCLBiome registerSubBiome(BCLBiome parent, BCLBiome subBiome, BiomeType dim) {
@@ -251,8 +260,10 @@ public class BiomeAPI {
      * @return {@link BCLBiome}
      */
     public static BCLBiome registerEndLandBiome(Holder<Biome> biome, float genChance) {
-        BCLBiome bclBiome = new BCLBiome(biome.value(),
-                VanillaBiomeSettings.createVanilla().setGenChance(genChance).build());
+        BCLBiome bclBiome = new BCLBiome(
+                biome.value(),
+                VanillaBiomeSettings.createVanilla().setGenChance(genChance).build()
+        );
 
         registerBiome(bclBiome, BiomeType.OTHER_END_LAND);
         return bclBiome;
@@ -299,8 +310,10 @@ public class BiomeAPI {
      * @return {@link BCLBiome}
      */
     public static BCLBiome registerEndVoidBiome(Holder<Biome> biome, float genChance) {
-        BCLBiome bclBiome = new BCLBiome(biome.value(),
-                VanillaBiomeSettings.createVanilla().setGenChance(genChance).build());
+        BCLBiome bclBiome = new BCLBiome(
+                biome.value(),
+                VanillaBiomeSettings.createVanilla().setGenChance(genChance).build()
+        );
 
         registerBiome(bclBiome, BiomeType.END_VOID);
         return bclBiome;
@@ -506,11 +519,14 @@ public class BiomeAPI {
      * @param dimensionID  {@link ResourceLocation} dimension ID, example: Level.OVERWORLD or "minecraft:overworld".
      * @param modification {@link BiConsumer} with {@link ResourceKey} biome ID and {@link Biome} parameters.
      */
-    public static void registerBiomeModification(ResourceKey<LevelStem> dimensionID,
-                                                 BiConsumer<ResourceLocation, Holder<Biome>> modification) {
+    public static void registerBiomeModification(
+            ResourceKey<LevelStem> dimensionID,
+            BiConsumer<ResourceLocation, Holder<Biome>> modification
+    ) {
         List<BiConsumer<ResourceLocation, Holder<Biome>>> modifications = InternalBiomeAPI.MODIFICATIONS.computeIfAbsent(
                 dimensionID,
-                k -> Lists.newArrayList());
+                k -> Lists.newArrayList()
+        );
         modifications.add(modification);
     }
 
@@ -549,11 +565,14 @@ public class BiomeAPI {
      * @param dimensionID  {@link ResourceLocation} dimension ID, example: Level.OVERWORLD or "minecraft:overworld".
      * @param modification {@link BiConsumer} with {@link ResourceKey} biome ID and {@link Biome} parameters.
      */
-    public static void onFinishingBiomeTags(ResourceKey dimensionID,
-                                            BiConsumer<ResourceLocation, Holder<Biome>> modification) {
+    public static void onFinishingBiomeTags(
+            ResourceKey dimensionID,
+            BiConsumer<ResourceLocation, Holder<Biome>> modification
+    ) {
         List<BiConsumer<ResourceLocation, Holder<Biome>>> modifications = InternalBiomeAPI.TAG_ADDERS.computeIfAbsent(
                 dimensionID,
-                k -> Lists.newArrayList());
+                k -> Lists.newArrayList()
+        );
         modifications.add(modification);
     }
 
@@ -627,9 +646,11 @@ public class BiomeAPI {
      * @param step               a {@link Decoration} step for the feature.
      * @param additionalFeatures List of {@link ConfiguredFeature} to add.
      */
-    private static void addBiomeFeature(Holder<Biome> biome,
-                                        Decoration step,
-                                        List<Holder<PlacedFeature>> additionalFeatures) {
+    private static void addBiomeFeature(
+            Holder<Biome> biome,
+            Decoration step,
+            List<Holder<PlacedFeature>> additionalFeatures
+    ) {
         BiomeGenerationSettingsAccessor accessor = (BiomeGenerationSettingsAccessor) biome.value()
                                                                                           .getGenerationSettings();
         List<HolderSet<PlacedFeature>> allFeatures = CollectionsUtil.getMutable(accessor.bclib_getFeatures());
@@ -670,11 +691,13 @@ public class BiomeAPI {
      * @param minGroupCount minimum mobs in group.
      * @param maxGroupCount maximum mobs in group.
      */
-    public static <M extends Mob> void addBiomeMobSpawn(Holder<Biome> biome,
-                                                        EntityType<M> entityType,
-                                                        int weight,
-                                                        int minGroupCount,
-                                                        int maxGroupCount) {
+    public static <M extends Mob> void addBiomeMobSpawn(
+            Holder<Biome> biome,
+            EntityType<M> entityType,
+            int weight,
+            int minGroupCount,
+            int maxGroupCount
+    ) {
         final MobCategory category = entityType.getCategory();
         MobSpawnSettingsAccessor accessor = (MobSpawnSettingsAccessor) biome.value().getMobSettings();
         Map<MobCategory, WeightedRandomList<SpawnerData>> spawners = CollectionsUtil.getMutable(accessor.bcl_getSpawners());
@@ -759,8 +782,10 @@ public class BiomeAPI {
         }
 
         features.forEach(feature -> {
-            InternalBiomeAPI.FEATURE_ORDER.computeIfAbsent(feature,
-                    f -> InternalBiomeAPI.FEATURE_ORDER_ID.getAndIncrement());
+            InternalBiomeAPI.FEATURE_ORDER.computeIfAbsent(
+                    feature,
+                    f -> InternalBiomeAPI.FEATURE_ORDER_ID.getAndIncrement()
+            );
         });
 
         features.sort((f1, f2) -> {
@@ -771,8 +796,10 @@ public class BiomeAPI {
     }
 
 
-    private static List<Holder<PlacedFeature>> getFeaturesListCopy(List<HolderSet<PlacedFeature>> features,
-                                                                   Decoration step) {
+    private static List<Holder<PlacedFeature>> getFeaturesListCopy(
+            List<HolderSet<PlacedFeature>> features,
+            Decoration step
+    ) {
         return getFeaturesListCopy(features, step.ordinal());
     }
 

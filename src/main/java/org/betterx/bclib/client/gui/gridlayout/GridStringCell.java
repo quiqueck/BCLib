@@ -10,33 +10,39 @@ import net.fabricmc.api.Environment;
 public class GridStringCell extends GridCell {
     private Component text;
 
-    GridStringCell(double width,
-                   GridLayout.GridValueType widthType,
-                   int height,
-                   GridLayout.Alignment contentAlignment,
-                   GridScreen parent,
-                   Component text) {
+    GridStringCell(
+            double width,
+            GridLayout.GridValueType widthType,
+            int height,
+            GridLayout.Alignment contentAlignment,
+            GridScreen parent,
+            Component text
+    ) {
         this(width, widthType, height, contentAlignment, parent, text, GridLayout.COLOR_WHITE);
 
     }
 
-    GridStringCell(double width,
-                   GridLayout.GridValueType widthType,
-                   int height,
-                   GridLayout.Alignment contentAlignment,
-                   GridScreen parent,
-                   Component text,
-                   int color) {
+    GridStringCell(
+            double width,
+            GridLayout.GridValueType widthType,
+            int height,
+            GridLayout.Alignment contentAlignment,
+            GridScreen parent,
+            Component text,
+            int color
+    ) {
         super(width, height, widthType, null, null);
         this.text = text;
         this.customRender = (poseStack, transform, context) -> {
             if (contentAlignment == GridLayout.Alignment.CENTER) {
-                GuiComponent.drawCenteredString(poseStack,
+                GuiComponent.drawCenteredString(
+                        poseStack,
                         parent.getFont(),
                         this.text,
                         transform.width / 2 + transform.left,
                         transform.top,
-                        color);
+                        color
+                );
             } else if (contentAlignment == GridLayout.Alignment.LEFT) {
                 GuiComponent.drawString(poseStack, parent.getFont(), this.text, transform.left, transform.top, color);
             }

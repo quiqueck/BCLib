@@ -1,16 +1,16 @@
 package org.betterx.bclib.client.gui.screens;
 
 
+import org.betterx.bclib.client.gui.gridlayout.GridCheckboxCell;
+import org.betterx.bclib.client.gui.gridlayout.GridLayout;
+import org.betterx.bclib.client.gui.gridlayout.GridRow;
+
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
-import org.betterx.bclib.client.gui.gridlayout.GridCheckboxCell;
-import org.betterx.bclib.client.gui.gridlayout.GridLayout;
-import org.betterx.bclib.client.gui.gridlayout.GridRow;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -34,18 +34,22 @@ public class ConfirmFixScreen extends BCLibScreen {
         grid.addSpacerRow();
 
         GridRow row = grid.addRow();
-        GridCheckboxCell backup = row.addCheckbox(Component.translatable("bclib.datafixer.backupWarning.backup"),
+        GridCheckboxCell backup = row.addCheckbox(
+                Component.translatable("bclib.datafixer.backupWarning.backup"),
                 true,
                 BUTTON_HEIGHT,
-                this.font);
+                this.font
+        );
 
         grid.addSpacerRow(10);
 
         row = grid.addRow();
-        GridCheckboxCell fix = row.addCheckbox(Component.translatable("bclib.datafixer.backupWarning.fix"),
+        GridCheckboxCell fix = row.addCheckbox(
+                Component.translatable("bclib.datafixer.backupWarning.fix"),
                 true,
                 BUTTON_HEIGHT,
-                this.font);
+                this.font
+        );
 
         grid.addSpacerRow(20);
 

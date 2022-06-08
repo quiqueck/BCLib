@@ -1,5 +1,8 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.api.v2.tag.NamedMineableTags;
+import org.betterx.bclib.api.v2.tag.TagAPI;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -16,9 +19,6 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
-import org.betterx.bclib.api.v2.tag.NamedMineableTags;
-import org.betterx.bclib.api.v2.tag.TagAPI;
-
 public class BaseStripableLogBlock extends BaseRotatedPillarBlock {
     private final Block striped;
 
@@ -29,20 +29,23 @@ public class BaseStripableLogBlock extends BaseRotatedPillarBlock {
 
     @Override
     @SuppressWarnings("deprecation")
-    public InteractionResult use(BlockState state,
-                                 Level world,
-                                 BlockPos pos,
-                                 Player player,
-                                 InteractionHand hand,
-                                 BlockHitResult hit) {
+    public InteractionResult use(
+            BlockState state,
+            Level world,
+            BlockPos pos,
+            Player player,
+            InteractionHand hand,
+            BlockHitResult hit
+    ) {
         if (TagAPI.isToolWithMineableTag(player.getMainHandItem(), NamedMineableTags.AXE)) {
             world.playSound(player, pos, SoundEvents.AXE_STRIP, SoundSource.BLOCKS, 1.0F, 1.0F);
             if (!world.isClientSide) {
-                world.setBlock(pos,
-                               striped.defaultBlockState()
-                                      .setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS)),
-                               11
-                              );
+                world.setBlock(
+                        pos,
+                        striped.defaultBlockState()
+                               .setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS)),
+                        11
+                );
                 if (!player.isCreative()) {
                     player.getMainHandItem().hurt(1, world.random, (ServerPlayer) player);
                 }

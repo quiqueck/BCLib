@@ -1,5 +1,14 @@
 package org.betterx.bclib;
 
+import org.betterx.bclib.api.v2.datafixer.DataFixerAPI;
+import org.betterx.bclib.api.v2.datafixer.ForcedLevelPatch;
+import org.betterx.bclib.api.v2.datafixer.MigrationProfile;
+import org.betterx.bclib.api.v2.generator.GeneratorOptions;
+import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
+import org.betterx.bclib.config.Configs;
+import org.betterx.bclib.util.MHelper;
+
+import com.mojang.serialization.Dynamic;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
@@ -10,15 +19,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
-
-import com.mojang.serialization.Dynamic;
-import org.betterx.bclib.api.v2.datafixer.DataFixerAPI;
-import org.betterx.bclib.api.v2.datafixer.ForcedLevelPatch;
-import org.betterx.bclib.api.v2.datafixer.MigrationProfile;
-import org.betterx.bclib.api.v2.generator.GeneratorOptions;
-import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
-import org.betterx.bclib.config.Configs;
-import org.betterx.bclib.util.MHelper;
 
 import java.util.Optional;
 
@@ -87,22 +87,23 @@ final class BiomeSourcePatch extends ForcedLevelPatch {
 //        return result;
     }
 
-    private boolean checkDimension(CompoundTag worldGenSettings,
-                                   CompoundTag dimensions,
-                                   RegistryAccess registryAccess,
-                                   RegistryOps<Tag> registryOps,
-                                   ResourceKey<LevelStem> dimensionKey
+    private boolean checkDimension(
+            CompoundTag worldGenSettings,
+            CompoundTag dimensions,
+            RegistryAccess registryAccess,
+            RegistryOps<Tag> registryOps,
+            ResourceKey<LevelStem> dimensionKey
     ) {
 
         final long seed = worldGenSettings.contains("seed")
                 ? worldGenSettings.getLong("seed")
                 : MHelper.RANDOM.nextLong();
 
-        final boolean genStructures = worldGenSettings.contains("generate_features") ? worldGenSettings.getBoolean(
-                "generate_features") : true;
+        final boolean genStructures = !worldGenSettings.contains("generate_features") || worldGenSettings.getBoolean(
+                "generate_features");
 
-        final boolean genBonusChest = worldGenSettings.contains("bonus_chest") ? worldGenSettings.getBoolean(
-                "bonus_chest") : false;
+        final boolean genBonusChest = worldGenSettings.contains("bonus_chest") && worldGenSettings.getBoolean(
+                "bonus_chest");
 
         boolean result = false;
         CompoundTag dimensionTag = dimensions.getCompound(dimensionKey.location().toString());

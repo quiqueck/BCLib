@@ -1,15 +1,15 @@
 package org.betterx.bclib.complexmaterials.entry;
 
+import org.betterx.bclib.api.v2.tag.TagAPI;
+import org.betterx.bclib.complexmaterials.ComplexMaterial;
+import org.betterx.bclib.registry.BlockRegistry;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-
-import org.betterx.bclib.api.v2.tag.TagAPI;
-import org.betterx.bclib.complexmaterials.ComplexMaterial;
-import org.betterx.bclib.registry.BlockRegistry;
 
 import java.util.function.BiFunction;
 
@@ -24,9 +24,11 @@ public class BlockEntry extends ComplexMaterialEntry {
         this(suffix, true, initFunction);
     }
 
-    public BlockEntry(String suffix,
-                      boolean hasItem,
-                      BiFunction<ComplexMaterial, FabricBlockSettings, Block> initFunction) {
+    public BlockEntry(
+            String suffix,
+            boolean hasItem,
+            BiFunction<ComplexMaterial, FabricBlockSettings, Block> initFunction
+    ) {
         super(suffix);
         this.initFunction = initFunction;
         this.hasItem = hasItem;

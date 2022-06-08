@@ -1,5 +1,12 @@
 package org.betterx.bclib.registry;
 
+import org.betterx.bclib.api.v2.tag.*;
+import org.betterx.bclib.blocks.BaseLeavesBlock;
+import org.betterx.bclib.blocks.BaseOreBlock;
+import org.betterx.bclib.blocks.FeatureSaplingBlock;
+import org.betterx.bclib.config.PathConfig;
+import org.betterx.bclib.interfaces.CustomItemProvider;
+
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
@@ -9,13 +16,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
-
-import org.betterx.bclib.api.v2.tag.*;
-import org.betterx.bclib.blocks.BaseLeavesBlock;
-import org.betterx.bclib.blocks.BaseOreBlock;
-import org.betterx.bclib.blocks.FeatureSaplingBlock;
-import org.betterx.bclib.config.PathConfig;
-import org.betterx.bclib.interfaces.CustomItemProvider;
 
 public class BlockRegistry extends BaseRegistry<Block> {
     public BlockRegistry(CreativeModeTab creativeTab, PathConfig config) {
@@ -51,7 +51,7 @@ public class BlockRegistry extends BaseRegistry<Block> {
                     CommonBlockTags.LEAVES,
                     NamedMineableTags.HOE,
                     NamedMineableTags.SHEARS
-                               );
+            );
             if (item != null) {
                 TagAPI.addItemTags(item, CommonItemTags.LEAVES, NamedItemTags.LEAVES);
             }

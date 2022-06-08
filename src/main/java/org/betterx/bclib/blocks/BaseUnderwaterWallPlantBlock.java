@@ -21,7 +21,7 @@ public abstract class BaseUnderwaterWallPlantBlock extends BaseWallPlantBlock im
                         .of(Material.WATER_PLANT)
                         .sound(SoundType.WET_GRASS)
                         .noCollission()
-            );
+        );
     }
 
     public BaseUnderwaterWallPlantBlock(int light) {
@@ -31,7 +31,7 @@ public abstract class BaseUnderwaterWallPlantBlock extends BaseWallPlantBlock im
                         .luminance(light)
                         .sound(SoundType.WET_GRASS)
                         .noCollission()
-            );
+        );
     }
 
     public BaseUnderwaterWallPlantBlock(Properties settings) {

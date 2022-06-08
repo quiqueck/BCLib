@@ -35,18 +35,22 @@ public abstract class BaseDataHandler {
     }
 
     @Environment(EnvType.CLIENT)
-    abstract void receiveFromServer(Minecraft client,
-                                    ClientPacketListener handler,
-                                    FriendlyByteBuf buf,
-                                    PacketSender responseSender);
+    abstract void receiveFromServer(
+            Minecraft client,
+            ClientPacketListener handler,
+            FriendlyByteBuf buf,
+            PacketSender responseSender
+    );
 
     private ServerPlayer lastMessageSender;
 
-    void receiveFromClient(MinecraftServer server,
-                           ServerPlayer player,
-                           ServerGamePacketListenerImpl handler,
-                           FriendlyByteBuf buf,
-                           PacketSender responseSender) {
+    void receiveFromClient(
+            MinecraftServer server,
+            ServerPlayer player,
+            ServerGamePacketListenerImpl handler,
+            FriendlyByteBuf buf,
+            PacketSender responseSender
+    ) {
         lastMessageSender = player;
     }
 

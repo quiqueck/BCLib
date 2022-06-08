@@ -1,8 +1,8 @@
 package org.betterx.bclib.config;
 
-import net.minecraft.resources.ResourceLocation;
-
 import org.betterx.bclib.util.Pair;
+
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.Arrays;
 import org.jetbrains.annotations.NotNull;

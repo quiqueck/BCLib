@@ -1,6 +1,9 @@
 package org.betterx.bclib.items.tool;
 
 
+import org.betterx.bclib.api.v2.tag.CommonItemTags;
+import org.betterx.bclib.api.v2.tag.TagAPI;
+
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -8,17 +11,16 @@ import net.minecraft.world.item.ShearsItem;
 
 import net.fabricmc.fabric.api.mininglevel.v1.FabricMineableTags;
 
-import org.betterx.bclib.api.v2.tag.CommonItemTags;
-import org.betterx.bclib.api.v2.tag.TagAPI;
-
 public class BaseShearsItem extends ShearsItem {
     public BaseShearsItem(Properties properties) {
         super(properties);
     }
 
     public static boolean isShear(ItemStack tool) {
-        return tool.is(Items.SHEARS) | tool.is(CommonItemTags.SHEARS) || TagAPI.isToolWithMineableTag(tool,
-                                                                                                      FabricMineableTags.SHEARS_MINEABLE);
+        return tool.is(Items.SHEARS) | tool.is(CommonItemTags.SHEARS) || TagAPI.isToolWithMineableTag(
+                tool,
+                FabricMineableTags.SHEARS_MINEABLE
+        );
     }
 
     public static boolean isShear(ItemStack itemStack, Item item) {

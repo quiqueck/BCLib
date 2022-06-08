@@ -1,15 +1,15 @@
 package org.betterx.bclib.client.gui.screens;
 
+import org.betterx.bclib.client.gui.gridlayout.GridColumn;
+import org.betterx.bclib.client.gui.gridlayout.GridLayout;
+import org.betterx.bclib.client.gui.gridlayout.GridRow;
+
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
-import org.betterx.bclib.client.gui.gridlayout.GridColumn;
-import org.betterx.bclib.client.gui.gridlayout.GridLayout;
-import org.betterx.bclib.client.gui.gridlayout.GridRow;
 
 @Environment(EnvType.CLIENT)
 public class LevelFixErrorScreen extends BCLibScreen {

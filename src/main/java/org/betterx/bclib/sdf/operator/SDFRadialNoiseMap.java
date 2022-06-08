@@ -1,9 +1,9 @@
 package org.betterx.bclib.sdf.operator;
 
-import net.minecraft.util.Mth;
-
 import org.betterx.bclib.noise.OpenSimplexNoise;
 import org.betterx.bclib.util.MHelper;
+
+import net.minecraft.util.Mth;
 
 public class SDFRadialNoiseMap extends SDFDisplacement {
     private static final float SIN = Mth.sin(0.5F);
@@ -38,7 +38,7 @@ public class SDFRadialNoiseMap extends SDFDisplacement {
         return (float) noise.eval(x, z) + (float) noise.eval(
                 x * 3 + 1000,
                 z * 3
-                                                            ) * 0.5F + (float) noise.eval(x * 9 + 1000, z * 9) * 0.2F;
+        ) * 0.5F + (float) noise.eval(x * 9 + 1000, z * 9) * 0.2F;
     }
 
     public SDFRadialNoiseMap setSeed(long seed) {

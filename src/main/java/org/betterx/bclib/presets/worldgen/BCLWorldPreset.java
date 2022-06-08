@@ -1,15 +1,15 @@
 package org.betterx.bclib.presets.worldgen;
 
+import org.betterx.bclib.mixin.common.WorldPresetAccessor;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
-
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import org.betterx.bclib.mixin.common.WorldPresetAccessor;
 
 import java.util.Map;
 
@@ -37,7 +37,8 @@ public class BCLWorldPreset extends WorldPreset {
 
     public static final Codec<Holder<WorldPreset>> CODEC = RegistryFileCodec.create(
             Registry.WORLD_PRESET_REGISTRY,
-            (Codec<WorldPreset>) ((Object) DIRECT_CODEC));
+            (Codec<WorldPreset>) ((Object) DIRECT_CODEC)
+    );
 
     public BCLWorldPreset(Map<ResourceKey<LevelStem>, LevelStem> map, int sortOrder, WorldPresetSettings settings) {
         super(map);
@@ -46,7 +47,7 @@ public class BCLWorldPreset extends WorldPreset {
     }
 
     private Map<ResourceKey<LevelStem>, LevelStem> getDimensions() {
-        return WorldPresetAccessor.class.cast(this).bcl_getDimensions();
+        return ((WorldPresetAccessor) this).bcl_getDimensions();
     }
 
 }

@@ -1,6 +1,6 @@
 {
-	"parent": "block/cross",
-	"textures": {
-		"cross": "%modid%:block/%texture%"
-	}
+  "parent": "block/cross",
+  "textures": {
+    "cross": "%modid%:block/%texture%"
+  }
 }

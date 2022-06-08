@@ -1,13 +1,14 @@
 package org.betterx.bclib.api.v2.generator.map;
 
-import net.minecraft.util.Mth;
-
-import org.apache.commons.lang3.function.TriFunction;
 import org.betterx.bclib.api.v2.generator.BiomePicker;
 import org.betterx.bclib.interfaces.BiomeChunk;
 import org.betterx.bclib.interfaces.BiomeMap;
 import org.betterx.bclib.interfaces.TriConsumer;
 import org.betterx.bclib.noise.OpenSimplexNoise;
+
+import net.minecraft.util.Mth;
+
+import org.apache.commons.lang3.function.TriFunction;
 
 import java.util.Random;
 
@@ -20,12 +21,14 @@ public class MapStack implements BiomeMap {
     private final int maxValue;
     private final int maxIndex;
 
-    public MapStack(long seed,
-                    int size,
-                    BiomePicker picker,
-                    int mapHeight,
-                    int worldHeight,
-                    TriFunction<Long, Integer, BiomePicker, BiomeMap> mapConstructor) {
+    public MapStack(
+            long seed,
+            int size,
+            BiomePicker picker,
+            int mapHeight,
+            int worldHeight,
+            TriFunction<Long, Integer, BiomePicker, BiomeMap> mapConstructor
+    ) {
         final int mapCount = Mth.ceil((float) worldHeight / mapHeight);
         this.maxIndex = mapCount - 1;
         this.worldHeight = worldHeight;
@@ -66,8 +69,10 @@ public class MapStack implements BiomeMap {
         } else if (y > maxValue) {
             mapIndex = maxIndex;
         } else {
-            mapIndex = Mth.floor((y + noise.eval(x * 0.03,
-                    z * 0.03) * layerDistortion) / worldHeight * maxIndex + 0.5F);
+            mapIndex = Mth.floor((y + noise.eval(
+                    x * 0.03,
+                    z * 0.03
+            ) * layerDistortion) / worldHeight * maxIndex + 0.5F);
             mapIndex = Mth.clamp(mapIndex, 0, maxIndex);
         }
 

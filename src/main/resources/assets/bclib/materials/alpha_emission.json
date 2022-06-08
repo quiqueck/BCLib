@@ -1,8 +1,8 @@
 {
-	"layers": [
-		{
-			"vertexSource": "canvas:shaders/material/default.vert",
-			"fragmentSource": "bclib:shaders/material/alpha_emission.frag"
-		}
-	]
+  "layers": [
+    {
+      "vertexSource": "canvas:shaders/material/default.vert",
+      "fragmentSource": "bclib:shaders/material/alpha_emission.frag"
+    }
+  ]
 }

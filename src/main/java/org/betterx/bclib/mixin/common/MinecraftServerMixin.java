@@ -1,5 +1,9 @@
 package org.betterx.bclib.mixin.common;
 
+import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
+import org.betterx.bclib.recipes.BCLRecipeManager;
+
+import com.mojang.datafixers.DataFixer;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.Services;
@@ -11,9 +15,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.LevelStorageSource.LevelStorageAccess;
 import net.minecraft.world.level.storage.WorldData;
 
-import com.mojang.datafixers.DataFixer;
-import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
-import org.betterx.bclib.recipes.BCLRecipeManager;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -41,21 +42,25 @@ public class MinecraftServerMixin {
     protected WorldData worldData;
 
     @Inject(method = "<init>*", at = @At("TAIL"))
-    private void bclib_onServerInit(Thread thread,
-                                    LevelStorageAccess levelStorageAccess,
-                                    PackRepository packRepository,
-                                    WorldStem worldStem,
-                                    Proxy proxy,
-                                    DataFixer dataFixer,
-                                    Services services,
-                                    ChunkProgressListenerFactory chunkProgressListenerFactory,
-                                    CallbackInfo ci) {
+    private void bclib_onServerInit(
+            Thread thread,
+            LevelStorageAccess levelStorageAccess,
+            PackRepository packRepository,
+            WorldStem worldStem,
+            Proxy proxy,
+            DataFixer dataFixer,
+            Services services,
+            ChunkProgressListenerFactory chunkProgressListenerFactory,
+            CallbackInfo ci
+    ) {
         DataExchangeAPI.prepareServerside();
     }
 
     @Inject(method = "reloadResources", at = @At(value = "RETURN"), cancellable = true)
-    private void bclib_reloadResources(Collection<String> collection,
-                                       CallbackInfoReturnable<CompletableFuture<Void>> info) {
+    private void bclib_reloadResources(
+            Collection<String> collection,
+            CallbackInfoReturnable<CompletableFuture<Void>> info
+    ) {
         bclib_injectRecipes();
     }
 

@@ -1,5 +1,10 @@
 package org.betterx.bclib.mixin.client;
 
+import org.betterx.bclib.blocks.BaseSignBlock;
+import org.betterx.bclib.client.render.BaseSignBlockEntityRenderer;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.SignEditScreen;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -9,10 +14,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import org.betterx.bclib.blocks.BaseSignBlock;
-import org.betterx.bclib.client.render.BaseSignBlockEntityRenderer;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -45,16 +46,18 @@ public abstract class SignEditScreenMixin extends Screen {
             target = "Lcom/mojang/blaze3d/vertex/PoseStack;pushPose()V",
             shift = Shift.BEFORE
     ))
-    private void bclib_checkOffset(PoseStack poseStack,
-                                   int i,
-                                   int j,
-                                   float f,
-                                   CallbackInfo ci,
-                                   float g,
-                                   BlockState blockState,
-                                   boolean bl,
-                                   boolean bl2,
-                                   float h) {
+    private void bclib_checkOffset(
+            PoseStack poseStack,
+            int i,
+            int j,
+            float f,
+            CallbackInfo ci,
+            float g,
+            BlockState blockState,
+            boolean bl,
+            boolean bl2,
+            float h
+    ) {
         bclib_isSign = blockState.getBlock() instanceof BaseSignBlock;
         if (bclib_isSign) {
             bclib_renderStick = blockState.getValue(BaseSignBlock.FLOOR);

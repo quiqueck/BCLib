@@ -1,5 +1,7 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.api.v2.levelgen.features.BCLFeature;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
@@ -8,8 +10,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
-import org.betterx.bclib.api.v2.levelgen.features.BCLFeature;
 
 import java.util.function.Function;
 
@@ -20,13 +20,17 @@ public abstract class FeatureHangingSaplingBlock extends FeatureSaplingBlock {
         super(featureSupplier);
     }
 
-    public FeatureHangingSaplingBlock(Function<BlockState, BCLFeature> featureSupplier,
-                                      int light) {
+    public FeatureHangingSaplingBlock(
+            Function<BlockState, BCLFeature> featureSupplier,
+            int light
+    ) {
         super(light, featureSupplier);
     }
 
-    public FeatureHangingSaplingBlock(BlockBehaviour.Properties properties,
-                                      Function<BlockState, BCLFeature> featureSupplier) {
+    public FeatureHangingSaplingBlock(
+            BlockBehaviour.Properties properties,
+            Function<BlockState, BCLFeature> featureSupplier
+    ) {
         super(properties, featureSupplier);
     }
 

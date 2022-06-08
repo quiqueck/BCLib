@@ -1,5 +1,12 @@
 package org.betterx.bclib.client.render;
 
+import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
+import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
+import org.betterx.bclib.config.Configs;
+import org.betterx.bclib.util.BackgroundInfo;
+import org.betterx.bclib.util.MHelper;
+
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Camera;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.util.Mth;
@@ -10,13 +17,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.material.FogType;
-
-import com.mojang.blaze3d.systems.RenderSystem;
-import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
-import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
-import org.betterx.bclib.config.Configs;
-import org.betterx.bclib.util.BackgroundInfo;
-import org.betterx.bclib.util.MHelper;
 
 public class CustomFogRenderer {
     private static final MutableBlockPos LAST_POS = new MutableBlockPos(0, -100, 0);
@@ -38,10 +38,12 @@ public class CustomFogRenderer {
         }
         Entity entity = camera.getEntity();
 
-        if (!isForcedDimension(entity.level) && shouldIgnoreArea(entity.level,
-                                                                 (int) entity.getX(),
-                                                                 (int) entity.getEyeY(),
-                                                                 (int) entity.getZ())) {
+        if (!isForcedDimension(entity.level) && shouldIgnoreArea(
+                entity.level,
+                (int) entity.getX(),
+                (int) entity.getEyeY(),
+                (int) entity.getZ()
+        )) {
             BackgroundInfo.fogDensity = 1;
             return false;
         }

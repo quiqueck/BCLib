@@ -1,5 +1,9 @@
 package org.betterx.bclib.api.v2.levelgen.features;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.levelgen.features.config.*;
+import org.betterx.bclib.api.v2.levelgen.features.features.*;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -21,45 +25,54 @@ import net.minecraft.world.level.levelgen.feature.configurations.RandomPatchConf
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.levelgen.features.config.*;
-import org.betterx.bclib.api.v2.levelgen.features.features.*;
-
 import java.util.Map.Entry;
 import java.util.Optional;
 
 public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> {
     public static final Feature<PlaceFacingBlockConfig> PLACE_BLOCK = register(
             BCLib.makeID("place_block"),
-            new PlaceBlockFeature<>(PlaceFacingBlockConfig.CODEC));
+            new PlaceBlockFeature<>(PlaceFacingBlockConfig.CODEC)
+    );
     public static final Feature<ScatterFeatureConfig.OnSolid> SCATTER_ON_SOLID = register(
             BCLib.makeID("scatter_on_solid"),
-            new ScatterFeature<>(ScatterFeatureConfig.OnSolid.CODEC));
+            new ScatterFeature<>(ScatterFeatureConfig.OnSolid.CODEC)
+    );
 
     public static final Feature<ScatterFeatureConfig.ExtendTop> SCATTER_EXTEND_TOP = register(
             BCLib.makeID("scatter_extend_top"),
-            new ScatterFeature<>(ScatterFeatureConfig.ExtendTop.CODEC));
+            new ScatterFeature<>(ScatterFeatureConfig.ExtendTop.CODEC)
+    );
 
     public static final Feature<ScatterFeatureConfig.ExtendBottom> SCATTER_EXTEND_BOTTOM = register(
             BCLib.makeID("scatter_extend_bottom"),
-            new ScatterFeature<>(ScatterFeatureConfig.ExtendBottom.CODEC));
+            new ScatterFeature<>(ScatterFeatureConfig.ExtendBottom.CODEC)
+    );
 
     public static final Feature<RandomFeatureConfiguration> RANDOM_SELECTOR = register(
             BCLib.makeID("random_select"),
-            new WeightedRandomSelectorFeature());
-    public static final Feature<TemplateFeatureConfig> TEMPLATE = register(BCLib.makeID("template"),
+            new WeightedRandomSelectorFeature()
+    );
+    public static final Feature<TemplateFeatureConfig> TEMPLATE = register(
+            BCLib.makeID("template"),
             new TemplateFeature(
-                    TemplateFeatureConfig.CODEC));
+                    TemplateFeatureConfig.CODEC)
+    );
 
-    public static final Feature<NoneFeatureConfiguration> MARK_POSTPROCESSING = register(BCLib.makeID(
+    public static final Feature<NoneFeatureConfiguration> MARK_POSTPROCESSING = register(
+            BCLib.makeID(
                     "mark_postprocessing"),
-            new MarkPostProcessingFeature());
+            new MarkPostProcessingFeature()
+    );
 
-    public static final Feature<SequenceFeatureConfig> SEQUENCE = register(BCLib.makeID("sequence"),
-            new SequenceFeature());
+    public static final Feature<SequenceFeatureConfig> SEQUENCE = register(
+            BCLib.makeID("sequence"),
+            new SequenceFeature()
+    );
 
-    public static final Feature<ConditionFeatureConfig> CONDITION = register(BCLib.makeID("condition"),
-            new ConditionFeature());
+    public static final Feature<ConditionFeatureConfig> CONDITION = register(
+            BCLib.makeID("condition"),
+            new ConditionFeature()
+    );
     private final Holder<PlacedFeature> placedFeature;
     private final Decoration featureStep;
     private final F feature;
@@ -67,19 +80,23 @@ public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> 
     public final ResourceLocation id;
 
 
-    public BCLFeature(ResourceLocation id,
-                      F feature,
-                      Decoration featureStep,
-                      FC configuration,
-                      PlacementModifier[] modifiers) {
+    public BCLFeature(
+            ResourceLocation id,
+            F feature,
+            Decoration featureStep,
+            FC configuration,
+            PlacementModifier[] modifiers
+    ) {
         this(id, feature, featureStep, configuration, buildPlacedFeature(id, feature, configuration, modifiers));
     }
 
-    public BCLFeature(ResourceLocation id,
-                      F feature,
-                      Decoration featureStep,
-                      FC configuration,
-                      Holder<PlacedFeature> placedFeature) {
+    public BCLFeature(
+            ResourceLocation id,
+            F feature,
+            Decoration featureStep,
+            FC configuration,
+            Holder<PlacedFeature> placedFeature
+    ) {
         this.placedFeature = placedFeature;
         this.featureStep = featureStep;
         this.feature = feature;
@@ -98,24 +115,31 @@ public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> 
             ResourceLocation id,
             F feature,
             FC configuration,
-            PlacementModifier[] modifiers) {
+            PlacementModifier[] modifiers
+    ) {
         Holder<ConfiguredFeature<?, ?>> configuredFeature;
         if (!BuiltinRegistries.CONFIGURED_FEATURE.containsKey(id)) {
-            configuredFeature = (Holder<ConfiguredFeature<?, ?>>) (Object) FeatureUtils.register(id.toString(),
+            configuredFeature = (Holder<ConfiguredFeature<?, ?>>) (Object) FeatureUtils.register(
+                    id.toString(),
                     feature,
-                    configuration);
+                    configuration
+            );
         } else {
             configuredFeature = BuiltinRegistries.CONFIGURED_FEATURE
-                    .getHolder(ResourceKey.create(BuiltinRegistries.CONFIGURED_FEATURE.key(),
-                            id))
+                    .getHolder(ResourceKey.create(
+                            BuiltinRegistries.CONFIGURED_FEATURE.key(),
+                            id
+                    ))
                     .orElseThrow();
         }
 
         if (!BuiltinRegistries.PLACED_FEATURE.containsKey(id)) {
             return PlacementUtils.register(id.toString(), configuredFeature, modifiers);
         } else {
-            return BuiltinRegistries.PLACED_FEATURE.getHolder(ResourceKey.create(BuiltinRegistries.PLACED_FEATURE.key(),
-                    id)).orElseThrow();
+            return BuiltinRegistries.PLACED_FEATURE.getHolder(ResourceKey.create(
+                    BuiltinRegistries.PLACED_FEATURE.key(),
+                    id
+            )).orElseThrow();
         }
     }
 
@@ -128,8 +152,10 @@ public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> 
         return optional.isPresent();
     }
 
-    public static <C extends FeatureConfiguration, F extends Feature<C>> F register(ResourceLocation string,
-                                                                                    F feature) {
+    public static <C extends FeatureConfiguration, F extends Feature<C>> F register(
+            ResourceLocation string,
+            F feature
+    ) {
         return Registry.register(Registry.FEATURE, string, feature);
     }
 
@@ -168,11 +194,13 @@ public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> 
         return place(this.getFeature(), this.getConfiguration(), level, pos, random);
     }
 
-    private static boolean placeUnbound(Feature<?> feature,
-                                        FeatureConfiguration config,
-                                        ServerLevel level,
-                                        BlockPos pos,
-                                        RandomSource random) {
+    private static boolean placeUnbound(
+            Feature<?> feature,
+            FeatureConfiguration config,
+            ServerLevel level,
+            BlockPos pos,
+            RandomSource random
+    ) {
         if (config instanceof RandomPatchConfiguration rnd) {
             var configured = rnd.feature().value().feature().value();
             feature = configured.feature();
@@ -194,18 +222,22 @@ public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> 
         return feature.place(context);
     }
 
-    public static boolean place(Feature<NoneFeatureConfiguration> feature,
-                                ServerLevel level,
-                                BlockPos pos,
-                                RandomSource random) {
+    public static boolean place(
+            Feature<NoneFeatureConfiguration> feature,
+            ServerLevel level,
+            BlockPos pos,
+            RandomSource random
+    ) {
         return placeUnbound(feature, FeatureConfiguration.NONE, level, pos, random);
     }
 
-    public static <FC extends FeatureConfiguration> boolean place(Feature<FC> feature,
-                                                                  FC config,
-                                                                  ServerLevel level,
-                                                                  BlockPos pos,
-                                                                  RandomSource random) {
+    public static <FC extends FeatureConfiguration> boolean place(
+            Feature<FC> feature,
+            FC config,
+            ServerLevel level,
+            BlockPos pos,
+            RandomSource random
+    ) {
         return placeUnbound(feature, config, level, pos, random);
     }
 }

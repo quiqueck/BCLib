@@ -9,9 +9,11 @@ import net.minecraft.world.level.LevelAccessor;
 
 @FunctionalInterface
 public interface SpawnRule<M extends Mob> {
-    boolean canSpawn(EntityType<M> type,
-                     LevelAccessor world,
-                     MobSpawnType spawnReason,
-                     BlockPos pos,
-                     RandomSource random);
+    boolean canSpawn(
+            EntityType<M> type,
+            LevelAccessor world,
+            MobSpawnType spawnReason,
+            BlockPos pos,
+            RandomSource random
+    );
 }

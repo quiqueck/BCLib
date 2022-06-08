@@ -1,12 +1,12 @@
 {
-	"parent": "block/cube",
-	"textures": {
-		"particle": "%modid%:block/%particle%",
-		"down": "%modid%:block/%down%",
-		"up": "%modid%:block/%up%",
-		"north": "%modid%:block/%north%",
-		"south": "%modid%:block/%south%",
-		"west": "%modid%:block/%west%",
-		"east": "%modid%:block/%east%"
-	}
+  "parent": "block/cube",
+  "textures": {
+    "particle": "%modid%:block/%particle%",
+    "down": "%modid%:block/%down%",
+    "up": "%modid%:block/%up%",
+    "north": "%modid%:block/%north%",
+    "south": "%modid%:block/%south%",
+    "west": "%modid%:block/%west%",
+    "east": "%modid%:block/%east%"
+  }
 }

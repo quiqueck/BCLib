@@ -78,26 +78,30 @@ public class StructureHelper {
                 mirror,
                 rotation,
                 BlockPos.ZERO
-                                                 );
+        );
         return pos.offset(-offset.x * 0.5, 0, -offset.z * 0.5);
     }
 
-    public static void placeCenteredBottom(WorldGenLevel world,
-                                           BlockPos pos,
-                                           StructureTemplate structure,
-                                           Rotation rotation,
-                                           Mirror mirror,
-                                           RandomSource random) {
+    public static void placeCenteredBottom(
+            WorldGenLevel world,
+            BlockPos pos,
+            StructureTemplate structure,
+            Rotation rotation,
+            Mirror mirror,
+            RandomSource random
+    ) {
         placeCenteredBottom(world, pos, structure, rotation, mirror, makeBox(pos), random);
     }
 
-    public static void placeCenteredBottom(WorldGenLevel world,
-                                           BlockPos pos,
-                                           StructureTemplate structure,
-                                           Rotation rotation,
-                                           Mirror mirror,
-                                           BoundingBox bounds,
-                                           RandomSource random) {
+    public static void placeCenteredBottom(
+            WorldGenLevel world,
+            BlockPos pos,
+            StructureTemplate structure,
+            Rotation rotation,
+            Mirror mirror,
+            BoundingBox bounds,
+            RandomSource random
+    ) {
         BlockPos offset = offsetPos(pos, structure, rotation, mirror);
         StructurePlaceSettings placementData = new StructurePlaceSettings().setRotation(rotation)
                                                                            .setMirror(mirror)
@@ -113,10 +117,12 @@ public class StructureHelper {
         return BoundingBox.fromCorners(new Vec3i(sx, 0, sz), new Vec3i(ex, 255, ez));
     }
 
-    public static BoundingBox getStructureBounds(BlockPos pos,
-                                                 StructureTemplate structure,
-                                                 Rotation rotation,
-                                                 Mirror mirror) {
+    public static BoundingBox getStructureBounds(
+            BlockPos pos,
+            StructureTemplate structure,
+            Rotation rotation,
+            Mirror mirror
+    ) {
         Vec3i max = structure.getSize();
         Vec3 min = StructureTemplate.transform(Vec3.atCenterOf(structure.getSize()), mirror, rotation, BlockPos.ZERO);
         max = max.offset(-min.x, -min.y, -min.z);

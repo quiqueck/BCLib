@@ -18,9 +18,11 @@ public class BCLCommonFeatures {
      * @param density iterations per chunk.
      * @return new BCLFeature instance.
      */
-    public static BCLFeature makeVegetationFeature(ResourceLocation id,
-                                                   Feature<NoneFeatureConfiguration> feature,
-                                                   int density) {
+    public static BCLFeature makeVegetationFeature(
+            ResourceLocation id,
+            Feature<NoneFeatureConfiguration> feature,
+            int density
+    ) {
         return makeVegetationFeature(id, feature, density, false);
     }
 
@@ -33,10 +35,12 @@ public class BCLCommonFeatures {
      * @param allHeight if {@code true} will generate plant on all layers, if {@code false} - only on surface.
      * @return new BCLFeature instance.
      */
-    public static BCLFeature makeVegetationFeature(ResourceLocation id,
-                                                   Feature<NoneFeatureConfiguration> feature,
-                                                   int density,
-                                                   boolean allHeight) {
+    public static BCLFeature makeVegetationFeature(
+            ResourceLocation id,
+            Feature<NoneFeatureConfiguration> feature,
+            int density,
+            boolean allHeight
+    ) {
         if (allHeight) {
             return BCLFeatureBuilder
                     .start(id, feature)
@@ -63,9 +67,11 @@ public class BCLCommonFeatures {
      * @param feature    {@link Feature} with {@link NoneFeatureConfiguration} config.
      * @return new BCLFeature instance.
      */
-    public static BCLFeature makeChunkFeature(ResourceLocation id,
-                                              Decoration decoration,
-                                              Feature<NoneFeatureConfiguration> feature) {
+    public static BCLFeature makeChunkFeature(
+            ResourceLocation id,
+            Decoration decoration,
+            Feature<NoneFeatureConfiguration> feature
+    ) {
         return BCLFeatureBuilder.start(id, feature).decoration(decoration).count(1).onlyInBiome().buildAndRegister();
     }
 
@@ -78,10 +84,12 @@ public class BCLCommonFeatures {
      * @param chance     chance for feature to be generated in.
      * @return new BCLFeature instance.
      */
-    public static BCLFeature makeChancedFeature(ResourceLocation id,
-                                                Decoration decoration,
-                                                Feature<NoneFeatureConfiguration> feature,
-                                                int chance) {
+    public static BCLFeature makeChancedFeature(
+            ResourceLocation id,
+            Decoration decoration,
+            Feature<NoneFeatureConfiguration> feature,
+            int chance
+    ) {
         return BCLFeatureBuilder.start(id, feature)
                                 .decoration(decoration)
                                 .onceEvery(chance)
@@ -99,10 +107,12 @@ public class BCLCommonFeatures {
      * @param count      iterations steps.
      * @return new BCLFeature instance.
      */
-    public static BCLFeature makeCountFeature(ResourceLocation id,
-                                              Decoration decoration,
-                                              Feature<NoneFeatureConfiguration> feature,
-                                              int count) {
+    public static BCLFeature makeCountFeature(
+            ResourceLocation id,
+            Decoration decoration,
+            Feature<NoneFeatureConfiguration> feature,
+            int count
+    ) {
         return BCLFeatureBuilder.start(id, feature)
                                 .decoration(decoration)
                                 .count(count)
@@ -125,14 +135,16 @@ public class BCLCommonFeatures {
      * @param rare             when true, this is placed as a rare resource
      * @return new BCLFeature instance.
      */
-    public static BCLFeature makeOreFeature(ResourceLocation id,
-                                            Block blockOre,
-                                            Block hostBlock,
-                                            int veins,
-                                            int veinSize,
-                                            float airDiscardChance,
-                                            PlacementModifier placement,
-                                            boolean rare) {
+    public static BCLFeature makeOreFeature(
+            ResourceLocation id,
+            Block blockOre,
+            Block hostBlock,
+            int veins,
+            int veinSize,
+            float airDiscardChance,
+            PlacementModifier placement,
+            boolean rare
+    ) {
         BCLFeatureBuilder builder = BCLFeatureBuilder.start(id, Feature.ORE).decoration(Decoration.UNDERGROUND_ORES);
 
         if (rare) {

@@ -1,5 +1,7 @@
 package org.betterx.bclib.util;
 
+import org.betterx.bclib.BCLib;
+
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -7,7 +9,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import com.google.gson.JsonObject;
-import org.betterx.bclib.BCLib;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

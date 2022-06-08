@@ -1,5 +1,8 @@
 package org.betterx.bclib.api.v2;
 
+import org.betterx.bclib.util.BlocksHelper;
+import org.betterx.bclib.util.WeightedList;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
@@ -8,8 +11,6 @@ import net.minecraft.world.level.block.Block;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.betterx.bclib.util.BlocksHelper;
-import org.betterx.bclib.util.WeightedList;
 
 import java.util.Map;
 import java.util.Set;
@@ -80,10 +81,12 @@ public class BonemealAPI {
         addLandGrass(biome, makeConsumer(plant), terrain, chance);
     }
 
-    public static void addLandGrass(ResourceLocation biome,
-                                    BiConsumer<Level, BlockPos> plant,
-                                    Block terrain,
-                                    float chance) {
+    public static void addLandGrass(
+            ResourceLocation biome,
+            BiConsumer<Level, BlockPos> plant,
+            Block terrain,
+            float chance
+    ) {
         Map<Block, WeightedList<BiConsumer<Level, BlockPos>>> map = LAND_GRASS_BIOMES.get(biome);
         if (map == null) {
             map = Maps.newHashMap();
@@ -136,10 +139,12 @@ public class BonemealAPI {
         addWaterGrass(biome, makeConsumer(plant), terrain, chance);
     }
 
-    public static void addWaterGrass(ResourceLocation biome,
-                                     BiConsumer<Level, BlockPos> plant,
-                                     Block terrain,
-                                     float chance) {
+    public static void addWaterGrass(
+            ResourceLocation biome,
+            BiConsumer<Level, BlockPos> plant,
+            Block terrain,
+            float chance
+    ) {
         Map<Block, WeightedList<BiConsumer<Level, BlockPos>>> map = WATER_GRASS_BIOMES.get(biome);
         if (map == null) {
             map = Maps.newHashMap();
@@ -154,9 +159,11 @@ public class BonemealAPI {
         list.add(plant, chance);
     }
 
-    public static BiConsumer<Level, BlockPos> getLandGrass(ResourceLocation biomeID,
-                                                           Block terrain,
-                                                           RandomSource random) {
+    public static BiConsumer<Level, BlockPos> getLandGrass(
+            ResourceLocation biomeID,
+            Block terrain,
+            RandomSource random
+    ) {
         Map<Block, WeightedList<BiConsumer<Level, BlockPos>>> map = LAND_GRASS_BIOMES.get(biomeID);
         WeightedList<BiConsumer<Level, BlockPos>> list;
         if (map != null) {
@@ -170,9 +177,11 @@ public class BonemealAPI {
         return list == null ? null : list.get(random);
     }
 
-    public static BiConsumer<Level, BlockPos> getWaterGrass(ResourceLocation biomeID,
-                                                            Block terrain,
-                                                            RandomSource random) {
+    public static BiConsumer<Level, BlockPos> getWaterGrass(
+            ResourceLocation biomeID,
+            Block terrain,
+            RandomSource random
+    ) {
         Map<Block, WeightedList<BiConsumer<Level, BlockPos>>> map = WATER_GRASS_BIOMES.get(biomeID);
         WeightedList<BiConsumer<Level, BlockPos>> list;
         if (map != null) {

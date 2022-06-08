@@ -1,10 +1,10 @@
 package org.betterx.bclib.sdf.primitive;
 
+import org.betterx.bclib.sdf.SDF;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-
-import org.betterx.bclib.sdf.SDF;
 
 import java.util.function.Function;
 

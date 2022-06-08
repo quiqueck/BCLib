@@ -1,8 +1,8 @@
 package org.betterx.bclib.noise;
 
-import net.minecraft.core.BlockPos;
-
 import org.betterx.bclib.util.MHelper;
+
+import net.minecraft.core.BlockPos;
 
 import java.util.Random;
 

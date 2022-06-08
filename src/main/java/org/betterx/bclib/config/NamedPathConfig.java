@@ -1,8 +1,8 @@
 package org.betterx.bclib.config;
 
-import net.minecraft.resources.ResourceLocation;
-
 import org.betterx.bclib.BCLib;
+
+import net.minecraft.resources.ResourceLocation;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -51,28 +51,34 @@ public class NamedPathConfig extends PathConfig {
     public static class DependendConfigToken<T> extends ConfigToken<T> {
         protected final Predicate<NamedPathConfig> dependenciesTrue;
 
-        protected DependendConfigToken(Class<?> type,
-                                       T defaultValue,
-                                       String entry,
-                                       ResourceLocation path,
-                                       Predicate<NamedPathConfig> dependenciesTrue) {
+        protected DependendConfigToken(
+                Class<?> type,
+                T defaultValue,
+                String entry,
+                ResourceLocation path,
+                Predicate<NamedPathConfig> dependenciesTrue
+        ) {
             this(type, defaultValue, entry, new String[]{path.getNamespace(), path.getPath()}, dependenciesTrue);
         }
 
-        protected DependendConfigToken(Class<?> type,
-                                       T defaultValue,
-                                       String entry,
-                                       String path,
-                                       Predicate<NamedPathConfig> dependenciesTrue) {
+        protected DependendConfigToken(
+                Class<?> type,
+                T defaultValue,
+                String entry,
+                String path,
+                Predicate<NamedPathConfig> dependenciesTrue
+        ) {
             super(type, defaultValue, entry, path);
             this.dependenciesTrue = dependenciesTrue;
         }
 
-        protected DependendConfigToken(Class<?> type,
-                                       T defaultValue,
-                                       String entry,
-                                       String[] path,
-                                       Predicate<NamedPathConfig> dependenciesTrue) {
+        protected DependendConfigToken(
+                Class<?> type,
+                T defaultValue,
+                String entry,
+                String[] path,
+                Predicate<NamedPathConfig> dependenciesTrue
+        ) {
             super(type, defaultValue, entry, path);
             this.dependenciesTrue = dependenciesTrue;
         }
@@ -81,15 +87,19 @@ public class NamedPathConfig extends PathConfig {
             return dependenciesTrue.test(config);
         }
 
-        public static DependendConfigToken<Boolean> Boolean(boolean defaultValue,
-                                                            String entry,
-                                                            String path,
-                                                            Predicate<NamedPathConfig> dependenciesTrue) {
-            return new DependendConfigToken<Boolean>(ConfigKeeper.BooleanEntry.class,
-                                                     defaultValue,
-                                                     entry,
-                                                     path,
-                                                     dependenciesTrue);
+        public static DependendConfigToken<Boolean> Boolean(
+                boolean defaultValue,
+                String entry,
+                String path,
+                Predicate<NamedPathConfig> dependenciesTrue
+        ) {
+            return new DependendConfigToken<Boolean>(
+                    ConfigKeeper.BooleanEntry.class,
+                    defaultValue,
+                    entry,
+                    path,
+                    dependenciesTrue
+            );
         }
     }
 

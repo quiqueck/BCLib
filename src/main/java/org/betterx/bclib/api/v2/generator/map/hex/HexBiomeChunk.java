@@ -1,9 +1,9 @@
 package org.betterx.bclib.api.v2.generator.map.hex;
 
-import net.minecraft.world.level.levelgen.WorldgenRandom;
-
 import org.betterx.bclib.api.v2.generator.BiomePicker;
 import org.betterx.bclib.interfaces.BiomeChunk;
+
+import net.minecraft.world.level.levelgen.WorldgenRandom;
 
 import java.util.Arrays;
 
@@ -83,10 +83,12 @@ public class HexBiomeChunk implements BiomeChunk {
         System.arraycopy(outBuffer, 0, this.biomes, 0, SIZE);
     }
 
-    private void circle(BiomePicker.ActualBiome[] buffer,
-                        short center,
-                        BiomePicker.ActualBiome biome,
-                        BiomePicker.ActualBiome mask) {
+    private void circle(
+            BiomePicker.ActualBiome[] buffer,
+            short center,
+            BiomePicker.ActualBiome biome,
+            BiomePicker.ActualBiome mask
+    ) {
         if (buffer[center] == mask) {
             buffer[center] = biome;
         }

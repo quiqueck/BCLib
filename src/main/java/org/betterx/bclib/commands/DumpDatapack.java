@@ -1,5 +1,13 @@
 package org.betterx.bclib.commands;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.blocks.BaseStairsBlock;
+
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.codecs.KeyDispatchCodec;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
@@ -16,13 +24,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.brigadier.Command;
-import com.mojang.brigadier.context.CommandContext;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.JsonOps;
-import com.mojang.serialization.codecs.KeyDispatchCodec;
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.blocks.BaseStairsBlock;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,9 +47,11 @@ public class DumpDatapack {
         registryAccess.registries().forEach(r -> dumpDatapack(r, registryOps, gson));
     }
 
-    private static <T> void dumpDatapack(RegistryAccess.RegistryEntry<T> registry,
-                                         RegistryOps<JsonElement> registryOps,
-                                         Gson gson) {
+    private static <T> void dumpDatapack(
+            RegistryAccess.RegistryEntry<T> registry,
+            RegistryOps<JsonElement> registryOps,
+            Gson gson
+    ) {
         File base = new File(System.getProperty("user.dir"), "bclib_datapack_dump");
         BCLib.LOGGER.info(registry.key().toString());
 
@@ -190,6 +193,5 @@ public class DumpDatapack {
                         BCLib.LOGGER.error("     !!! Could not determine Codec");
                     }
                 });
-        ;
     }
 }

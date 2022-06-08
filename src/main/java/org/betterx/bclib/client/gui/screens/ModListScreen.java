@@ -1,13 +1,5 @@
 package org.betterx.bclib.client.gui.screens;
 
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.network.chat.Component;
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.loader.api.metadata.ModEnvironment;
-
 import org.betterx.bclib.api.v2.dataexchange.handler.autosync.HelloClient;
 import org.betterx.bclib.client.gui.gridlayout.GridColumn;
 import org.betterx.bclib.client.gui.gridlayout.GridLayout;
@@ -16,6 +8,14 @@ import org.betterx.bclib.client.gui.gridlayout.GridScreen;
 import org.betterx.bclib.util.ModUtil;
 import org.betterx.bclib.util.PathUtil;
 import org.betterx.bclib.util.Triple;
+
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.loader.api.metadata.ModEnvironment;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,37 +34,45 @@ public class ModListScreen extends BCLibScreen {
         return list;
     }
 
-    public ModListScreen(Screen parent,
-                         Component title,
-                         Component description,
-                         Map<String, ModUtil.ModInfo> mods,
-                         HelloClient.IServerModMap serverInfo) {
+    public ModListScreen(
+            Screen parent,
+            Component title,
+            Component description,
+            Map<String, ModUtil.ModInfo> mods,
+            HelloClient.IServerModMap serverInfo
+    ) {
         this(parent, title, description, CommonComponents.GUI_BACK, mods, serverInfo);
     }
 
-    public ModListScreen(Screen parent,
-                         Component title,
-                         Component description,
-                         List<ModUtil.ModInfo> mods,
-                         HelloClient.IServerModMap serverInfo) {
+    public ModListScreen(
+            Screen parent,
+            Component title,
+            Component description,
+            List<ModUtil.ModInfo> mods,
+            HelloClient.IServerModMap serverInfo
+    ) {
         this(parent, title, description, CommonComponents.GUI_BACK, mods, serverInfo);
     }
 
-    public ModListScreen(Screen parent,
-                         Component title,
-                         Component description,
-                         Component button,
-                         Map<String, ModUtil.ModInfo> mods,
-                         HelloClient.IServerModMap serverInfo) {
+    public ModListScreen(
+            Screen parent,
+            Component title,
+            Component description,
+            Component button,
+            Map<String, ModUtil.ModInfo> mods,
+            HelloClient.IServerModMap serverInfo
+    ) {
         this(parent, title, description, button, extractModList(mods), serverInfo);
     }
 
-    public ModListScreen(Screen parent,
-                         Component title,
-                         Component description,
-                         Component button,
-                         List<ModUtil.ModInfo> mods,
-                         HelloClient.IServerModMap serverInfo) {
+    public ModListScreen(
+            Screen parent,
+            Component title,
+            Component description,
+            Component button,
+            List<ModUtil.ModInfo> mods,
+            HelloClient.IServerModMap serverInfo
+    ) {
         super(parent, title, 10, true);
         this.mods = mods;
         this.serverInfo = serverInfo;
@@ -96,10 +104,12 @@ public class ModListScreen extends BCLibScreen {
     }
 
 
-    public static void addModDesc(GridColumn grid,
-                                  java.util.List<ModUtil.ModInfo> mods,
-                                  HelloClient.IServerModMap serverInfo,
-                                  GridScreen parent) {
+    public static void addModDesc(
+            GridColumn grid,
+            java.util.List<ModUtil.ModInfo> mods,
+            HelloClient.IServerModMap serverInfo,
+            GridScreen parent
+    ) {
         final int STATE_OK = 6;
         final int STATE_SERVER_MISSING_CLIENT_MOD = 5;
         final int STATE_MISSING_NOT_OFFERED = 4;
@@ -128,9 +138,11 @@ public class ModListScreen extends BCLibScreen {
                               stateString += ", offered by server";
                           }
 
-                          items.add(new Triple<>(modid,
+                          items.add(new Triple<>(
+                                  modid,
                                   nfo.canDownload() ? STATE_MISSING : STATE_MISSING_NOT_OFFERED,
-                                  stateString));
+                                  stateString
+                          ));
                       });
         }
 

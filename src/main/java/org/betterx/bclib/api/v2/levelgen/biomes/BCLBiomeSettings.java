@@ -1,9 +1,9 @@
 package org.betterx.bclib.api.v2.levelgen.biomes;
 
-import net.minecraft.world.level.biome.Biome;
-
 import org.betterx.bclib.api.v2.generator.BiomePicker;
 import org.betterx.bclib.config.Configs;
+
+import net.minecraft.world.level.biome.Biome;
 
 public class BCLBiomeSettings {
     public static Builder createBCL() {

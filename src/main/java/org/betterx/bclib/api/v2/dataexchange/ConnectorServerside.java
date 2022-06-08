@@ -1,5 +1,8 @@
 package org.betterx.bclib.api.v2.dataexchange;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.dataexchange.handler.DataExchange;
+
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -7,9 +10,6 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.dataexchange.handler.DataExchange;
 
 /**
  * This is an internal class that handles a Serverside Connection to a Client-Player
@@ -33,16 +33,20 @@ public class ConnectorServerside extends Connector {
         }
         this.server = server;
         for (DataHandlerDescriptor desc : getDescriptors()) {
-            ServerPlayNetworking.registerReceiver(handler,
-                                                  desc.IDENTIFIER,
-                                                  (_server, _player, _handler, _buf, _responseSender) -> {
-                                                      receiveFromClient(desc,
-                                                                        _server,
-                                                                        _player,
-                                                                        _handler,
-                                                                        _buf,
-                                                                        _responseSender);
-                                                  });
+            ServerPlayNetworking.registerReceiver(
+                    handler,
+                    desc.IDENTIFIER,
+                    (_server, _player, _handler, _buf, _responseSender) -> {
+                        receiveFromClient(
+                                desc,
+                                _server,
+                                _player,
+                                _handler,
+                                _buf,
+                                _responseSender
+                        );
+                    }
+            );
         }
     }
 
@@ -63,12 +67,14 @@ public class ConnectorServerside extends Connector {
         }
     }
 
-    void receiveFromClient(DataHandlerDescriptor desc,
-                           MinecraftServer server,
-                           ServerPlayer player,
-                           ServerGamePacketListenerImpl handler,
-                           FriendlyByteBuf buf,
-                           PacketSender responseSender) {
+    void receiveFromClient(
+            DataHandlerDescriptor desc,
+            MinecraftServer server,
+            ServerPlayer player,
+            ServerGamePacketListenerImpl handler,
+            FriendlyByteBuf buf,
+            PacketSender responseSender
+    ) {
         BaseDataHandler h = desc.INSTANCE.get();
         h.receiveFromClient(server, player, handler, buf, responseSender);
     }

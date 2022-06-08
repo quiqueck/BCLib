@@ -1,16 +1,16 @@
 package org.betterx.bclib.client.gui.screens;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.client.gui.gridlayout.GridLayout;
+import org.betterx.bclib.client.gui.gridlayout.GridRow;
+import org.betterx.bclib.client.gui.gridlayout.GridScreen;
+
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.client.gui.gridlayout.GridLayout;
-import org.betterx.bclib.client.gui.gridlayout.GridRow;
-import org.betterx.bclib.client.gui.gridlayout.GridScreen;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -38,11 +38,13 @@ abstract class BCLibScreen extends GridScreen {
         super(title, topPadding, sidePadding, centerVertically);
     }
 
-    public BCLibScreen(@Nullable Screen parent,
-                       Component title,
-                       int topPadding,
-                       int sidePadding,
-                       boolean centerVertically) {
+    public BCLibScreen(
+            @Nullable Screen parent,
+            Component title,
+            int topPadding,
+            int sidePadding,
+            boolean centerVertically
+    ) {
         super(parent, title, topPadding, sidePadding, centerVertically);
     }
 

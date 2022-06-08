@@ -1,12 +1,13 @@
 package org.betterx.bclib.mixin.common;
 
+import org.betterx.bclib.api.v2.LifeCycleAPI;
+
+import com.mojang.serialization.DynamicOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.Main;
 import net.minecraft.world.level.storage.LevelStorageSource;
 
-import com.mojang.serialization.DynamicOps;
-import org.betterx.bclib.api.v2.LifeCycleAPI;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;

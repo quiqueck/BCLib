@@ -1,5 +1,9 @@
 package org.betterx.bclib.api.v2.levelgen.features.placement;
 
+import org.betterx.bclib.util.BlocksHelper;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Blocks;
@@ -9,17 +13,13 @@ import net.minecraft.world.level.levelgen.placement.PlacementContext;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import org.betterx.bclib.util.BlocksHelper;
-
 import java.util.Optional;
 import java.util.stream.Stream;
 
 public class OnEveryLayer
         extends PlacementModifier {
-    private static OnEveryLayer INSTANCE = new OnEveryLayer(Optional.empty(), Optional.empty());
-    private static OnEveryLayer INSTANCE_MIN_4 = new OnEveryLayer(Optional.of(4), Optional.empty());
+    private static final OnEveryLayer INSTANCE = new OnEveryLayer(Optional.empty(), Optional.empty());
+    private static final OnEveryLayer INSTANCE_MIN_4 = new OnEveryLayer(Optional.of(4), Optional.empty());
     public static final Codec<OnEveryLayer> CODEC = RecordCodecBuilder.create(instance -> instance
             .group(
                     Codec.INT.optionalFieldOf("min").forGetter(o -> o.minHeight),
@@ -45,9 +45,11 @@ public class OnEveryLayer
     }
 
     @Override
-    public Stream<BlockPos> getPositions(PlacementContext ctx,
-                                         RandomSource random,
-                                         BlockPos pos) {
+    public Stream<BlockPos> getPositions(
+            PlacementContext ctx,
+            RandomSource random,
+            BlockPos pos
+    ) {
 
         Stream.Builder<BlockPos> builder = Stream.builder();
 

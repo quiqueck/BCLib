@@ -1,5 +1,8 @@
 package org.betterx.bclib.api.v2.levelgen.structures;
 
+import org.betterx.bclib.api.v2.tag.TagAPI;
+
+import com.mojang.serialization.Codec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
@@ -9,9 +12,6 @@ import net.minecraft.world.level.levelgen.structure.TerrainAdjustment;
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadType;
 import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
-
-import com.mojang.serialization.Codec;
-import org.betterx.bclib.api.v2.tag.TagAPI;
 
 import java.util.function.Function;
 
@@ -34,8 +34,10 @@ public class BCLStructureBuilder<S extends Structure> {
     private BCLStructureBuilder() {
     }
 
-    public static <S extends Structure> BCLStructureBuilder<S> start(ResourceLocation structureID,
-                                                                     Function<Structure.StructureSettings, S> structureBuilder) {
+    public static <S extends Structure> BCLStructureBuilder<S> start(
+            ResourceLocation structureID,
+            Function<Structure.StructureSettings, S> structureBuilder
+    ) {
         INSTANCE.structureID = structureID;
         INSTANCE.structureBuilder = structureBuilder;
 
@@ -69,12 +71,12 @@ public class BCLStructureBuilder<S extends Structure> {
     }
 
     public BCLStructureBuilder<S> randomPlacement(int spacing, int separation) {
-        this.placement = new RandomSpreadStructurePlacement(spacing,
+        this.placement = new RandomSpreadStructurePlacement(
+                spacing,
                 separation,
                 RandomSpreadType.LINEAR,
                 13323129 + spacing + separation + structureID.toString().hashCode() % 10000
         );
-        ;
         return this;
     }
 

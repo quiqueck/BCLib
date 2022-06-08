@@ -1,5 +1,11 @@
 package org.betterx.bclib.api.v2.dataexchange.handler.autosync;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.dataexchange.BaseDataHandler;
+import org.betterx.bclib.api.v2.dataexchange.DataHandler;
+import org.betterx.bclib.api.v2.dataexchange.DataHandlerDescriptor;
+import org.betterx.bclib.api.v2.dataexchange.handler.DataExchange;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -9,12 +15,6 @@ import net.minecraft.util.ProgressListener;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.dataexchange.BaseDataHandler;
-import org.betterx.bclib.api.v2.dataexchange.DataHandler;
-import org.betterx.bclib.api.v2.dataexchange.DataHandlerDescriptor;
-import org.betterx.bclib.api.v2.dataexchange.handler.DataExchange;
 
 import java.util.*;
 import org.jetbrains.annotations.NotNull;
@@ -191,11 +191,15 @@ public class Chunker extends DataHandler.FromServer {
     public static final int MAX_PACKET_SIZE = 1024 * 1024;
     private static final int MAX_PAYLOAD_SIZE = MAX_PACKET_SIZE - HEADER_SIZE;
 
-    public static final DataHandlerDescriptor DESCRIPTOR = new DataHandlerDescriptor(new ResourceLocation(BCLib.MOD_ID,
-                                                                                                          "chunker"),
-                                                                                     Chunker::new,
-                                                                                     false,
-                                                                                     false);
+    public static final DataHandlerDescriptor DESCRIPTOR = new DataHandlerDescriptor(
+            new ResourceLocation(
+                    BCLib.MOD_ID,
+                    "chunker"
+            ),
+            Chunker::new,
+            false,
+            false
+    );
 
     private int serialNo;
     private UUID uuid;

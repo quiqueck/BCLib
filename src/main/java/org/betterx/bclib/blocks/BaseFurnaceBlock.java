@@ -1,5 +1,14 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.blockentities.BaseFurnaceBlockEntity;
+import org.betterx.bclib.client.models.BasePatterns;
+import org.betterx.bclib.client.models.ModelsHelper;
+import org.betterx.bclib.client.models.PatternsHelper;
+import org.betterx.bclib.client.render.BCLRenderLayer;
+import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.bclib.interfaces.RenderLayerProvider;
+import org.betterx.bclib.registry.BaseBlockEntities;
+
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
@@ -26,14 +35,6 @@ import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.betterx.bclib.blockentities.BaseFurnaceBlockEntity;
-import org.betterx.bclib.client.models.BasePatterns;
-import org.betterx.bclib.client.models.ModelsHelper;
-import org.betterx.bclib.client.models.PatternsHelper;
-import org.betterx.bclib.client.render.BCLRenderLayer;
-import org.betterx.bclib.interfaces.BlockModelProvider;
-import org.betterx.bclib.interfaces.RenderLayerProvider;
-import org.betterx.bclib.registry.BaseBlockEntities;
 
 import java.util.List;
 import java.util.Map;
@@ -91,9 +92,11 @@ public class BaseFurnaceBlock extends FurnaceBlock implements BlockModelProvider
 
     @Override
     @Environment(EnvType.CLIENT)
-    public UnbakedModel getModelVariant(ResourceLocation stateId,
-                                        BlockState blockState,
-                                        Map<ResourceLocation, UnbakedModel> modelCache) {
+    public UnbakedModel getModelVariant(
+            ResourceLocation stateId,
+            BlockState blockState,
+            Map<ResourceLocation, UnbakedModel> modelCache
+    ) {
         String lit = blockState.getValue(LIT) ? "_lit" : "";
         ResourceLocation modelId = new ResourceLocation(stateId.getNamespace(), "block/" + stateId.getPath() + lit);
         registerBlockModel(stateId, modelId, blockState, modelCache);
@@ -121,20 +124,24 @@ public class BaseFurnaceBlock extends FurnaceBlock implements BlockModelProvider
 
     @Override
     @Nullable
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level,
-                                                                  BlockState blockState,
-                                                                  BlockEntityType<T> blockEntityType) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(
+            Level level,
+            BlockState blockState,
+            BlockEntityType<T> blockEntityType
+    ) {
         return createFurnaceTicker(level, blockEntityType, BaseBlockEntities.FURNACE);
     }
 
     @Nullable
-    protected static <T extends BlockEntity> BlockEntityTicker<T> createFurnaceTicker(Level level,
-                                                                                      BlockEntityType<T> blockEntityType,
-                                                                                      BlockEntityType<? extends AbstractFurnaceBlockEntity> blockEntityType2) {
+    protected static <T extends BlockEntity> BlockEntityTicker<T> createFurnaceTicker(
+            Level level,
+            BlockEntityType<T> blockEntityType,
+            BlockEntityType<? extends AbstractFurnaceBlockEntity> blockEntityType2
+    ) {
         return level.isClientSide ? null : createTickerHelper(
                 blockEntityType,
                 blockEntityType2,
                 AbstractFurnaceBlockEntity::serverTick
-                                                             );
+        );
     }
 }

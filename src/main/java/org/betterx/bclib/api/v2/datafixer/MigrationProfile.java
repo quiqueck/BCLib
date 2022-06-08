@@ -1,15 +1,15 @@
 package org.betterx.bclib.api.v2.datafixer;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtIo;
-import net.minecraft.nbt.Tag;
-
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.WorldDataAPI;
 import org.betterx.bclib.interfaces.PatchBiFunction;
 import org.betterx.bclib.interfaces.PatchFunction;
 import org.betterx.bclib.util.ModUtil;
+
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.Tag;
 
 import java.io.File;
 import java.io.IOException;
@@ -225,10 +225,12 @@ public class MigrationProfile {
 
     final public void markApplied() {
         for (String modID : mods) {
-            DataFixerAPI.LOGGER.info("Updating Patch-Level for '{}' from {} to {}",
-                                     modID,
-                                     ModUtil.convertModVersion(currentPatchLevel(modID)),
-                                     ModUtil.convertModVersion(Patch.maxPatchLevel(modID)));
+            DataFixerAPI.LOGGER.info(
+                    "Updating Patch-Level for '{}' from {} to {}",
+                    modID,
+                    ModUtil.convertModVersion(currentPatchLevel(modID)),
+                    ModUtil.convertModVersion(Patch.maxPatchLevel(modID))
+            );
             if (config != null)
                 config.putString(modID, Patch.maxPatchVersion(modID));
         }

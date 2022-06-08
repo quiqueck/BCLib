@@ -1,5 +1,8 @@
 package org.betterx.bclib.api.v2.spawning;
 
+import org.betterx.bclib.entity.BCLEntityWrapper;
+import org.betterx.bclib.interfaces.SpawnRule;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.Entity;
@@ -15,8 +18,6 @@ import net.fabricmc.fabric.mixin.object.builder.SpawnRestrictionAccessor;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.betterx.bclib.entity.BCLEntityWrapper;
-import org.betterx.bclib.interfaces.SpawnRule;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -77,8 +78,10 @@ public class SpawnRuleBuilder<M extends Mob> {
      */
     public SpawnRuleBuilder notPeaceful() {
         entryInstance = getFromCache("not_peaceful", () -> {
-            return new SpawnRuleEntry(0,
-                                      (type, world, spawnReason, pos, random) -> world.getDifficulty() != Difficulty.PEACEFUL);
+            return new SpawnRuleEntry(
+                    0,
+                    (type, world, spawnReason, pos, random) -> world.getDifficulty() != Difficulty.PEACEFUL
+            );
         });
         rules.add(entryInstance);
         return this;
@@ -110,9 +113,11 @@ public class SpawnRuleBuilder<M extends Mob> {
      */
     public SpawnRuleBuilder belowMaxHeight() {
         entryInstance = getFromCache("below_max_height", () -> {
-            return new SpawnRuleEntry(0,
-                                      (type, world, spawnReason, pos, random) -> pos.getY() < world.dimensionType()
-                                                                                                   .logicalHeight());
+            return new SpawnRuleEntry(
+                    0,
+                    (type, world, spawnReason, pos, random) -> pos.getY() < world.dimensionType()
+                                                                                 .logicalHeight()
+            );
         });
         rules.add(entryInstance);
         return this;
@@ -187,8 +192,10 @@ public class SpawnRuleBuilder<M extends Mob> {
      */
     public SpawnRuleBuilder belowBrightness(int lightLevel) {
         entryInstance = getFromCache("below_brightness_" + lightLevel, () -> {
-            return new SpawnRuleEntry(2,
-                                      (type, world, spawnReason, pos, random) -> world.getMaxLocalRawBrightness(pos) <= lightLevel);
+            return new SpawnRuleEntry(
+                    2,
+                    (type, world, spawnReason, pos, random) -> world.getMaxLocalRawBrightness(pos) <= lightLevel
+            );
         });
         rules.add(entryInstance);
         return this;
@@ -202,8 +209,10 @@ public class SpawnRuleBuilder<M extends Mob> {
      */
     public SpawnRuleBuilder aboveBrightness(int lightLevel) {
         entryInstance = getFromCache("above_brightness_" + lightLevel, () -> {
-            return new SpawnRuleEntry(2,
-                                      (type, world, spawnReason, pos, random) -> world.getMaxLocalRawBrightness(pos) >= lightLevel);
+            return new SpawnRuleEntry(
+                    2,
+                    (type, world, spawnReason, pos, random) -> world.getMaxLocalRawBrightness(pos) >= lightLevel
+            );
         });
         rules.add(entryInstance);
         return this;

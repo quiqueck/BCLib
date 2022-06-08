@@ -1,6 +1,6 @@
 {
-	"parent": "bclib:block/ladder",
-	"textures": {
-		"texture": "%modid%:block/%texture%"
-	}
+  "parent": "bclib:block/ladder",
+  "textures": {
+    "texture": "%modid%:block/%texture%"
+  }
 }

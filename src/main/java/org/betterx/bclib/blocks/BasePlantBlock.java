@@ -1,5 +1,12 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.client.models.BasePatterns;
+import org.betterx.bclib.client.models.ModelsHelper;
+import org.betterx.bclib.client.models.PatternsHelper;
+import org.betterx.bclib.client.render.BCLRenderLayer;
+import org.betterx.bclib.interfaces.RenderLayerProvider;
+import org.betterx.bclib.items.tool.BaseShearsItem;
+
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -31,12 +38,6 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import com.google.common.collect.Lists;
-import org.betterx.bclib.client.models.BasePatterns;
-import org.betterx.bclib.client.models.ModelsHelper;
-import org.betterx.bclib.client.models.PatternsHelper;
-import org.betterx.bclib.client.render.BCLRenderLayer;
-import org.betterx.bclib.interfaces.RenderLayerProvider;
-import org.betterx.bclib.items.tool.BaseShearsItem;
 
 import java.util.List;
 import java.util.Optional;
@@ -65,12 +66,12 @@ public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderL
     public BasePlantBlock(boolean replaceable, Function<Properties, Properties> propMod) {
         this(
                 propMod.apply(FabricBlockSettings
-                                      .of(replaceable ? Material.REPLACEABLE_PLANT : Material.PLANT)
-                                      .sound(SoundType.GRASS)
-                                      .noCollission()
-                                      .offsetType(BlockBehaviour.OffsetType.XZ)
-                             )
-            );
+                        .of(replaceable ? Material.REPLACEABLE_PLANT : Material.PLANT)
+                        .sound(SoundType.GRASS)
+                        .noCollission()
+                        .offsetType(BlockBehaviour.OffsetType.XZ)
+                )
+        );
     }
 
     public BasePlantBlock(boolean replaceable, int light) {
@@ -80,13 +81,13 @@ public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderL
     public BasePlantBlock(boolean replaceable, int light, Function<Properties, Properties> propMod) {
         this(
                 propMod.apply(FabricBlockSettings
-                                      .of(replaceable ? Material.REPLACEABLE_PLANT : Material.PLANT)
-                                      .luminance(light)
-                                      .sound(SoundType.GRASS)
-                                      .noCollission()
-                                      .offsetType(BlockBehaviour.OffsetType.XZ)
-                             )
-            );
+                        .of(replaceable ? Material.REPLACEABLE_PLANT : Material.PLANT)
+                        .luminance(light)
+                        .sound(SoundType.GRASS)
+                        .noCollission()
+                        .offsetType(BlockBehaviour.OffsetType.XZ)
+                )
+        );
     }
 
     public BasePlantBlock(Properties settings) {
@@ -111,12 +112,14 @@ public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderL
 
     @Override
     @SuppressWarnings("deprecation")
-    public BlockState updateShape(BlockState state,
-                                  Direction facing,
-                                  BlockState neighborState,
-                                  LevelAccessor world,
-                                  BlockPos pos,
-                                  BlockPos neighborPos) {
+    public BlockState updateShape(
+            BlockState state,
+            Direction facing,
+            BlockState neighborState,
+            LevelAccessor world,
+            BlockPos pos,
+            BlockPos neighborPos
+    ) {
         if (!canSurvive(state, world, pos)) {
             return Blocks.AIR.defaultBlockState();
         } else {
@@ -130,7 +133,7 @@ public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderL
         if (tool != null && BaseShearsItem.isShear(tool) || EnchantmentHelper.getItemEnchantmentLevel(
                 Enchantments.SILK_TOUCH,
                 tool
-                                                                                                     ) > 0) {
+        ) > 0) {
             return Lists.newArrayList(new ItemStack(this));
         } else {
             return Lists.newArrayList();

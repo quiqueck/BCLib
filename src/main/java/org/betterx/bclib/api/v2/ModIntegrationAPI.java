@@ -1,9 +1,10 @@
 package org.betterx.bclib.api.v2;
 
+import org.betterx.bclib.integration.ModIntegration;
+
 import net.fabricmc.loader.api.FabricLoader;
 
 import com.google.common.collect.Lists;
-import org.betterx.bclib.integration.ModIntegration;
 
 import java.util.List;
 

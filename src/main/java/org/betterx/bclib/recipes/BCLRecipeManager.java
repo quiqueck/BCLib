@@ -1,5 +1,7 @@
 package org.betterx.bclib.recipes;
 
+import org.betterx.bclib.util.CollectionsUtil;
+
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
@@ -12,7 +14,6 @@ import net.minecraft.world.level.block.Block;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-import org.betterx.bclib.util.CollectionsUtil;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -23,10 +24,12 @@ public class BCLRecipeManager {
     private static final Map<RecipeType<?>, Object> SORTED = Maps.newHashMap();
     private static final String MINECRAFT = "minecraft";
 
-    public static <C extends Container, T extends Recipe<C>> Optional<T> getSortedRecipe(RecipeType<T> type,
-                                                                                         C inventory,
-                                                                                         Level level,
-                                                                                         Function<RecipeType<T>, Map<ResourceLocation, Recipe<C>>> getter) {
+    public static <C extends Container, T extends Recipe<C>> Optional<T> getSortedRecipe(
+            RecipeType<T> type,
+            C inventory,
+            Level level,
+            Function<RecipeType<T>, Map<ResourceLocation, Recipe<C>>> getter
+    ) {
         List<Recipe<C>> recipes = (List<Recipe<C>>) SORTED.computeIfAbsent(type, t -> {
             Collection<Recipe<C>> values = getter.apply(type).values();
             List<Recipe<C>> list = new ArrayList<>(values);
@@ -80,9 +83,11 @@ public class BCLRecipeManager {
         return result;
     }
 
-    public static <S extends RecipeSerializer<T>, T extends Recipe<?>> S registerSerializer(String modID,
-                                                                                            String id,
-                                                                                            S serializer) {
+    public static <S extends RecipeSerializer<T>, T extends Recipe<?>> S registerSerializer(
+            String modID,
+            String id,
+            S serializer
+    ) {
         return Registry.register(Registry.RECIPE_SERIALIZER, modID + ":" + id, serializer);
     }
 

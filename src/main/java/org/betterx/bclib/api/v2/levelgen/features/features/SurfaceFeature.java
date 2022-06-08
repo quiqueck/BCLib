@@ -1,14 +1,14 @@
 package org.betterx.bclib.api.v2.levelgen.features.features;
 
+import org.betterx.bclib.util.BlocksHelper;
+
+import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
-
-import com.mojang.serialization.Codec;
-import org.betterx.bclib.util.BlocksHelper;
 
 import java.util.Optional;
 
@@ -31,10 +31,12 @@ public abstract class SurfaceFeature<T extends FeatureConfiguration> extends Fea
 
     @Override
     public boolean place(FeaturePlaceContext<T> ctx) {
-        Optional<BlockPos> pos = BlocksHelper.findSurfaceBelow(ctx.level(),
+        Optional<BlockPos> pos = BlocksHelper.findSurfaceBelow(
+                ctx.level(),
                 ctx.origin(),
                 minHeight(ctx),
-                this::isValidSurface);
+                this::isValidSurface
+        );
         if (pos.isPresent()) {
             generate(pos.get(), ctx);
             return true;

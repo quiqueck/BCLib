@@ -1,7 +1,5 @@
 package org.betterx.bclib.api.v2.dataexchange.handler.autosync;
 
-import net.minecraft.network.FriendlyByteBuf;
-
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.dataexchange.DataHandler;
 import org.betterx.bclib.api.v2.dataexchange.SyncFileHash;
@@ -10,6 +8,8 @@ import org.betterx.bclib.util.ModUtil.ModInfo;
 import org.betterx.bclib.util.Pair;
 import org.betterx.bclib.util.PathUtil;
 import org.betterx.bclib.util.Triple;
+
+import net.minecraft.network.FriendlyByteBuf;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,11 +39,13 @@ class AutoFileSyncEntry extends AutoSyncID {
             if (desc != null) {
                 //ensures that the file is not above the base-folder
                 if (desc.acceptChildElements(desc.mapAbsolute(relFile))) {
-                    return new AutoFileSyncEntry.ForDirectFileRequest(syncID,
-                                                                      new File(relFile),
-                                                                      desc.localFolder.resolve(relFile)
-                                                                                      .normalize()
-                                                                                      .toFile());
+                    return new AutoFileSyncEntry.ForDirectFileRequest(
+                            syncID,
+                            new File(relFile),
+                            desc.localFolder.resolve(relFile)
+                                            .normalize()
+                                            .toFile()
+                    );
                 }
             }
             return null;
@@ -67,11 +69,13 @@ class AutoFileSyncEntry extends AutoSyncID {
         public final String version;
 
         ForModFileRequest(String modID, boolean matchLocalVersion, String version) {
-            super(modID,
-                  AutoSyncID.ForModFileRequest.UNIQUE_ID,
-                  getLocalPathForID(modID, matchLocalVersion),
-                  false,
-                  (a, b, c) -> false);
+            super(
+                    modID,
+                    AutoSyncID.ForModFileRequest.UNIQUE_ID,
+                    getLocalPathForID(modID, matchLocalVersion),
+                    false,
+                    (a, b, c) -> false
+            );
             if (this.fileName == null && matchLocalVersion) {
                 BCLib.LOGGER.error("Unknown mod '" + modID + "'.");
             }
@@ -104,18 +108,22 @@ class AutoFileSyncEntry extends AutoSyncID {
     public final boolean requestContent;
     private SyncFileHash hash;
 
-    AutoFileSyncEntry(String modID,
-                      File fileName,
-                      boolean requestContent,
-                      AutoSync.NeedTransferPredicate needTransfer) {
+    AutoFileSyncEntry(
+            String modID,
+            File fileName,
+            boolean requestContent,
+            AutoSync.NeedTransferPredicate needTransfer
+    ) {
         this(modID, fileName.getName(), fileName, requestContent, needTransfer);
     }
 
-    AutoFileSyncEntry(String modID,
-                      String uniqueID,
-                      File fileName,
-                      boolean requestContent,
-                      AutoSync.NeedTransferPredicate needTransfer) {
+    AutoFileSyncEntry(
+            String modID,
+            String uniqueID,
+            File fileName,
+            boolean requestContent,
+            AutoSync.NeedTransferPredicate needTransfer
+    ) {
         super(modID, uniqueID);
         this.needTransfer = needTransfer;
         this.fileName = fileName;
@@ -226,9 +234,11 @@ class AutoFileSyncEntry extends AutoSyncID {
                     final File absPath = desc.localFolder.resolve(subFile.relPath)
                                                          .normalize()
                                                          .toFile();
-                    return new AutoFileSyncEntry.ForDirectFileRequest(freq.uniqueID,
-                                                                      new File(subFile.relPath),
-                                                                      absPath);
+                    return new AutoFileSyncEntry.ForDirectFileRequest(
+                            freq.uniqueID,
+                            new File(subFile.relPath),
+                            absPath
+                    );
                 }
             }
             return null;

@@ -1,5 +1,9 @@
 package org.betterx.bclib.mixin.client;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.client.render.EmissiveTextureInfo;
+
+import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
@@ -9,9 +13,6 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.fabricmc.fabric.impl.client.texture.FabricSprite;
 import net.fabricmc.loader.api.FabricLoader;
 
-import com.mojang.blaze3d.platform.NativeImage;
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.client.render.EmissiveTextureInfo;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -36,14 +37,16 @@ public class TextureAtlasMixin {
     }
 
     @Inject(method = "load(Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite$Info;IIIII)Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;", at = @At("HEAD"), cancellable = true)
-    private void bclib_loadSprite(ResourceManager resourceManager,
-                                  TextureAtlasSprite.Info spriteInfo,
-                                  int atlasWidth,
-                                  int atlasHeight,
-                                  int maxLevel,
-                                  int posX,
-                                  int posY,
-                                  CallbackInfoReturnable<TextureAtlasSprite> info) {
+    private void bclib_loadSprite(
+            ResourceManager resourceManager,
+            TextureAtlasSprite.Info spriteInfo,
+            int atlasWidth,
+            int atlasHeight,
+            int maxLevel,
+            int posX,
+            int posY,
+            CallbackInfoReturnable<TextureAtlasSprite> info
+    ) {
         if (!bclib_modifyAtlas) {
             return;
         }

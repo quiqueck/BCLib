@@ -1,14 +1,14 @@
 package org.betterx.bclib.complexmaterials.entry;
 
+import org.betterx.bclib.api.v2.tag.TagAPI;
+import org.betterx.bclib.complexmaterials.ComplexMaterial;
+import org.betterx.bclib.registry.ItemRegistry;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-
-import org.betterx.bclib.api.v2.tag.TagAPI;
-import org.betterx.bclib.complexmaterials.ComplexMaterial;
-import org.betterx.bclib.registry.ItemRegistry;
 
 import java.util.function.BiFunction;
 

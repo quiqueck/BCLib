@@ -1,6 +1,6 @@
 {
-	"parent": "bclib:block/tint_cube",
-	"textures": {
-		"texture": "%modid%:block/%texture%"
-	}
+  "parent": "bclib:block/tint_cube",
+  "textures": {
+    "texture": "%modid%:block/%texture%"
+  }
 }

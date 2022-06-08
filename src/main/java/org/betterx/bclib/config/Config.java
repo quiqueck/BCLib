@@ -139,9 +139,11 @@ public abstract class Config {
         return false;
     }
 
-    protected <T extends Comparable<T>, RE extends ConfigKeeper.RangeEntry<T>> boolean setRanged(ConfigKey key,
-                                                                                                 T value,
-                                                                                                 Class<RE> type) {
+    protected <T extends Comparable<T>, RE extends ConfigKeeper.RangeEntry<T>> boolean setRanged(
+            ConfigKey key,
+            T value,
+            Class<RE> type
+    ) {
         try {
             ConfigKeeper.RangeEntry<T> entry = keeper.getEntry(key, type);
             if (entry == null) return false;
@@ -208,8 +210,10 @@ public abstract class Config {
     protected List<String> getStringArray(ConfigKey key, List<String> defaultValue) {
         List<String> str = keeper.getValue(key, ConfigKeeper.StringArrayEntry.class);
         if (str == null) {
-            ConfigKeeper.StringArrayEntry entry = keeper.registerEntry(key,
-                                                                       new ConfigKeeper.StringArrayEntry(defaultValue));
+            ConfigKeeper.StringArrayEntry entry = keeper.registerEntry(
+                    key,
+                    new ConfigKeeper.StringArrayEntry(defaultValue)
+            );
             return entry.getValue();
         }
         return str != null ? str : defaultValue;

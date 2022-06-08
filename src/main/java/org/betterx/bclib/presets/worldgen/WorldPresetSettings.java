@@ -1,15 +1,15 @@
 package org.betterx.bclib.presets.worldgen;
 
+import org.betterx.bclib.BCLib;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.Lifecycle;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
-
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.Lifecycle;
-import org.betterx.bclib.BCLib;
 
 import java.util.function.Function;
 
@@ -34,8 +34,10 @@ public abstract class WorldPresetSettings {
         return new MappedRegistry<>(resourceKey, Lifecycle.stable(), null);
     }
 
-    public static Codec<? extends WorldPresetSettings> register(ResourceLocation loc,
-                                                                Codec<? extends WorldPresetSettings> codec) {
+    public static Codec<? extends WorldPresetSettings> register(
+            ResourceLocation loc,
+            Codec<? extends WorldPresetSettings> codec
+    ) {
         return Registry.register(WORLD_PRESET_SETTINGS, loc, codec);
     }
 

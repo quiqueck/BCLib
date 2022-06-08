@@ -1,23 +1,25 @@
 package org.betterx.bclib.api.v2.levelgen.features.features;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.levelgen.GenerationStep;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-
-import com.mojang.serialization.Codec;
 import org.betterx.bclib.api.v2.levelgen.features.BCLFeature;
 import org.betterx.bclib.api.v2.levelgen.features.BCLFeatureBuilder;
 import org.betterx.bclib.api.v2.levelgen.features.config.TemplateFeatureConfig;
 import org.betterx.bclib.api.v2.levelgen.structures.StructureNBT;
 import org.betterx.bclib.api.v2.levelgen.structures.StructureWorldNBT;
 
+import com.mojang.serialization.Codec;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+
 public class TemplateFeature<FC extends TemplateFeatureConfig> extends Feature<FC> {
 
-    public static <T extends TemplateFeatureConfig> BCLFeature createAndRegisterRare(ResourceLocation location,
-                                                                                     TemplateFeatureConfig configuration,
-                                                                                     int onceEveryChunk) {
+    public static <T extends TemplateFeatureConfig> BCLFeature createAndRegisterRare(
+            ResourceLocation location,
+            TemplateFeatureConfig configuration,
+            int onceEveryChunk
+    ) {
 
 
         return BCLFeatureBuilder
@@ -34,9 +36,11 @@ public class TemplateFeature<FC extends TemplateFeatureConfig> extends Feature<F
                 .buildAndRegister(configuration);
     }
 
-    public static <T extends TemplateFeatureConfig> BCLFeature createAndRegister(ResourceLocation location,
-                                                                                 TemplateFeatureConfig configuration,
-                                                                                 int count) {
+    public static <T extends TemplateFeatureConfig> BCLFeature createAndRegister(
+            ResourceLocation location,
+            TemplateFeatureConfig configuration,
+            int count
+    ) {
         return BCLFeatureBuilder
                 .start(location, BCLFeature.TEMPLATE)
                 .decoration(GenerationStep.Decoration.SURFACE_STRUCTURES)
@@ -73,7 +77,8 @@ public class TemplateFeature<FC extends TemplateFeatureConfig> extends Feature<F
     @Override
     public boolean place(FeaturePlaceContext<FC> ctx) {
         StructureWorldNBT structure = randomStructure(ctx.config(), ctx.random());
-        return structure.generateIfPlaceable(ctx.level(),
+        return structure.generateIfPlaceable(
+                ctx.level(),
                 ctx.origin(),
                 StructureNBT.getRandomRotation(ctx.random()),
                 StructureNBT.getRandomMirror(ctx.random())

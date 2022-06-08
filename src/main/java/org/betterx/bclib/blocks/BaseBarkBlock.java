@@ -1,10 +1,10 @@
 package org.betterx.bclib.blocks;
 
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
-
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.PatternsHelper;
+
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.Optional;
 

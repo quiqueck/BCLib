@@ -1,8 +1,8 @@
 package org.betterx.bclib.sdf.primitive;
 
-import net.minecraft.util.Mth;
-
 import org.betterx.bclib.util.MHelper;
+
+import net.minecraft.util.Mth;
 
 public class SDFPie extends SDFPrimitive {
     private float sin;

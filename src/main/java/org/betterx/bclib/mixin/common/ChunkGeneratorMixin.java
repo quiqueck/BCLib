@@ -1,5 +1,7 @@
 package org.betterx.bclib.mixin.common;
 
+import org.betterx.bclib.interfaces.ChunkGeneratorAccessor;
+
 import net.minecraft.core.Registry;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
@@ -7,7 +9,6 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 
-import org.betterx.bclib.interfaces.ChunkGeneratorAccessor;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -29,10 +30,12 @@ public class ChunkGeneratorMixin implements ChunkGeneratorAccessor {
     }
 
     @Inject(method = "applyBiomeDecoration", at = @At("HEAD"))
-    private void bclib_obBiomeGenerate(WorldGenLevel worldGenLevel,
-                                       ChunkAccess chunkAccess,
-                                       StructureManager structureFeatureManager,
-                                       CallbackInfo ci) {
+    private void bclib_obBiomeGenerate(
+            WorldGenLevel worldGenLevel,
+            ChunkAccess chunkAccess,
+            StructureManager structureFeatureManager,
+            CallbackInfo ci
+    ) {
         bclib_featureIteratorSeed = 0;
     }
 

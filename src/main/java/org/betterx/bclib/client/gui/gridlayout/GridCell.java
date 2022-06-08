@@ -1,10 +1,11 @@
 package org.betterx.bclib.client.gui.gridlayout;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import org.betterx.bclib.interfaces.TriConsumer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import org.betterx.bclib.interfaces.TriConsumer;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import java.util.List;
 import java.util.function.Function;
@@ -15,11 +16,13 @@ class GridCell extends GridCellDefinition {
     Function<GridTransform, Object> componentPlacer;
     TriConsumer<PoseStack, GridTransform, Object> customRender;
 
-    GridCell(double width,
-             double height,
-             GridLayout.GridValueType widthType,
-             Function<GridTransform, Object> componentPlacer,
-             TriConsumer<PoseStack, GridTransform, Object> customRender) {
+    GridCell(
+            double width,
+            double height,
+            GridLayout.GridValueType widthType,
+            Function<GridTransform, Object> componentPlacer,
+            TriConsumer<PoseStack, GridTransform, Object> customRender
+    ) {
         super(width, widthType);
         this.height = (float) height;
         this.componentPlacer = componentPlacer;

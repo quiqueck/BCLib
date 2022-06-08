@@ -1,5 +1,7 @@
 package org.betterx.bclib.api.v2.levelgen.structures;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
@@ -14,9 +16,6 @@ import net.minecraft.world.level.levelgen.WorldGenerationContext;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
-
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,16 +38,20 @@ public abstract class TemplateStructure extends Structure {
     }
 
 
-    protected TemplateStructure(StructureSettings structureSettings,
-                                ResourceLocation location,
-                                int offsetY,
-                                StructurePlacementType type,
-                                float chance) {
+    protected TemplateStructure(
+            StructureSettings structureSettings,
+            ResourceLocation location,
+            int offsetY,
+            StructurePlacementType type,
+            float chance
+    ) {
         this(structureSettings, List.of(new Config(location, offsetY, type, chance)));
     }
 
-    protected TemplateStructure(StructureSettings structureSettings,
-                                List<Config> configs) {
+    protected TemplateStructure(
+            StructureSettings structureSettings,
+            List<Config> configs
+    ) {
         super(structureSettings);
         this.configs = configs;
     }
@@ -80,8 +83,10 @@ public abstract class TemplateStructure extends Structure {
     @Override
     public Optional<GenerationStub> findGenerationPoint(GenerationContext ctx) {
 
-        WorldGenerationContext worldGenerationContext = new WorldGenerationContext(ctx.chunkGenerator(),
-                ctx.heightAccessor());
+        WorldGenerationContext worldGenerationContext = new WorldGenerationContext(
+                ctx.chunkGenerator(),
+                ctx.heightAccessor()
+        );
         final Config config = randomConfig(ctx.random());
         if (config == null) return Optional.empty();
         ChunkPos chunkPos = ctx.chunkPos();
@@ -123,30 +128,38 @@ public abstract class TemplateStructure extends Structure {
         if (y >= maxHeight || y < seaLevel) return Optional.empty();
         if (!BCLStructure.isValidBiome(ctx, y)) return Optional.empty();
 
-        BlockPos halfSize = new BlockPos(structureTemplate.getSize().getX() / 2,
+        BlockPos halfSize = new BlockPos(
+                structureTemplate.getSize().getX() / 2,
                 0,
-                structureTemplate.getSize().getZ() / 2);
+                structureTemplate.getSize().getZ() / 2
+        );
         Rotation rotation = StructureNBT.getRandomRotation(ctx.random());
         Mirror mirror = StructureNBT.getRandomMirror(ctx.random());
-        BlockPos centerPos = new BlockPos(x,
+        BlockPos centerPos = new BlockPos(
+                x,
                 y - (searchStep == 1 ? 0 : (structureTemplate.getSize(Rotation.NONE).getY())),
-                z);
+                z
+        );
         BoundingBox boundingBox = structureTemplate.getBoundingBox(centerPos, rotation, halfSize, mirror);
 
 
         // if (!structure.canGenerate(ctx.chunkGenerator()., centerPos))
-        return Optional.of(new GenerationStub(centerPos,
+        return Optional.of(new GenerationStub(
+                centerPos,
                 structurePiecesBuilder ->
                         structurePiecesBuilder.addPiece(
-                                new TemplatePiece(ctx.structureTemplateManager(),
+                                new TemplatePiece(
+                                        ctx.structureTemplateManager(),
                                         config.location,
                                         centerPos.offset(
                                                 0,
                                                 config.offsetY,
-                                                0),
+                                                0
+                                        ),
                                         rotation,
                                         mirror,
-                                        halfSize))
+                                        halfSize
+                                ))
         ));
 
     }

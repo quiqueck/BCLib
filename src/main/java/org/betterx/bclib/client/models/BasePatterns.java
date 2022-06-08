@@ -1,8 +1,8 @@
 package org.betterx.bclib.client.models;
 
-import net.minecraft.resources.ResourceLocation;
-
 import org.betterx.bclib.BCLib;
+
+import net.minecraft.resources.ResourceLocation;
 
 public class BasePatterns {
     //Block Models

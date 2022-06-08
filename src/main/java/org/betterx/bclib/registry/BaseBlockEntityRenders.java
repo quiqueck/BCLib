@@ -1,11 +1,11 @@
 package org.betterx.bclib.registry;
 
+import org.betterx.bclib.client.render.BaseChestBlockEntityRenderer;
+import org.betterx.bclib.client.render.BaseSignBlockEntityRenderer;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
-
-import org.betterx.bclib.client.render.BaseChestBlockEntityRenderer;
-import org.betterx.bclib.client.render.BaseSignBlockEntityRenderer;
 
 @Environment(EnvType.CLIENT)
 public class BaseBlockEntityRenders {

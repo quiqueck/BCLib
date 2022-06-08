@@ -1,5 +1,10 @@
 package org.betterx.bclib.api.v2.levelgen.features.features;
 
+import org.betterx.bclib.api.v2.levelgen.features.UserGrowableFeature;
+import org.betterx.bclib.api.v2.levelgen.features.config.ScatterFeatureConfig;
+import org.betterx.bclib.util.BlocksHelper;
+
+import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -9,11 +14,6 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-
-import com.mojang.serialization.Codec;
-import org.betterx.bclib.api.v2.levelgen.features.UserGrowableFeature;
-import org.betterx.bclib.api.v2.levelgen.features.config.ScatterFeatureConfig;
-import org.betterx.bclib.util.BlocksHelper;
 
 import java.util.Optional;
 
@@ -44,13 +44,15 @@ public class ScatterFeature<FC extends ScatterFeatureConfig>
     }
 
 
-    protected void growCenterPillar(LevelAccessor level,
-                                    BlockPos origin,
-                                    BlockPos basePos,
-                                    Direction direction,
-                                    int centerHeight,
-                                    ScatterFeatureConfig config,
-                                    RandomSource random) {
+    protected void growCenterPillar(
+            LevelAccessor level,
+            BlockPos origin,
+            BlockPos basePos,
+            Direction direction,
+            int centerHeight,
+            ScatterFeatureConfig config,
+            RandomSource random
+    ) {
         if (config.isValidBase(level.getBlockState(basePos))) {
             final Direction surfaceDirection = direction.getOpposite();
             BlockPos.MutableBlockPos POS = new BlockPos.MutableBlockPos();
@@ -65,11 +67,13 @@ public class ScatterFeature<FC extends ScatterFeatureConfig>
                 POS.set(x, basePos.getY(), z);
 
                 if (BlocksHelper.findSurroundingSurface(level, POS, surfaceDirection, 4, config::isValidBase)) {
-                    int myHeight = freeHeight(level,
+                    int myHeight = freeHeight(
+                            level,
                             direction,
                             centerHeight,
                             config,
-                            POS);
+                            POS
+                    );
 
                     int dx = x - POS.getX();
                     int dz = z - POS.getZ();
@@ -90,20 +94,24 @@ public class ScatterFeature<FC extends ScatterFeatureConfig>
                             direction,
                             myHeight,
                             config,
-                            random, false);
+                            random, false
+                    );
                 }
             }
         }
     }
 
-    private int freeHeight(LevelAccessor level,
-                           Direction direction,
-                           int defaultHeight,
-                           ScatterFeatureConfig config,
-                           BlockPos POS) {
+    private int freeHeight(
+            LevelAccessor level,
+            Direction direction,
+            int defaultHeight,
+            ScatterFeatureConfig config,
+            BlockPos POS
+    ) {
         int myHeight;
         if (config.growWhileFree) {
-            myHeight = BlocksHelper.blockCount(level,
+            myHeight = BlocksHelper.blockCount(
+                    level,
                     POS,
                     direction,
                     config.maxHeight,
@@ -115,14 +123,16 @@ public class ScatterFeature<FC extends ScatterFeatureConfig>
         return Math.max(config.minHeight, myHeight);
     }
 
-    private void buildPillarWithBase(LevelAccessor level,
-                                     BlockPos origin,
-                                     BlockPos basePos,
-                                     Direction direction,
-                                     int height,
-                                     ScatterFeatureConfig config,
-                                     RandomSource random,
-                                     boolean force) {
+    private void buildPillarWithBase(
+            LevelAccessor level,
+            BlockPos origin,
+            BlockPos basePos,
+            Direction direction,
+            int height,
+            ScatterFeatureConfig config,
+            RandomSource random,
+            boolean force
+    ) {
         if (force || BlocksHelper.isFreeSpace(level, origin, direction, height, BlocksHelper::isFree)) {
             createPatchOfBaseBlocks(level, random, basePos, config);
             BlockState bottom = config.bottomBlock.getState(random, origin);
@@ -132,12 +142,14 @@ public class ScatterFeature<FC extends ScatterFeatureConfig>
         }
     }
 
-    private void buildPillar(LevelAccessor level,
-                             BlockPos origin,
-                             Direction direction,
-                             int height,
-                             ScatterFeatureConfig config,
-                             RandomSource random) {
+    private void buildPillar(
+            LevelAccessor level,
+            BlockPos origin,
+            Direction direction,
+            int height,
+            ScatterFeatureConfig config,
+            RandomSource random
+    ) {
 
         final BlockPos.MutableBlockPos POS = origin.mutable();
         for (int size = 0; size < height; size++) {
@@ -147,10 +159,12 @@ public class ScatterFeature<FC extends ScatterFeatureConfig>
         }
     }
 
-    private Optional<Direction> getTipDirection(LevelAccessor levelAccessor,
-                                                BlockPos blockPos,
-                                                RandomSource randomSource,
-                                                ScatterFeatureConfig config) {
+    private Optional<Direction> getTipDirection(
+            LevelAccessor levelAccessor,
+            BlockPos blockPos,
+            RandomSource randomSource,
+            ScatterFeatureConfig config
+    ) {
         boolean onCeil = config.floorChance < 1 && config.isValidBase(levelAccessor.getBlockState(blockPos.above()));
         boolean onFloor = config.floorChance > 0 && config.isValidBase(levelAccessor.getBlockState(blockPos.below()));
 
@@ -166,10 +180,12 @@ public class ScatterFeature<FC extends ScatterFeatureConfig>
         return Optional.empty();
     }
 
-    private void createPatchOfBaseBlocks(LevelAccessor levelAccessor,
-                                         RandomSource randomSource,
-                                         BlockPos blockPos,
-                                         ScatterFeatureConfig config) {
+    private void createPatchOfBaseBlocks(
+            LevelAccessor levelAccessor,
+            RandomSource randomSource,
+            BlockPos blockPos,
+            ScatterFeatureConfig config
+    ) {
         if (config.baseState.isPresent() && config.baseReplaceChance > 0 && randomSource.nextFloat() < config.baseReplaceChance) {
             final BlockState baseState = config.baseState.get();
             BlockPos pos;
@@ -190,9 +206,11 @@ public class ScatterFeature<FC extends ScatterFeatureConfig>
         }
     }
 
-    protected void placeBaseBlockIfPossible(LevelAccessor levelAccessor,
-                                            BlockPos blockPos,
-                                            BlockState baseState) {
+    protected void placeBaseBlockIfPossible(
+            LevelAccessor levelAccessor,
+            BlockPos blockPos,
+            BlockState baseState
+    ) {
         BlockState blockState = levelAccessor.getBlockState(blockPos);
         if (BlocksHelper.isTerrain(blockState)) {
             levelAccessor.setBlock(blockPos, baseState, 2);
@@ -200,10 +218,12 @@ public class ScatterFeature<FC extends ScatterFeatureConfig>
     }
 
     @Override
-    public boolean grow(ServerLevelAccessor level,
-                        BlockPos origin,
-                        RandomSource random,
-                        FC config) {
+    public boolean grow(
+            ServerLevelAccessor level,
+            BlockPos origin,
+            RandomSource random,
+            FC config
+    ) {
         Optional<Direction> oDirection = getTipDirection(level, origin, random, config);
         if (oDirection.isEmpty()) {
             return false;
@@ -213,11 +233,13 @@ public class ScatterFeature<FC extends ScatterFeatureConfig>
 
         if (config.isValidBase(level.getBlockState(basePos))) {
             int centerHeight = (int) (random.nextFloat() * (1 + config.maxHeight - config.minHeight) + config.minHeight);
-            centerHeight = freeHeight(level,
+            centerHeight = freeHeight(
+                    level,
                     direction,
                     centerHeight,
                     config,
-                    origin.relative(direction, 1)) + 1;
+                    origin.relative(direction, 1)
+            ) + 1;
             buildPillarWithBase(level, origin, basePos, direction, centerHeight, config, random, true);
         }
         return false;

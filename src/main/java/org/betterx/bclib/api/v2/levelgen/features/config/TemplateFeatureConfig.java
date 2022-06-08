@@ -1,13 +1,13 @@
 package org.betterx.bclib.api.v2.levelgen.features.config;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.ExtraCodecs;
-import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
+import org.betterx.bclib.api.v2.levelgen.structures.StructurePlacementType;
+import org.betterx.bclib.api.v2.levelgen.structures.StructureWorldNBT;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import org.betterx.bclib.api.v2.levelgen.structures.StructurePlacementType;
-import org.betterx.bclib.api.v2.levelgen.structures.StructureWorldNBT;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 
 import java.util.List;
 
@@ -23,10 +23,12 @@ public class TemplateFeatureConfig implements FeatureConfiguration {
 
     public final List<StructureWorldNBT> structures;
 
-    public static StructureWorldNBT cfg(ResourceLocation location,
-                                        int offsetY,
-                                        StructurePlacementType type,
-                                        float chance) {
+    public static StructureWorldNBT cfg(
+            ResourceLocation location,
+            int offsetY,
+            StructurePlacementType type,
+            float chance
+    ) {
         return StructureWorldNBT.create(location, offsetY, type, chance);
     }
 

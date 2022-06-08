@@ -1,5 +1,10 @@
 package org.betterx.bclib.api.v2.levelgen.surface.rules;
 
+import org.betterx.bclib.mixin.common.SurfaceRulesContextAccessor;
+import org.betterx.bclib.noise.OpenSimplexNoise;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.ConstantFloat;
@@ -8,10 +13,6 @@ import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.level.levelgen.SurfaceRules;
 
 import com.google.common.collect.Maps;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import org.betterx.bclib.mixin.common.SurfaceRulesContextAccessor;
-import org.betterx.bclib.noise.OpenSimplexNoise;
 
 import java.util.Map;
 
@@ -35,12 +36,14 @@ public class VolumeThresholdCondition extends VolumeNoiseCondition {
     public final double scaleY;
     public final double scaleZ;
 
-    public VolumeThresholdCondition(long noiseSeed,
-                                    double threshold,
-                                    FloatProvider range,
-                                    double scaleX,
-                                    double scaleY,
-                                    double scaleZ) {
+    public VolumeThresholdCondition(
+            long noiseSeed,
+            double threshold,
+            FloatProvider range,
+            double scaleX,
+            double scaleY,
+            double scaleZ
+    ) {
         this.threshold = threshold;
         this.range = range;
         this.scaleX = scaleX;

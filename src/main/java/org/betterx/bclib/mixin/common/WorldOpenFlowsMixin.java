@@ -1,5 +1,11 @@
 package org.betterx.bclib.mixin.common;
 
+import org.betterx.bclib.api.v2.LifeCycleAPI;
+import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
+import org.betterx.bclib.api.v2.datafixer.DataFixerAPI;
+import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
+import org.betterx.bclib.config.Configs;
+
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.worldselection.WorldOpenFlows;
 import net.minecraft.core.RegistryAccess;
@@ -9,11 +15,6 @@ import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.WorldData;
 
-import org.betterx.bclib.api.v2.LifeCycleAPI;
-import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
-import org.betterx.bclib.api.v2.datafixer.DataFixerAPI;
-import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
-import org.betterx.bclib.config.Configs;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -53,20 +54,24 @@ public abstract class WorldOpenFlowsMixin {
     }
 
     @Inject(method = "createFreshLevel", at = @At("HEAD"))
-    public void bcl_createFreshLevel(String levelID,
-                                     LevelSettings levelSettings,
-                                     RegistryAccess registryAccess,
-                                     WorldGenSettings worldGenSettings,
-                                     CallbackInfo ci) {
+    public void bcl_createFreshLevel(
+            String levelID,
+            LevelSettings levelSettings,
+            RegistryAccess registryAccess,
+            WorldGenSettings worldGenSettings,
+            CallbackInfo ci
+    ) {
         LifeCycleAPI.newWorldSetup(levelID, worldGenSettings, this.levelSource);
     }
 
     @Inject(method = "createLevelFromExistingSettings", at = @At("HEAD"))
-    public void bcl_createLevelFromExistingSettings(LevelStorageSource.LevelStorageAccess levelStorageAccess,
-                                                    ReloadableServerResources reloadableServerResources,
-                                                    RegistryAccess.Frozen frozen,
-                                                    WorldData worldData,
-                                                    CallbackInfo ci) {
+    public void bcl_createLevelFromExistingSettings(
+            LevelStorageSource.LevelStorageAccess levelStorageAccess,
+            ReloadableServerResources reloadableServerResources,
+            RegistryAccess.Frozen frozen,
+            WorldData worldData,
+            CallbackInfo ci
+    ) {
         //LifeCycleAPI.startWorld(levelStorageAccess, worldData.worldGenSettings());
     }
 }

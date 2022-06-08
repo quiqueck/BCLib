@@ -1,5 +1,8 @@
 package org.betterx.bclib.blockentities;
 
+import org.betterx.bclib.blocks.BaseBarrelBlock;
+import org.betterx.bclib.registry.BaseBlockEntities;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Vec3i;
@@ -19,9 +22,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-
-import org.betterx.bclib.blocks.BaseBarrelBlock;
-import org.betterx.bclib.registry.BaseBlockEntities;
 
 public class BaseBarrelBlockEntity extends RandomizableContainerBlockEntity {
     private NonNullList<ItemStack> inventory;
@@ -143,7 +143,7 @@ public class BaseBarrelBlockEntity extends RandomizableContainerBlockEntity {
                     SoundSource.BLOCKS,
                     0.5F,
                     this.level.random.nextFloat() * 0.1F + 0.9F
-                           );
+            );
         }
     }
 }

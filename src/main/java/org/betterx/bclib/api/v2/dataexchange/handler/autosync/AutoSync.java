@@ -1,13 +1,13 @@
 package org.betterx.bclib.api.v2.dataexchange.handler.autosync;
 
-import net.fabricmc.loader.api.FabricLoader;
-
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
 import org.betterx.bclib.api.v2.dataexchange.SyncFileHash;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.config.ServerConfig;
 import org.betterx.bclib.util.PathUtil;
+
+import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -18,13 +18,15 @@ import java.util.function.BiConsumer;
 
 public class AutoSync {
     public static final String SYNC_CATEGORY = "auto_sync";
-    public final static SyncFolderDescriptor SYNC_FOLDER = new SyncFolderDescriptor("BCLIB-SYNC",
-                                                                                    FabricLoader.getInstance()
-                                                                                                .getGameDir()
-                                                                                                .resolve("bclib-sync")
-                                                                                                .normalize()
-                                                                                                .toAbsolutePath(),
-                                                                                    true);
+    public final static SyncFolderDescriptor SYNC_FOLDER = new SyncFolderDescriptor(
+            "BCLIB-SYNC",
+            FabricLoader.getInstance()
+                        .getGameDir()
+                        .resolve("bclib-sync")
+                        .normalize()
+                        .toAbsolutePath(),
+            true
+    );
 
     @FunctionalInterface
     public interface NeedTransferPredicate {
@@ -83,10 +85,12 @@ public class AutoSync {
      *                       If the File needs to be copied. Normally using the {@link SyncFileHash}
      *                       for comparison is sufficient.
      */
-    public static void addAutoSyncFileData(String modID,
-                                           File fileName,
-                                           boolean requestContent,
-                                           NeedTransferPredicate needTransfer) {
+    public static void addAutoSyncFileData(
+            String modID,
+            File fileName,
+            boolean requestContent,
+            NeedTransferPredicate needTransfer
+    ) {
         if (!PathUtil.isChildOf(PathUtil.GAME_FOLDER, fileName.toPath())) {
             BCLib.LOGGER.error(fileName + " is outside of Game Folder " + PathUtil.GAME_FOLDER);
         } else {
@@ -109,11 +113,13 @@ public class AutoSync {
      *                       If the File needs to be copied. Normally using the {@link SyncFileHash}
      *                       for comparison is sufficient.
      */
-    public static void addAutoSyncFileData(String modID,
-                                           String uniqueID,
-                                           File fileName,
-                                           boolean requestContent,
-                                           NeedTransferPredicate needTransfer) {
+    public static void addAutoSyncFileData(
+            String modID,
+            String uniqueID,
+            File fileName,
+            boolean requestContent,
+            NeedTransferPredicate needTransfer
+    ) {
         if (!PathUtil.isChildOf(PathUtil.GAME_FOLDER, fileName.toPath())) {
             BCLib.LOGGER.error(fileName + " is outside of Game Folder " + PathUtil.GAME_FOLDER);
         } else {
@@ -184,9 +190,11 @@ public class AutoSync {
     public static void registerSyncFolder(String folderID, Path localBaseFolder, boolean removeAdditionalFiles) {
         localBaseFolder = localBaseFolder.normalize();
         if (PathUtil.isChildOf(PathUtil.GAME_FOLDER, localBaseFolder)) {
-            final SyncFolderDescriptor desc = new SyncFolderDescriptor(folderID,
-                                                                       localBaseFolder,
-                                                                       removeAdditionalFiles);
+            final SyncFolderDescriptor desc = new SyncFolderDescriptor(
+                    folderID,
+                    localBaseFolder,
+                    removeAdditionalFiles
+            );
             if (syncFolderDescriptions.contains(desc)) {
                 BCLib.LOGGER.warning("Tried to override Folder Sync '" + folderID + "' again.");
             } else {

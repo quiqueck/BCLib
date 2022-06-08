@@ -15,16 +15,18 @@ public class DimensionTypeMixin {
 //		locals = LocalCapture.CAPTURE_FAILHARD,
 //		at = @At("TAIL")
 //	)
-    private static void bclib_updateDimensions(RegistryAccess registryAccess,
-                                               long seed,
-                                               boolean bl,
-                                               CallbackInfoReturnable<Registry> info,
-                                               WritableRegistry writableRegistry,
-                                               Registry registry,
-                                               Registry biomeRegistry,
-                                               Registry structureRegistry,
-                                               Registry noiseSettingsRegistry,
-                                               Registry noiseParamRegistry) {
+    private static void bclib_updateDimensions(
+            RegistryAccess registryAccess,
+            long seed,
+            boolean bl,
+            CallbackInfoReturnable<Registry> info,
+            WritableRegistry writableRegistry,
+            Registry registry,
+            Registry biomeRegistry,
+            Registry structureRegistry,
+            Registry noiseSettingsRegistry,
+            Registry noiseParamRegistry
+    ) {
         //This probably moved to WorldPresets.bootstrap();
 //		int id = writableRegistry.getId(writableRegistry.get(LevelStem.NETHER));
 //		writableRegistry.registerOrOverride(

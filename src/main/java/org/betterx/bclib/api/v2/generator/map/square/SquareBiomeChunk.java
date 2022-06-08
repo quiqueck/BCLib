@@ -1,9 +1,9 @@
 package org.betterx.bclib.api.v2.generator.map.square;
 
-import net.minecraft.world.level.levelgen.WorldgenRandom;
-
 import org.betterx.bclib.api.v2.generator.BiomePicker;
 import org.betterx.bclib.interfaces.BiomeChunk;
+
+import net.minecraft.world.level.levelgen.WorldgenRandom;
 
 public class SquareBiomeChunk implements BiomeChunk {
     private static final int BIT_OFFSET = 4;

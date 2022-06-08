@@ -1,10 +1,11 @@
 package org.betterx.bclib.mixin.common;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.interfaces.BiomeSourceAccessor;
+
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
 
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.interfaces.BiomeSourceAccessor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

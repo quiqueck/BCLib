@@ -1,5 +1,7 @@
 package org.betterx.bclib.items;
 
+import org.betterx.bclib.interfaces.ItemModelProvider;
+
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -9,7 +11,6 @@ import net.minecraft.world.item.ArmorMaterial;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import org.betterx.bclib.interfaces.ItemModelProvider;
 
 import java.util.UUID;
 
@@ -31,20 +32,21 @@ public class BaseArmorItem extends ArmorItem implements ItemModelProvider {
         addAttributeModifier(
                 Attributes.ARMOR,
                 new AttributeModifier(uuid, "Armor modifier", getDefense(), AttributeModifier.Operation.ADDITION)
-                            );
+        );
         addAttributeModifier(
                 Attributes.ARMOR_TOUGHNESS,
                 new AttributeModifier(uuid, "Armor toughness", getToughness(), AttributeModifier.Operation.ADDITION)
-                            );
+        );
         if (knockbackResistance > 0.0F) {
             addAttributeModifier(
                     Attributes.KNOCKBACK_RESISTANCE,
-                    new AttributeModifier(uuid,
-                                          "Armor knockback resistance",
-                                          knockbackResistance,
-                                          AttributeModifier.Operation.ADDITION
+                    new AttributeModifier(
+                            uuid,
+                            "Armor knockback resistance",
+                            knockbackResistance,
+                            AttributeModifier.Operation.ADDITION
                     )
-                                );
+            );
         }
     }
 

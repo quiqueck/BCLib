@@ -1,5 +1,12 @@
 package org.betterx.bclib.client.render;
 
+import org.betterx.bclib.blockentities.BaseSignBlockEntity;
+import org.betterx.bclib.blocks.BaseSignBlock;
+
+import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -25,12 +32,6 @@ import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.phys.Vec3;
 
 import com.google.common.collect.Maps;
-import com.mojang.blaze3d.platform.NativeImage;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
-import org.betterx.bclib.blockentities.BaseSignBlockEntity;
-import org.betterx.bclib.blocks.BaseSignBlock;
 
 import java.util.HashMap;
 import java.util.List;
@@ -49,12 +50,14 @@ public class BaseSignBlockEntityRenderer implements BlockEntityRenderer<BaseSign
         model = new SignRenderer.SignModel(ctx.bakeLayer(ModelLayers.createSignModelName(WoodType.OAK)));
     }
 
-    public void render(BaseSignBlockEntity signBlockEntity,
-                       float tickDelta,
-                       PoseStack matrixStack,
-                       MultiBufferSource provider,
-                       int light,
-                       int overlay) {
+    public void render(
+            BaseSignBlockEntity signBlockEntity,
+            float tickDelta,
+            PoseStack matrixStack,
+            MultiBufferSource provider,
+            int light,
+            int overlay
+    ) {
         BlockState state = signBlockEntity.getBlockState();
 
         matrixStack.pushPose();
@@ -94,7 +97,7 @@ public class BaseSignBlockEntityRenderer implements BlockEntityRenderer<BaseSign
                     List<FormattedCharSequence> list = this.font.split(component, 90);
                     return list.isEmpty() ? FormattedCharSequence.EMPTY : list.get(0);
                 }
-                                                                                          );
+        );
         int drawColor;
         boolean drawOutlined;
         int drawLight;
@@ -121,7 +124,7 @@ public class BaseSignBlockEntityRenderer implements BlockEntityRenderer<BaseSign
                         matrixStack.last().pose(),
                         provider,
                         drawLight
-                                              );
+                );
             } else {
                 this.font.drawInBatch(
                         formattedCharSequence,
@@ -134,7 +137,7 @@ public class BaseSignBlockEntityRenderer implements BlockEntityRenderer<BaseSign
                         false,
                         0,
                         drawLight
-                                     );
+                );
             }
         }
 
@@ -179,8 +182,10 @@ public class BaseSignBlockEntityRenderer implements BlockEntityRenderer<BaseSign
 
     public static void registerRenderLayer(Block block) {
         ResourceLocation blockId = Registry.BLOCK.getKey(block);
-        RenderType layer = RenderType.entitySolid(new ResourceLocation(blockId.getNamespace(),
-                                                                       "textures/entity/sign/" + blockId.getPath() + ".png"));
+        RenderType layer = RenderType.entitySolid(new ResourceLocation(
+                blockId.getNamespace(),
+                "textures/entity/sign/" + blockId.getPath() + ".png"
+        ));
         RENDER_TYPES.put(block, layer);
     }
 

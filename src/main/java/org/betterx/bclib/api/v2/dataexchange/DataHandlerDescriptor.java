@@ -11,18 +11,22 @@ public class DataHandlerDescriptor {
         this(identifier, instancer, instancer, false, false);
     }
 
-    public DataHandlerDescriptor(@NotNull ResourceLocation identifier,
-                                 @NotNull Supplier<BaseDataHandler> instancer,
-                                 boolean sendOnJoin,
-                                 boolean sendBeforeEnter) {
+    public DataHandlerDescriptor(
+            @NotNull ResourceLocation identifier,
+            @NotNull Supplier<BaseDataHandler> instancer,
+            boolean sendOnJoin,
+            boolean sendBeforeEnter
+    ) {
         this(identifier, instancer, instancer, sendOnJoin, sendBeforeEnter);
     }
 
-    public DataHandlerDescriptor(@NotNull ResourceLocation identifier,
-                                 @NotNull Supplier<BaseDataHandler> receiv_instancer,
-                                 @NotNull Supplier<BaseDataHandler> join_instancer,
-                                 boolean sendOnJoin,
-                                 boolean sendBeforeEnter) {
+    public DataHandlerDescriptor(
+            @NotNull ResourceLocation identifier,
+            @NotNull Supplier<BaseDataHandler> receiv_instancer,
+            @NotNull Supplier<BaseDataHandler> join_instancer,
+            boolean sendOnJoin,
+            boolean sendBeforeEnter
+    ) {
         this.INSTANCE = receiv_instancer;
         this.JOIN_INSTANCE = join_instancer;
         this.IDENTIFIER = identifier;

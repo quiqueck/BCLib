@@ -1,5 +1,12 @@
 package org.betterx.bclib.commands;
 
+import org.betterx.bclib.api.v2.tag.CommonBlockTags;
+import org.betterx.bclib.util.BlocksHelper;
+
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -17,13 +24,6 @@ import net.minecraft.world.phys.Vec3;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 
-import com.mojang.brigadier.Command;
-import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import org.betterx.bclib.api.v2.tag.CommonBlockTags;
-import org.betterx.bclib.util.BlocksHelper;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,9 +32,11 @@ public class CommandRegistry {
         CommandRegistrationCallback.EVENT.register(CommandRegistry::register);
     }
 
-    private static void register(CommandDispatcher<CommandSourceStack> dispatcher,
-                                 CommandBuildContext commandBuildContext,
-                                 Commands.CommandSelection commandSelection) {
+    private static void register(
+            CommandDispatcher<CommandSourceStack> dispatcher,
+            CommandBuildContext commandBuildContext,
+            Commands.CommandSelection commandSelection
+    ) {
         dispatcher.register(
                 Commands.literal("bclib")
                         .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
@@ -184,11 +186,13 @@ public class CommandRegistry {
         final ServerLevel level = source.getLevel();
         MutableBlockPos mPos = new BlockPos(pos).mutable();
         System.out.println("Staring at: " + mPos + " -> " + level.getBlockState(mPos));
-        boolean found = org.betterx.bclib.util.BlocksHelper.findSurroundingSurface(level,
+        boolean found = org.betterx.bclib.util.BlocksHelper.findSurroundingSurface(
+                level,
                 mPos,
                 Direction.DOWN,
                 12,
-                state -> BlocksHelper.isTerrain(state));
+                state -> BlocksHelper.isTerrain(state)
+        );
         System.out.println("Ending at: " + mPos + " -> " + level.getBlockState(mPos) + " = " + found);
         org.betterx.bclib.util.BlocksHelper.setWithoutUpdate(level, new BlockPos(pos), Blocks.YELLOW_CONCRETE);
         org.betterx.bclib.util.BlocksHelper.setWithoutUpdate(level, mPos, Blocks.LIGHT_BLUE_CONCRETE);

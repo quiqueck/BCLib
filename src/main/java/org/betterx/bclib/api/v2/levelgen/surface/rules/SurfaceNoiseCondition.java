@@ -1,10 +1,10 @@
 package org.betterx.bclib.api.v2.levelgen.surface.rules;
 
+import org.betterx.bclib.mixin.common.SurfaceRulesContextAccessor;
+
 import net.minecraft.world.level.levelgen.SurfaceRules.Condition;
 import net.minecraft.world.level.levelgen.SurfaceRules.Context;
 import net.minecraft.world.level.levelgen.SurfaceRules.LazyXZCondition;
-
-import org.betterx.bclib.mixin.common.SurfaceRulesContextAccessor;
 
 public abstract class SurfaceNoiseCondition implements NoiseCondition {
     @Override

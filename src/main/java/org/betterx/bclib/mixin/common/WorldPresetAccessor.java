@@ -12,5 +12,5 @@ import java.util.Map;
 @Mixin(WorldPreset.class)
 public interface WorldPresetAccessor {
     @Accessor("dimensions")
-    public Map<ResourceKey<LevelStem>, LevelStem> bcl_getDimensions();
+    Map<ResourceKey<LevelStem>, LevelStem> bcl_getDimensions();
 }

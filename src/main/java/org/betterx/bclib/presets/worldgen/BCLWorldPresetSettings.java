@@ -1,5 +1,17 @@
 package org.betterx.bclib.presets.worldgen;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.generator.BCLBiomeSource;
+import org.betterx.bclib.api.v2.generator.BCLChunkGenerator;
+import org.betterx.bclib.api.v2.generator.BCLibNetherBiomeSource;
+import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
+import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
+import org.betterx.bclib.api.v2.levelgen.surface.SurfaceRuleUtil;
+import org.betterx.bclib.interfaces.ChunkGeneratorAccessor;
+import org.betterx.bclib.interfaces.NoiseGeneratorSettingsProvider;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
@@ -11,18 +23,6 @@ import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
-
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.generator.BCLBiomeSource;
-import org.betterx.bclib.api.v2.generator.BCLChunkGenerator;
-import org.betterx.bclib.api.v2.generator.BCLibNetherBiomeSource;
-import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
-import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
-import org.betterx.bclib.api.v2.levelgen.surface.SurfaceRuleUtil;
-import org.betterx.bclib.interfaces.ChunkGeneratorAccessor;
-import org.betterx.bclib.interfaces.NoiseGeneratorSettingsProvider;
 
 import java.util.Map;
 import java.util.Optional;
@@ -63,16 +63,21 @@ public class BCLWorldPresetSettings extends WorldPresetSettings {
         return CODEC;
     }
 
-    public BCLWorldPreset buildPreset(LevelStem overworldStem,
-                                      LevelGenUtil.Context netherContext,
-                                      LevelGenUtil.Context endContext) {
+    public BCLWorldPreset buildPreset(
+            LevelStem overworldStem,
+            LevelGenUtil.Context netherContext,
+            LevelGenUtil.Context endContext
+    ) {
         return new BCLWorldPreset(buildDimensionMap(overworldStem, netherContext, endContext), 1000, this);
     }
 
-    public Map<ResourceKey<LevelStem>, LevelStem> buildDimensionMap(LevelStem overworldStem,
-                                                                    LevelGenUtil.Context netherContext,
-                                                                    LevelGenUtil.Context endContext) {
-        return Map.of(LevelStem.OVERWORLD,
+    public Map<ResourceKey<LevelStem>, LevelStem> buildDimensionMap(
+            LevelStem overworldStem,
+            LevelGenUtil.Context netherContext,
+            LevelGenUtil.Context endContext
+    ) {
+        return Map.of(
+                LevelStem.OVERWORLD,
                 overworldStem,
                 LevelStem.NETHER,
                 createNetherStem(netherContext),
@@ -109,10 +114,13 @@ public class BCLWorldPresetSettings extends WorldPresetSettings {
         return biomeSource;
     }
 
-    public Holder<NoiseGeneratorSettings> fixNoiseSettings(Holder<NoiseGeneratorSettings> settings,
-                                                           BiomeSource biomeSource) {
+    public Holder<NoiseGeneratorSettings> fixNoiseSettings(
+            Holder<NoiseGeneratorSettings> settings,
+            BiomeSource biomeSource
+    ) {
         NoiseGeneratorSettings old = settings.value();
-        NoiseGeneratorSettings noise = new NoiseGeneratorSettings(old.noiseSettings(),
+        NoiseGeneratorSettings noise = new NoiseGeneratorSettings(
+                old.noiseSettings(),
                 old.defaultBlock(),
                 old.defaultFluid(),
                 old.noiseRouter(),
@@ -122,7 +130,8 @@ public class BCLWorldPresetSettings extends WorldPresetSettings {
                 old.disableMobGeneration(),
                 old.aquifersEnabled(),
                 old.oreVeinsEnabled(),
-                old.useLegacyRandomSource());
+                old.useLegacyRandomSource()
+        );
 
 
         return Holder.direct(noise);
@@ -138,9 +147,11 @@ public class BCLWorldPresetSettings extends WorldPresetSettings {
      * @param settings
      * @return
      */
-    public WorldGenSettings fixSettingsInCurrentWorld(RegistryAccess access, ResourceKey<LevelStem> dimensionKey,
-                                                      ResourceKey<DimensionType> dimensionTypeKey,
-                                                      WorldGenSettings settings) {
+    public WorldGenSettings fixSettingsInCurrentWorld(
+            RegistryAccess access, ResourceKey<LevelStem> dimensionKey,
+            ResourceKey<DimensionType> dimensionTypeKey,
+            WorldGenSettings settings
+    ) {
         Optional<Holder<LevelStem>> loadedStem = settings.dimensions().getHolder(dimensionKey);
         final ChunkGenerator loadedChunkGenerator = loadedStem.map(h -> h.value().generator()).orElse(null);
         final int loaderVersion = LevelGenUtil.getBiomeVersionForGenerator(loadedStem
@@ -171,7 +182,8 @@ public class BCLWorldPresetSettings extends WorldPresetSettings {
                     final Set<Holder<Biome>> biomes = loadedChunkGenerator.getBiomeSource().possibleBiomes();
                     final BiomeSource bs = fixBiomeSource(referenceGenerator.getBiomeSource(), biomes);
                     InternalBiomeAPI.applyModifications(bs, dimensionKey);
-                    referenceGenerator = new BCLChunkGenerator(generator.bclib_getStructureSetsRegistry(),
+                    referenceGenerator = new BCLChunkGenerator(
+                            generator.bclib_getStructureSetsRegistry(),
                             noiseProvider.bclib_getNoises(),
                             bs,
                             fixNoiseSettings(noiseProvider.bclib_getNoiseGeneratorSettingHolders(), bs)
@@ -179,11 +191,13 @@ public class BCLWorldPresetSettings extends WorldPresetSettings {
                 }
             }
 
-            return LevelGenUtil.replaceGenerator(dimensionKey,
+            return LevelGenUtil.replaceGenerator(
+                    dimensionKey,
                     dimensionTypeKey,
                     access,
                     settings,
-                    referenceGenerator);
+                    referenceGenerator
+            );
         } else {
             BCLChunkGenerator.injectNoiseSettings(dimensionKey, loadedChunkGenerator);
         }

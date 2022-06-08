@@ -1,10 +1,10 @@
 package org.betterx.bclib.api.v2.dataexchange.handler.autosync;
 
-import net.minecraft.network.FriendlyByteBuf;
-
 import org.betterx.bclib.api.v2.dataexchange.DataHandler;
 import org.betterx.bclib.config.Config;
 import org.betterx.bclib.util.ModUtil;
+
+import net.minecraft.network.FriendlyByteBuf;
 
 import java.io.File;
 import java.util.Objects;

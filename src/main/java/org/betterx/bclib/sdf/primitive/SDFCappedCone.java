@@ -1,8 +1,8 @@
 package org.betterx.bclib.sdf.primitive;
 
-import net.minecraft.util.Mth;
-
 import org.betterx.bclib.util.MHelper;
+
+import net.minecraft.util.Mth;
 
 public class SDFCappedCone extends SDFPrimitive {
     private float radius1;
@@ -35,7 +35,7 @@ public class SDFCappedCone extends SDFPrimitive {
                 MHelper.dot(radius2 - qx, height - y, k2x, k2y) / MHelper.dot(k2x, k2y, k2x, k2y),
                 0F,
                 1F
-                             );
+        );
         float cbx = qx - radius2 + k2x * mlt;
         float cby = y - height + k2y * mlt;
         float s = (cbx < 0F && cay < 0F) ? -1F : 1F;

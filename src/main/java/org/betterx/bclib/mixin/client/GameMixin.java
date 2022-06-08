@@ -1,8 +1,9 @@
 package org.betterx.bclib.mixin.client;
 
+import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
+
 import net.minecraft.client.Game;
 
-import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

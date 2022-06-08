@@ -1,5 +1,9 @@
 package org.betterx.bclib.interfaces;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.client.models.ModelsHelper;
+import org.betterx.bclib.client.models.PatternsHelper;
+
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
@@ -7,10 +11,6 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.client.models.ModelsHelper;
-import org.betterx.bclib.client.models.PatternsHelper;
 
 import java.util.Map;
 import java.util.Optional;
@@ -24,19 +24,23 @@ public interface BlockModelProvider extends ItemModelProvider {
     }
 
     @Environment(EnvType.CLIENT)
-    default UnbakedModel getModelVariant(ResourceLocation stateId,
-                                         BlockState blockState,
-                                         Map<ResourceLocation, UnbakedModel> modelCache) {
+    default UnbakedModel getModelVariant(
+            ResourceLocation stateId,
+            BlockState blockState,
+            Map<ResourceLocation, UnbakedModel> modelCache
+    ) {
         ResourceLocation modelId = new ResourceLocation(stateId.getNamespace(), "block/" + stateId.getPath());
         registerBlockModel(stateId, modelId, blockState, modelCache);
         return ModelsHelper.createBlockSimple(modelId);
     }
 
     @Environment(EnvType.CLIENT)
-    default void registerBlockModel(ResourceLocation stateId,
-                                    ResourceLocation modelId,
-                                    BlockState blockState,
-                                    Map<ResourceLocation, UnbakedModel> modelCache) {
+    default void registerBlockModel(
+            ResourceLocation stateId,
+            ResourceLocation modelId,
+            BlockState blockState,
+            Map<ResourceLocation, UnbakedModel> modelCache
+    ) {
         if (!modelCache.containsKey(modelId)) {
             BlockModel model = getBlockModel(stateId, blockState);
             if (model != null) {

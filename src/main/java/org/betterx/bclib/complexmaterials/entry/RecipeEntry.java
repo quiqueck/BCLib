@@ -1,10 +1,10 @@
 package org.betterx.bclib.complexmaterials.entry;
 
-import net.minecraft.resources.ResourceLocation;
-
 import org.betterx.bclib.complexmaterials.ComplexMaterial;
 import org.betterx.bclib.config.PathConfig;
 import org.betterx.bclib.interfaces.TriConsumer;
+
+import net.minecraft.resources.ResourceLocation;
 
 public class RecipeEntry extends ComplexMaterialEntry {
     final TriConsumer<ComplexMaterial, PathConfig, ResourceLocation> initFunction;

@@ -1,5 +1,12 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.api.v2.tag.NamedMineableTags;
+import org.betterx.bclib.api.v2.tag.TagAPI;
+import org.betterx.bclib.client.models.BasePatterns;
+import org.betterx.bclib.client.models.ModelsHelper;
+import org.betterx.bclib.client.models.PatternsHelper;
+import org.betterx.bclib.client.sound.BlockSounds;
+
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
@@ -34,12 +41,6 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import com.google.common.collect.Maps;
-import org.betterx.bclib.api.v2.tag.NamedMineableTags;
-import org.betterx.bclib.api.v2.tag.TagAPI;
-import org.betterx.bclib.client.models.BasePatterns;
-import org.betterx.bclib.client.models.ModelsHelper;
-import org.betterx.bclib.client.models.PatternsHelper;
-import org.betterx.bclib.client.sound.BlockSounds;
 
 import java.util.Collections;
 import java.util.List;
@@ -54,11 +55,11 @@ public class BaseTerrainBlock extends BaseBlock {
 
     public BaseTerrainBlock(Block baseBlock, MaterialColor color) {
         super(FabricBlockSettings
-                      .copyOf(baseBlock)
-                      .materialColor(color)
-                      .sound(BlockSounds.TERRAIN_SOUND)
-                      .randomTicks()
-             );
+                .copyOf(baseBlock)
+                .materialColor(color)
+                .sound(BlockSounds.TERRAIN_SOUND)
+                .randomTicks()
+        );
         this.baseBlock = baseBlock;
     }
 
@@ -71,12 +72,14 @@ public class BaseTerrainBlock extends BaseBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState state,
-                                 Level world,
-                                 BlockPos pos,
-                                 Player player,
-                                 InteractionHand hand,
-                                 BlockHitResult hit) {
+    public InteractionResult use(
+            BlockState state,
+            Level world,
+            BlockPos pos,
+            Player player,
+            InteractionHand hand,
+            BlockHitResult hit
+    ) {
         if (pathBlock != null && TagAPI.isToolWithMineableTag(player.getMainHandItem(), NamedMineableTags.SHOVEL)) {
             world.playSound(player, pos, SoundEvents.SHOVEL_FLATTEN, SoundSource.BLOCKS, 1.0F, 1.0F);
             if (!world.isClientSide) {
@@ -122,7 +125,7 @@ public class BaseTerrainBlock extends BaseBlock {
                     blockPos,
                     Direction.UP,
                     blockState.getLightBlock(worldView, blockPos)
-                                                      );
+            );
             return i < 5;
         }
     }
@@ -150,9 +153,11 @@ public class BaseTerrainBlock extends BaseBlock {
 
     @Override
     @Environment(EnvType.CLIENT)
-    public UnbakedModel getModelVariant(ResourceLocation stateId,
-                                        BlockState blockState,
-                                        Map<ResourceLocation, UnbakedModel> modelCache) {
+    public UnbakedModel getModelVariant(
+            ResourceLocation stateId,
+            BlockState blockState,
+            Map<ResourceLocation, UnbakedModel> modelCache
+    ) {
         ResourceLocation modelId = new ResourceLocation(stateId.getNamespace(), "block/" + stateId.getPath());
         registerBlockModel(stateId, modelId, blockState, modelCache);
         return ModelsHelper.createRandomTopModel(modelId);

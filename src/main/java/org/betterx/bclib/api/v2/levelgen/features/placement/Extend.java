@@ -1,5 +1,7 @@
 package org.betterx.bclib.api.v2.levelgen.features.placement;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -8,9 +10,6 @@ import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.levelgen.placement.PlacementContext;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
-
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import java.util.stream.Stream;
 
@@ -37,9 +36,11 @@ public class Extend extends PlacementModifier {
     }
 
     @Override
-    public Stream<BlockPos> getPositions(PlacementContext placementContext,
-                                         RandomSource random,
-                                         BlockPos blockPos) {
+    public Stream<BlockPos> getPositions(
+            PlacementContext placementContext,
+            RandomSource random,
+            BlockPos blockPos
+    ) {
         var builder = Stream.<BlockPos>builder();
         final int count = length.sample(random);
         builder.add(blockPos);

@@ -23,7 +23,7 @@ public abstract class UnderwaterPlantWithAgeBlock extends UnderwaterPlantBlock {
                         .sound(SoundType.WET_GRASS)
                         .randomTicks()
                         .noCollission()
-             );
+        );
     }
 
     @Override

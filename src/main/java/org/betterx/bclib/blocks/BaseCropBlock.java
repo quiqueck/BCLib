@@ -1,5 +1,8 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.util.BlocksHelper;
+import org.betterx.bclib.util.MHelper;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -25,8 +28,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import com.google.common.collect.Lists;
-import org.betterx.bclib.util.BlocksHelper;
-import org.betterx.bclib.util.MHelper;
 
 import java.util.Collections;
 import java.util.List;
@@ -46,7 +47,7 @@ public class BaseCropBlock extends BasePlantBlock {
                                    .noCollission()
                                    .offsetType(BlockBehaviour.OffsetType.NONE),
                 drop, terrain
-            );
+        );
     }
 
     public BaseCropBlock(BlockBehaviour.Properties properties, Item drop, Block... terrain) {

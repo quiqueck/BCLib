@@ -1,9 +1,10 @@
 package org.betterx.bclib.mixin.common;
 
+import org.betterx.bclib.blocks.BaseAnvilBlock;
+
 import net.minecraft.world.level.block.AnvilBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
-import org.betterx.bclib.blocks.BaseAnvilBlock;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

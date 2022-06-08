@@ -27,11 +27,13 @@ public class BCLPoiType {
     public final int maxTickets;
     public final int validRange;
 
-    public BCLPoiType(ResourceKey<PoiType> key,
-                      PoiType type,
-                      Set<BlockState> matchingStates,
-                      int maxTickets,
-                      int validRange) {
+    public BCLPoiType(
+            ResourceKey<PoiType> key,
+            PoiType type,
+            Set<BlockState> matchingStates,
+            int maxTickets,
+            int validRange
+    ) {
         this.key = key;
         this.type = type;
         this.matchingStates = matchingStates;
@@ -39,10 +41,12 @@ public class BCLPoiType {
         this.validRange = validRange;
     }
 
-    public static BCLPoiType register(ResourceLocation location,
-                                      Set<BlockState> matchingStates,
-                                      int maxTickets,
-                                      int validRanges) {
+    public static BCLPoiType register(
+            ResourceLocation location,
+            Set<BlockState> matchingStates,
+            int maxTickets,
+            int validRanges
+    ) {
         ResourceKey<PoiType> key = ResourceKey.create(Registry.POINT_OF_INTEREST_TYPE_REGISTRY, location);
         PoiType type = PoiTypes.register(Registry.POINT_OF_INTEREST_TYPE, key, matchingStates, maxTickets, validRanges);
         return new BCLPoiType(key, type, matchingStates, maxTickets, validRanges);
@@ -52,17 +56,21 @@ public class BCLPoiType {
         return ImmutableSet.copyOf(block.getStateDefinition().getPossibleStates());
     }
 
-    public Optional<BlockPos> findPoiAround(ServerLevel level,
-                                            BlockPos center,
-                                            boolean wideSearch,
-                                            WorldBorder worldBorder) {
+    public Optional<BlockPos> findPoiAround(
+            ServerLevel level,
+            BlockPos center,
+            boolean wideSearch,
+            WorldBorder worldBorder
+    ) {
         return findPoiAround(key, level, center, wideSearch, worldBorder);
     }
 
-    public Optional<BlockPos> findPoiAround(ServerLevel level,
-                                            BlockPos center,
-                                            int radius,
-                                            WorldBorder worldBorder) {
+    public Optional<BlockPos> findPoiAround(
+            ServerLevel level,
+            BlockPos center,
+            int radius,
+            WorldBorder worldBorder
+    ) {
         return findPoiAround(key, level, center, radius, worldBorder);
     }
 
@@ -71,7 +79,8 @@ public class BCLPoiType {
             ServerLevel level,
             BlockPos center,
             boolean wideSearch,
-            WorldBorder worldBorder) {
+            WorldBorder worldBorder
+    ) {
         return findPoiAround(key, level, center, wideSearch ? 16 : 128, worldBorder);
     }
 
@@ -80,7 +89,8 @@ public class BCLPoiType {
             ServerLevel level,
             BlockPos center,
             int radius,
-            WorldBorder worldBorder) {
+            WorldBorder worldBorder
+    ) {
         PoiManager poiManager = level.getPoiManager();
 
         poiManager.ensureLoadedAndValid(level, center, radius);

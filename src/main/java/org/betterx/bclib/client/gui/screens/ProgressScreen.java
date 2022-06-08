@@ -1,17 +1,17 @@
 package org.betterx.bclib.client.gui.screens;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.client.gui.gridlayout.*;
+
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ProgressListener;
-
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.client.gui.gridlayout.*;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import org.jetbrains.annotations.Nullable;
@@ -78,7 +78,8 @@ class ProgressLogoRender extends GridCustomRenderCell {
         }
 
         if (percentage > 0 && percentage < 1.0) {
-            GuiComponent.fill(poseStack,
+            GuiComponent.fill(
+                    poseStack,
                     transform.left,
                     yBar,
                     transform.left + transform.width,
@@ -91,8 +92,10 @@ class ProgressLogoRender extends GridCustomRenderCell {
 
 public class ProgressScreen extends GridScreen implements ProgressListener, AtomicProgressListener {
 
-    static final ResourceLocation BCLIB_LOGO_PIXELATED_LOCATION = new ResourceLocation(BCLib.MOD_ID,
-            "iconpixelated.png");
+    static final ResourceLocation BCLIB_LOGO_PIXELATED_LOCATION = new ResourceLocation(
+            BCLib.MOD_ID,
+            "iconpixelated.png"
+    );
 
     public ProgressScreen(@Nullable Screen parent, Component title, Component description) {
         super(parent, title, 20, true);
@@ -155,9 +158,11 @@ public class ProgressScreen extends GridScreen implements ProgressListener, Atom
 
         grid.addSpacerRow(20);
         row = grid.addRow();
-        stage = row.addMessage(stageComponent != null ? stageComponent : Component.literal(""),
+        stage = row.addMessage(
+                stageComponent != null ? stageComponent : Component.literal(""),
                 font,
-                GridLayout.Alignment.CENTER);
+                GridLayout.Alignment.CENTER
+        );
     }
 
     @Override

@@ -1,5 +1,9 @@
 package org.betterx.bclib.api.v2.levelgen.features.placement;
 
+import org.betterx.bclib.util.BlocksHelper;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.ExtraCodecs;
@@ -9,10 +13,6 @@ import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.levelgen.placement.PlacementContext;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
-
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import org.betterx.bclib.util.BlocksHelper;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -28,8 +28,10 @@ public class FindSolidInDirection extends PlacementModifier {
                                                   Codec.intRange(1, 32).fieldOf("dist").orElse(12).forGetter((p) -> p.maxSearchDistance),
                                                   Codec.BOOL.fieldOf("random:select").orElse(true).forGetter(p -> p.randomSelect)
                                           )
-                                          .apply(instance,
-                                                  FindSolidInDirection::new));
+                                          .apply(
+                                                  instance,
+                                                  FindSolidInDirection::new
+                                          ));
     protected static final FindSolidInDirection DOWN = new FindSolidInDirection(Direction.DOWN, 6);
     protected static final FindSolidInDirection UP = new FindSolidInDirection(Direction.UP, 6);
     private final List<Direction> direction;
@@ -77,9 +79,11 @@ public class FindSolidInDirection extends PlacementModifier {
     }
 
     @Override
-    public Stream<BlockPos> getPositions(PlacementContext placementContext,
-                                         RandomSource randomSource,
-                                         BlockPos blockPos) {
+    public Stream<BlockPos> getPositions(
+            PlacementContext placementContext,
+            RandomSource randomSource,
+            BlockPos blockPos
+    ) {
         var builder = Stream.<BlockPos>builder();
         if (randomSelect) {
             submitSingle(placementContext, blockPos, builder, randomDirection(randomSource));
@@ -92,16 +96,20 @@ public class FindSolidInDirection extends PlacementModifier {
         return builder.build();
     }
 
-    private void submitSingle(PlacementContext placementContext,
-                              BlockPos blockPos,
-                              Stream.Builder<BlockPos> builder,
-                              Direction d) {
+    private void submitSingle(
+            PlacementContext placementContext,
+            BlockPos blockPos,
+            Stream.Builder<BlockPos> builder,
+            Direction d
+    ) {
         BlockPos.MutableBlockPos POS = blockPos.mutable();
-        if (BlocksHelper.findOnSurroundingSurface(placementContext.getLevel(),
+        if (BlocksHelper.findOnSurroundingSurface(
+                placementContext.getLevel(),
                 POS,
                 d,
                 maxSearchDistance,
-                BlocksHelper::isTerrain)) {
+                BlocksHelper::isTerrain
+        )) {
             builder.add(POS);
         }
     }

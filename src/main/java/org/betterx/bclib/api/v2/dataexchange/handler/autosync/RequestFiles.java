@@ -1,5 +1,10 @@
 package org.betterx.bclib.api.v2.dataexchange.handler.autosync;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.dataexchange.DataHandler;
+import org.betterx.bclib.api.v2.dataexchange.DataHandlerDescriptor;
+import org.betterx.bclib.config.Configs;
+
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -9,22 +14,21 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.dataexchange.DataHandler;
-import org.betterx.bclib.api.v2.dataexchange.DataHandlerDescriptor;
-import org.betterx.bclib.config.Configs;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class RequestFiles extends DataHandler.FromClient {
-    public static final DataHandlerDescriptor DESCRIPTOR = new DataHandlerDescriptor(new ResourceLocation(BCLib.MOD_ID,
-                                                                                                          "request_files"),
-                                                                                     RequestFiles::new,
-                                                                                     false,
-                                                                                     false);
+    public static final DataHandlerDescriptor DESCRIPTOR = new DataHandlerDescriptor(
+            new ResourceLocation(
+                    BCLib.MOD_ID,
+                    "request_files"
+            ),
+            RequestFiles::new,
+            false,
+            false
+    );
     static String currentToken = "";
 
     protected List<AutoSyncID> files;

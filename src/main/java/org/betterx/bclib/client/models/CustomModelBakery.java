@@ -1,5 +1,11 @@
 package org.betterx.bclib.client.models;
 
+import org.betterx.bclib.api.v2.ModIntegrationAPI;
+import org.betterx.bclib.client.render.EmissiveTextureInfo;
+import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.bclib.interfaces.ItemModelProvider;
+
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.multipart.MultiPart;
@@ -15,11 +21,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.mojang.datafixers.util.Pair;
-import org.betterx.bclib.api.v2.ModIntegrationAPI;
-import org.betterx.bclib.client.render.EmissiveTextureInfo;
-import org.betterx.bclib.interfaces.BlockModelProvider;
-import org.betterx.bclib.interfaces.ItemModelProvider;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,16 +35,20 @@ public class CustomModelBakery {
     }
 
     public UnbakedModel getItemModel(ResourceLocation location) {
-        ResourceLocation storageID = new ResourceLocation(location.getNamespace(),
-                                                          "models/item/" + location.getPath() + ".json");
+        ResourceLocation storageID = new ResourceLocation(
+                location.getNamespace(),
+                "models/item/" + location.getPath() + ".json"
+        );
         return models.get(location);
     }
 
     public void loadCustomModels(ResourceManager resourceManager) {
         Registry.BLOCK.stream().parallel().filter(block -> block instanceof BlockModelProvider).forEach(block -> {
             ResourceLocation blockID = Registry.BLOCK.getKey(block);
-            ResourceLocation storageID = new ResourceLocation(blockID.getNamespace(),
-                                                              "blockstates/" + blockID.getPath() + ".json");
+            ResourceLocation storageID = new ResourceLocation(
+                    blockID.getNamespace(),
+                    "blockstates/" + blockID.getPath() + ".json"
+            );
             if (resourceManager.getResource(storageID).isEmpty()) {
                 addBlockModel(blockID, block);
             }
@@ -55,8 +60,10 @@ public class CustomModelBakery {
 
         Registry.ITEM.stream().parallel().filter(item -> item instanceof ItemModelProvider).forEach(item -> {
             ResourceLocation registryID = Registry.ITEM.getKey(item);
-            ResourceLocation storageID = new ResourceLocation(registryID.getNamespace(),
-                                                              "models/item/" + registryID.getPath() + ".json");
+            ResourceLocation storageID = new ResourceLocation(
+                    registryID.getNamespace(),
+                    "models/item/" + registryID.getPath() + ".json"
+            );
             if (resourceManager.getResource(storageID).isEmpty()) {
                 addItemModel(registryID, (ItemModelProvider) item);
             }
@@ -88,9 +95,11 @@ public class CustomModelBakery {
     }
 
     private void addItemModel(ResourceLocation itemID, ItemModelProvider provider) {
-        ModelResourceLocation modelLocation = new ModelResourceLocation(itemID.getNamespace(),
-                                                                        itemID.getPath(),
-                                                                        "inventory");
+        ModelResourceLocation modelLocation = new ModelResourceLocation(
+                itemID.getNamespace(),
+                itemID.getPath(),
+                "inventory"
+        );
         if (models.containsKey(modelLocation)) {
             return;
         }

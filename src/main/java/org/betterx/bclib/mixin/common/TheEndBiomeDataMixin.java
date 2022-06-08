@@ -1,5 +1,7 @@
 package org.betterx.bclib.mixin.common;
 
+import org.betterx.bclib.interfaces.TheEndBiomeDataAccessor;
+
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
@@ -7,7 +9,6 @@ import net.minecraft.world.level.biome.Biome;
 import net.fabricmc.fabric.impl.biome.TheEndBiomeData;
 import net.fabricmc.fabric.impl.biome.WeightedPicker;
 
-import org.betterx.bclib.interfaces.TheEndBiomeDataAccessor;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -31,14 +32,14 @@ public class TheEndBiomeDataMixin implements TheEndBiomeDataAccessor {
     private Map<Holder<Biome>, WeightedPicker<Holder<Biome>>> endBarrensMap;
 
     public boolean bcl_canGenerateAsEndBiome(ResourceKey<Biome> key) {
-        return endBiomesMap == null ? false : endBiomesMap.containsKey(key);
+        return endBiomesMap != null && endBiomesMap.containsKey(key);
     }
 
     public boolean bcl_canGenerateAsEndMidlandBiome(ResourceKey<Biome> key) {
-        return endMidlandsMap == null ? false : endMidlandsMap.containsKey(key);
+        return endMidlandsMap != null && endMidlandsMap.containsKey(key);
     }
 
     public boolean bcl_canGenerateAsEndBarrensBiome(ResourceKey<Biome> key) {
-        return endBarrensMap == null ? false : endBarrensMap.containsKey(key);
+        return endBarrensMap != null && endBarrensMap.containsKey(key);
     }
 }

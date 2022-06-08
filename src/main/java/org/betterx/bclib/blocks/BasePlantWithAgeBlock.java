@@ -29,7 +29,7 @@ public abstract class BasePlantWithAgeBlock extends BasePlantBlock {
                                                  .sound(SoundType.GRASS)
                                                  .randomTicks()
                                                  .noCollission())
-            );
+        );
     }
 
     public BasePlantWithAgeBlock(Properties settings) {

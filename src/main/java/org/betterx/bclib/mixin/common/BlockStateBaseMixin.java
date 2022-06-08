@@ -1,9 +1,10 @@
 package org.betterx.bclib.mixin.common;
 
+import org.betterx.bclib.util.MethodReplace;
+
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour.BlockStateBase;
 
-import org.betterx.bclib.util.MethodReplace;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

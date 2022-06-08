@@ -1,5 +1,16 @@
 package org.betterx.bclib.api.v2.datafixer;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.WorldDataAPI;
+import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
+import org.betterx.bclib.client.gui.screens.AtomicProgressListener;
+import org.betterx.bclib.client.gui.screens.ConfirmFixScreen;
+import org.betterx.bclib.client.gui.screens.LevelFixErrorScreen;
+import org.betterx.bclib.client.gui.screens.LevelFixErrorScreen.Listener;
+import org.betterx.bclib.client.gui.screens.ProgressScreen;
+import org.betterx.bclib.config.Configs;
+import org.betterx.bclib.util.Logger;
+
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.toasts.SystemToast;
@@ -15,17 +26,6 @@ import net.minecraft.world.level.storage.LevelStorageSource.LevelStorageAccess;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.WorldDataAPI;
-import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
-import org.betterx.bclib.client.gui.screens.AtomicProgressListener;
-import org.betterx.bclib.client.gui.screens.ConfirmFixScreen;
-import org.betterx.bclib.client.gui.screens.LevelFixErrorScreen;
-import org.betterx.bclib.client.gui.screens.LevelFixErrorScreen.Listener;
-import org.betterx.bclib.client.gui.screens.ProgressScreen;
-import org.betterx.bclib.config.Configs;
-import org.betterx.bclib.util.Logger;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -72,9 +72,11 @@ public class DataFixerAPI {
         void call();
     }
 
-    private static boolean wrapCall(LevelStorageSource levelSource,
-                                    String levelID,
-                                    Function<LevelStorageAccess, Boolean> runWithLevel) {
+    private static boolean wrapCall(
+            LevelStorageSource levelSource,
+            String levelID,
+            Function<LevelStorageAccess, Boolean> runWithLevel
+    ) {
         LevelStorageSource.LevelStorageAccess levelStorageAccess;
         try {
             levelStorageAccess = levelSource.createAccess(levelID);
@@ -108,10 +110,12 @@ public class DataFixerAPI {
      * @return {@code true} if the UI was displayed. The UI is only displayed if {@code showUI} was {@code true} and
      * patches were enabled in the config and the Guardian did find any patches that need to be applied to the world.
      */
-    public static boolean fixData(LevelStorageSource levelSource,
-                                  String levelID,
-                                  boolean showUI,
-                                  Consumer<Boolean> onResume) {
+    public static boolean fixData(
+            LevelStorageSource levelSource,
+            String levelID,
+            boolean showUI,
+            Consumer<Boolean> onResume
+    ) {
         return wrapCall(levelSource, levelID, (levelStorageAccess) -> fixData(levelStorageAccess, showUI, onResume));
     }
 
@@ -125,9 +129,11 @@ public class DataFixerAPI {
      * @return {@code true} if the UI was displayed. The UI is only displayed if {@code showUI} was {@code true} and
      * patches were enabled in the config and the Guardian did find any patches that need to be applied to the world.
      */
-    public static boolean fixData(LevelStorageSource.LevelStorageAccess levelStorageAccess,
-                                  boolean showUI,
-                                  Consumer<Boolean> onResume) {
+    public static boolean fixData(
+            LevelStorageSource.LevelStorageAccess levelStorageAccess,
+            boolean showUI,
+            Consumer<Boolean> onResume
+    ) {
         File levelPath = levelStorageAccess.getLevelPath(LevelResource.ROOT).toFile();
         File levelDat = levelStorageAccess.getLevelPath(LevelResource.LEVEL_DATA_FILE).toFile();
         boolean newWorld = false;
@@ -203,9 +209,11 @@ public class DataFixerAPI {
 
     @Environment(EnvType.CLIENT)
     private static AtomicProgressListener showProgressScreen() {
-        ProgressScreen ps = new ProgressScreen(Minecraft.getInstance().screen,
+        ProgressScreen ps = new ProgressScreen(
+                Minecraft.getInstance().screen,
                 Component.translatable("title.bclib.datafixer.progress"),
-                Component.translatable("message.bclib.datafixer.progress"));
+                Component.translatable("message.bclib.datafixer.progress")
+        );
         Minecraft.getInstance().setScreen(ps);
         return ps;
     }
@@ -311,9 +319,11 @@ public class DataFixerAPI {
     @Environment(EnvType.CLIENT)
     private static void showLevelFixErrorScreen(State state, Listener onContinue) {
         Minecraft.getInstance()
-                 .setScreen(new LevelFixErrorScreen(Minecraft.getInstance().screen,
+                 .setScreen(new LevelFixErrorScreen(
+                         Minecraft.getInstance().screen,
                          state.getErrorMessages(),
-                         onContinue));
+                         onContinue
+                 ));
     }
 
     private static MigrationProfile loadProfileIfNeeded(File levelBaseDir) {
@@ -524,9 +534,13 @@ public class DataFixerAPI {
                             });
 
                             try {
-                                changed[0] |= data.patchBlockState(palette,
-                                        ((CompoundTag) tag).getList("BlockStates",
-                                                Tag.TAG_LONG));
+                                changed[0] |= data.patchBlockState(
+                                        palette,
+                                        ((CompoundTag) tag).getList(
+                                                "BlockStates",
+                                                Tag.TAG_LONG
+                                        )
+                                );
                             } catch (PatchDidiFailException e) {
                                 BCLib.LOGGER.error("Failed fixing BlockState in " + pos);
                                 state.addError("Failed fixing BlockState in " + pos + " (" + e.getMessage() + ")");

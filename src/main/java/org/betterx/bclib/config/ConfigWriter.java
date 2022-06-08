@@ -1,10 +1,11 @@
 package org.betterx.bclib.config;
 
+import org.betterx.bclib.util.JsonFactory;
+
 import net.fabricmc.loader.api.FabricLoader;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.betterx.bclib.util.JsonFactory;
 
 import java.io.File;
 import java.nio.file.Path;

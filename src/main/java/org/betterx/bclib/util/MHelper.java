@@ -1,10 +1,9 @@
 package org.betterx.bclib.util;
 
+import com.mojang.math.Vector3f;
 import net.minecraft.core.Vec3i;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.LegacyRandomSource;
-
-import com.mojang.math.Vector3f;
 
 import java.util.Random;
 

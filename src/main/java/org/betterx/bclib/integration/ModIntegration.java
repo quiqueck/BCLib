@@ -1,5 +1,9 @@
 package org.betterx.bclib.integration;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.levelgen.features.BCLFeature;
+import org.betterx.bclib.api.v2.tag.TagAPI;
+
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.data.BuiltinRegistries;
@@ -16,10 +20,6 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
 import net.fabricmc.loader.api.FabricLoader;
-
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.levelgen.features.BCLFeature;
-import org.betterx.bclib.api.v2.tag.TagAPI;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -69,11 +69,13 @@ public abstract class ModIntegration {
         Feature<?> feature = Registry.FEATURE.get(id);
         Holder<PlacedFeature> featurePlaced = BuiltinRegistries.PLACED_FEATURE.getHolder(getFeatureKey(placedFeatureID))
                                                                               .orElse(null);
-        return new BCLFeature(id,
+        return new BCLFeature(
+                id,
                 feature,
                 featureStep,
                 featurePlaced.value().getFeatures().map(f -> f.config()).findFirst().orElse(null),
-                featurePlaced);
+                featurePlaced
+        );
     }
 
     public BCLFeature getFeature(String name, GenerationStep.Decoration featureStep) {
@@ -171,10 +173,12 @@ public abstract class ModIntegration {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Object> T getAndExecuteRuntime(Class<?> cl,
-                                                     Object instance,
-                                                     String functionName,
-                                                     Object... args) {
+    public <T extends Object> T getAndExecuteRuntime(
+            Class<?> cl,
+            Object instance,
+            String functionName,
+            Object... args
+    ) {
         if (instance != null) {
             Class<?>[] classes = new Class<?>[args.length];
             for (int i = 0; i < args.length; i++) {

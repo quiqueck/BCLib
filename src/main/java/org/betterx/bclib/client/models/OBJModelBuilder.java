@@ -1,12 +1,12 @@
 package org.betterx.bclib.client.models;
 
+import com.mojang.math.Vector3f;
 import net.minecraft.resources.ResourceLocation;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import com.google.common.collect.Lists;
-import com.mojang.math.Vector3f;
 
 import java.util.List;
 

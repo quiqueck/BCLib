@@ -1,5 +1,7 @@
 package org.betterx.bclib.api.v2.levelgen.features.features;
 
+import org.betterx.bclib.util.BlocksHelper;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
@@ -7,8 +9,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
-
-import org.betterx.bclib.util.BlocksHelper;
 
 @Deprecated(forRemoval = true)
 public abstract class DefaultFeature extends Feature<NoneFeatureConfiguration> {

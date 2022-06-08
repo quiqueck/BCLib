@@ -1,15 +1,15 @@
 package org.betterx.bclib.client.gui.modmenu;
 
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.network.chat.Component;
-
 import org.betterx.bclib.client.gui.gridlayout.*;
 import org.betterx.bclib.config.ConfigKeeper;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.config.NamedPathConfig;
 import org.betterx.bclib.config.NamedPathConfig.ConfigTokenDescription;
 import org.betterx.bclib.config.NamedPathConfig.DependendConfigToken;
+
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,13 +50,15 @@ public class MainScreen extends GridScreen {
         if (option.leftPadding > 0) {
             row.addSpacer(option.leftPadding);
         }
-        GridCheckboxCell cb = row.addCheckbox(getComponent(config, option, "title"),
+        GridCheckboxCell cb = row.addCheckbox(
+                getComponent(config, option, "title"),
                 config.getRaw(option.token),
                 font,
                 (state) -> {
                     config.set(option.token, state);
                     updateEnabledState();
-                });
+                }
+        );
 
         if (option.token instanceof DependendConfigToken) {
             dependentWidgets.put(cb, () -> option.token.dependenciesTrue(config));

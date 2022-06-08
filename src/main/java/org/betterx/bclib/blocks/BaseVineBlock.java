@@ -1,5 +1,11 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.blocks.BlockProperties.TripleShape;
+import org.betterx.bclib.client.render.BCLRenderLayer;
+import org.betterx.bclib.interfaces.RenderLayerProvider;
+import org.betterx.bclib.items.tool.BaseShearsItem;
+import org.betterx.bclib.util.BlocksHelper;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -30,11 +36,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import com.google.common.collect.Lists;
-import org.betterx.bclib.blocks.BlockProperties.TripleShape;
-import org.betterx.bclib.client.render.BCLRenderLayer;
-import org.betterx.bclib.interfaces.RenderLayerProvider;
-import org.betterx.bclib.items.tool.BaseShearsItem;
-import org.betterx.bclib.util.BlocksHelper;
 
 import java.util.List;
 import java.util.function.Function;
@@ -59,14 +60,14 @@ public class BaseVineBlock extends BaseBlockNotFull implements RenderLayerProvid
     public BaseVineBlock(int light, boolean bottomOnly, Function<Properties, Properties> propMod) {
         this(
                 propMod.apply(FabricBlockSettings
-                                      .of(Material.PLANT)
-                                      .sound(SoundType.GRASS)
-                                      .lightLevel((state) -> bottomOnly ? state.getValue(SHAPE) == TripleShape.BOTTOM
-                                              ? light
-                                              : 0 : light)
-                                      .noCollission()
-                                      .offsetType(BlockBehaviour.OffsetType.XZ))
-            );
+                        .of(Material.PLANT)
+                        .sound(SoundType.GRASS)
+                        .lightLevel((state) -> bottomOnly ? state.getValue(SHAPE) == TripleShape.BOTTOM
+                                ? light
+                                : 0 : light)
+                        .noCollission()
+                        .offsetType(BlockBehaviour.OffsetType.XZ))
+        );
     }
 
     public BaseVineBlock(BlockBehaviour.Properties properties) {
@@ -100,12 +101,14 @@ public class BaseVineBlock extends BaseBlockNotFull implements RenderLayerProvid
     }
 
     @Override
-    public BlockState updateShape(BlockState state,
-                                  Direction facing,
-                                  BlockState neighborState,
-                                  LevelAccessor world,
-                                  BlockPos pos,
-                                  BlockPos neighborPos) {
+    public BlockState updateShape(
+            BlockState state,
+            Direction facing,
+            BlockState neighborState,
+            LevelAccessor world,
+            BlockPos pos,
+            BlockPos neighborPos
+    ) {
         if (!canSurvive(state, world, pos)) {
             return Blocks.AIR.defaultBlockState();
         } else {
@@ -121,7 +124,7 @@ public class BaseVineBlock extends BaseBlockNotFull implements RenderLayerProvid
         if (tool != null && BaseShearsItem.isShear(tool) || EnchantmentHelper.getItemEnchantmentLevel(
                 Enchantments.SILK_TOUCH,
                 tool
-                                                                                                     ) > 0) {
+        ) > 0) {
             return Lists.newArrayList(new ItemStack(this));
         } else {
             return Lists.newArrayList();

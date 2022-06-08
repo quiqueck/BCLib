@@ -1,5 +1,11 @@
 package org.betterx.bclib.api.v2.levelgen.biomes;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.interfaces.BiomeSourceAccessor;
+import org.betterx.bclib.interfaces.NoiseGeneratorSettingsProvider;
+import org.betterx.bclib.interfaces.SurfaceRuleProvider;
+import org.betterx.bclib.mixin.common.BiomeGenerationSettingsAccessor;
+
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
@@ -17,11 +23,6 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.mutable.MutableInt;
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.interfaces.BiomeSourceAccessor;
-import org.betterx.bclib.interfaces.NoiseGeneratorSettingsProvider;
-import org.betterx.bclib.interfaces.SurfaceRuleProvider;
-import org.betterx.bclib.mixin.common.BiomeGenerationSettingsAccessor;
 
 import java.util.List;
 import java.util.Map;
@@ -215,8 +216,10 @@ public class InternalBiomeAPI {
         }
     }
 
-    private static void applyModificationsAndUpdateFeatures(List<BiConsumer<ResourceLocation, Holder<Biome>>> modifications,
-                                                            Holder<Biome> biome) {
+    private static void applyModificationsAndUpdateFeatures(
+            List<BiConsumer<ResourceLocation, Holder<Biome>>> modifications,
+            Holder<Biome> biome
+    ) {
         ResourceLocation biomeID = BiomeAPI.getBiomeID(biome);
         if (modifications != null) {
             modifications.forEach(consumer -> {

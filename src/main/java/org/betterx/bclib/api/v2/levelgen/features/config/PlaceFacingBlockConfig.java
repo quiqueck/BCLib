@@ -1,5 +1,9 @@
 package org.betterx.bclib.api.v2.levelgen.features.config;
 
+import org.betterx.bclib.util.BlocksHelper;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.ExtraCodecs;
@@ -11,10 +15,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStateProvider;
-
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import org.betterx.bclib.util.BlocksHelper;
 
 import java.util.List;
 
@@ -28,17 +28,21 @@ public class PlaceFacingBlockConfig extends PlaceBlockFeatureConfig {
                                .forGetter(a -> a.directions)
             ).apply(instance, PlaceFacingBlockConfig::new)
     );
-    public static final List<Direction> HORIZONTAL = List.of(Direction.NORTH,
+    public static final List<Direction> HORIZONTAL = List.of(
+            Direction.NORTH,
             Direction.EAST,
             Direction.WEST,
-            Direction.SOUTH);
+            Direction.SOUTH
+    );
     public static final List<Direction> VERTICAL = List.of(Direction.UP, Direction.DOWN);
-    public static final List<Direction> ALL = List.of(Direction.NORTH,
+    public static final List<Direction> ALL = List.of(
+            Direction.NORTH,
             Direction.EAST,
             Direction.SOUTH,
             Direction.WEST,
             Direction.UP,
-            Direction.DOWN);
+            Direction.DOWN
+    );
 
     private final List<Direction> directions;
 
@@ -65,10 +69,12 @@ public class PlaceFacingBlockConfig extends PlaceBlockFeatureConfig {
 
     @Override
 
-    public boolean placeBlock(FeaturePlaceContext<? extends PlaceBlockFeatureConfig> ctx,
-                              WorldGenLevel level,
-                              BlockPos pos,
-                              BlockState targetState) {
+    public boolean placeBlock(
+            FeaturePlaceContext<? extends PlaceBlockFeatureConfig> ctx,
+            WorldGenLevel level,
+            BlockPos pos,
+            BlockState targetState
+    ) {
         BlockState lookupState;
         for (Direction dir : directions) {
             lookupState = targetState.setValue(HorizontalDirectionalBlock.FACING, dir);
