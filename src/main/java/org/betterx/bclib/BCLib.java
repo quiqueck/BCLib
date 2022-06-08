@@ -20,19 +20,13 @@ import org.betterx.bclib.registry.BaseBlockEntities;
 import org.betterx.bclib.registry.BaseRegistry;
 import org.betterx.bclib.util.Logger;
 
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.ai.village.poi.PoiType;
-import net.minecraft.world.entity.ai.village.poi.PoiTypes;
-import net.minecraft.world.level.block.Blocks;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.util.List;
-import java.util.Set;
 
 public class BCLib implements ModInitializer {
     public static final String MOD_ID = "bclib";
@@ -71,8 +65,6 @@ public class BCLib implements ModInitializer {
         PlacementModifiers.ensureStaticInitialization();
         Configs.save();
 
-        ResourceKey<PoiType> key = ResourceKey.create(Registry.POINT_OF_INTEREST_TYPE_REGISTRY, makeID("test"));
-        PoiTypes.register(Registry.POINT_OF_INTEREST_TYPE, key, Set.of(Blocks.RED_CONCRETE.defaultBlockState()), 0, 1);
         /*if (isDevEnvironment()) {
             Biome.BiomeBuilder builder = new Biome.BiomeBuilder()
                     .precipitation(Biome.Precipitation.NONE)
