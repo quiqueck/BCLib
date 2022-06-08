@@ -38,7 +38,7 @@
 	"title.bclib.syncfiles.modlist": "Mod Information",
 	"message.bclib.syncfiles.modlist": "The following shows the state of your installed installed Mods.\n\nAll Mods that do not exist locally, or have a different version on the Server will be synchronized.",
 	"title.bclib.modmissmatch": "Mod Version Conflict",
-	"message.bclib.modmissmatch": "Some Mods on this client do not match the version of Mods on the Server.\n\nMismatching Mods can result in odd game behavior or crashes. Please make sue that you use the same mods as the server.",
+	"message.bclib.modmissmatch": "Some Mods on this client do not match the version of Mods on the Server.\n\nMismatching Mods can result in odd game behavior or crashes. Please make sure that you use the same mods as the server.",
 
 	"message.bclib.datafixer.progress.waitbackup": "Waiting for Backup to finish. This may take a while!",
 	"message.bclib.datafixer.progress.reading": "Reading Data",
