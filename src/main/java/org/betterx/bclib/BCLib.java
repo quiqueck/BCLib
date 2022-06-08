@@ -1,6 +1,11 @@
 package org.betterx.bclib;
 
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.ai.village.poi.PoiType;
+import net.minecraft.world.entity.ai.village.poi.PoiTypes;
+import net.minecraft.world.level.block.Blocks;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
@@ -27,6 +32,7 @@ import org.betterx.bclib.registry.BaseRegistry;
 import org.betterx.bclib.util.Logger;
 
 import java.util.List;
+import java.util.Set;
 
 public class BCLib implements ModInitializer {
     public static final String MOD_ID = "bclib";
@@ -52,18 +58,21 @@ public class BCLib implements ModInitializer {
         CommandRegistry.register();
 
         DataExchangeAPI.registerDescriptors(List.of(
-                        HelloClient.DESCRIPTOR,
-                        HelloServer.DESCRIPTOR,
-                        RequestFiles.DESCRIPTOR,
-                        SendFiles.DESCRIPTOR,
-                        Chunker.DESCRIPTOR
-                )
-        );
+                                                    HelloClient.DESCRIPTOR,
+                                                    HelloServer.DESCRIPTOR,
+                                                    RequestFiles.DESCRIPTOR,
+                                                    SendFiles.DESCRIPTOR,
+                                                    Chunker.DESCRIPTOR
+                                                   )
+                                           );
 
         BCLibPatch.register();
         TemplatePiece.ensureStaticInitialization();
         PlacementModifiers.ensureStaticInitialization();
         Configs.save();
+
+        ResourceKey<PoiType> key = ResourceKey.create(Registry.POINT_OF_INTEREST_TYPE_REGISTRY, makeID("test"));
+        PoiTypes.register(Registry.POINT_OF_INTEREST_TYPE, key, Set.of(Blocks.RED_CONCRETE.defaultBlockState()), 0, 1);
         /*if (isDevEnvironment()) {
             Biome.BiomeBuilder builder = new Biome.BiomeBuilder()
                     .precipitation(Biome.Precipitation.NONE)
