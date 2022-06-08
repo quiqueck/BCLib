@@ -111,7 +111,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
                     if (bclBiome.getParentBiome() == null) {
                         if (BiomeAPI.wasRegisteredAsEndVoidBiome(key) || includeVoid.contains(key.toString())) {
                             endVoidBiomePicker.addBiome(bclBiome);
-                        } else {
+                        } else if (BiomeAPI.wasRegisteredAsEndLandBiome(key)){
                             endLandBiomePicker.addBiome(bclBiome);
                         }
                     }
