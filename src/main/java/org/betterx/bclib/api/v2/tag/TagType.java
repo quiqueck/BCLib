@@ -46,6 +46,7 @@ public class TagType<T> {
 
         @Override
         public TagKey<T> makeTag(ResourceLocation id) {
+            initializeTag(id);
             return registry
                     .getTagNames()
                     .filter(tagKey -> tagKey.location().equals(id))
@@ -102,6 +103,10 @@ public class TagType<T> {
         this.locationProvider = locationProvider;
     }
 
+    protected void initializeTag(ResourceLocation tagID){
+        getSetForTag(tagID);
+    }
+
     public Set<TagEntry> getSetForTag(ResourceLocation tagID) {
         return tags.computeIfAbsent(tagID, k -> Sets.newHashSet());
     }
@@ -121,6 +126,11 @@ public class TagType<T> {
      * @return the corresponding TagKey {@link TagKey<T>}.
      */
     public TagKey<T> makeTag(ResourceLocation id) {
+        return creatTagKey(id);
+    }
+
+    protected TagKey<T> creatTagKey(ResourceLocation id) {
+        initializeTag(id);
         return TagKey.create(registryKey, id);
     }
 
@@ -132,7 +142,7 @@ public class TagType<T> {
      * @see <a href="https://fabricmc.net/wiki/tutorial:tags">Fabric Wiki (Tags)</a>
      */
     public TagKey<T> makeCommonTag(String name) {
-        return TagKey.create(registryKey, new ResourceLocation("c", name));
+        return creatTagKey(new ResourceLocation("c", name));
     }
 
     public void addUntyped(TagKey<T> tagID, ResourceLocation... elements) {
@@ -212,10 +222,11 @@ public class TagType<T> {
         if (Registry.BIOME_REGISTRY.equals(registryKey)) InternalBiomeAPI._runBiomeTagAdders();
 
         //this.isFrozen = true;
-        this.forEach((id, ids) -> apply(tagsMap.computeIfAbsent(id, key -> Lists.newArrayList()), ids));
+        this.forEach((id, ids) -> apply(id, tagsMap.computeIfAbsent(id, key -> Lists.newArrayList()), ids));
     }
 
-    private static List<TagLoader.EntryWithSource> apply(List<TagLoader.EntryWithSource> builder,
+    private static List<TagLoader.EntryWithSource> apply(ResourceLocation id,
+                                                         List<TagLoader.EntryWithSource> builder,
                                                          Set<TagEntry> ids) {
         ids.forEach(value -> builder.add(new TagLoader.EntryWithSource(value, BCLib.MOD_ID)));
         return builder;

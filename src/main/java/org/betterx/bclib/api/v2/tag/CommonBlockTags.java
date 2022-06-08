@@ -48,6 +48,11 @@ public class CommonBlockTags {
         TagAPI.BLOCKS.add(SOUL_GROUND, Blocks.SOUL_SAND, Blocks.SOUL_SOIL);
 
         TagAPI.BLOCKS.add(IS_OBSIDIAN, Blocks.OBSIDIAN, Blocks.CRYING_OBSIDIAN);
+
+        TagAPI.BLOCKS.add(MYCELIUM, Blocks.MYCELIUM);
+        TagAPI.BLOCKS.addOtherTags(MYCELIUM, NETHER_MYCELIUM);
+
+
         TagAPI.BLOCKS.add(TERRAIN,
                 Blocks.MAGMA_BLOCK,
                 Blocks.GRAVEL,
@@ -57,7 +62,6 @@ public class CommonBlockTags {
                 Blocks.BONE_BLOCK,
                 Blocks.SCULK
         );
-
         TagAPI.BLOCKS.addOtherTags(TERRAIN,
                 BlockTags.DRIPSTONE_REPLACEABLE,
                 BlockTags.BASE_STONE_OVERWORLD,
@@ -68,8 +72,5 @@ public class CommonBlockTags {
                 NETHER_MYCELIUM,
                 MYCELIUM,
                 END_STONES);
-
-        TagAPI.BLOCKS.add(MYCELIUM, Blocks.MYCELIUM);
-        TagAPI.BLOCKS.addOtherTags(MYCELIUM, NETHER_MYCELIUM);
     }
 }
