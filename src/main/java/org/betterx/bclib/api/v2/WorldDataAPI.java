@@ -135,10 +135,10 @@ public class WorldDataAPI {
             tag.putString(TAG_MODIFIED, ModUtil.getModVersion(modID));
 
 
-            final File tempFile =new File(dataDir, modID + ".nbt_temp");
+            final File tempFile =new File(dataDir, modID + "_temp.nbt");
             NbtIo.writeCompressed(tag, tempFile);
 
-            final File oldFile = new File(dataDir, modID + ".nbt_old");
+            final File oldFile = new File(dataDir, modID + "_old.nbt");
             final File dataFile = new File(dataDir, modID + ".nbt");
             Util.safeReplaceFile(dataFile, tempFile, oldFile);
         } catch (IOException e) {
