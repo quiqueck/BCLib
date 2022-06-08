@@ -93,6 +93,10 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
         List<String> includeVoid = Configs.BIOMES_CONFIG.getEntry("force_include",
                 "end_void_biomes",
                 StringArrayEntry.class).getValue();
+
+        List<String> includeLand = Configs.BIOMES_CONFIG.getEntry("force_include",
+                "end_land_biomes",
+                StringArrayEntry.class).getValue();
         this.possibleBiomes().forEach(biome -> {
             ResourceLocation key = biome.unwrapKey().orElseThrow().location();
             String group = key.getNamespace() + "." + key.getPath();
@@ -111,7 +115,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
                     if (bclBiome.getParentBiome() == null) {
                         if (BiomeAPI.wasRegisteredAsEndVoidBiome(key) || includeVoid.contains(key.toString())) {
                             endVoidBiomePicker.addBiome(bclBiome);
-                        } else if (BiomeAPI.wasRegisteredAsEndLandBiome(key)){
+                        } else if (BiomeAPI.wasRegisteredAsEndLandBiome(key)  || includeLand.contains(key.toString()) ){
                             endLandBiomePicker.addBiome(bclBiome);
                         }
                     }
