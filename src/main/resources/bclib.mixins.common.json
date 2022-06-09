@@ -17,6 +17,7 @@
     "CraftingMenuMixin",
     "DedicatedServerPropertiesMixin",
     "DiggerItemAccessor",
+    "DiggerItemMixin",
     "EnchantingTableBlockMixin",
     "ItemStackMixin",
     "LayerLightSectionStorageMixin",
