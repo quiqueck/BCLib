@@ -108,7 +108,7 @@ public class BCLWorldPresetSettings extends WorldPresetSettings {
     }
 
     public BiomeSource fixBiomeSource(BiomeSource biomeSource, Set<Holder<Biome>> datapackBiomes) {
-        if (biomeSource instanceof BCLibNetherBiomeSource bs) {
+        if (biomeSource instanceof BCLBiomeSource bs) {
             return bs.createCopyForDatapack(datapackBiomes);
         }
         return biomeSource;
