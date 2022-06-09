@@ -606,7 +606,10 @@ public class BiomeAPI {
      * @param biome The {@link Biome} to sort the features for
      */
     public static void sortBiomeFeatures(Holder<Biome> biome) {
-        BiomeGenerationSettings settings = biome.value().getGenerationSettings();
+        sortBiomeFeatures(biome.value());
+    }
+    static void sortBiomeFeatures(Biome biome) {
+        BiomeGenerationSettings settings = biome.getGenerationSettings();
         BiomeGenerationSettingsAccessor accessor = (BiomeGenerationSettingsAccessor) settings;
         List<HolderSet<PlacedFeature>> featureList = CollectionsUtil.getMutable(accessor.bclib_getFeatures());
         final int size = featureList.size();

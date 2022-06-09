@@ -11,7 +11,7 @@ public class MainConfig extends NamedPathConfig {
 
     @ConfigUI(leftPadding = 8)
     public static final ConfigToken<Boolean> REPAIR_BIOMES = DependendConfigToken.Boolean(
-            true,
+            false,
             "repairBiomesOnLoad",
             Configs.MAIN_PATCH_CATEGORY,
             (config) -> config.get(
