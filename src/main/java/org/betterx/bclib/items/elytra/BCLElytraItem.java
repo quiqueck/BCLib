@@ -13,8 +13,6 @@ public interface BCLElytraItem extends FabricElytraItem {
     double getMovementFactor();
 
     default void doVanillaElytraTick(LivingEntity entity, ItemStack chestStack) {
-        if (BCLElytraUtils.onBreak == null) ((FabricElytraItem) this).doVanillaElytraTick(entity, chestStack);
-
         int nextRoll = entity.getFallFlyingTicks() + 1;
 
         if (!entity.level.isClientSide && nextRoll % 10 == 0) {
