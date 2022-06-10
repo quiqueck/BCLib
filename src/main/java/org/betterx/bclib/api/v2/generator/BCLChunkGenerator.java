@@ -76,18 +76,22 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator {
 
             //terrablender is completley invalidating the feature imitialization
             //we redo it at this point, otherwise we will get blank biomes
-            if (this instanceof ChunkGeneratorAccessor acc) {
-                Function<Holder<Biome>, BiomeGenerationSettings> function = (Holder<Biome> hh) -> hh.value()
-                                                                                                    .getGenerationSettings();
-
-                acc.bcl_setFeaturesPerStep(Suppliers.memoize(() -> FeatureSorter.buildFeaturesPerStep(
-                        List.copyOf(biomeSource.possibleBiomes()),
-                        (hh) -> function.apply(hh).features(),
-                        true
-                )));
-            }
+            rebuildFeaturesPerStep(biomeSource);
         }
         System.out.println("Chunk Generator: " + this + " (biomeSource: " + biomeSource + ")");
+    }
+
+    private void rebuildFeaturesPerStep(BiomeSource biomeSource) {
+        if (this instanceof ChunkGeneratorAccessor acc) {
+            Function<Holder<Biome>, BiomeGenerationSettings> function = (Holder<Biome> hh) -> hh.value()
+                                                                                                .getGenerationSettings();
+
+            acc.bcl_setFeaturesPerStep(Suppliers.memoize(() -> FeatureSorter.buildFeaturesPerStep(
+                    List.copyOf(biomeSource.possibleBiomes()),
+                    (hh) -> function.apply(hh).features(),
+                    true
+            )));
+        }
     }
 
     public void restoreInitialBiomeSource() {
@@ -96,6 +100,7 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator {
                 BiomeSource bs = LevelGenUtil.getWorldSettings()
                                              .fixBiomeSource(initialBiomeSource, getBiomeSource().possibleBiomes());
                 acc.bcl_setBiomeSource(bs);
+                rebuildFeaturesPerStep(getBiomeSource());
             }
         }
     }
