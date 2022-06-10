@@ -33,6 +33,10 @@ public class BCLib implements ModInitializer {
     public static final String TOGETHER_WORLDS = "worlds_together";
     public static final Logger LOGGER = new Logger(MOD_ID);
 
+    public static final boolean RUNS_TERRABLENDER = FabricLoader.getInstance()
+                                                                .getModContainer("terrablender")
+                                                                .isPresent();
+
     @Override
     public void onInitialize() {
         Types.ensureStaticInitialization();

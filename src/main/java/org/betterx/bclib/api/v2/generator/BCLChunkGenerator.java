@@ -7,7 +7,6 @@ import org.betterx.bclib.api.v2.levelgen.surface.SurfaceRuleUtil;
 import org.betterx.bclib.interfaces.NoiseGeneratorSettingsProvider;
 import org.betterx.bclib.interfaces.SurfaceRuleProvider;
 import org.betterx.bclib.mixin.common.ChunkGeneratorAccessor;
-import org.betterx.bclib.util.ModUtil;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -71,7 +70,7 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator {
         super(registry, registry2, biomeSource, holder);
         initialBiomeSource = biomeSource;
 
-        if (!"0.0.0".equals(ModUtil.getModVersion("terrablender"))) {
+        if (BCLib.RUNS_TERRABLENDER) {
             BCLib.LOGGER.info("Make sure features are loaded from terrablender for " + biomeSource);
 
             //terrablender is completley invalidating the feature imitialization
