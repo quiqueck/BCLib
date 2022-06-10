@@ -47,6 +47,7 @@
     "WorldGenRegionMixin",
     "WorldOpenFlowsMixin",
     "WorldPresetsBootstrapMixin",
+    "elytra.LivingEntityMixin",
     "shears.BeehiveBlockMixin",
     "shears.DiggingEnchantmentMixin",
     "shears.ItemPredicateBuilderMixin",
