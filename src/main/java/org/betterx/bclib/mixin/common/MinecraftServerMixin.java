@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.progress.ChunkProgressListenerFactory;
 import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.LevelStorageSource.LevelStorageAccess;
 import net.minecraft.world.level.storage.WorldData;
 
@@ -28,7 +29,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-@Mixin(MinecraftServer.class)
+@Mixin(value=MinecraftServer.class)
 public class MinecraftServerMixin {
     @Shadow
     private MinecraftServer.ReloadableResources resources;
@@ -41,7 +42,7 @@ public class MinecraftServerMixin {
     @Shadow
     protected WorldData worldData;
 
-    @Inject(method = "<init>*", at = @At("TAIL"))
+        @Inject(method = "<init>*", at = @At("TAIL"))
     private void bclib_onServerInit(
             Thread thread,
             LevelStorageAccess levelStorageAccess,

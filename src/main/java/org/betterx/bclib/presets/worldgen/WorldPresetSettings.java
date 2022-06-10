@@ -4,13 +4,17 @@ import org.betterx.bclib.BCLib;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
+import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
 
+import java.util.Set;
 import java.util.function.Function;
 
 public abstract class WorldPresetSettings {
@@ -47,4 +51,5 @@ public abstract class WorldPresetSettings {
 
     public abstract Codec<? extends WorldPresetSettings> codec();
     public abstract WorldGenSettings repairSettingsOnLoad(RegistryAccess registryAccess, WorldGenSettings settings);
+    public abstract BiomeSource fixBiomeSource(BiomeSource biomeSource, Set<Holder<Biome>> datapackBiomes);
 }

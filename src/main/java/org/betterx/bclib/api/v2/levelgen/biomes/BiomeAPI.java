@@ -608,6 +608,7 @@ public class BiomeAPI {
     public static void sortBiomeFeatures(Holder<Biome> biome) {
         sortBiomeFeatures(biome.value());
     }
+
     static void sortBiomeFeatures(Biome biome) {
         BiomeGenerationSettings settings = biome.getGenerationSettings();
         BiomeGenerationSettingsAccessor accessor = (BiomeGenerationSettingsAccessor) settings;

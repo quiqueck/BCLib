@@ -1,10 +1,13 @@
 package org.betterx.bclib.api.v2.generator;
 
 import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
 import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
 import org.betterx.bclib.api.v2.levelgen.surface.SurfaceRuleUtil;
 import org.betterx.bclib.interfaces.NoiseGeneratorSettingsProvider;
 import org.betterx.bclib.interfaces.SurfaceRuleProvider;
+import org.betterx.bclib.mixin.common.ChunkGeneratorAccessor;
+import org.betterx.bclib.util.ModUtil;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -13,7 +16,10 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.BiomeSource;
+import net.minecraft.world.level.biome.FeatureSorter;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
@@ -23,8 +29,11 @@ import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
+import com.google.common.base.Suppliers;
+
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class BCLChunkGenerator extends NoiseBasedChunkGenerator {
@@ -51,7 +60,7 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator {
                         .and(builderInstance.group(noiseGetter, biomeSourceCodec, settingsCodec))
                         .apply(builderInstance, builderInstance.stable(BCLChunkGenerator::new));
             });
-
+    public final BiomeSource initialBiomeSource;
 
     public BCLChunkGenerator(
             Registry<StructureSet> registry,
@@ -60,7 +69,35 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator {
             Holder<NoiseGeneratorSettings> holder
     ) {
         super(registry, registry2, biomeSource, holder);
-        System.out.println("Chunk Generator: " + this);
+        initialBiomeSource = biomeSource;
+
+        if (!"0.0.0".equals(ModUtil.getModVersion("terrablender"))) {
+            BCLib.LOGGER.info("Make sure features are loaded from terrablender for " + biomeSource);
+
+            //terrablender is completley invalidating the feature imitialization
+            //we redo it at this point, otherwise we will get blank biomes
+            if (this instanceof ChunkGeneratorAccessor acc) {
+                Function<Holder<Biome>, BiomeGenerationSettings> function = (Holder<Biome> hh) -> hh.value()
+                                                                                                    .getGenerationSettings();
+
+                acc.bcl_setFeaturesPerStep(Suppliers.memoize(() -> FeatureSorter.buildFeaturesPerStep(
+                        List.copyOf(biomeSource.possibleBiomes()),
+                        (hh) -> function.apply(hh).features(),
+                        true
+                )));
+            }
+        }
+        System.out.println("Chunk Generator: " + this + " (biomeSource: " + biomeSource + ")");
+    }
+
+    public void restoreInitialBiomeSource() {
+        if (initialBiomeSource != getBiomeSource()) {
+            if (this instanceof ChunkGeneratorAccessor acc) {
+                BiomeSource bs = LevelGenUtil.getWorldSettings()
+                                             .fixBiomeSource(initialBiomeSource, getBiomeSource().possibleBiomes());
+                acc.bcl_setBiomeSource(bs);
+            }
+        }
     }
 
     public static void injectNoiseSettings(WorldGenSettings settings) {
@@ -123,6 +160,10 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator {
         return "BCLib - Chunk Generator (" + Integer.toHexString(hashCode()) + ")";
     }
 
+    //Make sure terrablender does not rewrite the feature-set
+    public void appendFeaturesPerStep() {
+    }
+
     public static RandomState createRandomState(ServerLevel level, ChunkGenerator generator) {
         if (generator instanceof NoiseBasedChunkGenerator noiseBasedChunkGenerator) {
             return RandomState.create(
@@ -132,6 +173,18 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator {
             );
         } else {
             return RandomState.create(level.registryAccess(), NoiseGeneratorSettings.OVERWORLD, level.getSeed());
+        }
+    }
+
+    public static void restoreInitialBiomeSources(WorldGenSettings settings) {
+        restoreInitialBiomeSource(settings, LevelStem.NETHER);
+        restoreInitialBiomeSource(settings, LevelStem.END);
+    }
+
+    public static void restoreInitialBiomeSource(WorldGenSettings settings, ResourceKey<LevelStem> dimension) {
+        LevelStem loadedStem = settings.dimensions().getOrThrow(dimension);
+        if (loadedStem.generator() instanceof BCLChunkGenerator cg) {
+            cg.restoreInitialBiomeSource();
         }
     }
 }
