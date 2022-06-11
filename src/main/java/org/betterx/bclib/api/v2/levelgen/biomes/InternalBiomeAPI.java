@@ -84,6 +84,8 @@ public class InternalBiomeAPI {
                     if (b != null) {
                         BCLib.LOGGER.info("Sorting Features in Biome: " + id + "(" + b + ")");
                         BiomeAPI.sortBiomeFeatures(b);
+                    } else {
+                        BCLib.LOGGER.info("Unknown Biome: " + id);
                     }
                 });
             }
