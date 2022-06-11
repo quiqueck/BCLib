@@ -6,7 +6,6 @@ import org.betterx.bclib.interfaces.NoiseGeneratorSettingsProvider;
 import org.betterx.bclib.interfaces.SurfaceRuleProvider;
 import org.betterx.bclib.mixin.common.BiomeGenerationSettingsAccessor;
 
-import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
@@ -24,15 +23,15 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
 import net.fabricmc.fabric.api.event.registry.DynamicRegistrySetupCallback;
 import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
-import net.fabricmc.fabric.impl.registry.sync.FabricRegistry;
-import net.fabricmc.fabric.impl.registry.sync.FabricRegistryInit;
-import net.fabricmc.fabric.impl.resource.loader.FabricLifecycledResourceManager;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.mutable.MutableInt;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
@@ -82,8 +81,10 @@ public class InternalBiomeAPI {
 
                 BIOMES_TO_SORT.forEach(id -> {
                     Biome b = biomeRegistry.get(id);
-                    BCLib.LOGGER.info("Sorting Features in Biome: " + id + "("+b+")");
-                    BiomeAPI.sortBiomeFeatures(b);
+                    if (b != null) {
+                        BCLib.LOGGER.info("Sorting Features in Biome: " + id + "(" + b + ")");
+                        BiomeAPI.sortBiomeFeatures(b);
+                    }
                 });
             }
         }
@@ -242,6 +243,7 @@ public class InternalBiomeAPI {
     }
 
     private static final Set<ResourceLocation> BIOMES_TO_SORT = Sets.newHashSet();
+
     static {
         DynamicRegistrySetupCallback.EVENT.register(registryManager -> {
             Optional<? extends Registry<Biome>> oBiomeRegistry = registryManager.registry(Registry.BIOME_REGISTRY);
@@ -249,7 +251,7 @@ public class InternalBiomeAPI {
                     .event(oBiomeRegistry.get())
                     .register((rawId, id, biome) -> {
                         BCLBiome b = BiomeAPI.getBiome(id);
-                        if (!"minecraft".equals(id.getNamespace()) && (b==null || b==BiomeAPI.EMPTY_BIOME)) {
+                        if (!"minecraft".equals(id.getNamespace()) && (b == null || b == BiomeAPI.EMPTY_BIOME)) {
                             //BCLib.LOGGER.info(" #### " + rawId + ", " + biome + ", " + id);
                             BIOMES_TO_SORT.add(id);
                         }
