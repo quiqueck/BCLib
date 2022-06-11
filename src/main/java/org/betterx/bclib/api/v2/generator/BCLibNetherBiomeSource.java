@@ -21,7 +21,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Climate;
 
-import net.fabricmc.fabric.impl.biome.NetherBiomeData;
+import net.fabricmc.fabric.api.biome.v1.NetherBiomes;
 
 import org.apache.commons.lang3.function.TriFunction;
 
@@ -148,7 +148,7 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource {
 
 
     private static boolean isValidNetherBiome(Holder<Biome> biome, ResourceLocation location) {
-        return NetherBiomeData.canGenerateInNether(biome.unwrapKey().get()) ||
+        return NetherBiomes.canGenerateInNether(biome.unwrapKey().get()) ||
                 biome.is(BiomeTags.IS_NETHER) ||
                 BiomeAPI.wasRegisteredAsNetherBiome(location);
     }
@@ -156,7 +156,7 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource {
     private static boolean isValidNonVanillaNetherBiome(Holder<Biome> biome, ResourceLocation location) {
         return (
                 !"minecraft".equals(location.getNamespace()) &&
-                        NetherBiomeData.canGenerateInNether(biome.unwrapKey().get())) ||
+                        NetherBiomes.canGenerateInNether(biome.unwrapKey().get())) ||
                 BiomeAPI.wasRegisteredAs(location, BiomeAPI.BiomeType.BCL_NETHER);
     }
 

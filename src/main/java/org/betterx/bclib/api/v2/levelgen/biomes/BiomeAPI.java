@@ -41,8 +41,8 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.impl.biome.NetherBiomeData;
-import net.fabricmc.fabric.impl.biome.TheEndBiomeData;
+import net.fabricmc.fabric.api.biome.v1.NetherBiomes;
+import net.fabricmc.fabric.api.biome.v1.TheEndBiomes;
 
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
@@ -200,7 +200,7 @@ public class BiomeAPI {
 
         ResourceKey<Biome> key = getBiomeKey(bclBiome.getBiome());
         if (bclBiome.allowFabricRegistration()) {
-            bclBiome.forEachClimateParameter(p -> NetherBiomeData.addNetherBiome(key, p));
+            bclBiome.forEachClimateParameter(p -> NetherBiomes.addNetherBiome(key, p));
         }
         return bclBiome;
     }
@@ -231,8 +231,8 @@ public class BiomeAPI {
         float weight = biome.getGenChance();
         ResourceKey<Biome> key = getBiomeKey(biome.getBiome());
         if (biome.allowFabricRegistration()) {
-            TheEndBiomeData.addEndBiomeReplacement(Biomes.END_HIGHLANDS, key, weight);
-            TheEndBiomeData.addEndBiomeReplacement(Biomes.END_MIDLANDS, key, weight);
+            TheEndBiomes.addHighlandsBiome(key, weight);
+            //TheEndBiomes.addMidlandsBiome(key, weight);
         }
         return biome;
     }
@@ -282,7 +282,7 @@ public class BiomeAPI {
         float weight = biome.getGenChance();
         ResourceKey<Biome> key = getBiomeKey(biome.getBiome());
         if (biome.allowFabricRegistration()) {
-            TheEndBiomeData.addEndBiomeReplacement(Biomes.SMALL_END_ISLANDS, key, weight);
+            TheEndBiomes.addSmallIslandsBiome(key, weight);
         }
         return biome;
     }
