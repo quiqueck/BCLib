@@ -254,7 +254,7 @@ public class InternalBiomeAPI {
                     .register((rawId, id, biome) -> {
                         BCLBiome b = BiomeAPI.getBiome(id);
                         if (!"minecraft".equals(id.getNamespace()) && (b == null || b == BiomeAPI.EMPTY_BIOME)) {
-                            BCLib.LOGGER.info(" #### " + rawId + ", " + biome + ", " + id);
+                            //BCLib.LOGGER.info(" #### " + rawId + ", " + biome + ", " + id);
                             BIOMES_TO_SORT.add(id);
                         }
                     });

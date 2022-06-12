@@ -72,6 +72,7 @@ public abstract class WorldOpenFlowsMixin {
             WorldData worldData,
             CallbackInfo ci
     ) {
-        //LifeCycleAPI.startWorld(levelStorageAccess, worldData.worldGenSettings());
+        //called from the CreateWorldScreenMixin now
+        //LifeCycleAPI.newWorldSetup(levelStorageAccess, worldData.worldGenSettings());
     }
 }
