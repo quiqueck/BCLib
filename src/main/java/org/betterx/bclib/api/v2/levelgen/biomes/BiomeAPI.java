@@ -232,7 +232,11 @@ public class BiomeAPI {
         ResourceKey<Biome> key = getBiomeKey(biome.getBiome());
         if (biome.allowFabricRegistration()) {
             TheEndBiomes.addHighlandsBiome(key, weight);
-            //TheEndBiomes.addMidlandsBiome(key, weight);
+            TheEndBiomes.addMidlandsBiome(key, key, weight);
+            if (biome.isEdgeBiome()) {
+                ResourceKey<Biome> parentKey = getBiomeKey(biome.getParentBiome().getBiome());
+                TheEndBiomes.addMidlandsBiome(parentKey, key, weight);
+            }
         }
         return biome;
     }
