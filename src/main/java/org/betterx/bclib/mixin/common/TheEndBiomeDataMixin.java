@@ -32,14 +32,14 @@ public class TheEndBiomeDataMixin implements TheEndBiomeDataAccessor {
     private Map<Holder<Biome>, WeightedPicker<Holder<Biome>>> endBarrensMap;
 
     public boolean bcl_canGenerateAsEndBiome(ResourceKey<Biome> key) {
-        return endBiomesMap != null && endBiomesMap.containsKey(key);
+        return endBiomesMap != null && endBiomesMap.keySet().stream().map(h->h.unwrapKey().orElse(null)).anyMatch(k->k!=null && k.equals(key));
     }
 
     public boolean bcl_canGenerateAsEndMidlandBiome(ResourceKey<Biome> key) {
-        return endMidlandsMap != null && endMidlandsMap.containsKey(key);
+        return endMidlandsMap != null && endMidlandsMap.keySet().stream().map(h->h.unwrapKey().orElse(null)).anyMatch(k->k!=null && k.equals(key));
     }
 
     public boolean bcl_canGenerateAsEndBarrensBiome(ResourceKey<Biome> key) {
-        return endBarrensMap != null && endBarrensMap.containsKey(key);
+        return endBarrensMap != null && endBarrensMap.keySet().stream().map(h->h.unwrapKey().orElse(null)).anyMatch(k->k!=null && k.equals(key));
     }
 }
