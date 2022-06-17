@@ -596,6 +596,16 @@ public class BCLBiomeBuilder {
     }
 
     /**
+     * Adds new feature to the biome.
+     *
+     * @param feature {@link BCLFeature}.
+     * @return same {@link BCLBiomeBuilder} instance.
+     */
+    public BCLBiomeBuilder feature(org.betterx.bclib.api.v3.levelgen.features.BCLFeature feature) {
+        return feature(feature.decoration, feature.placedFeature);
+    }
+
+    /**
      * Adds new structure feature into the biome.
      *
      * @param structureTag {@link TagKey} to add.

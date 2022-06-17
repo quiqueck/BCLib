@@ -4,6 +4,8 @@ import org.betterx.bclib.api.v2.levelgen.features.config.PlaceFacingBlockConfig;
 import org.betterx.bclib.api.v2.levelgen.features.config.ScatterFeatureConfig;
 import org.betterx.bclib.api.v2.levelgen.features.features.ScatterFeature;
 
+import net.minecraft.data.worldgen.features.FeatureUtils;
+import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Block;
@@ -19,6 +21,12 @@ import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvi
 import net.minecraft.world.level.levelgen.feature.stateproviders.RandomizedIntStateProvider;
 
 public class FastFeatures {
+    public static RandomPatchConfiguration grassPatch(BlockStateProvider stateProvider, int tries) {
+        return FeatureUtils.simpleRandomPatchConfiguration(
+                tries,
+                PlacementUtils.onlyWhenEmpty(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(stateProvider))
+        );
+    }
 
 
     public static BCLFeature<ScatterFeature<ScatterFeatureConfig.OnSolid>, ScatterFeatureConfig.OnSolid> vine(
