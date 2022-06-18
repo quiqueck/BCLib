@@ -1,6 +1,7 @@
 package org.betterx.bclib.api.v3.levelgen.features;
 
 import org.betterx.bclib.api.v2.levelgen.features.config.PlaceFacingBlockConfig;
+import org.betterx.bclib.api.v2.levelgen.features.features.SequenceFeature;
 import org.betterx.bclib.api.v2.levelgen.features.placement.*;
 import org.betterx.bclib.api.v2.tag.CommonBlockTags;
 
@@ -11,9 +12,14 @@ import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.util.valueproviders.UniformInt;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.RandomPatchFeature;
+import net.minecraft.world.level.levelgen.feature.SimpleBlockFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
+import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import net.minecraft.world.level.levelgen.placement.*;
 import net.minecraft.world.level.material.Material;
 
@@ -334,12 +340,80 @@ abstract class CommonPlacedFeatureBuilder<F extends Feature<FC>, FC extends Feat
         return modifier(PlacementUtils.HEIGHTMAP_WORLD_SURFACE);
     }
 
-    public T onlyWhenEmpty() {
+    public T extendXZ(int xzSpread) {
+        IntProvider xz = UniformInt.of(0, xzSpread);
+        return (T) modifier(
+                new ForAll(List.of(
+                        new Extend(Direction.NORTH, xz),
+                        new Extend(Direction.SOUTH, xz),
+                        new Extend(Direction.EAST, xz),
+                        new Extend(Direction.WEST, xz)
+                )),
+                new ForAll(List.of(
+                        new Extend(Direction.EAST, xz),
+                        new Extend(Direction.WEST, xz),
+                        new Extend(Direction.NORTH, xz),
+                        new Extend(Direction.SOUTH, xz)
+                ))
+        );
+    }
+
+    public T extendXYZ(int xzSpread, int ySpread) {
+        IntProvider xz = UniformInt.of(0, xzSpread);
+        return (T) extendXZ(xzSpread).extendDown(1, ySpread);
+    }
+
+    public T isEmpty() {
         return modifier(BlockPredicateFilter.forPredicate(BlockPredicate.ONLY_IN_AIR_PREDICATE));
     }
 
-    public T filtered(BlockPredicate predicate) {
+
+    public T is(BlockPredicate predicate) {
         return modifier(BlockPredicateFilter.forPredicate(predicate));
+    }
+
+    public T isNextTo(BlockPredicate predicate) {
+        return modifier(new IsNextTo(predicate));
+    }
+
+    public T belowIsNextTo(BlockPredicate predicate) {
+        return modifier(new IsNextTo(predicate, Direction.DOWN.getNormal()));
+    }
+
+    public T isNextTo(BlockPredicate predicate, Vec3i offset) {
+        return modifier(new IsNextTo(predicate, offset));
+    }
+
+    public T isOn(BlockPredicate predicate) {
+        return modifier(Is.below(predicate));
+    }
+
+    public T isEmptyAndOn(BlockPredicate predicate) {
+        return (T) this.isEmpty().isOn(predicate);
+    }
+
+    public T isEmptyAndOnNylium() {
+        return isEmptyAndOn(BlockPredicates.ONLY_NYLIUM);
+    }
+
+    public T isEmptyAndOnNetherGround() {
+        return isEmptyAndOn(BlockPredicates.ONLY_NETHER_GROUND);
+    }
+
+    public T isUnder(BlockPredicate predicate) {
+        return modifier(Is.above(predicate));
+    }
+
+    public T isEmptyAndUnder(BlockPredicate predicate) {
+        return (T) this.isEmpty().isUnder(predicate);
+    }
+
+    public T isEmptyAndUnderNylium() {
+        return isEmptyAndUnder(BlockPredicates.ONLY_NYLIUM);
+    }
+
+    public T isEmptyAndUnderNetherGround() {
+        return isEmptyAndUnder(BlockPredicates.ONLY_NETHER_GROUND);
     }
 
     public T vanillaNetherGround(int countPerLayer) {
@@ -369,7 +443,26 @@ abstract class CommonPlacedFeatureBuilder<F extends Feature<FC>, FC extends Feat
      */
     abstract Holder<PlacedFeature> build();
 
-    public BCLFeatureBuilder.RandomPatch inRandomPatch(ResourceLocation id) {
+    public BCLFeatureBuilder.RandomPatch<RandomPatchFeature> inRandomPatch(ResourceLocation id) {
         return BCLFeatureBuilder.startRandomPatch(id, build());
+    }
+
+    public BCLFeatureBuilder.AsSequence<SequenceFeature> then(ResourceLocation id) {
+        return BCLFeatureBuilder.startSequence(id).add(build());
+    }
+
+    public BCLFeatureBuilder.ForSimpleBlock<SimpleBlockFeature> putBlock(ResourceLocation id, Block block) {
+        return BCLFeatureBuilder.start(id, block);
+    }
+
+    public BCLFeatureBuilder.ForSimpleBlock<SimpleBlockFeature> putBlock(ResourceLocation id, BlockState state) {
+        return BCLFeatureBuilder.start(id, state);
+    }
+
+    public BCLFeatureBuilder.ForSimpleBlock<SimpleBlockFeature> putBlock(
+            ResourceLocation id,
+            BlockStateProvider provider
+    ) {
+        return BCLFeatureBuilder.start(id, provider);
     }
 }

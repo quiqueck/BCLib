@@ -73,6 +73,11 @@ public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> 
             BCLib.makeID("condition"),
             new ConditionFeature()
     );
+
+    public static final Feature<PillarFeatureConfig> PILLAR = register(
+            BCLib.makeID("pillar"),
+            new PillarFeature()
+    );
     private final Holder<PlacedFeature> placedFeature;
     private final Decoration featureStep;
     private final F feature;

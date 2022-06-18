@@ -65,7 +65,7 @@ public class BCLPlacedFeatureBuilder<F extends Feature<FC>, FC extends FeatureCo
      *
      * @return created {@link BCLFeature} instance.
      */
-    protected Holder<PlacedFeature> build() {
+    public Holder<PlacedFeature> build() {
         Holder<PlacedFeature> p = PlacementUtils.register(
                 featureID.toString(),
                 cFeature.configuredFeature,

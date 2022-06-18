@@ -3,7 +3,6 @@ package org.betterx.bclib.api.v2.levelgen.features.placement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
@@ -13,47 +12,53 @@ import net.minecraft.world.level.levelgen.placement.PlacementFilter;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 
 import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
 
-public class Is extends PlacementFilter {
-    public static final Codec<Is> CODEC = RecordCodecBuilder.create((instance) -> instance
+public class IsNextTo extends PlacementFilter {
+    public static final Codec<IsNextTo> CODEC = RecordCodecBuilder.create((instance) -> instance
             .group(
                     BlockPredicate.CODEC
                             .fieldOf("predicate")
                             .forGetter(cfg -> cfg.predicate),
                     Vec3i.CODEC
                             .optionalFieldOf("offset")
-                            .forGetter(cfg -> cfg.offset)
+                            .forGetter(cfg -> Optional.of(cfg.offset))
             )
-            .apply(instance, Is::new));
+            .apply(instance, IsNextTo::new));
 
     private final BlockPredicate predicate;
-    private final Optional<Vec3i> offset;
+    private final Vec3i offset;
 
-    public Is(BlockPredicate predicate, Optional<Vec3i> offset) {
+    public IsNextTo(BlockPredicate predicate) {
+        this(predicate, Optional.of(Vec3i.ZERO));
+    }
+
+    public IsNextTo(BlockPredicate predicate, Optional<Vec3i> offset) {
+        this(predicate, offset.orElse(Vec3i.ZERO));
+    }
+
+    public IsNextTo(@NotNull BlockPredicate predicate, @NotNull Vec3i offset) {
         this.predicate = predicate;
         this.offset = offset;
     }
 
-    public static Is simple(BlockPredicate predicate) {
-        return new Is(predicate, Optional.empty());
-    }
-
-    public static Is below(BlockPredicate predicate) {
-        return new Is(predicate, Optional.of(Direction.DOWN.getNormal()));
-    }
-
-    public static Is above(BlockPredicate predicate) {
-        return new Is(predicate, Optional.of(Direction.UP.getNormal()));
+    public static PlacementFilter simple(BlockPredicate predicate) {
+        return new IsBasin(predicate);
     }
 
     @Override
     protected boolean shouldPlace(PlacementContext ctx, RandomSource random, BlockPos pos) {
         WorldGenLevel level = ctx.getLevel();
-        return predicate.test(level, offset.map(v -> pos.offset(v.getX(), v.getY(), v.getZ())).orElse(pos));
+
+        pos = pos.offset(this.offset);
+        return predicate.test(level, pos.west())
+                || predicate.test(level, pos.east())
+                || predicate.test(level, pos.north())
+                || predicate.test(level, pos.south());
     }
 
     @Override
-    public PlacementModifierType<Is> type() {
-        return PlacementModifiers.IS;
+    public PlacementModifierType<?> type() {
+        return PlacementModifiers.IS_NEXT_TO;
     }
 }

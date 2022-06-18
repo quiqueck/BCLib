@@ -33,4 +33,12 @@ public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> 
         this.placedFeature = placed;
         this.decoration = decoration;
     }
+
+    public Holder<PlacedFeature> getPlacedFeature() {
+        return placedFeature;
+    }
+
+    public GenerationStep.Decoration getDecoration() {
+        return decoration;
+    }
 }

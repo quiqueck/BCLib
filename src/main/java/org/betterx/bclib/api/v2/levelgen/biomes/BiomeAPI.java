@@ -639,6 +639,19 @@ public class BiomeAPI {
     /**
      * Adds new features to existing biome.
      *
+     * @param biome   {@link Biome} to add features in.
+     * @param feature {@link ConfiguredFeature} to add.
+     */
+    public static void addBiomeFeature(
+            Holder<Biome> biome,
+            org.betterx.bclib.api.v3.levelgen.features.BCLFeature feature
+    ) {
+        addBiomeFeature(biome, feature.getDecoration(), feature.getPlacedFeature());
+    }
+
+    /**
+     * Adds new features to existing biome.
+     *
      * @param biome       {@link Biome} to add features in.
      * @param step        a {@link Decoration} step for the feature.
      * @param featureList {@link ConfiguredFeature} to add.

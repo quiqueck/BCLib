@@ -19,6 +19,11 @@ public class PlacementModifiers {
             MinEmptyFilter.CODEC
     );
 
+    public static final PlacementModifierType<ForAll> FOR_ALL = register(
+            "for_all",
+            ForAll.CODEC
+    );
+
     public static final PlacementModifierType<FindSolidInDirection> SOLID_IN_DIR = register(
             "solid_in_dir",
             FindSolidInDirection.CODEC
@@ -37,6 +42,11 @@ public class PlacementModifiers {
     public static final PlacementModifierType<IsBasin> IS_BASIN = register(
             "is_basin",
             IsBasin.CODEC
+    );
+
+    public static final PlacementModifierType<IsNextTo> IS_NEXT_TO = register(
+            "is_next_to",
+            IsNextTo.CODEC
     );
 
     public static final PlacementModifierType<Is> IS = register(

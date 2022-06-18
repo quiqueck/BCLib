@@ -80,4 +80,5 @@ public class BCLInlinePlacedBuilder<F extends Feature<FC>, FC extends FeatureCon
         return PlacementUtils.inlinePlaced(feature, configuration, modifiers);
     }
 
+
 }

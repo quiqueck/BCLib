@@ -32,6 +32,7 @@ public class CommonBlockTags {
 
     public static final TagKey<Block> IS_OBSIDIAN = TagAPI.makeCommonBlockTag("is_obsidian");
     public static final TagKey<Block> TERRAIN = TagAPI.makeCommonBlockTag("terrain");
+    public static final TagKey<Block> NETHER_TERRAIN = TagAPI.makeCommonBlockTag("nether_terrain");
 
     static {
         TagAPI.BLOCKS.add(END_STONES, Blocks.END_STONE);
@@ -67,15 +68,31 @@ public class CommonBlockTags {
         );
         TagAPI.BLOCKS.addOtherTags(
                 TERRAIN,
+                NETHER_TERRAIN,
                 BlockTags.DRIPSTONE_REPLACEABLE,
                 BlockTags.BASE_STONE_OVERWORLD,
+                BlockTags.NYLIUM,
+                MYCELIUM,
+                END_STONES
+        );
+
+        TagAPI.BLOCKS.add(
+                NETHER_TERRAIN,
+                Blocks.MAGMA_BLOCK,
+                Blocks.GRAVEL,
+                Blocks.RED_SAND,
+                Blocks.GLOWSTONE,
+                Blocks.BONE_BLOCK,
+                Blocks.SCULK
+        );
+        TagAPI.BLOCKS.addOtherTags(
+                NETHER_TERRAIN,
+                NETHERRACK,
                 BlockTags.NYLIUM,
                 NETHER_STONES,
                 NETHER_ORES,
                 SOUL_GROUND,
-                NETHER_MYCELIUM,
-                MYCELIUM,
-                END_STONES
+                NETHER_MYCELIUM
         );
     }
 }
