@@ -1,7 +1,6 @@
 package org.betterx.bclib.api.v3.levelgen.features;
 
 import org.betterx.bclib.api.v2.levelgen.features.config.PlaceFacingBlockConfig;
-import org.betterx.bclib.api.v2.levelgen.features.features.SequenceFeature;
 import org.betterx.bclib.api.v2.levelgen.features.placement.*;
 import org.betterx.bclib.api.v2.tag.CommonBlockTags;
 
@@ -16,8 +15,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.RandomPatchFeature;
-import net.minecraft.world.level.levelgen.feature.SimpleBlockFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import net.minecraft.world.level.levelgen.placement.*;
@@ -27,7 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-abstract class CommonPlacedFeatureBuilder<F extends Feature<FC>, FC extends FeatureConfiguration, T extends CommonPlacedFeatureBuilder<F, FC, ?>> {
+abstract class CommonPlacedFeatureBuilder<F extends Feature<FC>, FC extends FeatureConfiguration, T extends CommonPlacedFeatureBuilder<F, FC, T>> {
     protected final List<PlacementModifier> modifications = new LinkedList<>();
 
 
@@ -443,23 +440,23 @@ abstract class CommonPlacedFeatureBuilder<F extends Feature<FC>, FC extends Feat
      */
     abstract Holder<PlacedFeature> build();
 
-    public BCLFeatureBuilder.RandomPatch<RandomPatchFeature> inRandomPatch(ResourceLocation id) {
+    public BCLFeatureBuilder.RandomPatch inRandomPatch(ResourceLocation id) {
         return BCLFeatureBuilder.startRandomPatch(id, build());
     }
 
-    public BCLFeatureBuilder.AsSequence<SequenceFeature> then(ResourceLocation id) {
+    public BCLFeatureBuilder.AsSequence then(ResourceLocation id) {
         return BCLFeatureBuilder.startSequence(id).add(build());
     }
 
-    public BCLFeatureBuilder.ForSimpleBlock<SimpleBlockFeature> putBlock(ResourceLocation id, Block block) {
+    public BCLFeatureBuilder.ForSimpleBlock putBlock(ResourceLocation id, Block block) {
         return BCLFeatureBuilder.start(id, block);
     }
 
-    public BCLFeatureBuilder.ForSimpleBlock<SimpleBlockFeature> putBlock(ResourceLocation id, BlockState state) {
+    public BCLFeatureBuilder.ForSimpleBlock putBlock(ResourceLocation id, BlockState state) {
         return BCLFeatureBuilder.start(id, state);
     }
 
-    public BCLFeatureBuilder.ForSimpleBlock<SimpleBlockFeature> putBlock(
+    public BCLFeatureBuilder.ForSimpleBlock putBlock(
             ResourceLocation id,
             BlockStateProvider provider
     ) {
