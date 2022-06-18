@@ -12,4 +12,8 @@ public class BlockPredicates {
     public static final BlockPredicate ONLY_GROUND = BlockPredicate.matchesTag(CommonBlockTags.TERRAIN);
 
     public static final BlockPredicate ONLY_LAVA = BlockPredicate.matchesFluids(Fluids.LAVA);
+    public static final BlockPredicate ONLY_GROUND_OR_LAVA = BlockPredicate.anyOf(
+            BlockPredicate.matchesTag(CommonBlockTags.TERRAIN),
+            BlockPredicate.matchesFluids(Fluids.LAVA)
+    );
 }

@@ -147,7 +147,7 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource {
 
 
     private static boolean isValidNetherBiome(Holder<Biome> biome, ResourceLocation location) {
-        return biome.unwrapKey().get().location().toString().contains("bone_reef");
+        return biome.unwrapKey().get().location().toString().contains("magma_land");
 
 //        return NetherBiomes.canGenerateInNether(biome.unwrapKey().get()) ||
 //                biome.is(BiomeTags.IS_NETHER) ||

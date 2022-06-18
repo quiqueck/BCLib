@@ -9,7 +9,6 @@ import org.betterx.bclib.api.v2.levelgen.features.features.TemplateFeature;
 import org.betterx.bclib.api.v2.levelgen.structures.StructurePlacementType;
 import org.betterx.bclib.api.v2.levelgen.structures.StructureWorldNBT;
 import org.betterx.bclib.api.v2.poi.BCLPoiType;
-import org.betterx.bclib.blocks.BCLBlockProperties;
 import org.betterx.bclib.blocks.BlockProperties;
 
 import net.minecraft.core.Direction;
@@ -87,6 +86,16 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         return builder;
     }
 
+    public static WeightedBlock startWeighted(
+            ResourceLocation featureID
+    ) {
+        WeightedBlock builder = new WeightedBlock(
+                featureID,
+                (SimpleBlockFeature) Feature.SIMPLE_BLOCK
+        );
+        return builder;
+    }
+
     public static RandomPatch startRandomPatch(
             ResourceLocation featureID,
             Holder<PlacedFeature> featureToPlace
@@ -108,6 +117,7 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         );
         return builder;
     }
+
 
     public static WithTemplates<Feature<TemplateFeatureConfig>> startWithTemplates(
             ResourceLocation featureID
@@ -382,16 +392,28 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
 
         public AsBlockColumn<FF> addTripleShape(BlockState state, IntProvider midHeight) {
             return this
-                    .add(1, state.setValue(BCLBlockProperties.TRIPLE_SHAPE, BlockProperties.TripleShape.BOTTOM))
-                    .add(midHeight, state.setValue(BCLBlockProperties.TRIPLE_SHAPE, BlockProperties.TripleShape.MIDDLE))
-                    .add(1, state.setValue(BCLBlockProperties.TRIPLE_SHAPE, BlockProperties.TripleShape.TOP));
+                    .add(1, state.setValue(BlockProperties.TRIPLE_SHAPE, BlockProperties.TripleShape.BOTTOM))
+                    .add(midHeight, state.setValue(BlockProperties.TRIPLE_SHAPE, BlockProperties.TripleShape.MIDDLE))
+                    .add(1, state.setValue(BlockProperties.TRIPLE_SHAPE, BlockProperties.TripleShape.TOP));
         }
 
         public AsBlockColumn<FF> addTripleShapeUpsideDown(BlockState state, IntProvider midHeight) {
             return this
-                    .add(1, state.setValue(BCLBlockProperties.TRIPLE_SHAPE, BlockProperties.TripleShape.TOP))
-                    .add(midHeight, state.setValue(BCLBlockProperties.TRIPLE_SHAPE, BlockProperties.TripleShape.MIDDLE))
-                    .add(1, state.setValue(BCLBlockProperties.TRIPLE_SHAPE, BlockProperties.TripleShape.BOTTOM));
+                    .add(1, state.setValue(BlockProperties.TRIPLE_SHAPE, BlockProperties.TripleShape.TOP))
+                    .add(midHeight, state.setValue(BlockProperties.TRIPLE_SHAPE, BlockProperties.TripleShape.MIDDLE))
+                    .add(1, state.setValue(BlockProperties.TRIPLE_SHAPE, BlockProperties.TripleShape.BOTTOM));
+        }
+
+        public AsBlockColumn<FF> addBottomShapeUpsideDown(BlockState state, IntProvider midHeight) {
+            return this
+                    .add(midHeight, state.setValue(BlockProperties.BOTTOM, false))
+                    .add(1, state.setValue(BlockProperties.BOTTOM, true));
+        }
+
+        public AsBlockColumn<FF> addBottomShape(BlockState state, IntProvider midHeight) {
+            return this
+                    .add(1, state.setValue(BlockProperties.BOTTOM, true))
+                    .add(midHeight, state.setValue(BlockProperties.BOTTOM, false));
         }
 
         public AsBlockColumn<FF> direction(Direction dir) {
@@ -591,6 +613,43 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         @Override
         public SimpleBlockConfiguration createConfiguration() {
             return new SimpleBlockConfiguration(provider);
+        }
+    }
+
+    public static class WeightedBlock extends BCLFeatureBuilder<SimpleBlockFeature, SimpleBlockConfiguration> {
+        SimpleWeightedRandomList.Builder<BlockState> stateBuilder = SimpleWeightedRandomList.builder();
+
+        private WeightedBlock(
+                @NotNull ResourceLocation featureID,
+                @NotNull SimpleBlockFeature feature
+        ) {
+            super(featureID, feature);
+        }
+
+        public WeightedBlock add(Block block, int weight) {
+            return add(block.defaultBlockState(), weight);
+        }
+
+        public WeightedBlock add(BlockState state, int weight) {
+            stateBuilder.add(state, weight);
+            return this;
+        }
+
+        public WeightedBlock addAllStates(Block block, int weight) {
+            Set<BlockState> states = BCLPoiType.getBlockStates(block);
+            states.forEach(s -> add(block.defaultBlockState(), Math.max(1, weight / states.size())));
+            return this;
+        }
+
+        public WeightedBlock addAllStatesFor(IntegerProperty prop, Block block, int weight) {
+            Collection<Integer> values = prop.getPossibleValues();
+            values.forEach(s -> add(block.defaultBlockState().setValue(prop, s), Math.max(1, weight / values.size())));
+            return this;
+        }
+
+        @Override
+        public SimpleBlockConfiguration createConfiguration() {
+            return new SimpleBlockConfiguration(new WeightedStateProvider(stateBuilder.build()));
         }
     }
 }

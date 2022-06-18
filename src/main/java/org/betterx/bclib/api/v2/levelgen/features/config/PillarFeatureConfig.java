@@ -1,6 +1,6 @@
 package org.betterx.bclib.api.v2.levelgen.features.config;
 
-import org.betterx.bclib.blocks.BCLBlockProperties;
+import org.betterx.bclib.blocks.BlockProperties;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -10,7 +10,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
@@ -18,19 +17,24 @@ import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvi
 public class PillarFeatureConfig implements FeatureConfiguration {
     @FunctionalInterface
     public interface StateTransform {
-        int apply(int height, int maxHeight, BlockState inputState, BlockPos pos, RandomSource rnd);
+        BlockState apply(int height, int maxHeight, BlockState inputState, BlockPos pos, RandomSource rnd);
     }
 
     public enum KnownTransformers implements StringRepresentable {
         SIZE_DECREASE(
                 "size_decrease",
-                BCLBlockProperties.SIZE,
-                (height, maxHeight, state, pos, rnd) -> Math.max(0, Math.min(7, maxHeight - height))
+                (height, maxHeight, state, pos, rnd) -> state
+                        .setValue(BlockProperties.SIZE, Math.max(0, Math.min(7, maxHeight - height)))
         ),
         SIZE_INCREASE(
                 "size_increase",
-                BCLBlockProperties.SIZE,
-                (height, maxHeight, state, pos, rnd) -> Math.max(0, Math.min(7, height))
+                (height, maxHeight, state, pos, rnd) -> state
+                        .setValue(BlockProperties.SIZE, Math.max(0, Math.min(7, height)))
+        ),
+        BOTTOM_GROW(
+                "bottom_grow",
+                (height, maxHeight, state, pos, rnd) -> state
+                        .setValue(BlockProperties.BOTTOM, height == maxHeight)
         );
 
 
@@ -39,13 +43,11 @@ public class PillarFeatureConfig implements FeatureConfiguration {
 
 
         public final String name;
-        public final IntegerProperty property;
-        public final StateTransform transform;
+        public final StateTransform stateTransform;
 
-        KnownTransformers(String name, IntegerProperty property, StateTransform transform) {
+        KnownTransformers(String name, StateTransform stateTransform) {
             this.name = name;
-            this.property = property;
-            this.transform = transform;
+            this.stateTransform = stateTransform;
         }
 
         @Override
@@ -93,9 +95,6 @@ public class PillarFeatureConfig implements FeatureConfiguration {
 
     public BlockState transform(int currentHeight, int maxHeight, BlockPos pos, RandomSource rnd) {
         BlockState state = stateProvider.getState(rnd, pos);
-        return state.setValue(
-                transformer.property,
-                transformer.transform.apply(currentHeight, maxHeight, state, pos, rnd)
-        );
+        return transformer.stateTransform.apply(currentHeight, maxHeight, state, pos, rnd);
     }
 }

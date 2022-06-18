@@ -35,7 +35,7 @@ public class BCLConfigureFeature<F extends Feature<FC>, FC extends FeatureConfig
         return place(this.id);
     }
 
-    BCLPlacedFeatureBuilder<F, FC> place(ResourceLocation id) {
+    public BCLPlacedFeatureBuilder<F, FC> place(ResourceLocation id) {
         return BCLPlacedFeatureBuilder.place(id, this);
     }
 
