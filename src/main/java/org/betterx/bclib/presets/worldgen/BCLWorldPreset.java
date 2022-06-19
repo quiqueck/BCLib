@@ -40,6 +40,10 @@ public class BCLWorldPreset extends WorldPreset {
         this.settings = settings;
     }
 
+    public BCLWorldPreset withSettings(WorldPresetSettings settings) {
+        return new BCLWorldPreset(getDimensions(), sortOrder, settings);
+    }
+
     private Map<ResourceKey<LevelStem>, LevelStem> getDimensions() {
         return ((WorldPresetAccessor) this).bcl_getDimensions();
     }

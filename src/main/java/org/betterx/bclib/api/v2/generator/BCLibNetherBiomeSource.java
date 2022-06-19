@@ -30,8 +30,6 @@ import java.util.Optional;
 import java.util.Set;
 
 public class BCLibNetherBiomeSource extends BCLBiomeSource {
-    private static int lastWorldHeight;
-    private static int worldHeight;
     public static final Codec<BCLibNetherBiomeSource> CODEC = RecordCodecBuilder
             .create(instance -> instance
                     .group(
@@ -118,15 +116,6 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource {
         );
     }
 
-    /**
-     * Set world height, used when Nether is larger than vanilla 128 blocks tall.
-     *
-     * @param worldHeight height of the Nether ceiling.
-     */
-    public static void setWorldHeight(int worldHeight) {
-        BCLibNetherBiomeSource.worldHeight = worldHeight;
-    }
-
     private static List<Holder<Biome>> getBclBiomes(Registry<Biome> biomeRegistry) {
         List<String> include = Configs.BIOMES_CONFIG.getEntry("force_include", "nether_biomes", StringArrayEntry.class)
                                                     .getValue();
@@ -177,10 +166,7 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource {
     public Holder<Biome> getNoiseBiome(int biomeX, int biomeY, int biomeZ, Climate.Sampler var4) {
         if (biomeMap == null)
             return this.possibleBiomes().stream().findFirst().get();
-        if (lastWorldHeight != worldHeight) {
-            lastWorldHeight = worldHeight;
-            initMap(this.currentSeed);
-        }
+
         if ((biomeX & 63) == 0 && (biomeZ & 63) == 0) {
             biomeMap.clearCache();
         }
@@ -198,13 +184,13 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource {
         TriFunction<Long, Integer, BiomePicker, BiomeMap> mapConstructor = (biomeSourceVersion != BIOME_SOURCE_VERSION_HEX)
                 ? SquareBiomeMap::new
                 : HexBiomeMap::new;
-        if (worldHeight > 128 && GeneratorOptions.useVerticalBiomes()) {
+        if (maxHeight > 128 && GeneratorOptions.useVerticalBiomes()) {
             this.biomeMap = new MapStack(
                     seed,
                     GeneratorOptions.getBiomeSizeNether(),
                     biomePicker,
                     GeneratorOptions.getVerticalBiomeSizeNether(),
-                    worldHeight,
+                    maxHeight,
                     mapConstructor
             );
         } else {
@@ -217,7 +203,12 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource {
     }
 
     @Override
+    protected void onHeightChange(int newHeight) {
+        initMap(currentSeed);
+    }
+
+    @Override
     public String toString() {
-        return "BCLib - Nether BiomeSource (" + Integer.toHexString(hashCode()) + ", version=" + biomeSourceVersion + ", seed=" + currentSeed + ", biomes=" + possibleBiomes().size() + ")";
+        return "BCLib - Nether BiomeSource (" + Integer.toHexString(hashCode()) + ", version=" + biomeSourceVersion + ", seed=" + currentSeed + ", height=" + maxHeight + ", biomes=" + possibleBiomes().size() + ")";
     }
 }

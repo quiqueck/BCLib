@@ -19,6 +19,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -309,7 +310,8 @@ public class LevelGenUtil {
     }
 
     public static WorldPresetSettings getWorldSettings() {
-        final RegistryAccess registryAccess = RegistryAccess.builtinCopy();
+        if (BuiltinRegistries.ACCESS == null) return null;
+        final RegistryAccess registryAccess = BuiltinRegistries.ACCESS;
         final RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
 
         Optional<WorldPresetSettings> oLevelStem = WorldPresetSettings.CODEC

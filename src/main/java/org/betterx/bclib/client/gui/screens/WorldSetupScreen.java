@@ -5,9 +5,13 @@ import org.betterx.bclib.api.v2.generator.BCLBiomeSource;
 import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
 import org.betterx.bclib.client.gui.gridlayout.GridCheckboxCell;
 import org.betterx.bclib.client.gui.gridlayout.GridLayout;
+import org.betterx.bclib.interfaces.WorldGenSettingsComponentAccessor;
+import org.betterx.bclib.presets.worldgen.BCLWorldPreset;
+import org.betterx.bclib.presets.worldgen.BCLWorldPresetSettings;
 
 import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.client.gui.screens.worldselection.WorldCreationContext;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -18,6 +22,7 @@ import net.minecraft.world.level.dimension.LevelStem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
 @Environment(EnvType.CLIENT)
@@ -35,24 +40,26 @@ public class WorldSetupScreen extends BCLibScreen {
     private GridCheckboxCell bclibEnd;
     private GridCheckboxCell bclibNether;
     GridCheckboxCell endLegacy;
+    GridCheckboxCell endCustomTerrain;
     GridCheckboxCell netherLegacy;
 
     @Override
     protected void initLayout() {
-        final int netherVersion = LevelGenUtil.getBiomeVersionForGenerator(context
-                .worldGenSettings()
-                .dimensions()
-                .getOrCreateHolderOrThrow(
-                        LevelStem.NETHER)
-                .value()
-                .generator());
-        final int endVersion = LevelGenUtil.getBiomeVersionForGenerator(context
-                .worldGenSettings()
-                .dimensions()
-                .getOrCreateHolderOrThrow(
-                        LevelStem.END)
-                .value()
-                .generator());
+        final int netherVersion;
+        final int endVersion;
+        final boolean customEndGen;
+        if (createWorldScreen.worldGenSettingsComponent instanceof WorldGenSettingsComponentAccessor acc
+                && acc.bcl_getPreset()
+                      .isPresent() && acc.bcl_getPreset()
+                                         .get()
+                                         .value() instanceof BCLWorldPreset wp
+                && wp.settings instanceof BCLWorldPresetSettings settings) {
+            netherVersion = settings.netherVersion;
+            endVersion = settings.endVersion;
+            customEndGen = settings.useEndTerrainGenerator;
+        } else {
+            throw new IllegalStateException("The WorldSetup Screen is only valid for BetterX Presets.");
+        }
 
         final int BUTTON_HEIGHT = 20;
         grid.addSpacerRow(20);
@@ -99,7 +106,17 @@ public class WorldSetupScreen extends BCLibScreen {
         colEnd.addSpacerRow(2);
         row = colEnd.addRow();
         row.addSpacer(20);
-
+        endCustomTerrain = row.addCheckbox(
+                Component.translatable("title.screen.bclib.worldgen.custom_end_terrain"),
+                customEndGen,
+                1.0,
+                GridLayout.GridValueType.PERCENTAGE,
+                (state) -> {
+                }
+        );
+        
+        row = colEnd.addRow();
+        row.addSpacer(20);
         endLegacy = row.addCheckbox(
                 Component.translatable("title.screen.bclib.worldgen.legacy_square"),
                 endVersion == BCLBiomeSource.BIOME_SOURCE_VERSION_SQUARE,
@@ -117,8 +134,10 @@ public class WorldSetupScreen extends BCLibScreen {
                 GridLayout.GridValueType.PERCENTAGE,
                 (state) -> {
                     endLegacy.setEnabled(state);
+                    endCustomTerrain.setEnabled(state);
                 }
         );
+
 
         grid.addSpacerRow(36);
         row = grid.addRow();
@@ -147,9 +166,23 @@ public class WorldSetupScreen extends BCLibScreen {
             netherVersion = BCLBiomeSource.BIOME_SOURCE_VERSION_VANILLA;
         }
 
+        if (createWorldScreen.worldGenSettingsComponent instanceof WorldGenSettingsComponentAccessor acc
+                && acc.bcl_getPreset()
+                      .isPresent() && acc.bcl_getPreset()
+                                         .get()
+                                         .value() instanceof BCLWorldPreset worldPreset) {
+            acc.bcl_setPreset(Optional.of(Holder.direct(worldPreset.withSettings(new BCLWorldPresetSettings(
+                    netherVersion,
+                    endVersion,
+                    endCustomTerrain.isChecked()
+            )))));
+        }
+
         BCLib.LOGGER.info("Custom World Versions: end=" + endVersion + ", nether=" + netherVersion);
         updateConfiguration(LevelStem.END, BuiltinDimensionTypes.END, endVersion);
         updateConfiguration(LevelStem.NETHER, BuiltinDimensionTypes.NETHER, netherVersion);
+
+
     }
 
 

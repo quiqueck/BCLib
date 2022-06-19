@@ -69,6 +69,9 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator {
     ) {
         super(registry, registry2, biomeSource, holder);
         initialBiomeSource = biomeSource;
+        if (biomeSource instanceof BCLBiomeSource bcl) {
+            bcl.setMaxHeight(holder.value().noiseSettings().height());
+        }
 
         if (BCLib.RUNS_TERRABLENDER) {
             BCLib.LOGGER.info("Make sure features are loaded from terrablender for " + biomeSource);

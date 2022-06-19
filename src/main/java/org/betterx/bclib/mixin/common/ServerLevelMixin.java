@@ -2,8 +2,6 @@ package org.betterx.bclib.mixin.common;
 
 import org.betterx.bclib.api.v2.LifeCycleAPI;
 import org.betterx.bclib.api.v2.generator.BCLBiomeSource;
-import org.betterx.bclib.api.v2.generator.BCLibEndBiomeSource;
-import org.betterx.bclib.api.v2.generator.BCLibNetherBiomeSource;
 
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
@@ -74,12 +72,6 @@ public abstract class ServerLevelMixin extends Level {
                 list,
                 bl2
         );
-
-        if (level.dimension() == Level.NETHER) {
-            BCLibNetherBiomeSource.setWorldHeight(level.getChunkSource().getGenerator().getGenDepth());
-        } else if (level.dimension() == Level.END) {
-            BCLibEndBiomeSource.setWorldHeight(level.getChunkSource().getGenerator().getGenDepth());
-        }
 
         if (levelStem.generator().getBiomeSource() instanceof BCLBiomeSource source) {
             source.setSeed(level.getSeed());

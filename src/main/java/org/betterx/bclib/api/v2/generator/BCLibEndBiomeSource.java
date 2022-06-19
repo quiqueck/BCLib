@@ -3,6 +3,7 @@ package org.betterx.bclib.api.v2.generator;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.generator.map.hex.HexBiomeMap;
 import org.betterx.bclib.api.v2.generator.map.square.SquareBiomeMap;
+import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 import org.betterx.bclib.config.ConfigKeeper.StringArrayEntry;
@@ -10,6 +11,7 @@ import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.interfaces.BiomeMap;
 import org.betterx.bclib.interfaces.TheEndBiomeDataAccessor;
 import org.betterx.bclib.noise.OpenSimplexNoise;
+import org.betterx.bclib.presets.worldgen.BCLWorldPresetSettings;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -66,8 +68,6 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
     private SimplexNoise noise;
     private BiomeMap mapLand;
     private BiomeMap mapVoid;
-
-    private static int worldHeight;
 
     private final BiomePicker endLandBiomePicker;
     private final BiomePicker endVoidBiomePicker;
@@ -141,7 +141,12 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
         this.centerBiome = biomeRegistry.getOrCreateHolderOrThrow(Biomes.THE_END);
         this.barrens = biomeRegistry.getOrCreateHolderOrThrow(Biomes.END_BARRENS);
 
-        this.endLandFunction = GeneratorOptions.getEndLandFunction();
+        if (LevelGenUtil.getWorldSettings() instanceof BCLWorldPresetSettings settings
+                && !settings.useEndTerrainGenerator) {
+            this.endLandFunction = null;
+        } else {
+            this.endLandFunction = GeneratorOptions.getEndLandFunction();
+        }
         this.pos = new Point();
 
         if (initMaps) {
@@ -158,15 +163,6 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
                 Optional.of(biomeSourceVersion),
                 true
         );
-    }
-
-    /**
-     * Set world height, used when Nether is larger than vanilla 128 blocks tall.
-     *
-     * @param worldHeight height of the Nether ceiling.
-     */
-    public static void setWorldHeight(int worldHeight) {
-        BCLibEndBiomeSource.worldHeight = worldHeight;
     }
 
     private static List<Holder<Biome>> getBclBiomes(Registry<Biome> biomeRegistry) {
@@ -297,6 +293,11 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
         this.noise = new SimplexNoise(chunkRandom);
     }
 
+    @Override
+    protected void onHeightChange(int newHeight) {
+
+    }
+
 
     @Override
     public Holder<Biome> getNoiseBiome(int biomeX, int biomeY, int biomeZ, Climate.Sampler sampler) {
@@ -331,7 +332,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
             }
         } else {
             pos.setLocation(biomeX, biomeZ);
-            if (endLandFunction.apply(pos, worldHeight)) {
+            if (endLandFunction.apply(pos, maxHeight)) {
                 return dist <= farEndBiomes ? centerBiome : mapLand.getBiome(posX, biomeY << 2, posZ).biome;
             } else {
                 return dist <= farEndBiomes ? barrens : mapVoid.getBiome(posX, biomeY << 2, posZ).biome;
@@ -346,6 +347,6 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
 
     @Override
     public String toString() {
-        return "BCLib - The End BiomeSource (" + Integer.toHexString(hashCode()) + ", version=" + biomeSourceVersion + ", seed=" + currentSeed + ", biomes=" + possibleBiomes().size() + ")";
+        return "BCLib - The End BiomeSource (" + Integer.toHexString(hashCode()) + ", version=" + biomeSourceVersion + ", seed=" + currentSeed + ", height=" + maxHeight + ", biomes=" + possibleBiomes().size() + ")";
     }
 }

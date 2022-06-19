@@ -23,6 +23,7 @@ public abstract class BCLBiomeSource extends BiomeSource {
     public static int DEFAULT_BIOME_SOURCE_VERSION = BIOME_SOURCE_VERSION_HEX;
     protected final Registry<Biome> biomeRegistry;
     protected long currentSeed;
+    protected int maxHeight;
 
     public final int biomeSourceVersion;
 
@@ -62,12 +63,26 @@ public abstract class BCLBiomeSource extends BiomeSource {
         }
     }
 
+    /**
+     * Set world height
+     *
+     * @param maxHeight height of the World.
+     */
+    final public void setMaxHeight(int maxHeight) {
+        if (this.maxHeight != maxHeight) {
+            System.out.println(this + " set Max Height: " + maxHeight);
+            this.maxHeight = maxHeight;
+            onHeightChange(maxHeight);
+        }
+    }
+
     protected final void initMap(long seed) {
         System.out.println(this + " updates Map");
         onInitMap(seed);
     }
 
     protected abstract void onInitMap(long newSeed);
+    protected abstract void onHeightChange(int newHeight);
 
     public static int getVersionBiomeSource(BiomeSource biomeSource) {
         if (biomeSource == null) return BCLBiomeSource.BIOME_SOURCE_VERSION_NONE;

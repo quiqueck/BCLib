@@ -23,6 +23,10 @@ public abstract class WorldGenSettingsComponentMixin implements WorldGenSettings
     @Accessor("preset")
     public abstract Optional<Holder<WorldPreset>> bcl_getPreset();
 
+    @Override
+    @Accessor("preset")
+    public abstract void bcl_setPreset(Optional<Holder<WorldPreset>> preset);
+
     @ModifyArg(method = "init", index = 0, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/CycleButton$Builder;withValues(Ljava/util/List;Ljava/util/List;)Lnet/minecraft/client/gui/components/CycleButton$Builder;"))
     public List<Holder<WorldPreset>> bcl_SortLists(List<Holder<WorldPreset>> list) {
         final Predicate<Holder<WorldPreset>> vanilla = (p -> p.unwrapKey()

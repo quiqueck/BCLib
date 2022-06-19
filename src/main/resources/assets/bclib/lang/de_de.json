@@ -55,5 +55,6 @@
   "title.bclib.the_nether": "Nether",
   "title.bclib.the_end": "Das Ende",
   "title.screen.bclib.worldgen.custom_biome_source": "Benutzerdefinierte Biomquelle verwenden",
-  "title.screen.bclib.worldgen.legacy_square": "Legacy-Verteilung (1.17)"
+  "title.screen.bclib.worldgen.legacy_square": "Legacy-Verteilung (1.17)",
+  "title.screen.bclib.worldgen.custom_end_terrain": "Angepasster End-Terrain-Generator"
 }
