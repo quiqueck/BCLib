@@ -140,16 +140,16 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
                                 endLandBiomePicker.addBiome(bclBiome);
                             }
                         } else {
-                            if (!key.equals(Biomes.SMALL_END_ISLANDS)
-                                    && !key.equals(Biomes.THE_END)
-                                    &&
-                                    (BiomeAPI.wasRegisteredAsEndVoidBiome(key)
-                                            || BiomeAPI.wasRegisteredAsEndLandBiome(key)
-                                            || includeVoid.contains(key.toString())
-                                            || includeLand.contains(key.toString())
-                                    )
-                            )
+                            if (BiomeAPI.wasRegisteredAsEndLandBiome(key) || includeLand.contains(key.toString())) {
                                 endLandBiomePicker.addBiome(bclBiome);
+                                endVoidBiomePicker.addBiome(bclBiome);
+                            }
+                            if (!key.equals(Biomes.SMALL_END_ISLANDS) && !key.equals(Biomes.THE_END)
+                                    && (BiomeAPI.wasRegisteredAsEndVoidBiome(key) || includeVoid.contains(key.toString()))
+                            ) {
+                                endVoidBiomePicker.addBiome(bclBiome);
+                            }
+
                         }
                     }
                 }
@@ -352,8 +352,8 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
                 return mapLand.getBiome(posX, biomeY << 2, posZ).biome;
             } else {
                 return d < -0.21875
-                        ? (generateEndVoids ? mapVoid : mapLand).getBiome(posX, biomeY << 2, posZ).biome
-                        : this.barrens;
+                        ? mapVoid.getBiome(posX, biomeY << 2, posZ).biome
+                        : generateEndVoids ? this.barrens : mapVoid.getBiome(posX, biomeY << 2, posZ).biome;
             }
         } else {
             pos.setLocation(biomeX, biomeZ);
@@ -362,7 +362,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
             } else {
                 return dist <= farEndBiomes
                         ? barrens
-                        : (generateEndVoids ? mapVoid : mapLand).getBiome(posX, biomeY << 2, posZ).biome;
+                        : mapVoid.getBiome(posX, biomeY << 2, posZ).biome;
             }
         }
 

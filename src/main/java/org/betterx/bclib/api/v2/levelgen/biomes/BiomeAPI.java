@@ -283,7 +283,7 @@ public class BiomeAPI {
      * @return {@link BCLBiome}
      */
     public static BCLBiome registerEndVoidBiome(BCLBiome biome) {
-        registerBiome(biome, BiomeType.END_VOID);
+        registerBiome(biome, BiomeType.BCL_END_VOID);
 
         float weight = biome.getGenChance();
         ResourceKey<Biome> key = getBiomeKey(biome.getBiome());
