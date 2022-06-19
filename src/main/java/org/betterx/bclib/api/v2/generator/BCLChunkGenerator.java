@@ -73,7 +73,7 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator {
         if (BCLib.RUNS_TERRABLENDER) {
             BCLib.LOGGER.info("Make sure features are loaded from terrablender for " + biomeSource);
 
-            //terrablender is completley invalidating the feature imitialization
+            //terrablender is invalidating the feature initialization
             //we redo it at this point, otherwise we will get blank biomes
             rebuildFeaturesPerStep(biomeSource);
         }

@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 public class BCLibEndBiomeSource extends BCLBiomeSource {
     private static final OpenSimplexNoise SMALL_NOISE = new OpenSimplexNoise(8324);
@@ -62,10 +62,12 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
     private final Holder<Biome> centerBiome;
     private final Holder<Biome> barrens;
     private final Point pos;
-    private final Function<Point, Boolean> endLandFunction;
+    private final BiFunction<Point, Integer, Boolean> endLandFunction;
     private SimplexNoise noise;
     private BiomeMap mapLand;
     private BiomeMap mapVoid;
+
+    private static int worldHeight;
 
     private final BiomePicker endLandBiomePicker;
     private final BiomePicker endVoidBiomePicker;
@@ -156,6 +158,15 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
                 Optional.of(biomeSourceVersion),
                 true
         );
+    }
+
+    /**
+     * Set world height, used when Nether is larger than vanilla 128 blocks tall.
+     *
+     * @param worldHeight height of the Nether ceiling.
+     */
+    public static void setWorldHeight(int worldHeight) {
+        BCLibEndBiomeSource.worldHeight = worldHeight;
     }
 
     private static List<Holder<Biome>> getBclBiomes(Registry<Biome> biomeRegistry) {
@@ -320,7 +331,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
             }
         } else {
             pos.setLocation(biomeX, biomeZ);
-            if (endLandFunction.apply(pos)) {
+            if (endLandFunction.apply(pos, worldHeight)) {
                 return dist <= farEndBiomes ? centerBiome : mapLand.getBiome(posX, biomeY << 2, posZ).biome;
             } else {
                 return dist <= farEndBiomes ? barrens : mapVoid.getBiome(posX, biomeY << 2, posZ).biome;

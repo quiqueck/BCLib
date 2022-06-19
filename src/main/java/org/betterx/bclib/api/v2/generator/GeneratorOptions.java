@@ -5,14 +5,14 @@ import org.betterx.bclib.config.Configs;
 import net.minecraft.util.Mth;
 
 import java.awt.*;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 public class GeneratorOptions {
     private static int biomeSizeNether;
     private static int biomeVSizeNether;
     private static int biomeSizeEndLand;
     private static int biomeSizeEndVoid;
-    private static Function<Point, Boolean> endLandFunction;
+    private static BiFunction<Point, Integer, Boolean> endLandFunction;
     private static boolean customNetherBiomeSource = true;
     private static boolean customEndBiomeSource = true;
     private static boolean verticalBiomes = true;
@@ -52,11 +52,11 @@ public class GeneratorOptions {
         return Mth.clamp(biomeSizeEndVoid, 1, 8192);
     }
 
-    public static void setEndLandFunction(Function<Point, Boolean> endLandFunction) {
+    public static void setEndLandFunction(BiFunction<Point, Integer, Boolean> endLandFunction) {
         GeneratorOptions.endLandFunction = endLandFunction;
     }
 
-    public static Function<Point, Boolean> getEndLandFunction() {
+    public static BiFunction<Point, Integer, Boolean> getEndLandFunction() {
         return endLandFunction;
     }
 

@@ -348,7 +348,11 @@ public class LevelGenUtil {
             }
 
             BCLib.LOGGER.info("Set world to BiomeSource Version " + biomeSourceVersion);
-            BCLWorldPreset.writeWorldPresetSettings(new BCLWorldPresetSettings(biomeSourceVersion, biomeSourceVersion));
+            BCLWorldPreset.writeWorldPresetSettings(new BCLWorldPresetSettings(
+                    biomeSourceVersion,
+                    biomeSourceVersion,
+                    true
+            ));
         }
     }
 

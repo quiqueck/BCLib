@@ -3,7 +3,7 @@ package org.betterx.bclib.presets.worldgen;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.generator.BCLBiomeSource;
 import org.betterx.bclib.api.v2.generator.BCLChunkGenerator;
-import org.betterx.bclib.api.v2.generator.BCLibNetherBiomeSource;
+import org.betterx.bclib.api.v2.generator.BCLibEndBiomeSource;
 import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
 import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
 import org.betterx.bclib.api.v2.levelgen.surface.SurfaceRuleUtil;
@@ -33,28 +33,32 @@ public class BCLWorldPresetSettings extends WorldPresetSettings {
 
     public static final Codec<BCLWorldPresetSettings> CODEC = RecordCodecBuilder
             .create((RecordCodecBuilder.Instance<BCLWorldPresetSettings> builderInstance) -> {
-                RecordCodecBuilder<BCLWorldPresetSettings, Integer> netherVersion = Codec.INT
-                        .fieldOf(LevelStem.NETHER.location().toString())
-                        .forGetter((BCLWorldPresetSettings settings) -> settings.netherVersion);
-
-                RecordCodecBuilder<BCLWorldPresetSettings, Integer> endVersion = Codec.INT
-                        .fieldOf(LevelStem.END.location().toString())
-                        .forGetter((BCLWorldPresetSettings settings) -> settings.endVersion);
-
-
-                return builderInstance.group(netherVersion, endVersion)
+                return builderInstance.group(
+                                              Codec.INT
+                                                      .fieldOf(LevelStem.NETHER.location().toString())
+                                                      .forGetter(o -> o.netherVersion),
+                                              Codec.INT
+                                                      .fieldOf(LevelStem.END.location().toString())
+                                                      .forGetter(o -> o.endVersion),
+                                              Codec.BOOL
+                                                      .fieldOf("custom_end_terrain")
+                                                      .orElse(true)
+                                                      .forGetter(o -> o.useEndTerrainGenerator)
+                                      )
                                       .apply(builderInstance, builderInstance.stable(BCLWorldPresetSettings::new));
             });
     public final int netherVersion;
     public final int endVersion;
+    public final boolean useEndTerrainGenerator;
 
     public BCLWorldPresetSettings(int version) {
-        this(version, version);
+        this(version, version, true);
     }
 
-    public BCLWorldPresetSettings(int netherVersion, int endVersion) {
+    public BCLWorldPresetSettings(int netherVersion, int endVersion, boolean useEndTerrainGenerator) {
         this.netherVersion = netherVersion;
         this.endVersion = endVersion;
+        this.useEndTerrainGenerator = endVersion != BCLibEndBiomeSource.BIOME_SOURCE_VERSION_VANILLA && useEndTerrainGenerator;
     }
 
 
@@ -114,7 +118,8 @@ public class BCLWorldPresetSettings extends WorldPresetSettings {
         return biomeSource;
     }
 
-    public Holder<NoiseGeneratorSettings> fixNoiseSettings(
+    private Holder<NoiseGeneratorSettings> fixNoiseSettings(
+            Holder<NoiseGeneratorSettings> reference,
             Holder<NoiseGeneratorSettings> settings,
             BiomeSource biomeSource
     ) {
@@ -147,7 +152,7 @@ public class BCLWorldPresetSettings extends WorldPresetSettings {
      * @param settings
      * @return
      */
-    public WorldGenSettings fixSettingsInCurrentWorld(
+    private WorldGenSettings fixSettingsInCurrentWorld(
             RegistryAccess access, ResourceKey<LevelStem> dimensionKey,
             ResourceKey<DimensionType> dimensionTypeKey,
             WorldGenSettings settings
@@ -179,15 +184,21 @@ public class BCLWorldPresetSettings extends WorldPresetSettings {
 
             if (loadedChunkGenerator instanceof ChunkGeneratorAccessor generator) {
                 if (loadedChunkGenerator instanceof NoiseGeneratorSettingsProvider noiseProvider) {
-                    final Set<Holder<Biome>> biomes = loadedChunkGenerator.getBiomeSource().possibleBiomes();
-                    final BiomeSource bs = fixBiomeSource(referenceGenerator.getBiomeSource(), biomes);
-                    InternalBiomeAPI.applyModifications(bs, dimensionKey);
-                    referenceGenerator = new BCLChunkGenerator(
-                            generator.bclib_getStructureSetsRegistry(),
-                            noiseProvider.bclib_getNoises(),
-                            bs,
-                            fixNoiseSettings(noiseProvider.bclib_getNoiseGeneratorSettingHolders(), bs)
-                    );
+                    if (referenceGenerator instanceof NoiseGeneratorSettingsProvider referenceProvider) {
+                        final Set<Holder<Biome>> biomes = loadedChunkGenerator.getBiomeSource().possibleBiomes();
+                        final BiomeSource bs = fixBiomeSource(referenceGenerator.getBiomeSource(), biomes);
+                        InternalBiomeAPI.applyModifications(bs, dimensionKey);
+                        referenceGenerator = new BCLChunkGenerator(
+                                generator.bclib_getStructureSetsRegistry(),
+                                noiseProvider.bclib_getNoises(),
+                                bs,
+                                fixNoiseSettings(
+                                        referenceProvider.bclib_getNoiseGeneratorSettingHolders(),
+                                        noiseProvider.bclib_getNoiseGeneratorSettingHolders(),
+                                        bs
+                                )
+                        );
+                    }
                 }
             }
 
