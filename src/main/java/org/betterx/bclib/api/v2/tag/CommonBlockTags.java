@@ -35,6 +35,8 @@ public class CommonBlockTags {
     public static final TagKey<Block> NETHER_TERRAIN = TagAPI.makeCommonBlockTag("nether_terrain");
 
     static {
+        TagAPI.BLOCKS.addOtherTags(DRAGON_IMMUNE, BlockTags.DRAGON_IMMUNE);
+
         TagAPI.BLOCKS.add(END_STONES, Blocks.END_STONE);
         TagAPI.BLOCKS.addOtherTags(NETHER_STONES, BlockTags.BASE_STONE_NETHER);
 
