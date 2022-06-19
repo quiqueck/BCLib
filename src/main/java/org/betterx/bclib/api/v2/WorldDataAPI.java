@@ -24,7 +24,7 @@ import java.util.Optional;
  * <p>
  * This class provides the ability for mod to store persistent data inside a world. The Storage for the world is
  * currently initialized as part of the {@link org.betterx.bclib.presets.worldgen.WorldBootstrap} in
- * {@link org.betterx.bclib.presets.worldgen.WorldBootstrap#initializeWorldDataAPI(File, boolean)}
+ * org.betterx.bclib.presets.worldgen.WorldBootstrap.Helpers#initializeWorldDataAPI(File, boolean)
  */
 public class WorldDataAPI {
     private static final Map<String, CompoundTag> TAGS = Maps.newHashMap();

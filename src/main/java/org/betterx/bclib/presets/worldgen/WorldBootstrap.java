@@ -5,6 +5,7 @@ import org.betterx.bclib.api.v2.LifeCycleAPI;
 import org.betterx.bclib.api.v2.WorldDataAPI;
 import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
 import org.betterx.bclib.api.v2.datafixer.DataFixerAPI;
+import org.betterx.bclib.api.v2.generator.BCLibEndBiomeSource;
 import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
 import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
 import org.betterx.bclib.interfaces.WorldGenSettingsComponentAccessor;
@@ -14,6 +15,8 @@ import net.minecraft.client.gui.screens.worldselection.WorldGenSettingsComponent
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.storage.LevelResource;
@@ -92,7 +95,7 @@ public class WorldBootstrap {
                 Helpers.initializeWorldDataAPI(levelStorageAccess.get(), true);
 
                 if (worldGenSettingsComponent instanceof WorldGenSettingsComponentAccessor acc) {
-                    BCLWorldPreset.writeWorldPresetSettings(acc.bcl_getPreset());
+                    BCLWorldPreset.writeWorldPresetSettings(adaptPresetForDatapacks(acc, worldGenSettingsComponent));
                 }
 
                 DataFixerAPI.initializePatchData();
@@ -136,6 +139,41 @@ public class WorldBootstrap {
             DataFixerAPI.initializePatchData();
             LifeCycleAPI._runBeforeLevelLoad();
         }
+    }
+
+    private static Optional<Holder<WorldPreset>> adaptPresetForDatapacks(
+            WorldGenSettingsComponentAccessor accessor,
+            WorldGenSettingsComponent component
+    ) {
+        LevelStem endStem = component.settings().worldGenSettings().dimensions().get(LevelStem.END);
+        Optional<Holder<WorldPreset>> currentPreset = accessor.bcl_getPreset();
+
+        //We probably loaded a Datapack for the End
+        if (!(endStem.generator().getBiomeSource() instanceof BCLibEndBiomeSource)) {
+            BCLib.LOGGER.info("Detected Datapack for END.");
+
+            if (currentPreset.isPresent()) {
+                if (currentPreset.get().value() instanceof BCLWorldPreset worldPreset) {
+                    ResourceKey key = currentPreset.get().unwrapKey().orElse(null);
+                    //user did not configure the Preset!
+                    if (BCLWorldPresets.BCL_WORLD.equals(key) || BCLWorldPresets.BCL_WORLD_17.equals(key)) {
+                        if (worldPreset.settings instanceof BCLWorldPresetSettings settings) {
+                            BCLib.LOGGER.info("Changing Default WorldPreset Settings for Datapack use.");
+
+                            worldPreset = worldPreset.withSettings(new BCLWorldPresetSettings(
+                                    settings.netherVersion,
+                                    settings.endVersion,
+                                    false,
+                                    false
+                            ));
+                            currentPreset = Optional.of(Holder.direct(worldPreset));
+                            accessor.bcl_setPreset(currentPreset);
+                        }
+                    }
+                }
+            }
+        }
+        return currentPreset;
     }
 
     public static WorldGenSettings enforceInNewWorld(WorldGenSettings worldGenSettings) {

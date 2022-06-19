@@ -353,6 +353,7 @@ public class LevelGenUtil {
             BCLWorldPreset.writeWorldPresetSettings(new BCLWorldPresetSettings(
                     biomeSourceVersion,
                     biomeSourceVersion,
+                    true,
                     true
             ));
         }

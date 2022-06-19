@@ -41,6 +41,7 @@ public class WorldSetupScreen extends BCLibScreen {
     private GridCheckboxCell bclibNether;
     GridCheckboxCell endLegacy;
     GridCheckboxCell endCustomTerrain;
+    GridCheckboxCell generateEndVoid;
     GridCheckboxCell netherLegacy;
 
     @Override
@@ -48,6 +49,7 @@ public class WorldSetupScreen extends BCLibScreen {
         final int netherVersion;
         final int endVersion;
         final boolean customEndGen;
+        final boolean haveEndVoid;
         if (createWorldScreen.worldGenSettingsComponent instanceof WorldGenSettingsComponentAccessor acc
                 && acc.bcl_getPreset()
                       .isPresent() && acc.bcl_getPreset()
@@ -57,6 +59,7 @@ public class WorldSetupScreen extends BCLibScreen {
             netherVersion = settings.netherVersion;
             endVersion = settings.endVersion;
             customEndGen = settings.useEndTerrainGenerator;
+            haveEndVoid = settings.generateEndVoid;
         } else {
             throw new IllegalStateException("The WorldSetup Screen is only valid for BetterX Presets.");
         }
@@ -114,7 +117,18 @@ public class WorldSetupScreen extends BCLibScreen {
                 (state) -> {
                 }
         );
-        
+
+        row = colEnd.addRow();
+        row.addSpacer(20);
+        generateEndVoid = row.addCheckbox(
+                Component.translatable("title.screen.bclib.worldgen.end_void"),
+                haveEndVoid,
+                1.0,
+                GridLayout.GridValueType.PERCENTAGE,
+                (state) -> {
+                }
+        );
+
         row = colEnd.addRow();
         row.addSpacer(20);
         endLegacy = row.addCheckbox(
@@ -135,6 +149,7 @@ public class WorldSetupScreen extends BCLibScreen {
                 (state) -> {
                     endLegacy.setEnabled(state);
                     endCustomTerrain.setEnabled(state);
+                    generateEndVoid.setEnabled(state);
                 }
         );
 
@@ -174,7 +189,8 @@ public class WorldSetupScreen extends BCLibScreen {
             acc.bcl_setPreset(Optional.of(Holder.direct(worldPreset.withSettings(new BCLWorldPresetSettings(
                     netherVersion,
                     endVersion,
-                    endCustomTerrain.isChecked()
+                    endCustomTerrain.isChecked(),
+                    generateEndVoid.isChecked()
             )))));
         }
 

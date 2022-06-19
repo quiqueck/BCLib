@@ -43,22 +43,33 @@ public class BCLWorldPresetSettings extends WorldPresetSettings {
                                               Codec.BOOL
                                                       .fieldOf("custom_end_terrain")
                                                       .orElse(true)
-                                                      .forGetter(o -> o.useEndTerrainGenerator)
+                                                      .forGetter(o -> o.useEndTerrainGenerator),
+                                              Codec.BOOL
+                                                      .fieldOf("generate_end_void")
+                                                      .orElse(true)
+                                                      .forGetter(o -> o.generateEndVoid)
                                       )
                                       .apply(builderInstance, builderInstance.stable(BCLWorldPresetSettings::new));
             });
     public final int netherVersion;
     public final int endVersion;
     public final boolean useEndTerrainGenerator;
+    public final boolean generateEndVoid;
 
     public BCLWorldPresetSettings(int version) {
-        this(version, version, true);
+        this(version, version, true, true);
     }
 
-    public BCLWorldPresetSettings(int netherVersion, int endVersion, boolean useEndTerrainGenerator) {
+    public BCLWorldPresetSettings(
+            int netherVersion,
+            int endVersion,
+            boolean useEndTerrainGenerator,
+            boolean generateEndVoid
+    ) {
         this.netherVersion = netherVersion;
         this.endVersion = endVersion;
         this.useEndTerrainGenerator = endVersion != BCLibEndBiomeSource.BIOME_SOURCE_VERSION_VANILLA && useEndTerrainGenerator;
+        this.generateEndVoid = generateEndVoid;
     }
 
 

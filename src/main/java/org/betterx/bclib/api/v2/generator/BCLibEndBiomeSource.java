@@ -16,7 +16,9 @@ import org.betterx.bclib.presets.worldgen.BCLWorldPresetSettings;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
+import net.minecraft.core.QuartPos;
 import net.minecraft.core.Registry;
+import net.minecraft.core.SectionPos;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
@@ -25,6 +27,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.biome.Climate;
+import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.level.levelgen.synth.SimplexNoise;
@@ -235,6 +238,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
                 BiomeAPI.wasRegisteredAs(location, BiomeAPI.BiomeType.BCL_END_VOID);
     }
 
+
     public static float getLegacyHeightValue(SimplexNoise simplexNoise, int i, int j) {
         int k = i / 2;
         int l = j / 2;
@@ -298,46 +302,72 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
 
     }
 
+    public Holder<Biome> getNoiseBiomeVanilla(int biomeX, int biomeY, int biomeZ, Climate.Sampler sampler) {
+        int posX = QuartPos.toBlock(biomeX);
+        int posY = QuartPos.toBlock(biomeY);
+        int posZ = QuartPos.toBlock(biomeZ);
+        int sectionX = SectionPos.blockToSectionCoord(posX);
+        int sectionZ = SectionPos.blockToSectionCoord(posZ);
+        long farEndBiomes = GeneratorOptions.getFarEndBiomes();
+
+        if ((long) sectionX * (long) sectionX + (long) sectionZ * (long) sectionZ <= 4096L) {
+            return this.centerBiome;
+        } else {
+            int x = (SectionPos.blockToSectionCoord(posX) * 2 + 1) * 8;
+            int z = (SectionPos.blockToSectionCoord(posZ) * 2 + 1) * 8;
+            double d = sampler.erosion().compute(new DensityFunction.SinglePointContext(x, posY, z));
+            if (d > 0.25) {
+                return mapLand.getBiome(posX, biomeY << 2, posZ).biome;
+            } else if (d >= -0.0625) {
+                return mapLand.getBiome(posX, biomeY << 2, posZ).biome;
+            } else {
+                return d < -0.21875 ? mapVoid.getBiome(posX, biomeY << 2, posZ).biome : this.barrens;
+            }
+        }
+    }
 
     @Override
     public Holder<Biome> getNoiseBiome(int biomeX, int biomeY, int biomeZ, Climate.Sampler sampler) {
         if (mapLand == null || mapVoid == null)
             return this.possibleBiomes().stream().findFirst().get();
-        long posX = biomeX << 2;
-        long posZ = biomeZ << 2;
-        long farEndBiomes = GeneratorOptions.getFarEndBiomes();
-        long dist = posX * posX + posZ * posZ;
 
-        if ((biomeX & 63) == 0 && (biomeZ & 63) == 0) {
-            mapLand.clearCache();
-            mapVoid.clearCache();
-        }
+        return getNoiseBiomeVanilla(biomeX, biomeY, biomeZ, sampler);
 
-        if (endLandFunction == null) {
-            if (dist <= farEndBiomes) return centerBiome;
-            float height = getLegacyHeightValue(
-                    noise,
-                    (biomeX >> 1) + 1,
-                    (biomeZ >> 1) + 1
-            ) + (float) SMALL_NOISE.eval(biomeX, biomeZ) * 5;
-
-            if (height > -20F && height < -5F) {
-                return barrens;
-            }
-
-            if (height < -10F) {
-                return mapVoid.getBiome(posX, biomeY << 2, posZ).biome;
-            } else {
-                return mapLand.getBiome(posX, biomeY << 2, posZ).biome;
-            }
-        } else {
-            pos.setLocation(biomeX, biomeZ);
-            if (endLandFunction.apply(pos, maxHeight)) {
-                return dist <= farEndBiomes ? centerBiome : mapLand.getBiome(posX, biomeY << 2, posZ).biome;
-            } else {
-                return dist <= farEndBiomes ? barrens : mapVoid.getBiome(posX, biomeY << 2, posZ).biome;
-            }
-        }
+//        long posX = biomeX << 2;
+//        long posZ = biomeZ << 2;
+//        long farEndBiomes = GeneratorOptions.getFarEndBiomes();
+//        long dist = posX * posX + posZ * posZ;
+//
+//        if ((biomeX & 63) == 0 && (biomeZ & 63) == 0) {
+//            mapLand.clearCache();
+//            mapVoid.clearCache();
+//        }
+//
+//        if (endLandFunction == null) {
+//            if (dist <= farEndBiomes) return centerBiome;
+//            float height = getLegacyHeightValue(
+//                    noise,
+//                    (biomeX >> 1) + 1,
+//                    (biomeZ >> 1) + 1
+//            ) + (float) SMALL_NOISE.eval(biomeX, biomeZ) * 5;
+//
+//            if (height > -20F && height < -5F) {
+//                return barrens;
+//            }
+//
+//            if (height < -10F) {
+//                return mapVoid.getBiome(posX, biomeY << 2, posZ).biome;
+//            } else {
+//                return mapLand.getBiome(posX, biomeY << 2, posZ).biome;
+//            }
+//        } else {
+//            pos.setLocation(biomeX, biomeZ);
+//            if (endLandFunction.apply(pos, maxHeight)) {
+//                return dist <= farEndBiomes ? centerBiome : mapLand.getBiome(posX, biomeY << 2, posZ).biome;
+//            } else {
+//                return dist <= farEndBiomes ? barrens : mapVoid.getBiome(posX, biomeY << 2, posZ).biome;
+//            }
+//        }
     }
 
     @Override

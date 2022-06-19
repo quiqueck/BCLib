@@ -57,5 +57,6 @@
   "title.bclib.the_end": "The End",
   "title.screen.bclib.worldgen.custom_biome_source": "Use Custom Biome Source",
   "title.screen.bclib.worldgen.legacy_square": "Use Legacy Map (1.17)",
-  "title.screen.bclib.worldgen.custom_end_terrain": "Custom End Terrain Generator"
+  "title.screen.bclib.worldgen.custom_end_terrain": "Custom End Terrain Generator",
+  "title.screen.bclib.worldgen.end_void": "Generate small Islands"
 }
