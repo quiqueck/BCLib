@@ -69,6 +69,7 @@ public class BiomeAPI {
         public static final BiomeType END = new BiomeType("END");
         public static final BiomeType END_LAND = new BiomeType("END_LAND", END);
         public static final BiomeType END_VOID = new BiomeType("END_VOID", END);
+        public static final BiomeType END_CENTER = new BiomeType("END_CENTER", END);
         public static final BiomeType BCL_END_LAND = new BiomeType("BCL_END_LAND", END_LAND);
         public static final BiomeType BCL_END_VOID = new BiomeType("BCL_END_VOID", END_VOID);
         public static final BiomeType OTHER_END_LAND = new BiomeType("OTHER_END_LAND", END_LAND);
@@ -115,7 +116,8 @@ public class BiomeAPI {
     public static final BCLBiome SOUL_SAND_VALLEY_BIOME = registerNetherBiome(getFromRegistry(Biomes.SOUL_SAND_VALLEY).value());
     public static final BCLBiome BASALT_DELTAS_BIOME = registerNetherBiome(getFromRegistry(Biomes.BASALT_DELTAS).value());
 
-    public static final BCLBiome THE_END = registerEndLandBiome(getFromRegistry(Biomes.THE_END));
+
+    public static final BCLBiome THE_END = registerCenterBiome(getFromRegistry(Biomes.THE_END));
     public static final BCLBiome END_MIDLANDS = registerSubBiome(
             THE_END,
             getFromRegistry(Biomes.END_MIDLANDS).value(),
@@ -127,7 +129,7 @@ public class BiomeAPI {
             0.5F
     );
 
-    public static final BCLBiome END_BARRENS = registerEndVoidBiome(getFromRegistry(new ResourceLocation("end_barrens")));
+    public static final BCLBiome END_BARRENS = registerEndBiome(getFromRegistry(new ResourceLocation("end_barrens")));
     public static final BCLBiome SMALL_END_ISLANDS = registerEndVoidBiome(getFromRegistry(new ResourceLocation(
             "small_end_islands")));
 
@@ -302,6 +304,20 @@ public class BiomeAPI {
         BCLBiome bclBiome = new BCLBiome(biome.value(), null);
 
         registerBiome(bclBiome, BiomeType.END_VOID);
+        return bclBiome;
+    }
+
+    public static BCLBiome registerEndBiome(Holder<Biome> biome) {
+        BCLBiome bclBiome = new BCLBiome(biome.value(), null);
+
+        registerBiome(bclBiome, BiomeType.END);
+        return bclBiome;
+    }
+
+    public static BCLBiome registerCenterBiome(Holder<Biome> biome) {
+        BCLBiome bclBiome = new BCLBiome(biome.value(), null);
+
+        registerBiome(bclBiome, BiomeType.END_CENTER);
         return bclBiome;
     }
 

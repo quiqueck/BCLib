@@ -75,6 +75,8 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
     private final BiomePicker endLandBiomePicker;
     private final BiomePicker endVoidBiomePicker;
 
+    private boolean generateEndVoids;
+
     public BCLibEndBiomeSource(Registry<Biome> biomeRegistry, long seed, Optional<Integer> version) {
         this(biomeRegistry, seed, version, true);
     }
@@ -95,6 +97,11 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
             boolean initMaps
     ) {
         super(biomeRegistry, list, seed, version);
+        if (LevelGenUtil.getWorldSettings() instanceof BCLWorldPresetSettings settings) {
+            generateEndVoids = settings.generateEndVoid;
+        } else {
+            generateEndVoids = true;
+        }
 
         endLandBiomePicker = new BiomePicker(biomeRegistry);
         endVoidBiomePicker = new BiomePicker(biomeRegistry);
@@ -112,7 +119,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
         ).getValue();
         this.possibleBiomes().forEach(biome -> {
             ResourceLocation key = biome.unwrapKey().orElseThrow().location();
-            String group = key.getNamespace() + "." + key.getPath();
+
 
             if (!BiomeAPI.hasBiome(key)) {
                 BCLBiome bclBiome = new BCLBiome(key, biome.value());
@@ -126,10 +133,23 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
                 BCLBiome bclBiome = BiomeAPI.getBiome(key);
                 if (bclBiome != BiomeAPI.EMPTY_BIOME) {
                     if (bclBiome.getParentBiome() == null) {
-                        if (BiomeAPI.wasRegisteredAsEndVoidBiome(key) || includeVoid.contains(key.toString())) {
-                            endVoidBiomePicker.addBiome(bclBiome);
-                        } else if (BiomeAPI.wasRegisteredAsEndLandBiome(key) || includeLand.contains(key.toString())) {
-                            endLandBiomePicker.addBiome(bclBiome);
+                        if (generateEndVoids) {
+                            if (BiomeAPI.wasRegisteredAsEndVoidBiome(key) || includeVoid.contains(key.toString())) {
+                                endVoidBiomePicker.addBiome(bclBiome);
+                            } else if (BiomeAPI.wasRegisteredAsEndLandBiome(key) || includeLand.contains(key.toString())) {
+                                endLandBiomePicker.addBiome(bclBiome);
+                            }
+                        } else {
+                            if (!key.equals(Biomes.SMALL_END_ISLANDS)
+                                    && !key.equals(Biomes.THE_END)
+                                    &&
+                                    (BiomeAPI.wasRegisteredAsEndVoidBiome(key)
+                                            || BiomeAPI.wasRegisteredAsEndLandBiome(key)
+                                            || includeVoid.contains(key.toString())
+                                            || includeLand.contains(key.toString())
+                                    )
+                            )
+                                endLandBiomePicker.addBiome(bclBiome);
                         }
                     }
                 }
@@ -302,17 +322,27 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
 
     }
 
-    public Holder<Biome> getNoiseBiomeVanilla(int biomeX, int biomeY, int biomeZ, Climate.Sampler sampler) {
+    @Override
+    public Holder<Biome> getNoiseBiome(int biomeX, int biomeY, int biomeZ, Climate.Sampler sampler) {
+        if (mapLand == null || mapVoid == null)
+            return this.possibleBiomes().stream().findFirst().get();
+
         int posX = QuartPos.toBlock(biomeX);
         int posY = QuartPos.toBlock(biomeY);
         int posZ = QuartPos.toBlock(biomeZ);
-        int sectionX = SectionPos.blockToSectionCoord(posX);
-        int sectionZ = SectionPos.blockToSectionCoord(posZ);
         long farEndBiomes = GeneratorOptions.getFarEndBiomes();
 
-        if ((long) sectionX * (long) sectionX + (long) sectionZ * (long) sectionZ <= 4096L) {
-            return this.centerBiome;
-        } else {
+        long dist = posX * posX + posZ * posZ;
+
+        if ((biomeX & 63) == 0 && (biomeZ & 63) == 0) {
+            mapLand.clearCache();
+            mapVoid.clearCache();
+        }
+
+        if (endLandFunction == null) {
+            if (dist <= farEndBiomes) {
+                return this.centerBiome;
+            }
             int x = (SectionPos.blockToSectionCoord(posX) * 2 + 1) * 8;
             int z = (SectionPos.blockToSectionCoord(posZ) * 2 + 1) * 8;
             double d = sampler.erosion().compute(new DensityFunction.SinglePointContext(x, posY, z));
@@ -321,54 +351,23 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
             } else if (d >= -0.0625) {
                 return mapLand.getBiome(posX, biomeY << 2, posZ).biome;
             } else {
-                return d < -0.21875 ? mapVoid.getBiome(posX, biomeY << 2, posZ).biome : this.barrens;
+                return d < -0.21875
+                        ? (generateEndVoids ? mapVoid : mapLand).getBiome(posX, biomeY << 2, posZ).biome
+                        : this.barrens;
+            }
+        } else {
+            pos.setLocation(biomeX, biomeZ);
+            if (endLandFunction.apply(pos, maxHeight)) {
+                return dist <= farEndBiomes ? centerBiome : mapLand.getBiome(posX, biomeY << 2, posZ).biome;
+            } else {
+                return dist <= farEndBiomes
+                        ? barrens
+                        : (generateEndVoids ? mapVoid : mapLand).getBiome(posX, biomeY << 2, posZ).biome;
             }
         }
+
     }
 
-    @Override
-    public Holder<Biome> getNoiseBiome(int biomeX, int biomeY, int biomeZ, Climate.Sampler sampler) {
-        if (mapLand == null || mapVoid == null)
-            return this.possibleBiomes().stream().findFirst().get();
-
-        return getNoiseBiomeVanilla(biomeX, biomeY, biomeZ, sampler);
-
-//        long posX = biomeX << 2;
-//        long posZ = biomeZ << 2;
-//        long farEndBiomes = GeneratorOptions.getFarEndBiomes();
-//        long dist = posX * posX + posZ * posZ;
-//
-//        if ((biomeX & 63) == 0 && (biomeZ & 63) == 0) {
-//            mapLand.clearCache();
-//            mapVoid.clearCache();
-//        }
-//
-//        if (endLandFunction == null) {
-//            if (dist <= farEndBiomes) return centerBiome;
-//            float height = getLegacyHeightValue(
-//                    noise,
-//                    (biomeX >> 1) + 1,
-//                    (biomeZ >> 1) + 1
-//            ) + (float) SMALL_NOISE.eval(biomeX, biomeZ) * 5;
-//
-//            if (height > -20F && height < -5F) {
-//                return barrens;
-//            }
-//
-//            if (height < -10F) {
-//                return mapVoid.getBiome(posX, biomeY << 2, posZ).biome;
-//            } else {
-//                return mapLand.getBiome(posX, biomeY << 2, posZ).biome;
-//            }
-//        } else {
-//            pos.setLocation(biomeX, biomeZ);
-//            if (endLandFunction.apply(pos, maxHeight)) {
-//                return dist <= farEndBiomes ? centerBiome : mapLand.getBiome(posX, biomeY << 2, posZ).biome;
-//            } else {
-//                return dist <= farEndBiomes ? barrens : mapVoid.getBiome(posX, biomeY << 2, posZ).biome;
-//            }
-//        }
-    }
 
     @Override
     protected Codec<? extends BiomeSource> codec() {
@@ -377,6 +376,6 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
 
     @Override
     public String toString() {
-        return "BCLib - The End BiomeSource (" + Integer.toHexString(hashCode()) + ", version=" + biomeSourceVersion + ", seed=" + currentSeed + ", height=" + maxHeight + ", biomes=" + possibleBiomes().size() + ")";
+        return "BCLib - The End BiomeSource (" + Integer.toHexString(hashCode()) + ", version=" + biomeSourceVersion + ", seed=" + currentSeed + ", height=" + maxHeight + ", voids=" + generateEndVoids + ", customLand=" + (endLandFunction != null) + ", biomes=" + possibleBiomes().size() + ")";
     }
 }
