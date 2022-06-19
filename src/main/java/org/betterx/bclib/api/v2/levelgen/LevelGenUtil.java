@@ -6,7 +6,7 @@ import org.betterx.bclib.api.v2.generator.BCLBiomeSource;
 import org.betterx.bclib.api.v2.generator.BCLChunkGenerator;
 import org.betterx.bclib.api.v2.generator.BCLibEndBiomeSource;
 import org.betterx.bclib.api.v2.generator.BCLibNetherBiomeSource;
-import org.betterx.bclib.mixin.common.RegistryOpsAccessor;
+import org.betterx.bclib.presets.worldgen.BCLWorldPreset;
 import org.betterx.bclib.presets.worldgen.BCLWorldPresetSettings;
 import org.betterx.bclib.presets.worldgen.BCLWorldPresets;
 import org.betterx.bclib.presets.worldgen.WorldPresetSettings;
@@ -43,7 +43,7 @@ import org.jetbrains.annotations.NotNull;
 public class LevelGenUtil {
     private static final String TAG_VERSION = "version";
     private static final String TAG_BN_GEN_VERSION = "generator_version";
-    private static final String TAG_GENERATOR = "generator";
+    public static final String TAG_GENERATOR = "generator";
 
     @NotNull
     public static LevelStem getBCLNetherLevelStem(Context context, Optional<Integer> version) {
@@ -79,27 +79,6 @@ public class LevelGenUtil {
     public static LevelStem getBCLEndLevelStem(Context context, Optional<Integer> version) {
         BCLibEndBiomeSource endSource = new BCLibEndBiomeSource(context.biomes, version);
         return getBCLEndLevelStem(context, endSource);
-    }
-
-    /**
-     * Datapacks can change the world's generator. This Method will ensure, that the Generators contain
-     * the correct BiomeSources for this world
-     *
-     * @param settings
-     * @return
-     * @see BCLChunkGenerator#injectNoiseSettings(WorldGenSettings)  for the correcponding behaviour
-     * for new worlds
-     */
-    public static WorldGenSettings fixSettingsInCurrentWorld(
-            Optional<RegistryOps<Tag>> registryOps,
-            WorldGenSettings settings
-    ) {
-        if (registryOps.orElse(null) instanceof RegistryOpsAccessor acc) {
-            return getWorldSettings().repairSettingsOnLoad(acc.bcl_getRegistryAccess(), settings);
-        } else {
-            BCLib.LOGGER.error("Unable to obtain registryAccess when enforcing generators.");
-        }
-        return settings;
     }
 
     public static WorldGenSettings createWorldFromPreset(
@@ -325,27 +304,6 @@ public class LevelGenUtil {
         generatorSettings.putInt(key.location().toString(), getDimensionVersion(settings, key));
     }
 
-    public static void initializeWorldData(WorldGenSettings settings) {
-        updateWorldData(getDimensionVersion(settings, LevelStem.NETHER), getDimensionVersion(settings, LevelStem.END));
-    }
-
-    public static void updateWorldData(int netherVersion, int endVersion) {
-        BCLWorldPresetSettings worldSettings = new BCLWorldPresetSettings(netherVersion, endVersion);
-        final RegistryAccess registryAccess = RegistryAccess.builtinCopy();
-        final RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
-        final var codec = WorldPresetSettings.CODEC.orElse(worldSettings);
-        final var encodeResult = codec.encodeStart(registryOps, worldSettings);
-
-        if (encodeResult.result().isPresent()) {
-            final CompoundTag settingsNbt = WorldDataAPI.getRootTag(BCLib.TOGETHER_WORLDS);
-            settingsNbt.put(TAG_GENERATOR, encodeResult.result().get());
-        } else {
-            BCLib.LOGGER.error("Unable to encode world generator settings generator for level.dat.");
-        }
-
-        WorldDataAPI.saveFile(BCLib.TOGETHER_WORLDS);
-    }
-
     static CompoundTag getSettingsNbt() {
         return WorldDataAPI.getCompoundTag(BCLib.TOGETHER_WORLDS, TAG_GENERATOR);
     }
@@ -390,7 +348,7 @@ public class LevelGenUtil {
             }
 
             BCLib.LOGGER.info("Set world to BiomeSource Version " + biomeSourceVersion);
-            updateWorldData(biomeSourceVersion, biomeSourceVersion);
+            BCLWorldPreset.writeWorldPresetSettings(new BCLWorldPresetSettings(biomeSourceVersion, biomeSourceVersion));
         }
     }
 

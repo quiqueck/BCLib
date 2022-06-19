@@ -1,10 +1,9 @@
 package org.betterx.bclib.mixin.common;
 
 import org.betterx.bclib.api.v2.LifeCycleAPI;
-import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
 import org.betterx.bclib.api.v2.datafixer.DataFixerAPI;
-import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
 import org.betterx.bclib.config.Configs;
+import org.betterx.bclib.presets.worldgen.WorldBootstrap;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.worldselection.WorldOpenFlows;
@@ -22,6 +21,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Optional;
+
 @Mixin(WorldOpenFlows.class)
 public abstract class WorldOpenFlowsMixin {
 
@@ -34,8 +35,7 @@ public abstract class WorldOpenFlowsMixin {
 
     @Inject(method = "loadLevel", cancellable = true, at = @At("HEAD"))
     private void bcl_callFixerOnLoad(Screen screen, String levelID, CallbackInfo ci) {
-        DataExchangeAPI.prepareServerside();
-        InternalBiomeAPI.prepareNewLevel();
+        WorldBootstrap.InGUI.setupLoadedWorld(levelID, this.levelSource);
 
         if (DataFixerAPI.fixData(this.levelSource, levelID, true, (appliedFixes) -> {
             LifeCycleAPI._runBeforeLevelLoad();
@@ -61,7 +61,7 @@ public abstract class WorldOpenFlowsMixin {
             WorldGenSettings worldGenSettings,
             CallbackInfo ci
     ) {
-        LifeCycleAPI.newWorldSetup(levelID, worldGenSettings, this.levelSource);
+        WorldBootstrap.InFreshLevel.setupNewWorld(levelID, worldGenSettings, this.levelSource, Optional.empty());
     }
 
     @Inject(method = "createLevelFromExistingSettings", at = @At("HEAD"))

@@ -2,7 +2,6 @@ package org.betterx.bclib.api.v2.datafixer;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.WorldDataAPI;
-import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
 import org.betterx.bclib.client.gui.screens.AtomicProgressListener;
 import org.betterx.bclib.client.gui.screens.ConfirmFixScreen;
 import org.betterx.bclib.client.gui.screens.LevelFixErrorScreen;
@@ -19,7 +18,6 @@ import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.storage.RegionFile;
-import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.LevelStorageSource.LevelStorageAccess;
@@ -135,77 +133,17 @@ public class DataFixerAPI {
             Consumer<Boolean> onResume
     ) {
         File levelPath = levelStorageAccess.getLevelPath(LevelResource.ROOT).toFile();
-        File levelDat = levelStorageAccess.getLevelPath(LevelResource.LEVEL_DATA_FILE).toFile();
-        boolean newWorld = false;
-        if (!levelDat.exists()) {
-            BCLib.LOGGER.info("Creating a new World, no fixes needed");
-            newWorld = true;
-        }
-
-        initializeWorldData(levelPath, newWorld);
-        if (newWorld) return false;
-
         return fixData(levelPath, levelStorageAccess.getLevelId(), showUI, onResume);
     }
 
     /**
-     * Initializes the DataStorage for this world. If the world is new, the patch registry is initialized to the
-     * current versions of the plugins.
-     * <p>
-     * This implementation will create a new  {@link LevelStorageAccess} and call {@link #initializeWorldData(File, boolean)}
-     * using the provided root path.
-     *
-     * @param levelSource The SourceStorage for this Minecraft instance, You can get this using
-     *                    {@code Minecraft.getInstance().getLevelSource()}
-     * @param levelID     The ID of the Level you want to patch
-     * @param newWorld    {@code true} if this is a fresh world
+     * Creates the patch level file for new worlds
      */
-    public static void initializeWorldData(LevelStorageSource levelSource, String levelID, boolean newWorld) {
-        wrapCall(levelSource, levelID, (levelStorageAccess) -> {
-            initializeWorldData(levelStorageAccess, newWorld);
-            return true;
-        });
-    }
-
-    public static void createWorldData(LevelStorageSource levelSource, String levelID, WorldGenSettings settings) {
-        wrapCall(levelSource, levelID, (levelStorageAccess) -> {
-            createWorldData(levelStorageAccess, settings);
-            return true;
-        });
-    }
-
-    /**
-     * Initializes the DataStorage for this world. If the world is new, the patch registry is initialized to the
-     * current versions of the plugins.
-     *
-     * @param access   levelAccess for the worldd
-     * @param newWorld {@code true} if this is a fresh world
-     */
-    public static void initializeWorldData(LevelStorageAccess access, boolean newWorld) {
-        initializeWorldData(access.getLevelPath(LevelResource.ROOT).toFile(), newWorld);
-    }
-
-    public static void createWorldData(LevelStorageAccess access, WorldGenSettings settings) {
-        initializeWorldData(access, true);
-        LevelGenUtil.initializeWorldData(settings);
+    public static void initializePatchData() {
+        getMigrationProfile().markApplied();
         WorldDataAPI.saveFile(BCLib.MOD_ID);
     }
 
-    /**
-     * Initializes the DataStorage for this world. If the world is new, the patch registry is initialized to the
-     * current versions of the plugins.
-     *
-     * @param levelBaseDir Folder of the world
-     * @param newWorld     {@code true} if this is a fresh world
-     */
-    public static void initializeWorldData(File levelBaseDir, boolean newWorld) {
-        WorldDataAPI.load(new File(levelBaseDir, "data"));
-
-        if (newWorld) {
-            getMigrationProfile().markApplied();
-            WorldDataAPI.saveFile(BCLib.MOD_ID);
-        }
-    }
 
     @Environment(EnvType.CLIENT)
     private static AtomicProgressListener showProgressScreen() {

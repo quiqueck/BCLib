@@ -1,9 +1,9 @@
 package org.betterx.bclib.mixin.client;
 
-import org.betterx.bclib.api.v2.LifeCycleAPI;
 import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
 import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
 import org.betterx.bclib.presets.worldgen.BCLWorldPresets;
+import org.betterx.bclib.presets.worldgen.WorldBootstrap;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.gui.screens.Screen;
@@ -62,6 +62,7 @@ public class CreateWorldScreenMixin {
     //this is called when a new world is first created
     @Inject(method = "createNewWorldDirectory", at = @At("RETURN"))
     void bcl_createNewWorld(CallbackInfoReturnable<Optional<LevelStorageSource.LevelStorageAccess>> cir) {
-        LifeCycleAPI.worldCreationStarted(cir.getReturnValue(), this.worldGenSettingsComponent);
+        WorldBootstrap.InGUI.registryReady(this.worldGenSettingsComponent);
+        WorldBootstrap.InGUI.setupNewWorld(cir.getReturnValue(), this.worldGenSettingsComponent);
     }
 }

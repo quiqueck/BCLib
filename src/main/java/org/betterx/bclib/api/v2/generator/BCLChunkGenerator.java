@@ -104,9 +104,6 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator {
         }
     }
 
-    public static void injectNoiseSettings(WorldGenSettings settings) {
-        BCLChunkGenerator.injectNoiseSettings(settings, BCLChunkGenerator.ALL_DIMENSIONS);
-    }
 
     public static void injectNoiseSettings(
             ResourceKey<LevelStem> dimensionKey,
@@ -127,7 +124,6 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator {
     }
 
     public static final Predicate<ResourceKey<LevelStem>> NON_MANAGED_DIMENSIONS = dim -> dim != LevelStem.NETHER && dim != LevelStem.END;
-    public static final Predicate<ResourceKey<LevelStem>> ALL_DIMENSIONS = dim -> true;
 
     public static void injectNoiseSettings(WorldGenSettings settings, Predicate<ResourceKey<LevelStem>> filter) {
         List<ResourceKey<LevelStem>> otherDimensions = settings

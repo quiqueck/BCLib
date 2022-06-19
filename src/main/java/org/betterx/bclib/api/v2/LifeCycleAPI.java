@@ -1,16 +1,8 @@
 package org.betterx.bclib.api.v2;
 
-import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
 import org.betterx.bclib.api.v2.datafixer.DataFixerAPI;
-import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
-import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
-import org.betterx.bclib.mixin.common.RegistryOpsAccessor;
 
-import net.minecraft.client.gui.screens.worldselection.WorldGenSettingsComponent;
 import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -18,13 +10,11 @@ import net.minecraft.server.level.progress.ChunkProgressListener;
 import net.minecraft.world.level.CustomSpawner;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.ServerLevelData;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.Executor;
 
 /**
@@ -35,66 +25,6 @@ public class LifeCycleAPI {
     private final static List<LevelLoadCall> onLoadLevel = new ArrayList<>(2);
     private final static List<BeforeLevelLoadCall> beforeLoadLevel = new ArrayList<>(2);
 
-
-    private static void worldCreationStarted(RegistryAccess access) {
-        InternalBiomeAPI.initRegistry(access);
-    }
-
-    public static void newWorldSetup(
-            LevelStorageSource.LevelStorageAccess levelStorageAccess,
-            WorldGenSettings settings
-    ) {
-        DataExchangeAPI.prepareServerside();
-        InternalBiomeAPI.prepareNewLevel();
-
-        DataFixerAPI.createWorldData(levelStorageAccess, settings);
-        _runBeforeLevelLoad();
-    }
-
-    public static void newWorldSetup(
-            String levelID,
-            WorldGenSettings worldGenSettings,
-            LevelStorageSource levelSource
-    ) {
-        DataExchangeAPI.prepareServerside();
-        InternalBiomeAPI.prepareNewLevel();
-
-        DataFixerAPI.createWorldData(levelSource, levelID, worldGenSettings);
-        _runBeforeLevelLoad();
-    }
-
-    public static void newWorldSetup(LevelStorageSource.LevelStorageAccess levelStorageAccess) {
-        InternalBiomeAPI.prepareNewLevel();
-        DataFixerAPI.fixData(levelStorageAccess, false, (didFix) -> {/* not called when showUI==false */});
-
-        _runBeforeLevelLoad();
-    }
-
-    public static WorldGenSettings worldLoadStarted(WorldGenSettings settings, Optional<RegistryOps<Tag>> registryOps) {
-        if (registryOps.orElse(null) instanceof RegistryOpsAccessor acc) {
-            InternalBiomeAPI.initRegistry(acc.bcl_getRegistryAccess());
-        }
-        settings = LevelGenUtil.fixSettingsInCurrentWorld(registryOps, settings);
-
-        return settings;
-    }
-
-    public static void worldCreationStarted(RegistryOps<Tag> regOps) {
-        if (regOps instanceof RegistryOpsAccessor acc) {
-            worldCreationStarted(acc.bcl_getRegistryAccess());
-        }
-    }
-
-    public static void worldCreationStarted(
-            Optional<LevelStorageSource.LevelStorageAccess> levelStorageAccess,
-            WorldGenSettingsComponent worldGenSettingsComponent
-    ) {
-        worldCreationStarted(worldGenSettingsComponent.registryHolder());
-
-        if (levelStorageAccess.isPresent()) {
-            newWorldSetup(levelStorageAccess.get(), worldGenSettingsComponent.settings().worldGenSettings());
-        }
-    }
 
     /**
      * Register a callback that is called before a level is loaded or created,

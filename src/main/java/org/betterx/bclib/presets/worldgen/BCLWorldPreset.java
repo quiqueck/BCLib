@@ -1,44 +1,38 @@
 package org.betterx.bclib.presets.worldgen;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.WorldDataAPI;
+import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
 import org.betterx.bclib.mixin.common.WorldPresetAccessor;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.RegistryFileCodec;
+import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 
 import java.util.Map;
+import java.util.Optional;
 
 public class BCLWorldPreset extends WorldPreset {
     public final WorldPresetSettings settings;
     public final int sortOrder;
-    public static final Codec<BCLWorldPreset> DIRECT_CODEC = RecordCodecBuilder.create(builderInstance -> {
-        RecordCodecBuilder<BCLWorldPreset, Map<ResourceKey<LevelStem>, LevelStem>> dimensionsBuidler = Codec
-                .unboundedMap(ResourceKey.codec(Registry.LEVEL_STEM_REGISTRY), LevelStem.CODEC)
-                .fieldOf("dimensions")
-                .forGetter(worldPreset -> worldPreset.getDimensions());
 
-        RecordCodecBuilder<BCLWorldPreset, Integer> sortBuilder = Codec.INT
-                .fieldOf("sort_order")
-                .forGetter(wp -> wp.sortOrder);
+    private static final String TAG_GENERATOR = LevelGenUtil.TAG_GENERATOR;
 
-        RecordCodecBuilder<BCLWorldPreset, WorldPresetSettings> settingsBuilder = WorldPresetSettings.CODEC
-                .fieldOf("settings")
-                .forGetter(wp -> wp.settings);
+    private static int NEXT_IN_SORT_ORDER = 1000;
 
-        return builderInstance
-                .group(dimensionsBuidler, sortBuilder, settingsBuilder)
-                .apply(builderInstance, BCLWorldPreset::new);
-    });
-
-    public static final Codec<Holder<WorldPreset>> CODEC = RegistryFileCodec.create(
-            Registry.WORLD_PRESET_REGISTRY,
-            (Codec<WorldPreset>) ((Object) DIRECT_CODEC)
-    );
+    public BCLWorldPreset(
+            Map<ResourceKey<LevelStem>, LevelStem> map,
+            Optional<Integer> sortOrder,
+            Optional<WorldPresetSettings> settings
+    ) {
+        this(map, sortOrder.orElse(NEXT_IN_SORT_ORDER++), settings.orElse(VanillaWorldPresetSettings.DEFAULT));
+    }
 
     public BCLWorldPreset(Map<ResourceKey<LevelStem>, LevelStem> map, int sortOrder, WorldPresetSettings settings) {
         super(map);
@@ -50,4 +44,28 @@ public class BCLWorldPreset extends WorldPreset {
         return ((WorldPresetAccessor) this).bcl_getDimensions();
     }
 
+    public static WorldPresetSettings writeWorldPresetSettings(Optional<Holder<WorldPreset>> worldPreset) {
+        if (worldPreset.isPresent() && worldPreset.get().value() instanceof BCLWorldPreset wp) {
+            writeWorldPresetSettings(wp.settings);
+            return wp.settings;
+        } else {
+            writeWorldPresetSettings(VanillaWorldPresetSettings.DEFAULT);
+            return VanillaWorldPresetSettings.DEFAULT;
+        }
+    }
+
+    public static void writeWorldPresetSettings(WorldPresetSettings presetSettings) {
+        final RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, BuiltinRegistries.ACCESS);
+        final var codec = WorldPresetSettings.CODEC.orElse(presetSettings);
+        final var encodeResult = codec.encodeStart(registryOps, presetSettings);
+
+        if (encodeResult.result().isPresent()) {
+            final CompoundTag settingsNbt = WorldDataAPI.getRootTag(BCLib.TOGETHER_WORLDS);
+            settingsNbt.put(TAG_GENERATOR, encodeResult.result().get());
+        } else {
+            BCLib.LOGGER.error("Unable to encode world generator settings generator for level.dat.");
+        }
+
+        WorldDataAPI.saveFile(BCLib.TOGETHER_WORLDS);
+    }
 }

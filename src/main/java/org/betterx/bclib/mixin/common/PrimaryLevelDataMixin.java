@@ -1,7 +1,6 @@
 package org.betterx.bclib.mixin.common;
 
-import org.betterx.bclib.api.v2.LifeCycleAPI;
-import org.betterx.bclib.api.v2.generator.BCLChunkGenerator;
+import org.betterx.bclib.presets.worldgen.WorldBootstrap;
 
 import com.mojang.datafixers.DataFixer;
 import com.mojang.serialization.Dynamic;
@@ -36,8 +35,7 @@ public class PrimaryLevelDataMixin {
     //This is the way a created (new) world is initializing the PrimaryLevelData
     @ModifyArg(method = "<init>(Lnet/minecraft/world/level/LevelSettings;Lnet/minecraft/world/level/levelgen/WorldGenSettings;Lcom/mojang/serialization/Lifecycle;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/PrimaryLevelData;<init>(Lcom/mojang/datafixers/DataFixer;ILnet/minecraft/nbt/CompoundTag;ZIIIFJJIIIZIZZZLnet/minecraft/world/level/border/WorldBorder$Settings;IILjava/util/UUID;Ljava/util/Set;Lnet/minecraft/world/level/timers/TimerQueue;Lnet/minecraft/nbt/CompoundTag;Lnet/minecraft/nbt/CompoundTag;Lnet/minecraft/world/level/LevelSettings;Lnet/minecraft/world/level/levelgen/WorldGenSettings;Lcom/mojang/serialization/Lifecycle;)V"))
     private static WorldGenSettings bcl_fixOtherSettings(WorldGenSettings worldGenSettings) {
-        BCLChunkGenerator.injectNoiseSettings(worldGenSettings);
-        return worldGenSettings;
+        return WorldBootstrap.enforceInNewWorld(worldGenSettings);
     }
 
     @Inject(method = "parse", at = @At("HEAD"))
@@ -62,7 +60,8 @@ public class PrimaryLevelDataMixin {
     @ModifyArg(method = "parse", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/PrimaryLevelData;<init>(Lcom/mojang/datafixers/DataFixer;ILnet/minecraft/nbt/CompoundTag;ZIIIFJJIIIZIZZZLnet/minecraft/world/level/border/WorldBorder$Settings;IILjava/util/UUID;Ljava/util/Set;Lnet/minecraft/world/level/timers/TimerQueue;Lnet/minecraft/nbt/CompoundTag;Lnet/minecraft/nbt/CompoundTag;Lnet/minecraft/world/level/LevelSettings;Lnet/minecraft/world/level/levelgen/WorldGenSettings;Lcom/mojang/serialization/Lifecycle;)V"))
     private static WorldGenSettings bcl_fixSettings(WorldGenSettings settings) {
         Optional<RegistryOps<Tag>> registryOps = bcl_lastRegistryAccess.get();
-        settings = LifeCycleAPI.worldLoadStarted(settings, registryOps);
+        WorldBootstrap.InGUI.registryReady(registryOps);
+        settings = WorldBootstrap.enforceInLoadedWorld(registryOps, settings);
         bcl_lastRegistryAccess.set(Optional.empty());
         return settings;
     }

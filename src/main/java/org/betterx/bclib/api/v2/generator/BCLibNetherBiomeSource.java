@@ -16,6 +16,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Climate;
@@ -147,13 +148,13 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource {
 
 
     private static boolean isValidNetherBiome(Holder<Biome> biome, ResourceLocation location) {
-        return biome.unwrapKey().get().location().toString().equals("betternether:crimson_glowing_woods")
-                || biome.unwrapKey().get().location().toString().equals("minecraft:crimson_forest")
-                || biome.unwrapKey().get().location().toString().equals("betternether:crimson_pinewood");
+//        return biome.unwrapKey().get().location().toString().equals("betternether:crimson_glowing_woods")
+//                || biome.unwrapKey().get().location().toString().equals("minecraft:crimson_forest")
+//                || biome.unwrapKey().get().location().toString().equals("betternether:crimson_pinewood");
 
-//        return NetherBiomes.canGenerateInNether(biome.unwrapKey().get()) ||
-//                biome.is(BiomeTags.IS_NETHER) ||
-//                BiomeAPI.wasRegisteredAsNetherBiome(location);
+        return NetherBiomes.canGenerateInNether(biome.unwrapKey().get()) ||
+                biome.is(BiomeTags.IS_NETHER) ||
+                BiomeAPI.wasRegisteredAsNetherBiome(location);
     }
 
     private static boolean isValidNonVanillaNetherBiome(Holder<Biome> biome, ResourceLocation location) {

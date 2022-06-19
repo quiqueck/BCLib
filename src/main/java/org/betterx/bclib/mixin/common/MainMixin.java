@@ -1,6 +1,6 @@
 package org.betterx.bclib.mixin.common;
 
-import org.betterx.bclib.api.v2.LifeCycleAPI;
+import org.betterx.bclib.presets.worldgen.WorldBootstrap;
 
 import com.mojang.serialization.DynamicOps;
 import net.minecraft.nbt.Tag;
@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 abstract public class MainMixin {
     @ModifyVariable(method = "main", ordinal = 0, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess;getSummary()Lnet/minecraft/world/level/storage/LevelSummary;"))
     private static LevelStorageSource.LevelStorageAccess bc_createAccess(LevelStorageSource.LevelStorageAccess levelStorageAccess) {
-        LifeCycleAPI.newWorldSetup(levelStorageAccess);
+        WorldBootstrap.DedicatedServer.setupWorld(levelStorageAccess);
         return levelStorageAccess;
     }
 
@@ -25,7 +25,7 @@ abstract public class MainMixin {
     @ModifyArg(method = "method_43613", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess;getDataTag(Lcom/mojang/serialization/DynamicOps;Lnet/minecraft/world/level/DataPackConfig;Lcom/mojang/serialization/Lifecycle;)Lnet/minecraft/world/level/storage/WorldData;"))
     private static DynamicOps<Tag> bcl_onCreate(DynamicOps<Tag> dynamicOps) {
         if (dynamicOps instanceof RegistryOps<Tag> regOps) {
-            LifeCycleAPI.worldCreationStarted(regOps);
+            WorldBootstrap.DedicatedServer.registryReady(regOps);
         }
         return dynamicOps;
     }

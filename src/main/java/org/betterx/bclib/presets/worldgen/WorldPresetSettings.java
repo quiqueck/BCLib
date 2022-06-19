@@ -47,6 +47,7 @@ public abstract class WorldPresetSettings {
 
     public static void bootstrap() {
         register(BCLib.makeID("bcl_world_preset_settings"), BCLWorldPresetSettings.CODEC);
+        register(BCLib.makeID("vanilla_world_preset_settings"), VanillaWorldPresetSettings.CODEC);
     }
 
     public abstract Codec<? extends WorldPresetSettings> codec();

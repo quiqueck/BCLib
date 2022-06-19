@@ -5,11 +5,14 @@ import org.betterx.bclib.interfaces.BiomeSourceAccessor;
 import org.betterx.bclib.interfaces.NoiseGeneratorSettingsProvider;
 import org.betterx.bclib.interfaces.SurfaceRuleProvider;
 import org.betterx.bclib.mixin.common.BiomeGenerationSettingsAccessor;
+import org.betterx.bclib.mixin.common.RegistryOpsAccessor;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -63,6 +66,21 @@ public class InternalBiomeAPI {
                 .forEach(stepFeatureSuppliers -> stepFeatureSuppliers.forEach(step -> step.forEach(feature -> {
                     FEATURE_ORDER.computeIfAbsent(feature, f -> FEATURE_ORDER_ID.getAndIncrement());
                 })));
+    }
+
+    public static RegistryAccess worldRegistryAccess() {
+        return registryAccess;
+    }
+
+    /**
+     * Initialize registry for current server.
+     *
+     * @param regOps - registryOps for the current Session.
+     */
+    public static void initRegistry(RegistryOps<Tag> regOps) {
+        if (regOps instanceof RegistryOpsAccessor acc) {
+            initRegistry(acc.bcl_getRegistryAccess());
+        }
     }
 
     /**
@@ -159,12 +177,7 @@ public class InternalBiomeAPI {
             }
         }
     }
-
-    /**
-     * Will apply biome modifications to world, internal usage only.
-     *
-     * @param level
-     */
+    
     @Deprecated(forRemoval = true)
     public static void applyModificationsDeprecated(ServerLevel level) {
         //TODO: Now Disabled, because we fix the settings when everything gets loaded

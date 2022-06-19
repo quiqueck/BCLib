@@ -1,13 +1,11 @@
 package org.betterx.bclib.api.v2;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.datafixer.DataFixerAPI;
 import org.betterx.bclib.util.ModUtil;
 
 import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
-import net.minecraft.world.level.storage.LevelStorageSource.LevelStorageAccess;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
@@ -20,14 +18,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 /**
  * Mod-specifix data-storage for a world.
  * <p>
  * This class provides the ability for mod to store persistent data inside a world. The Storage for the world is
- * currently initialized as part of the {@link DataFixerAPI} in {@link DataFixerAPI#fixData(LevelStorageAccess, boolean, Consumer)}
- * or {@link DataFixerAPI#initializeWorldData(File, boolean)}
+ * currently initialized as part of the {@link org.betterx.bclib.presets.worldgen.WorldBootstrap} in
+ * {@link org.betterx.bclib.presets.worldgen.WorldBootstrap#initializeWorldDataAPI(File, boolean)}
  */
 public class WorldDataAPI {
     private static final Map<String, CompoundTag> TAGS = Maps.newHashMap();

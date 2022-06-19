@@ -46,6 +46,8 @@
     "WorldGenPropertiesMixin",
     "WorldGenRegionMixin",
     "WorldOpenFlowsMixin",
+    "WorldPresetAccessor",
+    "WorldPresetMixin",
     "WorldPresetsBootstrapMixin",
     "elytra.LivingEntityMixin",
     "shears.BeehiveBlockMixin",
