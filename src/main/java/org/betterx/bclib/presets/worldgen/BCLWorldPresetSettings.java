@@ -46,7 +46,7 @@ public class BCLWorldPresetSettings extends WorldPresetSettings {
                                                       .forGetter(o -> o.useEndTerrainGenerator),
                                               Codec.BOOL
                                                       .fieldOf("generate_end_void")
-                                                      .orElse(true)
+                                                      .orElse(false)
                                                       .forGetter(o -> o.generateEndVoid)
                                       )
                                       .apply(builderInstance, builderInstance.stable(BCLWorldPresetSettings::new));
@@ -57,7 +57,7 @@ public class BCLWorldPresetSettings extends WorldPresetSettings {
     public final boolean generateEndVoid;
 
     public BCLWorldPresetSettings(int version) {
-        this(version, version, true, true);
+        this(version, version, true, false);
     }
 
     public BCLWorldPresetSettings(
