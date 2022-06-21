@@ -20,7 +20,7 @@ import java.net.Proxy;
 @Mixin(value = MinecraftServer.class, priority = 2000)
 public class MinecraftServerMixinLate {
     @Inject(at = @At("RETURN"), method = "<init>")
-    private void appendGlobalFeatures(
+    private void bcl_restoreBiomeSource(
             Thread thread,
             LevelStorageSource.LevelStorageAccess levelStorageAccess,
             PackRepository packRepository,

@@ -8,10 +8,9 @@ import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
 import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
 import org.betterx.bclib.interfaces.ChunkGeneratorAccessor;
 import org.betterx.bclib.interfaces.NoiseGeneratorSettingsProvider;
-import org.betterx.worlds.together.surfaceRules.SurfaceRuleRegistry;
-import org.betterx.worlds.together.surfaceRules.SurfaceRuleUtil;
 import org.betterx.worlds.together.world.WorldGenUtil;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
+import org.betterx.worlds.together.worldPreset.settings.VanillaWorldPresetSettings;
 import org.betterx.worlds.together.worldPreset.settings.WorldPresetSettings;
 
 import com.mojang.serialization.Codec;
@@ -135,16 +134,15 @@ public class BCLWorldPresetSettings extends WorldPresetSettings {
 
     @Override
     public void injectSurfaceRules(RegistryAccess registryAccess, WorldGenSettings settings) {
-        //END and NETHER are handled in #repairSettingsOnLoad
-        SurfaceRuleUtil.injectSurfaceRules(settings, SurfaceRuleRegistry.NON_MANAGED_DIMENSIONS);
+        VanillaWorldPresetSettings.DEFAULT.injectSurfaceRules(registryAccess, settings);
     }
 
-    private static Holder<NoiseGeneratorSettings> injectSurfaceRules(
+    private static Holder<NoiseGeneratorSettings> buildGeneratorSettings(
             Holder<NoiseGeneratorSettings> reference,
             Holder<NoiseGeneratorSettings> settings,
             BiomeSource biomeSource
     ) {
-        SurfaceRuleUtil.injectSurfaceRules(settings.value(), biomeSource);
+        //SurfaceRuleUtil.injectSurfaceRules(settings.value(), biomeSource);
         return settings;
 //        NoiseGeneratorSettings old = settings.value();
 //        NoiseGeneratorSettings noise = new NoiseGeneratorSettings(
@@ -216,7 +214,7 @@ public class BCLWorldPresetSettings extends WorldPresetSettings {
                                 generator.bclib_getStructureSetsRegistry(),
                                 noiseProvider.bclib_getNoises(),
                                 bs,
-                                injectSurfaceRules(
+                                buildGeneratorSettings(
                                         referenceProvider.bclib_getNoiseGeneratorSettingHolders(),
                                         noiseProvider.bclib_getNoiseGeneratorSettingHolders(),
                                         bs
@@ -233,9 +231,9 @@ public class BCLWorldPresetSettings extends WorldPresetSettings {
                     settings,
                     referenceGenerator
             );
-        } else {
+        }/* else {
             SurfaceRuleUtil.injectSurfaceRules(dimensionKey, loadedChunkGenerator);
-        }
+        }*/
         return settings;
     }
 

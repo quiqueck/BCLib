@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * We need a hook here to alter surface rules after Fabric did add its biomes
  * in {@link net.fabricmc.fabric.mixin.biome.MixinMinecraftServer}
  */
-@Mixin(value = MinecraftServer.class, priority = 500)
+@Mixin(value = MinecraftServer.class, priority = 2000)
 public class MinecraftServerMixin {
     @Shadow
     @Final
@@ -27,7 +27,7 @@ public class MinecraftServerMixin {
     @Final
     protected WorldData worldData;
 
-    @Inject(method = "createLevels", at = @At("HEAD"))
+    @Inject(method = "createLevels", at = @At(value = "HEAD"))
     private void together_addSurfaceRules(ChunkProgressListener worldGenerationProgressListener, CallbackInfo ci) {
         WorldGenUtil.getWorldSettings().injectSurfaceRules(registryHolder, this.worldData.worldGenSettings());
     }
