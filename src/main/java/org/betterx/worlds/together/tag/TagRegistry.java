@@ -11,6 +11,8 @@ import net.minecraft.tags.TagEntry;
 import net.minecraft.tags.TagKey;
 import net.minecraft.tags.TagLoader;
 import net.minecraft.tags.TagManager;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.biome.Biome;
 
 import com.google.common.collect.Lists;
@@ -23,7 +25,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-import org.jetbrains.annotations.ApiStatus;
 
 public class TagRegistry<T> {
     boolean isFrozen = false;
@@ -66,29 +67,19 @@ public class TagRegistry<T> {
             super(registry, directory, locationProvider);
         }
 
-        public void add(TagKey<T> tagID, T... elements) {
+        @SafeVarargs
+        public final void add(TagKey<T> tagID, T... elements) {
             super.add(tagID, elements);
         }
 
-        public void add(T element, TagKey<T>... tagIDs) {
-            super.add(element, tagIDs);
-        }
-
-        @Deprecated(forRemoval = true)
-        public void add(ResourceLocation tagID, T... elements) {
-            super.add(tagID, elements);
-        }
-
-        @Deprecated(forRemoval = true)
-        public void add(T element, ResourceLocation... tagIDs) {
+        @SafeVarargs
+        public final void add(T element, TagKey<T>... tagIDs) {
             super.add(element, tagIDs);
         }
     }
 
     public static class Biomes extends Simple<Biome> {
-
-        @ApiStatus.Internal
-        public Biomes(String directory, Function<Biome, ResourceLocation> locationProvider) {
+        Biomes(String directory, Function<Biome, ResourceLocation> locationProvider) {
             super(Registry.BIOME_REGISTRY, directory, locationProvider);
         }
 
@@ -99,6 +90,25 @@ public class TagRegistry<T> {
         public void apply(Map<ResourceLocation, List<TagLoader.EntryWithSource>> tagsMap) {
             InternalBiomeAPI._runBiomeTagAdders();
             super.apply(tagsMap);
+        }
+    }
+
+    public static class Items extends RegistryBacked<Item> {
+
+        Items() {
+            super(Registry.ITEM);
+        }
+
+        @SafeVarargs
+        public final void add(TagKey<Item> tagID, ItemLike... elements) {
+            for (ItemLike element : elements) {
+                add(tagID, element.asItem());
+            }
+        }
+
+        @SafeVarargs
+        public final void add(ItemLike element, TagKey<Item>... tagIDs) {
+            super.add(element.asItem(), tagIDs);
         }
     }
 

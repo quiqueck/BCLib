@@ -10,7 +10,6 @@ import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
-@Deprecated(forRemoval = true)
 public abstract class DefaultFeature extends Feature<NoneFeatureConfiguration> {
     protected static final BlockState AIR = Blocks.AIR.defaultBlockState();
     protected static final BlockState WATER = Blocks.WATER.defaultBlockState();

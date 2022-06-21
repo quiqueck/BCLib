@@ -11,6 +11,7 @@ import org.betterx.worlds.together.util.ModUtil;
 import org.betterx.worlds.together.world.WorldConfig;
 import org.betterx.worlds.together.world.WorldGenUtil;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
+import org.betterx.worlds.together.worldPreset.settings.WorldPresetSettings;
 
 import com.mojang.serialization.Lifecycle;
 import net.minecraft.core.Holder;
@@ -279,5 +280,13 @@ public class LevelGenUtil {
                     true
             ));
         }
+    }
+
+    /**
+     * @deprecated Replace by {@link WorldGenUtil#getWorldSettings()}
+     */
+    @Deprecated(forRemoval = true)
+    public static WorldPresetSettings getWorldSettings() {
+        return WorldGenUtil.getWorldSettings();
     }
 }

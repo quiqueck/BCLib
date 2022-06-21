@@ -20,6 +20,7 @@ import java.util.function.Function;
 /**
  *  Please use the {@link org.betterx.bclib.api.v2.levelgen.structures.BCLStructure} and
  *  {@link BCLStructureBuilder} instead.
+ * @deprecated Use {@link org.betterx.bclib.api.v2.levelgen.structures.BCLStructure} instead
  */
 public class BCLStructure<S extends Structure> extends org.betterx.bclib.api.v2.levelgen.structures.BCLStructure<S> {
 

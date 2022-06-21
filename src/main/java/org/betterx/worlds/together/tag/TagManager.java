@@ -26,12 +26,17 @@ public class TagManager {
     private static final Map<String, TagRegistry<?>> TYPES = Maps.newHashMap();
 
     public static TagRegistry.RegistryBacked<Block> BLOCKS = registerType(Registry.BLOCK);
-    public static TagRegistry.RegistryBacked<Item> ITEMS = registerType(Registry.ITEM);
+    public static TagRegistry.RegistryBacked<Item> ITEMS = registerItem();
     public static TagRegistry.Biomes BIOMES = registerBiome();
 
     public static <T> TagRegistry.RegistryBacked<T> registerType(DefaultedRegistry<T> registry) {
         TagRegistry<T> type = new TagRegistry.RegistryBacked<>(registry);
         return (TagRegistry.RegistryBacked<T>) TYPES.computeIfAbsent(type.directory, (dir) -> type);
+    }
+
+    public static TagRegistry.Items registerItem() {
+        TagRegistry.Items type = new TagRegistry.Items();
+        return (TagRegistry.Items) TYPES.computeIfAbsent(type.directory, (dir) -> type);
     }
 
     public static <T> TagRegistry.Simple<T> registerType(Registry<T> registry, String directory) {

@@ -69,7 +69,7 @@ public class BaseLeavesBlock extends LeavesBlock implements BlockModelProvider, 
     }
 
     public BaseLeavesBlock(Block sapling, MaterialColor color, int light) {
-        super(makeLeaves(color).lightLevel(light));
+        super(makeLeaves(color).luminance(light));
         this.sapling = sapling;
     }
 
