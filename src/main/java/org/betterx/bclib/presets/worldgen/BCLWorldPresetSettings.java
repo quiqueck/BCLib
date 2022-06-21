@@ -133,6 +133,12 @@ public class BCLWorldPresetSettings extends WorldPresetSettings {
         return biomeSource;
     }
 
+    @Override
+    public void injectSurfaceRules(RegistryAccess registryAccess, WorldGenSettings settings) {
+        //END and NETHER are handled in #repairSettingsOnLoad
+        SurfaceRuleUtil.injectSurfaceRules(settings, SurfaceRuleRegistry.NON_MANAGED_DIMENSIONS);
+    }
+
     private static Holder<NoiseGeneratorSettings> injectSurfaceRules(
             Holder<NoiseGeneratorSettings> reference,
             Holder<NoiseGeneratorSettings> settings,
@@ -236,7 +242,6 @@ public class BCLWorldPresetSettings extends WorldPresetSettings {
     public WorldGenSettings repairSettingsOnLoad(RegistryAccess registryAccess, WorldGenSettings settings) {
         settings = fixSettingsInCurrentWorld(registryAccess, LevelStem.NETHER, BuiltinDimensionTypes.NETHER, settings);
         settings = fixSettingsInCurrentWorld(registryAccess, LevelStem.END, BuiltinDimensionTypes.END, settings);
-        SurfaceRuleUtil.injectSurfaceRules(settings, SurfaceRuleRegistry.NON_MANAGED_DIMENSIONS);
         return settings;
     }
 

@@ -23,12 +23,16 @@ public class VanillaWorldPresetSettings extends WorldPresetSettings {
 
     @Override
     public WorldGenSettings repairSettingsOnLoad(RegistryAccess registryAccess, WorldGenSettings settings) {
-        SurfaceRuleUtil.injectSurfaceRules(settings, SurfaceRuleRegistry.ALL_DIMENSIONS);
         return settings;
     }
 
     @Override
     public BiomeSource addDatapackBiomes(BiomeSource biomeSource, Set<Holder<Biome>> datapackBiomes) {
         return biomeSource;
+    }
+
+
+    public void injectSurfaceRules(RegistryAccess registryAccess, WorldGenSettings settings) {
+        SurfaceRuleUtil.injectSurfaceRules(settings, SurfaceRuleRegistry.ALL_DIMENSIONS);
     }
 }
