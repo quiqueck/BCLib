@@ -1,11 +1,11 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.api.v2.tag.NamedMineableTags;
-import org.betterx.bclib.api.v2.tag.TagAPI;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.client.sound.BlockSounds;
+import org.betterx.worlds.together.tag.MineableTags;
+import org.betterx.worlds.together.tag.TagManager;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.UnbakedModel;
@@ -80,7 +80,7 @@ public class BaseTerrainBlock extends BaseBlock {
             InteractionHand hand,
             BlockHitResult hit
     ) {
-        if (pathBlock != null && TagAPI.isToolWithMineableTag(player.getMainHandItem(), NamedMineableTags.SHOVEL)) {
+        if (pathBlock != null && TagManager.isToolWithMineableTag(player.getMainHandItem(), MineableTags.SHOVEL)) {
             world.playSound(player, pos, SoundEvents.SHOVEL_FLATTEN, SoundSource.BLOCKS, 1.0F, 1.0F);
             if (!world.isClientSide) {
                 world.setBlockAndUpdate(pos, pathBlock.defaultBlockState());

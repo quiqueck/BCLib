@@ -2,7 +2,7 @@ package org.betterx.bclib.integration;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.levelgen.features.BCLFeature;
-import org.betterx.bclib.api.v2.tag.TagAPI;
+import org.betterx.worlds.together.tag.TagManager;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -211,11 +211,11 @@ public abstract class ModIntegration {
 
     public TagKey<Item> getItemTag(String name) {
         ResourceLocation id = getID(name);
-        return TagAPI.makeItemTag(id);
+        return TagManager.ITEMS.makeTag(id);
     }
 
     public TagKey<Block> getBlockTag(String name) {
         ResourceLocation id = getID(name);
-        return TagAPI.makeBlockTag(id);
+        return TagManager.BLOCKS.makeTag(id);
     }
 }

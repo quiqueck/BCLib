@@ -1,8 +1,8 @@
 package org.betterx.bclib.complexmaterials.entry;
 
-import org.betterx.bclib.api.v2.tag.TagAPI;
 import org.betterx.bclib.complexmaterials.ComplexMaterial;
 import org.betterx.bclib.registry.ItemRegistry;
+import org.betterx.worlds.together.tag.TagManager;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -32,7 +32,7 @@ public class ItemEntry extends ComplexMaterialEntry {
         Item item = initFunction.apply(material, itemSettings);
         registry.register(location, item);
         if (itemTags != null) {
-            TagAPI.addItemTags(item, itemTags);
+            TagManager.ITEMS.add(item, itemTags);
         }
         return item;
     }

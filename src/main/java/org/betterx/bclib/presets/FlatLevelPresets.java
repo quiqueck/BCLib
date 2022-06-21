@@ -1,6 +1,6 @@
 package org.betterx.bclib.presets;
 
-import org.betterx.bclib.api.v2.tag.TagType;
+import org.betterx.worlds.together.tag.TagRegistry;
 
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -15,7 +15,7 @@ public class FlatLevelPresets {
      * @deprecated Use {@link org.betterx.worlds.together.flatLevel.FlatLevelPresets#FLAT_LEVEL_PRESETS} instead
      */
     @Deprecated(forRemoval = true)
-    public static TagType.Simple<FlatLevelGeneratorPreset> FLAT_LEVEL_PRESETS = org.betterx.worlds.together.flatLevel.FlatLevelPresets.FLAT_LEVEL_PRESETS;
+    public static TagRegistry.Simple<FlatLevelGeneratorPreset> FLAT_LEVEL_PRESETS = org.betterx.worlds.together.flatLevel.FlatLevelPresets.FLAT_LEVEL_PRESETS;
 
 
     /**

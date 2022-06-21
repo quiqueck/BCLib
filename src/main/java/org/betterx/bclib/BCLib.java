@@ -10,7 +10,6 @@ import org.betterx.bclib.api.v2.levelgen.features.blockpredicates.Types;
 import org.betterx.bclib.api.v2.levelgen.features.placement.PlacementModifiers;
 import org.betterx.bclib.api.v2.levelgen.structures.TemplatePiece;
 import org.betterx.bclib.api.v2.levelgen.surface.rules.Conditions;
-import org.betterx.bclib.api.v2.tag.TagAPI;
 import org.betterx.bclib.commands.CommandRegistry;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.recipes.AnvilRecipe;
@@ -19,6 +18,7 @@ import org.betterx.bclib.registry.BaseBlockEntities;
 import org.betterx.bclib.registry.BaseRegistry;
 import org.betterx.bclib.util.Logger;
 import org.betterx.worlds.together.WorldsTogether;
+import org.betterx.worlds.together.tag.TagManager;
 import org.betterx.worlds.together.world.WorldConfig;
 
 import net.minecraft.resources.ResourceLocation;
@@ -43,7 +43,7 @@ public class BCLib implements ModInitializer {
         BaseBlockEntities.register();
         BCLibEndBiomeSource.register();
         BCLibNetherBiomeSource.register();
-        TagAPI.init();
+        TagManager.ensureStaticallyLoaded();
         CraftingRecipes.init();
         WorldConfig.registerModCache(MOD_ID);
         DataExchangeAPI.registerMod(MOD_ID);

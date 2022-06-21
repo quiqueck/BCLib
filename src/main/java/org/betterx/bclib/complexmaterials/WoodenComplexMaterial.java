@@ -1,13 +1,17 @@
 package org.betterx.bclib.complexmaterials;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.tag.*;
 import org.betterx.bclib.blocks.*;
 import org.betterx.bclib.complexmaterials.entry.BlockEntry;
 import org.betterx.bclib.complexmaterials.entry.RecipeEntry;
 import org.betterx.bclib.recipes.GridRecipe;
+import org.betterx.worlds.together.tag.CommonBlockTags;
+import org.betterx.worlds.together.tag.CommonItemTags;
+import org.betterx.worlds.together.tag.TagManager;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -73,8 +77,8 @@ public class WoodenComplexMaterial extends ComplexMaterial {
 
     @Override
     protected void initTags() {
-        addBlockTag(TagAPI.makeBlockTag(getModID(), getBaseName() + "_logs"));
-        addItemTag(TagAPI.makeItemTag(getModID(), getBaseName() + "_logs"));
+        addBlockTag(TagManager.BLOCKS.makeTag(getModID(), getBaseName() + "_logs"));
+        addItemTag(TagManager.ITEMS.makeTag(getModID(), getBaseName() + "_logs"));
     }
 
     @Override
@@ -90,13 +94,13 @@ public class WoodenComplexMaterial extends ComplexMaterial {
 
         addBlockEntry(
                 new BlockEntry(BLOCK_STRIPPED_LOG, (complexMaterial, settings) -> new BaseRotatedPillarBlock(settings))
-                        .setBlockTags(NamedBlockTags.LOGS, NamedBlockTags.LOGS_THAT_BURN, tagBlockLog)
-                        .setItemTags(NamedItemTags.LOGS, NamedItemTags.LOGS_THAT_BURN, tagItemLog)
+                        .setBlockTags(BlockTags.LOGS, BlockTags.LOGS_THAT_BURN, tagBlockLog)
+                        .setItemTags(ItemTags.LOGS, ItemTags.LOGS_THAT_BURN, tagItemLog)
         );
         addBlockEntry(
                 new BlockEntry(BLOCK_STRIPPED_BARK, (complexMaterial, settings) -> new BaseBarkBlock(settings))
-                        .setBlockTags(NamedBlockTags.LOGS, NamedBlockTags.LOGS_THAT_BURN, tagBlockLog)
-                        .setItemTags(NamedItemTags.LOGS, NamedItemTags.LOGS_THAT_BURN, tagItemLog)
+                        .setBlockTags(BlockTags.LOGS, BlockTags.LOGS_THAT_BURN, tagBlockLog)
+                        .setItemTags(ItemTags.LOGS, ItemTags.LOGS_THAT_BURN, tagItemLog)
         );
 
         addBlockEntry(
@@ -107,8 +111,8 @@ public class WoodenComplexMaterial extends ComplexMaterial {
                                 getBlock(BLOCK_STRIPPED_LOG)
                         )
                 )
-                        .setBlockTags(NamedBlockTags.LOGS, NamedBlockTags.LOGS_THAT_BURN, tagBlockLog)
-                        .setItemTags(NamedItemTags.LOGS, NamedItemTags.LOGS_THAT_BURN, tagItemLog)
+                        .setBlockTags(BlockTags.LOGS, BlockTags.LOGS_THAT_BURN, tagBlockLog)
+                        .setItemTags(ItemTags.LOGS, ItemTags.LOGS_THAT_BURN, tagItemLog)
         );
         addBlockEntry(
                 new BlockEntry(
@@ -118,80 +122,80 @@ public class WoodenComplexMaterial extends ComplexMaterial {
                                 getBlock(BLOCK_STRIPPED_BARK)
                         )
                 )
-                        .setBlockTags(NamedBlockTags.LOGS, NamedBlockTags.LOGS_THAT_BURN, tagBlockLog)
-                        .setItemTags(NamedItemTags.LOGS, NamedItemTags.LOGS_THAT_BURN, tagItemLog)
+                        .setBlockTags(BlockTags.LOGS, BlockTags.LOGS_THAT_BURN, tagBlockLog)
+                        .setItemTags(ItemTags.LOGS, ItemTags.LOGS_THAT_BURN, tagItemLog)
         );
         addBlockEntry(new BlockEntry(BLOCK_PLANKS, (complexMaterial, settings) -> new BaseBlock(settings))
-                .setBlockTags(NamedBlockTags.PLANKS)
-                .setItemTags(NamedItemTags.PLANKS));
+                .setBlockTags(BlockTags.PLANKS)
+                .setItemTags(ItemTags.PLANKS));
 
         addBlockEntry(new BlockEntry(
                 BLOCK_STAIRS,
                 (complexMaterial, settings) -> new BaseStairsBlock(getBlock(BLOCK_PLANKS), false)
         )
-                .setBlockTags(NamedBlockTags.WOODEN_STAIRS, NamedBlockTags.STAIRS)
-                .setItemTags(NamedItemTags.WOODEN_STAIRS, NamedItemTags.STAIRS));
+                .setBlockTags(BlockTags.WOODEN_STAIRS, BlockTags.STAIRS)
+                .setItemTags(ItemTags.WOODEN_STAIRS, ItemTags.STAIRS));
 
         addBlockEntry(new BlockEntry(
                 BLOCK_SLAB,
                 (complexMaterial, settings) -> new BaseSlabBlock(getBlock(BLOCK_PLANKS), false)
         )
-                .setBlockTags(NamedBlockTags.WOODEN_SLABS, NamedBlockTags.SLABS)
-                .setItemTags(NamedItemTags.WOODEN_SLABS, NamedItemTags.SLABS));
+                .setBlockTags(BlockTags.WOODEN_SLABS, BlockTags.SLABS)
+                .setItemTags(ItemTags.WOODEN_SLABS, ItemTags.SLABS));
 
         addBlockEntry(new BlockEntry(
                 BLOCK_FENCE,
                 (complexMaterial, settings) -> new BaseFenceBlock(getBlock(BLOCK_PLANKS))
         )
-                .setBlockTags(NamedBlockTags.FENCES, NamedBlockTags.WOODEN_FENCES)
-                .setItemTags(NamedItemTags.FENCES, NamedItemTags.WOODEN_FENCES));
+                .setBlockTags(BlockTags.FENCES, BlockTags.WOODEN_FENCES)
+                .setItemTags(ItemTags.FENCES, ItemTags.WOODEN_FENCES));
 
         addBlockEntry(new BlockEntry(
                 BLOCK_GATE,
                 (complexMaterial, settings) -> new BaseGateBlock(getBlock(BLOCK_PLANKS))
         )
-                .setBlockTags(NamedBlockTags.FENCE_GATES));
+                .setBlockTags(BlockTags.FENCE_GATES));
 
         addBlockEntry(new BlockEntry(
                 BLOCK_BUTTON,
                 (complexMaterial, settings) -> new BaseWoodenButtonBlock(getBlock(BLOCK_PLANKS))
         )
-                .setBlockTags(NamedBlockTags.BUTTONS, NamedBlockTags.WOODEN_BUTTONS)
-                .setItemTags(NamedItemTags.BUTTONS, NamedItemTags.WOODEN_BUTTONS));
+                .setBlockTags(BlockTags.BUTTONS, BlockTags.WOODEN_BUTTONS)
+                .setItemTags(ItemTags.BUTTONS, ItemTags.WOODEN_BUTTONS));
 
         addBlockEntry(new BlockEntry(
                 BLOCK_PRESSURE_PLATE,
                 (complexMaterial, settings) -> new WoodenPressurePlateBlock(getBlock(BLOCK_PLANKS))
         )
-                .setBlockTags(NamedBlockTags.PRESSURE_PLATES, NamedBlockTags.WOODEN_PRESSURE_PLATES)
-                .setItemTags(NamedItemTags.WOODEN_PRESSURE_PLATES));
+                .setBlockTags(BlockTags.PRESSURE_PLATES, BlockTags.WOODEN_PRESSURE_PLATES)
+                .setItemTags(ItemTags.WOODEN_PRESSURE_PLATES));
 
         addBlockEntry(new BlockEntry(
                 BLOCK_TRAPDOOR,
                 (complexMaterial, settings) -> new BaseTrapdoorBlock(getBlock(BLOCK_PLANKS))
         )
-                .setBlockTags(NamedBlockTags.TRAPDOORS, NamedBlockTags.WOODEN_TRAPDOORS)
-                .setItemTags(NamedItemTags.TRAPDOORS, NamedItemTags.WOODEN_TRAPDOORS));
+                .setBlockTags(BlockTags.TRAPDOORS, BlockTags.WOODEN_TRAPDOORS)
+                .setItemTags(ItemTags.TRAPDOORS, ItemTags.WOODEN_TRAPDOORS));
 
         addBlockEntry(new BlockEntry(
                 BLOCK_DOOR,
                 (complexMaterial, settings) -> new BaseDoorBlock(getBlock(BLOCK_PLANKS))
         )
-                .setBlockTags(NamedBlockTags.DOORS, NamedBlockTags.WOODEN_DOORS)
-                .setItemTags(NamedItemTags.DOORS, NamedItemTags.WOODEN_DOORS));
+                .setBlockTags(BlockTags.DOORS, BlockTags.WOODEN_DOORS)
+                .setItemTags(ItemTags.DOORS, ItemTags.WOODEN_DOORS));
 
         addBlockEntry(new BlockEntry(
                 BLOCK_LADDER,
                 (complexMaterial, settings) -> new BaseLadderBlock(getBlock(BLOCK_PLANKS))
         )
-                .setBlockTags(NamedBlockTags.CLIMBABLE));
+                .setBlockTags(BlockTags.CLIMBABLE));
 
         addBlockEntry(new BlockEntry(
                 BLOCK_SIGN,
                 (complexMaterial, settings) -> new BaseSignBlock(getBlock(BLOCK_PLANKS))
         )
-                .setBlockTags(NamedBlockTags.SIGNS)
-                .setItemTags(NamedItemTags.SIGNS));
+                .setBlockTags(BlockTags.SIGNS)
+                .setItemTags(ItemTags.SIGNS));
     }
 
     final protected void initStorage(FabricBlockSettings blockSettings, FabricItemSettings itemSettings) {

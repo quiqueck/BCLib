@@ -1,6 +1,6 @@
 package org.betterx.bclib.api.v2.levelgen.structures;
 
-import org.betterx.bclib.api.v2.tag.TagAPI;
+import org.betterx.worlds.together.tag.TagManager;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.resources.ResourceLocation;
@@ -81,7 +81,7 @@ public class BCLStructureBuilder<S extends Structure> {
     }
 
     public BCLStructureBuilder<S> biomeTag(String modID, String path) {
-        this.biomeTag = TagAPI.makeStructureTag(modID, path);
+        this.biomeTag = TagManager.BIOMES.makeStructureTag(modID, path);
         return this;
     }
 

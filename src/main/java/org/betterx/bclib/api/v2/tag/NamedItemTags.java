@@ -5,6 +5,10 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
 
+/**
+ * @deprecated Replaced by {@link ItemTags}
+ */
+@Deprecated(forRemoval = true)
 public class NamedItemTags {
     public static final TagKey<Item> BUTTONS = ItemTags.BUTTONS;
     public static final TagKey<Item> DOORS = ItemTags.DOORS;

@@ -2,12 +2,12 @@ package org.betterx.bclib.api.v2.levelgen.biomes;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.levelgen.features.BCLFeature;
-import org.betterx.bclib.api.v2.tag.CommonBiomeTags;
-import org.betterx.bclib.api.v2.tag.TagAPI;
 import org.betterx.bclib.interfaces.SurfaceMaterialProvider;
 import org.betterx.bclib.mixin.common.BiomeGenerationSettingsAccessor;
 import org.betterx.bclib.mixin.common.MobSpawnSettingsAccessor;
 import org.betterx.bclib.util.CollectionsUtil;
+import org.betterx.worlds.together.tag.CommonBiomeTags;
+import org.betterx.worlds.together.tag.TagManager;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -150,10 +150,10 @@ public class BiomeAPI {
         BiomeType.BIOME_TYPE_MAP.put(bclbiome.getID(), dim);
 
         if (dim != null && dim.is(BiomeType.NETHER)) {
-            TagAPI.addBiomeTag(BiomeTags.IS_NETHER, bclbiome.getBiome());
-            TagAPI.addBiomeTag(CommonBiomeTags.IN_NETHER, bclbiome.getBiome());
+            TagManager.BIOMES.add(BiomeTags.IS_NETHER, bclbiome.getBiome());
+            TagManager.BIOMES.add(CommonBiomeTags.IN_NETHER, bclbiome.getBiome());
         } else if (dim != null && dim.is(BiomeType.END)) {
-            TagAPI.addBiomeTag(BiomeTags.IS_END, bclbiome.getBiome());
+            TagManager.BIOMES.add(BiomeTags.IS_END, bclbiome.getBiome());
         }
 
         bclbiome.afterRegistration();

@@ -1,100 +1,131 @@
 package org.betterx.bclib.api.v2.tag;
 
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 
+/**
+ * @deprecated Replaced by {@link org.betterx.worlds.together.tag.CommonBlockTags}
+ */
+@Deprecated(forRemoval = true)
 public class CommonBlockTags {
-    public static final TagKey<Block> BARREL = TagAPI.makeCommonBlockTag("barrel");
-    public static final TagKey<Block> BOOKSHELVES = TagAPI.makeCommonBlockTag("bookshelves");
-    public static final TagKey<Block> CHEST = TagAPI.makeCommonBlockTag("chest");
-    public static final TagKey<Block> END_STONES = TagAPI.makeCommonBlockTag("end_stones");
-    public static final TagKey<Block> GEN_END_STONES = END_STONES;
-    public static final TagKey<Block> IMMOBILE = TagAPI.makeCommonBlockTag("immobile");
-    public static final TagKey<Block> LEAVES = TagAPI.makeCommonBlockTag("leaves");
-    public static final TagKey<Block> NETHERRACK = TagAPI.makeCommonBlockTag("netherrack");
-    public static final TagKey<Block> MYCELIUM = TagAPI.makeCommonBlockTag("mycelium");
-    public static final TagKey<Block> NETHER_MYCELIUM = TagAPI.makeCommonBlockTag("nether_mycelium");
-    public static final TagKey<Block> NETHER_PORTAL_FRAME = TagAPI.makeCommonBlockTag("nether_pframe");
-    public static final TagKey<Block> NETHER_STONES = TagAPI.makeCommonBlockTag("nether_stones");
-    public static final TagKey<Block> NETHER_ORES = TagAPI.makeCommonBlockTag("nether_ores");
-    public static final TagKey<Block> END_ORES = TagAPI.makeCommonBlockTag("end_ores");
-    public static final TagKey<Block> SAPLINGS = TagAPI.makeCommonBlockTag("saplings");
-    public static final TagKey<Block> SOUL_GROUND = TagAPI.makeCommonBlockTag("soul_ground");
-    public static final TagKey<Block> WOODEN_BARREL = TagAPI.makeCommonBlockTag("wooden_barrels");
-    public static final TagKey<Block> WOODEN_CHEST = TagAPI.makeCommonBlockTag("wooden_chests");
-    public static final TagKey<Block> WORKBENCHES = TagAPI.makeCommonBlockTag("workbench");
-
-    public static final TagKey<Block> DRAGON_IMMUNE = TagAPI.makeCommonBlockTag("dragon_immune");
-
-    public static final TagKey<Block> MINABLE_WITH_HAMMER = TagAPI.makeCommonBlockTag("mineable/hammer");
-
-    public static final TagKey<Block> IS_OBSIDIAN = TagAPI.makeCommonBlockTag("is_obsidian");
-    public static final TagKey<Block> TERRAIN = TagAPI.makeCommonBlockTag("terrain");
-    public static final TagKey<Block> NETHER_TERRAIN = TagAPI.makeCommonBlockTag("nether_terrain");
-
-    static {
-        TagAPI.BLOCKS.addOtherTags(DRAGON_IMMUNE, BlockTags.DRAGON_IMMUNE);
-
-        TagAPI.BLOCKS.add(END_STONES, Blocks.END_STONE);
-        TagAPI.BLOCKS.addOtherTags(NETHER_STONES, BlockTags.BASE_STONE_NETHER);
-
-        TagAPI.BLOCKS.add(
-                NETHERRACK,
-                Blocks.NETHERRACK,
-                Blocks.NETHER_QUARTZ_ORE,
-                Blocks.NETHER_GOLD_ORE,
-                Blocks.CRIMSON_NYLIUM,
-                Blocks.WARPED_NYLIUM
-        );
-
-        TagAPI.BLOCKS.add(NETHER_ORES, Blocks.NETHER_QUARTZ_ORE, Blocks.NETHER_GOLD_ORE);
-        TagAPI.BLOCKS.add(SOUL_GROUND, Blocks.SOUL_SAND, Blocks.SOUL_SOIL);
-
-        TagAPI.BLOCKS.add(IS_OBSIDIAN, Blocks.OBSIDIAN, Blocks.CRYING_OBSIDIAN);
-
-        TagAPI.BLOCKS.add(MYCELIUM, Blocks.MYCELIUM);
-        TagAPI.BLOCKS.addOtherTags(MYCELIUM, NETHER_MYCELIUM);
-
-
-        TagAPI.BLOCKS.add(
-                TERRAIN,
-                Blocks.MAGMA_BLOCK,
-                Blocks.GRAVEL,
-                Blocks.SAND,
-                Blocks.RED_SAND,
-                Blocks.GLOWSTONE,
-                Blocks.BONE_BLOCK,
-                Blocks.SCULK
-        );
-        TagAPI.BLOCKS.addOtherTags(
-                TERRAIN,
-                NETHER_TERRAIN,
-                BlockTags.DRIPSTONE_REPLACEABLE,
-                BlockTags.BASE_STONE_OVERWORLD,
-                BlockTags.NYLIUM,
-                MYCELIUM,
-                END_STONES
-        );
-
-        TagAPI.BLOCKS.add(
-                NETHER_TERRAIN,
-                Blocks.MAGMA_BLOCK,
-                Blocks.GRAVEL,
-                Blocks.RED_SAND,
-                Blocks.GLOWSTONE,
-                Blocks.BONE_BLOCK,
-                Blocks.SCULK
-        );
-        TagAPI.BLOCKS.addOtherTags(
-                NETHER_TERRAIN,
-                NETHERRACK,
-                BlockTags.NYLIUM,
-                NETHER_STONES,
-                NETHER_ORES,
-                SOUL_GROUND,
-                NETHER_MYCELIUM
-        );
-    }
+    /**
+     * @deprecated Replaced by {@link org.betterx.worlds.together.tag.CommonBlockTags#BARREL}
+     **/
+    @Deprecated(forRemoval = true)
+    public static final TagKey<Block> BARREL = org.betterx.worlds.together.tag.CommonBlockTags.BARREL;
+    /**
+     * @deprecated Replaced by {@link org.betterx.worlds.together.tag.CommonBlockTags#BOOKSHELVES}
+     **/
+    @Deprecated(forRemoval = true)
+    public static final TagKey<Block> BOOKSHELVES = org.betterx.worlds.together.tag.CommonBlockTags.BOOKSHELVES;
+    /**
+     * @deprecated Replaced by {@link org.betterx.worlds.together.tag.CommonBlockTags#CHEST}
+     **/
+    @Deprecated(forRemoval = true)
+    public static final TagKey<Block> CHEST = org.betterx.worlds.together.tag.CommonBlockTags.CHEST;
+    /**
+     * @deprecated Replaced by {@link org.betterx.worlds.together.tag.CommonBlockTags#END_STONES}
+     **/
+    @Deprecated(forRemoval = true)
+    public static final TagKey<Block> END_STONES = org.betterx.worlds.together.tag.CommonBlockTags.END_STONES;
+    /**
+     * @deprecated Replaced by {@link org.betterx.worlds.together.tag.CommonBlockTags#GEN_END_STONES}
+     **/
+    @Deprecated(forRemoval = true)
+    public static final TagKey<Block> GEN_END_STONES = org.betterx.worlds.together.tag.CommonBlockTags.GEN_END_STONES;
+    /**
+     * @deprecated Replaced by {@link org.betterx.worlds.together.tag.CommonBlockTags#IMMOBILE}
+     **/
+    @Deprecated(forRemoval = true)
+    public static final TagKey<Block> IMMOBILE = org.betterx.worlds.together.tag.CommonBlockTags.IMMOBILE;
+    /**
+     * @deprecated Replaced by {@link org.betterx.worlds.together.tag.CommonBlockTags#LEAVES}
+     **/
+    @Deprecated(forRemoval = true)
+    public static final TagKey<Block> LEAVES = org.betterx.worlds.together.tag.CommonBlockTags.LEAVES;
+    /**
+     * @deprecated Replaced by {@link org.betterx.worlds.together.tag.CommonBlockTags#NETHERRACK}
+     **/
+    @Deprecated(forRemoval = true)
+    public static final TagKey<Block> NETHERRACK = org.betterx.worlds.together.tag.CommonBlockTags.NETHERRACK;
+    /**
+     * @deprecated Replaced by {@link org.betterx.worlds.together.tag.CommonBlockTags#MYCELIUM}
+     **/
+    @Deprecated(forRemoval = true)
+    public static final TagKey<Block> MYCELIUM = org.betterx.worlds.together.tag.CommonBlockTags.MYCELIUM;
+    /**
+     * @deprecated Replaced by {@link org.betterx.worlds.together.tag.CommonBlockTags#NETHER_MYCELIUM}
+     **/
+    @Deprecated(forRemoval = true)
+    public static final TagKey<Block> NETHER_MYCELIUM = org.betterx.worlds.together.tag.CommonBlockTags.NETHER_MYCELIUM;
+    /**
+     * @deprecated Replaced by {@link org.betterx.worlds.together.tag.CommonBlockTags#NETHER_PORTAL_FRAME}
+     **/
+    @Deprecated(forRemoval = true)
+    public static final TagKey<Block> NETHER_PORTAL_FRAME = org.betterx.worlds.together.tag.CommonBlockTags.NETHER_PORTAL_FRAME;
+    /**
+     * @deprecated Replaced by {@link org.betterx.worlds.together.tag.CommonBlockTags#NETHER_STONES}
+     **/
+    @Deprecated(forRemoval = true)
+    public static final TagKey<Block> NETHER_STONES = org.betterx.worlds.together.tag.CommonBlockTags.NETHER_STONES;
+    /**
+     * @deprecated Replaced by {@link org.betterx.worlds.together.tag.CommonBlockTags#NETHER_ORES}
+     **/
+    @Deprecated(forRemoval = true)
+    public static final TagKey<Block> NETHER_ORES = org.betterx.worlds.together.tag.CommonBlockTags.NETHER_ORES;
+    /**
+     * @deprecated Replaced by {@link org.betterx.worlds.together.tag.CommonBlockTags#END_ORES}
+     **/
+    @Deprecated(forRemoval = true)
+    public static final TagKey<Block> END_ORES = org.betterx.worlds.together.tag.CommonBlockTags.END_ORES;
+    /**
+     * @deprecated Replaced by {@link org.betterx.worlds.together.tag.CommonBlockTags#SAPLINGS}
+     **/
+    @Deprecated(forRemoval = true)
+    public static final TagKey<Block> SAPLINGS = org.betterx.worlds.together.tag.CommonBlockTags.SAPLINGS;
+    /**
+     * @deprecated Replaced by {@link org.betterx.worlds.together.tag.CommonBlockTags#SOUL_GROUND}
+     **/
+    @Deprecated(forRemoval = true)
+    public static final TagKey<Block> SOUL_GROUND = org.betterx.worlds.together.tag.CommonBlockTags.SOUL_GROUND;
+    /**
+     * @deprecated Replaced by {@link org.betterx.worlds.together.tag.CommonBlockTags#WOODEN_BARREL}
+     **/
+    @Deprecated(forRemoval = true)
+    public static final TagKey<Block> WOODEN_BARREL = org.betterx.worlds.together.tag.CommonBlockTags.WOODEN_BARREL;
+    /**
+     * @deprecated Replaced by {@link org.betterx.worlds.together.tag.CommonBlockTags#WOODEN_CHEST}
+     **/
+    @Deprecated(forRemoval = true)
+    public static final TagKey<Block> WOODEN_CHEST = org.betterx.worlds.together.tag.CommonBlockTags.WOODEN_CHEST;
+    /**
+     * @deprecated Replaced by {@link org.betterx.worlds.together.tag.CommonBlockTags#WORKBENCHES}
+     **/
+    @Deprecated(forRemoval = true)
+    public static final TagKey<Block> WORKBENCHES = org.betterx.worlds.together.tag.CommonBlockTags.WORKBENCHES;
+    /**
+     * @deprecated Replaced by {@link org.betterx.worlds.together.tag.CommonBlockTags#DRAGON_IMMUNE}
+     **/
+    @Deprecated(forRemoval = true)
+    public static final TagKey<Block> DRAGON_IMMUNE = org.betterx.worlds.together.tag.CommonBlockTags.DRAGON_IMMUNE;
+    /**
+     * @deprecated Replaced by {@link org.betterx.worlds.together.tag.CommonBlockTags#MINABLE_WITH_HAMMER}
+     **/
+    @Deprecated(forRemoval = true)
+    public static final TagKey<Block> MINABLE_WITH_HAMMER = org.betterx.worlds.together.tag.CommonBlockTags.MINABLE_WITH_HAMMER;
+    /**
+     * @deprecated Replaced by {@link org.betterx.worlds.together.tag.CommonBlockTags#IS_OBSIDIAN}
+     **/
+    @Deprecated(forRemoval = true)
+    public static final TagKey<Block> IS_OBSIDIAN = org.betterx.worlds.together.tag.CommonBlockTags.IS_OBSIDIAN;
+    /**
+     * @deprecated Replaced by {@link org.betterx.worlds.together.tag.CommonBlockTags#TERRAIN}
+     **/
+    @Deprecated(forRemoval = true)
+    public static final TagKey<Block> TERRAIN = org.betterx.worlds.together.tag.CommonBlockTags.TERRAIN;
+    /**
+     * @deprecated Replaced by {@link org.betterx.worlds.together.tag.CommonBlockTags#NETHER_TERRAIN}
+     **/
+    @Deprecated(forRemoval = true)
+    public static final TagKey<Block> NETHER_TERRAIN = org.betterx.worlds.together.tag.CommonBlockTags.NETHER_TERRAIN;
 }

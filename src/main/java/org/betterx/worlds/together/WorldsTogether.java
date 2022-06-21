@@ -1,6 +1,7 @@
 package org.betterx.worlds.together;
 
 import org.betterx.bclib.util.Logger;
+import org.betterx.worlds.together.tag.TagManager;
 import org.betterx.worlds.together.world.WorldConfig;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
 
@@ -21,8 +22,12 @@ public class WorldsTogether {
     }
 
     public static void onInitialize() {
+        TagManager.ensureStaticallyLoaded();
+
+
         WorldConfig.registerModCache(WorldsTogether.MOD_ID);
         WorldPresets.ensureStaticallyLoaded();
+
     }
 
     public static ResourceLocation makeID(String s) {

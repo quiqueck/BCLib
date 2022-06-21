@@ -2,8 +2,6 @@ package org.betterx.bclib.api.v2;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
-import org.betterx.bclib.api.v2.tag.NamedMineableTags;
-import org.betterx.bclib.api.v2.tag.TagAPI;
 import org.betterx.bclib.blocks.BaseBarrelBlock;
 import org.betterx.bclib.blocks.BaseChestBlock;
 import org.betterx.bclib.blocks.BaseFurnaceBlock;
@@ -17,6 +15,8 @@ import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.interfaces.TagProvider;
 import org.betterx.bclib.interfaces.tools.*;
 import org.betterx.bclib.registry.BaseBlockEntities;
+import org.betterx.worlds.together.tag.MineableTags;
+import org.betterx.worlds.together.tag.TagManager;
 
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Registry;
@@ -97,7 +97,7 @@ public class PostInitAPI {
             } catch (NullPointerException ex) {
                 BCLib.LOGGER.error(item + " probably tried to access blockTags.", ex);
             }
-            itemTags.forEach(tag -> TagAPI.addItemTag(tag, item));
+            itemTags.forEach(tag -> TagManager.ITEMS.add(tag, item));
             itemTags.clear();
         }
     }
@@ -117,31 +117,31 @@ public class PostInitAPI {
         }
         if (!(block instanceof PreventMineableAdd)) {
             if (block instanceof AddMineableShears) {
-                TagAPI.addBlockTags(block, NamedMineableTags.SHEARS);
+                TagManager.BLOCKS.add(block, MineableTags.SHEARS);
             }
             if (block instanceof AddMineableAxe) {
-                TagAPI.addBlockTags(block, NamedMineableTags.AXE);
+                TagManager.BLOCKS.add(block, MineableTags.AXE);
             }
             if (block instanceof AddMineablePickaxe) {
-                TagAPI.addBlockTags(block, NamedMineableTags.PICKAXE);
+                TagManager.BLOCKS.add(block, MineableTags.PICKAXE);
             }
             if (block instanceof AddMineableShovel) {
-                TagAPI.addBlockTags(block, NamedMineableTags.SHOVEL);
+                TagManager.BLOCKS.add(block, MineableTags.SHOVEL);
             }
             if (block instanceof AddMineableHoe) {
-                TagAPI.addBlockTags(block, NamedMineableTags.HOE);
+                TagManager.BLOCKS.add(block, MineableTags.HOE);
             }
             if (block instanceof AddMineableSword) {
-                TagAPI.addBlockTags(block, NamedMineableTags.SWORD);
+                TagManager.BLOCKS.add(block, MineableTags.SWORD);
             }
             if (block instanceof AddMineableHammer) {
-                TagAPI.addBlockTags(block, NamedMineableTags.HAMMER);
+                TagManager.BLOCKS.add(block, MineableTags.HAMMER);
             }
         }
         if (block instanceof TagProvider) {
             ((TagProvider) block).addTags(blockTags, itemTags);
-            blockTags.forEach(tag -> TagAPI.addBlockTag(tag, block));
-            itemTags.forEach(tag -> TagAPI.addItemTag(tag, block));
+            blockTags.forEach(tag -> TagManager.BLOCKS.add(tag, block));
+            itemTags.forEach(tag -> TagManager.ITEMS.add(tag, block.asItem()));
             blockTags.clear();
             itemTags.clear();
         }

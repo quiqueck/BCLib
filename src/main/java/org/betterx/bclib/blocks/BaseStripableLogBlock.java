@@ -1,7 +1,7 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.api.v2.tag.NamedMineableTags;
-import org.betterx.bclib.api.v2.tag.TagAPI;
+import org.betterx.worlds.together.tag.MineableTags;
+import org.betterx.worlds.together.tag.TagManager;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -37,7 +37,7 @@ public class BaseStripableLogBlock extends BaseRotatedPillarBlock {
             InteractionHand hand,
             BlockHitResult hit
     ) {
-        if (TagAPI.isToolWithMineableTag(player.getMainHandItem(), NamedMineableTags.AXE)) {
+        if (TagManager.isToolWithMineableTag(player.getMainHandItem(), MineableTags.AXE)) {
             world.playSound(player, pos, SoundEvents.AXE_STRIP, SoundSource.BLOCKS, 1.0F, 1.0F);
             if (!world.isClientSide) {
                 world.setBlock(

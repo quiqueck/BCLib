@@ -1,8 +1,5 @@
 package org.betterx.bclib.registry;
 
-import org.betterx.bclib.api.v2.tag.CommonItemTags;
-import org.betterx.bclib.api.v2.tag.NamedToolTags;
-import org.betterx.bclib.api.v2.tag.TagAPI;
 import org.betterx.bclib.config.PathConfig;
 import org.betterx.bclib.items.BaseDiscItem;
 import org.betterx.bclib.items.BaseDrinkItem;
@@ -12,6 +9,9 @@ import org.betterx.bclib.items.tool.BaseAxeItem;
 import org.betterx.bclib.items.tool.BaseHoeItem;
 import org.betterx.bclib.items.tool.BasePickaxeItem;
 import org.betterx.bclib.items.tool.BaseShearsItem;
+import org.betterx.worlds.together.tag.CommonItemTags;
+import org.betterx.worlds.together.tag.TagManager;
+import org.betterx.worlds.together.tag.ToolTags;
 
 import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
@@ -66,17 +66,17 @@ public class ItemRegistry extends BaseRegistry<Item> {
         registerItem(itemId, item);
 
         if (item instanceof ShovelItem) {
-            TagAPI.addItemTag(NamedToolTags.FABRIC_SHOVELS, item);
+            TagManager.ITEMS.add(ToolTags.FABRIC_SHOVELS, item);
         } else if (item instanceof SwordItem) {
-            TagAPI.addItemTag(NamedToolTags.FABRIC_SWORDS, item);
+            TagManager.ITEMS.add(ToolTags.FABRIC_SWORDS, item);
         } else if (item instanceof BasePickaxeItem) {
-            TagAPI.addItemTag(NamedToolTags.FABRIC_PICKAXES, item);
+            TagManager.ITEMS.add(ToolTags.FABRIC_PICKAXES, item);
         } else if (item instanceof BaseAxeItem) {
-            TagAPI.addItemTag(NamedToolTags.FABRIC_AXES, item);
+            TagManager.ITEMS.add(ToolTags.FABRIC_AXES, item);
         } else if (item instanceof BaseHoeItem) {
-            TagAPI.addItemTag(NamedToolTags.FABRIC_HOES, item);
+            TagManager.ITEMS.add(ToolTags.FABRIC_HOES, item);
         } else if (item instanceof BaseShearsItem) {
-            TagAPI.addItemTags(item, NamedToolTags.FABRIC_SHEARS, CommonItemTags.SHEARS);
+            TagManager.ITEMS.add(item, ToolTags.FABRIC_SHEARS, CommonItemTags.SHEARS);
             DispenserBlock.registerBehavior(item.asItem(), new ShearsDispenseItemBehavior());
         }
 

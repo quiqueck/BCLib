@@ -1,9 +1,9 @@
 package org.betterx.worlds.together.worldPreset;
 
-import org.betterx.bclib.api.v2.tag.TagAPI;
-import org.betterx.bclib.api.v2.tag.TagType;
 import org.betterx.bclib.registry.PresetsRegistry;
 import org.betterx.worlds.together.WorldsTogether;
+import org.betterx.worlds.together.tag.TagManager;
+import org.betterx.worlds.together.tag.TagRegistry;
 import org.betterx.worlds.together.world.WorldGenUtil;
 import org.betterx.worlds.together.worldPreset.client.WorldPresetsClient;
 import org.betterx.worlds.together.worldPreset.settings.VanillaWorldPresetSettings;
@@ -26,8 +26,8 @@ import java.util.Optional;
 
 public class WorldPresets {
 
-    public static final TagType.Simple<WorldPreset> WORLD_PRESETS =
-            TagAPI.registerType(BuiltinRegistries.WORLD_PRESET, "tags/worldgen/world_preset");
+    public static final TagRegistry.Simple<WorldPreset> WORLD_PRESETS =
+            TagManager.registerType(BuiltinRegistries.WORLD_PRESET, "tags/worldgen/world_preset");
     private static Map<ResourceKey<WorldPreset>, PresetBuilder> BUILDERS = Maps.newHashMap();
     private static final Map<ResourceKey<WorldPreset>, WorldPresetSettings> SETTINGS = Maps.newHashMap();
     public static Optional<ResourceKey<WorldPreset>> DEFAULT = Optional.of(net.minecraft.world.level.levelgen.presets.WorldPresets.NORMAL);

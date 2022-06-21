@@ -1,6 +1,6 @@
 package org.betterx.bclib.mixin.common.shears;
 
-import org.betterx.bclib.api.v2.tag.CommonItemTags;
+import org.betterx.worlds.together.tag.CommonItemTags;
 
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.world.item.Item;

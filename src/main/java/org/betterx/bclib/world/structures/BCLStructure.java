@@ -1,8 +1,8 @@
 package org.betterx.bclib.world.structures;
 
 import org.betterx.bclib.api.v2.levelgen.structures.BCLStructureBuilder;
-import org.betterx.bclib.api.v2.tag.TagAPI;
 import org.betterx.bclib.util.MHelper;
+import org.betterx.worlds.together.tag.TagManager;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.resources.ResourceLocation;
@@ -69,7 +69,7 @@ public class BCLStructure<S extends Structure> extends org.betterx.bclib.api.v2.
                 separation,
                 adaptNoise,
                 Structure.simpleCodec(structureBuilder),
-                TagAPI.makeStructureTag(id.getNamespace(), id.getPath())
+                TagManager.BIOMES.makeStructureTag(id.getNamespace(), id.getPath())
         );
     }
 

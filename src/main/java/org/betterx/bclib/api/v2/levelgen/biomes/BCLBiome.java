@@ -2,8 +2,8 @@ package org.betterx.bclib.api.v2.levelgen.biomes;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.levelgen.surface.SurfaceRuleUtil;
-import org.betterx.bclib.api.v2.tag.TagAPI;
 import org.betterx.bclib.util.WeightedList;
+import org.betterx.worlds.together.tag.TagManager;
 
 import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceKey;
@@ -201,7 +201,7 @@ public class BCLBiome extends BCLBiomeSettings {
      */
     void afterRegistration() {
         ResourceKey<Biome> key = BuiltinRegistries.BIOME.getResourceKey(getBiome()).orElseThrow();
-        this.biomeTags.forEach(tagKey -> TagAPI.addBiomeTag(tagKey, biome));
+        this.biomeTags.forEach(tagKey -> TagManager.BIOMES.add(tagKey, biome));
 
         if (this.surfaceInit != null) {
             surfaceInit.accept(key);

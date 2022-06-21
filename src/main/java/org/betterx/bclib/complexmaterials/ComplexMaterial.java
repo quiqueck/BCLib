@@ -1,12 +1,12 @@
 package org.betterx.bclib.complexmaterials;
 
-import org.betterx.bclib.api.v2.tag.TagAPI;
 import org.betterx.bclib.complexmaterials.entry.BlockEntry;
 import org.betterx.bclib.complexmaterials.entry.ItemEntry;
 import org.betterx.bclib.complexmaterials.entry.RecipeEntry;
 import org.betterx.bclib.config.PathConfig;
 import org.betterx.bclib.registry.BlockRegistry;
 import org.betterx.bclib.registry.ItemRegistry;
+import org.betterx.worlds.together.tag.TagManager;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -112,7 +112,7 @@ public abstract class ComplexMaterial {
     }
 
     /**
-     * Adds custom block tag for this {@link ComplexMaterial}, tag can be created with {@link TagAPI} or you can use one of already created tags.
+     * Adds custom block tag for this {@link ComplexMaterial}, tag can be created with {@link TagManager} or you can use one of already created tags.
      *
      * @param tag {@link TagKey} for {@link Block}
      */
@@ -122,7 +122,7 @@ public abstract class ComplexMaterial {
     }
 
     /**
-     * Adds custom item tag for this {@link ComplexMaterial}, tag can be created with {@link TagAPI} or you can use one of already created tags.
+     * Adds custom item tag for this {@link ComplexMaterial}, tag can be created with {@link TagManager} or you can use one of already created tags.
      *
      * @param tag {@link TagKey} for {@link Item}
      */

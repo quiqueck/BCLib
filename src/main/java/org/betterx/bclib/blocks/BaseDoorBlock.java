@@ -1,7 +1,5 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.api.v2.tag.NamedBlockTags;
-import org.betterx.bclib.api.v2.tag.NamedItemTags;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
@@ -15,6 +13,8 @@ import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Item;
@@ -153,8 +153,8 @@ public class BaseDoorBlock extends DoorBlock implements RenderLayerProvider, Blo
 
     @Override
     public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-        blockTags.add(NamedBlockTags.DOORS);
-        itemTags.add(NamedItemTags.DOORS);
+        blockTags.add(BlockTags.DOORS);
+        itemTags.add(ItemTags.DOORS);
     }
 
     protected enum DoorType implements StringRepresentable {

@@ -1,8 +1,7 @@
-package org.betterx.bclib.api.v2.tag;
+package org.betterx.worlds.together.tag;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
-import org.betterx.worlds.together.tag.TagRegistry;
 
 import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Registry;
@@ -24,18 +23,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import org.jetbrains.annotations.ApiStatus;
 
-/**
- * @deprecated Replaced by {@link TagRegistry}
- */
-@Deprecated(forRemoval = true)
-public class TagType<T> {
+public class TagRegistry<T> {
     boolean isFrozen = false;
 
-    /**
-     * @deprecated Replaced by {@link TagRegistry.RegistryBacked}
-     */
-    @Deprecated(forRemoval = true)
     public static class RegistryBacked<T> extends Simple<T> {
         private final DefaultedRegistry<T> registry;
 
@@ -65,11 +57,7 @@ public class TagType<T> {
         }
     }
 
-    /**
-     * @deprecated Replaced by {@link TagRegistry.Simple}
-     */
-    @Deprecated(forRemoval = true)
-    public static class Simple<T> extends TagType<T> {
+    public static class Simple<T> extends TagRegistry<T> {
         Simple(
                 ResourceKey<? extends Registry<T>> registry,
                 String directory,
@@ -97,11 +85,24 @@ public class TagType<T> {
         }
     }
 
-    /**
-     * @deprecated Replaced by {@link TagRegistry.UnTyped}
-     */
-    @Deprecated(forRemoval = true)
-    public static class UnTyped<T> extends TagType<T> {
+    public static class Biomes extends Simple<Biome> {
+
+        @ApiStatus.Internal
+        public Biomes(String directory, Function<Biome, ResourceLocation> locationProvider) {
+            super(Registry.BIOME_REGISTRY, directory, locationProvider);
+        }
+
+        public TagKey<Biome> makeStructureTag(String modID, String name) {
+            return makeTag(modID, "has_structure/" + name);
+        }
+
+        public void apply(Map<ResourceLocation, List<TagLoader.EntryWithSource>> tagsMap) {
+            InternalBiomeAPI._runBiomeTagAdders();
+            super.apply(tagsMap);
+        }
+    }
+
+    public static class UnTyped<T> extends TagRegistry<T> {
         UnTyped(
                 ResourceKey<? extends Registry<T>> registry,
                 String directory
@@ -117,7 +118,7 @@ public class TagType<T> {
     public final ResourceKey<? extends Registry<T>> registryKey;
     private final Function<T, ResourceLocation> locationProvider;
 
-    private TagType(
+    private TagRegistry(
             ResourceKey<? extends Registry<T>> registry,
             String directory,
             Function<T, ResourceLocation> locationProvider
@@ -142,6 +143,16 @@ public class TagType<T> {
         return getSetForTag(tag.location());
     }
 
+    /**
+     * Get or create a {@link TagKey}.
+     *
+     * @param modId - {@link String} mod namespace (mod id);
+     * @param name  - {@link String} tag name.
+     * @return the corresponding TagKey {@link TagKey<T>}.
+     */
+    public TagKey<T> makeTag(String modId, String name) {
+        return makeTag(new ResourceLocation(modId, name));
+    }
 
     /**
      * Get or create a {@link TagKey}.
@@ -243,7 +254,6 @@ public class TagType<T> {
     }
 
     public void apply(Map<ResourceLocation, List<TagLoader.EntryWithSource>> tagsMap) {
-        if (Registry.BIOME_REGISTRY.equals(registryKey)) InternalBiomeAPI._runBiomeTagAdders();
 
         //this.isFrozen = true;
         this.forEach((id, ids) -> apply(id, tagsMap.computeIfAbsent(id, key -> Lists.newArrayList()), ids));

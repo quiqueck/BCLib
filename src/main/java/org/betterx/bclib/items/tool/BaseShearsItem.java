@@ -1,8 +1,8 @@
 package org.betterx.bclib.items.tool;
 
 
-import org.betterx.bclib.api.v2.tag.CommonItemTags;
-import org.betterx.bclib.api.v2.tag.TagAPI;
+import org.betterx.worlds.together.tag.CommonItemTags;
+import org.betterx.worlds.together.tag.TagManager;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -17,7 +17,7 @@ public class BaseShearsItem extends ShearsItem {
     }
 
     public static boolean isShear(ItemStack tool) {
-        return tool.is(Items.SHEARS) | tool.is(CommonItemTags.SHEARS) || TagAPI.isToolWithMineableTag(
+        return tool.is(Items.SHEARS) | tool.is(CommonItemTags.SHEARS) || TagManager.isToolWithMineableTag(
                 tool,
                 FabricMineableTags.SHEARS_MINEABLE
         );

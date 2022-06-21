@@ -1,7 +1,5 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.api.v2.tag.NamedBlockTags;
-import org.betterx.bclib.api.v2.tag.NamedItemTags;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
@@ -13,6 +11,8 @@ import org.betterx.bclib.util.MHelper;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -117,7 +117,7 @@ public class BaseLeavesBlock extends LeavesBlock implements BlockModelProvider, 
 
     @Override
     public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-        blockTags.add(NamedBlockTags.LEAVES);
-        itemTags.add(NamedItemTags.LEAVES);
+        blockTags.add(BlockTags.LEAVES);
+        itemTags.add(ItemTags.LEAVES);
     }
 }
