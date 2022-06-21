@@ -10,6 +10,7 @@ accessible	class	net/minecraft/world/level/levelgen/SurfaceRules$LazyCondition
 accessible	class	net/minecraft/world/level/levelgen/SurfaceRules$SequenceRuleSource
 accessible  class   net/minecraft/world/level/levelgen/presets/WorldPresets$Bootstrap
 extendable  class   net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator
+accessible  class   net/minecraft/data/BuiltinRegistries$RegistryBootstrap
 
 #Methods
 accessible method net/minecraft/client/gui/screens/worldselection/WorldGenSettingsComponent updateSettings (Lnet/minecraft/client/gui/screens/worldselection/WorldCreationContext$Updater;)V

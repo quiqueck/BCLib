@@ -4,9 +4,11 @@
   "package": "org.betterx.worlds.together.mixin.common",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "BuiltinRegistriesMixin",
     "DiggerItemAccessor",
     "MainMixin",
     "PrimaryLevelDataMixin",
+    "RegistryAccessMixin",
     "RegistryOpsAccessor",
     "TagLoaderMixin",
     "WorldGenPropertiesMixin",

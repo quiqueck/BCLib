@@ -31,7 +31,6 @@ public abstract class WorldPresetSettings {
 
 
     private static <T> ResourceKey<Registry<T>> createRegistryKey(ResourceLocation location) {
-
         return ResourceKey.createRegistryKey(location);
     }
 

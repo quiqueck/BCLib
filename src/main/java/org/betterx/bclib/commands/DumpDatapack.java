@@ -54,6 +54,21 @@ public class DumpDatapack {
     ) {
         File base = new File(System.getProperty("user.dir"), "bclib_datapack_dump");
         BCLib.LOGGER.info(registry.key().toString());
+        // Tag Output
+//        registry.value()
+//                .getTagNames()
+//                .map(tagKey -> registry.value().getTag(tagKey))
+//                .filter(tag -> tag.isPresent())
+//                .map(tag -> tag.get())
+//                .forEach(tag -> {
+//                    tag.stream()
+//                       .map(holder -> holder.unwrapKey())
+//                       .filter(k -> k.isPresent())
+//                       .map(k -> k.get())
+//                       .forEach(key -> {
+//
+//                       });
+//                });
 
         registry
                 .value()
