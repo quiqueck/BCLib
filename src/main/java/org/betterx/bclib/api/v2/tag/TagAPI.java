@@ -2,9 +2,9 @@ package org.betterx.bclib.api.v2.tag;
 
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 import org.betterx.worlds.together.mixin.common.DiggerItemAccessor;
-import org.betterx.worlds.together.tag.CommonBlockTags;
-import org.betterx.worlds.together.tag.TagManager;
-import org.betterx.worlds.together.tag.TagRegistry;
+import org.betterx.worlds.together.tag.v3.CommonBlockTags;
+import org.betterx.worlds.together.tag.v3.TagManager;
+import org.betterx.worlds.together.tag.v3.TagRegistry;
 
 import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Registry;

@@ -9,9 +9,9 @@ import org.betterx.bclib.items.tool.BaseAxeItem;
 import org.betterx.bclib.items.tool.BaseHoeItem;
 import org.betterx.bclib.items.tool.BasePickaxeItem;
 import org.betterx.bclib.items.tool.BaseShearsItem;
-import org.betterx.worlds.together.tag.CommonItemTags;
-import org.betterx.worlds.together.tag.TagManager;
-import org.betterx.worlds.together.tag.ToolTags;
+import org.betterx.worlds.together.tag.v3.CommonItemTags;
+import org.betterx.worlds.together.tag.v3.TagManager;
+import org.betterx.worlds.together.tag.v3.ToolTags;
 
 import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;

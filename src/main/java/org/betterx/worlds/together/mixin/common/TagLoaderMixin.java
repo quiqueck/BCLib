@@ -1,6 +1,6 @@
 package org.betterx.worlds.together.mixin.common;
 
-import org.betterx.worlds.together.tag.TagManager;
+import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagLoader;

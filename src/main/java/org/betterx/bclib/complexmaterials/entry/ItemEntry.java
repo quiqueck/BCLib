@@ -2,7 +2,7 @@ package org.betterx.bclib.complexmaterials.entry;
 
 import org.betterx.bclib.complexmaterials.ComplexMaterial;
 import org.betterx.bclib.registry.ItemRegistry;
-import org.betterx.worlds.together.tag.TagManager;
+import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;

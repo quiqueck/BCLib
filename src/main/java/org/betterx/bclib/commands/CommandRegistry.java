@@ -1,7 +1,7 @@
 package org.betterx.bclib.commands;
 
 import org.betterx.bclib.util.BlocksHelper;
-import org.betterx.worlds.together.tag.CommonBlockTags;
+import org.betterx.worlds.together.tag.v3.CommonBlockTags;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;

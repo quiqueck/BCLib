@@ -2,7 +2,7 @@ package org.betterx.bclib.integration;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.levelgen.features.BCLFeature;
-import org.betterx.worlds.together.tag.TagManager;
+import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;

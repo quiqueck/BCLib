@@ -1,6 +1,6 @@
 package org.betterx.bclib.presets;
 
-import org.betterx.worlds.together.tag.TagRegistry;
+import org.betterx.worlds.together.tag.v3.TagRegistry;
 
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;

@@ -15,8 +15,8 @@ import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.interfaces.TagProvider;
 import org.betterx.bclib.interfaces.tools.*;
 import org.betterx.bclib.registry.BaseBlockEntities;
-import org.betterx.worlds.together.tag.MineableTags;
-import org.betterx.worlds.together.tag.TagManager;
+import org.betterx.worlds.together.tag.v3.MineableTags;
+import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Registry;

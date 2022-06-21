@@ -2,7 +2,7 @@ package org.betterx.bclib.recipes;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.config.Configs;
-import org.betterx.worlds.together.tag.CommonItemTags;
+import org.betterx.worlds.together.tag.v3.CommonItemTags;
 
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;

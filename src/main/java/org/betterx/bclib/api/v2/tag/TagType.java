@@ -2,7 +2,7 @@ package org.betterx.bclib.api.v2.tag;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
-import org.betterx.worlds.together.tag.TagRegistry;
+import org.betterx.worlds.together.tag.v3.TagRegistry;
 
 import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Registry;

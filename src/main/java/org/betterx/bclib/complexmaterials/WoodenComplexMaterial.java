@@ -5,9 +5,9 @@ import org.betterx.bclib.blocks.*;
 import org.betterx.bclib.complexmaterials.entry.BlockEntry;
 import org.betterx.bclib.complexmaterials.entry.RecipeEntry;
 import org.betterx.bclib.recipes.GridRecipe;
-import org.betterx.worlds.together.tag.CommonBlockTags;
-import org.betterx.worlds.together.tag.CommonItemTags;
-import org.betterx.worlds.together.tag.TagManager;
+import org.betterx.worlds.together.tag.v3.CommonBlockTags;
+import org.betterx.worlds.together.tag.v3.CommonItemTags;
+import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;

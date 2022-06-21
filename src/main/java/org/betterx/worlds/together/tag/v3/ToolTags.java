@@ -1,4 +1,4 @@
-package org.betterx.worlds.together.tag;
+package org.betterx.worlds.together.tag.v3;
 
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;

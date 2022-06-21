@@ -2,7 +2,7 @@ package org.betterx.bclib.world.structures;
 
 import org.betterx.bclib.api.v2.levelgen.structures.BCLStructureBuilder;
 import org.betterx.bclib.util.MHelper;
-import org.betterx.worlds.together.tag.TagManager;
+import org.betterx.worlds.together.tag.v3.TagManager;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.resources.ResourceLocation;

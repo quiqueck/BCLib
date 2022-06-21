@@ -1,6 +1,6 @@
 package org.betterx.bclib.api.v3.levelgen.features;
 
-import org.betterx.worlds.together.tag.CommonBlockTags;
+import org.betterx.worlds.together.tag.v3.CommonBlockTags;
 
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;

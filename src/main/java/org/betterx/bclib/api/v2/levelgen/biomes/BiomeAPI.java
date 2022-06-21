@@ -6,8 +6,8 @@ import org.betterx.bclib.interfaces.SurfaceMaterialProvider;
 import org.betterx.bclib.mixin.common.BiomeGenerationSettingsAccessor;
 import org.betterx.bclib.mixin.common.MobSpawnSettingsAccessor;
 import org.betterx.bclib.util.CollectionsUtil;
-import org.betterx.worlds.together.tag.CommonBiomeTags;
-import org.betterx.worlds.together.tag.TagManager;
+import org.betterx.worlds.together.tag.v3.CommonBiomeTags;
+import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;

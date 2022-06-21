@@ -1,7 +1,7 @@
 package org.betterx.worlds.together;
 
 import org.betterx.bclib.util.Logger;
-import org.betterx.worlds.together.tag.TagManager;
+import org.betterx.worlds.together.tag.v3.TagManager;
 import org.betterx.worlds.together.world.WorldConfig;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
 

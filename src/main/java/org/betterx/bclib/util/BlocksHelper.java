@@ -1,6 +1,6 @@
 package org.betterx.bclib.util;
 
-import org.betterx.worlds.together.tag.CommonBlockTags;
+import org.betterx.worlds.together.tag.v3.CommonBlockTags;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;

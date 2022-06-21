@@ -1,7 +1,7 @@
 package org.betterx.bclib.api.v2.levelgen.features;
 
 import org.betterx.bclib.api.v2.levelgen.features.placement.*;
-import org.betterx.worlds.together.tag.CommonBlockTags;
+import org.betterx.worlds.together.tag.v3.CommonBlockTags;
 
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;

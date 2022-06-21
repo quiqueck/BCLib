@@ -1,46 +1,48 @@
 package org.betterx.bclib.api.v2.tag;
 
+import org.betterx.worlds.together.tag.v3.MineableTags;
+
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 
 /**
- * @deprecated Replaced by {@link org.betterx.worlds.together.tag.MineableTags}
+ * @deprecated Replaced by {@link MineableTags}
  */
 @Deprecated(forRemoval = true)
 public class NamedMineableTags {
     /**
-     * @deprecated use {@link org.betterx.worlds.together.tag.MineableTags#AXE} instead
+     * @deprecated use {@link MineableTags#AXE} instead
      **/
     @Deprecated(forRemoval = true)
-    public static final TagKey<Block> AXE = org.betterx.worlds.together.tag.MineableTags.AXE;
+    public static final TagKey<Block> AXE = MineableTags.AXE;
     /**
-     * @deprecated use {@link org.betterx.worlds.together.tag.MineableTags#HOE} instead
+     * @deprecated use {@link MineableTags#HOE} instead
      **/
     @Deprecated(forRemoval = true)
-    public static final TagKey<Block> HOE = org.betterx.worlds.together.tag.MineableTags.HOE;
+    public static final TagKey<Block> HOE = MineableTags.HOE;
     /**
-     * @deprecated use {@link org.betterx.worlds.together.tag.MineableTags#PICKAXE} instead
+     * @deprecated use {@link MineableTags#PICKAXE} instead
      **/
     @Deprecated(forRemoval = true)
-    public static final TagKey<Block> PICKAXE = org.betterx.worlds.together.tag.MineableTags.PICKAXE;
+    public static final TagKey<Block> PICKAXE = MineableTags.PICKAXE;
     /**
-     * @deprecated use {@link org.betterx.worlds.together.tag.MineableTags#SHEARS} instead
+     * @deprecated use {@link MineableTags#SHEARS} instead
      **/
     @Deprecated(forRemoval = true)
-    public static final TagKey<Block> SHEARS = org.betterx.worlds.together.tag.MineableTags.SHEARS;
+    public static final TagKey<Block> SHEARS = MineableTags.SHEARS;
     /**
-     * @deprecated use {@link org.betterx.worlds.together.tag.MineableTags#SHOVEL} instead
+     * @deprecated use {@link MineableTags#SHOVEL} instead
      **/
     @Deprecated(forRemoval = true)
-    public static final TagKey<Block> SHOVEL = org.betterx.worlds.together.tag.MineableTags.SHOVEL;
+    public static final TagKey<Block> SHOVEL = MineableTags.SHOVEL;
     /**
-     * @deprecated use {@link org.betterx.worlds.together.tag.MineableTags#SWORD} instead
+     * @deprecated use {@link MineableTags#SWORD} instead
      **/
     @Deprecated(forRemoval = true)
-    public static final TagKey<Block> SWORD = org.betterx.worlds.together.tag.MineableTags.SWORD;
+    public static final TagKey<Block> SWORD = MineableTags.SWORD;
     /**
-     * @deprecated use {@link org.betterx.worlds.together.tag.MineableTags#HAMMER} instead
+     * @deprecated use {@link MineableTags#HAMMER} instead
      **/
     @Deprecated(forRemoval = true)
-    public static final TagKey<Block> HAMMER = org.betterx.worlds.together.tag.MineableTags.HAMMER;
+    public static final TagKey<Block> HAMMER = MineableTags.HAMMER;
 }

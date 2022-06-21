@@ -1,7 +1,7 @@
 package org.betterx.worlds.together.flatLevel;
 
-import org.betterx.worlds.together.tag.TagManager;
-import org.betterx.worlds.together.tag.TagRegistry;
+import org.betterx.worlds.together.tag.v3.TagManager;
+import org.betterx.worlds.together.tag.v3.TagRegistry;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;

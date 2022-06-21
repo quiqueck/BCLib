@@ -3,7 +3,7 @@ package org.betterx.bclib.api.v2.levelgen.biomes;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.levelgen.surface.SurfaceRuleUtil;
 import org.betterx.bclib.util.WeightedList;
-import org.betterx.worlds.together.tag.TagManager;
+import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceKey;

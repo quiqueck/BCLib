@@ -6,7 +6,7 @@ import org.betterx.bclib.complexmaterials.entry.RecipeEntry;
 import org.betterx.bclib.config.PathConfig;
 import org.betterx.bclib.registry.BlockRegistry;
 import org.betterx.bclib.registry.ItemRegistry;
-import org.betterx.worlds.together.tag.TagManager;
+import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;

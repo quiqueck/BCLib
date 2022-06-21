@@ -2,8 +2,8 @@ package org.betterx.worlds.together.worldPreset;
 
 import org.betterx.bclib.registry.PresetsRegistry;
 import org.betterx.worlds.together.WorldsTogether;
-import org.betterx.worlds.together.tag.TagManager;
-import org.betterx.worlds.together.tag.TagRegistry;
+import org.betterx.worlds.together.tag.v3.TagManager;
+import org.betterx.worlds.together.tag.v3.TagRegistry;
 import org.betterx.worlds.together.world.WorldGenUtil;
 import org.betterx.worlds.together.worldPreset.client.WorldPresetsClient;
 import org.betterx.worlds.together.worldPreset.settings.VanillaWorldPresetSettings;

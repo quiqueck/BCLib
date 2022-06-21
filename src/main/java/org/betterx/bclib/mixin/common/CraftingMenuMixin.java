@@ -1,6 +1,6 @@
 package org.betterx.bclib.mixin.common;
 
-import org.betterx.worlds.together.tag.CommonBlockTags;
+import org.betterx.worlds.together.tag.v3.CommonBlockTags;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerLevelAccess;

@@ -1,7 +1,7 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.worlds.together.tag.MineableTags;
-import org.betterx.worlds.together.tag.TagManager;
+import org.betterx.worlds.together.tag.v3.MineableTags;
+import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;

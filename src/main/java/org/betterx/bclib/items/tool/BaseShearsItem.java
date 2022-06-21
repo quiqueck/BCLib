@@ -1,8 +1,8 @@
 package org.betterx.bclib.items.tool;
 
 
-import org.betterx.worlds.together.tag.CommonItemTags;
-import org.betterx.worlds.together.tag.TagManager;
+import org.betterx.worlds.together.tag.v3.CommonItemTags;
+import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;

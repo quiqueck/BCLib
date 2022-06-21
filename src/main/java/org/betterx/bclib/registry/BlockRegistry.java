@@ -5,10 +5,10 @@ import org.betterx.bclib.blocks.BaseOreBlock;
 import org.betterx.bclib.blocks.FeatureSaplingBlock;
 import org.betterx.bclib.config.PathConfig;
 import org.betterx.bclib.interfaces.CustomItemProvider;
-import org.betterx.worlds.together.tag.CommonBlockTags;
-import org.betterx.worlds.together.tag.CommonItemTags;
-import org.betterx.worlds.together.tag.MineableTags;
-import org.betterx.worlds.together.tag.TagManager;
+import org.betterx.worlds.together.tag.v3.CommonBlockTags;
+import org.betterx.worlds.together.tag.v3.CommonItemTags;
+import org.betterx.worlds.together.tag.v3.MineableTags;
+import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;

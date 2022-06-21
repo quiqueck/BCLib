@@ -5,7 +5,7 @@ import org.betterx.bclib.config.PathConfig;
 import org.betterx.bclib.interfaces.UnknownReceipBookCategory;
 import org.betterx.bclib.util.ItemUtil;
 import org.betterx.bclib.util.RecipeHelper;
-import org.betterx.worlds.together.tag.CommonItemTags;
+import org.betterx.worlds.together.tag.v3.CommonItemTags;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.core.NonNullList;

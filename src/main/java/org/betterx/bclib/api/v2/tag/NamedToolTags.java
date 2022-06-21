@@ -1,6 +1,6 @@
 package org.betterx.bclib.api.v2.tag;
 
-import org.betterx.worlds.together.tag.ToolTags;
+import org.betterx.worlds.together.tag.v3.ToolTags;
 
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
