@@ -6,6 +6,7 @@ import net.minecraft.util.Mth;
 
 import java.awt.*;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public class GeneratorOptions {
     private static int biomeSizeNether;
@@ -50,6 +51,15 @@ public class GeneratorOptions {
 
     public static int getBiomeSizeEndVoid() {
         return Mth.clamp(biomeSizeEndVoid, 1, 8192);
+    }
+
+    /**
+     * @param endLandFunction
+     * @deprecated use {@link #setEndLandFunction(BiFunction)} instead
+     */
+    @Deprecated(forRemoval = true)
+    public static void setEndLandFunction(Function<Point, Boolean> endLandFunction) {
+        GeneratorOptions.endLandFunction = (p, h) -> endLandFunction.apply(p);
     }
 
     public static void setEndLandFunction(BiFunction<Point, Integer, Boolean> endLandFunction) {
