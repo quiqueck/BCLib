@@ -30,6 +30,10 @@ import org.jetbrains.annotations.ApiStatus;
 public class WorldBootstrap {
     private static RegistryAccess LAST_REGISTRY_ACCESS = null;
 
+    public static RegistryAccess getLastRegistryAccess() {
+        return LAST_REGISTRY_ACCESS;
+    }
+
     public static class Helpers {
         private static void initializeWorldDataAPI(
                 LevelStorageSource.LevelStorageAccess levelStorageAccess,

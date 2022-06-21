@@ -1,12 +1,12 @@
 package org.betterx.worlds.together.mixin.common;
 
+import org.betterx.worlds.together.surfaceRules.AssignedSurfaceRule;
 import org.betterx.worlds.together.surfaceRules.SurfaceRuleRegistry;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.levelgen.SurfaceRules;
 
 import com.google.common.collect.ImmutableMap;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,7 +29,7 @@ public interface RegistryAccessMixin {
             ImmutableMap.Builder<ResourceKey<Registry<?>>, RegistryAccess.RegistryData<?>> builder = ImmutableMap.builder();
 
             builder.putAll(res);
-            put(builder, SurfaceRuleRegistry.SURFACE_RULES_REGISTRY, SurfaceRules.RuleSource.CODEC);
+            put(builder, SurfaceRuleRegistry.SURFACE_RULES_REGISTRY, AssignedSurfaceRule.CODEC);
             return builder.build();
         };
     }

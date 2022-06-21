@@ -9,6 +9,7 @@ import org.betterx.bclib.util.CollectionsUtil;
 import org.betterx.bclib.util.ColorUtil;
 import org.betterx.bclib.util.Pair;
 import org.betterx.bclib.util.TriFunction;
+import org.betterx.worlds.together.surfaceRules.SurfaceRuleRegistry;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -737,6 +738,7 @@ public class BCLBiomeBuilder {
      *
      * @param biomeConstructor {@link BiFunction} biome constructor.
      * @return created {@link BCLBiome} instance.
+     * @deprecated Replaced with {@link #build(BiomeSupplier)}
      */
     @Deprecated(forRemoval = true)
     public <T extends BCLBiome> T build(BiFunction<ResourceLocation, Biome, T> biomeConstructor) {
@@ -787,8 +789,10 @@ public class BCLBiomeBuilder {
         final Biome biome = builder.build();
         final T res = biomeConstructor.apply(biomeID, biome, settings);
         res.addBiomeTags(tags);
-        res.setSurface(surfaceRule);
+        //res.setSurface(surfaceRule);
+        SurfaceRuleRegistry.registerRule(biomeID, surfaceRule, biomeID);
         res.addClimateParameters(parameters);
+
 
         //carvers.forEach(cfg -> BiomeAPI.addBiomeCarver(biome, cfg.second, cfg.first));
         return res;

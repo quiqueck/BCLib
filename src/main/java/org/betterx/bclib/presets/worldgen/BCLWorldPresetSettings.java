@@ -6,9 +6,10 @@ import org.betterx.bclib.api.v2.generator.BCLChunkGenerator;
 import org.betterx.bclib.api.v2.generator.BCLibEndBiomeSource;
 import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
 import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
-import org.betterx.bclib.api.v2.levelgen.surface.SurfaceRuleUtil;
 import org.betterx.bclib.interfaces.ChunkGeneratorAccessor;
 import org.betterx.bclib.interfaces.NoiseGeneratorSettingsProvider;
+import org.betterx.worlds.together.surfaceRules.SurfaceRuleRegistry;
+import org.betterx.worlds.together.surfaceRules.SurfaceRuleUtil;
 import org.betterx.worlds.together.world.WorldGenUtil;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
 import org.betterx.worlds.together.worldPreset.settings.WorldPresetSettings;
@@ -125,35 +126,38 @@ public class BCLWorldPresetSettings extends WorldPresetSettings {
         return LevelGenUtil.getBCLEndLevelStem(ctx, Optional.of(endVersion));
     }
 
-    public BiomeSource fixBiomeSource(BiomeSource biomeSource, Set<Holder<Biome>> datapackBiomes) {
+    public BiomeSource addDatapackBiomes(BiomeSource biomeSource, Set<Holder<Biome>> datapackBiomes) {
         if (biomeSource instanceof BCLBiomeSource bs) {
             return bs.createCopyForDatapack(datapackBiomes);
         }
         return biomeSource;
     }
 
-    private Holder<NoiseGeneratorSettings> fixNoiseSettings(
+    private static Holder<NoiseGeneratorSettings> injectSurfaceRules(
             Holder<NoiseGeneratorSettings> reference,
             Holder<NoiseGeneratorSettings> settings,
             BiomeSource biomeSource
     ) {
-        NoiseGeneratorSettings old = settings.value();
-        NoiseGeneratorSettings noise = new NoiseGeneratorSettings(
-                old.noiseSettings(),
-                old.defaultBlock(),
-                old.defaultFluid(),
-                old.noiseRouter(),
-                SurfaceRuleUtil.addRulesForBiomeSource(old.surfaceRule(), biomeSource),
-                old.spawnTarget(),
-                old.seaLevel(),
-                old.disableMobGeneration(),
-                old.aquifersEnabled(),
-                old.oreVeinsEnabled(),
-                old.useLegacyRandomSource()
-        );
-
-
-        return Holder.direct(noise);
+        SurfaceRuleUtil.injectSurfaceRules(settings.value(), biomeSource);
+        return settings;
+//        NoiseGeneratorSettings old = settings.value();
+//        NoiseGeneratorSettings noise = new NoiseGeneratorSettings(
+//                old.noiseSettings(),
+//                old.defaultBlock(),
+//                old.defaultFluid(),
+//                old.noiseRouter(),
+//                SurfaceRuleRegistry.mergeSurfaceRulesFromBiomes(old.surfaceRule(), biomeSource),
+//                //SurfaceRuleUtil.addRulesForBiomeSource(old.surfaceRule(), biomeSource),
+//                old.spawnTarget(),
+//                old.seaLevel(),
+//                old.disableMobGeneration(),
+//                old.aquifersEnabled(),
+//                old.oreVeinsEnabled(),
+//                old.useLegacyRandomSource()
+//        );
+//
+//
+//        return Holder.direct(noise);
     }
 
 
@@ -200,13 +204,13 @@ public class BCLWorldPresetSettings extends WorldPresetSettings {
                 if (loadedChunkGenerator instanceof NoiseGeneratorSettingsProvider noiseProvider) {
                     if (referenceGenerator instanceof NoiseGeneratorSettingsProvider referenceProvider) {
                         final Set<Holder<Biome>> biomes = loadedChunkGenerator.getBiomeSource().possibleBiomes();
-                        final BiomeSource bs = fixBiomeSource(referenceGenerator.getBiomeSource(), biomes);
+                        final BiomeSource bs = addDatapackBiomes(referenceGenerator.getBiomeSource(), biomes);
                         InternalBiomeAPI.applyModifications(bs, dimensionKey);
                         referenceGenerator = new BCLChunkGenerator(
                                 generator.bclib_getStructureSetsRegistry(),
                                 noiseProvider.bclib_getNoises(),
                                 bs,
-                                fixNoiseSettings(
+                                injectSurfaceRules(
                                         referenceProvider.bclib_getNoiseGeneratorSettingHolders(),
                                         noiseProvider.bclib_getNoiseGeneratorSettingHolders(),
                                         bs
@@ -224,7 +228,7 @@ public class BCLWorldPresetSettings extends WorldPresetSettings {
                     referenceGenerator
             );
         } else {
-            BCLChunkGenerator.injectNoiseSettings(dimensionKey, loadedChunkGenerator);
+            SurfaceRuleUtil.injectSurfaceRules(dimensionKey, loadedChunkGenerator);
         }
         return settings;
     }
@@ -232,7 +236,7 @@ public class BCLWorldPresetSettings extends WorldPresetSettings {
     public WorldGenSettings repairSettingsOnLoad(RegistryAccess registryAccess, WorldGenSettings settings) {
         settings = fixSettingsInCurrentWorld(registryAccess, LevelStem.NETHER, BuiltinDimensionTypes.NETHER, settings);
         settings = fixSettingsInCurrentWorld(registryAccess, LevelStem.END, BuiltinDimensionTypes.END, settings);
-        BCLChunkGenerator.injectNoiseSettings(settings, BCLChunkGenerator.NON_MANAGED_DIMENSIONS);
+        SurfaceRuleUtil.injectSurfaceRules(settings, SurfaceRuleRegistry.NON_MANAGED_DIMENSIONS);
         return settings;
     }
 

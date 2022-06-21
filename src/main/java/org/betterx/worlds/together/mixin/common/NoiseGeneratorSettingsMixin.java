@@ -1,7 +1,7 @@
-package org.betterx.bclib.mixin.common;
+package org.betterx.worlds.together.mixin.common;
 
 import org.betterx.bclib.api.v2.levelgen.surface.SurfaceRuleUtil;
-import org.betterx.bclib.interfaces.SurfaceRuleProvider;
+import org.betterx.worlds.together.surfaceRules.SurfaceRuleProvider;
 
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
@@ -16,7 +16,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Mixin(NoiseGeneratorSettings.class)
 public class NoiseGeneratorSettingsMixin implements SurfaceRuleProvider {
@@ -34,39 +33,39 @@ public class NoiseGeneratorSettingsMixin implements SurfaceRuleProvider {
 
     @Override
     public void bclib_addBiomeSource(BiomeSource source) {
-        bclib_biomeSources.add(source);
-        bclib_updateCustomRules();
+//        bclib_biomeSources.add(source);
+//        bclib_updateCustomRules();
     }
 
     @Override
     public void bclib_clearBiomeSources() {
-        bclib_biomeSources.clear();
-        bclib_clearCustomRules();
+//        bclib_biomeSources.clear();
+//        bclib_clearCustomRules();
     }
 
     private void bclib_clearCustomRules() {
-        if (bclib_originalSurfaceRule != null) {
-            this.surfaceRule = bclib_originalSurfaceRule;
-            bclib_originalSurfaceRule = null;
-        }
+//        if (bclib_originalSurfaceRule != null) {
+//            this.surfaceRule = bclib_originalSurfaceRule;
+//            bclib_originalSurfaceRule = null;
+//        }
     }
 
     private void bclib_setCustomRules(List<RuleSource> rules) {
-        if (rules.size() == 0) {
-            bclib_clearCustomRules();
-            return;
-        }
-
-        RuleSource org = bclib_getOriginalSurfaceRule();
-        if (org instanceof SurfaceRules.SequenceRuleSource sequenceRule) {
-            List<RuleSource> currentSequence = sequenceRule.sequence();
-            rules = rules.stream().filter(r -> currentSequence.indexOf(r) < 0).collect(Collectors.toList());
-            rules.addAll(sequenceRule.sequence());
-        } else {
-            rules.add(org);
-        }
-
-        bclib_setSurfaceRule(SurfaceRules.sequence(rules.toArray(new RuleSource[rules.size()])));
+//        if (rules.size() == 0) {
+//            bclib_clearCustomRules();
+//            return;
+//        }
+//
+//        RuleSource org = bclib_getOriginalSurfaceRule();
+//        if (org instanceof SurfaceRules.SequenceRuleSource sequenceRule) {
+//            List<RuleSource> currentSequence = sequenceRule.sequence();
+//            rules = rules.stream().filter(r -> currentSequence.indexOf(r) < 0).collect(Collectors.toList());
+//            rules.addAll(sequenceRule.sequence());
+//        } else {
+//            rules.add(org);
+//        }
+//
+//        bclib_setSurfaceRule(SurfaceRules.sequence(rules.toArray(new RuleSource[rules.size()])));
     }
 
     public void bclib_overwrite(SurfaceRules.RuleSource surfaceRule) {

@@ -1,5 +1,8 @@
 package org.betterx.worlds.together.worldPreset.settings;
 
+import org.betterx.worlds.together.surfaceRules.SurfaceRuleRegistry;
+import org.betterx.worlds.together.surfaceRules.SurfaceRuleUtil;
+
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
@@ -20,11 +23,12 @@ public class VanillaWorldPresetSettings extends WorldPresetSettings {
 
     @Override
     public WorldGenSettings repairSettingsOnLoad(RegistryAccess registryAccess, WorldGenSettings settings) {
+        SurfaceRuleUtil.injectSurfaceRules(settings, SurfaceRuleRegistry.ALL_DIMENSIONS);
         return settings;
     }
 
     @Override
-    public BiomeSource fixBiomeSource(BiomeSource biomeSource, Set<Holder<Biome>> datapackBiomes) {
+    public BiomeSource addDatapackBiomes(BiomeSource biomeSource, Set<Holder<Biome>> datapackBiomes) {
         return biomeSource;
     }
 }

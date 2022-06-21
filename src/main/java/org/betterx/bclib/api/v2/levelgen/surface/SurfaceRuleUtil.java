@@ -2,14 +2,13 @@ package org.betterx.bclib.api.v2.levelgen.surface;
 
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
-import org.betterx.bclib.mixin.common.NoiseGeneratorSettingsMixin;
+import org.betterx.worlds.together.mixin.common.NoiseGeneratorSettingsMixin;
 
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
-import net.minecraft.world.level.levelgen.SurfaceRules;
 import net.minecraft.world.level.levelgen.SurfaceRules.RuleSource;
 
 import com.google.common.collect.Lists;
@@ -77,22 +76,12 @@ public class SurfaceRuleUtil {
         SURFACE_RULES.put(biomeID, source);
     }
 
-    public static RuleSource addRulesForBiomeSource(RuleSource org, BiomeSource biomeSource) {
+    public static RuleSource addRulesForBiomeSource(RuleSource orgiginalSource, BiomeSource biomeSource) {
         List<RuleSource> additionalRules = getRuleSources(biomeSource);
-        if (org instanceof SurfaceRules.SequenceRuleSource sequenceRule) {
-            List<RuleSource> existingSequence = sequenceRule.sequence();
-            additionalRules = additionalRules
-                    .stream()
-                    .filter(r -> existingSequence.indexOf(r) < 0)
-                    .collect(Collectors.toList());
-            if (additionalRules.size() == 0) return org;
-            additionalRules.addAll(sequenceRule.sequence());
-        } else {
-            if (additionalRules.size() == 0) return org;
-            if (!additionalRules.contains(org))
-                additionalRules.add(org);
-        }
-
-        return SurfaceRules.sequence(additionalRules.toArray(new RuleSource[additionalRules.size()]));
+        return org.betterx.worlds.together.surfaceRules.SurfaceRuleUtil.mergeSurfaceRules(
+                orgiginalSource,
+                additionalRules
+        );
     }
+
 }

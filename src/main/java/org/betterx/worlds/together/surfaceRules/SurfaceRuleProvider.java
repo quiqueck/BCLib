@@ -1,4 +1,4 @@
-package org.betterx.bclib.interfaces;
+package org.betterx.worlds.together.surfaceRules;
 
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.levelgen.SurfaceRules;

@@ -1,10 +1,7 @@
 package org.betterx.bclib.api.v2.generator;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
-import org.betterx.bclib.api.v2.levelgen.surface.SurfaceRuleUtil;
 import org.betterx.bclib.interfaces.NoiseGeneratorSettingsProvider;
-import org.betterx.bclib.interfaces.SurfaceRuleProvider;
 import org.betterx.bclib.mixin.common.ChunkGeneratorAccessor;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.world.WorldGenUtil;
@@ -32,9 +29,7 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
 import com.google.common.base.Suppliers;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 public class BCLChunkGenerator extends NoiseBasedChunkGenerator {
 
@@ -101,50 +96,13 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator {
         if (initialBiomeSource != getBiomeSource()) {
             if (this instanceof ChunkGeneratorAccessor acc) {
                 BiomeSource bs = WorldGenUtil.getWorldSettings()
-                                             .fixBiomeSource(initialBiomeSource, getBiomeSource().possibleBiomes());
+                                             .addDatapackBiomes(initialBiomeSource, getBiomeSource().possibleBiomes());
                 acc.bcl_setBiomeSource(bs);
                 rebuildFeaturesPerStep(getBiomeSource());
             }
         }
     }
 
-
-    public static void injectNoiseSettings(
-            ResourceKey<LevelStem> dimensionKey,
-            ChunkGenerator loadedChunkGenerator
-    ) {
-        BCLib.LOGGER.debug("Checking Noise Settings for " + dimensionKey.location().toString());
-        final BiomeSource loadedBiomeSource = loadedChunkGenerator.getBiomeSource();
-        InternalBiomeAPI.applyModifications(loadedBiomeSource, dimensionKey);
-
-        if (loadedChunkGenerator instanceof NoiseBasedChunkGenerator nbc) {
-            if (((Object) nbc.generatorSettings().value()) instanceof SurfaceRuleProvider srp) {
-                srp.bclib_overwrite(SurfaceRuleUtil.addRulesForBiomeSource(nbc
-                        .generatorSettings()
-                        .value()
-                        .surfaceRule(), loadedBiomeSource));
-            }
-        }
-    }
-
-    public static final Predicate<ResourceKey<LevelStem>> NON_MANAGED_DIMENSIONS = dim -> dim != LevelStem.NETHER && dim != LevelStem.END;
-
-    public static void injectNoiseSettings(WorldGenSettings settings, Predicate<ResourceKey<LevelStem>> filter) {
-        List<ResourceKey<LevelStem>> otherDimensions = settings
-                .dimensions()
-                .entrySet()
-                .stream()
-                .map(e -> e.getKey())
-                .filter(filter)
-                .toList();
-
-        for (ResourceKey<LevelStem> key : otherDimensions) {
-            Optional<Holder<LevelStem>> stem = settings.dimensions().getHolder(key);
-            if (stem.isPresent()) {
-                injectNoiseSettings(key, stem.get().value().generator());
-            }
-        }
-    }
 
     @Override
     protected Codec<? extends ChunkGenerator> codec() {

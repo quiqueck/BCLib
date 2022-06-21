@@ -12,10 +12,14 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.RegistryOps;
+import net.minecraft.tags.TagEntry;
+import net.minecraft.tags.TagFile;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.templatesystem.PosRuleTestType;
+import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTestType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraft.world.level.material.Fluid;
@@ -55,20 +59,37 @@ public class DumpDatapack {
         File base = new File(System.getProperty("user.dir"), "bclib_datapack_dump");
         BCLib.LOGGER.info(registry.key().toString());
         // Tag Output
-//        registry.value()
-//                .getTagNames()
-//                .map(tagKey -> registry.value().getTag(tagKey))
-//                .filter(tag -> tag.isPresent())
-//                .map(tag -> tag.get())
-//                .forEach(tag -> {
-//                    tag.stream()
-//                       .map(holder -> holder.unwrapKey())
-//                       .filter(k -> k.isPresent())
-//                       .map(k -> k.get())
-//                       .forEach(key -> {
-//
-//                       });
-//                });
+        registry.value()
+                .getTagNames()
+                .map(tagKey -> registry.value().getTag(tagKey))
+                .filter(tag -> tag.isPresent())
+                .map(tag -> tag.get())
+                .forEach(tag -> {
+                    File f1 = new File(base, tag.key().location().getNamespace());
+                    f1 = new File(f1, "tags");
+                    f1 = new File(f1, registry.key().location().getPath());
+                    f1.mkdirs();
+                    f1 = new File(f1, tag.key().location().getPath() + ".json");
+
+                    TagFile tf = new TagFile(
+                            tag.stream()
+                               .map(holder -> holder.unwrapKey())
+                               .filter(k -> k.isPresent())
+                               .map(k -> TagEntry.element(k.get().location()))
+                               .toList(),
+                            true
+                    );
+                    var o = TagFile.CODEC
+                            .encodeStart(registryOps, tf)
+                            .result()
+                            .orElse(new JsonObject());
+                    String content = gson.toJson(o);
+                    try {
+                        Files.writeString(f1.toPath(), content, StandardCharsets.UTF_8);
+                    } catch (IOException e) {
+                        BCLib.LOGGER.error("      ->> Unable to WRITE: " + e.getMessage());
+                    }
+                });
 
         registry
                 .value()
@@ -102,6 +123,10 @@ public class DumpDatapack {
                         return;
                     } else if (obj instanceof BaseStairsBlock) {
                         return;
+                    } else if (obj instanceof RuleTestType<?>) {
+                        codec[0] = registry.value().byNameCodec();
+                    } else if (obj instanceof PosRuleTestType<?>) {
+                        codec[0] = registry.value().byNameCodec();
                     }
 
                     if (codec[0] == null) {
@@ -113,6 +138,7 @@ public class DumpDatapack {
                                         try {
                                             codec[0] = (Codec) m.invoke(obj);
                                             BCLib.LOGGER.info("      Got Codec from " + m);
+                                            break;
                                         } catch (Exception e) {
                                             BCLib.LOGGER.error("     !!! Unable to get Codec from " + m);
                                         }
@@ -120,6 +146,7 @@ public class DumpDatapack {
                                         try {
                                             codec[0] = ((KeyDispatchCodec) m.invoke(obj)).codec();
                                             BCLib.LOGGER.info("      Got Codec from " + m);
+                                            break;
                                         } catch (Exception e) {
                                             BCLib.LOGGER.error("     !!! Unable to get Codec from " + m);
                                         }
@@ -127,6 +154,7 @@ public class DumpDatapack {
                                         try {
                                             codec[0] = ((KeyDispatchDataCodec) m.invoke(obj)).codec();
                                             BCLib.LOGGER.info("      Got Codec from " + m);
+                                            break;
                                         } catch (Exception e) {
                                             BCLib.LOGGER.error("     !!! Unable to get Codec from " + m);
                                         }
@@ -138,7 +166,7 @@ public class DumpDatapack {
 
                     if (codec[0] == null) {
                         //Try to find DIRECT_CODEC field
-                        for (Field f : obj.getClass().getDeclaredFields()) {
+                        for (Field f : obj.getClass().getFields()) {
                             if (Modifier.isStatic(f.getModifiers())) {
                                 if ("DIRECT_CODEC".equals(f.getName())) {
                                     f.setAccessible(true);
@@ -155,7 +183,7 @@ public class DumpDatapack {
 
                     //Try to find CODEC field
                     if (codec[0] == null) {
-                        for (Field f : obj.getClass().getDeclaredFields()) {
+                        for (Field f : obj.getClass().getFields()) {
                             if (Modifier.isStatic(f.getModifiers())) {
                                 if ("CODEC".equals(f.getName())) {
                                     try {
@@ -172,7 +200,7 @@ public class DumpDatapack {
 
                     //Try to find any Codec field
                     if (codec[0] == null) {
-                        for (Field f : obj.getClass().getDeclaredFields()) {
+                        for (Field f : obj.getClass().getFields()) {
                             if (Modifier.isStatic(f.getModifiers())) {
                                 if (Codec.class.isAssignableFrom(f.getType())) {
                                     f.setAccessible(true);
@@ -185,6 +213,10 @@ public class DumpDatapack {
                                 }
                             }
                         }
+                    }
+
+                    if (codec[0] == null) {
+                        codec[0] = registry.value().byNameCodec();
                     }
 
 

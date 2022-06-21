@@ -26,7 +26,6 @@
     "MinecraftServerMixinLate",
     "MobSpawnSettingsAccessor",
     "NoiseBasedChunkGeneratorMixin",
-    "NoiseGeneratorSettingsMixin",
     "PistonBaseBlockMixin",
     "PortalShapeMixin",
     "PotionBrewingAccessor",

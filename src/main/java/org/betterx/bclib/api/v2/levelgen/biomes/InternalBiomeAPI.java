@@ -3,8 +3,8 @@ package org.betterx.bclib.api.v2.levelgen.biomes;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.interfaces.BiomeSourceAccessor;
 import org.betterx.bclib.interfaces.NoiseGeneratorSettingsProvider;
-import org.betterx.bclib.interfaces.SurfaceRuleProvider;
 import org.betterx.bclib.mixin.common.BiomeGenerationSettingsAccessor;
+import org.betterx.worlds.together.surfaceRules.SurfaceRuleProvider;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -205,7 +205,8 @@ public class InternalBiomeAPI {
             // This happens for example when using the MiningDimensions, which reuses the generator for the
             // Nethering Dimension
             //MODIFIED_SURFACE_PROVIDERS.add(provider);
-            provider.bclib_addBiomeSource(source);
+
+            //provider.bclib_addBiomeSource(source);
         } else {
             BCLib.LOGGER.warning("No generator for " + source);
         }

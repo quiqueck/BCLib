@@ -51,5 +51,5 @@ public abstract class WorldPresetSettings {
 
     public abstract Codec<? extends WorldPresetSettings> codec();
     public abstract WorldGenSettings repairSettingsOnLoad(RegistryAccess registryAccess, WorldGenSettings settings);
-    public abstract BiomeSource fixBiomeSource(BiomeSource biomeSource, Set<Holder<Biome>> datapackBiomes);
+    public abstract BiomeSource addDatapackBiomes(BiomeSource biomeSource, Set<Holder<Biome>> datapackBiomes);
 }
