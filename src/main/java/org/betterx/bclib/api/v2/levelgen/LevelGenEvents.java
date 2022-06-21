@@ -55,13 +55,15 @@ public class LevelGenEvents {
 
         //We probably loaded a Datapack for the End
         if (!(endStem.generator().getBiomeSource() instanceof BCLibEndBiomeSource)) {
-            BCLib.LOGGER.info("Detected Datapack for END.");
+
 
             if (currentPreset.isPresent()) {
                 if (currentPreset.get().value() instanceof TogetherWorldPreset worldPreset) {
                     ResourceKey key = currentPreset.get().unwrapKey().orElse(null);
                     //user did not configure the Preset!
                     if (PresetsRegistry.BCL_WORLD.equals(key) || PresetsRegistry.BCL_WORLD_17.equals(key)) {
+                        BCLib.LOGGER.info("Detected Datapack for END.");
+                        
                         if (worldPreset.settings instanceof BCLWorldPresetSettings settings) {
                             BCLib.LOGGER.info("Changing Default WorldPreset Settings for Datapack use.");
 
