@@ -332,7 +332,9 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
         int posZ = QuartPos.toBlock(biomeZ);
         long farEndBiomes = GeneratorOptions.getFarEndBiomes();
 
-        long dist = posX * posX + posZ * posZ;
+        long dist = Math.abs(posX) + Math.abs(posZ) > farEndBiomes
+                ? (farEndBiomes + 1)
+                : (long) posX * (long) posX + (long) posZ * (long) posZ;
 
         if ((biomeX & 63) == 0 && (biomeZ & 63) == 0) {
             mapLand.clearCache();
