@@ -1,6 +1,6 @@
-package org.betterx.bclib.mixin.client;
+package org.betterx.worlds.together.mixin.client;
 
-import org.betterx.bclib.interfaces.WorldGenSettingsComponentAccessor;
+import org.betterx.worlds.together.worldPreset.WorldGenSettingsComponentAccessor;
 
 import net.minecraft.client.gui.screens.worldselection.WorldGenSettingsComponent;
 import net.minecraft.core.Holder;

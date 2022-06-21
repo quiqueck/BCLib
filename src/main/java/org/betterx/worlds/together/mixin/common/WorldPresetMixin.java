@@ -1,7 +1,7 @@
-package org.betterx.bclib.mixin.common;
+package org.betterx.worlds.together.mixin.common;
 
-import org.betterx.bclib.presets.worldgen.BCLWorldPreset;
-import org.betterx.bclib.presets.worldgen.WorldPresetSettings;
+import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
+import org.betterx.worlds.together.worldPreset.settings.WorldPresetSettings;
 
 import com.mojang.datafixers.kinds.App;
 import com.mojang.serialization.Codec;
@@ -40,21 +40,21 @@ public class WorldPresetMixin {
 
             RecordCodecBuilder<WorldPreset, Optional<Integer>> sortBuilder = Codec.INT
                     .optionalFieldOf("sort_order")
-                    .forGetter(wp -> (wp instanceof BCLWorldPreset)
-                            ? Optional.of(((BCLWorldPreset) wp).sortOrder)
+                    .forGetter(wp -> (wp instanceof TogetherWorldPreset)
+                            ? Optional.of(((TogetherWorldPreset) wp).sortOrder)
                             : Optional.empty());
 
             RecordCodecBuilder<WorldPreset, Optional<WorldPresetSettings>> settingsBuilder = WorldPresetSettings.CODEC
                     .optionalFieldOf("settings")
-                    .forGetter(wp -> (wp instanceof BCLWorldPreset)
-                            ? Optional.of(((BCLWorldPreset) wp).settings)
+                    .forGetter(wp -> (wp instanceof TogetherWorldPreset)
+                            ? Optional.of(((TogetherWorldPreset) wp).settings)
                             : Optional.empty());
 
             return builderInstance
                     .group(dimensionsBuilder, sortBuilder, settingsBuilder)
-                    .apply(builderInstance, BCLWorldPreset::new);
+                    .apply(builderInstance, TogetherWorldPreset::new);
         };
-        
+
         return CODEC_FUNCTION;
     }
 }

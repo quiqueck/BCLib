@@ -5,7 +5,7 @@ import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
 import org.betterx.bclib.api.v2.dataexchange.DataHandler;
 import org.betterx.bclib.api.v2.dataexchange.DataHandlerDescriptor;
 import org.betterx.bclib.config.Configs;
-import org.betterx.bclib.util.ModUtil;
+import org.betterx.worlds.together.util.ModUtil;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;

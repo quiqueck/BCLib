@@ -4,7 +4,7 @@ import org.betterx.bclib.api.v2.dataexchange.handler.autosync.HelloClient;
 import org.betterx.bclib.client.gui.gridlayout.GridCheckboxCell;
 import org.betterx.bclib.client.gui.gridlayout.GridLayout;
 import org.betterx.bclib.client.gui.gridlayout.GridRow;
-import org.betterx.bclib.util.ModUtil;
+import org.betterx.worlds.together.util.ModUtil;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.CommonComponents;

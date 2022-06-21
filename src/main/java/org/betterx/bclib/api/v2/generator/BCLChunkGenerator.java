@@ -1,12 +1,13 @@
 package org.betterx.bclib.api.v2.generator;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
 import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
 import org.betterx.bclib.api.v2.levelgen.surface.SurfaceRuleUtil;
 import org.betterx.bclib.interfaces.NoiseGeneratorSettingsProvider;
 import org.betterx.bclib.interfaces.SurfaceRuleProvider;
 import org.betterx.bclib.mixin.common.ChunkGeneratorAccessor;
+import org.betterx.worlds.together.WorldsTogether;
+import org.betterx.worlds.together.world.WorldGenUtil;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -73,7 +74,7 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator {
             bcl.setMaxHeight(holder.value().noiseSettings().height());
         }
 
-        if (BCLib.RUNS_TERRABLENDER) {
+        if (WorldsTogether.RUNS_TERRABLENDER) {
             BCLib.LOGGER.info("Make sure features are loaded from terrablender for " + biomeSource);
 
             //terrablender is invalidating the feature initialization
@@ -99,7 +100,7 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator {
     public void restoreInitialBiomeSource() {
         if (initialBiomeSource != getBiomeSource()) {
             if (this instanceof ChunkGeneratorAccessor acc) {
-                BiomeSource bs = LevelGenUtil.getWorldSettings()
+                BiomeSource bs = WorldGenUtil.getWorldSettings()
                                              .fixBiomeSource(initialBiomeSource, getBiomeSource().possibleBiomes());
                 acc.bcl_setBiomeSource(bs);
                 rebuildFeaturesPerStep(getBiomeSource());

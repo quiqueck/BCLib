@@ -1,6 +1,6 @@
-package org.betterx.bclib.presets.worldgen;
+package org.betterx.worlds.together.worldPreset.settings;
 
-import org.betterx.bclib.BCLib;
+import org.betterx.worlds.together.WorldsTogether;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
@@ -18,8 +18,9 @@ import java.util.Set;
 import java.util.function.Function;
 
 public abstract class WorldPresetSettings {
+    public static WorldPresetSettings DEFAULT = VanillaWorldPresetSettings.DEFAULT;
     public static final ResourceKey<Registry<Codec<? extends WorldPresetSettings>>> WORLD_PRESET_SETTINGS_REGISTRY =
-            createRegistryKey(BCLib.makeID("worldgen/world_preset_settings"));
+            createRegistryKey(WorldsTogether.makeID("worldgen/world_preset_settings"));
 
     public static final Registry<Codec<? extends WorldPresetSettings>> WORLD_PRESET_SETTINGS =
             registerSimple(WORLD_PRESET_SETTINGS_REGISTRY);
@@ -46,8 +47,7 @@ public abstract class WorldPresetSettings {
     }
 
     public static void bootstrap() {
-        register(BCLib.makeID("bcl_world_preset_settings"), BCLWorldPresetSettings.CODEC);
-        register(BCLib.makeID("vanilla_world_preset_settings"), VanillaWorldPresetSettings.CODEC);
+        register(WorldsTogether.makeID("vanilla_world_preset_settings"), VanillaWorldPresetSettings.CODEC);
     }
 
     public abstract Codec<? extends WorldPresetSettings> codec();

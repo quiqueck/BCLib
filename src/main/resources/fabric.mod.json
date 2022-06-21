@@ -33,6 +33,8 @@
   },
   "accessWidener": "bclib.accesswidener",
   "mixins": [
+    "together.mixins.common.json",
+    "together.mixins.client.json",
     "bclib.mixins.common.json",
     "bclib.mixins.client.json"
   ],

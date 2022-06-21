@@ -3,7 +3,6 @@ package org.betterx.bclib.api.v2.generator;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.generator.map.hex.HexBiomeMap;
 import org.betterx.bclib.api.v2.generator.map.square.SquareBiomeMap;
-import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 import org.betterx.bclib.config.ConfigKeeper.StringArrayEntry;
@@ -12,6 +11,7 @@ import org.betterx.bclib.interfaces.BiomeMap;
 import org.betterx.bclib.interfaces.TheEndBiomeDataAccessor;
 import org.betterx.bclib.noise.OpenSimplexNoise;
 import org.betterx.bclib.presets.worldgen.BCLWorldPresetSettings;
+import org.betterx.worlds.together.world.WorldGenUtil;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -97,7 +97,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
             boolean initMaps
     ) {
         super(biomeRegistry, list, seed, version);
-        if (LevelGenUtil.getWorldSettings() instanceof BCLWorldPresetSettings settings) {
+        if (WorldGenUtil.getWorldSettings() instanceof BCLWorldPresetSettings settings) {
             generateEndVoids = settings.generateEndVoid;
         } else {
             generateEndVoids = true;
@@ -164,7 +164,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
         this.centerBiome = biomeRegistry.getOrCreateHolderOrThrow(Biomes.THE_END);
         this.barrens = biomeRegistry.getOrCreateHolderOrThrow(Biomes.END_BARRENS);
 
-        if (LevelGenUtil.getWorldSettings() instanceof BCLWorldPresetSettings settings
+        if (WorldGenUtil.getWorldSettings() instanceof BCLWorldPresetSettings settings
                 && !settings.useEndTerrainGenerator) {
             this.endLandFunction = null;
         } else {

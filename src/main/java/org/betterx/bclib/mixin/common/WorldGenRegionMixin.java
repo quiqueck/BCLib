@@ -17,6 +17,7 @@ public class WorldGenRegionMixin {
     @Shadow
     private ChunkAccess center;
 
+    //TODO: 1.19 Is it ok to remove this?
     @Inject(method = "ensureCanWrite", at = @At("HEAD"), cancellable = true)
     private void be_alterBlockCheck(BlockPos blockPos, CallbackInfoReturnable<Boolean> info) {
         int x = blockPos.getX() >> 4;

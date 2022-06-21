@@ -10,9 +10,9 @@ import org.betterx.bclib.client.gui.screens.SyncFilesScreen;
 import org.betterx.bclib.client.gui.screens.WarnBCLibVersionMismatch;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.config.ServerConfig;
-import org.betterx.bclib.util.ModUtil;
-import org.betterx.bclib.util.ModUtil.ModInfo;
-import org.betterx.bclib.util.PathUtil;
+import org.betterx.worlds.together.util.ModUtil;
+import org.betterx.worlds.together.util.ModUtil.ModInfo;
+import org.betterx.worlds.together.util.PathUtil;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;

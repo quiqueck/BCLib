@@ -5,9 +5,9 @@ import org.betterx.bclib.api.v2.generator.BCLBiomeSource;
 import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
 import org.betterx.bclib.client.gui.gridlayout.GridCheckboxCell;
 import org.betterx.bclib.client.gui.gridlayout.GridLayout;
-import org.betterx.bclib.interfaces.WorldGenSettingsComponentAccessor;
-import org.betterx.bclib.presets.worldgen.BCLWorldPreset;
 import org.betterx.bclib.presets.worldgen.BCLWorldPresetSettings;
+import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
+import org.betterx.worlds.together.worldPreset.WorldGenSettingsComponentAccessor;
 
 import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.client.gui.screens.worldselection.WorldCreationContext;
@@ -54,7 +54,7 @@ public class WorldSetupScreen extends BCLibScreen {
                 && acc.bcl_getPreset()
                       .isPresent() && acc.bcl_getPreset()
                                          .get()
-                                         .value() instanceof BCLWorldPreset wp
+                                         .value() instanceof TogetherWorldPreset wp
                 && wp.settings instanceof BCLWorldPresetSettings settings) {
             netherVersion = settings.netherVersion;
             endVersion = settings.endVersion;
@@ -185,7 +185,7 @@ public class WorldSetupScreen extends BCLibScreen {
                 && acc.bcl_getPreset()
                       .isPresent() && acc.bcl_getPreset()
                                          .get()
-                                         .value() instanceof BCLWorldPreset worldPreset) {
+                                         .value() instanceof TogetherWorldPreset worldPreset) {
             acc.bcl_setPreset(Optional.of(Holder.direct(worldPreset.withSettings(new BCLWorldPresetSettings(
                     netherVersion,
                     endVersion,

@@ -1,10 +1,10 @@
 package org.betterx.bclib.api.v2.datafixer;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.WorldDataAPI;
 import org.betterx.bclib.interfaces.PatchBiFunction;
 import org.betterx.bclib.interfaces.PatchFunction;
-import org.betterx.bclib.util.ModUtil;
+import org.betterx.worlds.together.util.ModUtil;
+import org.betterx.worlds.together.world.WorldConfig;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -344,22 +344,22 @@ public class MigrationProfile {
 
     public void patchWorldData() throws PatchDidiFailException {
         for (Patch patch : worldDataPatchers) {
-            CompoundTag root = WorldDataAPI.getRootTag(patch.modID);
+            CompoundTag root = WorldConfig.getRootTag(patch.modID);
             boolean changed = patch.getWorldDataPatcher().apply(root, this);
             if (changed) {
-                WorldDataAPI.saveFile(patch.modID);
+                WorldConfig.saveFile(patch.modID);
             }
         }
 
         for (Map.Entry<String, List<String>> entry : worldDataIDPaths.entrySet()) {
-            CompoundTag root = WorldDataAPI.getRootTag(entry.getKey());
+            CompoundTag root = WorldConfig.getRootTag(entry.getKey());
             boolean[] changed = {false};
             entry.getValue().forEach(path -> {
                 changed[0] |= replaceIDatPath(root, path);
             });
 
             if (changed[0]) {
-                WorldDataAPI.saveFile(entry.getKey());
+                WorldConfig.saveFile(entry.getKey());
             }
         }
     }

@@ -9,6 +9,9 @@ import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
 import org.betterx.bclib.api.v2.levelgen.surface.SurfaceRuleUtil;
 import org.betterx.bclib.interfaces.ChunkGeneratorAccessor;
 import org.betterx.bclib.interfaces.NoiseGeneratorSettingsProvider;
+import org.betterx.worlds.together.world.WorldGenUtil;
+import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
+import org.betterx.worlds.together.worldPreset.settings.WorldPresetSettings;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -78,18 +81,18 @@ public class BCLWorldPresetSettings extends WorldPresetSettings {
         return CODEC;
     }
 
-    public BCLWorldPreset buildPreset(
+    public TogetherWorldPreset buildPreset(
             LevelStem overworldStem,
-            LevelGenUtil.Context netherContext,
-            LevelGenUtil.Context endContext
+            WorldGenUtil.Context netherContext,
+            WorldGenUtil.Context endContext
     ) {
-        return new BCLWorldPreset(buildDimensionMap(overworldStem, netherContext, endContext), 1000, this);
+        return new TogetherWorldPreset(buildDimensionMap(overworldStem, netherContext, endContext), 1000, this);
     }
 
     public Map<ResourceKey<LevelStem>, LevelStem> buildDimensionMap(
             LevelStem overworldStem,
-            LevelGenUtil.Context netherContext,
-            LevelGenUtil.Context endContext
+            WorldGenUtil.Context netherContext,
+            WorldGenUtil.Context endContext
     ) {
         return Map.of(
                 LevelStem.OVERWORLD,
@@ -108,17 +111,17 @@ public class BCLWorldPresetSettings extends WorldPresetSettings {
         return BCLBiomeSource.BIOME_SOURCE_VERSION_VANILLA;
     }
 
-    public LevelStem createStem(LevelGenUtil.Context ctx, ResourceKey<LevelStem> key) {
+    public LevelStem createStem(WorldGenUtil.Context ctx, ResourceKey<LevelStem> key) {
         if (key == LevelStem.NETHER) return createNetherStem(ctx);
         if (key == LevelStem.END) return createEndStem(ctx);
         return null;
     }
 
-    public LevelStem createNetherStem(LevelGenUtil.Context ctx) {
+    public LevelStem createNetherStem(WorldGenUtil.Context ctx) {
         return LevelGenUtil.getBCLNetherLevelStem(ctx, Optional.of(netherVersion));
     }
 
-    public LevelStem createEndStem(LevelGenUtil.Context ctx) {
+    public LevelStem createEndStem(WorldGenUtil.Context ctx) {
         return LevelGenUtil.getBCLEndLevelStem(ctx, Optional.of(endVersion));
     }
 

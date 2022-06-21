@@ -1,4 +1,4 @@
-package org.betterx.bclib.mixin.common;
+package org.betterx.worlds.together.mixin.common;
 
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.RegistryOps;

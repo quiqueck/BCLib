@@ -1,7 +1,6 @@
 package org.betterx.bclib.api.v2.datafixer;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.WorldDataAPI;
 import org.betterx.bclib.client.gui.screens.AtomicProgressListener;
 import org.betterx.bclib.client.gui.screens.ConfirmFixScreen;
 import org.betterx.bclib.client.gui.screens.LevelFixErrorScreen;
@@ -9,6 +8,7 @@ import org.betterx.bclib.client.gui.screens.LevelFixErrorScreen.Listener;
 import org.betterx.bclib.client.gui.screens.ProgressScreen;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.util.Logger;
+import org.betterx.worlds.together.world.WorldConfig;
 
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -141,7 +141,7 @@ public class DataFixerAPI {
      */
     public static void initializePatchData() {
         getMigrationProfile().markApplied();
-        WorldDataAPI.saveFile(BCLib.MOD_ID);
+        WorldConfig.saveFile(BCLib.MOD_ID);
     }
 
 
@@ -283,7 +283,7 @@ public class DataFixerAPI {
 
     @NotNull
     private static MigrationProfile getMigrationProfile() {
-        final CompoundTag patchConfig = WorldDataAPI.getCompoundTag(BCLib.MOD_ID, Configs.MAIN_PATCH_CATEGORY);
+        final CompoundTag patchConfig = WorldConfig.getCompoundTag(BCLib.MOD_ID, Configs.MAIN_PATCH_CATEGORY);
         MigrationProfile profile = Patch.createMigrationData(patchConfig);
         return profile;
     }
@@ -332,7 +332,7 @@ public class DataFixerAPI {
         if (!state.didFail) {
             progress.progressStage(Component.translatable("message.bclib.datafixer.progress.saving"));
             profile.markApplied();
-            WorldDataAPI.saveFile(BCLib.MOD_ID);
+            WorldConfig.saveFile(BCLib.MOD_ID);
         }
         progress.incAtomic(maxProgress);
 
@@ -511,7 +511,7 @@ public class DataFixerAPI {
 
     static CompoundTag getPatchData() {
         if (patchConfTag == null) {
-            patchConfTag = WorldDataAPI.getCompoundTag(BCLib.MOD_ID, Configs.MAIN_PATCH_CATEGORY);
+            patchConfTag = WorldConfig.getCompoundTag(BCLib.MOD_ID, Configs.MAIN_PATCH_CATEGORY);
         }
         return patchConfTag;
     }

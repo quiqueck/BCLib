@@ -5,9 +5,9 @@ import org.betterx.bclib.client.gui.gridlayout.GridColumn;
 import org.betterx.bclib.client.gui.gridlayout.GridLayout;
 import org.betterx.bclib.client.gui.gridlayout.GridRow;
 import org.betterx.bclib.client.gui.gridlayout.GridScreen;
-import org.betterx.bclib.util.ModUtil;
-import org.betterx.bclib.util.PathUtil;
 import org.betterx.bclib.util.Triple;
+import org.betterx.worlds.together.util.ModUtil;
+import org.betterx.worlds.together.util.PathUtil;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
@@ -38,7 +38,7 @@ public class ModListScreen extends BCLibScreen {
             Screen parent,
             Component title,
             Component description,
-            Map<String, ModUtil.ModInfo> mods,
+            Map<String, org.betterx.worlds.together.util.ModUtil.ModInfo> mods,
             HelloClient.IServerModMap serverInfo
     ) {
         this(parent, title, description, CommonComponents.GUI_BACK, mods, serverInfo);

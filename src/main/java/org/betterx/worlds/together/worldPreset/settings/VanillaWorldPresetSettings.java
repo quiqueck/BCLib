@@ -1,4 +1,4 @@
-package org.betterx.bclib.presets.worldgen;
+package org.betterx.worlds.together.worldPreset.settings;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;

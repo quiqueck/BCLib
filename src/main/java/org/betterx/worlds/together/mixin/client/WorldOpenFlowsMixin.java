@@ -1,9 +1,7 @@
-package org.betterx.bclib.mixin.common;
+package org.betterx.worlds.together.mixin.client;
 
-import org.betterx.bclib.api.v2.LifeCycleAPI;
-import org.betterx.bclib.api.v2.datafixer.DataFixerAPI;
-import org.betterx.bclib.config.Configs;
-import org.betterx.bclib.presets.worldgen.WorldBootstrap;
+import org.betterx.worlds.together.WorldsTogether;
+import org.betterx.worlds.together.world.event.WorldBootstrap;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.worldselection.WorldOpenFlows;
@@ -37,15 +35,16 @@ public abstract class WorldOpenFlowsMixin {
     private void bcl_callFixerOnLoad(Screen screen, String levelID, CallbackInfo ci) {
         WorldBootstrap.InGUI.setupLoadedWorld(levelID, this.levelSource);
 
-        if (DataFixerAPI.fixData(this.levelSource, levelID, true, (appliedFixes) -> {
-            LifeCycleAPI._runBeforeLevelLoad();
+        //if (DataFixerAPI.fixData(this.levelSource, levelID, true, (appliedFixes) -> {
+        if (WorldBootstrap.InGUI.applyWorldPatches(levelSource, levelID, (appliedFixes) -> {
+            WorldBootstrap.InGUI.finishedWorldLoad(levelID, this.levelSource);
             this.doLoadLevel(screen, levelID, false, false);
         })) {
             //cancel call when fix-screen is presented
             ci.cancel();
         } else {
-            LifeCycleAPI._runBeforeLevelLoad();
-            if (Configs.CLIENT_CONFIG.suppressExperimentalDialog()) {
+            WorldBootstrap.InGUI.finishedWorldLoad(levelID, this.levelSource);
+            if (WorldsTogether.SURPRESS_EXPERIMENTAL_DIALOG) {
                 this.doLoadLevel(screen, levelID, false, false);
                 //cancel call as we manually start the level load here
                 ci.cancel();

@@ -1,9 +1,11 @@
-package org.betterx.bclib.presets.worldgen;
+package org.betterx.worlds.together.worldPreset;
 
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.WorldDataAPI;
-import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
-import org.betterx.bclib.mixin.common.WorldPresetAccessor;
+import org.betterx.worlds.together.WorldsTogether;
+import org.betterx.worlds.together.mixin.common.WorldPresetAccessor;
+import org.betterx.worlds.together.world.WorldConfig;
+import org.betterx.worlds.together.world.WorldGenUtil;
+import org.betterx.worlds.together.worldPreset.settings.VanillaWorldPresetSettings;
+import org.betterx.worlds.together.worldPreset.settings.WorldPresetSettings;
 
 import net.minecraft.core.Holder;
 import net.minecraft.data.BuiltinRegistries;
@@ -18,15 +20,15 @@ import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import java.util.Map;
 import java.util.Optional;
 
-public class BCLWorldPreset extends WorldPreset {
+public class TogetherWorldPreset extends WorldPreset {
     public final WorldPresetSettings settings;
     public final int sortOrder;
 
-    private static final String TAG_GENERATOR = LevelGenUtil.TAG_GENERATOR;
+    private static final String TAG_GENERATOR = WorldGenUtil.TAG_GENERATOR;
 
     private static int NEXT_IN_SORT_ORDER = 1000;
 
-    public BCLWorldPreset(
+    public TogetherWorldPreset(
             Map<ResourceKey<LevelStem>, LevelStem> map,
             Optional<Integer> sortOrder,
             Optional<WorldPresetSettings> settings
@@ -34,14 +36,18 @@ public class BCLWorldPreset extends WorldPreset {
         this(map, sortOrder.orElse(NEXT_IN_SORT_ORDER++), settings.orElse(VanillaWorldPresetSettings.DEFAULT));
     }
 
-    public BCLWorldPreset(Map<ResourceKey<LevelStem>, LevelStem> map, int sortOrder, WorldPresetSettings settings) {
+    public TogetherWorldPreset(
+            Map<ResourceKey<LevelStem>, LevelStem> map,
+            int sortOrder,
+            WorldPresetSettings settings
+    ) {
         super(map);
         this.sortOrder = sortOrder;
         this.settings = settings;
     }
 
-    public BCLWorldPreset withSettings(WorldPresetSettings settings) {
-        return new BCLWorldPreset(getDimensions(), sortOrder, settings);
+    public TogetherWorldPreset withSettings(WorldPresetSettings settings) {
+        return new TogetherWorldPreset(getDimensions(), sortOrder, settings);
     }
 
     private Map<ResourceKey<LevelStem>, LevelStem> getDimensions() {
@@ -49,7 +55,7 @@ public class BCLWorldPreset extends WorldPreset {
     }
 
     public static WorldPresetSettings writeWorldPresetSettings(Optional<Holder<WorldPreset>> worldPreset) {
-        if (worldPreset.isPresent() && worldPreset.get().value() instanceof BCLWorldPreset wp) {
+        if (worldPreset.isPresent() && worldPreset.get().value() instanceof TogetherWorldPreset wp) {
             writeWorldPresetSettings(wp.settings);
             return wp.settings;
         } else {
@@ -64,12 +70,12 @@ public class BCLWorldPreset extends WorldPreset {
         final var encodeResult = codec.encodeStart(registryOps, presetSettings);
 
         if (encodeResult.result().isPresent()) {
-            final CompoundTag settingsNbt = WorldDataAPI.getRootTag(BCLib.TOGETHER_WORLDS);
+            final CompoundTag settingsNbt = WorldConfig.getRootTag(WorldsTogether.MOD_ID);
             settingsNbt.put(TAG_GENERATOR, encodeResult.result().get());
         } else {
-            BCLib.LOGGER.error("Unable to encode world generator settings generator for level.dat.");
+            WorldsTogether.LOGGER.error("Unable to encode world generator settings for level.dat.");
         }
 
-        WorldDataAPI.saveFile(BCLib.TOGETHER_WORLDS);
+        WorldConfig.saveFile(WorldsTogether.MOD_ID);
     }
 }

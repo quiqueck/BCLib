@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "org.betterx.worlds.together.mixin.common",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "MainMixin",
+    "PrimaryLevelDataMixin",
+    "RegistryOpsAccessor",
+    "WorldGenPropertiesMixin",
+    "WorldPresetAccessor",
+    "WorldPresetMixin",
+    "WorldPresetsBootstrapMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,11 +1,11 @@
 package org.betterx.bclib;
 
-import org.betterx.bclib.api.v2.WorldDataAPI;
 import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
 import org.betterx.bclib.api.v2.dataexchange.handler.autosync.*;
 import org.betterx.bclib.api.v2.generator.BCLibEndBiomeSource;
 import org.betterx.bclib.api.v2.generator.BCLibNetherBiomeSource;
 import org.betterx.bclib.api.v2.generator.GeneratorOptions;
+import org.betterx.bclib.api.v2.levelgen.LevelGenEvents;
 import org.betterx.bclib.api.v2.levelgen.features.blockpredicates.Types;
 import org.betterx.bclib.api.v2.levelgen.features.placement.PlacementModifiers;
 import org.betterx.bclib.api.v2.levelgen.structures.TemplatePiece;
@@ -13,12 +13,13 @@ import org.betterx.bclib.api.v2.levelgen.surface.rules.Conditions;
 import org.betterx.bclib.api.v2.tag.TagAPI;
 import org.betterx.bclib.commands.CommandRegistry;
 import org.betterx.bclib.config.Configs;
-import org.betterx.bclib.presets.worldgen.BCLWorldPresets;
 import org.betterx.bclib.recipes.AnvilRecipe;
 import org.betterx.bclib.recipes.CraftingRecipes;
 import org.betterx.bclib.registry.BaseBlockEntities;
 import org.betterx.bclib.registry.BaseRegistry;
 import org.betterx.bclib.util.Logger;
+import org.betterx.worlds.together.WorldsTogether;
+import org.betterx.worlds.together.world.WorldConfig;
 
 import net.minecraft.resources.ResourceLocation;
 
@@ -30,15 +31,12 @@ import java.util.List;
 
 public class BCLib implements ModInitializer {
     public static final String MOD_ID = "bclib";
-    public static final String TOGETHER_WORLDS = "worlds_together";
     public static final Logger LOGGER = new Logger(MOD_ID);
-
-    public static final boolean RUNS_TERRABLENDER = FabricLoader.getInstance()
-                                                                .getModContainer("terrablender")
-                                                                .isPresent();
 
     @Override
     public void onInitialize() {
+        LevelGenEvents.register();
+        WorldsTogether.onInitialize();
         Types.ensureStaticInitialization();
         BaseRegistry.register();
         GeneratorOptions.init();
@@ -47,10 +45,8 @@ public class BCLib implements ModInitializer {
         BCLibNetherBiomeSource.register();
         TagAPI.init();
         CraftingRecipes.init();
-        WorldDataAPI.registerModCache(MOD_ID);
-        WorldDataAPI.registerModCache(TOGETHER_WORLDS);
+        WorldConfig.registerModCache(MOD_ID);
         DataExchangeAPI.registerMod(MOD_ID);
-        BCLWorldPresets.registerPresets();
         AnvilRecipe.register();
         Conditions.registerAll();
         CommandRegistry.register();

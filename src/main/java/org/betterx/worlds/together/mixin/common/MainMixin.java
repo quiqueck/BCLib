@@ -1,11 +1,12 @@
-package org.betterx.bclib.mixin.common;
+package org.betterx.worlds.together.mixin.common;
 
-import org.betterx.bclib.presets.worldgen.WorldBootstrap;
+import org.betterx.worlds.together.world.event.WorldBootstrap;
 
 import com.mojang.serialization.DynamicOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.Main;
+import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.storage.LevelStorageSource;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -30,4 +31,9 @@ abstract public class MainMixin {
         return dynamicOps;
     }
 
+    @ModifyArg(method = "method_43613", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/PrimaryLevelData;<init>(Lnet/minecraft/world/level/LevelSettings;Lnet/minecraft/world/level/levelgen/WorldGenSettings;Lcom/mojang/serialization/Lifecycle;)V"))
+    private static WorldGenSettings bcl_onCreateLevelData(WorldGenSettings worldGenSettings) {
+        WorldBootstrap.DedicatedServer.applyDatapackChangesOnNewWorld(worldGenSettings);
+        return worldGenSettings;
+    }
 }

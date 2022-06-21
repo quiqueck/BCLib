@@ -5,7 +5,7 @@ import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
 import org.betterx.bclib.api.v2.dataexchange.SyncFileHash;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.config.ServerConfig;
-import org.betterx.bclib.util.PathUtil;
+import org.betterx.worlds.together.util.PathUtil;
 
 import net.fabricmc.loader.api.FabricLoader;
 

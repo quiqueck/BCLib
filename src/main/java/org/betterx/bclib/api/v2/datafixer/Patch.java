@@ -1,9 +1,8 @@
 package org.betterx.bclib.api.v2.datafixer;
 
-import org.betterx.bclib.api.v2.WorldDataAPI;
 import org.betterx.bclib.interfaces.PatchBiFunction;
 import org.betterx.bclib.interfaces.PatchFunction;
-import org.betterx.bclib.util.ModUtil;
+import org.betterx.worlds.together.util.ModUtil;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -149,7 +148,7 @@ public abstract class Patch {
 
     /**
      * Return a {@link PatchFunction} that is called with the content from the
-     * {@link WorldDataAPI} for this Mod.
+     * {@link org.betterx.worlds.together.world.WorldConfig} for this Mod.
      * The function needs to return {@code true}, if changes were made to the data.
      * If an error occurs, the method should throw a {@link PatchDidiFailException}
      * <p>
@@ -202,7 +201,7 @@ public abstract class Patch {
     }
 
     /**
-     * Returns a list of paths where your mod stores IDs in your {@link WorldDataAPI}-File.
+     * Returns a list of paths where your mod stores IDs in your {@link org.betterx.worlds.together.world.WorldConfig}-File.
      * <p>
      * {@link DataFixerAPI} will use information from the latest patch that returns a non-null-result. This list is used
      * to automatically fix changed IDs from all active patches (see {@link Patch#getIDReplacements()}
@@ -229,8 +228,8 @@ public abstract class Patch {
      * if the leaf-entry is a {@link net.minecraft.nbt.ListTag}, it is handle the same as a child <i>items</i> entry
      * of a {@link CompoundTag}.
      *
-     * @return {@code null} if nothing changes or a list of Paths in your {@link WorldDataAPI}-File.
-     * Paths are dot-seperated (see {@link WorldDataAPI#getCompoundTag(String, String)}).
+     * @return {@code null} if nothing changes or a list of Paths in your {@link org.betterx.worlds.together.world.WorldConfig}-File.
+     * Paths are dot-seperated (see {@link org.betterx.worlds.together.world.WorldConfig#getCompoundTag(String, String)}).
      */
     public List<String> getWorldDataIDPaths() {
         return null;

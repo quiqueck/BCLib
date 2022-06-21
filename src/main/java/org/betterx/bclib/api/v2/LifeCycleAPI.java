@@ -28,7 +28,7 @@ public class LifeCycleAPI {
 
     /**
      * Register a callback that is called before a level is loaded or created,
-     * but after the {@link WorldDataAPI} was initialized and patches from
+     * but after the {@link org.betterx.worlds.together.world.WorldConfig} was initialized and patches from
      * the {@link DataFixerAPI} were applied.
      *
      * @param call The callback Method

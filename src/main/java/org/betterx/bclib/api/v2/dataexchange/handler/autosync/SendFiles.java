@@ -6,8 +6,8 @@ import org.betterx.bclib.api.v2.dataexchange.DataHandlerDescriptor;
 import org.betterx.bclib.client.gui.screens.ConfirmRestartScreen;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.util.Pair;
-import org.betterx.bclib.util.PathUtil;
 import org.betterx.bclib.util.Triple;
+import org.betterx.worlds.together.util.PathUtil;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;

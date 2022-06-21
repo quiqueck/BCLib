@@ -1,6 +1,7 @@
 package org.betterx.bclib.api.v2.generator;
 
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
+import org.betterx.worlds.together.world.BiomeSourceWithSeed;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public abstract class BCLBiomeSource extends BiomeSource {
+public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceWithSeed {
     public static int BIOME_SOURCE_VERSION_NONE = -1;
     public static int BIOME_SOURCE_VERSION_VANILLA = 0;
     public static int BIOME_SOURCE_VERSION_SQUARE = 17;

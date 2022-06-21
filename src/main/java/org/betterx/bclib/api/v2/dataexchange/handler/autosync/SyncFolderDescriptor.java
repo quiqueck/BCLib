@@ -5,7 +5,7 @@ import org.betterx.bclib.api.v2.dataexchange.DataHandler;
 import org.betterx.bclib.api.v2.dataexchange.FileHash;
 import org.betterx.bclib.api.v2.dataexchange.handler.autosync.AutoSyncID.ForDirectFileRequest;
 import org.betterx.bclib.config.Configs;
-import org.betterx.bclib.util.PathUtil;
+import org.betterx.worlds.together.util.PathUtil;
 
 import net.minecraft.network.FriendlyByteBuf;
 

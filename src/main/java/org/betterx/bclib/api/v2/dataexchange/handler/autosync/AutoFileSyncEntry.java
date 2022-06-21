@@ -3,11 +3,11 @@ package org.betterx.bclib.api.v2.dataexchange.handler.autosync;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.dataexchange.DataHandler;
 import org.betterx.bclib.api.v2.dataexchange.SyncFileHash;
-import org.betterx.bclib.util.ModUtil;
-import org.betterx.bclib.util.ModUtil.ModInfo;
 import org.betterx.bclib.util.Pair;
-import org.betterx.bclib.util.PathUtil;
 import org.betterx.bclib.util.Triple;
+import org.betterx.worlds.together.util.ModUtil;
+import org.betterx.worlds.together.util.ModUtil.ModInfo;
+import org.betterx.worlds.together.util.PathUtil;
 
 import net.minecraft.network.FriendlyByteBuf;
 
@@ -200,7 +200,10 @@ class AutoFileSyncEntry extends AutoSyncID {
     }
 
     private int serializeFileContent(FriendlyByteBuf buf) {
-        if (!PathUtil.isChildOf(PathUtil.GAME_FOLDER, fileName.toPath())) {
+        if (!org.betterx.worlds.together.util.PathUtil.isChildOf(
+                org.betterx.worlds.together.util.PathUtil.GAME_FOLDER,
+                fileName.toPath()
+        )) {
             BCLib.LOGGER.error(fileName + " is not within game folder " + PathUtil.GAME_FOLDER + ". Pretending it does not exist.");
             buf.writeInt(0);
             return 0;

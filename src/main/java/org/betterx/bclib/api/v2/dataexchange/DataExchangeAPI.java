@@ -5,7 +5,7 @@ import org.betterx.bclib.api.v2.dataexchange.handler.DataExchange;
 import org.betterx.bclib.api.v2.dataexchange.handler.autosync.AutoSync;
 import org.betterx.bclib.api.v2.dataexchange.handler.autosync.AutoSyncID;
 import org.betterx.bclib.config.Config;
-import org.betterx.bclib.util.ModUtil;
+import org.betterx.worlds.together.util.ModUtil;
 
 import net.minecraft.network.FriendlyByteBuf;
 

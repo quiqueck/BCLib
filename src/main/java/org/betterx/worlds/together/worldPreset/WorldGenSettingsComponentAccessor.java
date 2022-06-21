@@ -1,4 +1,4 @@
-package org.betterx.bclib.interfaces;
+package org.betterx.worlds.together.worldPreset;
 
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;

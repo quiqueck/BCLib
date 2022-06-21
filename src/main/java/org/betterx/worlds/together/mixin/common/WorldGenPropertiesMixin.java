@@ -1,6 +1,6 @@
-package org.betterx.bclib.mixin.common;
+package org.betterx.worlds.together.mixin.common;
 
-import org.betterx.bclib.presets.worldgen.BCLWorldPresets;
+import org.betterx.worlds.together.worldPreset.WorldPresets;
 
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.dedicated.DedicatedServerProperties;
@@ -20,6 +20,6 @@ public class WorldGenPropertiesMixin {
     //Make sure Servers use our Default World Preset
     @ModifyArg(method = "create", at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/core/Registry;getHolder(Lnet/minecraft/resources/ResourceKey;)Ljava/util/Optional;"))
     private ResourceKey<WorldPreset> bcl_foo(ResourceKey<WorldPreset> resourceKey) {
-        return BCLWorldPresets.DEFAULT.orElseThrow();
+        return WorldPresets.DEFAULT.orElseThrow();
     }
 }

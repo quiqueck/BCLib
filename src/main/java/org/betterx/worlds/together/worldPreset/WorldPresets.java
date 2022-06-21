@@ -1,12 +1,17 @@
-package org.betterx.bclib.presets.worldgen;
+package org.betterx.worlds.together.worldPreset;
 
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.generator.BCLBiomeSource;
-import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
 import org.betterx.bclib.api.v2.tag.TagAPI;
 import org.betterx.bclib.api.v2.tag.TagType;
+import org.betterx.bclib.registry.PresetsRegistry;
+import org.betterx.worlds.together.WorldsTogether;
+import org.betterx.worlds.together.world.WorldGenUtil;
+import org.betterx.worlds.together.worldPreset.client.WorldPresetsClient;
+import org.betterx.worlds.together.worldPreset.settings.VanillaWorldPresetSettings;
+import org.betterx.worlds.together.worldPreset.settings.WorldPresetSettings;
 
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -19,58 +24,40 @@ import com.google.common.collect.Maps;
 import java.util.Map;
 import java.util.Optional;
 
-public class BCLWorldPresets {
+public class WorldPresets {
 
     public static final TagType.Simple<WorldPreset> WORLD_PRESETS =
             TagAPI.registerType(BuiltinRegistries.WORLD_PRESET, "tags/worldgen/world_preset");
     private static Map<ResourceKey<WorldPreset>, PresetBuilder> BUILDERS = Maps.newHashMap();
     private static final Map<ResourceKey<WorldPreset>, WorldPresetSettings> SETTINGS = Maps.newHashMap();
-    public static final ResourceKey<WorldPreset> BCL_WORLD =
-            register(
-                    BCLib.makeID("normal"),
-                    (overworldStem, netherContext, endContext) ->
-                            new BCLWorldPresetSettings(BCLBiomeSource.DEFAULT_BIOME_SOURCE_VERSION).buildPreset(
-                                    overworldStem,
-                                    netherContext,
-                                    endContext
-                            ),
-                    true
-            );
-    public static Optional<ResourceKey<WorldPreset>> DEFAULT = Optional.of(BCL_WORLD);
-    public static final ResourceKey<WorldPreset> BCL_WORLD_17 = register(
-            BCLib.makeID("legacy_17"),
-            (overworldStem, netherContext, endContext) ->
-                    new BCLWorldPresetSettings(BCLBiomeSource.BIOME_SOURCE_VERSION_SQUARE).buildPreset(
-                            overworldStem,
-                            netherContext,
-                            endContext
-                    ),
-            false
-    );
+    public static Optional<ResourceKey<WorldPreset>> DEFAULT = Optional.of(net.minecraft.world.level.levelgen.presets.WorldPresets.NORMAL);
+
+    public static Holder<WorldPreset> get(RegistryAccess access, ResourceKey<WorldPreset> key) {
+        return ((access != null) ? access : BuiltinRegistries.ACCESS)
+                .registryOrThrow(Registry.WORLD_PRESET_REGISTRY)
+                .getHolderOrThrow(key);
+    }
 
     /**
      * Registers a custom WorldPreset (with custom rules and behaviour)
      * <p>
-     * See also {@link org.betterx.bclib.client.presets.WorldPresetsUI} if you need to add a Customize Button/Screen
+     * See also {@link WorldPresetsClient} if you need to add a Customize Button/Screen
      * for your preset
      *
-     * @param loc The ID of your Preset
+     * @param loc         The ID of your Preset
+     * @param visibleInUI if true, the preset will show up in the UI on world creataion
      * @return The key you may use to reference your new Preset
      */
-    private static ResourceKey<WorldPreset> register(ResourceLocation loc) {
-        return register(loc, true);
-    }
-
-    private static ResourceKey<WorldPreset> register(ResourceLocation loc, boolean addToNormal) {
+    private static ResourceKey<WorldPreset> register(ResourceLocation loc, boolean visibleInUI) {
         ResourceKey<WorldPreset> key = ResourceKey.create(Registry.WORLD_PRESET_REGISTRY, loc);
-        if (addToNormal) {
+        if (visibleInUI) {
             WORLD_PRESETS.addUntyped(WorldPresetTags.NORMAL, key.location());
         }
 
         return key;
     }
 
-    public static void registerPresets() {
+    public static void ensureStaticallyLoaded() {
 
     }
 
@@ -82,7 +69,7 @@ public class BCLWorldPresets {
         ResourceKey<WorldPreset> key = register(loc, visibleInUI);
 
         if (BUILDERS == null) {
-            BCLib.LOGGER.error("Unable to register WorldPreset '" + loc + "'.");
+            WorldsTogether.LOGGER.error("Unable to register WorldPreset '" + loc + "'.");
 
         } else {
             BUILDERS.put(key, builder);
@@ -93,12 +80,13 @@ public class BCLWorldPresets {
     public static void bootstrapPresets(
             Registry<WorldPreset> presets,
             LevelStem overworldStem,
-            LevelGenUtil.Context netherContext,
-            LevelGenUtil.Context endContext
+            WorldGenUtil.Context netherContext,
+            WorldGenUtil.Context endContext
     ) {
+        PresetsRegistry.onLoad();
 
         for (Map.Entry<ResourceKey<WorldPreset>, PresetBuilder> e : BUILDERS.entrySet()) {
-            BCLWorldPreset preset = e.getValue().create(overworldStem, netherContext, endContext);
+            TogetherWorldPreset preset = e.getValue().create(overworldStem, netherContext, endContext);
             SETTINGS.put(e.getKey(), preset.settings);
             BuiltinRegistries.register(presets, e.getKey(), preset);
         }
@@ -106,15 +94,15 @@ public class BCLWorldPresets {
     }
 
     public static WorldPresetSettings getSettingsForPreset(ResourceKey<WorldPreset> key) {
-        return SETTINGS.getOrDefault(key, BCLWorldPresetSettings.DEFAULT);
+        return SETTINGS.getOrDefault(key, VanillaWorldPresetSettings.DEFAULT);
     }
 
     @FunctionalInterface
     public interface PresetBuilder {
-        BCLWorldPreset create(
+        TogetherWorldPreset create(
                 LevelStem overworldStem,
-                LevelGenUtil.Context netherContext,
-                LevelGenUtil.Context endContext
+                WorldGenUtil.Context netherContext,
+                WorldGenUtil.Context endContext
         );
     }
 }

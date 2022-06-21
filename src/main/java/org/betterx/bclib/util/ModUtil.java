@@ -1,6 +1,8 @@
 package org.betterx.bclib.util;
 
 import org.betterx.bclib.BCLib;
+import org.betterx.worlds.together.WorldsTogether;
+import org.betterx.worlds.together.util.PathUtil;
 
 import net.fabricmc.loader.api.*;
 import net.fabricmc.loader.api.metadata.*;
@@ -23,26 +25,25 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * @deprecated Replaced by {@link org.betterx.worlds.together.util.ModUtil}
+ */
+@Deprecated(forRemoval = true)
 public class ModUtil {
     private static Map<String, ModInfo> mods;
 
     /**
-     * Unloads the cache of available mods created from {@link #getMods()}
+     * @deprecated Replaced by {@link org.betterx.worlds.together.util.ModUtil#invalidateCachedMods()}
      */
+    @Deprecated(forRemoval = true)
     public static void invalidateCachedMods() {
         mods = null;
     }
 
     /**
-     * return a map of all mods that were found in the 'mods'-folder.
-     * <p>
-     * The method will cache the results. You can clear that cache (and free the memory) by
-     * calling {@link #invalidateCachedMods()}
-     * <p>
-     * An error message is printed if a mod fails to load, but the parsing will continue.
-     *
-     * @return A map of all found mods. (key=ModID, value={@link ModInfo})
+     * @deprecated Replaced by {@link org.betterx.worlds.together.util.ModUtil#getMods()} ()}
      */
+    @Deprecated(forRemoval = true)
     public static Map<String, ModInfo> getMods() {
         if (mods != null) return mods;
 
@@ -234,52 +235,49 @@ public class ModUtil {
     }
 
     /**
-     * Returns the {@link ModInfo} or {@code null} if the mod was not found.
-     * <p>
-     * The call will also return null if the mode-Version in the jar-File is not the same
-     * as the version of the loaded Mod.
-     *
-     * @param modID The mod ID to query
-     * @return A {@link ModInfo}-Object for the querried Mod.
+     * @deprecated Replaced by {@link org.betterx.worlds.together.util.ModUtil#getModInfo(String)}
      */
+    @Deprecated(forRemoval = true)
     public static ModInfo getModInfo(String modID) {
         return getModInfo(modID, true);
     }
 
+    /**
+     * @deprecated Replaced by {@link org.betterx.worlds.together.util.ModUtil#getModInfo(String, boolean)}
+     */
+    @Deprecated(forRemoval = true)
     public static ModInfo getModInfo(String modID, boolean matchVersion) {
         getMods();
         final ModInfo mi = mods.get(modID);
-        if (mi == null || (matchVersion && !getModVersion(modID).equals(mi.getVersion()))) return null;
+        if (mi == null || (matchVersion && !org.betterx.worlds.together.util.ModUtil.getModVersion(modID)
+                                                                                    .equals(mi.getVersion())))
+            return null;
         return mi;
     }
 
     /**
-     * Local Mod Version for the queried Mod
-     *
-     * @param modID The mod ID to query
-     * @return The version of the locally installed Mod
+     * @deprecated Replaced by {@link org.betterx.worlds.together.util.ModUtil#getModVersion(String)}
      */
+    @Deprecated(forRemoval = true)
     public static String getModVersion(String modID) {
-        if (modID == BCLib.TOGETHER_WORLDS) modID = BCLib.MOD_ID;
+        if (modID == WorldsTogether.MOD_ID) modID = BCLib.MOD_ID;
 
         Optional<ModContainer> optional = FabricLoader.getInstance()
                                                       .getModContainer(modID);
         if (optional.isPresent()) {
             ModContainer modContainer = optional.get();
-            return ModInfo.versionToString(modContainer.getMetadata()
-                                                       .getVersion());
+            return org.betterx.worlds.together.util.ModUtil.ModInfo.versionToString(modContainer.getMetadata()
+                                                                                                .getVersion());
 
         }
 
-        return getModVersionFromJar(modID);
+        return org.betterx.worlds.together.util.ModUtil.getModVersionFromJar(modID);
     }
 
     /**
-     * Local Mod Version for the queried Mod from the Jar-File in the games mod-directory
-     *
-     * @param modID The mod ID to query
-     * @return The version of the locally installed Mod
+     * @deprecated Replaced by {@link org.betterx.worlds.together.util.ModUtil#getModVersionFromJar(String)}
      */
+    @Deprecated(forRemoval = true)
     public static String getModVersionFromJar(String modID) {
         final ModInfo mi = getModInfo(modID, false);
         if (mi != null) return mi.getVersion();
@@ -288,11 +286,9 @@ public class ModUtil {
     }
 
     /**
-     * Get mod version from string. String should be in format: %d.%d.%d
-     *
-     * @param version - {@link String} mod version.
-     * @return int mod version.
+     * @deprecated Replaced by {@link org.betterx.worlds.together.util.ModUtil#convertModVersion(String)}
      */
+    @Deprecated(forRemoval = true)
     public static int convertModVersion(String version) {
         if (version.isEmpty()) {
             return 0;
@@ -318,11 +314,9 @@ public class ModUtil {
     }
 
     /**
-     * Get mod version from integer. String will be in format %d.%d.%d
-     *
-     * @param version - mod version in integer form.
-     * @return {@link String} mod version.
+     * @deprecated Replaced by {@link org.betterx.worlds.together.util.ModUtil#convertModVersion(int)}
      */
+    @Deprecated(forRemoval = true)
     public static String convertModVersion(int version) {
         int a = (version >> 22) & 0xFF;
         int b = (version >> 14) & 0xFF;
@@ -331,25 +325,21 @@ public class ModUtil {
     }
 
     /**
-     * {@code true} if the version v1 is larger than v2
-     *
-     * @param v1 A Version string
-     * @param v2 Another Version string
-     * @return v1 &gt; v2
+     * @deprecated Replaced by {@link org.betterx.worlds.together.util.ModUtil#isLargerVersion(String, String)}
      */
+    @Deprecated(forRemoval = true)
     public static boolean isLargerVersion(String v1, String v2) {
-        return convertModVersion(v1) > convertModVersion(v2);
+        return org.betterx.worlds.together.util.ModUtil.convertModVersion(v1) > org.betterx.worlds.together.util.ModUtil.convertModVersion(
+                v2);
     }
 
     /**
-     * {@code true} if the version v1 is larger or equal v2
-     *
-     * @param v1 A Version string
-     * @param v2 Another Version string
-     * @return v1 &ge; v2
+     * @deprecated Replaced by {@link org.betterx.worlds.together.util.ModUtil#isLargerOrEqualVersion(String, String)}
      */
+    @Deprecated(forRemoval = true)
     public static boolean isLargerOrEqualVersion(String v1, String v2) {
-        return convertModVersion(v1) >= convertModVersion(v2);
+        return org.betterx.worlds.together.util.ModUtil.convertModVersion(v1) >= org.betterx.worlds.together.util.ModUtil.convertModVersion(
+                v2);
     }
 
     private static void accept(Path file) {
@@ -387,6 +377,10 @@ public class ModUtil {
         }
     }
 
+    /**
+     * @deprecated Replaced by {@link org.betterx.worlds.together.util.ModUtil.ModInfo}
+     */
+    @Deprecated(forRemoval = true)
     public static class ModInfo {
         public final ModMetadata metadata;
         public final Path jarPath;
@@ -396,13 +390,23 @@ public class ModUtil {
             this.jarPath = jarPath;
         }
 
+        /**
+         * @deprecated Replaced by {@link org.betterx.worlds.together.util.ModUtil.ModInfo#versionToString(Version)}
+         */
+        @Deprecated(forRemoval = true)
         public static String versionToString(Version v) {
             if (v instanceof SemanticVersion) {
-                return versionToString((SemanticVersion) v);
+                return org.betterx.worlds.together.util.ModUtil.ModInfo.versionToString((SemanticVersion) v);
             }
-            return convertModVersion(convertModVersion(v.toString()));
+            return org.betterx.worlds.together.util.ModUtil.convertModVersion(
+                    org.betterx.worlds.together.util.ModUtil.convertModVersion(v.toString())
+            );
         }
 
+        /**
+         * @deprecated Replaced by {@link org.betterx.worlds.together.util.ModUtil.ModInfo#versionToString(SemanticVersion)}
+         */
+        @Deprecated(forRemoval = true)
         public static String versionToString(SemanticVersion v) {
             StringBuilder stringBuilder = new StringBuilder();
             boolean first = true;
@@ -429,7 +433,7 @@ public class ModUtil {
             if (metadata == null) {
                 return "0.0.0";
             }
-            return versionToString(metadata.getVersion());
+            return org.betterx.worlds.together.util.ModUtil.ModInfo.versionToString(metadata.getVersion());
         }
     }
 }

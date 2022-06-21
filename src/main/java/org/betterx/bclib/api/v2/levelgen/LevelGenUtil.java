@@ -1,41 +1,29 @@
 package org.betterx.bclib.api.v2.levelgen;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.WorldDataAPI;
 import org.betterx.bclib.api.v2.generator.BCLBiomeSource;
 import org.betterx.bclib.api.v2.generator.BCLChunkGenerator;
 import org.betterx.bclib.api.v2.generator.BCLibEndBiomeSource;
 import org.betterx.bclib.api.v2.generator.BCLibNetherBiomeSource;
-import org.betterx.bclib.presets.worldgen.BCLWorldPreset;
 import org.betterx.bclib.presets.worldgen.BCLWorldPresetSettings;
-import org.betterx.bclib.presets.worldgen.BCLWorldPresets;
-import org.betterx.bclib.presets.worldgen.WorldPresetSettings;
-import org.betterx.bclib.util.ModUtil;
+import org.betterx.bclib.registry.PresetsRegistry;
+import org.betterx.worlds.together.util.ModUtil;
+import org.betterx.worlds.together.world.WorldConfig;
+import org.betterx.worlds.together.world.WorldGenUtil;
+import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
 
-import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.Lifecycle;
 import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
-import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
-import net.minecraft.world.level.levelgen.presets.WorldPreset;
-import net.minecraft.world.level.levelgen.structure.StructureSet;
-import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
 import java.util.Map;
 import java.util.Optional;
@@ -44,15 +32,14 @@ import org.jetbrains.annotations.NotNull;
 public class LevelGenUtil {
     private static final String TAG_VERSION = "version";
     private static final String TAG_BN_GEN_VERSION = "generator_version";
-    public static final String TAG_GENERATOR = "generator";
 
     @NotNull
-    public static LevelStem getBCLNetherLevelStem(Context context, Optional<Integer> version) {
+    public static LevelStem getBCLNetherLevelStem(WorldGenUtil.Context context, Optional<Integer> version) {
         BCLibNetherBiomeSource netherSource = new BCLibNetherBiomeSource(context.biomes, version);
         return getBCLNetherLevelStem(context, netherSource);
     }
 
-    public static LevelStem getBCLNetherLevelStem(StemContext context, BiomeSource biomeSource) {
+    public static LevelStem getBCLNetherLevelStem(WorldGenUtil.StemContext context, BiomeSource biomeSource) {
         return new LevelStem(
                 context.dimension,
                 new BCLChunkGenerator(
@@ -65,7 +52,7 @@ public class LevelGenUtil {
     }
 
     @NotNull
-    public static LevelStem getBCLEndLevelStem(StemContext context, BiomeSource biomeSource) {
+    public static LevelStem getBCLEndLevelStem(WorldGenUtil.StemContext context, BiomeSource biomeSource) {
         return new LevelStem(
                 context.dimension,
                 new BCLChunkGenerator(
@@ -77,60 +64,11 @@ public class LevelGenUtil {
         );
     }
 
-    public static LevelStem getBCLEndLevelStem(Context context, Optional<Integer> version) {
+    public static LevelStem getBCLEndLevelStem(WorldGenUtil.Context context, Optional<Integer> version) {
         BCLibEndBiomeSource endSource = new BCLibEndBiomeSource(context.biomes, version);
         return getBCLEndLevelStem(context, endSource);
     }
 
-    public static WorldGenSettings createWorldFromPreset(
-            ResourceKey<WorldPreset> preset,
-            RegistryAccess registryAccess,
-            long seed,
-            boolean generateStructures,
-            boolean generateBonusChest
-    ) {
-        WorldGenSettings settings = registryAccess
-                .registryOrThrow(Registry.WORLD_PRESET_REGISTRY)
-                .getHolderOrThrow(preset)
-                .value()
-                .createWorldGenSettings(seed, generateStructures, generateBonusChest);
-
-        for (LevelStem stem : settings.dimensions()) {
-            if (stem.generator().getBiomeSource() instanceof BCLBiomeSource bcl) {
-                bcl.setSeed(seed);
-            }
-        }
-
-        return settings;
-    }
-
-    public static WorldGenSettings createDefaultWorldFromPreset(
-            RegistryAccess registryAccess,
-            long seed,
-            boolean generateStructures,
-            boolean generateBonusChest
-    ) {
-        return createWorldFromPreset(
-                BCLWorldPresets.DEFAULT.orElseThrow(),
-                registryAccess,
-                seed,
-                generateStructures,
-                generateBonusChest
-        );
-    }
-
-    public static Pair<WorldGenSettings, RegistryAccess.Frozen> defaultWorldDataSupplier(RegistryAccess.Frozen frozen) {
-        WorldGenSettings worldGenSettings = createDefaultWorldFromPreset(frozen);
-        return Pair.of(worldGenSettings, frozen);
-    }
-
-    public static WorldGenSettings createDefaultWorldFromPreset(RegistryAccess registryAccess, long seed) {
-        return createDefaultWorldFromPreset(registryAccess, seed, true, false);
-    }
-
-    public static WorldGenSettings createDefaultWorldFromPreset(RegistryAccess registryAccess) {
-        return createDefaultWorldFromPreset(registryAccess, RandomSource.create().nextLong());
-    }
 
     public static WorldGenSettings replaceGenerator(
             ResourceKey<LevelStem> dimensionKey,
@@ -261,15 +199,15 @@ public class LevelGenUtil {
                     generateBonusChest
             );
         } else if (biomeSourceVersion == BCLBiomeSource.BIOME_SOURCE_VERSION_SQUARE) {
-            referenceSettings = createWorldFromPreset(
-                    BCLWorldPresets.BCL_WORLD_17,
+            referenceSettings = WorldGenUtil.createWorldFromPreset(
+                    PresetsRegistry.BCL_WORLD_17,
                     registryAccess,
                     seed,
                     generateStructures,
                     generateBonusChest
             );
         } else {
-            referenceSettings = createDefaultWorldFromPreset(
+            referenceSettings = WorldGenUtil.createDefaultWorldFromPreset(
                     registryAccess,
                     seed,
                     generateStructures,
@@ -280,7 +218,7 @@ public class LevelGenUtil {
     }
 
     public static int getBiomeVersionForCurrentWorld(ResourceKey<LevelStem> key) {
-        final CompoundTag settingsNbt = getSettingsNbt();
+        final CompoundTag settingsNbt = WorldGenUtil.getSettingsNbt();
         if (!settingsNbt.contains(key.location().toString())) return BCLBiomeSource.DEFAULT_BIOME_SOURCE_VERSION;
         return settingsNbt.getInt(key.location().toString());
     }
@@ -305,30 +243,14 @@ public class LevelGenUtil {
         generatorSettings.putInt(key.location().toString(), getDimensionVersion(settings, key));
     }
 
-    static CompoundTag getSettingsNbt() {
-        return WorldDataAPI.getCompoundTag(BCLib.TOGETHER_WORLDS, TAG_GENERATOR);
-    }
-
-    public static WorldPresetSettings getWorldSettings() {
-        if (BuiltinRegistries.ACCESS == null) return null;
-        final RegistryAccess registryAccess = BuiltinRegistries.ACCESS;
-        final RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
-
-        Optional<WorldPresetSettings> oLevelStem = WorldPresetSettings.CODEC
-                .parse(new Dynamic<>(registryOps, getSettingsNbt()))
-                .resultOrPartial(BCLib.LOGGER::error);
-
-        return oLevelStem.orElse(BCLWorldPresetSettings.DEFAULT);
-    }
-
     public static void migrateGeneratorSettings() {
-        final CompoundTag settingsNbt = getSettingsNbt();
+        final CompoundTag settingsNbt = WorldGenUtil.getSettingsNbt();
 
         if (settingsNbt.size() == 0) {
             BCLib.LOGGER.info("Found World without generator Settings. Setting up data...");
             int biomeSourceVersion = BCLBiomeSource.DEFAULT_BIOME_SOURCE_VERSION;
 
-            final CompoundTag bclRoot = WorldDataAPI.getRootTag(BCLib.MOD_ID);
+            final CompoundTag bclRoot = WorldConfig.getRootTag(BCLib.MOD_ID);
 
             String bclVersion = "0.0.0";
             if (bclRoot.contains(TAG_VERSION)) {
@@ -341,16 +263,16 @@ public class LevelGenUtil {
                 biomeSourceVersion = BCLBiomeSource.BIOME_SOURCE_VERSION_SQUARE;
             }
 
-            if (WorldDataAPI.hasMod("betternether")) {
+            if (WorldConfig.hasMod("betternether")) {
                 BCLib.LOGGER.info("Found Data from BetterNether, using for migration.");
-                final CompoundTag bnRoot = WorldDataAPI.getRootTag("betternether");
+                final CompoundTag bnRoot = WorldConfig.getRootTag("betternether");
                 biomeSourceVersion = "1.17".equals(bnRoot.getString(TAG_BN_GEN_VERSION))
                         ? BCLBiomeSource.BIOME_SOURCE_VERSION_SQUARE
                         : BCLBiomeSource.BIOME_SOURCE_VERSION_HEX;
             }
 
             BCLib.LOGGER.info("Set world to BiomeSource Version " + biomeSourceVersion);
-            BCLWorldPreset.writeWorldPresetSettings(new BCLWorldPresetSettings(
+            TogetherWorldPreset.writeWorldPresetSettings(new BCLWorldPresetSettings(
                     biomeSourceVersion,
                     biomeSourceVersion,
                     true,
@@ -358,38 +280,4 @@ public class LevelGenUtil {
             ));
         }
     }
-
-    public static class StemContext {
-        public final Holder<DimensionType> dimension;
-        public final Registry<StructureSet> structureSets;
-        public final Registry<NormalNoise.NoiseParameters> noiseParameters;
-        public final Holder<NoiseGeneratorSettings> generatorSettings;
-
-        public StemContext(
-                Holder<DimensionType> dimension,
-                Registry<StructureSet> structureSets,
-                Registry<NormalNoise.NoiseParameters> noiseParameters,
-                Holder<NoiseGeneratorSettings> generatorSettings
-        ) {
-            this.dimension = dimension;
-            this.structureSets = structureSets;
-            this.noiseParameters = noiseParameters;
-            this.generatorSettings = generatorSettings;
-        }
-    }
-
-    public static class Context extends StemContext {
-        public final Registry<Biome> biomes;
-
-        public Context(
-                Registry<Biome> biomes, Holder<DimensionType> dimension,
-                Registry<StructureSet> structureSets,
-                Registry<NormalNoise.NoiseParameters> noiseParameters,
-                Holder<NoiseGeneratorSettings> generatorSettings
-        ) {
-            super(dimension, structureSets, noiseParameters, generatorSettings);
-            this.biomes = biomes;
-        }
-    }
-
 }

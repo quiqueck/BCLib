@@ -1,164 +1,77 @@
 package org.betterx.bclib.api.v2;
 
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.util.ModUtil;
+import org.betterx.worlds.together.world.WorldConfig;
 
-import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtIo;
-
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
- * Mod-specifix data-storage for a world.
- * <p>
- * This class provides the ability for mod to store persistent data inside a world. The Storage for the world is
- * currently initialized as part of the {@link org.betterx.bclib.presets.worldgen.WorldBootstrap} in
- * org.betterx.bclib.presets.worldgen.WorldBootstrap.Helpers#initializeWorldDataAPI(File, boolean)
+ * @deprecated Implementation moved to {@link WorldConfig}
  */
+@Deprecated(forRemoval = true)
 public class WorldDataAPI {
-    private static final Map<String, CompoundTag> TAGS = Maps.newHashMap();
-    private static final List<String> MODS = Lists.newArrayList();
-
-    private static final String TAG_CREATED = "create_version";
-    private static final String TAG_MODIFIED = "modify_version";
-    private static File dataDir;
-
+    /**
+     * @deprecated use {@link WorldConfig#load(File)} instead
+     */
+    @Deprecated(forRemoval = true)
     public static void load(File dataDir) {
-        WorldDataAPI.dataDir = dataDir;
-        MODS.stream()
-            .parallel()
-            .forEach(modID -> {
-                File file = new File(dataDir, modID + ".nbt");
-                CompoundTag root = new CompoundTag();
-                if (file.exists()) {
-                    try {
-                        root = NbtIo.readCompressed(file);
-                    } catch (IOException e) {
-                        BCLib.LOGGER.error("World data loading failed", e);
-                    }
-                    TAGS.put(modID, root);
-                } else {
-                    Optional<ModContainer> optional = FabricLoader.getInstance()
-                                                                  .getModContainer(modID);
-                    if (optional.isPresent()) {
-                        ModContainer modContainer = optional.get();
-                        if (BCLib.isDevEnvironment()) {
-                            root.putString("version", "255.255.9999");
-                        } else {
-                            root.putString("version", modContainer.getMetadata()
-                                                                  .getVersion()
-                                                                  .toString());
-                        }
-                        TAGS.put(modID, root);
-                        saveFile(modID);
-                    }
-                }
-            });
+        WorldConfig.load(dataDir);
     }
 
     /**
-     * Register mod cache, world cache is located in world data folder.
-     *
-     * @param modID - {@link String} modID.
+     * @deprecated use {@link WorldConfig#registerModCache(String)} instead
      */
+    @Deprecated(forRemoval = true)
     public static void registerModCache(String modID) {
-        if (!MODS.contains(modID))
-            MODS.add(modID);
+        WorldConfig.registerModCache(modID);
     }
 
     /**
-     * Get root {@link CompoundTag} for mod cache in world data folder.
-     *
-     * @param modID - {@link String} modID.
-     * @return {@link CompoundTag}
+     * @deprecated use {@link WorldConfig#getRootTag(String)} instead
      */
+    @Deprecated(forRemoval = true)
     public static CompoundTag getRootTag(String modID) {
-        CompoundTag root = TAGS.get(modID);
-        if (root == null) {
-            root = new CompoundTag();
-            root.putString(TAG_CREATED, ModUtil.getModVersion(modID));
-            TAGS.put(modID, root);
-        }
-        return root;
+        return WorldConfig.getRootTag(modID);
     }
 
+    /**
+     * @deprecated use {@link WorldConfig#hasMod(String)} instead
+     */
+    @Deprecated(forRemoval = true)
     public static boolean hasMod(String modID) {
-        return MODS.contains(modID);
+        return WorldConfig.hasMod(modID);
     }
 
     /**
-     * Get {@link CompoundTag} with specified path from mod cache in world data folder.
-     *
-     * @param modID - {@link String} path to tag, dot-separated.
-     * @return {@link CompoundTag}
+     * @deprecated use {@link WorldConfig#getCompoundTag(String, String)} instead
      */
+    @Deprecated(forRemoval = true)
     public static CompoundTag getCompoundTag(String modID, String path) {
-        String[] parts = path.split("\\.");
-        CompoundTag tag = getRootTag(modID);
-        for (String part : parts) {
-            if (tag.contains(part)) {
-                tag = tag.getCompound(part);
-            } else {
-                CompoundTag t = new CompoundTag();
-                tag.put(part, t);
-                tag = t;
-            }
-        }
-        return tag;
+        return WorldConfig.getCompoundTag(modID, path);
     }
 
     /**
-     * Forces mod cache file to be saved.
-     *
-     * @param modID {@link String} mod ID.
+     * @deprecated use {@link WorldConfig#saveFile(String)} instead
      */
+    @Deprecated(forRemoval = true)
     public static void saveFile(String modID) {
-
-        try {
-            if (!dataDir.exists()) {
-                dataDir.mkdirs();
-            }
-            CompoundTag tag = getRootTag(modID);
-            tag.putString(TAG_MODIFIED, ModUtil.getModVersion(modID));
-
-
-            final File tempFile = new File(dataDir, modID + "_temp.nbt");
-            NbtIo.writeCompressed(tag, tempFile);
-
-            final File oldFile = new File(dataDir, modID + "_old.nbt");
-            final File dataFile = new File(dataDir, modID + ".nbt");
-            Util.safeReplaceFile(dataFile, tempFile, oldFile);
-        } catch (IOException e) {
-            BCLib.LOGGER.error("World data saving failed", e);
-        }
+        WorldConfig.saveFile(modID);
     }
 
     /**
-     * Get stored mod version (only for mods with registered cache).
-     *
-     * @return {@link String} mod version.
+     * @deprecated use {@link WorldConfig#getModVersion(String)} instead
      */
+    @Deprecated(forRemoval = true)
     public static String getModVersion(String modID) {
-        return getRootTag(modID).getString("version");
+        return WorldConfig.getModVersion(modID);
     }
 
     /**
-     * Get stored mod version as integer (only for mods with registered cache).
-     *
-     * @return {@code int} mod version.
+     * @deprecated use {@link WorldConfig#getIntModVersion(String)} instead
      */
+    @Deprecated(forRemoval = true)
     public static int getIntModVersion(String modID) {
-        return ModUtil.convertModVersion(getModVersion(modID));
+        return WorldConfig.getIntModVersion(modID);
     }
 }
