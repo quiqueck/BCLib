@@ -13,6 +13,7 @@ import org.betterx.worlds.together.worldPreset.settings.WorldPresetSettings;
 
 import net.minecraft.client.gui.screens.worldselection.WorldGenSettingsComponent;
 import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
@@ -79,6 +80,16 @@ public class WorldBootstrap {
             }
             return settings;
         }
+
+        private static Optional<Holder<WorldPreset>> presetFromDatapack(Optional<Holder<WorldPreset>> currentPreset) {
+            if (currentPreset.isPresent() && LAST_REGISTRY_ACCESS != null) {
+                Optional<Holder<WorldPreset>> newPreset = LAST_REGISTRY_ACCESS
+                        .registryOrThrow(Registry.WORLD_PRESET_REGISTRY)
+                        .getHolder(currentPreset.map(h -> h.unwrapKey()).map(h -> h.orElseThrow()).orElseThrow());
+                if (newPreset.isPresent()) currentPreset = newPreset;
+            }
+            return currentPreset;
+        }
     }
 
     public static class DedicatedServer {
@@ -141,6 +152,7 @@ public class WorldBootstrap {
             if (levelStorageAccess.isPresent()) {
                 if (worldGenSettingsComponent instanceof WorldGenSettingsComponentAccessor acc) {
                     Optional<Holder<WorldPreset>> currentPreset = acc.bcl_getPreset();
+                    currentPreset = Helpers.presetFromDatapack(currentPreset);
                     Optional<Holder<WorldPreset>> newPreset = setupNewWorldCommon(
                             levelStorageAccess.get(),
                             currentPreset,

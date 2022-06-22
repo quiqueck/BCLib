@@ -1,8 +1,9 @@
 package org.betterx.bclib.commands;
 
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.blocks.BaseStairsBlock;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.serialization.Codec;
@@ -16,19 +17,20 @@ import net.minecraft.tags.TagEntry;
 import net.minecraft.tags.TagFile;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.level.biome.BiomeSource;
+import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.templatesystem.PosRuleTestType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTestType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraft.world.level.material.Fluid;
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.blocks.BaseStairsBlock;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
+import java.awt.Taskbar.Feature;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -101,6 +103,7 @@ public class DumpDatapack {
                     f1 = new File(f1, registry.key().location().getPath());
                     f1.mkdirs();
                     f1 = new File(f1, holder.unwrapKey().get().location().getPath() + ".json");
+                    f1.getParentFile().mkdirs();
 
                     Codec[] codec = {null};
 
@@ -110,7 +113,11 @@ public class DumpDatapack {
                     while (obj instanceof Holder<?>) {
                         obj = ((Holder<?>) obj).value();
                     }
-
+    
+                    if (obj instanceof BiomeSource || obj instanceof Feature) {
+                        System.out.print("");
+                    }
+    
                     if (obj instanceof Structure s) {
                         codec[0] = s.type().codec();
                     } else if (obj instanceof StructureProcessorList s) {
@@ -126,6 +133,10 @@ public class DumpDatapack {
                     } else if (obj instanceof RuleTestType<?>) {
                         codec[0] = registry.value().byNameCodec();
                     } else if (obj instanceof PosRuleTestType<?>) {
+                        codec[0] = registry.value().byNameCodec();
+                    }else if (obj instanceof WorldGenSettings) {
+                        codec[0] = registry.value().byNameCodec();
+                    }else if (obj instanceof LevelStem) {
                         codec[0] = registry.value().byNameCodec();
                     }
 
@@ -214,6 +225,10 @@ public class DumpDatapack {
                             }
                         }
                     }
+                    
+                    if (codec[0]==null){
+                        codec[0] = registry.value().byNameCodec();
+                    }
 
                     if (codec[0] == null) {
                         codec[0] = registry.value().byNameCodec();
@@ -223,7 +238,7 @@ public class DumpDatapack {
                     if (codec[0] != null) {
                         try {
                             var o = codec[0]
-                                    .encodeStart(registryOps, holder.value())
+                                    .encodeStart(registryOps, obj)
                                     .result()
                                     .orElse(new JsonObject());
 
@@ -237,7 +252,7 @@ public class DumpDatapack {
                             BCLib.LOGGER.error("      ->> Unable to encode: " + e.getMessage());
                         }
                     } else {
-                        BCLib.LOGGER.error("     !!! Could not determine Codec");
+                        BCLib.LOGGER.error("     !!! Could not determine Codec: " + obj.getClass());
                     }
                 });
     }
