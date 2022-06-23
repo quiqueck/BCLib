@@ -216,7 +216,7 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
 
     @Override
     public void setTogetherConfig(BCLNetherBiomeSourceConfig newConfig) {
-        this.config = config;
+        this.config = newConfig;
         initMap(currentSeed);
     }
 }

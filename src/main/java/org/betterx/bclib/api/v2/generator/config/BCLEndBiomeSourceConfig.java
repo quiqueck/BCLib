@@ -16,6 +16,12 @@ import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
 public class BCLEndBiomeSourceConfig implements BiomeSourceConfig<BCLibEndBiomeSource> {
+    public static final BCLEndBiomeSourceConfig VANILLA = new BCLEndBiomeSourceConfig(
+            EndBiomeMapType.VANILLA,
+            EndBiomeGeneratorType.VANILLA,
+            true,
+            4096
+    );
     public static final BCLEndBiomeSourceConfig MINECRAFT_17 = new BCLEndBiomeSourceConfig(
             EndBiomeMapType.SQUARE,
             EndBiomeGeneratorType.PAULEVS,

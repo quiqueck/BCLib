@@ -1,15 +1,18 @@
 package org.betterx.bclib.registry;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.generator.BCLBiomeSource;
-import org.betterx.bclib.presets.worldgen.BCLWorldPresetSettings;
+import org.betterx.bclib.api.v2.generator.config.BCLEndBiomeSourceConfig;
+import org.betterx.bclib.api.v2.generator.config.BCLNetherBiomeSourceConfig;
+import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
+import org.betterx.worlds.together.levelgen.WorldGenUtil;
+import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
-import org.betterx.worlds.together.worldPreset.settings.WorldPresetSettings;
 
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 
-import java.util.Optional;
+import java.util.Map;
 
 public class PresetsRegistry {
     public static ResourceKey<WorldPreset> BCL_WORLD;
@@ -18,12 +21,13 @@ public class PresetsRegistry {
     public static void onLoad() {
         BCL_WORLD =
                 WorldPresets.register(
-                        BCLib.makeID("hex_map"),
+                        BCLib.makeID("normal"),
                         (overworldStem, netherContext, endContext) ->
-                                new BCLWorldPresetSettings(BCLBiomeSource.BIOME_SOURCE_VERSION_HEX).buildPreset(
+                                buildPreset(
                                         overworldStem,
                                         netherContext,
-                                        endContext
+                                        BCLNetherBiomeSourceConfig.DEFAULT, endContext,
+                                        BCLEndBiomeSourceConfig.DEFAULT
                                 ),
                         true
                 );
@@ -31,18 +35,47 @@ public class PresetsRegistry {
         BCL_WORLD_17 = WorldPresets.register(
                 BCLib.makeID("legacy_17"),
                 (overworldStem, netherContext, endContext) ->
-                        new BCLWorldPresetSettings(BCLBiomeSource.BIOME_SOURCE_VERSION_SQUARE).buildPreset(
+                        buildPreset(
                                 overworldStem,
                                 netherContext,
-                                endContext
+                                BCLNetherBiomeSourceConfig.MINECRAFT_17, endContext,
+                                BCLEndBiomeSourceConfig.MINECRAFT_17
                         ),
                 false
         );
 
-        WorldPresetSettings.DEFAULT = BCLWorldPresetSettings.DEFAULT;
-        WorldPresets.DEFAULT = Optional.of(BCL_WORLD);
-
-        WorldPresetSettings.register(BCLib.makeID("bcl_world_preset_settings"), BCLWorldPresetSettings.CODEC);
+        WorldPresets.DEFAULT = BCL_WORLD;
     }
 
+    public static TogetherWorldPreset buildPreset(
+            LevelStem overworldStem,
+            WorldGenUtil.Context netherContext,
+            BCLNetherBiomeSourceConfig netherConfig,
+            WorldGenUtil.Context endContext,
+            BCLEndBiomeSourceConfig endConfig
+    ) {
+        return new TogetherWorldPreset(buildDimensionMap(
+                overworldStem,
+                netherContext,
+                netherConfig, endContext,
+                endConfig
+        ), 1000);
+    }
+
+    public static Map<ResourceKey<LevelStem>, LevelStem> buildDimensionMap(
+            LevelStem overworldStem,
+            WorldGenUtil.Context netherContext,
+            BCLNetherBiomeSourceConfig netherConfig,
+            WorldGenUtil.Context endContext,
+            BCLEndBiomeSourceConfig endConfig
+    ) {
+        return Map.of(
+                LevelStem.OVERWORLD,
+                overworldStem,
+                LevelStem.NETHER,
+                LevelGenUtil.getBCLNetherLevelStem(netherContext, netherConfig),
+                LevelStem.END,
+                LevelGenUtil.getBCLEndLevelStem(endContext, endConfig)
+        );
+    }
 }

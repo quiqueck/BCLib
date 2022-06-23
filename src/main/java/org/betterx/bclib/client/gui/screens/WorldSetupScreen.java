@@ -1,11 +1,13 @@
 package org.betterx.bclib.client.gui.screens;
 
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.generator.BCLBiomeSource;
+import org.betterx.bclib.api.v2.generator.BCLibEndBiomeSource;
+import org.betterx.bclib.api.v2.generator.BCLibNetherBiomeSource;
+import org.betterx.bclib.api.v2.generator.config.BCLEndBiomeSourceConfig;
+import org.betterx.bclib.api.v2.generator.config.BCLNetherBiomeSourceConfig;
 import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
 import org.betterx.bclib.client.gui.gridlayout.GridCheckboxCell;
 import org.betterx.bclib.client.gui.gridlayout.GridLayout;
-import org.betterx.bclib.presets.worldgen.BCLWorldPresetSettings;
+import org.betterx.bclib.registry.PresetsRegistry;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
 import org.betterx.worlds.together.worldPreset.WorldGenSettingsComponentAccessor;
 
@@ -15,13 +17,16 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraft.world.level.levelgen.presets.WorldPresets;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,23 +51,24 @@ public class WorldSetupScreen extends BCLibScreen {
 
     @Override
     protected void initLayout() {
-        final int netherVersion;
-        final int endVersion;
-        final boolean customEndGen;
-        final boolean haveEndVoid;
+        BCLEndBiomeSourceConfig endConfig = BCLEndBiomeSourceConfig.VANILLA;
+        BCLNetherBiomeSourceConfig netherConfig = BCLNetherBiomeSourceConfig.VANILLA;
         if (createWorldScreen.worldGenSettingsComponent instanceof WorldGenSettingsComponentAccessor acc
                 && acc.bcl_getPreset()
                       .isPresent() && acc.bcl_getPreset()
                                          .get()
-                                         .value() instanceof TogetherWorldPreset wp
-                && wp.settings instanceof BCLWorldPresetSettings settings) {
-            netherVersion = settings.netherVersion;
-            endVersion = settings.endVersion;
-            customEndGen = settings.useEndTerrainGenerator;
-            haveEndVoid = settings.generateEndVoid;
-        } else {
-            throw new IllegalStateException("The WorldSetup Screen is only valid for BetterX Presets.");
+                                         .value() instanceof TogetherWorldPreset wp) {
+
+            LevelStem endStem = wp.getDimension(LevelStem.END);
+            if (endStem != null && endStem.generator().getBiomeSource() instanceof BCLibEndBiomeSource bs) {
+                endConfig = bs.getTogetherConfig();
+            }
+            LevelStem netherStem = wp.getDimension(LevelStem.NETHER);
+            if (netherStem != null && netherStem.generator().getBiomeSource() instanceof BCLibNetherBiomeSource bs) {
+                netherConfig = bs.getTogetherConfig();
+            }
         }
+
 
         final int BUTTON_HEIGHT = 20;
         grid.addSpacerRow(20);
@@ -82,7 +88,7 @@ public class WorldSetupScreen extends BCLibScreen {
         row.addSpacer(20);
         netherLegacy = row.addCheckbox(
                 Component.translatable("title.screen.bclib.worldgen.legacy_square"),
-                endVersion == BCLBiomeSource.BIOME_SOURCE_VERSION_SQUARE,
+                netherConfig.mapVersion == BCLNetherBiomeSourceConfig.NetherBiomeMapType.SQUARE,
                 1.0,
                 GridLayout.GridValueType.PERCENTAGE,
                 (state) -> {
@@ -91,7 +97,7 @@ public class WorldSetupScreen extends BCLibScreen {
         bclibNether = mainSettingsRow.addCheckbox(
                 Component.translatable(
                         "title.screen.bclib.worldgen.custom_biome_source"),
-                netherVersion != BCLBiomeSource.BIOME_SOURCE_VERSION_VANILLA,
+                netherConfig.mapVersion != BCLNetherBiomeSourceConfig.NetherBiomeMapType.VANILLA,
                 1.0,
                 GridLayout.GridValueType.PERCENTAGE,
                 (state) -> {
@@ -111,7 +117,7 @@ public class WorldSetupScreen extends BCLibScreen {
         row.addSpacer(20);
         endCustomTerrain = row.addCheckbox(
                 Component.translatable("title.screen.bclib.worldgen.custom_end_terrain"),
-                customEndGen,
+                endConfig.generatorVersion != BCLEndBiomeSourceConfig.EndBiomeGeneratorType.VANILLA,
                 1.0,
                 GridLayout.GridValueType.PERCENTAGE,
                 (state) -> {
@@ -122,7 +128,7 @@ public class WorldSetupScreen extends BCLibScreen {
         row.addSpacer(20);
         generateEndVoid = row.addCheckbox(
                 Component.translatable("title.screen.bclib.worldgen.end_void"),
-                haveEndVoid,
+                endConfig.withVoidBiomes,
                 1.0,
                 GridLayout.GridValueType.PERCENTAGE,
                 (state) -> {
@@ -133,7 +139,7 @@ public class WorldSetupScreen extends BCLibScreen {
         row.addSpacer(20);
         endLegacy = row.addCheckbox(
                 Component.translatable("title.screen.bclib.worldgen.legacy_square"),
-                endVersion == BCLBiomeSource.BIOME_SOURCE_VERSION_SQUARE,
+                endConfig.mapVersion == BCLEndBiomeSourceConfig.EndBiomeMapType.SQUARE,
                 1.0,
                 GridLayout.GridValueType.PERCENTAGE,
                 (state) -> {
@@ -143,7 +149,7 @@ public class WorldSetupScreen extends BCLibScreen {
         bclibEnd = mainSettingsRow.addCheckbox(
                 Component.translatable(
                         "title.screen.bclib.worldgen.custom_biome_source"),
-                endVersion != BCLBiomeSource.BIOME_SOURCE_VERSION_VANILLA,
+                endConfig.mapVersion != BCLEndBiomeSourceConfig.EndBiomeMapType.VANILLA,
                 1.0,
                 GridLayout.GridValueType.PERCENTAGE,
                 (state) -> {
@@ -165,20 +171,48 @@ public class WorldSetupScreen extends BCLibScreen {
     }
 
     private void updateSettings() {
-        int endVersion = BCLBiomeSource.DEFAULT_BIOME_SOURCE_VERSION;
+        Map<ResourceKey<LevelStem>, ChunkGenerator> betterxDimensions = TogetherWorldPreset.getDimensionsMap(
+                PresetsRegistry.BCL_WORLD);
+        Map<ResourceKey<LevelStem>, ChunkGenerator> vanillaDimensions = TogetherWorldPreset.getDimensionsMap(
+                WorldPresets.NORMAL);
+        BCLEndBiomeSourceConfig.EndBiomeMapType endVersion = BCLEndBiomeSourceConfig.DEFAULT.mapVersion;
+
+
         if (bclibEnd.isChecked()) {
-            if (endLegacy.isChecked()) endVersion = BCLBiomeSource.BIOME_SOURCE_VERSION_SQUARE;
-            else endVersion = BCLBiomeSource.BIOME_SOURCE_VERSION_HEX;
+            BCLEndBiomeSourceConfig endConfig = new BCLEndBiomeSourceConfig(
+                    endLegacy.isChecked()
+                            ? BCLEndBiomeSourceConfig.EndBiomeMapType.SQUARE
+                            : BCLEndBiomeSourceConfig.EndBiomeMapType.HEX,
+                    endCustomTerrain.isChecked()
+                            ? BCLEndBiomeSourceConfig.EndBiomeGeneratorType.PAULEVS
+                            : BCLEndBiomeSourceConfig.EndBiomeGeneratorType.VANILLA,
+                    generateEndVoid.isChecked(),
+                    BCLEndBiomeSourceConfig.DEFAULT.innerVoidRadiusSquared
+            );
+
+            ChunkGenerator endGenerator = betterxDimensions.get(LevelStem.END);
+            ((BCLibEndBiomeSource) endGenerator.getBiomeSource()).setTogetherConfig(endConfig);
+
+            updateConfiguration(LevelStem.END, BuiltinDimensionTypes.END, endGenerator);
         } else {
-            endVersion = BCLBiomeSource.BIOME_SOURCE_VERSION_VANILLA;
+            ChunkGenerator endGenerator = vanillaDimensions.get(LevelStem.END);
+            updateConfiguration(LevelStem.END, BuiltinDimensionTypes.END, endGenerator);
         }
 
-        int netherVersion = BCLBiomeSource.DEFAULT_BIOME_SOURCE_VERSION;
         if (bclibNether.isChecked()) {
-            if (netherLegacy.isChecked()) netherVersion = BCLBiomeSource.BIOME_SOURCE_VERSION_SQUARE;
-            else netherVersion = BCLBiomeSource.BIOME_SOURCE_VERSION_HEX;
+            BCLNetherBiomeSourceConfig netherConfig = new BCLNetherBiomeSourceConfig(
+                    netherLegacy.isChecked()
+                            ? BCLNetherBiomeSourceConfig.NetherBiomeMapType.SQUARE
+                            : BCLNetherBiomeSourceConfig.NetherBiomeMapType.HEX
+            );
+
+            ChunkGenerator netherGenerator = betterxDimensions.get(LevelStem.NETHER);
+            ((BCLibNetherBiomeSource) netherGenerator.getBiomeSource()).setTogetherConfig(netherConfig);
+
+            updateConfiguration(LevelStem.NETHER, BuiltinDimensionTypes.NETHER, netherGenerator);
         } else {
-            netherVersion = BCLBiomeSource.BIOME_SOURCE_VERSION_VANILLA;
+            ChunkGenerator endGenerator = vanillaDimensions.get(LevelStem.NETHER);
+            updateConfiguration(LevelStem.NETHER, BuiltinDimensionTypes.NETHER, endGenerator);
         }
 
         if (createWorldScreen.worldGenSettingsComponent instanceof WorldGenSettingsComponentAccessor acc
@@ -186,34 +220,31 @@ public class WorldSetupScreen extends BCLibScreen {
                       .isPresent() && acc.bcl_getPreset()
                                          .get()
                                          .value() instanceof TogetherWorldPreset worldPreset) {
-            acc.bcl_setPreset(Optional.of(Holder.direct(worldPreset.withSettings(new BCLWorldPresetSettings(
-                    netherVersion,
-                    endVersion,
-                    endCustomTerrain.isChecked(),
-                    generateEndVoid.isChecked()
-            )))));
+            acc.bcl_setPreset(Optional.of(Holder.direct(
+                    worldPreset.withDimensions(
+                            createWorldScreen
+                                    .worldGenSettingsComponent
+                                    .settings()
+                                    .worldGenSettings()
+                                    .dimensions()
+                    )
+            )));
         }
-
-        BCLib.LOGGER.info("Custom World Versions: end=" + endVersion + ", nether=" + netherVersion);
-        updateConfiguration(LevelStem.END, BuiltinDimensionTypes.END, endVersion);
-        updateConfiguration(LevelStem.NETHER, BuiltinDimensionTypes.NETHER, netherVersion);
-
-
     }
 
 
     private void updateConfiguration(
             ResourceKey<LevelStem> dimensionKey,
             ResourceKey<DimensionType> dimensionTypeKey,
-            int biomeSourceVersion
+            ChunkGenerator chunkGenerator
     ) {
         createWorldScreen.worldGenSettingsComponent.updateSettings(
                 (registryAccess, worldGenSettings) -> LevelGenUtil.replaceGenerator(
                         dimensionKey,
                         dimensionTypeKey,
-                        biomeSourceVersion,
                         registryAccess,
-                        worldGenSettings
+                        worldGenSettings,
+                        chunkGenerator
                 )
         );
     }

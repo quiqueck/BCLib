@@ -2,7 +2,6 @@ package org.betterx.worlds.together.mixin.common;
 
 import org.betterx.worlds.together.levelgen.WorldGenUtil;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
-import org.betterx.worlds.together.worldPreset.settings.WorldPresetSettings;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -51,7 +50,6 @@ public abstract class WorldPresetsBootstrapMixin {
 
     @ModifyArg(method = "run", at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/world/level/levelgen/presets/WorldPresets$Bootstrap;registerCustomOverworldPreset(Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/world/level/dimension/LevelStem;)Lnet/minecraft/core/Holder;"))
     private LevelStem bcl_getOverworldStem(LevelStem overworldStem) {
-        WorldPresetSettings.bootstrap();
         WorldGenUtil.Context netherContext = new WorldGenUtil.Context(
                 this.biomes,
                 this.netherDimensionType,

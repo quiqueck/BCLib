@@ -16,6 +16,9 @@ import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
 public class BCLNetherBiomeSourceConfig implements BiomeSourceConfig<BCLibNetherBiomeSource> {
+    public static final BCLNetherBiomeSourceConfig VANILLA = new BCLNetherBiomeSourceConfig(
+            NetherBiomeMapType.VANILLA
+    );
     public static final BCLNetherBiomeSourceConfig MINECRAFT_17 = new BCLNetherBiomeSourceConfig(
             NetherBiomeMapType.SQUARE
     );

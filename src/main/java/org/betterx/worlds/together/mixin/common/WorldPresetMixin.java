@@ -1,7 +1,6 @@
 package org.betterx.worlds.together.mixin.common;
 
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
-import org.betterx.worlds.together.worldPreset.settings.WorldPresetSettings;
 
 import com.mojang.datafixers.kinds.App;
 import com.mojang.serialization.Codec;
@@ -44,14 +43,8 @@ public class WorldPresetMixin {
                             ? Optional.of(((TogetherWorldPreset) wp).sortOrder)
                             : Optional.empty());
 
-            RecordCodecBuilder<WorldPreset, Optional<WorldPresetSettings>> settingsBuilder = WorldPresetSettings.CODEC
-                    .optionalFieldOf("settings")
-                    .forGetter(wp -> (wp instanceof TogetherWorldPreset)
-                            ? Optional.of(((TogetherWorldPreset) wp).settings)
-                            : Optional.empty());
-
             return builderInstance
-                    .group(dimensionsBuilder, sortBuilder, settingsBuilder)
+                    .group(dimensionsBuilder, sortBuilder)
                     .apply(builderInstance, TogetherWorldPreset::new);
         };
 

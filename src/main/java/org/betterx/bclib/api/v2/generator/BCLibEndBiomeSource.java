@@ -8,9 +8,7 @@ import org.betterx.bclib.config.ConfigKeeper.StringArrayEntry;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.interfaces.BiomeMap;
 import org.betterx.bclib.interfaces.TheEndBiomeDataAccessor;
-import org.betterx.bclib.presets.worldgen.BCLWorldPresetSettings;
 import org.betterx.worlds.together.biomesource.BiomeSourceWithConfig;
-import org.betterx.worlds.together.levelgen.WorldGenUtil;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -158,12 +156,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
         this.centerBiome = biomeRegistry.getOrCreateHolderOrThrow(Biomes.THE_END);
         this.barrens = biomeRegistry.getOrCreateHolderOrThrow(Biomes.END_BARRENS);
 
-        if (WorldGenUtil.getWorldSettings() instanceof BCLWorldPresetSettings settings
-                && !settings.useEndTerrainGenerator) {
-            this.endLandFunction = null;
-        } else {
-            this.endLandFunction = GeneratorOptions.getEndLandFunction();
-        }
+        this.endLandFunction = GeneratorOptions.getEndLandFunction();
         this.pos = new Point();
 
         if (initMaps) {

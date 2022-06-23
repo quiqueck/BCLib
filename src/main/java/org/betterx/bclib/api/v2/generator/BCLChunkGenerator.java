@@ -10,7 +10,6 @@ import org.betterx.worlds.together.biomesource.MergeableBiomeSource;
 import org.betterx.worlds.together.chunkgenerator.EnforceableChunkGenerator;
 import org.betterx.worlds.together.chunkgenerator.InjectableSurfaceRules;
 import org.betterx.worlds.together.chunkgenerator.RestorableBiomeSource;
-import org.betterx.worlds.together.levelgen.WorldGenUtil;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -109,9 +108,10 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
     public void restoreInitialBiomeSource(ResourceKey<LevelStem> dimensionKey) {
         if (initialBiomeSource != getBiomeSource()) {
             if (this instanceof ChunkGeneratorAccessor acc) {
-                BiomeSource bs = WorldGenUtil.getWorldSettings()
-                                             .addDatapackBiomes(initialBiomeSource, getBiomeSource().possibleBiomes());
-                acc.bcl_setBiomeSource(bs);
+                if (initialBiomeSource instanceof MergeableBiomeSource bs) {
+                    acc.bcl_setBiomeSource(bs.mergeWithBiomeSource(getBiomeSource()));
+                }
+
                 rebuildFeaturesPerStep(getBiomeSource());
             }
         }
@@ -174,7 +174,7 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
                     } else {
                         bs = referenceGenerator.getBiomeSource();
                     }
-                    
+
                     InternalBiomeAPI.applyModifications(bs, dimensionKey);
                     referenceGenerator = new BCLChunkGenerator(
                             generator.bclib_getStructureSetsRegistry(),

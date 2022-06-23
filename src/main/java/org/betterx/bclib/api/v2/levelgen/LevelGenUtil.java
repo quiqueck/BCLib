@@ -7,13 +7,11 @@ import org.betterx.bclib.api.v2.generator.BCLibEndBiomeSource;
 import org.betterx.bclib.api.v2.generator.BCLibNetherBiomeSource;
 import org.betterx.bclib.api.v2.generator.config.BCLEndBiomeSourceConfig;
 import org.betterx.bclib.api.v2.generator.config.BCLNetherBiomeSourceConfig;
-import org.betterx.bclib.presets.worldgen.BCLWorldPresetSettings;
 import org.betterx.bclib.registry.PresetsRegistry;
 import org.betterx.worlds.together.levelgen.WorldGenUtil;
 import org.betterx.worlds.together.util.ModUtil;
 import org.betterx.worlds.together.world.WorldConfig;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
-import org.betterx.worlds.together.worldPreset.settings.WorldPresetSettings;
 
 import com.mojang.serialization.Lifecycle;
 import net.minecraft.core.Holder;
@@ -26,6 +24,7 @@ import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
+import net.minecraft.world.level.levelgen.presets.WorldPreset;
 
 import java.util.Map;
 import java.util.Optional;
@@ -111,23 +110,23 @@ public class LevelGenUtil {
         );
     }
 
-    public static WorldGenSettings replaceStem(
-            ResourceKey<LevelStem> dimensionKey,
-            WorldGenSettings worldGenSettings,
-            LevelStem levelStem
-    ) {
-        Registry<LevelStem> newDimensions = withDimension(
-                dimensionKey,
-                worldGenSettings.dimensions(),
-                levelStem
-        );
-        return new WorldGenSettings(
-                worldGenSettings.seed(),
-                worldGenSettings.generateStructures(),
-                worldGenSettings.generateBonusChest(),
-                newDimensions
-        );
-    }
+//    public static WorldGenSettings replaceStem(
+//            ResourceKey<LevelStem> dimensionKey,
+//            WorldGenSettings worldGenSettings,
+//            LevelStem levelStem
+//    ) {
+//        Registry<LevelStem> newDimensions = withDimension(
+//                dimensionKey,
+//                worldGenSettings.dimensions(),
+//                levelStem
+//        );
+//        return new WorldGenSettings(
+//                worldGenSettings.seed(),
+//                worldGenSettings.generateStructures(),
+//                worldGenSettings.generateBonusChest(),
+//                newDimensions
+//        );
+//    }
 
     public static Registry<LevelStem> withDimension(
             ResourceKey<LevelStem> dimensionKey,
@@ -211,11 +210,11 @@ public class LevelGenUtil {
         return referenceSettings.dimensions().getHolder(dimensionKey);
     }
 
-    public static int getBiomeVersionForCurrentWorld(ResourceKey<LevelStem> key) {
-        final CompoundTag settingsNbt = WorldGenUtil.getSettingsNbt();
-        if (!settingsNbt.contains(key.location().toString())) return BCLBiomeSource.DEFAULT_BIOME_SOURCE_VERSION;
-        return settingsNbt.getInt(key.location().toString());
-    }
+//    public static int getBiomeVersionForCurrentWorld(ResourceKey<LevelStem> key) {
+//        final CompoundTag settingsNbt = WorldGenUtil.getSettingsNbt();
+//        if (!settingsNbt.contains(key.location().toString())) return BCLBiomeSource.DEFAULT_BIOME_SOURCE_VERSION;
+//        return settingsNbt.getInt(key.location().toString());
+//    }
 
 //    private static int getDimensionVersion(
 //            WorldGenSettings settings,
@@ -242,7 +241,7 @@ public class LevelGenUtil {
 
         if (settingsNbt.size() == 0) {
             BCLib.LOGGER.info("Found World without generator Settings. Setting up data...");
-            int biomeSourceVersion = BCLBiomeSource.DEFAULT_BIOME_SOURCE_VERSION;
+            ResourceKey<WorldPreset> biomeSourceVersion = PresetsRegistry.BCL_WORLD;
 
             final CompoundTag bclRoot = WorldConfig.getRootTag(BCLib.MOD_ID);
 
@@ -254,32 +253,32 @@ public class LevelGenUtil {
 
             if (isPre18) {
                 BCLib.LOGGER.info("World was create pre 1.18!");
-                biomeSourceVersion = BCLBiomeSource.BIOME_SOURCE_VERSION_SQUARE;
+                biomeSourceVersion = PresetsRegistry.BCL_WORLD_17;
             }
 
             if (WorldConfig.hasMod("betternether")) {
                 BCLib.LOGGER.info("Found Data from BetterNether, using for migration.");
                 final CompoundTag bnRoot = WorldConfig.getRootTag("betternether");
                 biomeSourceVersion = "1.17".equals(bnRoot.getString(TAG_BN_GEN_VERSION))
-                        ? BCLBiomeSource.BIOME_SOURCE_VERSION_SQUARE
-                        : BCLBiomeSource.BIOME_SOURCE_VERSION_HEX;
+                        ? PresetsRegistry.BCL_WORLD_17
+                        : PresetsRegistry.BCL_WORLD;
             }
 
-            BCLib.LOGGER.info("Set world to BiomeSource Version " + biomeSourceVersion);
-            TogetherWorldPreset.writeWorldPresetSettings(new BCLWorldPresetSettings(
-                    biomeSourceVersion,
-                    biomeSourceVersion,
-                    true,
-                    true
-            ));
+            Registry<LevelStem> dimensions = TogetherWorldPreset.getDimensions(biomeSourceVersion);
+            if (dimensions != null) {
+                BCLib.LOGGER.info("Set world to BiomeSource Version " + biomeSourceVersion);
+                TogetherWorldPreset.writeWorldPresetSettings(dimensions);
+            } else {
+                BCLib.LOGGER.error("Failed to set world to BiomeSource Version " + biomeSourceVersion);
+            }
         }
     }
 
-    /**
-     * @deprecated Replace by {@link WorldGenUtil#getWorldSettings()}
-     */
-    @Deprecated(forRemoval = true)
-    public static WorldPresetSettings getWorldSettings() {
-        return WorldGenUtil.getWorldSettings();
-    }
+//    /**
+//     * @deprecated Replace by {@link WorldGenUtil#getWorldSettings()}
+//     */
+//    @Deprecated(forRemoval = true)
+//    public static WorldPresetSettings getWorldSettings() {
+//        return null;
+//    }
 }

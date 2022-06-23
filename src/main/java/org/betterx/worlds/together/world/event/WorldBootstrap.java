@@ -9,21 +9,24 @@ import org.betterx.worlds.together.world.WorldConfig;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
 import org.betterx.worlds.together.worldPreset.WorldGenSettingsComponentAccessor;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
-import org.betterx.worlds.together.worldPreset.settings.VanillaWorldPresetSettings;
-import org.betterx.worlds.together.worldPreset.settings.WorldPresetSettings;
 
 import net.minecraft.client.gui.screens.worldselection.WorldGenSettingsComponent;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.level.storage.LevelStorageSource;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.ApiStatus;
@@ -33,6 +36,11 @@ public class WorldBootstrap {
     private static RegistryAccess LAST_REGISTRY_ACCESS = null;
 
     public static RegistryAccess getLastRegistryAccess() {
+        return LAST_REGISTRY_ACCESS;
+    }
+
+    public static RegistryAccess getLastRegistryAccessOrElseBuiltin() {
+        if (LAST_REGISTRY_ACCESS == null) return BuiltinRegistries.ACCESS;
         return LAST_REGISTRY_ACCESS;
     }
 
@@ -63,31 +71,34 @@ public class WorldBootstrap {
         private static Holder<WorldPreset> defaultServerPreset() {
             return WorldPresets.get(
                     LAST_REGISTRY_ACCESS,
-                    WorldPresets.DEFAULT.orElseThrow()
+                    WorldPresets.DEFAULT
             );
         }
 
-        private static WorldPresetSettings defaultServerSettings() {
+        private static Map<ResourceKey<LevelStem>, ChunkGenerator> defaultServerDimensions() {
             final Holder<WorldPreset> defaultPreset = defaultServerPreset();
-            return defaultServerSettings(defaultPreset);
+            return defaultServerDimensions(defaultPreset);
         }
 
-        private static WorldPresetSettings defaultServerSettings(Holder<WorldPreset> defaultPreset) {
-            final WorldPresetSettings settings;
+        private static Map<ResourceKey<LevelStem>, ChunkGenerator> defaultServerDimensions(Holder<WorldPreset> defaultPreset) {
+            final Map<ResourceKey<LevelStem>, ChunkGenerator> dimensions;
             if (defaultPreset.value() instanceof TogetherWorldPreset t) {
-                settings = t.settings;
+                dimensions = t.getDimensionsMap();
             } else {
-                settings = VanillaWorldPresetSettings.DEFAULT;
+                dimensions = TogetherWorldPreset.getDimensionsMap(net.minecraft.world.level.levelgen.presets.WorldPresets.NORMAL);
             }
-            return settings;
+            return dimensions;
         }
 
         private static Optional<Holder<WorldPreset>> presetFromDatapack(Optional<Holder<WorldPreset>> currentPreset) {
             if (currentPreset.isPresent() && LAST_REGISTRY_ACCESS != null) {
-                Optional<Holder<WorldPreset>> newPreset = LAST_REGISTRY_ACCESS
-                        .registryOrThrow(Registry.WORLD_PRESET_REGISTRY)
-                        .getHolder(currentPreset.map(h -> h.unwrapKey()).map(h -> h.orElseThrow()).orElseThrow());
-                if (newPreset.isPresent()) currentPreset = newPreset;
+                var presetKey = currentPreset.get().unwrapKey();
+                if (presetKey.isPresent()) {
+                    Optional<Holder<WorldPreset>> newPreset = LAST_REGISTRY_ACCESS
+                            .registryOrThrow(Registry.WORLD_PRESET_REGISTRY)
+                            .getHolder(presetKey.get());
+                    if (newPreset.isPresent()) currentPreset = newPreset;
+                }
             }
             return currentPreset;
         }
@@ -104,7 +115,7 @@ public class WorldBootstrap {
             File levelDat = levelStorageAccess.getLevelPath(LevelResource.LEVEL_DATA_FILE).toFile();
             if (!levelDat.exists()) {
                 BCLib.LOGGER.info("Creating a new World, no fixes needed");
-                final WorldPresetSettings settings = Helpers.defaultServerSettings();
+                final Map<ResourceKey<LevelStem>, ChunkGenerator> settings = Helpers.defaultServerDimensions();
 
                 Helpers.initializeWorldConfig(levelStorageAccess, true);
                 WorldEventsImpl.BEFORE_SERVER_WORLD_LOAD.emit(e -> e.prepareWorld(
@@ -114,7 +125,7 @@ public class WorldBootstrap {
                 Helpers.initializeWorldConfig(levelStorageAccess, false);
                 WorldEventsImpl.BEFORE_SERVER_WORLD_LOAD.emit(e -> e.prepareWorld(
                         levelStorageAccess,
-                        WorldGenUtil.getWorldSettings(),
+                        TogetherWorldPreset.getWorldDimensions(),
                         false
                 ));
                 WorldEventsImpl.ON_WORLD_LOAD.emit(OnWorldLoad::onLoad);
@@ -124,18 +135,13 @@ public class WorldBootstrap {
         //Needs to get called after setupWorld
         public static void applyDatapackChangesOnNewWorld(WorldGenSettings worldGenSettings) {
             Optional<Holder<WorldPreset>> currentPreset = Optional.of(Helpers.defaultServerPreset());
-            var settings = Helpers.defaultServerSettings(currentPreset.orElseThrow());
-
             currentPreset = WorldEventsImpl.ADAPT_WORLD_PRESET.emit(currentPreset, worldGenSettings);
-            if (currentPreset.map(h -> h.value()).orElse(null) instanceof TogetherWorldPreset t) {
-                settings = t.settings;
-            }
-            TogetherWorldPreset.writeWorldPresetSettings(settings);
-            if (currentPreset.map(h -> h.value()).orElse(null) instanceof WorldPresetAccessor acc) {
+
+            if (currentPreset.map(Holder::value).orElse(null) instanceof WorldPresetAccessor acc) {
                 TogetherWorldPreset.writeWorldPresetSettings(acc.bcl_getDimensions());
             } else {
                 WorldsTogether.LOGGER.error("Failed writing together File");
-                //TogetherWorldPreset.writeWorldPresetSettings(worldGenSettings);
+                TogetherWorldPreset.writeWorldPresetSettings(worldGenSettings.dimensions());
             }
             WorldEventsImpl.ON_WORLD_LOAD.emit(OnWorldLoad::onLoad);
         }
@@ -185,29 +191,28 @@ public class WorldBootstrap {
             Helpers.initializeWorldConfig(levelStorageAccess, true);
 
 
-            final WorldPresetSettings settings;
+            final Map<ResourceKey<LevelStem>, ChunkGenerator> dimensions;
             if (currentPreset.map(Holder::value).orElse(null) instanceof TogetherWorldPreset t) {
-                settings = t.settings;
+                dimensions = t.getDimensionsMap();
             } else {
-                settings = VanillaWorldPresetSettings.DEFAULT;
+                dimensions = TogetherWorldPreset.getDimensionsMap(net.minecraft.world.level.levelgen.presets.WorldPresets.NORMAL);
             }
 
             // Helpers.setupWorld();
             // DataFixerAPI.initializePatchData();
             WorldEventsImpl.BEFORE_WORLD_LOAD.emit(e -> e.prepareWorld(
                     levelStorageAccess,
-                    settings,
+                    dimensions,
                     true
             ));
 
             currentPreset = WorldEventsImpl.ADAPT_WORLD_PRESET.emit(currentPreset, worldGenSettings);
 
-            TogetherWorldPreset.writeWorldPresetSettings(currentPreset);
-            if (currentPreset.map(h -> h.value()).orElse(null) instanceof WorldPresetAccessor acc) {
+            if (currentPreset.map(Holder::value).orElse(null) instanceof WorldPresetAccessor acc) {
                 TogetherWorldPreset.writeWorldPresetSettings(acc.bcl_getDimensions());
             } else {
                 WorldsTogether.LOGGER.error("Failed writing together File");
-                //TogetherWorldPreset.writeWorldPresetSettings(worldGenSettings);
+                TogetherWorldPreset.writeWorldPresetSettings(worldGenSettings.dimensions());
             }
 
             //LifeCycleAPI._runBeforeLevelLoad();
@@ -230,7 +235,7 @@ public class WorldBootstrap {
                 //Helpers.setupWorld();
                 WorldEventsImpl.BEFORE_WORLD_LOAD.emit(e -> e.prepareWorld(
                         levelStorageAccess,
-                        WorldGenUtil.getWorldSettings(),
+                        TogetherWorldPreset.getWorldDimensions(),
                         false
                 ));
                 levelStorageAccess.close();

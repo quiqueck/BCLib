@@ -7,18 +7,12 @@ import org.betterx.worlds.together.world.BiomeSourceWithSeed;
 import org.betterx.worlds.together.world.WorldConfig;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
-import org.betterx.worlds.together.worldPreset.settings.WorldPresetSettings;
 
 import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.Dynamic;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.biome.Biome;
@@ -30,8 +24,6 @@ import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
-
-import java.util.Optional;
 
 public class WorldGenUtil {
     public static final String TAG_GENERATOR = "generator";
@@ -65,7 +57,7 @@ public class WorldGenUtil {
             boolean generateBonusChest
     ) {
         return createWorldFromPreset(
-                WorldPresets.DEFAULT.orElseThrow(),
+                WorldPresets.DEFAULT,
                 registryAccess,
                 seed,
                 generateStructures,
@@ -90,22 +82,12 @@ public class WorldGenUtil {
         return WorldConfig.getCompoundTag(WorldsTogether.MOD_ID, TAG_GENERATOR);
     }
 
-    public static WorldPresetSettings getWorldSettings() {
-        final RegistryAccess registryAccess = BuiltinRegistries.ACCESS;
-        final RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
-
-        Optional<WorldPresetSettings> oLevelStem = WorldPresetSettings.CODEC
-                .parse(new Dynamic<>(registryOps, getSettingsNbt()))
-                .resultOrPartial(WorldsTogether.LOGGER::error);
-
-        return oLevelStem.orElse(WorldPresetSettings.DEFAULT);
-    }
-
     public static class Context extends StemContext {
         public final Registry<Biome> biomes;
 
         public Context(
-                Registry<Biome> biomes, Holder<DimensionType> dimension,
+                Registry<Biome> biomes,
+                Holder<DimensionType> dimension,
                 Registry<StructureSet> structureSets,
                 Registry<NormalNoise.NoiseParameters> noiseParameters,
                 Holder<NoiseGeneratorSettings> generatorSettings

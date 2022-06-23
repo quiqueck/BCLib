@@ -5,8 +5,6 @@ import org.betterx.worlds.together.levelgen.WorldGenUtil;
 import org.betterx.worlds.together.mixin.common.WorldPresetAccessor;
 import org.betterx.worlds.together.world.WorldConfig;
 import org.betterx.worlds.together.world.event.WorldBootstrap;
-import org.betterx.worlds.together.worldPreset.settings.VanillaWorldPresetSettings;
-import org.betterx.worlds.together.worldPreset.settings.WorldPresetSettings;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Dynamic;
@@ -29,7 +27,6 @@ import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 public class TogetherWorldPreset extends WorldPreset {
-    public final WorldPresetSettings settings;
     public final int sortOrder;
 
     private static final String TAG_GENERATOR = WorldGenUtil.TAG_GENERATOR;
@@ -38,41 +35,57 @@ public class TogetherWorldPreset extends WorldPreset {
 
     public TogetherWorldPreset(
             Map<ResourceKey<LevelStem>, LevelStem> map,
-            Optional<Integer> sortOrder,
-            Optional<WorldPresetSettings> settings
+            Optional<Integer> sortOrder
     ) {
-        this(map, sortOrder.orElse(NEXT_IN_SORT_ORDER++), settings.orElse(VanillaWorldPresetSettings.DEFAULT));
+        this(map, sortOrder.orElse(NEXT_IN_SORT_ORDER++));
     }
 
     public TogetherWorldPreset(
             Map<ResourceKey<LevelStem>, LevelStem> map,
-            int sortOrder,
-            WorldPresetSettings settings
+            int sortOrder
     ) {
         super(map);
         this.sortOrder = sortOrder;
-        this.settings = settings;
     }
 
-    public TogetherWorldPreset withSettings(WorldPresetSettings settings) {
-        return new TogetherWorldPreset(getDimensions(), sortOrder, settings);
+    public TogetherWorldPreset withDimensions(Registry<LevelStem> dimensions) {
+        Map<ResourceKey<LevelStem>, LevelStem> map = new HashMap<>();
+        for (var entry : dimensions.entrySet()) {
+            ResourceKey<LevelStem> key = entry.getKey();
+            LevelStem stem = entry.getValue();
+            map.put(key, stem);
+        }
+        return new TogetherWorldPreset(map, sortOrder);
     }
 
     private Map<ResourceKey<LevelStem>, LevelStem> getDimensions() {
         return ((WorldPresetAccessor) this).bcl_getDimensions();
     }
 
+    public Map<ResourceKey<LevelStem>, ChunkGenerator> getDimensionsMap() {
+        return DimensionsWrapper.build(getDimensions());
+    }
+
     public LevelStem getDimension(ResourceKey<LevelStem> key) {
         return getDimensions().get(key);
     }
 
+    public static void writeWorldPresetSettings(Registry<LevelStem> dimensions) {
+        DimensionsWrapper wrapper = new DimensionsWrapper(dimensions);
+        writeWorldPresetSettings(wrapper);
+    }
+
     public static void writeWorldPresetSettings(Map<ResourceKey<LevelStem>, LevelStem> settings) {
+        DimensionsWrapper wrapper = new DimensionsWrapper(DimensionsWrapper.build(settings));
+        writeWorldPresetSettings(wrapper);
+    }
+
+    private static void writeWorldPresetSettings(DimensionsWrapper wrapper) {
         final RegistryOps<Tag> registryOps = RegistryOps.create(
                 NbtOps.INSTANCE,
                 WorldBootstrap.getLastRegistryAccess()
         );
-        DimensionsWrapper wrapper = new DimensionsWrapper(DimensionsWrapper.build(settings));
-        final var encodeResult = wrapper.CODEC.encodeStart(registryOps, wrapper);
+        final var encodeResult = DimensionsWrapper.CODEC.encodeStart(registryOps, wrapper);
 
         if (encodeResult.result().isPresent()) {
             final CompoundTag settingsNbt = WorldConfig.getRootTag(WorldsTogether.MOD_ID);
@@ -87,7 +100,6 @@ public class TogetherWorldPreset extends WorldPreset {
     private static DimensionsWrapper DEFAULT_DIMENSIONS_WRAPPER = null;
 
     public static @NotNull Map<ResourceKey<LevelStem>, ChunkGenerator> getWorldDimensions() {
-        if (BuiltinRegistries.ACCESS == null) return null;
         final RegistryAccess registryAccess;
         if (WorldBootstrap.getLastRegistryAccess() != null) {
             registryAccess = WorldBootstrap.getLastRegistryAccess();
@@ -104,7 +116,7 @@ public class TogetherWorldPreset extends WorldPreset {
             DEFAULT_DIMENSIONS_WRAPPER = new DimensionsWrapper(WorldPresets
                     .get(
                             registryAccess,
-                            WorldPresets.DEFAULT.orElseThrow()
+                            WorldPresets.DEFAULT
                     )
                     .value()
                     .createWorldGenSettings(0, true, true)
@@ -112,6 +124,27 @@ public class TogetherWorldPreset extends WorldPreset {
         }
 
         return oLevelStem.orElse(DEFAULT_DIMENSIONS_WRAPPER).dimensions;
+    }
+
+    public static Registry<LevelStem> getDimensions(ResourceKey<WorldPreset> key) {
+        RegistryAccess access = WorldBootstrap.getLastRegistryAccessOrElseBuiltin();
+        var preset = access.registryOrThrow(Registry.WORLD_PRESET_REGISTRY).getHolder(key);
+        if (preset.isEmpty()) return null;
+        return preset
+                .get()
+                .value()
+                .createWorldGenSettings(
+                        0,
+                        true,
+                        true
+                )
+                .dimensions();
+    }
+
+    public static @NotNull Map<ResourceKey<LevelStem>, ChunkGenerator> getDimensionsMap(ResourceKey<WorldPreset> key) {
+        Registry<LevelStem> reg = getDimensions(key);
+        if (reg == null) return new HashMap<>();
+        return DimensionsWrapper.build(reg);
     }
 
     private static class DimensionsWrapper {
@@ -145,6 +178,7 @@ public class TogetherWorldPreset extends WorldPreset {
             }
             return map;
         }
+
 
         DimensionsWrapper(Registry<LevelStem> dimensions) {
             this(build(dimensions));

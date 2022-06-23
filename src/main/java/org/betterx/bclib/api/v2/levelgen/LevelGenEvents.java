@@ -10,16 +10,17 @@ import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
 import org.betterx.bclib.registry.PresetsRegistry;
 import org.betterx.worlds.together.world.event.WorldEvents;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
-import org.betterx.worlds.together.worldPreset.settings.WorldPresetSettings;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.storage.LevelStorageSource;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -89,21 +90,20 @@ public class LevelGenEvents {
         InternalBiomeAPI.initRegistry(a);
     }
 
-    public static WorldPresetSettings prepareWorld(
+    public static void prepareWorld(
             LevelStorageSource.LevelStorageAccess storageAccess,
-            WorldPresetSettings settings,
+            Map<ResourceKey<LevelStem>, ChunkGenerator> dimensions,
             boolean isNewWorld
     ) {
         setupWorld();
         if (isNewWorld) {
             DataFixerAPI.initializePatchData();
         }
-        return settings;
     }
 
-    public static WorldPresetSettings prepareServerWorld(
+    public static void prepareServerWorld(
             LevelStorageSource.LevelStorageAccess storageAccess,
-            WorldPresetSettings settings,
+            Map<ResourceKey<LevelStem>, ChunkGenerator> dimensions,
             boolean isNewWorld
     ) {
         setupWorld();
@@ -113,9 +113,6 @@ public class LevelGenEvents {
         } else {
             DataFixerAPI.fixData(storageAccess, false, (didFix) -> {/* not called when showUI==false */});
         }
-
-
-        return settings;
     }
 
     public static void onWorldLoad() {
