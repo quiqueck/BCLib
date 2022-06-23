@@ -18,9 +18,9 @@ public class PresetsRegistry {
     public static void onLoad() {
         BCL_WORLD =
                 WorldPresets.register(
-                        BCLib.makeID("normal"),
+                        BCLib.makeID("hex_map"),
                         (overworldStem, netherContext, endContext) ->
-                                new BCLWorldPresetSettings(BCLBiomeSource.DEFAULT_BIOME_SOURCE_VERSION).buildPreset(
+                                new BCLWorldPresetSettings(BCLBiomeSource.BIOME_SOURCE_VERSION_HEX).buildPreset(
                                         overworldStem,
                                         netherContext,
                                         endContext

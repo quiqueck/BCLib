@@ -1,6 +1,11 @@
-package org.betterx.worlds.together.world;
+package org.betterx.worlds.together.levelgen;
 
 import org.betterx.worlds.together.WorldsTogether;
+import org.betterx.worlds.together.biomesource.BiomeSourceWithConfig;
+import org.betterx.worlds.together.chunkgenerator.EnforceableChunkGenerator;
+import org.betterx.worlds.together.world.BiomeSourceWithSeed;
+import org.betterx.worlds.together.world.WorldConfig;
+import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
 import org.betterx.worlds.together.worldPreset.settings.WorldPresetSettings;
 
@@ -17,6 +22,7 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
@@ -85,7 +91,6 @@ public class WorldGenUtil {
     }
 
     public static WorldPresetSettings getWorldSettings() {
-        if (BuiltinRegistries.ACCESS == null) return null;
         final RegistryAccess registryAccess = BuiltinRegistries.ACCESS;
         final RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
 
@@ -127,5 +132,40 @@ public class WorldGenUtil {
             this.noiseParameters = noiseParameters;
             this.generatorSettings = generatorSettings;
         }
+    }
+
+
+    @SuppressWarnings("unchecked")
+    public static WorldGenSettings repairBiomeSourceInAllDimensions(
+            RegistryAccess registryAccess,
+            WorldGenSettings settings
+    ) {
+        var dimensions = TogetherWorldPreset.getWorldDimensions();
+        for (var entry : settings.dimensions().entrySet()) {
+            ResourceKey<LevelStem> key = entry.getKey();
+            LevelStem loadedStem = entry.getValue();
+
+            ChunkGenerator referenceGenerator = dimensions.get(key);
+            if (referenceGenerator instanceof EnforceableChunkGenerator enforcer) {
+                final ChunkGenerator loadedChunkGenerator = loadedStem.generator();
+
+                if (enforcer.needsChunkGeneratorRepair(loadedChunkGenerator)) {
+                    settings = enforcer.enforceGeneratorInWorldGenSettings(
+                            registryAccess,
+                            key,
+                            loadedStem.typeHolder().unwrapKey().orElseThrow(),
+                            loadedChunkGenerator,
+                            settings
+                    );
+                } else if (loadedChunkGenerator.getBiomeSource() instanceof BiomeSourceWithConfig bs) {
+                    if (referenceGenerator.getBiomeSource() instanceof BiomeSourceWithConfig refbs) {
+                        if (!refbs.getTogetherConfig().sameConfig(bs.getTogetherConfig())) {
+                            bs.setTogetherConfig(refbs.getTogetherConfig());
+                        }
+                    }
+                }
+            }
+        }
+        return settings;
     }
 }

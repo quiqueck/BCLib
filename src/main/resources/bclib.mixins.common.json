@@ -23,7 +23,6 @@
     "LayerLightSectionStorageMixin",
     "LootPoolMixin",
     "MinecraftServerMixin",
-    "MinecraftServerMixinLate",
     "MobSpawnSettingsAccessor",
     "NoiseBasedChunkGeneratorMixin",
     "PistonBaseBlockMixin",

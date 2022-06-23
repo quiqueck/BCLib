@@ -5,8 +5,8 @@ import org.betterx.bclib.api.v2.LifeCycleAPI;
 import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
 import org.betterx.bclib.api.v2.datafixer.DataFixerAPI;
 import org.betterx.bclib.api.v2.generator.BCLibEndBiomeSource;
+import org.betterx.bclib.api.v2.generator.config.BCLEndBiomeSourceConfig;
 import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
-import org.betterx.bclib.presets.worldgen.BCLWorldPresetSettings;
 import org.betterx.bclib.registry.PresetsRegistry;
 import org.betterx.worlds.together.world.event.WorldEvents;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
@@ -59,21 +59,24 @@ public class LevelGenEvents {
 
             if (currentPreset.isPresent()) {
                 if (currentPreset.get().value() instanceof TogetherWorldPreset worldPreset) {
-                    ResourceKey key = currentPreset.get().unwrapKey().orElse(null);
-                    //user did not configure the Preset!
-                    if (PresetsRegistry.BCL_WORLD.equals(key) || PresetsRegistry.BCL_WORLD_17.equals(key)) {
+                    ResourceKey worldPresetKey = currentPreset.get().unwrapKey().orElse(null);
+
+                    //user did not configure/change the Preset!
+                    if (PresetsRegistry.BCL_WORLD.equals(worldPresetKey)
+                            || PresetsRegistry.BCL_WORLD_17.equals(worldPresetKey)) {
                         BCLib.LOGGER.info("Detected Datapack for END.");
-                        
-                        if (worldPreset.settings instanceof BCLWorldPresetSettings settings) {
+
+                        LevelStem configuredEndStem = worldPreset.getDimension(LevelStem.END);
+                        if (configuredEndStem.generator().getBiomeSource() instanceof BCLibEndBiomeSource endSource) {
                             BCLib.LOGGER.info("Changing Default WorldPreset Settings for Datapack use.");
 
-                            worldPreset = worldPreset.withSettings(new BCLWorldPresetSettings(
-                                    settings.netherVersion,
-                                    settings.endVersion,
+                            BCLEndBiomeSourceConfig inputConfig = endSource.getTogetherConfig();
+                            endSource.setTogetherConfig(new BCLEndBiomeSourceConfig(
+                                    inputConfig.mapVersion,
+                                    BCLEndBiomeSourceConfig.EndBiomeGeneratorType.VANILLA,
                                     false,
-                                    false
+                                    inputConfig.innerVoidRadiusSquared
                             ));
-                            currentPreset = Optional.of(Holder.direct(worldPreset));
                         }
                     }
                 }

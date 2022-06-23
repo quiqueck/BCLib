@@ -1,15 +1,22 @@
 package org.betterx.bclib.api.v2.generator;
 
 import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
+import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
 import org.betterx.bclib.interfaces.NoiseGeneratorSettingsProvider;
 import org.betterx.bclib.mixin.common.ChunkGeneratorAccessor;
 import org.betterx.worlds.together.WorldsTogether;
-import org.betterx.worlds.together.world.WorldGenUtil;
+import org.betterx.worlds.together.biomesource.MergeableBiomeSource;
+import org.betterx.worlds.together.chunkgenerator.EnforceableChunkGenerator;
+import org.betterx.worlds.together.chunkgenerator.InjectableSurfaceRules;
+import org.betterx.worlds.together.chunkgenerator.RestorableBiomeSource;
+import org.betterx.worlds.together.levelgen.WorldGenUtil;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -18,6 +25,7 @@ import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.FeatureSorter;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
@@ -31,7 +39,7 @@ import com.google.common.base.Suppliers;
 import java.util.List;
 import java.util.function.Function;
 
-public class BCLChunkGenerator extends NoiseBasedChunkGenerator {
+public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements RestorableBiomeSource<BCLChunkGenerator>, InjectableSurfaceRules<BCLChunkGenerator>, EnforceableChunkGenerator<BCLChunkGenerator> {
 
     public static final Codec<BCLChunkGenerator> CODEC = RecordCodecBuilder
             .create((RecordCodecBuilder.Instance<BCLChunkGenerator> builderInstance) -> {
@@ -92,7 +100,13 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator {
         }
     }
 
-    public void restoreInitialBiomeSource() {
+    /**
+     * Other Mods like TerraBlender might inject new BiomeSources. We und that change after the world setup did run.
+     *
+     * @param dimensionKey The Dimension where this ChunkGenerator is used from
+     */
+    @Override
+    public void restoreInitialBiomeSource(ResourceKey<LevelStem> dimensionKey) {
         if (initialBiomeSource != getBiomeSource()) {
             if (this instanceof ChunkGeneratorAccessor acc) {
                 BiomeSource bs = WorldGenUtil.getWorldSettings()
@@ -122,7 +136,9 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator {
         return "BCLib - Chunk Generator (" + Integer.toHexString(hashCode()) + ")";
     }
 
-    //Make sure terrablender does not rewrite the feature-set
+    // This method is injected by Terrablender.
+    // We make sure terrablender does not rewrite the feature-set for our ChunkGenerator by overwriting the
+    // Mixin-Method with an empty implementation
     public void appendFeaturesPerStep() {
     }
 
@@ -138,15 +154,75 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator {
         }
     }
 
-    public static void restoreInitialBiomeSources(WorldGenSettings settings) {
-        restoreInitialBiomeSource(settings, LevelStem.NETHER);
-        restoreInitialBiomeSource(settings, LevelStem.END);
+    @Override
+    public WorldGenSettings enforceGeneratorInWorldGenSettings(
+            RegistryAccess access,
+            ResourceKey<LevelStem> dimensionKey,
+            ResourceKey<DimensionType> dimensionTypeKey,
+            ChunkGenerator loadedChunkGenerator,
+            WorldGenSettings settings
+    ) {
+        BCLib.LOGGER.info("Enforcing Correct Generator for " + dimensionKey.location().toString() + ".");
+
+        ChunkGenerator referenceGenerator = this;
+        if (loadedChunkGenerator instanceof org.betterx.bclib.interfaces.ChunkGeneratorAccessor generator) {
+            if (loadedChunkGenerator instanceof NoiseGeneratorSettingsProvider noiseProvider) {
+                if (referenceGenerator instanceof NoiseGeneratorSettingsProvider referenceProvider) {
+                    final BiomeSource bs;
+                    if (referenceGenerator.getBiomeSource() instanceof MergeableBiomeSource mbs) {
+                        bs = mbs.mergeWithBiomeSource(loadedChunkGenerator.getBiomeSource());
+                    } else {
+                        bs = referenceGenerator.getBiomeSource();
+                    }
+                    
+                    InternalBiomeAPI.applyModifications(bs, dimensionKey);
+                    referenceGenerator = new BCLChunkGenerator(
+                            generator.bclib_getStructureSetsRegistry(),
+                            noiseProvider.bclib_getNoises(),
+                            bs,
+                            buildGeneratorSettings(
+                                    referenceProvider.bclib_getNoiseGeneratorSettingHolders(),
+                                    noiseProvider.bclib_getNoiseGeneratorSettingHolders(),
+                                    bs
+                            )
+                    );
+                }
+            }
+        }
+
+        return LevelGenUtil.replaceGenerator(
+                dimensionKey,
+                dimensionTypeKey,
+                access,
+                settings,
+                referenceGenerator
+        );
+
     }
 
-    public static void restoreInitialBiomeSource(WorldGenSettings settings, ResourceKey<LevelStem> dimension) {
-        LevelStem loadedStem = settings.dimensions().getOrThrow(dimension);
-        if (loadedStem.generator() instanceof BCLChunkGenerator cg) {
-            cg.restoreInitialBiomeSource();
-        }
+    private static Holder<NoiseGeneratorSettings> buildGeneratorSettings(
+            Holder<NoiseGeneratorSettings> reference,
+            Holder<NoiseGeneratorSettings> settings,
+            BiomeSource biomeSource
+    ) {
+        return settings;
+//        NoiseGeneratorSettings old = settings.value();
+//        NoiseGeneratorSettings noise = new NoiseGeneratorSettings(
+//                old.noiseSettings(),
+//                old.defaultBlock(),
+//                old.defaultFluid(),
+//                old.noiseRouter(),
+//                SurfaceRuleRegistry.mergeSurfaceRulesFromBiomes(old.surfaceRule(), biomeSource),
+//                //SurfaceRuleUtil.addRulesForBiomeSource(old.surfaceRule(), biomeSource),
+//                old.spawnTarget(),
+//                old.seaLevel(),
+//                old.disableMobGeneration(),
+//                old.aquifersEnabled(),
+//                old.oreVeinsEnabled(),
+//                old.useLegacyRandomSource()
+//        );
+//
+//
+//        return Holder.direct(noise);
     }
 }

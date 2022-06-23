@@ -1,17 +1,16 @@
 package org.betterx.bclib.api.v2.generator;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.generator.map.hex.HexBiomeMap;
-import org.betterx.bclib.api.v2.generator.map.square.SquareBiomeMap;
+import org.betterx.bclib.api.v2.generator.config.BCLEndBiomeSourceConfig;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 import org.betterx.bclib.config.ConfigKeeper.StringArrayEntry;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.interfaces.BiomeMap;
 import org.betterx.bclib.interfaces.TheEndBiomeDataAccessor;
-import org.betterx.bclib.noise.OpenSimplexNoise;
 import org.betterx.bclib.presets.worldgen.BCLWorldPresetSettings;
-import org.betterx.worlds.together.world.WorldGenUtil;
+import org.betterx.worlds.together.biomesource.BiomeSourceWithConfig;
+import org.betterx.worlds.together.levelgen.WorldGenUtil;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -22,27 +21,22 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.levelgen.DensityFunction;
-import net.minecraft.world.level.levelgen.LegacyRandomSource;
-import net.minecraft.world.level.levelgen.WorldgenRandom;
-import net.minecraft.world.level.levelgen.synth.SimplexNoise;
 
 import net.fabricmc.fabric.impl.biome.TheEndBiomeData;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
+import org.jetbrains.annotations.NotNull;
 
-public class BCLibEndBiomeSource extends BCLBiomeSource {
-    private static final OpenSimplexNoise SMALL_NOISE = new OpenSimplexNoise(8324);
+public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWithConfig<BCLibEndBiomeSource, BCLEndBiomeSourceConfig> {
     public static Codec<BCLibEndBiomeSource> CODEC
             = RecordCodecBuilder.create((instance) -> instance.group(
                                                                       RegistryOps
@@ -53,11 +47,11 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
                                                                               .fieldOf("seed")
                                                                               .stable()
                                                                               .forGetter(source -> source.currentSeed),
-                                                                      Codec
-                                                                              .INT
-                                                                              .optionalFieldOf("version")
-                                                                              .stable()
-                                                                              .forGetter(source -> Optional.of(source.biomeSourceVersion))
+                                                                      BCLEndBiomeSourceConfig
+                                                                              .CODEC
+                                                                              .fieldOf("config")
+                                                                              .orElse(BCLEndBiomeSourceConfig.DEFAULT)
+                                                                              .forGetter(o -> o.config)
                                                               )
                                                               .apply(
                                                                       instance,
@@ -68,40 +62,40 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
     private final Holder<Biome> barrens;
     private final Point pos;
     private final BiFunction<Point, Integer, Boolean> endLandFunction;
-    private SimplexNoise noise;
     private BiomeMap mapLand;
     private BiomeMap mapVoid;
 
     private final BiomePicker endLandBiomePicker;
     private final BiomePicker endVoidBiomePicker;
 
-    private boolean generateEndVoids;
+    private BCLEndBiomeSourceConfig config;
 
-    public BCLibEndBiomeSource(Registry<Biome> biomeRegistry, long seed, Optional<Integer> version) {
-        this(biomeRegistry, seed, version, true);
+    public BCLibEndBiomeSource(Registry<Biome> biomeRegistry, long seed, BCLEndBiomeSourceConfig config) {
+        this(biomeRegistry, seed, config, true);
     }
 
-    public BCLibEndBiomeSource(Registry<Biome> biomeRegistry, Optional<Integer> version) {
-        this(biomeRegistry, 0, version, false);
+    public BCLibEndBiomeSource(Registry<Biome> biomeRegistry, BCLEndBiomeSourceConfig config) {
+        this(biomeRegistry, 0, config, false);
     }
 
-    private BCLibEndBiomeSource(Registry<Biome> biomeRegistry, long seed, Optional<Integer> version, boolean initMaps) {
-        this(biomeRegistry, getBiomes(biomeRegistry), seed, version, initMaps);
+    private BCLibEndBiomeSource(
+            Registry<Biome> biomeRegistry,
+            long seed,
+            BCLEndBiomeSourceConfig config,
+            boolean initMaps
+    ) {
+        this(biomeRegistry, getBiomes(biomeRegistry), seed, config, initMaps);
     }
 
     private BCLibEndBiomeSource(
             Registry<Biome> biomeRegistry,
             List<Holder<Biome>> list,
             long seed,
-            Optional<Integer> version,
+            BCLEndBiomeSourceConfig config,
             boolean initMaps
     ) {
-        super(biomeRegistry, list, seed, version);
-        if (WorldGenUtil.getWorldSettings() instanceof BCLWorldPresetSettings settings) {
-            generateEndVoids = settings.generateEndVoid;
-        } else {
-            generateEndVoids = true;
-        }
+        super(biomeRegistry, list, seed);
+        this.config = config;
 
         endLandBiomePicker = new BiomePicker(biomeRegistry);
         endVoidBiomePicker = new BiomePicker(biomeRegistry);
@@ -133,7 +127,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
                 BCLBiome bclBiome = BiomeAPI.getBiome(key);
                 if (bclBiome != BiomeAPI.EMPTY_BIOME) {
                     if (bclBiome.getParentBiome() == null) {
-                        if (generateEndVoids) {
+                        if (config.withVoidBiomes) {
                             if (BiomeAPI.wasRegisteredAsEndVoidBiome(key) || includeVoid.contains(key.toString())) {
                                 endVoidBiomePicker.addBiome(bclBiome);
                             } else if (BiomeAPI.wasRegisteredAsEndLandBiome(key) || includeLand.contains(key.toString())) {
@@ -144,7 +138,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
                                 endLandBiomePicker.addBiome(bclBiome);
                                 endVoidBiomePicker.addBiome(bclBiome);
                             }
-                            if (!key.equals(Biomes.SMALL_END_ISLANDS) && !key.equals(Biomes.THE_END)
+                            if (!key.equals(Biomes.SMALL_END_ISLANDS.location()) && !key.equals(Biomes.THE_END.location())
                                     && (BiomeAPI.wasRegisteredAsEndVoidBiome(key) || includeVoid.contains(key.toString()))
                             ) {
                                 endVoidBiomePicker.addBiome(bclBiome);
@@ -183,7 +177,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
                 this.biomeRegistry,
                 datapackBiomes.stream().toList(),
                 this.currentSeed,
-                Optional.of(biomeSourceVersion),
+                this.config,
                 true
         );
     }
@@ -258,63 +252,23 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
                 BiomeAPI.wasRegisteredAs(location, BiomeAPI.BiomeType.BCL_END_VOID);
     }
 
-
-    public static float getLegacyHeightValue(SimplexNoise simplexNoise, int i, int j) {
-        int k = i / 2;
-        int l = j / 2;
-        int m = i % 2;
-        int n = j % 2;
-        float f = 100.0f - Mth.sqrt(i * i + j * j) * 8.0f;
-        f = Mth.clamp(f, -100.0f, 80.0f);
-        for (int o = -12; o <= 12; ++o) {
-            for (int p = -12; p <= 12; ++p) {
-                long q = k + o;
-                long r = l + p;
-                if (q * q + r * r <= 4096L || !(simplexNoise.getValue(q, r) < (double) -0.9f)) continue;
-                float g = (Mth.abs(q) * 3439.0f + Mth.abs(r) * 147.0f) % 13.0f + 9.0f;
-                float h = m - o * 2;
-                float s = n - p * 2;
-                float t = 100.0f - Mth.sqrt(h * h + s * s) * g;
-                t = Mth.clamp(t, -100.0f, 80.0f);
-                f = Math.max(f, t);
-            }
-        }
-        return f;
-    }
-
     public static void register() {
         Registry.register(Registry.BIOME_SOURCE, BCLib.makeID("end_biome_source"), CODEC);
     }
 
     @Override
     protected void onInitMap(long seed) {
-        if ((biomeSourceVersion != BIOME_SOURCE_VERSION_HEX)) {
-            this.mapLand = new SquareBiomeMap(
-                    seed,
-                    GeneratorOptions.getBiomeSizeEndLand(),
-                    endLandBiomePicker
-            );
-            this.mapVoid = new SquareBiomeMap(
-                    seed,
-                    GeneratorOptions.getBiomeSizeEndVoid(),
-                    endVoidBiomePicker
-            );
-        } else {
-            this.mapLand = new HexBiomeMap(
-                    seed,
-                    GeneratorOptions.getBiomeSizeEndLand(),
-                    endLandBiomePicker
-            );
-            this.mapVoid = new HexBiomeMap(
-                    seed,
-                    GeneratorOptions.getBiomeSizeEndVoid(),
-                    endVoidBiomePicker
-            );
-        }
+        this.mapLand = config.mapVersion.mapBuilder.apply(
+                seed,
+                GeneratorOptions.getBiomeSizeEndLand(),
+                endLandBiomePicker
+        );
 
-        WorldgenRandom chunkRandom = new WorldgenRandom(new LegacyRandomSource(seed));
-        chunkRandom.consumeCount(17292);
-        this.noise = new SimplexNoise(chunkRandom);
+        this.mapVoid = config.mapVersion.mapBuilder.apply(
+                seed,
+                GeneratorOptions.getBiomeSizeEndVoid(),
+                endVoidBiomePicker
+        );
     }
 
     @Override
@@ -323,17 +277,16 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
     }
 
     @Override
-    public Holder<Biome> getNoiseBiome(int biomeX, int biomeY, int biomeZ, Climate.Sampler sampler) {
+    public Holder<Biome> getNoiseBiome(int biomeX, int biomeY, int biomeZ, Climate.@NotNull Sampler sampler) {
         if (mapLand == null || mapVoid == null)
-            return this.possibleBiomes().stream().findFirst().get();
+            return this.possibleBiomes().stream().findFirst().orElseThrow();
 
         int posX = QuartPos.toBlock(biomeX);
         int posY = QuartPos.toBlock(biomeY);
         int posZ = QuartPos.toBlock(biomeZ);
-        long farEndBiomes = GeneratorOptions.getFarEndBiomes();
 
-        long dist = Math.abs(posX) + Math.abs(posZ) > farEndBiomes
-                ? (farEndBiomes + 1)
+        long dist = Math.abs(posX) + Math.abs(posZ) > (long) config.innerVoidRadiusSquared
+                ? ((long) config.innerVoidRadiusSquared + 1)
                 : (long) posX * (long) posX + (long) posZ * (long) posZ;
 
         if ((biomeX & 63) == 0 && (biomeZ & 63) == 0) {
@@ -341,8 +294,8 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
             mapVoid.clearCache();
         }
 
-        if (endLandFunction == null) {
-            if (dist <= farEndBiomes) {
+        if (config.generatorVersion == BCLEndBiomeSourceConfig.EndBiomeGeneratorType.VANILLA || endLandFunction == null) {
+            if (dist <= (long) config.innerVoidRadiusSquared) {
                 return this.centerBiome;
             }
             int x = (SectionPos.blockToSectionCoord(posX) * 2 + 1) * 8;
@@ -355,14 +308,15 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
             } else {
                 return d < -0.21875
                         ? mapVoid.getBiome(posX, biomeY << 2, posZ).biome
-                        : generateEndVoids ? this.barrens : mapVoid.getBiome(posX, biomeY << 2, posZ).biome;
+                        : config.withVoidBiomes ? this.barrens : mapVoid.getBiome(posX, biomeY << 2, posZ).biome;
             }
         } else {
             pos.setLocation(biomeX, biomeZ);
             if (endLandFunction.apply(pos, maxHeight)) {
-                return dist <= farEndBiomes ? centerBiome : mapLand.getBiome(posX, biomeY << 2, posZ).biome;
+                return dist <= (long) config.innerVoidRadiusSquared
+                        ? centerBiome : mapLand.getBiome(posX, biomeY << 2, posZ).biome;
             } else {
-                return dist <= farEndBiomes
+                return dist <= (long) config.innerVoidRadiusSquared
                         ? barrens
                         : mapVoid.getBiome(posX, biomeY << 2, posZ).biome;
             }
@@ -378,6 +332,17 @@ public class BCLibEndBiomeSource extends BCLBiomeSource {
 
     @Override
     public String toString() {
-        return "BCLib - The End BiomeSource (" + Integer.toHexString(hashCode()) + ", version=" + biomeSourceVersion + ", seed=" + currentSeed + ", height=" + maxHeight + ", voids=" + generateEndVoids + ", customLand=" + (endLandFunction != null) + ", biomes=" + possibleBiomes().size() + ")";
+        return "BCLib - The End BiomeSource (" + Integer.toHexString(hashCode()) + ", config=" + config + ", seed=" + currentSeed + ", height=" + maxHeight + ", customLand=" + (endLandFunction != null) + ", biomes=" + possibleBiomes().size() + ")";
+    }
+
+    @Override
+    public BCLEndBiomeSourceConfig getTogetherConfig() {
+        return config;
+    }
+
+    @Override
+    public void setTogetherConfig(BCLEndBiomeSourceConfig newConfig) {
+        this.config = newConfig;
+        this.initMap(currentSeed);
     }
 }

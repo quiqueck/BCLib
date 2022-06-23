@@ -5,10 +5,9 @@ import org.betterx.bclib.interfaces.BiomeChunk;
 import org.betterx.bclib.interfaces.BiomeMap;
 import org.betterx.bclib.interfaces.TriConsumer;
 import org.betterx.bclib.noise.OpenSimplexNoise;
+import org.betterx.bclib.util.TriFunction;
 
 import net.minecraft.util.Mth;
-
-import org.apache.commons.lang3.function.TriFunction;
 
 import java.util.Random;
 

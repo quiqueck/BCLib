@@ -6,21 +6,14 @@ import org.betterx.bclib.api.v2.datafixer.MigrationProfile;
 import org.betterx.bclib.api.v2.generator.GeneratorOptions;
 import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
 import org.betterx.bclib.config.Configs;
-import org.betterx.bclib.util.MHelper;
 
-import com.mojang.serialization.Dynamic;
-import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.LevelStem;
-import net.minecraft.world.level.levelgen.WorldGenSettings;
-
-import java.util.Optional;
 
 public final class BCLibPatch {
     public static void register() {
@@ -94,60 +87,60 @@ final class BiomeSourcePatch extends ForcedLevelPatch {
             RegistryOps<Tag> registryOps,
             ResourceKey<LevelStem> dimensionKey
     ) {
-
-        final long seed = worldGenSettings.contains("seed")
-                ? worldGenSettings.getLong("seed")
-                : MHelper.RANDOM.nextLong();
-
-        final boolean genStructures = !worldGenSettings.contains("generate_features") || worldGenSettings.getBoolean(
-                "generate_features");
-
-        final boolean genBonusChest = worldGenSettings.contains("bonus_chest") && worldGenSettings.getBoolean(
-                "bonus_chest");
-
         boolean result = false;
-        CompoundTag dimensionTag = dimensions.getCompound(dimensionKey.location().toString());
-        Optional<WorldGenSettings> oWorldGen = WorldGenSettings.CODEC
-                .parse(new Dynamic<>(registryOps, worldGenSettings))
-                .result();
-
-        Optional<LevelStem> oLevelStem = LevelStem.CODEC
-                .parse(new Dynamic<>(registryOps, dimensionTag))
-                .resultOrPartial(BCLib.LOGGER::error);
-
-        Optional<ChunkGenerator> netherGenerator = oLevelStem.map(l -> l.generator());
-        int biomeSourceVersion = LevelGenUtil.getBiomeVersionForGenerator(netherGenerator.orElse(null));
-        int targetVersion = LevelGenUtil.getBiomeVersionForCurrentWorld(dimensionKey);
-        if (biomeSourceVersion != targetVersion) {
-            Optional<Holder<LevelStem>> refLevelStem = LevelGenUtil.referenceStemForVersion(
-                    dimensionKey,
-                    targetVersion,
-                    registryAccess,
-                    oWorldGen.map(g -> g.seed()).orElse(seed),
-                    oWorldGen.map(g -> g.generateStructures()).orElse(genStructures),
-                    oWorldGen.map(g -> g.generateBonusChest()).orElse(genBonusChest)
-            );
-
-            BCLib.LOGGER.warning("The world uses the BiomeSource Version " + biomeSourceVersion + " but should have " + targetVersion + ".");
-            BCLib.LOGGER.warning("Dimension: " + dimensionKey);
-            BCLib.LOGGER.warning("Found: " + netherGenerator);
-            BCLib.LOGGER.warning("Should: " + refLevelStem.map(l -> l.value().generator()));
-
-            if (refLevelStem.isPresent()) {
-                var levelStem = refLevelStem.get();
-                BCLib.LOGGER.warning("Repairing level.dat in order to ensure world continuity.");
-                var codec = LevelStem.CODEC.orElse(levelStem.value());
-                var encodeResult = codec.encodeStart(registryOps, levelStem.value());
-                if (encodeResult.result().isPresent()) {
-                    dimensions.put(dimensionKey.location().toString(), encodeResult.result().get());
-                    result = true;
-                } else {
-                    BCLib.LOGGER.error("Unable to encode '" + dimensionKey + "' generator for level.dat.");
-                }
-            } else {
-                BCLib.LOGGER.error("Unable to update '" + dimensionKey + "' generator in level.dat.");
-            }
-        }
+//        final long seed = worldGenSettings.contains("seed")
+//                ? worldGenSettings.getLong("seed")
+//                : MHelper.RANDOM.nextLong();
+//
+//        final boolean genStructures = !worldGenSettings.contains("generate_features") || worldGenSettings.getBoolean(
+//                "generate_features");
+//
+//        final boolean genBonusChest = worldGenSettings.contains("bonus_chest") && worldGenSettings.getBoolean(
+//                "bonus_chest");
+//
+//
+//        CompoundTag dimensionTag = dimensions.getCompound(dimensionKey.location().toString());
+//        Optional<WorldGenSettings> oWorldGen = WorldGenSettings.CODEC
+//                .parse(new Dynamic<>(registryOps, worldGenSettings))
+//                .result();
+//
+//        Optional<LevelStem> oLevelStem = LevelStem.CODEC
+//                .parse(new Dynamic<>(registryOps, dimensionTag))
+//                .resultOrPartial(BCLib.LOGGER::error);
+//
+//        Optional<ChunkGenerator> netherGenerator = oLevelStem.map(l -> l.generator());
+//        int biomeSourceVersion = LevelGenUtil.getBiomeVersionForGenerator(netherGenerator.orElse(null));
+//        int targetVersion = LevelGenUtil.getBiomeVersionForCurrentWorld(dimensionKey);
+//        if (biomeSourceVersion != targetVersion) {
+//            Optional<Holder<LevelStem>> refLevelStem = LevelGenUtil.referenceStemForVersion(
+//                    dimensionKey,
+//                    targetVersion,
+//                    registryAccess,
+//                    oWorldGen.map(g -> g.seed()).orElse(seed),
+//                    oWorldGen.map(g -> g.generateStructures()).orElse(genStructures),
+//                    oWorldGen.map(g -> g.generateBonusChest()).orElse(genBonusChest)
+//            );
+//
+//            BCLib.LOGGER.warning("The world uses the BiomeSource Version " + biomeSourceVersion + " but should have " + targetVersion + ".");
+//            BCLib.LOGGER.warning("Dimension: " + dimensionKey);
+//            BCLib.LOGGER.warning("Found: " + netherGenerator);
+//            BCLib.LOGGER.warning("Should: " + refLevelStem.map(l -> l.value().generator()));
+//
+//            if (refLevelStem.isPresent()) {
+//                var levelStem = refLevelStem.get();
+//                BCLib.LOGGER.warning("Repairing level.dat in order to ensure world continuity.");
+//                var codec = LevelStem.CODEC.orElse(levelStem.value());
+//                var encodeResult = codec.encodeStart(registryOps, levelStem.value());
+//                if (encodeResult.result().isPresent()) {
+//                    dimensions.put(dimensionKey.location().toString(), encodeResult.result().get());
+//                    result = true;
+//                } else {
+//                    BCLib.LOGGER.error("Unable to encode '" + dimensionKey + "' generator for level.dat.");
+//                }
+//            } else {
+//                BCLib.LOGGER.error("Unable to update '" + dimensionKey + "' generator in level.dat.");
+//            }
+//        }
 
         return result;
     }

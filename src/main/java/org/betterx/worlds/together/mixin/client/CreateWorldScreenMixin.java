@@ -1,6 +1,6 @@
 package org.betterx.worlds.together.mixin.client;
 
-import org.betterx.worlds.together.world.WorldGenUtil;
+import org.betterx.worlds.together.levelgen.WorldGenUtil;
 import org.betterx.worlds.together.world.event.WorldBootstrap;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
 

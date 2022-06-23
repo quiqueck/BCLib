@@ -1,6 +1,6 @@
-package org.betterx.bclib.mixin.common;
+package org.betterx.worlds.together.mixin.common;
 
-import org.betterx.bclib.api.v2.generator.BCLChunkGenerator;
+import org.betterx.worlds.together.chunkgenerator.ChunkGeneratorUtils;
 
 import com.mojang.datafixers.DataFixer;
 import net.minecraft.server.MinecraftServer;
@@ -31,6 +31,6 @@ public class MinecraftServerMixinLate {
             ChunkProgressListenerFactory chunkProgressListenerFactory,
             CallbackInfo ci
     ) {
-        BCLChunkGenerator.restoreInitialBiomeSources(worldStem.worldData().worldGenSettings());
+        ChunkGeneratorUtils.restoreOriginalBiomeSourceInAllDimension(worldStem.worldData().worldGenSettings());
     }
 }

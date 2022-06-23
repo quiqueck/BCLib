@@ -1,6 +1,6 @@
 package org.betterx.worlds.together.mixin.common;
 
-import org.betterx.worlds.together.world.WorldGenUtil;
+import org.betterx.worlds.together.levelgen.WorldGenUtil;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
 import org.betterx.worlds.together.worldPreset.settings.WorldPresetSettings;
 

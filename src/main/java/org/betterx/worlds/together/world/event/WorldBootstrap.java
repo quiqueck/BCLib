@@ -2,9 +2,10 @@ package org.betterx.worlds.together.world.event;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.worlds.together.WorldsTogether;
+import org.betterx.worlds.together.levelgen.WorldGenUtil;
 import org.betterx.worlds.together.mixin.common.RegistryOpsAccessor;
+import org.betterx.worlds.together.mixin.common.WorldPresetAccessor;
 import org.betterx.worlds.together.world.WorldConfig;
-import org.betterx.worlds.together.world.WorldGenUtil;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
 import org.betterx.worlds.together.worldPreset.WorldGenSettingsComponentAccessor;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
@@ -36,15 +37,15 @@ public class WorldBootstrap {
     }
 
     public static class Helpers {
-        private static void initializeWorldDataAPI(
+        private static void initializeWorldConfig(
                 LevelStorageSource.LevelStorageAccess levelStorageAccess,
                 boolean newWorld
         ) {
             File levelPath = levelStorageAccess.getLevelPath(LevelResource.ROOT).toFile();
-            initializeWorldDataAPI(levelPath, newWorld);
+            initializeWorldConfig(levelPath, newWorld);
         }
 
-        private static void initializeWorldDataAPI(File levelBaseDir, boolean newWorld) {
+        private static void initializeWorldConfig(File levelBaseDir, boolean newWorld) {
             WorldConfig.load(new File(levelBaseDir, "data"));
 
             if (newWorld) {
@@ -105,12 +106,12 @@ public class WorldBootstrap {
                 BCLib.LOGGER.info("Creating a new World, no fixes needed");
                 final WorldPresetSettings settings = Helpers.defaultServerSettings();
 
-                Helpers.initializeWorldDataAPI(levelStorageAccess, true);
+                Helpers.initializeWorldConfig(levelStorageAccess, true);
                 WorldEventsImpl.BEFORE_SERVER_WORLD_LOAD.emit(e -> e.prepareWorld(
                         levelStorageAccess, settings, true
                 ));
             } else {
-                Helpers.initializeWorldDataAPI(levelStorageAccess, false);
+                Helpers.initializeWorldConfig(levelStorageAccess, false);
                 WorldEventsImpl.BEFORE_SERVER_WORLD_LOAD.emit(e -> e.prepareWorld(
                         levelStorageAccess,
                         WorldGenUtil.getWorldSettings(),
@@ -130,6 +131,12 @@ public class WorldBootstrap {
                 settings = t.settings;
             }
             TogetherWorldPreset.writeWorldPresetSettings(settings);
+            if (currentPreset.map(h -> h.value()).orElse(null) instanceof WorldPresetAccessor acc) {
+                TogetherWorldPreset.writeWorldPresetSettings(acc.bcl_getDimensions());
+            } else {
+                WorldsTogether.LOGGER.error("Failed writing together File");
+                //TogetherWorldPreset.writeWorldPresetSettings(worldGenSettings);
+            }
             WorldEventsImpl.ON_WORLD_LOAD.emit(OnWorldLoad::onLoad);
         }
     }
@@ -173,9 +180,9 @@ public class WorldBootstrap {
         static Optional<Holder<WorldPreset>> setupNewWorldCommon(
                 LevelStorageSource.LevelStorageAccess levelStorageAccess,
                 Optional<Holder<WorldPreset>> currentPreset,
-                WorldGenSettings worldgenSettings
+                WorldGenSettings worldGenSettings
         ) {
-            Helpers.initializeWorldDataAPI(levelStorageAccess, true);
+            Helpers.initializeWorldConfig(levelStorageAccess, true);
 
 
             final WorldPresetSettings settings;
@@ -193,9 +200,15 @@ public class WorldBootstrap {
                     true
             ));
 
-            currentPreset = WorldEventsImpl.ADAPT_WORLD_PRESET.emit(currentPreset, worldgenSettings);
+            currentPreset = WorldEventsImpl.ADAPT_WORLD_PRESET.emit(currentPreset, worldGenSettings);
 
             TogetherWorldPreset.writeWorldPresetSettings(currentPreset);
+            if (currentPreset.map(h -> h.value()).orElse(null) instanceof WorldPresetAccessor acc) {
+                TogetherWorldPreset.writeWorldPresetSettings(acc.bcl_getDimensions());
+            } else {
+                WorldsTogether.LOGGER.error("Failed writing together File");
+                //TogetherWorldPreset.writeWorldPresetSettings(worldGenSettings);
+            }
 
             //LifeCycleAPI._runBeforeLevelLoad();
             WorldEventsImpl.ON_WORLD_LOAD.emit(OnWorldLoad::onLoad);
@@ -212,7 +225,7 @@ public class WorldBootstrap {
         ) {
             try {
                 var levelStorageAccess = levelSource.createAccess(levelID);
-                Helpers.initializeWorldDataAPI(levelStorageAccess, false);
+                Helpers.initializeWorldConfig(levelStorageAccess, false);
 
                 //Helpers.setupWorld();
                 WorldEventsImpl.BEFORE_WORLD_LOAD.emit(e -> e.prepareWorld(
@@ -270,10 +283,7 @@ public class WorldBootstrap {
     }
 
     public static WorldGenSettings enforceInNewWorld(WorldGenSettings worldGenSettings) {
-        worldGenSettings = WorldGenUtil
-                .getWorldSettings()
-                .repairSettingsOnLoad(LAST_REGISTRY_ACCESS, worldGenSettings);
-        return worldGenSettings;
+        return WorldGenUtil.repairBiomeSourceInAllDimensions(LAST_REGISTRY_ACCESS, worldGenSettings);
     }
 
     public static WorldGenSettings enforceInLoadedWorld(
@@ -281,9 +291,7 @@ public class WorldBootstrap {
             WorldGenSettings worldGenSettings
     ) {
         if (registryOps.orElse(null) instanceof RegistryOpsAccessor acc) {
-            return WorldGenUtil
-                    .getWorldSettings()
-                    .repairSettingsOnLoad(acc.bcl_getRegistryAccess(), worldGenSettings);
+            return WorldGenUtil.repairBiomeSourceInAllDimensions(acc.bcl_getRegistryAccess(), worldGenSettings);
             //.repairSettingsOnLoad(LAST_REGISTRY_ACCESS, worldGenSettings);
         } else {
             BCLib.LOGGER.error("Unable to obtain registryAccess when enforcing generators.");

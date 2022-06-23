@@ -5,11 +5,13 @@ import org.betterx.bclib.api.v2.generator.BCLBiomeSource;
 import org.betterx.bclib.api.v2.generator.BCLChunkGenerator;
 import org.betterx.bclib.api.v2.generator.BCLibEndBiomeSource;
 import org.betterx.bclib.api.v2.generator.BCLibNetherBiomeSource;
+import org.betterx.bclib.api.v2.generator.config.BCLEndBiomeSourceConfig;
+import org.betterx.bclib.api.v2.generator.config.BCLNetherBiomeSourceConfig;
 import org.betterx.bclib.presets.worldgen.BCLWorldPresetSettings;
 import org.betterx.bclib.registry.PresetsRegistry;
+import org.betterx.worlds.together.levelgen.WorldGenUtil;
 import org.betterx.worlds.together.util.ModUtil;
 import org.betterx.worlds.together.world.WorldConfig;
-import org.betterx.worlds.together.world.WorldGenUtil;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
 import org.betterx.worlds.together.worldPreset.settings.WorldPresetSettings;
 
@@ -20,7 +22,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
@@ -35,39 +36,31 @@ public class LevelGenUtil {
     private static final String TAG_BN_GEN_VERSION = "generator_version";
 
     @NotNull
-    public static LevelStem getBCLNetherLevelStem(WorldGenUtil.Context context, Optional<Integer> version) {
-        BCLibNetherBiomeSource netherSource = new BCLibNetherBiomeSource(context.biomes, version);
-        return getBCLNetherLevelStem(context, netherSource);
-    }
+    public static LevelStem getBCLNetherLevelStem(WorldGenUtil.Context context, BCLNetherBiomeSourceConfig config) {
+        BCLibNetherBiomeSource netherSource = new BCLibNetherBiomeSource(context.biomes, config);
 
-    public static LevelStem getBCLNetherLevelStem(WorldGenUtil.StemContext context, BiomeSource biomeSource) {
         return new LevelStem(
                 context.dimension,
                 new BCLChunkGenerator(
                         context.structureSets,
                         context.noiseParameters,
-                        biomeSource,
+                        netherSource,
                         context.generatorSettings
                 )
         );
     }
 
-    @NotNull
-    public static LevelStem getBCLEndLevelStem(WorldGenUtil.StemContext context, BiomeSource biomeSource) {
+    public static LevelStem getBCLEndLevelStem(WorldGenUtil.Context context, BCLEndBiomeSourceConfig config) {
+        BCLibEndBiomeSource endSource = new BCLibEndBiomeSource(context.biomes, config);
         return new LevelStem(
                 context.dimension,
                 new BCLChunkGenerator(
                         context.structureSets,
                         context.noiseParameters,
-                        biomeSource,
+                        endSource,
                         context.generatorSettings
                 )
         );
-    }
-
-    public static LevelStem getBCLEndLevelStem(WorldGenUtil.Context context, Optional<Integer> version) {
-        BCLibEndBiomeSource endSource = new BCLibEndBiomeSource(context.biomes, version);
-        return getBCLEndLevelStem(context, endSource);
     }
 
 
@@ -178,10 +171,10 @@ public class LevelGenUtil {
         return writableRegistry;
     }
 
-    public static int getBiomeVersionForGenerator(ChunkGenerator generator) {
-        if (generator == null) return BCLBiomeSource.getVersionBiomeSource(null);
-        return BCLBiomeSource.getVersionBiomeSource(generator.getBiomeSource());
-    }
+//    public static int getBiomeVersionForGenerator(ChunkGenerator generator) {
+//        if (generator == null) return BCLBiomeSource.getVersionBiomeSource(null);
+//        return BCLBiomeSource.getVersionBiomeSource(generator.getBiomeSource());
+//    }
 
     public static Optional<Holder<LevelStem>> referenceStemForVersion(
             ResourceKey<LevelStem> dimensionKey,
@@ -224,25 +217,25 @@ public class LevelGenUtil {
         return settingsNbt.getInt(key.location().toString());
     }
 
-    private static int getDimensionVersion(
-            WorldGenSettings settings,
-            ResourceKey<LevelStem> key
-    ) {
-        var dimension = settings.dimensions().getHolder(key);
-        if (dimension.isPresent()) {
-            return getBiomeVersionForGenerator(dimension.get().value().generator());
-        } else {
-            return getBiomeVersionForGenerator(null);
-        }
-    }
+//    private static int getDimensionVersion(
+//            WorldGenSettings settings,
+//            ResourceKey<LevelStem> key
+//    ) {
+//        var dimension = settings.dimensions().getHolder(key);
+//        if (dimension.isPresent()) {
+//            return getBiomeVersionForGenerator(dimension.get().value().generator());
+//        } else {
+//            return getBiomeVersionForGenerator(null);
+//        }
+//    }
 
-    private static void writeDimensionVersion(
-            WorldGenSettings settings,
-            CompoundTag generatorSettings,
-            ResourceKey<LevelStem> key
-    ) {
-        generatorSettings.putInt(key.location().toString(), getDimensionVersion(settings, key));
-    }
+//    private static void writeDimensionVersion(
+//            WorldGenSettings settings,
+//            CompoundTag generatorSettings,
+//            ResourceKey<LevelStem> key
+//    ) {
+//        generatorSettings.putInt(key.location().toString(), getDimensionVersion(settings, key));
+//    }
 
     public static void migrateGeneratorSettings() {
         final CompoundTag settingsNbt = WorldGenUtil.getSettingsNbt();

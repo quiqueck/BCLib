@@ -1,14 +1,15 @@
 package org.betterx.bclib.api.v2.generator;
 
 import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.generator.config.BCLNetherBiomeSourceConfig;
 import org.betterx.bclib.api.v2.generator.map.MapStack;
-import org.betterx.bclib.api.v2.generator.map.hex.HexBiomeMap;
-import org.betterx.bclib.api.v2.generator.map.square.SquareBiomeMap;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 import org.betterx.bclib.config.ConfigKeeper.StringArrayEntry;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.interfaces.BiomeMap;
+import org.betterx.bclib.util.TriFunction;
+import org.betterx.worlds.together.biomesource.BiomeSourceWithConfig;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -23,13 +24,10 @@ import net.minecraft.world.level.biome.Climate;
 
 import net.fabricmc.fabric.api.biome.v1.NetherBiomes;
 
-import org.apache.commons.lang3.function.TriFunction;
-
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
-public class BCLibNetherBiomeSource extends BCLBiomeSource {
+public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourceWithConfig<BCLibNetherBiomeSource, BCLNetherBiomeSourceConfig> {
     public static final Codec<BCLibNetherBiomeSource> CODEC = RecordCodecBuilder
             .create(instance -> instance
                     .group(
@@ -43,43 +41,44 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource {
                                     .forGetter(source -> {
                                         return source.currentSeed;
                                     }),
-                            Codec
-                                    .INT
-                                    .optionalFieldOf("version")
-                                    .stable()
-                                    .forGetter(source -> Optional.of(source.biomeSourceVersion))
+                            BCLNetherBiomeSourceConfig
+                                    .CODEC
+                                    .fieldOf("config")
+                                    .orElse(BCLNetherBiomeSourceConfig.DEFAULT)
+                                    .forGetter(o -> o.config)
                     )
                     .apply(instance, instance.stable(BCLibNetherBiomeSource::new))
             );
     private BiomeMap biomeMap;
     private final BiomePicker biomePicker;
+    private BCLNetherBiomeSourceConfig config;
 
-    public BCLibNetherBiomeSource(Registry<Biome> biomeRegistry, Optional<Integer> version) {
-        this(biomeRegistry, 0, version, false);
+    public BCLibNetherBiomeSource(Registry<Biome> biomeRegistry, BCLNetherBiomeSourceConfig config) {
+        this(biomeRegistry, 0, config, false);
     }
 
-    public BCLibNetherBiomeSource(Registry<Biome> biomeRegistry, long seed, Optional<Integer> version) {
-        this(biomeRegistry, seed, version, true);
+    public BCLibNetherBiomeSource(Registry<Biome> biomeRegistry, long seed, BCLNetherBiomeSourceConfig config) {
+        this(biomeRegistry, seed, config, true);
     }
 
     private BCLibNetherBiomeSource(
             Registry<Biome> biomeRegistry,
             long seed,
-            Optional<Integer> version,
+            BCLNetherBiomeSourceConfig config,
             boolean initMaps
     ) {
-        this(biomeRegistry, getBiomes(biomeRegistry), seed, version, initMaps);
+        this(biomeRegistry, getBiomes(biomeRegistry), seed, config, initMaps);
     }
 
     private BCLibNetherBiomeSource(
             Registry<Biome> biomeRegistry,
             List<Holder<Biome>> list,
             long seed,
-            Optional<Integer> version,
+            BCLNetherBiomeSourceConfig config,
             boolean initMaps
     ) {
-        super(biomeRegistry, list, seed, version);
-
+        super(biomeRegistry, list, seed);
+        this.config = config;
         biomePicker = new BiomePicker(biomeRegistry);
 
         this.possibleBiomes().forEach(biome -> {
@@ -111,7 +110,7 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource {
                 this.biomeRegistry,
                 datapackBiomes.stream().toList(),
                 this.currentSeed,
-                Optional.of(biomeSourceVersion),
+                config,
                 true
         );
     }
@@ -181,9 +180,7 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource {
 
     @Override
     protected void onInitMap(long seed) {
-        TriFunction<Long, Integer, BiomePicker, BiomeMap> mapConstructor = (biomeSourceVersion != BIOME_SOURCE_VERSION_HEX)
-                ? SquareBiomeMap::new
-                : HexBiomeMap::new;
+        TriFunction<Long, Integer, BiomePicker, BiomeMap> mapConstructor = config.mapVersion.mapBuilder;
         if (maxHeight > 128 && GeneratorOptions.useVerticalBiomes()) {
             this.biomeMap = new MapStack(
                     seed,
@@ -209,6 +206,17 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource {
 
     @Override
     public String toString() {
-        return "BCLib - Nether BiomeSource (" + Integer.toHexString(hashCode()) + ", version=" + biomeSourceVersion + ", seed=" + currentSeed + ", height=" + maxHeight + ", biomes=" + possibleBiomes().size() + ")";
+        return "BCLib - Nether BiomeSource (" + Integer.toHexString(hashCode()) + ", config=" + config + ", seed=" + currentSeed + ", height=" + maxHeight + ", biomes=" + possibleBiomes().size() + ")";
+    }
+
+    @Override
+    public BCLNetherBiomeSourceConfig getTogetherConfig() {
+        return config;
+    }
+
+    @Override
+    public void setTogetherConfig(BCLNetherBiomeSourceConfig newConfig) {
+        this.config = config;
+        initMap(currentSeed);
     }
 }

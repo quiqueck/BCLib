@@ -1,6 +1,6 @@
 package org.betterx.worlds.together.mixin.common;
 
-import org.betterx.worlds.together.world.WorldGenUtil;
+import org.betterx.worlds.together.surfaceRules.SurfaceRuleUtil;
 
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.MinecraftServer;
@@ -29,6 +29,6 @@ public class MinecraftServerMixin {
 
     @Inject(method = "createLevels", at = @At(value = "HEAD"))
     private void together_addSurfaceRules(ChunkProgressListener worldGenerationProgressListener, CallbackInfo ci) {
-        WorldGenUtil.getWorldSettings().injectSurfaceRules(registryHolder, this.worldData.worldGenSettings());
+        SurfaceRuleUtil.injectSurfaceRulesToAllDimensions(this.worldData.worldGenSettings());
     }
 }

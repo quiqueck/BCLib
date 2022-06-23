@@ -1,7 +1,5 @@
 package org.betterx.bclib.api.v2.levelgen.biomes;
 
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.levelgen.surface.SurfaceRuleUtil;
 import org.betterx.bclib.util.WeightedList;
 import org.betterx.worlds.together.tag.v3.TagManager;
 
@@ -11,8 +9,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Climate;
-import net.minecraft.world.level.levelgen.SurfaceRules;
-import net.minecraft.world.level.levelgen.SurfaceRules.RuleSource;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 
 import com.google.common.collect.Lists;
@@ -36,7 +32,6 @@ public class BCLBiome extends BCLBiomeSettings {
 
     private final List<Climate.ParameterPoint> parameterPoints = Lists.newArrayList();
 
-    private Consumer<ResourceKey<Biome>> surfaceInit;
     private BCLBiome biomeParent;
 
     /**
@@ -202,10 +197,6 @@ public class BCLBiome extends BCLBiomeSettings {
     void afterRegistration() {
         ResourceKey<Biome> key = BuiltinRegistries.BIOME.getResourceKey(getBiome()).orElseThrow();
         this.biomeTags.forEach(tagKey -> TagManager.BIOMES.add(tagKey, biome));
-
-        if (this.surfaceInit != null) {
-            surfaceInit.accept(key);
-        }
     }
 
 
@@ -295,21 +286,6 @@ public class BCLBiome extends BCLBiomeSettings {
 
     public void forEachClimateParameter(Consumer<Climate.ParameterPoint> consumer) {
         this.parameterPoints.forEach(consumer);
-    }
-
-    /**
-     * Sets biome surface rule.
-     *
-     * @param surface {@link SurfaceRules.RuleSource} rule.
-     */
-    void setSurface(RuleSource surface) {
-        this.surfaceInit = (key) -> {
-            if (key == null) {
-                BCLib.LOGGER.warning("BCL Biome " + biomeID + " does not have registry key!");
-            } else {
-                SurfaceRuleUtil.addSurfaceRule(biomeID, SurfaceRules.ifTrue(SurfaceRules.isBiome(key), surface));
-            }
-        };
     }
 
     /**

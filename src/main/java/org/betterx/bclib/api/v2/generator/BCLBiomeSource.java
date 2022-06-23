@@ -1,6 +1,7 @@
 package org.betterx.bclib.api.v2.generator;
 
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
+import org.betterx.worlds.together.biomesource.MergeableBiomeSource;
 import org.betterx.worlds.together.world.BiomeSourceWithSeed;
 
 import net.minecraft.core.Holder;
@@ -13,11 +14,9 @@ import com.google.common.collect.Sets;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
-public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceWithSeed {
-    public static int BIOME_SOURCE_VERSION_NONE = -1;
+public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceWithSeed, MergeableBiomeSource<BCLBiomeSource> {
     public static int BIOME_SOURCE_VERSION_VANILLA = 0;
     public static int BIOME_SOURCE_VERSION_SQUARE = 17;
     public static int BIOME_SOURCE_VERSION_HEX = 18;
@@ -25,8 +24,6 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
     protected final Registry<Biome> biomeRegistry;
     protected long currentSeed;
     protected int maxHeight;
-
-    public final int biomeSourceVersion;
 
     private static List<Holder<Biome>> preInit(Registry<Biome> biomeRegistry, List<Holder<Biome>> biomes) {
         biomes = biomes.stream().sorted(Comparator.comparing(holder -> holder.unwrapKey()
@@ -41,19 +38,12 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
     protected BCLBiomeSource(
             Registry<Biome> biomeRegistry,
             List<Holder<Biome>> list,
-            long seed,
-            Optional<Integer> biomeSourceVersion
+            long seed
     ) {
         super(preInit(biomeRegistry, list));
 
         this.biomeRegistry = biomeRegistry;
-        this.biomeSourceVersion = biomeSourceVersion.orElse(DEFAULT_BIOME_SOURCE_VERSION);
         this.currentSeed = seed;
-
-        System.out.println(this + " with Registry: " + biomeRegistry.getClass().getName() + "@" + Integer.toHexString(
-                biomeRegistry.hashCode()));
-
-        //BiomeAPI.initRegistry(biomeRegistry);
     }
 
     final public void setSeed(long seed) {
@@ -84,16 +74,6 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
 
     protected abstract void onInitMap(long newSeed);
     protected abstract void onHeightChange(int newHeight);
-
-    public static int getVersionBiomeSource(BiomeSource biomeSource) {
-        if (biomeSource == null) return BCLBiomeSource.BIOME_SOURCE_VERSION_NONE;
-
-        if (biomeSource instanceof BCLBiomeSource bcl) {
-            return bcl.biomeSourceVersion;
-        } else {
-            return BCLBiomeSource.BIOME_SOURCE_VERSION_VANILLA;
-        }
-    }
 
     public BCLBiomeSource createCopyForDatapack(Set<Holder<Biome>> datapackBiomes) {
         Set<Holder<Biome>> mutableSet = Sets.newHashSet();
@@ -127,5 +107,11 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
                                 return test.isValid(biome, location);
                             })
                             .toList();
+    }
+
+    @Override
+    public BCLBiomeSource mergeWithBiomeSource(BiomeSource inputBiomeSource) {
+        final Set<Holder<Biome>> datapackBiomes = inputBiomeSource.possibleBiomes();
+        return this.createCopyForDatapack(datapackBiomes);
     }
 }

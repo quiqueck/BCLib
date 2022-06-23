@@ -8,6 +8,8 @@
     "DiggerItemAccessor",
     "MainMixin",
     "MinecraftServerMixin",
+    "MinecraftServerMixinLate",
+    "NoiseBasedChunkGeneratorMixin",
     "NoiseGeneratorSettingsMixin",
     "PrimaryLevelDataMixin",
     "RegistryAccessMixin",
