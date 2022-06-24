@@ -11,7 +11,6 @@ import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -86,7 +85,7 @@ public class TogetherWorldPreset extends WorldPreset {
     private static void writeWorldPresetSettings(DimensionsWrapper wrapper) {
         final RegistryOps<Tag> registryOps = RegistryOps.create(
                 NbtOps.INSTANCE,
-                WorldBootstrap.getLastRegistryAccess()
+                WorldBootstrap.getLastRegistryAccessOrElseBuiltin()
         );
         final var encodeResult = DimensionsWrapper.CODEC.encodeStart(registryOps, wrapper);
 
@@ -103,12 +102,7 @@ public class TogetherWorldPreset extends WorldPreset {
     private static DimensionsWrapper DEFAULT_DIMENSIONS_WRAPPER = null;
 
     public static @NotNull Map<ResourceKey<LevelStem>, ChunkGenerator> loadWorldDimensions() {
-        final RegistryAccess registryAccess;
-        if (WorldBootstrap.getLastRegistryAccess() != null) {
-            registryAccess = WorldBootstrap.getLastRegistryAccess();
-        } else {
-            registryAccess = BuiltinRegistries.ACCESS;
-        }
+        final RegistryAccess registryAccess = WorldBootstrap.getLastRegistryAccessOrElseBuiltin();
         final RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
         if (DEFAULT_DIMENSIONS_WRAPPER == null) {
             DEFAULT_DIMENSIONS_WRAPPER = new DimensionsWrapper(TogetherWorldPreset.getDimensionsMap(WorldPresets.DEFAULT));
