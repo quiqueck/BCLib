@@ -6,6 +6,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.SectionPos;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.IntProvider;
@@ -102,12 +103,24 @@ public class FindSolidInDirection extends PlacementModifier {
             Stream.Builder<BlockPos> builder,
             Direction d
     ) {
+        int searchDist;
         BlockPos.MutableBlockPos POS = blockPos.mutable();
+        if (d == Direction.EAST) { //+x
+            searchDist = Math.min(maxSearchDistance, 15 - SectionPos.sectionRelative(blockPos.getX()));
+        } else if (d == Direction.WEST) { //-x
+            searchDist = Math.min(maxSearchDistance, SectionPos.sectionRelative(blockPos.getX()));
+        } else if (d == Direction.SOUTH) { //+z
+            searchDist = Math.min(maxSearchDistance, 15 - SectionPos.sectionRelative(blockPos.getZ()));
+        } else if (d == Direction.NORTH) { //-z
+            searchDist = Math.min(maxSearchDistance, SectionPos.sectionRelative(blockPos.getZ()));
+        } else {
+            searchDist = maxSearchDistance;
+        }
         if (BlocksHelper.findOnSurroundingSurface(
                 placementContext.getLevel(),
                 POS,
                 d,
-                maxSearchDistance,
+                searchDist,
                 BlocksHelper::isTerrain
         )) {
             builder.add(POS);

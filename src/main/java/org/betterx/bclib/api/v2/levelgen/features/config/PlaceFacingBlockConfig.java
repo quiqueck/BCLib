@@ -76,10 +76,13 @@ public class PlaceFacingBlockConfig extends PlaceBlockFeatureConfig {
             BlockState targetState
     ) {
         BlockState lookupState;
+        BlockPos testPos;
         for (Direction dir : directions) {
+            testPos = pos.relative(dir.getOpposite());
             lookupState = targetState.setValue(HorizontalDirectionalBlock.FACING, dir);
-            if (lookupState.canSurvive(level, pos)) {
-                BlocksHelper.setWithoutUpdate(level, pos, lookupState);
+            if (lookupState.canSurvive(level, testPos) && level.getBlockState(testPos).isAir()) {
+                BlocksHelper.setWithoutUpdate(level, testPos, lookupState);
+                //BlocksHelper.setWithoutUpdate(level, pos, level.getBlockState(pos.relative(dir.getOpposite())));
                 return true;
             }
         }
