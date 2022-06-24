@@ -27,6 +27,10 @@ public class SequenceFeatureConfig implements FeatureConfiguration {
         return new SequenceFeatureConfig(features.stream().map(f -> f.getPlacedFeature()).toList());
     }
 
+    public static SequenceFeatureConfig createSequence(List<org.betterx.bclib.api.v3.levelgen.features.BCLFeature<?, ?>> features) {
+        return new SequenceFeatureConfig(features.stream().map(f -> f.getPlacedFeature()).toList());
+    }
+
     public SequenceFeatureConfig(List<Holder<PlacedFeature>> features) {
         this.features = features;
     }
