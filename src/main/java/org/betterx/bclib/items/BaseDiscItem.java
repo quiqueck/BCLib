@@ -12,6 +12,6 @@ public class BaseDiscItem extends RecordItem implements ItemModelProvider {
     }
 
     public BaseDiscItem(int comparatorOutput, SoundEvent sound, Properties settings, int lengthInSeconds) {
-        super(comparatorOutput, sound, settings, lengthInSeconds);
+        super(comparatorOutput, sound, settings);
     }
 }
