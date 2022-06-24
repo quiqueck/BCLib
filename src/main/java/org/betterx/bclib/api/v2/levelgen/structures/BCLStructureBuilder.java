@@ -50,7 +50,7 @@ public class BCLStructureBuilder<S extends Structure> {
         return INSTANCE;
     }
 
-    public BCLStructureBuilder<S> step(TerrainAdjustment value) {
+    public BCLStructureBuilder<S> adjustment(TerrainAdjustment value) {
         this.terrainAdjustment = value;
         return this;
     }
