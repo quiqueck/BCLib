@@ -9,6 +9,10 @@ import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 
 public class PlacementModifiers {
+    public static final PlacementModifierType<Debug> DEBUG = register(
+            "debug",
+            Debug.CODEC
+    );
     public static final PlacementModifierType<IsEmptyAboveSampledFilter> IS_EMPTY_ABOVE_SAMPLED_FILTER = register(
             "is_empty_above_sampled_filter",
             IsEmptyAboveSampledFilter.CODEC
