@@ -6,7 +6,12 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.RecordItem;
 
 public class BaseDiscItem extends RecordItem implements ItemModelProvider {
+    @Deprecated(forRemoval = true)
     public BaseDiscItem(int comparatorOutput, SoundEvent sound, Properties settings) {
-        super(comparatorOutput, sound, settings);
+        this(comparatorOutput, sound, settings, 30);
+    }
+
+    public BaseDiscItem(int comparatorOutput, SoundEvent sound, Properties settings, int lengthInSeconds) {
+        super(comparatorOutput, sound, settings, lengthInSeconds);
     }
 }

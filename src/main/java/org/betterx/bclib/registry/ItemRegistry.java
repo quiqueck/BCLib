@@ -33,8 +33,8 @@ public class ItemRegistry extends BaseRegistry<Item> {
         super(creativeTab, config);
     }
 
-    public Item registerDisc(ResourceLocation itemId, int power, SoundEvent sound) {
-        BaseDiscItem item = new BaseDiscItem(power, sound, makeItemSettings().stacksTo(1));
+    public Item registerDisc(ResourceLocation itemId, int power, SoundEvent sound, int lengthInSeconds) {
+        BaseDiscItem item = new BaseDiscItem(power, sound, makeItemSettings().stacksTo(1), lengthInSeconds);
 
         if (!config.getBoolean("musicDiscs", itemId.getPath(), true)) {
             return item;
