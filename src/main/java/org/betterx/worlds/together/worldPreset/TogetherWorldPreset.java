@@ -29,8 +29,6 @@ import org.jetbrains.annotations.NotNull;
 public class TogetherWorldPreset extends WorldPreset {
     public final int sortOrder;
 
-    private static final String TAG_GENERATOR = WorldGenUtil.TAG_GENERATOR;
-
     private static int NEXT_IN_SORT_ORDER = 1000;
 
     public TogetherWorldPreset(
@@ -80,6 +78,11 @@ public class TogetherWorldPreset extends WorldPreset {
         writeWorldPresetSettings(wrapper);
     }
 
+    public static void writeWorldPresetSettingsDirect(Map<ResourceKey<LevelStem>, ChunkGenerator> settings) {
+        DimensionsWrapper wrapper = new DimensionsWrapper(settings);
+        writeWorldPresetSettings(wrapper);
+    }
+
     private static void writeWorldPresetSettings(DimensionsWrapper wrapper) {
         final RegistryOps<Tag> registryOps = RegistryOps.create(
                 NbtOps.INSTANCE,
@@ -89,7 +92,7 @@ public class TogetherWorldPreset extends WorldPreset {
 
         if (encodeResult.result().isPresent()) {
             final CompoundTag settingsNbt = WorldConfig.getRootTag(WorldsTogether.MOD_ID);
-            settingsNbt.put(TAG_GENERATOR, encodeResult.result().get());
+            settingsNbt.put(WorldGenUtil.TAG_PRESET, encodeResult.result().get());
         } else {
             WorldsTogether.LOGGER.error("Unable to encode world generator settings for level.dat.");
         }
@@ -99,7 +102,7 @@ public class TogetherWorldPreset extends WorldPreset {
 
     private static DimensionsWrapper DEFAULT_DIMENSIONS_WRAPPER = null;
 
-    public static @NotNull Map<ResourceKey<LevelStem>, ChunkGenerator> getWorldDimensions() {
+    public static @NotNull Map<ResourceKey<LevelStem>, ChunkGenerator> loadWorldDimensions() {
         final RegistryAccess registryAccess;
         if (WorldBootstrap.getLastRegistryAccess() != null) {
             registryAccess = WorldBootstrap.getLastRegistryAccess();
@@ -107,21 +110,19 @@ public class TogetherWorldPreset extends WorldPreset {
             registryAccess = BuiltinRegistries.ACCESS;
         }
         final RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
+        if (DEFAULT_DIMENSIONS_WRAPPER == null) {
+            DEFAULT_DIMENSIONS_WRAPPER = new DimensionsWrapper(TogetherWorldPreset.getDimensionsMap(WorldPresets.DEFAULT));
+        }
+
+        CompoundTag presetNBT = WorldGenUtil.getPresetsNbt();
+        if (!presetNBT.contains("dimensions")) {
+            return DEFAULT_DIMENSIONS_WRAPPER.dimensions;
+        }
 
         Optional<DimensionsWrapper> oLevelStem = DimensionsWrapper.CODEC
-                .parse(new Dynamic<>(registryOps, WorldGenUtil.getSettingsNbt()))
+                .parse(new Dynamic<>(registryOps, presetNBT))
                 .resultOrPartial(WorldsTogether.LOGGER::error);
 
-        if (DEFAULT_DIMENSIONS_WRAPPER == null) {
-            DEFAULT_DIMENSIONS_WRAPPER = new DimensionsWrapper(WorldPresets
-                    .get(
-                            registryAccess,
-                            WorldPresets.DEFAULT
-                    )
-                    .value()
-                    .createWorldGenSettings(0, true, true)
-                    .dimensions());
-        }
 
         return oLevelStem.orElse(DEFAULT_DIMENSIONS_WRAPPER).dimensions;
     }

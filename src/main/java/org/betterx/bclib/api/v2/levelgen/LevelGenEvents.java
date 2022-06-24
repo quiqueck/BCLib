@@ -98,6 +98,8 @@ public class LevelGenEvents {
         setupWorld();
         if (isNewWorld) {
             DataFixerAPI.initializePatchData();
+        } else {
+            LevelGenUtil.migrateGeneratorSettings();
         }
     }
 
@@ -111,6 +113,7 @@ public class LevelGenEvents {
         if (isNewWorld) {
             DataFixerAPI.initializePatchData();
         } else {
+            LevelGenUtil.migrateGeneratorSettings();
             DataFixerAPI.fixData(storageAccess, false, (didFix) -> {/* not called when showUI==false */});
         }
     }

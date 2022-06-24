@@ -1,7 +1,6 @@
 package org.betterx.bclib.api.v2.levelgen;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.generator.BCLBiomeSource;
 import org.betterx.bclib.api.v2.generator.BCLChunkGenerator;
 import org.betterx.bclib.api.v2.generator.BCLibEndBiomeSource;
 import org.betterx.bclib.api.v2.generator.BCLibNetherBiomeSource;
@@ -25,9 +24,11 @@ import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
+import net.minecraft.world.level.levelgen.presets.WorldPresets;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 public class LevelGenUtil {
@@ -66,30 +67,6 @@ public class LevelGenUtil {
     public static WorldGenSettings replaceGenerator(
             ResourceKey<LevelStem> dimensionKey,
             ResourceKey<DimensionType> dimensionTypeKey,
-            int biomeSourceVersion,
-            RegistryAccess registryAccess,
-            WorldGenSettings worldGenSettings
-    ) {
-        Optional<Holder<LevelStem>> oLevelStem = referenceStemForVersion(
-                dimensionKey,
-                biomeSourceVersion,
-                registryAccess,
-                worldGenSettings.seed(),
-                worldGenSettings.generateStructures(),
-                worldGenSettings.generateStructures()
-        );
-        return replaceGenerator(
-                dimensionKey,
-                dimensionTypeKey,
-                registryAccess,
-                worldGenSettings,
-                oLevelStem.map(l -> l.value().generator()).orElseThrow()
-        );
-    }
-
-    public static WorldGenSettings replaceGenerator(
-            ResourceKey<LevelStem> dimensionKey,
-            ResourceKey<DimensionType> dimensionTypeKey,
             RegistryAccess registryAccess,
             WorldGenSettings worldGenSettings,
             ChunkGenerator generator
@@ -109,24 +86,6 @@ public class LevelGenUtil {
                 newDimensions
         );
     }
-
-//    public static WorldGenSettings replaceStem(
-//            ResourceKey<LevelStem> dimensionKey,
-//            WorldGenSettings worldGenSettings,
-//            LevelStem levelStem
-//    ) {
-//        Registry<LevelStem> newDimensions = withDimension(
-//                dimensionKey,
-//                worldGenSettings.dimensions(),
-//                levelStem
-//        );
-//        return new WorldGenSettings(
-//                worldGenSettings.seed(),
-//                worldGenSettings.generateStructures(),
-//                worldGenSettings.generateBonusChest(),
-//                newDimensions
-//        );
-//    }
 
     public static Registry<LevelStem> withDimension(
             ResourceKey<LevelStem> dimensionKey,
@@ -170,76 +129,47 @@ public class LevelGenUtil {
         return writableRegistry;
     }
 
-//    public static int getBiomeVersionForGenerator(ChunkGenerator generator) {
-//        if (generator == null) return BCLBiomeSource.getVersionBiomeSource(null);
-//        return BCLBiomeSource.getVersionBiomeSource(generator.getBiomeSource());
-//    }
-
-    public static Optional<Holder<LevelStem>> referenceStemForVersion(
-            ResourceKey<LevelStem> dimensionKey,
-            int biomeSourceVersion,
-            RegistryAccess registryAccess,
-            long seed,
-            boolean generateStructures,
-            boolean generateBonusChest
-    ) {
-        final WorldGenSettings referenceSettings;
-        if (biomeSourceVersion == BCLBiomeSource.BIOME_SOURCE_VERSION_VANILLA) {
-            referenceSettings = net.minecraft.world.level.levelgen.presets.WorldPresets.createNormalWorldFromPreset(
-                    registryAccess,
-                    seed,
-                    generateStructures,
-                    generateBonusChest
-            );
-        } else if (biomeSourceVersion == BCLBiomeSource.BIOME_SOURCE_VERSION_SQUARE) {
-            referenceSettings = WorldGenUtil.createWorldFromPreset(
-                    PresetsRegistry.BCL_WORLD_17,
-                    registryAccess,
-                    seed,
-                    generateStructures,
-                    generateBonusChest
-            );
-        } else {
-            referenceSettings = WorldGenUtil.createDefaultWorldFromPreset(
-                    registryAccess,
-                    seed,
-                    generateStructures,
-                    generateBonusChest
-            );
-        }
-        return referenceSettings.dimensions().getHolder(dimensionKey);
-    }
-
-//    public static int getBiomeVersionForCurrentWorld(ResourceKey<LevelStem> key) {
-//        final CompoundTag settingsNbt = WorldGenUtil.getSettingsNbt();
-//        if (!settingsNbt.contains(key.location().toString())) return BCLBiomeSource.DEFAULT_BIOME_SOURCE_VERSION;
-//        return settingsNbt.getInt(key.location().toString());
-//    }
-
-//    private static int getDimensionVersion(
-//            WorldGenSettings settings,
-//            ResourceKey<LevelStem> key
-//    ) {
-//        var dimension = settings.dimensions().getHolder(key);
-//        if (dimension.isPresent()) {
-//            return getBiomeVersionForGenerator(dimension.get().value().generator());
-//        } else {
-//            return getBiomeVersionForGenerator(null);
-//        }
-//    }
-
-//    private static void writeDimensionVersion(
-//            WorldGenSettings settings,
-//            CompoundTag generatorSettings,
-//            ResourceKey<LevelStem> key
-//    ) {
-//        generatorSettings.putInt(key.location().toString(), getDimensionVersion(settings, key));
-//    }
 
     public static void migrateGeneratorSettings() {
-        final CompoundTag settingsNbt = WorldGenUtil.getSettingsNbt();
+        final CompoundTag settingsNbt = WorldGenUtil.getPresetsNbt();
 
         if (settingsNbt.size() == 0) {
+            CompoundTag oldGen = WorldGenUtil.getGeneratorNbt();
+            if (oldGen != null) {
+                if (oldGen.contains("type")) {
+                    BCLib.LOGGER.info("Found World with beta generator Settings.");
+                    if ("bclib:bcl_world_preset_settings".equals(oldGen.getString("type"))) {
+                        int netherVersion = 18;
+                        int endVersion = 18;
+                        if (oldGen.contains("minecraft:the_nether"))
+                            netherVersion = oldGen.getInt("minecraft:the_nether");
+                        if (oldGen.contains("minecraft:the_end"))
+                            endVersion = oldGen.getInt("minecraft:the_end");
+
+                        if (netherVersion == 18) netherVersion = 0;
+                        else if (netherVersion == 17) netherVersion = 1;
+                        else netherVersion = 2;
+
+                        if (endVersion == 18) endVersion = 0;
+                        else if (endVersion == 17) endVersion = 1;
+                        else endVersion = 2;
+
+                        var presets = List.of(
+                                TogetherWorldPreset.getDimensionsMap(PresetsRegistry.BCL_WORLD),
+                                TogetherWorldPreset.getDimensionsMap(PresetsRegistry.BCL_WORLD_17),
+                                TogetherWorldPreset.getDimensionsMap(WorldPresets.NORMAL)
+                        );
+                        Map<ResourceKey<LevelStem>, ChunkGenerator> dimensions = new HashMap<>();
+                        dimensions.put(LevelStem.OVERWORLD, presets.get(0).get(LevelStem.OVERWORLD));
+                        dimensions.put(LevelStem.NETHER, presets.get(netherVersion).get(LevelStem.NETHER));
+                        dimensions.put(LevelStem.END, presets.get(endVersion).get(LevelStem.END));
+
+                        TogetherWorldPreset.writeWorldPresetSettingsDirect(dimensions);
+                    }
+                    return;
+                }
+            }
+
             BCLib.LOGGER.info("Found World without generator Settings. Setting up data...");
             ResourceKey<WorldPreset> biomeSourceVersion = PresetsRegistry.BCL_WORLD;
 
@@ -273,12 +203,4 @@ public class LevelGenUtil {
             }
         }
     }
-
-//    /**
-//     * @deprecated Replace by {@link WorldGenUtil#getWorldSettings()}
-//     */
-//    @Deprecated(forRemoval = true)
-//    public static WorldPresetSettings getWorldSettings() {
-//        return null;
-//    }
 }

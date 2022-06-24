@@ -125,7 +125,7 @@ public class WorldBootstrap {
                 Helpers.initializeWorldConfig(levelStorageAccess, false);
                 WorldEventsImpl.BEFORE_SERVER_WORLD_LOAD.emit(e -> e.prepareWorld(
                         levelStorageAccess,
-                        TogetherWorldPreset.getWorldDimensions(),
+                        TogetherWorldPreset.loadWorldDimensions(),
                         false
                 ));
                 WorldEventsImpl.ON_WORLD_LOAD.emit(OnWorldLoad::onLoad);
@@ -235,7 +235,7 @@ public class WorldBootstrap {
                 //Helpers.setupWorld();
                 WorldEventsImpl.BEFORE_WORLD_LOAD.emit(e -> e.prepareWorld(
                         levelStorageAccess,
-                        TogetherWorldPreset.getWorldDimensions(),
+                        TogetherWorldPreset.loadWorldDimensions(),
                         false
                 ));
                 levelStorageAccess.close();

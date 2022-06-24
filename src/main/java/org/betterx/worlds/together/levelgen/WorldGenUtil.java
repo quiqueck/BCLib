@@ -26,6 +26,7 @@ import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
 public class WorldGenUtil {
+    public static final String TAG_PRESET = "preset";
     public static final String TAG_GENERATOR = "generator";
 
     public static WorldGenSettings createWorldFromPreset(
@@ -78,8 +79,15 @@ public class WorldGenUtil {
         return createDefaultWorldFromPreset(registryAccess, RandomSource.create().nextLong());
     }
 
-    public static CompoundTag getSettingsNbt() {
-        return WorldConfig.getCompoundTag(WorldsTogether.MOD_ID, TAG_GENERATOR);
+    public static CompoundTag getPresetsNbt() {
+        return WorldConfig.getCompoundTag(WorldsTogether.MOD_ID, TAG_PRESET);
+    }
+
+    public static CompoundTag getGeneratorNbt() {
+        CompoundTag root = WorldConfig.getRootTag(WorldsTogether.MOD_ID);
+        if (root.contains(TAG_GENERATOR))
+            return WorldConfig.getCompoundTag(WorldsTogether.MOD_ID, TAG_GENERATOR);
+        return null;
     }
 
     public static class Context extends StemContext {
@@ -122,7 +130,7 @@ public class WorldGenUtil {
             RegistryAccess registryAccess,
             WorldGenSettings settings
     ) {
-        var dimensions = TogetherWorldPreset.getWorldDimensions();
+        var dimensions = TogetherWorldPreset.loadWorldDimensions();
         for (var entry : settings.dimensions().entrySet()) {
             ResourceKey<LevelStem> key = entry.getKey();
             LevelStem loadedStem = entry.getValue();

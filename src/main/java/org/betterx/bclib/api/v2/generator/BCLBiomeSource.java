@@ -17,10 +17,6 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceWithSeed, MergeableBiomeSource<BCLBiomeSource> {
-    public static int BIOME_SOURCE_VERSION_VANILLA = 0;
-    public static int BIOME_SOURCE_VERSION_SQUARE = 17;
-    public static int BIOME_SOURCE_VERSION_HEX = 18;
-    public static int DEFAULT_BIOME_SOURCE_VERSION = BIOME_SOURCE_VERSION_HEX;
     protected final Registry<Biome> biomeRegistry;
     protected long currentSeed;
     protected int maxHeight;
