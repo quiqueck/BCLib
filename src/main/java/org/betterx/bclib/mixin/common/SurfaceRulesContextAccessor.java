@@ -4,6 +4,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.NoiseChunk;
+import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.SurfaceRules;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -45,4 +46,7 @@ public interface SurfaceRulesContextAccessor {
 
     @Accessor("lastUpdateXZ")
     long getLastUpdateXZ();
+
+    @Accessor("randomState")
+    RandomState getRandomState();
 }
