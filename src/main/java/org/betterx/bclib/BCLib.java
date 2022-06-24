@@ -70,7 +70,7 @@ public class BCLib implements ModInitializer {
         PlacementModifiers.ensureStaticInitialization();
         Configs.save();
 
-        if (isDevEnvironment()) {
+        if (false && isDevEnvironment()) {
             BCLBiome theYellow = BCLBiomeBuilder
                     .start(makeID("the_yellow"))
                     .precipitation(Biome.Precipitation.NONE)
