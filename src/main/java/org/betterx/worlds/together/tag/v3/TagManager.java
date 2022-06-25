@@ -11,7 +11,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.tags.TagKey;
 import net.minecraft.tags.TagLoader;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 
@@ -26,7 +25,7 @@ public class TagManager {
     private static final Map<String, TagRegistry<?>> TYPES = Maps.newHashMap();
 
     public static TagRegistry.RegistryBacked<Block> BLOCKS = registerType(Registry.BLOCK);
-    public static TagRegistry.RegistryBacked<Item> ITEMS = registerItem();
+    public static TagRegistry.Items ITEMS = registerItem();
     public static TagRegistry.Biomes BIOMES = registerBiome();
 
     public static <T> TagRegistry.RegistryBacked<T> registerType(DefaultedRegistry<T> registry) {
