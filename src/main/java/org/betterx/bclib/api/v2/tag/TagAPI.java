@@ -2,7 +2,6 @@ package org.betterx.bclib.api.v2.tag;
 
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 import org.betterx.worlds.together.mixin.common.DiggerItemAccessor;
-import org.betterx.worlds.together.tag.v3.CommonBlockTags;
 import org.betterx.worlds.together.tag.v3.TagManager;
 import org.betterx.worlds.together.tag.v3.TagRegistry;
 
@@ -14,11 +13,9 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.tags.TagLoader;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 
 import com.google.common.collect.Maps;
 
@@ -177,11 +174,6 @@ public class TagAPI {
      */
     @Deprecated(forRemoval = true)
     public static void init() {
-        addBlockTag(CommonBlockTags.BOOKSHELVES, Blocks.BOOKSHELF);
-        addBlockTag(CommonBlockTags.CHEST, Blocks.CHEST);
-        addItemTag(CommonItemTags.CHEST, Items.CHEST);
-        addItemTag(CommonItemTags.IRON_INGOTS, Items.IRON_INGOT);
-        addItemTag(CommonItemTags.FURNACES, Blocks.FURNACE);
     }
 
     /**
