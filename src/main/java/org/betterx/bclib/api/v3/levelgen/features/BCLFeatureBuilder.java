@@ -272,7 +272,8 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
     }
 
     public static class AsPillar extends BCLFeatureBuilder<PillarFeature, PillarFeatureConfig> {
-        private IntProvider height;
+        private IntProvider maxHeight;
+        private IntProvider minHeight;
         private BlockStateProvider stateProvider;
 
         private final PillarFeatureConfig.KnownTransformers transformer;
@@ -311,13 +312,23 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
             return this;
         }
 
-        public AsPillar height(int v) {
-            this.height = ConstantInt.of(v);
+        public AsPillar maxHeight(int v) {
+            this.maxHeight = ConstantInt.of(v);
             return this;
         }
 
-        public AsPillar height(IntProvider v) {
-            this.height = v;
+        public AsPillar maxHeight(IntProvider v) {
+            this.maxHeight = v;
+            return this;
+        }
+
+        public AsPillar minHeight(int v) {
+            this.minHeight = ConstantInt.of(v);
+            return this;
+        }
+
+        public AsPillar minHeight(IntProvider v) {
+            this.minHeight = v;
             return this;
         }
 
@@ -327,10 +338,18 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
             if (stateProvider == null) {
                 throw new IllegalStateException("A Pillar Features need a stateProvider");
             }
-            if (height == null) {
+            if (maxHeight == null) {
                 throw new IllegalStateException("A Pillar Features need a height");
             }
-            return new PillarFeatureConfig(height, direction, allowedPlacement, stateProvider, transformer);
+            if (minHeight == null) minHeight = ConstantInt.of(0);
+            return new PillarFeatureConfig(
+                    minHeight,
+                    maxHeight,
+                    direction,
+                    allowedPlacement,
+                    stateProvider,
+                    transformer
+            );
         }
     }
 
@@ -377,6 +396,25 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
 
         public AsBlockColumn<FF> add(int height, BlockStateProvider state) {
             return add(ConstantInt.of(height), state);
+        }
+
+        protected static SimpleWeightedRandomList<BlockState> buildWeightedList(BlockState state) {
+            return SimpleWeightedRandomList
+                    .<BlockState>builder()
+                    .add(state, 1)
+                    .build();
+        }
+
+        @SafeVarargs
+        public final AsBlockColumn<FF> addRandom(int height, BlockState... states) {
+            return this.addRandom(ConstantInt.of(height), states);
+        }
+
+        @SafeVarargs
+        public final AsBlockColumn<FF> addRandom(IntProvider height, BlockState... states) {
+            var builder = SimpleWeightedRandomList.<BlockState>builder();
+            for (BlockState state : states) builder.add(state, 1);
+            return add(height, new WeightedStateProvider(builder.build()));
         }
 
         public AsBlockColumn<FF> add(IntProvider height, Block block) {

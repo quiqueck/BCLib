@@ -22,22 +22,33 @@ public class PillarFeature extends Feature<PillarFeatureConfig> {
         final WorldGenLevel level = featurePlaceContext.level();
         final PillarFeatureConfig config = featurePlaceContext.config();
         final RandomSource rnd = featurePlaceContext.random();
-        int maxHeight = config.height.sample(rnd);
-
+        int maxHeight = config.maxHeight.sample(rnd);
+        int minHeight = config.minHeight.sample(rnd);
         BlockPos.MutableBlockPos posnow = featurePlaceContext.origin().mutable();
 
         for (height = 0; height < maxHeight; ++height) {
             if (!config.allowedPlacement.test(level, posnow)) {
-                maxHeight = height - 1;
+                maxHeight = height;
                 break;
             }
             posnow.move(config.direction);
         }
-        if (maxHeight < 0) return false;
+        if (maxHeight < minHeight) return false;
 
+        if (!config.transformer.canPlace.at(
+                minHeight,
+                maxHeight,
+                featurePlaceContext.origin(),
+                posnow,
+                level,
+                config.allowedPlacement,
+                rnd
+        )) {
+            return false;
+        }
         posnow = featurePlaceContext.origin().mutable();
         for (height = 0; height < maxHeight; ++height) {
-            BlockState state = config.transform(height, maxHeight, posnow, rnd);
+            BlockState state = config.transform(height, maxHeight - 1, posnow, rnd);
             BlocksHelper.setWithoutUpdate(level, posnow, state);
             posnow.move(config.direction);
         }

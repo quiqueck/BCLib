@@ -9,6 +9,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.util.valueproviders.IntProvider;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
@@ -18,6 +19,20 @@ public class PillarFeatureConfig implements FeatureConfiguration {
     @FunctionalInterface
     public interface StateTransform {
         BlockState apply(int height, int maxHeight, BlockState inputState, BlockPos pos, RandomSource rnd);
+    }
+
+    @FunctionalInterface
+    public interface PlacePredicate {
+        PlacePredicate ALLWAYS = (min, max, start, above, level, allow, rnd) -> true;
+        boolean at(
+                int minHeight,
+                int maxHeight,
+                BlockPos startPos,
+                BlockPos abovePos,
+                WorldGenLevel level,
+                BlockPredicate allowedPlacement,
+                RandomSource rnd
+        );
     }
 
     public enum KnownTransformers implements StringRepresentable {
@@ -35,6 +50,17 @@ public class PillarFeatureConfig implements FeatureConfiguration {
                 "bottom_grow",
                 (height, maxHeight, state, pos, rnd) -> state
                         .setValue(BlockProperties.BOTTOM, height == maxHeight)
+        ),
+        TRIPLE_SHAPE_FILL(
+                "triple_shape_fill",
+                (height, maxHeight, state, pos, rnd) -> {
+                    if (height == 0)
+                        return state.setValue(BlockProperties.TRIPLE_SHAPE, BlockProperties.TripleShape.BOTTOM);
+                    if (height == maxHeight)
+                        return state.setValue(BlockProperties.TRIPLE_SHAPE, BlockProperties.TripleShape.TOP);
+                    return state.setValue(BlockProperties.TRIPLE_SHAPE, BlockProperties.TripleShape.MIDDLE);
+                },
+                (minHeight, maxHeight, startPos, abovePos, level, allow, rnd) -> !allow.test(level, abovePos)
         );
 
 
@@ -44,10 +70,16 @@ public class PillarFeatureConfig implements FeatureConfiguration {
 
         public final String name;
         public final StateTransform stateTransform;
+        public final PlacePredicate canPlace;
 
         KnownTransformers(String name, StateTransform stateTransform) {
+            this(name, stateTransform, PlacePredicate.ALLWAYS);
+        }
+
+        KnownTransformers(String name, StateTransform stateTransform, PlacePredicate canPlace) {
             this.name = name;
             this.stateTransform = stateTransform;
+            this.canPlace = canPlace;
         }
 
         @Override
@@ -63,7 +95,8 @@ public class PillarFeatureConfig implements FeatureConfiguration {
 
     public static final Codec<PillarFeatureConfig> CODEC = RecordCodecBuilder.create(instance -> instance
             .group(
-                    IntProvider.CODEC.fieldOf("height").forGetter(o -> o.height),
+                    IntProvider.CODEC.fieldOf("min_height").forGetter(o -> o.minHeight),
+                    IntProvider.CODEC.fieldOf("max_height").forGetter(o -> o.maxHeight),
                     Direction.CODEC.fieldOf("direction").orElse(Direction.UP).forGetter(o -> o.direction),
                     BlockPredicate.CODEC.fieldOf("allowed_placement").forGetter(o -> o.allowedPlacement),
                     BlockStateProvider.CODEC.fieldOf("state").forGetter(o -> o.stateProvider),
@@ -71,7 +104,8 @@ public class PillarFeatureConfig implements FeatureConfiguration {
             )
             .apply(instance, PillarFeatureConfig::new));
 
-    public final IntProvider height;
+    public final IntProvider maxHeight;
+    public final IntProvider minHeight;
     public final BlockStateProvider stateProvider;
 
     public final KnownTransformers transformer;
@@ -80,13 +114,15 @@ public class PillarFeatureConfig implements FeatureConfiguration {
 
 
     public PillarFeatureConfig(
-            IntProvider height,
+            IntProvider minHeight,
+            IntProvider maxHeight,
             Direction direction,
             BlockPredicate allowedPlacement,
             BlockStateProvider stateProvider,
             KnownTransformers transformer
     ) {
-        this.height = height;
+        this.minHeight = minHeight;
+        this.maxHeight = maxHeight;
         this.stateProvider = stateProvider;
         this.transformer = transformer;
         this.direction = direction;
