@@ -69,7 +69,7 @@ public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderL
                         .of(replaceable ? Material.REPLACEABLE_PLANT : Material.PLANT)
                         .sound(SoundType.GRASS)
                         .noCollission()
-                        .offsetType(BlockBehaviour.OffsetType.XZ)
+                        .offsetType(OffsetType.NONE)
                 )
         );
     }
