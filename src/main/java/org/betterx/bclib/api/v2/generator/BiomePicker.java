@@ -1,6 +1,7 @@
 package org.betterx.bclib.api.v2.generator;
 
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
+import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 import org.betterx.bclib.util.WeighTree;
 import org.betterx.bclib.util.WeightedList;
 
@@ -57,13 +58,16 @@ public class BiomePicker {
     }
 
     public void rebuild() {
-        if (biomes.isEmpty()) {
-            return;
-        }
         WeightedList<ActualBiome> list = new WeightedList<>();
-        biomes.forEach(biome -> {
-            list.add(biome, biome.bclBiome.getGenChance());
-        });
+        if (biomes.isEmpty()) {
+            list.add(create(BiomeAPI.EMPTY_BIOME), 1);
+        } else {
+            biomes.forEach(biome -> {
+                list.add(biome, biome.bclBiome.getGenChance());
+            });
+        }
+
+
         tree = new WeighTree<>(list);
     }
 
