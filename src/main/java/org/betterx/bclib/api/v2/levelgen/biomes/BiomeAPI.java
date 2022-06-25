@@ -48,7 +48,6 @@ import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import java.util.List;
 import java.util.Map;
@@ -808,28 +807,28 @@ public class BiomeAPI {
     }
 
     private static void sortFeatures(List<Holder<PlacedFeature>> features) {
-        InternalBiomeAPI.initFeatureOrder();
-
-        Set<Holder<PlacedFeature>> featuresWithoutDuplicates = Sets.newHashSet();
-        features.forEach(holder -> featuresWithoutDuplicates.add(holder));
-
-        if (featuresWithoutDuplicates.size() != features.size()) {
-            features.clear();
-            featuresWithoutDuplicates.forEach(feature -> features.add(feature));
-        }
-
-        features.forEach(feature -> {
-            InternalBiomeAPI.FEATURE_ORDER.computeIfAbsent(
-                    feature,
-                    f -> InternalBiomeAPI.FEATURE_ORDER_ID.getAndIncrement()
-            );
-        });
-
-        features.sort((f1, f2) -> {
-            int v1 = InternalBiomeAPI.FEATURE_ORDER.getOrDefault(f1, 70000);
-            int v2 = InternalBiomeAPI.FEATURE_ORDER.getOrDefault(f2, 70000);
-            return Integer.compare(v1, v2);
-        });
+//        InternalBiomeAPI.initFeatureOrder();
+//
+//        Set<Holder<PlacedFeature>> featuresWithoutDuplicates = Sets.newHashSet();
+//        features.forEach(holder -> featuresWithoutDuplicates.add(holder));
+//
+//        if (featuresWithoutDuplicates.size() != features.size()) {
+//            features.clear();
+//            featuresWithoutDuplicates.forEach(feature -> features.add(feature));
+//        }
+//
+//        features.forEach(feature -> {
+//            InternalBiomeAPI.FEATURE_ORDER.computeIfAbsent(
+//                    feature,
+//                    f -> InternalBiomeAPI.FEATURE_ORDER_ID.getAndIncrement()
+//            );
+//        });
+//
+//        features.sort((f1, f2) -> {
+//            int v1 = InternalBiomeAPI.FEATURE_ORDER.getOrDefault(f1, 70000);
+//            int v2 = InternalBiomeAPI.FEATURE_ORDER.getOrDefault(f2, 70000);
+//            return Integer.compare(v1, v2);
+//        });
     }
 
 
