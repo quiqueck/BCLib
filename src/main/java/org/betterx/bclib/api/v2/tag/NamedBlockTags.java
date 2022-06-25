@@ -9,14 +9,50 @@ import net.minecraft.world.level.block.Block;
  */
 @Deprecated(forRemoval = true)
 public class NamedBlockTags {
+    /**
+     * @deprecated replaced by {@link net.minecraft.tags.BlockTags#ANVIL}
+     **/
+    @Deprecated(forRemoval = true)
     public static final TagKey<Block> ANVIL = BlockTags.ANVIL;
+    /**
+     * @deprecated replaced by {@link net.minecraft.tags.BlockTags#BUTTONS}
+     **/
+    @Deprecated(forRemoval = true)
     public static final TagKey<Block> BUTTONS = BlockTags.BUTTONS;
+    /**
+     * @deprecated replaced by {@link net.minecraft.tags.BlockTags#CLIMBABLE}
+     **/
+    @Deprecated(forRemoval = true)
     public static final TagKey<Block> CLIMBABLE = BlockTags.CLIMBABLE;
+    /**
+     * @deprecated replaced by {@link net.minecraft.tags.BlockTags#DOORS}
+     **/
+    @Deprecated(forRemoval = true)
     public static final TagKey<Block> DOORS = BlockTags.DOORS;
+    /**
+     * @deprecated replaced by {@link net.minecraft.tags.BlockTags#FENCES}
+     **/
+    @Deprecated(forRemoval = true)
     public static final TagKey<Block> FENCES = BlockTags.FENCES;
+    /**
+     * @deprecated replaced by {@link net.minecraft.tags.BlockTags#FENCE_GATES}
+     **/
+    @Deprecated(forRemoval = true)
     public static final TagKey<Block> FENCE_GATES = BlockTags.FENCE_GATES;
+    /**
+     * @deprecated replaced by {@link net.minecraft.tags.BlockTags#LEAVES}
+     **/
+    @Deprecated(forRemoval = true)
     public static final TagKey<Block> LEAVES = BlockTags.LEAVES;
+    /**
+     * @deprecated replaced by {@link net.minecraft.tags.BlockTags#LOGS}
+     **/
+    @Deprecated(forRemoval = true)
     public static final TagKey<Block> LOGS = BlockTags.LOGS;
+    /**
+     * @deprecated replaced by {@link net.minecraft.tags.BlockTags#LOGS_THAT_BURN}
+     **/
+    @Deprecated(forRemoval = true)
     public static final TagKey<Block> LOGS_THAT_BURN = BlockTags.LOGS_THAT_BURN;
     /**
      * @deprecated replaced by {@link net.minecraft.tags.BlockTags#NYLIUM}
