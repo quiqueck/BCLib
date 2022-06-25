@@ -26,6 +26,7 @@ public class BlockProperties {
     public static final IntegerProperty AGE = BlockStateProperties.AGE_3;
     public static final IntegerProperty AGE_THREE = BlockStateProperties.AGE_2;
     public static final BooleanProperty BOTTOM = BooleanProperty.create("bottom");
+    public static final BooleanProperty TOP = BooleanProperty.create("top");
 
     public enum TripleShape implements StringRepresentable {
         TOP("top", 0), MIDDLE("middle", 1), BOTTOM("bottom", 2);

@@ -418,6 +418,18 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
                     .add(midHeight, state.setValue(BlockProperties.BOTTOM, false));
         }
 
+        public AsBlockColumn<FF> addTopShapeUpsideDown(BlockState state, IntProvider midHeight) {
+            return this
+                    .add(1, state.setValue(BlockProperties.TOP, true))
+                    .add(midHeight, state.setValue(BlockProperties.TOP, false));
+        }
+
+        public AsBlockColumn<FF> addTopShape(BlockState state, IntProvider midHeight) {
+            return this
+                    .add(midHeight, state.setValue(BlockProperties.TOP, false))
+                    .add(1, state.setValue(BlockProperties.TOP, true));
+        }
+
         public AsBlockColumn<FF> direction(Direction dir) {
             direction = dir;
             return this;
