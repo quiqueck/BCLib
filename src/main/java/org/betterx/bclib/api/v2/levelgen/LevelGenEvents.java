@@ -36,19 +36,21 @@ public class LevelGenEvents {
 
         WorldEvents.ON_WORLD_LOAD.on(LevelGenEvents::onWorldLoad);
         WorldEvents.WORLD_REGISTRY_READY.on(LevelGenEvents::onRegistryReady);
+        WorldEvents.ON_FINALIZE_LEVEL_STEM.on(LevelGenEvents::finalizeStem);
 
         WorldEvents.PATCH_WORLD.on(LevelGenEvents::patchExistingWorld);
         WorldEvents.ADAPT_WORLD_PRESET.on(LevelGenEvents::adaptWorldPresetSettings);
     }
 
-    public static boolean patchExistingWorld(
+
+    private static boolean patchExistingWorld(
             LevelStorageSource.LevelStorageAccess storageAccess,
             Consumer<Boolean> allDone
     ) {
         return DataFixerAPI.fixData(storageAccess, true, allDone);
     }
 
-    public static Optional<Holder<WorldPreset>> adaptWorldPresetSettings(
+    private static Optional<Holder<WorldPreset>> adaptWorldPresetSettings(
             Optional<Holder<WorldPreset>> currentPreset,
             WorldGenSettings worldGenSettings
     ) {
@@ -86,11 +88,11 @@ public class LevelGenEvents {
         return currentPreset;
     }
 
-    public static void onRegistryReady(RegistryAccess a) {
+    private static void onRegistryReady(RegistryAccess a) {
         InternalBiomeAPI.initRegistry(a);
     }
 
-    public static void prepareWorld(
+    private static void prepareWorld(
             LevelStorageSource.LevelStorageAccess storageAccess,
             Map<ResourceKey<LevelStem>, ChunkGenerator> dimensions,
             boolean isNewWorld
@@ -103,7 +105,7 @@ public class LevelGenEvents {
         }
     }
 
-    public static void prepareServerWorld(
+    private static void prepareServerWorld(
             LevelStorageSource.LevelStorageAccess storageAccess,
             Map<ResourceKey<LevelStem>, ChunkGenerator> dimensions,
             boolean isNewWorld
@@ -118,7 +120,15 @@ public class LevelGenEvents {
         }
     }
 
-    public static void onWorldLoad() {
+    private static void onWorldLoad() {
         LifeCycleAPI._runBeforeLevelLoad();
+    }
+
+    private static void finalizeStem(
+            WorldGenSettings settings,
+            ResourceKey<LevelStem> dimension,
+            LevelStem levelStem
+    ) {
+        InternalBiomeAPI.applyModifications(levelStem.generator().getBiomeSource(), dimension);
     }
 }

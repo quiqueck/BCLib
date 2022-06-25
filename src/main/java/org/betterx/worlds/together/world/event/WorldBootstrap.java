@@ -5,6 +5,7 @@ import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.levelgen.WorldGenUtil;
 import org.betterx.worlds.together.mixin.common.RegistryOpsAccessor;
 import org.betterx.worlds.together.mixin.common.WorldPresetAccessor;
+import org.betterx.worlds.together.surfaceRules.SurfaceRuleUtil;
 import org.betterx.worlds.together.world.WorldConfig;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
 import org.betterx.worlds.together.worldPreset.WorldGenSettingsComponentAccessor;
@@ -285,6 +286,17 @@ public class WorldBootstrap {
                 BCLib.LOGGER.error("Failed to initialize data in world", e);
             }
         }
+    }
+
+    public static void finalizeWorldGenSettings(WorldGenSettings worldGenSettings) {
+        for (var entry : worldGenSettings.dimensions().entrySet()) {
+            WorldEventsImpl.ON_FINALIZE_LEVEL_STEM.emit(e -> e.now(
+                    worldGenSettings,
+                    entry.getKey(),
+                    entry.getValue()
+            ));
+        }
+        SurfaceRuleUtil.injectSurfaceRulesToAllDimensions(worldGenSettings);
     }
 
     public static WorldGenSettings enforceInNewWorld(WorldGenSettings worldGenSettings) {

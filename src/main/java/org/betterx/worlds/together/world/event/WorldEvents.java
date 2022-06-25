@@ -5,7 +5,7 @@ public class WorldEvents {
     public static final Event<BeforeWorldLoad> BEFORE_WORLD_LOAD = WorldEventsImpl.BEFORE_WORLD_LOAD;
     public static final Event<BeforeServerWorldLoad> BEFORE_SERVER_WORLD_LOAD = WorldEventsImpl.BEFORE_SERVER_WORLD_LOAD;
     public static final Event<OnWorldLoad> ON_WORLD_LOAD = WorldEventsImpl.ON_WORLD_LOAD;
-
+    public static final Event<OnFinalizeLevelStem> ON_FINALIZE_LEVEL_STEM = WorldEventsImpl.ON_FINALIZE_LEVEL_STEM;
     public static final Event<OnWorldPatch> PATCH_WORLD = WorldEventsImpl.PATCH_WORLD;
     public static final Event<OnAdaptWorldPresetSettings> ADAPT_WORLD_PRESET = WorldEventsImpl.ADAPT_WORLD_PRESET;
 }

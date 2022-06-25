@@ -2,7 +2,6 @@ package org.betterx.bclib.api.v2.generator;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
-import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
 import org.betterx.bclib.interfaces.NoiseGeneratorSettingsProvider;
 import org.betterx.bclib.mixin.common.ChunkGeneratorAccessor;
 import org.betterx.worlds.together.WorldsTogether;
@@ -175,7 +174,6 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
                         bs = referenceGenerator.getBiomeSource();
                     }
 
-                    InternalBiomeAPI.applyModifications(bs, dimensionKey);
                     referenceGenerator = new BCLChunkGenerator(
                             generator.bclib_getStructureSetsRegistry(),
                             noiseProvider.bclib_getNoises(),
