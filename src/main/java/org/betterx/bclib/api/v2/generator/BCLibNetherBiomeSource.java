@@ -135,11 +135,11 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
 
 
     private static boolean isValidNetherBiome(Holder<Biome> biome, ResourceLocation location) {
-        return biome.unwrapKey().get().location().toString().contains("gravel_desert");
+        //return biome.unwrapKey().get().location().toString().contains("gravel_desert");
 
-//        return NetherBiomes.canGenerateInNether(biome.unwrapKey().get()) ||
-//                biome.is(BiomeTags.IS_NETHER) ||
-//                BiomeAPI.wasRegisteredAsNetherBiome(location);
+        return NetherBiomes.canGenerateInNether(biome.unwrapKey().get()) ||
+                biome.is(BiomeTags.IS_NETHER) ||
+                BiomeAPI.wasRegisteredAsNetherBiome(location);
     }
 
     private static boolean isValidNonVanillaNetherBiome(Holder<Biome> biome, ResourceLocation location) {
