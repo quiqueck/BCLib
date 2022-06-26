@@ -47,6 +47,7 @@ public class BCLInlinePlacedBuilder<F extends Feature<FC>, FC extends FeatureCon
      *
      * @return created {@link PlacedFeature} instance.
      */
+    @Override
     public Holder<PlacedFeature> build() {
         return build(cFeature);
     }

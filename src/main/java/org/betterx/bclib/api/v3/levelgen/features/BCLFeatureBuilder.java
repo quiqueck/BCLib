@@ -1,5 +1,6 @@
 package org.betterx.bclib.api.v3.levelgen.features;
 
+import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.levelgen.features.BCLFeature;
 import org.betterx.bclib.api.v2.levelgen.features.config.PillarFeatureConfig;
 import org.betterx.bclib.api.v2.levelgen.features.config.PlaceFacingBlockConfig;
@@ -13,6 +14,7 @@ import org.betterx.bclib.api.v2.levelgen.structures.StructurePlacementType;
 import org.betterx.bclib.api.v2.levelgen.structures.StructureWorldNBT;
 import org.betterx.bclib.api.v2.poi.BCLPoiType;
 import org.betterx.bclib.blocks.BlockProperties;
+import org.betterx.bclib.util.Triple;
 
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -106,6 +108,26 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
                 featureID,
                 (RandomPatchFeature) Feature.RANDOM_PATCH,
                 featureToPlace
+        );
+    }
+
+    public static AsRandomSelect startRandomSelect(
+            ResourceLocation featureID
+    ) {
+        return new AsRandomSelect(
+                featureID,
+                (RandomSelectorFeature) Feature.RANDOM_SELECTOR
+        );
+    }
+
+    public static AsMultiPlaceRandomSelect startRandomSelect(
+            ResourceLocation featureID,
+            BiFunction<BCLInlinePlacedBuilder<SimpleBlockFeature, SimpleBlockConfiguration>, Integer, Holder<PlacedFeature>> placementModFunction
+    ) {
+        return new AsMultiPlaceRandomSelect(
+                featureID,
+                (RandomSelectorFeature) Feature.RANDOM_SELECTOR,
+                placementModFunction
         );
     }
 
@@ -779,6 +801,142 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         @Override
         public SimpleBlockConfiguration createConfiguration() {
             return new SimpleBlockConfiguration(new WeightedStateProvider(stateBuilder.build()));
+        }
+    }
+
+    public static class AsRandomSelect extends BCLFeatureBuilder<RandomSelectorFeature, RandomFeatureConfiguration> {
+        private List<WeightedPlacedFeature> features = new LinkedList<>();
+        private Holder<PlacedFeature> defaultFeature;
+
+        private AsRandomSelect(ResourceLocation featureID, RandomSelectorFeature feature) {
+            super(featureID, feature);
+        }
+
+
+        public AsRandomSelect add(Holder<PlacedFeature> feature, float weight) {
+            features.add(new WeightedPlacedFeature(feature, weight));
+            return this;
+        }
+
+        public AsRandomSelect defaultFeature(Holder<PlacedFeature> feature) {
+            defaultFeature = feature;
+            return this;
+        }
+
+        @Override
+        public RandomFeatureConfiguration createConfiguration() {
+            return new RandomFeatureConfiguration(features, defaultFeature);
+        }
+    }
+
+    public static class AsMultiPlaceRandomSelect extends BCLFeatureBuilder<RandomSelectorFeature, RandomFeatureConfiguration> {
+        private List<Triple<BlockStateProvider, Float, Integer>> features = new LinkedList<>();
+
+        private final BiFunction<BCLInlinePlacedBuilder<SimpleBlockFeature, SimpleBlockConfiguration>, Integer, Holder<PlacedFeature>> modFunction;
+
+        private AsMultiPlaceRandomSelect(
+                ResourceLocation featureID,
+                RandomSelectorFeature feature,
+                BiFunction<BCLInlinePlacedBuilder<SimpleBlockFeature, SimpleBlockConfiguration>, Integer, Holder<PlacedFeature>> mod
+        ) {
+            super(featureID, feature);
+            this.modFunction = mod;
+        }
+
+        private static int featureCounter = 0;
+        private static int lastID = 0;
+
+        public AsMultiPlaceRandomSelect addAllStates(Block block, int weight) {
+            return addAllStates(block, weight, lastID + 1);
+        }
+
+        public AsMultiPlaceRandomSelect addAll(int weight, Block... blocks) {
+            return addAll(weight, lastID + 1, blocks);
+        }
+
+        public AsMultiPlaceRandomSelect addAllStatesFor(IntegerProperty prop, Block block, int weight) {
+            return addAllStatesFor(prop, block, weight, lastID + 1);
+        }
+
+        public AsMultiPlaceRandomSelect add(Block block, float weight) {
+            return add(BlockStateProvider.simple(block), weight);
+        }
+
+        public AsMultiPlaceRandomSelect add(BlockState state, float weight) {
+            return add(BlockStateProvider.simple(state), weight);
+        }
+
+        public AsMultiPlaceRandomSelect add(BlockStateProvider provider, float weight) {
+            return add(provider, weight, lastID + 1);
+        }
+
+
+        public AsMultiPlaceRandomSelect addAllStates(Block block, int weight, int id) {
+            Set<BlockState> states = BCLPoiType.getBlockStates(block);
+            SimpleWeightedRandomList.Builder<BlockState> builder = SimpleWeightedRandomList.builder();
+            states.forEach(s -> builder.add(block.defaultBlockState(), 1));
+
+            this.add(new WeightedStateProvider(builder.build()), weight, id);
+            return this;
+        }
+
+        public AsMultiPlaceRandomSelect addAll(int weight, int id, Block... blocks) {
+            SimpleWeightedRandomList.Builder<BlockState> builder = SimpleWeightedRandomList.builder();
+            for (Block block : blocks) {
+                builder.add(block.defaultBlockState(), 1);
+            }
+
+            this.add(new WeightedStateProvider(builder.build()), weight, id);
+            return this;
+        }
+
+        public AsMultiPlaceRandomSelect addAllStatesFor(IntegerProperty prop, Block block, int weight, int id) {
+            Collection<Integer> values = prop.getPossibleValues();
+            SimpleWeightedRandomList.Builder<BlockState> builder = SimpleWeightedRandomList.builder();
+            values.forEach(s -> builder.add(block.defaultBlockState().setValue(prop, s), 1));
+            this.add(new WeightedStateProvider(builder.build()), weight, id);
+            return this;
+        }
+
+        public AsMultiPlaceRandomSelect add(Block block, float weight, int id) {
+            return add(BlockStateProvider.simple(block), weight, id);
+        }
+
+        public AsMultiPlaceRandomSelect add(BlockState state, float weight, int id) {
+            return add(BlockStateProvider.simple(state), weight, id);
+        }
+
+        public AsMultiPlaceRandomSelect add(BlockStateProvider provider, float weight, int id) {
+            features.add(new Triple<>(provider, weight, id));
+            lastID = Math.max(lastID, id);
+            return this;
+        }
+
+        private Holder<PlacedFeature> place(BlockStateProvider p, int id) {
+            var builder = BCLFeatureBuilder
+                    .start(BCLib.makeID("temp_select_feature" + (featureCounter++)), p)
+                    .inlinePlace();
+            return modFunction.apply(builder, id);
+        }
+
+        @Override
+        public RandomFeatureConfiguration createConfiguration() {
+            if (modFunction == null) {
+                throw new IllegalStateException("AsMultiPlaceRandomSelect needs a placement.modification Function");
+            }
+            float sum = this.features.stream().map(p -> p.second).reduce(0.0f, (p, v) -> p + v);
+            List<WeightedPlacedFeature> features = this.features.stream()
+                                                                .map(p -> new WeightedPlacedFeature(
+                                                                        this.place(p.first, p.third),
+                                                                        p.second / sum
+                                                                ))
+                                                                .toList();
+
+
+            return new RandomFeatureConfiguration(
+                    features.subList(0, features.size() - 1),
+                    features.get(features.size() - 1).feature
+            );
         }
     }
 }

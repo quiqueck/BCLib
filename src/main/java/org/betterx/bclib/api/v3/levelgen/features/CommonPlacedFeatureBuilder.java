@@ -11,12 +11,9 @@ import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.util.valueproviders.UniformInt;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
-import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import net.minecraft.world.level.levelgen.placement.*;
 import net.minecraft.world.level.material.Material;
 
@@ -442,24 +439,5 @@ abstract class CommonPlacedFeatureBuilder<F extends Feature<FC>, FC extends Feat
 
     public BCLFeatureBuilder.RandomPatch inRandomPatch(ResourceLocation id) {
         return BCLFeatureBuilder.startRandomPatch(id, build());
-    }
-
-    public BCLFeatureBuilder.AsSequence then(ResourceLocation id) {
-        return BCLFeatureBuilder.startSequence(id).add(build());
-    }
-
-    public BCLFeatureBuilder.ForSimpleBlock putBlock(ResourceLocation id, Block block) {
-        return BCLFeatureBuilder.start(id, block);
-    }
-
-    public BCLFeatureBuilder.ForSimpleBlock putBlock(ResourceLocation id, BlockState state) {
-        return BCLFeatureBuilder.start(id, state);
-    }
-
-    public BCLFeatureBuilder.ForSimpleBlock putBlock(
-            ResourceLocation id,
-            BlockStateProvider provider
-    ) {
-        return BCLFeatureBuilder.start(id, provider);
     }
 }

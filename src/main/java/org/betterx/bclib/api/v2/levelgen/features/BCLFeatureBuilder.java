@@ -25,6 +25,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * @param <FC>
+ * @param <F>
+ * @deprecated please use {@link org.betterx.bclib.api.v3.levelgen.features.BCLFeatureBuilder} instead
+ */
+@Deprecated(forRemoval = true)
 public class BCLFeatureBuilder<FC extends FeatureConfiguration, F extends Feature<FC>> {
     private final List<PlacementModifier> modifications = new ArrayList<>(5);
     private final ResourceLocation featureID;

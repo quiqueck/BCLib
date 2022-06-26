@@ -28,6 +28,12 @@ import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import java.util.Map.Entry;
 import java.util.Optional;
 
+/**
+ * @param <F>
+ * @param <FC>
+ * @deprecated Please use {@link org.betterx.bclib.api.v3.levelgen.features.BCLFeature} instead
+ */
+@Deprecated(forRemoval = true)
 public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> {
     public static final Feature<PlaceFacingBlockConfig> PLACE_BLOCK = register(
             BCLib.makeID("place_block"),
