@@ -9,6 +9,7 @@ import net.minecraft.world.level.material.Fluids;
 
 public class BlockPredicates {
     public static final BlockPredicate ONLY_NYLIUM = BlockPredicate.matchesTag(BlockTags.NYLIUM);
+    public static final BlockPredicate ONLY_MYCELIUM = BlockPredicate.matchesTag(CommonBlockTags.MYCELIUM);
     public static final BlockPredicate ONLY_GRAVEL_OR_SAND = BlockPredicate.matchesBlocks(
             Blocks.GRAVEL,
             Blocks.SAND,
