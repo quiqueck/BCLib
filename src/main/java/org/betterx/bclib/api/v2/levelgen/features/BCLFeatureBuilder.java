@@ -1,6 +1,9 @@
 package org.betterx.bclib.api.v2.levelgen.features;
 
-import org.betterx.bclib.api.v2.levelgen.features.placement.*;
+import org.betterx.bclib.api.v2.levelgen.features.placement.IsEmptyAboveSampledFilter;
+import org.betterx.bclib.api.v2.levelgen.features.placement.MinEmptyFilter;
+import org.betterx.bclib.api.v2.levelgen.features.placement.Stencil;
+import org.betterx.bclib.api.v3.levelgen.features.placement.*;
 import org.betterx.worlds.together.tag.v3.CommonBlockTags;
 
 import net.minecraft.core.Direction;

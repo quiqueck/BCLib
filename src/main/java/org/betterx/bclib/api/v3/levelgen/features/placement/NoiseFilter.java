@@ -1,6 +1,5 @@
 package org.betterx.bclib.api.v3.levelgen.features.placement;
 
-import org.betterx.bclib.api.v2.levelgen.features.placement.PlacementModifiers;
 import org.betterx.bclib.noise.Noises;
 
 import com.mojang.serialization.Codec;

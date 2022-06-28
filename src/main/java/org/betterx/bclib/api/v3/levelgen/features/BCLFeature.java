@@ -1,8 +1,8 @@
 package org.betterx.bclib.api.v3.levelgen.features;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.levelgen.features.config.*;
-import org.betterx.bclib.api.v2.levelgen.features.features.*;
+import org.betterx.bclib.api.v3.levelgen.features.config.*;
+import org.betterx.bclib.api.v3.levelgen.features.features.*;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -11,7 +11,6 @@ import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
-import net.minecraft.world.level.levelgen.feature.configurations.RandomFeatureConfiguration;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
 import org.jetbrains.annotations.ApiStatus;
@@ -21,25 +20,8 @@ public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> 
             BCLib.makeID("place_block"),
             new PlaceBlockFeature<>(PlaceFacingBlockConfig.CODEC)
     );
-    public static final Feature<ScatterFeatureConfig.OnSolid> SCATTER_ON_SOLID = register(
-            BCLib.makeID("scatter_on_solid"),
-            new ScatterFeature<>(ScatterFeatureConfig.OnSolid.CODEC)
-    );
 
-    public static final Feature<ScatterFeatureConfig.ExtendTop> SCATTER_EXTEND_TOP = register(
-            BCLib.makeID("scatter_extend_top"),
-            new ScatterFeature<>(ScatterFeatureConfig.ExtendTop.CODEC)
-    );
-
-    public static final Feature<ScatterFeatureConfig.ExtendBottom> SCATTER_EXTEND_BOTTOM = register(
-            BCLib.makeID("scatter_extend_bottom"),
-            new ScatterFeature<>(ScatterFeatureConfig.ExtendBottom.CODEC)
-    );
-
-    public static final Feature<RandomFeatureConfiguration> RANDOM_SELECTOR = register(
-            BCLib.makeID("random_select"),
-            new WeightedRandomSelectorFeature()
-    );
+    
     public static final Feature<TemplateFeatureConfig> TEMPLATE = register(
             BCLib.makeID("template"),
             new TemplateFeature(

@@ -1,7 +1,5 @@
 package org.betterx.bclib.api.v3.levelgen.features;
 
-import org.betterx.bclib.api.v2.levelgen.features.UserGrowableFeature;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;

@@ -12,6 +12,7 @@ import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 /**
  * Tests if there is air at two locations above the tested block position
  */
+@Deprecated(forRemoval = true)
 public class IsEmptyAboveSampledFilter extends PlacementFilter {
     private static final IsEmptyAboveSampledFilter DEFAULT = new IsEmptyAboveSampledFilter(4, 2);
     private static final IsEmptyAboveSampledFilter DEFAULT1 = new IsEmptyAboveSampledFilter(1, 1);

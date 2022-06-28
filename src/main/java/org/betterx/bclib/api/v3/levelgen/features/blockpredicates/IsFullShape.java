@@ -1,4 +1,4 @@
-package org.betterx.bclib.api.v2.levelgen.features.blockpredicates;
+package org.betterx.bclib.api.v3.levelgen.features.blockpredicates;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -30,7 +30,7 @@ public class IsFullShape implements BlockPredicate {
 
 
     public BlockPredicateType<IsFullShape> type() {
-        return Types.FULL_SHAPE;
+        return BlockPredicates.FULL_SHAPE;
     }
 
     @Override

@@ -12,6 +12,7 @@ import net.minecraft.world.level.levelgen.placement.PlacementFilter;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 
+@Deprecated(forRemoval = true)
 public class MinEmptyFilter extends PlacementFilter {
     private static final MinEmptyFilter DOWN = new MinEmptyFilter(Direction.DOWN, 2);
     private static final MinEmptyFilter UP = new MinEmptyFilter(Direction.UP, 2);

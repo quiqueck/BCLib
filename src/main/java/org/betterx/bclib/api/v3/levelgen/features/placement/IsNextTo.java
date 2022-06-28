@@ -1,4 +1,4 @@
-package org.betterx.bclib.api.v2.levelgen.features.placement;
+package org.betterx.bclib.api.v3.levelgen.features.placement;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

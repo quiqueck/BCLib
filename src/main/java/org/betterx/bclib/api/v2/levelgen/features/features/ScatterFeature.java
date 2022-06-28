@@ -1,7 +1,7 @@
 package org.betterx.bclib.api.v2.levelgen.features.features;
 
-import org.betterx.bclib.api.v2.levelgen.features.UserGrowableFeature;
 import org.betterx.bclib.api.v2.levelgen.features.config.ScatterFeatureConfig;
+import org.betterx.bclib.api.v3.levelgen.features.UserGrowableFeature;
 import org.betterx.bclib.util.BlocksHelper;
 
 import com.mojang.serialization.Codec;
@@ -17,6 +17,7 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 
 import java.util.Optional;
 
+@Deprecated(forRemoval = true)
 public class ScatterFeature<FC extends ScatterFeatureConfig>
         extends Feature<FC> implements UserGrowableFeature<FC> {
 

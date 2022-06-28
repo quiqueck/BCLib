@@ -1,8 +1,8 @@
 package org.betterx.bclib.api.v3.levelgen.features;
 
-import org.betterx.bclib.api.v2.levelgen.features.config.PlaceFacingBlockConfig;
-import org.betterx.bclib.api.v2.levelgen.features.placement.*;
-import org.betterx.bclib.api.v3.levelgen.features.placement.NoiseFilter;
+import org.betterx.bclib.api.v3.levelgen.features.blockpredicates.BlockPredicates;
+import org.betterx.bclib.api.v3.levelgen.features.config.PlaceFacingBlockConfig;
+import org.betterx.bclib.api.v3.levelgen.features.placement.*;
 import org.betterx.worlds.together.tag.v3.CommonBlockTags;
 
 import net.minecraft.core.Direction;
@@ -75,24 +75,6 @@ abstract class CommonPlacedFeatureBuilder<F extends Feature<FC>, FC extends Feat
     }
 
     /**
-     * Generate points in a stencil pattern
-     *
-     * @return same {@link CommonPlacedFeatureBuilder} instance.
-     */
-    public T stencil() {
-        return modifier(Stencil.all());
-    }
-
-    /**
-     * Generate points in a stencil pattern and selecting (on average) only every 4th
-     *
-     * @return same {@link CommonPlacedFeatureBuilder} instance.
-     */
-    public T stencilOneIn4() {
-        return modifier(Stencil.oneIn4());
-    }
-
-    /**
      * Generate points for every xz-Coordinate in a chunk. Be carefuller, this is quite expensive!
      *
      * @return same {@link CommonPlacedFeatureBuilder} instance.
@@ -100,6 +82,15 @@ abstract class CommonPlacedFeatureBuilder<F extends Feature<FC>, FC extends Feat
     public T all() {
         return modifier(All.simple());
     }
+
+    public T stencil() {
+        return modifier(Stencil.all());
+    }
+
+    public T stencilOneIn4() {
+        return modifier(Stencil.oneIn4());
+    }
+
 
     /**
      * Generate feature in certain iterations (per chunk).
@@ -218,34 +209,6 @@ abstract class CommonPlacedFeatureBuilder<F extends Feature<FC>, FC extends Feat
         return modifier(PlacementUtils.FULL_RANGE);
     }
 
-    public T isEmptyAbove4() {
-        return modifier(IsEmptyAboveSampledFilter.emptyAbove4());
-    }
-
-    public T isEmptyAbove2() {
-        return modifier(IsEmptyAboveSampledFilter.emptyAbove2());
-    }
-
-    public T isEmptyAbove() {
-        return modifier(IsEmptyAboveSampledFilter.emptyAbove());
-    }
-
-    public T isEmptyBelow4() {
-        return modifier(IsEmptyAboveSampledFilter.emptyBelow4());
-    }
-
-    public T isEmptyBelow2() {
-        return modifier(IsEmptyAboveSampledFilter.emptyBelow2());
-    }
-
-    public T isEmptyBelow() {
-        return modifier(IsEmptyAboveSampledFilter.emptyBelow());
-    }
-
-    public T isEmptyAbove(int d1, int d2) {
-        return modifier(new IsEmptyAboveSampledFilter(d1, d2));
-    }
-
     public T spreadHorizontal(IntProvider p) {
         return modifier(RandomOffsetPlacement.horizontal(p));
     }
@@ -308,15 +271,6 @@ abstract class CommonPlacedFeatureBuilder<F extends Feature<FC>, FC extends Feat
     public T findSolidCeil(int distance) {
         return modifier(FindSolidInDirection.up(distance));
     }
-
-    public T hasMinimumDownwardSpace() {
-        return modifier(MinEmptyFilter.down());
-    }
-
-    public T hasMinimumUpwardSpace() {
-        return modifier(MinEmptyFilter.up());
-    }
-
 
     /**
      * Cast a ray with max {@code distance} length to find the next solid Block. The ray will travel through replaceable

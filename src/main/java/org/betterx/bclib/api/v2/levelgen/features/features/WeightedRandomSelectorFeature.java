@@ -10,6 +10,8 @@ import net.minecraft.world.level.levelgen.feature.WeightedPlacedFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.RandomFeatureConfiguration;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
+
+@Deprecated(forRemoval = true)
 public class WeightedRandomSelectorFeature extends Feature<RandomFeatureConfiguration> {
     public WeightedRandomSelectorFeature() {
         super(RandomFeatureConfiguration.CODEC);

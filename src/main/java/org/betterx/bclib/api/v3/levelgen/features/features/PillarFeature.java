@@ -1,6 +1,6 @@
-package org.betterx.bclib.api.v2.levelgen.features.features;
+package org.betterx.bclib.api.v3.levelgen.features.features;
 
-import org.betterx.bclib.api.v2.levelgen.features.config.PillarFeatureConfig;
+import org.betterx.bclib.api.v3.levelgen.features.config.PillarFeatureConfig;
 import org.betterx.bclib.util.BlocksHelper;
 
 import net.minecraft.core.BlockPos;

@@ -12,6 +12,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 
 import java.util.Optional;
 
+@Deprecated(forRemoval = true)
 public abstract class SurfaceFeature<T extends FeatureConfiguration> extends Feature<T> {
     public static abstract class DefaultConfiguration extends SurfaceFeature<NoneFeatureConfiguration> {
         protected DefaultConfiguration() {

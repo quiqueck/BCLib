@@ -1,4 +1,4 @@
-package org.betterx.bclib.api.v2.levelgen.features.config;
+package org.betterx.bclib.api.v3.levelgen.features.config;
 
 import org.betterx.bclib.blocks.BlockProperties;
 

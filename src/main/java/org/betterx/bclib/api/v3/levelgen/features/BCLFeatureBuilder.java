@@ -1,17 +1,17 @@
 package org.betterx.bclib.api.v3.levelgen.features;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.levelgen.features.config.PillarFeatureConfig;
-import org.betterx.bclib.api.v2.levelgen.features.config.PlaceFacingBlockConfig;
-import org.betterx.bclib.api.v2.levelgen.features.config.SequenceFeatureConfig;
-import org.betterx.bclib.api.v2.levelgen.features.config.TemplateFeatureConfig;
-import org.betterx.bclib.api.v2.levelgen.features.features.PillarFeature;
-import org.betterx.bclib.api.v2.levelgen.features.features.PlaceBlockFeature;
-import org.betterx.bclib.api.v2.levelgen.features.features.SequenceFeature;
-import org.betterx.bclib.api.v2.levelgen.features.features.TemplateFeature;
 import org.betterx.bclib.api.v2.levelgen.structures.StructurePlacementType;
 import org.betterx.bclib.api.v2.levelgen.structures.StructureWorldNBT;
 import org.betterx.bclib.api.v2.poi.BCLPoiType;
+import org.betterx.bclib.api.v3.levelgen.features.config.PillarFeatureConfig;
+import org.betterx.bclib.api.v3.levelgen.features.config.PlaceFacingBlockConfig;
+import org.betterx.bclib.api.v3.levelgen.features.config.SequenceFeatureConfig;
+import org.betterx.bclib.api.v3.levelgen.features.config.TemplateFeatureConfig;
+import org.betterx.bclib.api.v3.levelgen.features.features.PillarFeature;
+import org.betterx.bclib.api.v3.levelgen.features.features.PlaceBlockFeature;
+import org.betterx.bclib.api.v3.levelgen.features.features.SequenceFeature;
+import org.betterx.bclib.api.v3.levelgen.features.features.TemplateFeature;
 import org.betterx.bclib.blocks.BlockProperties;
 import org.betterx.bclib.util.Triple;
 

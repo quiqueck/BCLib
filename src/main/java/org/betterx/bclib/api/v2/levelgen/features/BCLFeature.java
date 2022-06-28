@@ -1,8 +1,16 @@
 package org.betterx.bclib.api.v2.levelgen.features;
 
-import org.betterx.bclib.api.v2.levelgen.features.config.*;
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.levelgen.features.config.ScatterFeatureConfig;
+import org.betterx.bclib.api.v2.levelgen.features.features.ScatterFeature;
+import org.betterx.bclib.api.v2.levelgen.features.features.WeightedRandomSelectorFeature;
 import org.betterx.bclib.api.v3.levelgen.features.BCLConfigureFeature;
 import org.betterx.bclib.api.v3.levelgen.features.BCLFeatureBuilder;
+import org.betterx.bclib.api.v3.levelgen.features.UserGrowableFeature;
+import org.betterx.bclib.api.v3.levelgen.features.config.ConditionFeatureConfig;
+import org.betterx.bclib.api.v3.levelgen.features.config.PlaceFacingBlockConfig;
+import org.betterx.bclib.api.v3.levelgen.features.config.SequenceFeatureConfig;
+import org.betterx.bclib.api.v3.levelgen.features.config.TemplateFeatureConfig;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -40,26 +48,31 @@ public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> 
      */
     @Deprecated(forRemoval = true)
     public static final Feature<PlaceFacingBlockConfig> PLACE_BLOCK = org.betterx.bclib.api.v3.levelgen.features.BCLFeature.PLACE_BLOCK;
-    /**
-     * @deprecated Replace by {@link org.betterx.bclib.api.v3.levelgen.features.BCLFeature#SCATTER_ON_SOLID}
-     */
+
     @Deprecated(forRemoval = true)
-    public static final Feature<ScatterFeatureConfig.OnSolid> SCATTER_ON_SOLID = org.betterx.bclib.api.v3.levelgen.features.BCLFeature.SCATTER_ON_SOLID;
-    /**
-     * @deprecated Replace by {@link org.betterx.bclib.api.v3.levelgen.features.BCLFeature#SCATTER_EXTEND_TOP}
-     */
+    public static final Feature<ScatterFeatureConfig.OnSolid> SCATTER_ON_SOLID = register(
+            BCLib.makeID("scatter_on_solid"),
+            new ScatterFeature<>(ScatterFeatureConfig.OnSolid.CODEC)
+    );
+
     @Deprecated(forRemoval = true)
-    public static final Feature<ScatterFeatureConfig.ExtendTop> SCATTER_EXTEND_TOP = org.betterx.bclib.api.v3.levelgen.features.BCLFeature.SCATTER_EXTEND_TOP;
-    /**
-     * @deprecated Replace by {@link org.betterx.bclib.api.v3.levelgen.features.BCLFeature#SCATTER_EXTEND_BOTTOM}
-     */
+    public static final Feature<ScatterFeatureConfig.ExtendTop> SCATTER_EXTEND_TOP = register(
+            BCLib.makeID("scatter_extend_top"),
+            new ScatterFeature<>(ScatterFeatureConfig.ExtendTop.CODEC)
+    );
+
     @Deprecated(forRemoval = true)
-    public static final Feature<ScatterFeatureConfig.ExtendBottom> SCATTER_EXTEND_BOTTOM = org.betterx.bclib.api.v3.levelgen.features.BCLFeature.SCATTER_EXTEND_BOTTOM;
-    /**
-     * @deprecated Replace by {@link org.betterx.bclib.api.v3.levelgen.features.BCLFeature#RANDOM_SELECTOR}
-     */
+    public static final Feature<ScatterFeatureConfig.ExtendBottom> SCATTER_EXTEND_BOTTOM = register(
+            BCLib.makeID("scatter_extend_bottom"),
+            new ScatterFeature<>(ScatterFeatureConfig.ExtendBottom.CODEC)
+    );
+
     @Deprecated(forRemoval = true)
-    public static final Feature<RandomFeatureConfiguration> RANDOM_SELECTOR = org.betterx.bclib.api.v3.levelgen.features.BCLFeature.RANDOM_SELECTOR;
+    public static final Feature<RandomFeatureConfiguration> RANDOM_SELECTOR = register(
+            BCLib.makeID("random_select"),
+            new WeightedRandomSelectorFeature()
+    );
+
     /**
      * @deprecated Replace by {@link org.betterx.bclib.api.v3.levelgen.features.BCLFeature#TEMPLATE}
      */

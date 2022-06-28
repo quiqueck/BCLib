@@ -1,10 +1,15 @@
-package org.betterx.bclib.api.v3.levelgen.features;
+package org.betterx.bclib.api.v3.levelgen.features.blockpredicates;
 
+import org.betterx.bclib.BCLib;
 import org.betterx.worlds.together.tag.v3.CommonBlockTags;
 
+import com.mojang.serialization.Codec;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
+import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicateType;
 import net.minecraft.world.level.material.Fluids;
 
 public class BlockPredicates {
@@ -24,4 +29,16 @@ public class BlockPredicates {
             BlockPredicate.matchesTag(CommonBlockTags.TERRAIN),
             BlockPredicate.matchesFluids(Fluids.LAVA)
     );
+    public static final BlockPredicateType<IsFullShape> FULL_SHAPE = register(
+            BCLib.makeID("full_shape"),
+            IsFullShape.CODEC
+    );
+
+    public static <P extends BlockPredicate> BlockPredicateType<P> register(ResourceLocation location, Codec<P> codec) {
+        return Registry.register(Registry.BLOCK_PREDICATE_TYPES, location, () -> codec);
+    }
+
+    public static void ensureStaticInitialization() {
+
+    }
 }

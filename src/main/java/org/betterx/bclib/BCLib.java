@@ -9,10 +9,10 @@ import org.betterx.bclib.api.v2.levelgen.LevelGenEvents;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeBuilder;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
-import org.betterx.bclib.api.v2.levelgen.features.blockpredicates.Types;
-import org.betterx.bclib.api.v2.levelgen.features.placement.PlacementModifiers;
 import org.betterx.bclib.api.v2.levelgen.structures.TemplatePiece;
 import org.betterx.bclib.api.v2.levelgen.surface.rules.Conditions;
+import org.betterx.bclib.api.v3.levelgen.features.blockpredicates.BlockPredicates;
+import org.betterx.bclib.api.v3.levelgen.features.placement.PlacementModifiers;
 import org.betterx.bclib.commands.CommandRegistry;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.recipes.AnvilRecipe;
@@ -42,7 +42,7 @@ public class BCLib implements ModInitializer {
     public void onInitialize() {
         LevelGenEvents.register();
         WorldsTogether.onInitialize();
-        Types.ensureStaticInitialization();
+        BlockPredicates.ensureStaticInitialization();
         BaseRegistry.register();
         GeneratorOptions.init();
         BaseBlockEntities.register();
