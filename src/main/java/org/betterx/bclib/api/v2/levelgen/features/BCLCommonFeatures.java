@@ -9,6 +9,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguratio
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.structure.templatesystem.BlockMatchTest;
 
+@Deprecated(forRemoval = true)
 public class BCLCommonFeatures {
     /**
      * Will create a basic plant feature.

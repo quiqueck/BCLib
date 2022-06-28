@@ -35,7 +35,9 @@ public class FastFeatures {
             boolean sparse,
             ScatterFeatureConfig.Builder builder
     ) {
-        return scatter(location, onFloor, sparse, builder, BCLFeature.SCATTER_ON_SOLID);
+        return scatter(location, onFloor, sparse, builder,
+                org.betterx.bclib.api.v3.levelgen.features.BCLFeature.SCATTER_ON_SOLID
+        );
     }
 
     public static BCLFeature scatter(
@@ -229,7 +231,8 @@ public class FastFeatures {
             int xzSpread,
             int ySpread
     ) {
-        final BCLFeature SINGLE = simple(location, ySpread, false, BCLFeature.PLACE_BLOCK,
+        final BCLFeature SINGLE = simple(location, ySpread, false,
+                org.betterx.bclib.api.v3.levelgen.features.BCLFeature.PLACE_BLOCK,
                 new PlaceFacingBlockConfig(block, PlaceFacingBlockConfig.HORIZONTAL)
         );
         return patch(location, attempts, xzSpread, ySpread, SINGLE);

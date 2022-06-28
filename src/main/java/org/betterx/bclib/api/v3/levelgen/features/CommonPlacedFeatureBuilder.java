@@ -2,6 +2,7 @@ package org.betterx.bclib.api.v3.levelgen.features;
 
 import org.betterx.bclib.api.v2.levelgen.features.config.PlaceFacingBlockConfig;
 import org.betterx.bclib.api.v2.levelgen.features.placement.*;
+import org.betterx.bclib.api.v3.levelgen.features.placement.NoiseFilter;
 import org.betterx.worlds.together.tag.v3.CommonBlockTags;
 
 import net.minecraft.core.Direction;
@@ -11,6 +12,7 @@ import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.util.valueproviders.UniformInt;
+import net.minecraft.world.level.levelgen.Noises;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
@@ -156,6 +158,18 @@ abstract class CommonPlacedFeatureBuilder<F extends Feature<FC>, FC extends Feat
      */
     public T onlyInBiome() {
         return modifier(BiomeFilter.biome());
+    }
+
+    public T noiseIn(double min, double max, float scaleXZ, float scaleY) {
+        return modifier(new NoiseFilter(Noises.GRAVEL, min, max, scaleXZ, scaleY));
+    }
+
+    public T noiseAbove(double value, float scaleXZ, float scaleY) {
+        return modifier(new NoiseFilter(Noises.GRAVEL, value, Double.MAX_VALUE, scaleXZ, scaleY));
+    }
+
+    public T noiseBelow(double value, float scaleXZ, float scaleY) {
+        return modifier(new NoiseFilter(Noises.GRAVEL, -Double.MAX_VALUE, value, scaleXZ, scaleY));
     }
 
     /**

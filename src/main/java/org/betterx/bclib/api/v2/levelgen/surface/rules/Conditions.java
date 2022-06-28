@@ -83,5 +83,6 @@ public class Conditions {
         registerNumeric(BCLib.makeID("nether_noise"), NetherNoiseCondition.CODEC);
         register(BCLib.makeID("threshold_condition"), ThresholdCondition.CODEC);
         register(BCLib.makeID("volume_threshold_condition"), VolumeThresholdCondition.CODEC);
+        register(BCLib.makeID("rough_noise_condition"), RoughNoiseCondition.CODEC);
     }
 }

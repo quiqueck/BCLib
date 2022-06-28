@@ -1,8 +1,8 @@
 package org.betterx.bclib.api.v2.levelgen.features;
 
-import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.levelgen.features.config.*;
-import org.betterx.bclib.api.v2.levelgen.features.features.*;
+import org.betterx.bclib.api.v3.levelgen.features.BCLConfigureFeature;
+import org.betterx.bclib.api.v3.levelgen.features.BCLFeatureBuilder;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -25,7 +25,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.RandomPatchConf
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 
-import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -35,62 +35,57 @@ import java.util.Optional;
  */
 @Deprecated(forRemoval = true)
 public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> {
-    public static final Feature<PlaceFacingBlockConfig> PLACE_BLOCK = register(
-            BCLib.makeID("place_block"),
-            new PlaceBlockFeature<>(PlaceFacingBlockConfig.CODEC)
-    );
-    public static final Feature<ScatterFeatureConfig.OnSolid> SCATTER_ON_SOLID = register(
-            BCLib.makeID("scatter_on_solid"),
-            new ScatterFeature<>(ScatterFeatureConfig.OnSolid.CODEC)
-    );
+    /**
+     * @deprecated Replace by {@link org.betterx.bclib.api.v3.levelgen.features.BCLFeature#PLACE_BLOCK}
+     */
+    @Deprecated(forRemoval = true)
+    public static final Feature<PlaceFacingBlockConfig> PLACE_BLOCK = org.betterx.bclib.api.v3.levelgen.features.BCLFeature.PLACE_BLOCK;
+    /**
+     * @deprecated Replace by {@link org.betterx.bclib.api.v3.levelgen.features.BCLFeature#SCATTER_ON_SOLID}
+     */
+    @Deprecated(forRemoval = true)
+    public static final Feature<ScatterFeatureConfig.OnSolid> SCATTER_ON_SOLID = org.betterx.bclib.api.v3.levelgen.features.BCLFeature.SCATTER_ON_SOLID;
+    /**
+     * @deprecated Replace by {@link org.betterx.bclib.api.v3.levelgen.features.BCLFeature#SCATTER_EXTEND_TOP}
+     */
+    @Deprecated(forRemoval = true)
+    public static final Feature<ScatterFeatureConfig.ExtendTop> SCATTER_EXTEND_TOP = org.betterx.bclib.api.v3.levelgen.features.BCLFeature.SCATTER_EXTEND_TOP;
+    /**
+     * @deprecated Replace by {@link org.betterx.bclib.api.v3.levelgen.features.BCLFeature#SCATTER_EXTEND_BOTTOM}
+     */
+    @Deprecated(forRemoval = true)
+    public static final Feature<ScatterFeatureConfig.ExtendBottom> SCATTER_EXTEND_BOTTOM = org.betterx.bclib.api.v3.levelgen.features.BCLFeature.SCATTER_EXTEND_BOTTOM;
+    /**
+     * @deprecated Replace by {@link org.betterx.bclib.api.v3.levelgen.features.BCLFeature#RANDOM_SELECTOR}
+     */
+    @Deprecated(forRemoval = true)
+    public static final Feature<RandomFeatureConfiguration> RANDOM_SELECTOR = org.betterx.bclib.api.v3.levelgen.features.BCLFeature.RANDOM_SELECTOR;
+    /**
+     * @deprecated Replace by {@link org.betterx.bclib.api.v3.levelgen.features.BCLFeature#TEMPLATE}
+     */
+    @Deprecated(forRemoval = true)
+    public static final Feature<TemplateFeatureConfig> TEMPLATE = org.betterx.bclib.api.v3.levelgen.features.BCLFeature.TEMPLATE;
+    /**
+     * @deprecated Replace by {@link org.betterx.bclib.api.v3.levelgen.features.BCLFeature#MARK_POSTPROCESSING}
+     */
+    @Deprecated(forRemoval = true)
+    public static final Feature<NoneFeatureConfiguration> MARK_POSTPROCESSING = org.betterx.bclib.api.v3.levelgen.features.BCLFeature.MARK_POSTPROCESSING;
+    /**
+     * @deprecated Replace by {@link org.betterx.bclib.api.v3.levelgen.features.BCLFeature#SEQUENCE}
+     */
+    @Deprecated(forRemoval = true)
+    public static final Feature<SequenceFeatureConfig> SEQUENCE = org.betterx.bclib.api.v3.levelgen.features.BCLFeature.SEQUENCE;
+    /**
+     * @deprecated Replace by {@link org.betterx.bclib.api.v3.levelgen.features.BCLFeature#CONDITION}
+     */
+    @Deprecated(forRemoval = true)
+    public static final Feature<ConditionFeatureConfig> CONDITION = org.betterx.bclib.api.v3.levelgen.features.BCLFeature.CONDITION;
 
-    public static final Feature<ScatterFeatureConfig.ExtendTop> SCATTER_EXTEND_TOP = register(
-            BCLib.makeID("scatter_extend_top"),
-            new ScatterFeature<>(ScatterFeatureConfig.ExtendTop.CODEC)
-    );
-
-    public static final Feature<ScatterFeatureConfig.ExtendBottom> SCATTER_EXTEND_BOTTOM = register(
-            BCLib.makeID("scatter_extend_bottom"),
-            new ScatterFeature<>(ScatterFeatureConfig.ExtendBottom.CODEC)
-    );
-
-    public static final Feature<RandomFeatureConfiguration> RANDOM_SELECTOR = register(
-            BCLib.makeID("random_select"),
-            new WeightedRandomSelectorFeature()
-    );
-    public static final Feature<TemplateFeatureConfig> TEMPLATE = register(
-            BCLib.makeID("template"),
-            new TemplateFeature(
-                    TemplateFeatureConfig.CODEC)
-    );
-
-    public static final Feature<NoneFeatureConfiguration> MARK_POSTPROCESSING = register(
-            BCLib.makeID(
-                    "mark_postprocessing"),
-            new MarkPostProcessingFeature()
-    );
-
-    public static final Feature<SequenceFeatureConfig> SEQUENCE = register(
-            BCLib.makeID("sequence"),
-            new SequenceFeature()
-    );
-
-    public static final Feature<ConditionFeatureConfig> CONDITION = register(
-            BCLib.makeID("condition"),
-            new ConditionFeature()
-    );
-
-    public static final Feature<PillarFeatureConfig> PILLAR = register(
-            BCLib.makeID("pillar"),
-            new PillarFeature()
-    );
-    private final Holder<PlacedFeature> placedFeature;
-    private final Decoration featureStep;
-    private final F feature;
-    private final FC configuration;
     public final ResourceLocation id;
 
+    org.betterx.bclib.api.v3.levelgen.features.BCLFeature<F, FC> proxy;
 
+    @Deprecated(forRemoval = true)
     public BCLFeature(
             ResourceLocation id,
             F feature,
@@ -101,6 +96,35 @@ public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> 
         this(id, feature, featureStep, configuration, buildPlacedFeature(id, feature, configuration, modifiers));
     }
 
+    private static <E> boolean containsObj(Registry<E> registry, E obj) {
+        Optional<Map.Entry<ResourceKey<E>, E>> optional = registry
+                .entrySet()
+                .stream()
+                .filter(entry -> entry.getValue() == obj)
+                .findAny();
+        return optional.isPresent();
+    }
+
+    private static <F extends Feature<FC>, FC extends FeatureConfiguration> org.betterx.bclib.api.v3.levelgen.features.BCLFeature<F, FC> build(
+            ResourceLocation id,
+            F feature,
+            Decoration featureStep,
+            FC configuration,
+            Holder<PlacedFeature> placedFeature
+    ) {
+        BCLConfigureFeature<F, FC> cfg = BCLFeatureBuilder.start(id, feature)
+                                                          .configuration(configuration)
+                                                          .build();
+        if (!BuiltinRegistries.PLACED_FEATURE.containsKey(id)) {
+            Registry.register(BuiltinRegistries.PLACED_FEATURE, id, placedFeature.value());
+        }
+        if (!Registry.FEATURE.containsKey(id) && !containsObj(Registry.FEATURE, feature)) {
+            Registry.register(Registry.FEATURE, id, feature);
+        }
+        return new org.betterx.bclib.api.v3.levelgen.features.BCLFeature<>(cfg, placedFeature, featureStep);
+    }
+
+    @Deprecated(forRemoval = true)
     public BCLFeature(
             ResourceLocation id,
             F feature,
@@ -108,18 +132,13 @@ public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> 
             FC configuration,
             Holder<PlacedFeature> placedFeature
     ) {
-        this.placedFeature = placedFeature;
-        this.featureStep = featureStep;
-        this.feature = feature;
-        this.configuration = configuration;
-        this.id = id;
+        this(build(id, feature, featureStep, configuration, placedFeature));
+    }
 
-        if (!BuiltinRegistries.PLACED_FEATURE.containsKey(id)) {
-            Registry.register(BuiltinRegistries.PLACED_FEATURE, id, placedFeature.value());
-        }
-        if (!Registry.FEATURE.containsKey(id) && !containsObj(Registry.FEATURE, feature)) {
-            Registry.register(Registry.FEATURE, id, feature);
-        }
+    @Deprecated(forRemoval = true)
+    public BCLFeature(org.betterx.bclib.api.v3.levelgen.features.BCLFeature proxy) {
+        this.proxy = proxy;
+        this.id = proxy.configuredFeature.id;
     }
 
     private static <FC extends FeatureConfiguration, F extends Feature<FC>> Holder<PlacedFeature> buildPlacedFeature(
@@ -154,20 +173,20 @@ public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> 
         }
     }
 
-    private static <E> boolean containsObj(Registry<E> registry, E obj) {
-        Optional<Entry<ResourceKey<E>, E>> optional = registry
-                .entrySet()
-                .stream()
-                .filter(entry -> entry.getValue() == obj)
-                .findAny();
-        return optional.isPresent();
-    }
-
+    /**
+     * @param string
+     * @param feature
+     * @param <C>
+     * @param <F>
+     * @return
+     * @deprecated Use {@link org.betterx.bclib.api.v3.levelgen.features.BCLFeature#register(ResourceLocation, Feature)} instead
+     */
+    @Deprecated(forRemoval = true)
     public static <C extends FeatureConfiguration, F extends Feature<C>> F register(
             ResourceLocation string,
             F feature
     ) {
-        return Registry.register(Registry.FEATURE, string, feature);
+        return org.betterx.bclib.api.v3.levelgen.features.BCLFeature.register(string, feature);
     }
 
     /**
@@ -176,7 +195,11 @@ public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> 
      * @return {@link Feature}.
      */
     public F getFeature() {
-        return feature;
+        return proxy.getFeature();
+    }
+
+    public BCLConfigureFeature<F, FC> getConfFeature() {
+        return proxy.configuredFeature;
     }
 
     /**
@@ -185,7 +208,7 @@ public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> 
      * @return {@link PlacedFeature}.
      */
     public Holder<PlacedFeature> getPlacedFeature() {
-        return placedFeature;
+        return proxy.getPlacedFeature();
     }
 
     /**
@@ -194,11 +217,11 @@ public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> 
      * @return {@link Decoration}.
      */
     public Decoration getDecoration() {
-        return featureStep;
+        return proxy.getDecoration();
     }
 
     public FC getConfiguration() {
-        return configuration;
+        return proxy.getConfiguration();
     }
 
     public boolean place(ServerLevel level, BlockPos pos, RandomSource random) {

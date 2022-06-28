@@ -64,6 +64,7 @@ public abstract class ModIntegration {
         return FabricLoader.getInstance().isModLoaded(modID);
     }
 
+    @Deprecated(forRemoval = true)
     public BCLFeature getFeature(String featureID, String placedFeatureID, GenerationStep.Decoration featureStep) {
         ResourceLocation id = getID(featureID);
         Feature<?> feature = Registry.FEATURE.get(id);
@@ -78,6 +79,7 @@ public abstract class ModIntegration {
         );
     }
 
+    @Deprecated(forRemoval = true)
     public BCLFeature getFeature(String name, GenerationStep.Decoration featureStep) {
         return getFeature(name, name, featureStep);
     }

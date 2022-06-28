@@ -1,7 +1,6 @@
 package org.betterx.bclib.api.v3.levelgen.features;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.levelgen.features.BCLFeature;
 import org.betterx.bclib.api.v2.levelgen.features.config.PillarFeatureConfig;
 import org.betterx.bclib.api.v2.levelgen.features.config.PlaceFacingBlockConfig;
 import org.betterx.bclib.api.v2.levelgen.features.config.SequenceFeatureConfig;
@@ -43,6 +42,7 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("unused")
 public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends FeatureConfiguration> {
     private final ResourceLocation featureID;
     private final F feature;
@@ -122,7 +122,7 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
 
     public static AsMultiPlaceRandomSelect startRandomSelect(
             ResourceLocation featureID,
-            BiFunction<BCLInlinePlacedBuilder<SimpleBlockFeature, SimpleBlockConfiguration>, Integer, Holder<PlacedFeature>> placementModFunction
+            AsMultiPlaceRandomSelect.Placer placementModFunction
     ) {
         return new AsMultiPlaceRandomSelect(
                 featureID,
@@ -146,7 +146,7 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
     ) {
         return new WithTemplates(
                 featureID,
-                (TemplateFeature<TemplateFeatureConfig>) BCLFeature.TEMPLATE
+                (TemplateFeature<TemplateFeatureConfig>) org.betterx.bclib.api.v3.levelgen.features.BCLFeature.TEMPLATE
         );
     }
 
@@ -383,7 +383,7 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         }
 
 
-        public AsSequence add(org.betterx.bclib.api.v3.levelgen.features.BCLFeature p) {
+        public AsSequence add(org.betterx.bclib.api.v3.levelgen.features.BCLFeature<?, ?> p) {
             return add(p.placedFeature);
         }
 
@@ -427,12 +427,10 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
                     .build();
         }
 
-        @SafeVarargs
         public final AsBlockColumn<FF> addRandom(int height, BlockState... states) {
             return this.addRandom(ConstantInt.of(height), states);
         }
 
-        @SafeVarargs
         public final AsBlockColumn<FF> addRandom(IntProvider height, BlockState... states) {
             var builder = SimpleWeightedRandomList.<BlockState>builder();
             for (BlockState state : states) builder.add(state, 1);
@@ -659,7 +657,7 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
             super(featureID, feature);
         }
 
-        public WithConfiguration configuration(FC config) {
+        public WithConfiguration<F, FC> configuration(FC config) {
             this.configuration = config;
             return this;
         }
@@ -673,7 +671,7 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
     }
 
     public static class FacingBlock extends BCLFeatureBuilder<PlaceBlockFeature<PlaceFacingBlockConfig>, PlaceFacingBlockConfig> {
-        private SimpleWeightedRandomList.Builder<BlockState> stateBuilder = SimpleWeightedRandomList.builder();
+        private final SimpleWeightedRandomList.Builder<BlockState> stateBuilder = SimpleWeightedRandomList.builder();
         BlockState firstState;
         private int count = 0;
         private List<Direction> directions = PlaceFacingBlockConfig.HORIZONTAL;
@@ -805,7 +803,7 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
     }
 
     public static class AsRandomSelect extends BCLFeatureBuilder<RandomSelectorFeature, RandomFeatureConfiguration> {
-        private List<WeightedPlacedFeature> features = new LinkedList<>();
+        private final List<WeightedPlacedFeature> features = new LinkedList<>();
         private Holder<PlacedFeature> defaultFeature;
 
         private AsRandomSelect(ResourceLocation featureID, RandomSelectorFeature feature) {
@@ -830,14 +828,21 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
     }
 
     public static class AsMultiPlaceRandomSelect extends BCLFeatureBuilder<RandomSelectorFeature, RandomFeatureConfiguration> {
-        private List<Triple<BlockStateProvider, Float, Integer>> features = new LinkedList<>();
+        public interface Placer {
+            Holder<PlacedFeature> place(
+                    BCLInlinePlacedBuilder<SimpleBlockFeature, SimpleBlockConfiguration> placer,
+                    int id
+            );
+        }
 
-        private final BiFunction<BCLInlinePlacedBuilder<SimpleBlockFeature, SimpleBlockConfiguration>, Integer, Holder<PlacedFeature>> modFunction;
+        private final List<Triple<BlockStateProvider, Float, Integer>> features = new LinkedList<>();
+
+        private final Placer modFunction;
 
         private AsMultiPlaceRandomSelect(
                 ResourceLocation featureID,
                 RandomSelectorFeature feature,
-                BiFunction<BCLInlinePlacedBuilder<SimpleBlockFeature, SimpleBlockConfiguration>, Integer, Holder<PlacedFeature>> mod
+                Placer mod
         ) {
             super(featureID, feature);
             this.modFunction = mod;
@@ -916,7 +921,7 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
             var builder = BCLFeatureBuilder
                     .start(BCLib.makeID("temp_select_feature" + (featureCounter++)), p)
                     .inlinePlace();
-            return modFunction.apply(builder, id);
+            return modFunction.place(builder, id);
         }
 
         @Override
@@ -924,7 +929,7 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
             if (modFunction == null) {
                 throw new IllegalStateException("AsMultiPlaceRandomSelect needs a placement.modification Function");
             }
-            float sum = this.features.stream().map(p -> p.second).reduce(0.0f, (p, v) -> p + v);
+            float sum = this.features.stream().map(p -> p.second).reduce(0.0f, Float::sum);
             List<WeightedPlacedFeature> features = this.features.stream()
                                                                 .map(p -> new WeightedPlacedFeature(
                                                                         this.place(p.first, p.third),

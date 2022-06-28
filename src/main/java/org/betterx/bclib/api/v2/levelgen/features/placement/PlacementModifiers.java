@@ -1,6 +1,7 @@
 package org.betterx.bclib.api.v2.levelgen.features.placement;
 
 import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v3.levelgen.features.placement.NoiseFilter;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Registry;
@@ -9,6 +10,10 @@ import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 
 public class PlacementModifiers {
+    public static final PlacementModifierType<NoiseFilter> NOISE_FILTER = register(
+            "noise_filter",
+            NoiseFilter.CODEC
+    );
     public static final PlacementModifierType<Debug> DEBUG = register(
             "debug",
             Debug.CODEC

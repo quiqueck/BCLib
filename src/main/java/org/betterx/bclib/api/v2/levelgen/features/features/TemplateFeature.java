@@ -23,7 +23,7 @@ public class TemplateFeature<FC extends TemplateFeatureConfig> extends Feature<F
 
 
         return BCLFeatureBuilder
-                .start(location, BCLFeature.TEMPLATE)
+                .start(location, org.betterx.bclib.api.v3.levelgen.features.BCLFeature.TEMPLATE)
                 .decoration(GenerationStep.Decoration.SURFACE_STRUCTURES)
                 .onceEvery(onceEveryChunk) //discard neighboring chunks
                 .count(16) //try 16 placements in chunk
@@ -42,7 +42,7 @@ public class TemplateFeature<FC extends TemplateFeatureConfig> extends Feature<F
             int count
     ) {
         return BCLFeatureBuilder
-                .start(location, BCLFeature.TEMPLATE)
+                .start(location, org.betterx.bclib.api.v3.levelgen.features.BCLFeature.TEMPLATE)
                 .decoration(GenerationStep.Decoration.SURFACE_STRUCTURES)
                 .count(count)
                 .squarePlacement()

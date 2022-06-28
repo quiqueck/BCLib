@@ -22,6 +22,7 @@ public class CommonBlockTags {
     public static final TagKey<Block> END_ORES = TagManager.BLOCKS.makeCommonTag("end_ores");
     public static final TagKey<Block> SAPLINGS = TagManager.BLOCKS.makeCommonTag("saplings");
     public static final TagKey<Block> SOUL_GROUND = TagManager.BLOCKS.makeCommonTag("soul_ground");
+    public static final TagKey<Block> SCULK_LIKE = TagManager.BLOCKS.makeCommonTag("sculk_like");
     public static final TagKey<Block> WOODEN_BARREL = TagManager.BLOCKS.makeCommonTag("wooden_barrels");
     public static final TagKey<Block> WOODEN_CHEST = TagManager.BLOCKS.makeCommonTag("wooden_chests");
     public static final TagKey<Block> WORKBENCHES = TagManager.BLOCKS.makeCommonTag("workbench");
@@ -35,6 +36,7 @@ public class CommonBlockTags {
     public static final TagKey<Block> NETHER_TERRAIN = TagManager.BLOCKS.makeCommonTag("nether_terrain");
 
     static void prepareTags() {
+        TagManager.BLOCKS.add(SCULK_LIKE, Blocks.SCULK);
         TagManager.BLOCKS.addOtherTags(DRAGON_IMMUNE, BlockTags.DRAGON_IMMUNE);
 
         TagManager.BLOCKS.add(END_STONES, Blocks.END_STONE);
@@ -84,8 +86,7 @@ public class CommonBlockTags {
                 Blocks.GRAVEL,
                 Blocks.RED_SAND,
                 Blocks.GLOWSTONE,
-                Blocks.BONE_BLOCK,
-                Blocks.SCULK
+                Blocks.BONE_BLOCK
         );
         TagManager.BLOCKS.addOtherTags(
                 NETHER_TERRAIN,
