@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class BiomePicker {
-    public final Map<BCLBiome, ActualBiome> all = new HashMap<>();
+    private final Map<BCLBiome, ActualBiome> all = new HashMap<>();
     public final Registry<Biome> biomeRegistry;
     private final List<ActualBiome> biomes = Lists.newArrayList();
     private final List<String> allowedBiomes;
@@ -63,7 +63,8 @@ public class BiomePicker {
             list.add(create(BiomeAPI.EMPTY_BIOME), 1);
         } else {
             biomes.forEach(biome -> {
-                list.add(biome, biome.bclBiome.getGenChance());
+                if (biome.isValid)
+                    list.add(biome, biome.bclBiome.getGenChance());
             });
         }
 
@@ -79,14 +80,15 @@ public class BiomePicker {
         private final WeightedList<ActualBiome> subbiomes = new WeightedList<>();
         private final ActualBiome edge;
         private final ActualBiome parent;
+        public final boolean isValid;
 
         private ActualBiome(BCLBiome bclBiome) {
             all.put(bclBiome, this);
             this.bclBiome = bclBiome;
 
-            this.key = biomeRegistry.getResourceKey(biomeRegistry.get(bclBiome.getID())).orElseThrow();
-            this.biome = biomeRegistry.getOrCreateHolderOrThrow(key);
-
+            this.key = biomeRegistry.getResourceKey(biomeRegistry.get(bclBiome.getID())).orElse(null);
+            this.biome = key != null ? biomeRegistry.getOrCreateHolderOrThrow(key) : null;
+            this.isValid = key != null;
             bclBiome.forEachSubBiome((b, w) -> {
                 if (isAllowed(b))
                     subbiomes.add(create(b), w);
