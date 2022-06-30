@@ -46,7 +46,7 @@ public class CreateWorldScreenMixin {
     //Change the WorldPreset that is selected by default on the Create World Screen
     @ModifyArg(method = "openFresh", index = 1, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/worldselection/WorldGenSettingsComponent;<init>(Lnet/minecraft/client/gui/screens/worldselection/WorldCreationContext;Ljava/util/Optional;Ljava/util/OptionalLong;)V"))
     private static Optional<ResourceKey<WorldPreset>> bcl_NewDefault(Optional<ResourceKey<WorldPreset>> preset) {
-        return Optional.of(WorldPresets.DEFAULT);
+        return Optional.of(WorldPresets.getDEFAULT());
     }
 
     //Make sure the WorldGenSettings used to populate the create screen match the default WorldPreset

@@ -72,7 +72,7 @@ public class WorldBootstrap {
         private static Holder<WorldPreset> defaultServerPreset() {
             return WorldPresets.get(
                     LAST_REGISTRY_ACCESS,
-                    WorldPresets.DEFAULT
+                    WorldPresets.getDEFAULT()
             );
         }
 

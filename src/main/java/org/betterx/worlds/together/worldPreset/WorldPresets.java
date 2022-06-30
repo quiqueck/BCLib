@@ -20,13 +20,14 @@ import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import com.google.common.collect.Maps;
 
 import java.util.Map;
+import org.jetbrains.annotations.ApiStatus;
 
 public class WorldPresets {
 
     public static final TagRegistry.Simple<WorldPreset> WORLD_PRESETS =
             TagManager.registerType(BuiltinRegistries.WORLD_PRESET, "tags/worldgen/world_preset");
     private static Map<ResourceKey<WorldPreset>, PresetBuilder> BUILDERS = Maps.newHashMap();
-    public static ResourceKey<WorldPreset> DEFAULT = net.minecraft.world.level.levelgen.presets.WorldPresets.NORMAL;
+    private static ResourceKey<WorldPreset> DEFAULT = net.minecraft.world.level.levelgen.presets.WorldPresets.NORMAL;
 
     public static Holder<WorldPreset> get(RegistryAccess access, ResourceKey<WorldPreset> key) {
         return ((access != null) ? access : BuiltinRegistries.ACCESS)
@@ -47,6 +48,9 @@ public class WorldPresets {
     private static ResourceKey<WorldPreset> register(ResourceLocation loc, boolean visibleInUI) {
         ResourceKey<WorldPreset> key = ResourceKey.create(Registry.WORLD_PRESET_REGISTRY, loc);
         if (visibleInUI) {
+            if (!didExplicitlySetDefault && DEFAULT == net.minecraft.world.level.levelgen.presets.WorldPresets.NORMAL) {
+                DEFAULT = key;
+            }
             WORLD_PRESETS.addUntyped(WorldPresetTags.NORMAL, key.location());
         }
 
@@ -86,6 +90,18 @@ public class WorldPresets {
             BuiltinRegistries.register(presets, e.getKey(), preset);
         }
         BUILDERS = null;
+    }
+
+    public static ResourceKey<WorldPreset> getDEFAULT() {
+        return DEFAULT;
+    }
+
+    private static boolean didExplicitlySetDefault = false;
+
+    @ApiStatus.Internal
+    public static void setDEFAULT(ResourceKey<WorldPreset> DEFAULT) {
+        didExplicitlySetDefault = true;
+        WorldPresets.DEFAULT = DEFAULT;
     }
 
 

@@ -105,7 +105,7 @@ public class TogetherWorldPreset extends WorldPreset {
         final RegistryAccess registryAccess = WorldBootstrap.getLastRegistryAccessOrElseBuiltin();
         final RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
         if (DEFAULT_DIMENSIONS_WRAPPER == null) {
-            DEFAULT_DIMENSIONS_WRAPPER = new DimensionsWrapper(TogetherWorldPreset.getDimensionsMap(WorldPresets.DEFAULT));
+            DEFAULT_DIMENSIONS_WRAPPER = new DimensionsWrapper(TogetherWorldPreset.getDimensionsMap(WorldPresets.getDEFAULT()));
         }
 
         CompoundTag presetNBT = WorldGenUtil.getPresetsNbt();

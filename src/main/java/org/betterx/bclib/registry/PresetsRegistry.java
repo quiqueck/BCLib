@@ -44,7 +44,7 @@ public class PresetsRegistry {
                 false
         );
 
-        WorldPresets.DEFAULT = BCL_WORLD;
+        WorldPresets.setDEFAULT(BCL_WORLD);
     }
 
     public static TogetherWorldPreset buildPreset(

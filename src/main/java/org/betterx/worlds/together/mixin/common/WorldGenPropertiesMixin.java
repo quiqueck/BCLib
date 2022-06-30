@@ -20,6 +20,6 @@ public class WorldGenPropertiesMixin {
     //Make sure Servers use our Default World Preset
     @ModifyArg(method = "create", at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/core/Registry;getHolder(Lnet/minecraft/resources/ResourceKey;)Ljava/util/Optional;"))
     private ResourceKey<WorldPreset> bcl_foo(ResourceKey<WorldPreset> resourceKey) {
-        return WorldPresets.DEFAULT;
+        return WorldPresets.getDEFAULT();
     }
 }

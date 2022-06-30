@@ -58,7 +58,7 @@ public class WorldGenUtil {
             boolean generateBonusChest
     ) {
         return createWorldFromPreset(
-                WorldPresets.DEFAULT,
+                WorldPresets.getDEFAULT(),
                 registryAccess,
                 seed,
                 generateStructures,
