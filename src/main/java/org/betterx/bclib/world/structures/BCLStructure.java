@@ -1,7 +1,6 @@
 package org.betterx.bclib.world.structures;
 
 import org.betterx.bclib.api.v2.levelgen.structures.BCLStructureBuilder;
-import org.betterx.bclib.util.MHelper;
 import org.betterx.worlds.together.tag.v3.TagManager;
 
 import com.mojang.serialization.Codec;
@@ -102,7 +101,7 @@ public class BCLStructure<S extends Structure> extends org.betterx.bclib.api.v2.
                 spacing,
                 separation,
                 RandomSpreadType.LINEAR,
-                MHelper.RANDOM.nextInt(8192)
+                id.toString().hashCode()
         ), codec, biomeTag, TerrainAdjustment.NONE);
     }
 
