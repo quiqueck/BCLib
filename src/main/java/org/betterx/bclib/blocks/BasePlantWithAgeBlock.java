@@ -6,13 +6,9 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.material.Material;
-
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import java.util.function.Function;
 
@@ -23,16 +19,12 @@ public abstract class BasePlantWithAgeBlock extends BasePlantBlock {
         this(p -> p);
     }
 
+    @Deprecated(forRemoval = true)
     public BasePlantWithAgeBlock(Function<Properties, Properties> propMod) {
-        this(
-                propMod.apply(FabricBlockSettings.of(Material.PLANT)
-                                                 .sound(SoundType.GRASS)
-                                                 .randomTicks()
-                                                 .noCollission())
-        );
+        this(propMod.apply(basePlantSettings().randomTicks()));
     }
 
-    public BasePlantWithAgeBlock(Properties settings) {
+    protected BasePlantWithAgeBlock(Properties settings) {
         super(settings);
     }
 

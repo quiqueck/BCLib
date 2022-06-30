@@ -53,11 +53,14 @@ public interface SurvivesOnSpecialGround {
 
     boolean isSurvivable(BlockState state);
 
-    default boolean canSurviveOnTop(BlockState state, LevelReader world, BlockPos pos) {
+    default boolean canSurviveOnTop(LevelReader world, BlockPos pos) {
         return isSurvivable(world.getBlockState(pos.below()));
     }
 
-    default boolean canSurviveOnBottom(BlockState state, LevelReader world, BlockPos pos) {
+    default boolean canSurviveOnBottom(LevelReader world, BlockPos pos) {
         return isSurvivable(world.getBlockState(pos.above()));
+    }
+    default boolean isTerrain(BlockState state) {
+        return isSurvivable(state);
     }
 }

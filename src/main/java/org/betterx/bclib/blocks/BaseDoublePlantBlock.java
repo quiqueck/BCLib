@@ -50,7 +50,7 @@ public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements R
                 FabricBlockSettings.of(Material.PLANT)
                                    .sound(SoundType.GRASS)
                                    .noCollission()
-                                   .offsetType(BlockBehaviour.OffsetType.XZ)
+                                   .offsetType(BlockBehaviour.OffsetType.NONE)
         );
     }
 
@@ -60,7 +60,7 @@ public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements R
                                    .sound(SoundType.GRASS)
                                    .lightLevel((state) -> state.getValue(TOP) ? light : 0)
                                    .noCollission()
-                                   .offsetType(BlockBehaviour.OffsetType.XZ)
+                                   .offsetType(BlockBehaviour.OffsetType.NONE)
         );
     }
 

@@ -5,6 +5,7 @@ import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
+import org.betterx.bclib.interfaces.SettingsExtender;
 import org.betterx.bclib.items.tool.BaseShearsItem;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -41,46 +42,68 @@ import com.google.common.collect.Lists;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderLayerProvider, BonemealableBlock {
+    public static Properties basePlantSettings() {
+        return basePlantSettings(false, 0);
+    }
+
+    public static Properties basePlantSettings(int light) {
+        return basePlantSettings(false, light);
+    }
+
+    public static Properties basePlantSettings(boolean replaceable) {
+        return basePlantSettings(replaceable, 0);
+    }
+
+    public static Properties basePlantSettings(boolean replaceable, int light) {
+        return basePlantSettings(replaceable ? Material.REPLACEABLE_PLANT : Material.PLANT, light);
+    }
+
+    public static Properties basePlantSettings(Material mat, int light) {
+        Properties props = FabricBlockSettings
+                .of(mat)
+                .sounds(SoundType.GRASS)
+                .noCollision()
+                .offsetType(BlockBehaviour.OffsetType.XZ);
+        if (light > 0) props.lightLevel(s -> light);
+        return props;
+    }
+
     private static final VoxelShape SHAPE = box(4, 0, 4, 12, 14, 12);
 
     public BasePlantBlock() {
-        this(false, p -> p);
+        this(basePlantSettings());
     }
 
     public BasePlantBlock(int light) {
-        this(light, p -> p);
+        this(basePlantSettings(light));
     }
 
-    public BasePlantBlock(int light, Function<Properties, Properties> propMod) {
+    @Deprecated(forRemoval = true)
+    public BasePlantBlock(int light, SettingsExtender propMod) {
         this(false, light, propMod);
     }
 
-    public BasePlantBlock(boolean replaceabled) {
-        this(replaceabled, p -> p);
+    public BasePlantBlock(boolean replaceable) {
+        this(basePlantSettings(replaceable));
     }
 
-    public BasePlantBlock(boolean replaceable, Function<Properties, Properties> propMod) {
-        this(
-                propMod.apply(FabricBlockSettings
-                        .of(replaceable ? Material.REPLACEABLE_PLANT : Material.PLANT)
-                        .sound(SoundType.GRASS)
-                        .noCollission()
-                        .offsetType(OffsetType.NONE)
-                )
-        );
+    @Deprecated(forRemoval = true)
+    public BasePlantBlock(boolean replaceable, SettingsExtender propMod) {
+        this(replaceable, 0, propMod);
     }
+
 
     public BasePlantBlock(boolean replaceable, int light) {
-        this(replaceable, light, p -> p);
+        this(basePlantSettings(replaceable, light));
     }
 
-    public BasePlantBlock(boolean replaceable, int light, Function<Properties, Properties> propMod) {
+    @Deprecated(forRemoval = true)
+    public BasePlantBlock(boolean replaceable, int light, SettingsExtender propMod) {
         this(
-                propMod.apply(FabricBlockSettings
+                propMod.amend(FabricBlockSettings
                         .of(replaceable ? Material.REPLACEABLE_PLANT : Material.PLANT)
                         .luminance(light)
                         .sound(SoundType.GRASS)
@@ -90,11 +113,12 @@ public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderL
         );
     }
 
-    public BasePlantBlock(Properties settings) {
-        super(settings.offsetType(BlockBehaviour.OffsetType.XZ));
+    protected BasePlantBlock(Properties settings) {
+        super(settings);
     }
 
     protected abstract boolean isTerrain(BlockState state);
+
 
     @Override
     @SuppressWarnings("deprecation")
@@ -105,8 +129,8 @@ public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderL
 
     @Override
     @SuppressWarnings("deprecation")
-    public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
-        BlockState down = world.getBlockState(pos.below());
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        BlockState down = level.getBlockState(pos.below());
         return isTerrain(down);
     }
 

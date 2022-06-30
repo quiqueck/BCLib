@@ -40,19 +40,45 @@ import java.util.List;
 import java.util.function.Function;
 
 public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements RenderLayerProvider, BonemealableBlock, LiquidBlockContainer {
+    public static Properties baseUnderwaterPlantSettings() {
+        return baseUnderwaterPlantSettings(false, 0);
+    }
+
+    public static Properties baseUnderwaterPlantSettings(int light) {
+        return baseUnderwaterPlantSettings(false, light);
+    }
+
+    public static Properties baseUnderwaterPlantSettings(boolean replaceable) {
+        return baseUnderwaterPlantSettings(replaceable, 0);
+    }
+
+    public static Properties baseUnderwaterPlantSettings(boolean replaceable, int light) {
+        return baseUnderwaterPlantSettings(
+                replaceable ? Material.REPLACEABLE_WATER_PLANT : Material.WATER_PLANT,
+                light
+        );
+    }
+
+    public static Properties baseUnderwaterPlantSettings(Material mat, int light) {
+        Properties props = FabricBlockSettings
+                .of(mat)
+                .sound(SoundType.WET_GRASS)
+                .noCollission()
+                .offsetType(BlockBehaviour.OffsetType.XZ);
+        if (light > 0) props.lightLevel(s -> light);
+        return props;
+    }
+
     private static final VoxelShape SHAPE = box(4, 0, 4, 12, 14, 12);
 
     public UnderwaterPlantBlock() {
         this(p -> p);
     }
 
+    @Deprecated(forRemoval = true)
     public UnderwaterPlantBlock(Function<Properties, Properties> propMod) {
         this(
-                propMod.apply(FabricBlockSettings
-                        .of(Material.WATER_PLANT)
-                        .sound(SoundType.WET_GRASS)
-                        .noCollission()
-                        .offsetType(BlockBehaviour.OffsetType.XZ))
+                propMod.apply(baseUnderwaterPlantSettings())
         );
     }
 
@@ -60,14 +86,10 @@ public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements R
         this(light, p -> p);
     }
 
+    @Deprecated(forRemoval = true)
     public UnderwaterPlantBlock(int light, Function<Properties, Properties> propMod) {
         this(
-                propMod.apply(FabricBlockSettings
-                        .of(Material.WATER_PLANT)
-                        .luminance(light)
-                        .sound(SoundType.WET_GRASS)
-                        .noCollission()
-                        .offsetType(BlockBehaviour.OffsetType.XZ))
+                propMod.apply(baseUnderwaterPlantSettings(light))
         );
     }
 

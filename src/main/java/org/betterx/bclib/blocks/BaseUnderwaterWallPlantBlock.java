@@ -5,32 +5,20 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.LiquidBlockContainer;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.material.Material;
-
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 public abstract class BaseUnderwaterWallPlantBlock extends BaseWallPlantBlock implements LiquidBlockContainer {
+
     public BaseUnderwaterWallPlantBlock() {
-        this(
-                FabricBlockSettings
-                        .of(Material.WATER_PLANT)
-                        .sound(SoundType.WET_GRASS)
-                        .noCollission()
-        );
+        this(0);
     }
 
     public BaseUnderwaterWallPlantBlock(int light) {
         this(
-                FabricBlockSettings
-                        .of(Material.WATER_PLANT)
-                        .luminance(light)
-                        .sound(SoundType.WET_GRASS)
-                        .noCollission()
+                UnderwaterPlantBlock.baseUnderwaterPlantSettings(light)
         );
     }
 
@@ -55,7 +43,7 @@ public abstract class BaseUnderwaterWallPlantBlock extends BaseWallPlantBlock im
     }
 
     @Override
-    public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
-        return world.getFluidState(pos).getType() == Fluids.WATER && super.canSurvive(state, world, pos);
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        return level.getFluidState(pos).getType() == Fluids.WATER && super.canSurvive(state, level, pos);
     }
 }

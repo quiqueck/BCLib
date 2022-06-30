@@ -5,25 +5,15 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.material.Material;
-
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 public abstract class UnderwaterPlantWithAgeBlock extends UnderwaterPlantBlock {
     public static final IntegerProperty AGE = BlockProperties.AGE;
 
     public UnderwaterPlantWithAgeBlock() {
-        super(
-                FabricBlockSettings
-                        .of(Material.WATER_PLANT)
-                        .sound(SoundType.WET_GRASS)
-                        .randomTicks()
-                        .noCollission()
-        );
+        super(baseUnderwaterPlantSettings().randomTicks());
     }
 
     @Override

@@ -9,15 +9,11 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -34,29 +30,17 @@ public abstract class BaseWallPlantBlock extends BasePlantBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
     public BaseWallPlantBlock() {
-        this(
-                FabricBlockSettings
-                        .of(Material.PLANT)
-                        .sound(SoundType.GRASS)
-                        .noCollission()
-                        .offsetType(BlockBehaviour.OffsetType.NONE)
-        );
+        this(basePlantSettings());
     }
 
     public BaseWallPlantBlock(int light) {
-        this(
-                FabricBlockSettings
-                        .of(Material.PLANT)
-                        .luminance(light)
-                        .sound(SoundType.GRASS)
-                        .noCollission()
-                        .offsetType(BlockBehaviour.OffsetType.NONE)
-        );
+        this(basePlantSettings(light));
     }
 
-    public BaseWallPlantBlock(Properties settings) {
-        super(settings.offsetType(BlockBehaviour.OffsetType.NONE));
+    protected BaseWallPlantBlock(Properties settings) {
+        super(settings.offsetType(OffsetType.NONE));
     }
+
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> stateManager) {
@@ -69,11 +53,11 @@ public abstract class BaseWallPlantBlock extends BasePlantBlock {
     }
 
     @Override
-    public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         Direction direction = state.getValue(FACING);
         BlockPos blockPos = pos.relative(direction.getOpposite());
-        BlockState blockState = world.getBlockState(blockPos);
-        return isSupport(world, blockPos, blockState, direction);
+        BlockState blockState = level.getBlockState(blockPos);
+        return isSupport(level, blockPos, blockState, direction);
     }
 
     public boolean isSupport(LevelReader world, BlockPos pos, BlockState blockState, Direction direction) {

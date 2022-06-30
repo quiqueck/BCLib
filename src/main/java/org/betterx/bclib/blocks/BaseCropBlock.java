@@ -14,18 +14,14 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import com.google.common.collect.Lists;
 
@@ -40,18 +36,11 @@ public class BaseCropBlock extends BasePlantBlock {
     private final Item drop;
 
     public BaseCropBlock(Item drop, Block... terrain) {
-        this(
-                FabricBlockSettings.of(Material.PLANT)
-                                   .sound(SoundType.GRASS)
-                                   .randomTicks()
-                                   .noCollission()
-                                   .offsetType(BlockBehaviour.OffsetType.NONE),
-                drop, terrain
-        );
+        this(basePlantSettings().randomTicks(), drop, terrain);
     }
 
-    public BaseCropBlock(BlockBehaviour.Properties properties, Item drop, Block... terrain) {
-        super(properties.offsetType(BlockBehaviour.OffsetType.NONE));
+    protected BaseCropBlock(BlockBehaviour.Properties properties, Item drop, Block... terrain) {
+        super(properties);
         this.drop = drop;
         this.terrain = terrain;
         this.registerDefaultState(defaultBlockState().setValue(AGE, 0));
