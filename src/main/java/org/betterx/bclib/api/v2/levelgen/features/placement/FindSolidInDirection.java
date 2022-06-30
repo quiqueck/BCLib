@@ -12,14 +12,14 @@ public class FindSolidInDirection extends org.betterx.bclib.api.v3.levelgen.feat
 
 
     public FindSolidInDirection(Direction direction, int maxSearchDistance) {
-        super(direction, maxSearchDistance);
+        super(direction, maxSearchDistance, 0);
     }
 
     public FindSolidInDirection(List<Direction> direction, int maxSearchDistance) {
-        super(direction, maxSearchDistance);
+        super(direction, maxSearchDistance, 0);
     }
 
     public FindSolidInDirection(List<Direction> direction, int maxSearchDistance, boolean randomSelect) {
-        super(direction, maxSearchDistance, randomSelect);
+        super(direction, maxSearchDistance, randomSelect, 0);
     }
 }

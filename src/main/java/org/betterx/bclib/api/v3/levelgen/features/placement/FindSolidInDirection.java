@@ -27,34 +27,42 @@ public class FindSolidInDirection extends PlacementModifier {
                                                              .orElse(List.of(Direction.DOWN))
                                                              .forGetter(a -> a.direction),
                                                   Codec.intRange(1, 32).fieldOf("dist").orElse(12).forGetter((p) -> p.maxSearchDistance),
-                                                  Codec.BOOL.fieldOf("random:select").orElse(true).forGetter(p -> p.randomSelect)
+                                                  Codec.BOOL.fieldOf("random_select").orElse(true).forGetter(p -> p.randomSelect),
+                                                  Codec.INT.fieldOf("offset_in_dir").orElse(0).forGetter(p -> p.offsetInDir)
                                           )
                                           .apply(
                                                   instance,
                                                   FindSolidInDirection::new
                                           ));
-    protected static final FindSolidInDirection DOWN = new FindSolidInDirection(Direction.DOWN, 6);
-    protected static final FindSolidInDirection UP = new FindSolidInDirection(Direction.UP, 6);
+    protected static final FindSolidInDirection DOWN = new FindSolidInDirection(Direction.DOWN, 6, 0);
+    protected static final FindSolidInDirection UP = new FindSolidInDirection(Direction.UP, 6, 0);
     private final List<Direction> direction;
     private final int maxSearchDistance;
 
+    private final int offsetInDir;
     private final boolean randomSelect;
     private final IntProvider provider;
 
 
-    public FindSolidInDirection(Direction direction, int maxSearchDistance) {
-        this(List.of(direction), maxSearchDistance, false);
+    public FindSolidInDirection(Direction direction, int maxSearchDistance, int offsetInDir) {
+        this(List.of(direction), maxSearchDistance, false, offsetInDir);
     }
 
-    public FindSolidInDirection(List<Direction> direction, int maxSearchDistance) {
-        this(direction, maxSearchDistance, direction.size() > 1);
+    public FindSolidInDirection(List<Direction> direction, int maxSearchDistance, int offsetInDir) {
+        this(direction, maxSearchDistance, direction.size() > 1, offsetInDir);
     }
 
-    public FindSolidInDirection(List<Direction> direction, int maxSearchDistance, boolean randomSelect) {
+    public FindSolidInDirection(
+            List<Direction> direction,
+            int maxSearchDistance,
+            boolean randomSelect,
+            int offsetInDir
+    ) {
         this.direction = direction;
         this.maxSearchDistance = maxSearchDistance;
         this.provider = UniformInt.of(0, direction.size() - 1);
         this.randomSelect = randomSelect;
+        this.offsetInDir = offsetInDir;
     }
 
     public static PlacementModifier down() {
@@ -66,13 +74,23 @@ public class FindSolidInDirection extends PlacementModifier {
     }
 
     public static PlacementModifier down(int dist) {
-        if (dist == DOWN.maxSearchDistance) return DOWN;
-        return new FindSolidInDirection(Direction.DOWN, dist);
+        if (dist == DOWN.maxSearchDistance && 0 == DOWN.offsetInDir) return DOWN;
+        return new FindSolidInDirection(Direction.DOWN, dist, 0);
     }
 
     public static PlacementModifier up(int dist) {
-        if (dist == UP.maxSearchDistance) return UP;
-        return new FindSolidInDirection(Direction.UP, dist);
+        if (dist == UP.maxSearchDistance && 0 == UP.offsetInDir) return UP;
+        return new FindSolidInDirection(Direction.UP, dist, 0);
+    }
+
+    public static PlacementModifier down(int dist, int offset) {
+        if (dist == DOWN.maxSearchDistance && 0 == DOWN.offsetInDir) return DOWN;
+        return new FindSolidInDirection(Direction.DOWN, dist, offset);
+    }
+
+    public static PlacementModifier up(int dist, int offset) {
+        if (dist == UP.maxSearchDistance && offset == UP.offsetInDir) return UP;
+        return new FindSolidInDirection(Direction.UP, dist, offset);
     }
 
     public Direction randomDirection(RandomSource random) {
@@ -123,7 +141,10 @@ public class FindSolidInDirection extends PlacementModifier {
                 searchDist,
                 BlocksHelper::isTerrain
         )) {
-            builder.add(POS);
+            if (offsetInDir != 0)
+                builder.add(POS.move(d, offsetInDir));
+            else
+                builder.add(POS);
         }
     }
 

@@ -68,7 +68,6 @@ public class PlaceFacingBlockConfig extends PlaceBlockFeatureConfig {
     }
 
     @Override
-
     public boolean placeBlock(
             FeaturePlaceContext<? extends PlaceBlockFeatureConfig> ctx,
             WorldGenLevel level,
@@ -78,11 +77,11 @@ public class PlaceFacingBlockConfig extends PlaceBlockFeatureConfig {
         BlockState lookupState;
         BlockPos testPos;
         for (Direction dir : directions) {
-            testPos = pos.relative(dir.getOpposite());
+            testPos = pos.relative(dir);
             lookupState = targetState.setValue(HorizontalDirectionalBlock.FACING, dir);
-            if (lookupState.canSurvive(level, testPos) && level.getBlockState(testPos).isAir()) {
+            if (level.getBlockState(testPos).isAir() && lookupState.canSurvive(level, testPos)) {
+                lookupState.canSurvive(level, testPos);
                 BlocksHelper.setWithoutUpdate(level, testPos, lookupState);
-                //BlocksHelper.setWithoutUpdate(level, pos, level.getBlockState(pos.relative(dir.getOpposite())));
                 return true;
             }
         }
