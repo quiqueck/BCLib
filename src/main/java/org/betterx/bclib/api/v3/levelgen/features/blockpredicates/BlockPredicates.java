@@ -22,6 +22,10 @@ public class BlockPredicates {
     );
     public static final BlockPredicate ONLY_SOUL_GROUND = BlockPredicate.matchesTag(CommonBlockTags.SOUL_GROUND);
     public static final BlockPredicate ONLY_NETHER_GROUND = BlockPredicate.matchesTag(CommonBlockTags.NETHER_TERRAIN);
+    public static final BlockPredicate ONLY_NETHER_GROUND_AND_BASALT = BlockPredicate.anyOf(
+            ONLY_NETHER_GROUND,
+            BlockPredicate.matchesBlocks(Blocks.BASALT)
+    );
     public static final BlockPredicate ONLY_GROUND = BlockPredicate.matchesTag(CommonBlockTags.TERRAIN);
 
     public static final BlockPredicate ONLY_LAVA = BlockPredicate.matchesFluids(Fluids.LAVA);

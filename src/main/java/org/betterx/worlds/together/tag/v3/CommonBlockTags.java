@@ -86,13 +86,13 @@ public class CommonBlockTags {
                 Blocks.GRAVEL,
                 Blocks.RED_SAND,
                 Blocks.GLOWSTONE,
-                Blocks.BONE_BLOCK
+                Blocks.BONE_BLOCK,
+                Blocks.BLACKSTONE
         );
         TagManager.BLOCKS.addOtherTags(
                 NETHER_TERRAIN,
                 NETHERRACK,
                 BlockTags.NYLIUM,
-                NETHER_STONES,
                 NETHER_ORES,
                 SOUL_GROUND,
                 NETHER_MYCELIUM
@@ -101,7 +101,13 @@ public class CommonBlockTags {
         TagManager.BLOCKS.add(CommonBlockTags.BOOKSHELVES, Blocks.BOOKSHELF);
         TagManager.BLOCKS.add(CommonBlockTags.CHEST, Blocks.CHEST);
 
-        TagManager.BLOCKS.add(BlockTags.NETHER_CARVER_REPLACEABLES, Blocks.RED_SAND, Blocks.MAGMA_BLOCK, Blocks.SCULK);
+        TagManager.BLOCKS.add(
+                BlockTags.NETHER_CARVER_REPLACEABLES,
+                Blocks.BASALT,
+                Blocks.RED_SAND,
+                Blocks.MAGMA_BLOCK,
+                Blocks.SCULK
+        );
         TagManager.BLOCKS.addOtherTags(
                 BlockTags.NETHER_CARVER_REPLACEABLES,
                 CommonBlockTags.NETHER_STONES,
