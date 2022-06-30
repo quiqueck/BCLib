@@ -6,11 +6,12 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.placement.PlacementContext;
 import net.minecraft.world.level.levelgen.placement.PlacementFilter;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
+
+import java.util.Random;
 
 @Deprecated(forRemoval = true)
 public class MinEmptyFilter extends PlacementFilter {
@@ -48,7 +49,7 @@ public class MinEmptyFilter extends PlacementFilter {
     }
 
     @Override
-    protected boolean shouldPlace(PlacementContext ctx, RandomSource randomSource, BlockPos pos) {
+    protected boolean shouldPlace(PlacementContext ctx, Random Random, BlockPos pos) {
         return BlocksHelper.isFreeSpace(
                 ctx.getLevel(),
                 pos.relative(direction),

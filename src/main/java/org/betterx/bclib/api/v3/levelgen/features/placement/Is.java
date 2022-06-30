@@ -5,7 +5,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.placement.PlacementContext;
@@ -13,6 +12,7 @@ import net.minecraft.world.level.levelgen.placement.PlacementFilter;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 
 import java.util.Optional;
+import java.util.Random;
 
 public class Is extends PlacementFilter {
     public static final Codec<Is> CODEC = RecordCodecBuilder.create((instance) -> instance
@@ -47,7 +47,7 @@ public class Is extends PlacementFilter {
     }
 
     @Override
-    protected boolean shouldPlace(PlacementContext ctx, RandomSource random, BlockPos pos) {
+    protected boolean shouldPlace(PlacementContext ctx, Random random, BlockPos pos) {
         WorldGenLevel level = ctx.getLevel();
         return predicate.test(level, offset.map(v -> pos.offset(v.getX(), v.getY(), v.getZ())).orElse(pos));
     }

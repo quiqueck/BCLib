@@ -9,7 +9,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
@@ -23,6 +22,7 @@ import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.Random;
 
 public class StructureNBT {
     public final ResourceLocation location;
@@ -39,11 +39,11 @@ public class StructureNBT {
         this.structure = structure;
     }
 
-    public static Rotation getRandomRotation(RandomSource random) {
+    public static Rotation getRandomRotation(Random random) {
         return Rotation.getRandom(random);
     }
 
-    public static Mirror getRandomMirror(RandomSource random) {
+    public static Mirror getRandomMirror(Random random) {
         return Mirror.values()[random.nextInt(3)];
     }
 

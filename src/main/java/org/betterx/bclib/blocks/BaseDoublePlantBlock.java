@@ -8,7 +8,6 @@ import org.betterx.bclib.util.BlocksHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -39,6 +38,7 @@ import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import com.google.common.collect.Lists;
 
 import java.util.List;
+import java.util.Random;
 
 public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements RenderLayerProvider, BonemealableBlock {
     private static final VoxelShape SHAPE = box(4, 2, 4, 12, 16, 12);
@@ -142,12 +142,12 @@ public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements R
     }
 
     @Override
-    public boolean isBonemealSuccess(Level level, RandomSource random, BlockPos pos, BlockState state) {
+    public boolean isBonemealSuccess(Level level, Random random, BlockPos pos, BlockState state) {
         return true;
     }
 
     @Override
-    public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
+    public void performBonemeal(ServerLevel level, Random random, BlockPos pos, BlockState state) {
         ItemEntity item = new ItemEntity(
                 level,
                 pos.getX() + 0.5,

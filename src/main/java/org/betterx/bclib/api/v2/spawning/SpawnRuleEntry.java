@@ -3,12 +3,12 @@ package org.betterx.bclib.api.v2.spawning;
 import org.betterx.bclib.interfaces.SpawnRule;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.LevelAccessor;
 
+import java.util.Random;
 import org.jetbrains.annotations.NotNull;
 
 public class SpawnRuleEntry<M extends Mob> implements Comparable<SpawnRuleEntry> {
@@ -25,7 +25,7 @@ public class SpawnRuleEntry<M extends Mob> implements Comparable<SpawnRuleEntry>
             LevelAccessor world,
             MobSpawnType spawnReason,
             BlockPos pos,
-            RandomSource random
+            Random random
     ) {
         return rule.canSpawn(type, world, spawnReason, pos, random);
     }

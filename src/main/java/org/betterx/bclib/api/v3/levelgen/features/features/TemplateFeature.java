@@ -8,10 +8,11 @@ import org.betterx.bclib.api.v3.levelgen.features.config.TemplateFeatureConfig;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+
+import java.util.Random;
 
 public class TemplateFeature<FC extends TemplateFeatureConfig> extends Feature<FC> {
 
@@ -57,7 +58,7 @@ public class TemplateFeature<FC extends TemplateFeatureConfig> extends Feature<F
         super(codec);
     }
 
-    protected StructureWorldNBT randomStructure(TemplateFeatureConfig cfg, RandomSource random) {
+    protected StructureWorldNBT randomStructure(TemplateFeatureConfig cfg, Random random) {
 
         if (cfg.structures.size() > 1) {
             final float chanceSum = cfg.structures.parallelStream().map(c -> c.chance).reduce(0.0f, (p, c) -> p + c);

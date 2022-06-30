@@ -16,7 +16,6 @@ import net.minecraft.client.resources.model.*;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 
 import net.fabricmc.api.EnvType;
@@ -121,7 +120,7 @@ public class OBJBlockModel implements UnbakedModel, BakedModel {
     public List<BakedQuad> getQuads(
             @Nullable BlockState blockState,
             @Nullable Direction direction,
-            RandomSource random
+            Random random
     ) {
         return direction == null ? quadsBaked : quadsBakedMap.get(direction);
     }

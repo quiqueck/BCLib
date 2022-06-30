@@ -8,7 +8,6 @@ import com.mojang.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -16,6 +15,7 @@ import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Function;
 
 public class SplineHelper {
@@ -57,7 +57,7 @@ public class SplineHelper {
         return new Vector3f(x, y, z);
     }
 
-    public static void offsetParts(List<Vector3f> spline, RandomSource random, float dx, float dy, float dz) {
+    public static void offsetParts(List<Vector3f> spline, Random random, float dx, float dy, float dz) {
         int count = spline.size();
         for (int i = 1; i < count; i++) {
             Vector3f pos = spline.get(i);

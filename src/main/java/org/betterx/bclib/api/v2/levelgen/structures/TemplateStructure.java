@@ -5,7 +5,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.NoiseColumn;
 import net.minecraft.world.level.block.Blocks;
@@ -13,6 +12,7 @@ import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.WorldGenerationContext;
+import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
@@ -21,11 +21,12 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
-public abstract class TemplateStructure extends Structure {
+public abstract class TemplateStructure extends StructureFeature {
     protected final List<Config> configs;
 
     public static <T extends TemplateStructure> Codec<T> simpleTemplateCodec(BiFunction<StructureSettings, List<Config>, T> instancer) {
@@ -59,7 +60,7 @@ public abstract class TemplateStructure extends Structure {
         this.configs = configs;
     }
 
-    protected Config randomConfig(RandomSource random) {
+    protected Config randomConfig(Random random) {
         if (this.configs.size() > 1) {
             final float chanceSum = configs.parallelStream().map(c -> c.chance()).reduce(0.0f, (p, c) -> p + c);
             float rnd = random.nextFloat() * chanceSum;

@@ -1,5 +1,6 @@
 package org.betterx.worlds.together.levelgen;
 
+import org.betterx.bclib.util.MHelper;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.biomesource.BiomeSourceWithConfig;
 import org.betterx.worlds.together.chunkgenerator.EnforceableChunkGenerator;
@@ -9,19 +10,18 @@ import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
 
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.client.gui.screens.worldselection.WorldPreset;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
-import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
@@ -76,7 +76,7 @@ public class WorldGenUtil {
     }
 
     public static WorldGenSettings createDefaultWorldFromPreset(RegistryAccess registryAccess) {
-        return createDefaultWorldFromPreset(registryAccess, RandomSource.create().nextLong());
+        return createDefaultWorldFromPreset(registryAccess, MHelper.RANDOM.nextLong());
     }
 
     public static CompoundTag getPresetsNbt() {

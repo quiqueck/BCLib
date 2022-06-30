@@ -4,7 +4,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
@@ -15,6 +14,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.RandomPatchConf
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 
 public class BCLConfigureFeature<F extends Feature<FC>, FC extends FeatureConfiguration> {
     private static final Map<Holder<ConfiguredFeature<?, ?>>, BCLConfigureFeature<?, ?>> KNOWN = new HashMap<>();
@@ -54,7 +54,7 @@ public class BCLConfigureFeature<F extends Feature<FC>, FC extends FeatureConfig
         );
     }
 
-    public boolean placeInWorld(ServerLevel level, BlockPos pos, RandomSource random) {
+    public boolean placeInWorld(ServerLevel level, BlockPos pos, Random random) {
         return placeInWorld(getFeature(), getConfiguration(), level, pos, random);
     }
 
@@ -63,7 +63,7 @@ public class BCLConfigureFeature<F extends Feature<FC>, FC extends FeatureConfig
             FeatureConfiguration config,
             ServerLevel level,
             BlockPos pos,
-            RandomSource random
+            Random random
     ) {
         if (config instanceof RandomPatchConfiguration rnd) {
             var configured = rnd.feature().value().feature().value();
@@ -90,7 +90,7 @@ public class BCLConfigureFeature<F extends Feature<FC>, FC extends FeatureConfig
             Feature<NoneFeatureConfiguration> feature,
             ServerLevel level,
             BlockPos pos,
-            RandomSource random
+            Random random
     ) {
         return placeUnboundInWorld(feature, FeatureConfiguration.NONE, level, pos, random);
     }
@@ -100,7 +100,7 @@ public class BCLConfigureFeature<F extends Feature<FC>, FC extends FeatureConfig
             FC config,
             ServerLevel level,
             BlockPos pos,
-            RandomSource random
+            Random random
     ) {
         return placeUnboundInWorld(feature, config, level, pos, random);
     }

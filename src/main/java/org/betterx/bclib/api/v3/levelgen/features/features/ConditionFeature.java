@@ -4,7 +4,6 @@ import org.betterx.bclib.api.v3.levelgen.features.config.ConditionFeatureConfig;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
@@ -12,6 +11,7 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementContext;
 
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Stream;
 
 public class ConditionFeature extends Feature<ConditionFeatureConfig> {
@@ -23,7 +23,7 @@ public class ConditionFeature extends Feature<ConditionFeatureConfig> {
     public boolean place(FeaturePlaceContext<ConditionFeatureConfig> ctx) {
         final ConditionFeatureConfig cfg = ctx.config();
         final WorldGenLevel level = ctx.level();
-        final RandomSource random = ctx.random();
+        final Random random = ctx.random();
         final BlockPos pos = ctx.origin();
 
         final PlacementContext c = new PlacementContext(level, ctx.chunkGenerator(), Optional.empty());

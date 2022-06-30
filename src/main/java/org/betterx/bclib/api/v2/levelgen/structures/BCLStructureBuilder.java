@@ -7,19 +7,18 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.GenerationStep;
-import net.minecraft.world.level.levelgen.structure.Structure;
-import net.minecraft.world.level.levelgen.structure.TerrainAdjustment;
+import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadType;
 import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
 
 import java.util.function.Function;
 
-public class BCLStructureBuilder<S extends Structure> {
+public class BCLStructureBuilder<S extends StructureFeature> {
     private static final BCLStructureBuilder INSTANCE = new BCLStructureBuilder();
 
     private ResourceLocation structureID;
-    private Function<Structure.StructureSettings, S> structureBuilder;
+    private Function<StructureSettings, S> structureBuilder;
 
     private GenerationStep.Decoration step;
 

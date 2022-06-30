@@ -6,15 +6,15 @@ import org.betterx.bclib.noise.OpenSimplexNoise;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
-import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.ConstantFloat;
 import net.minecraft.util.valueproviders.FloatProvider;
 import net.minecraft.world.level.levelgen.SurfaceRules;
-import net.minecraft.world.level.levelgen.ThreadSafeLegacyRandomSource;
+import net.minecraft.world.level.levelgen.ThreadSafeLegacyRandom;
 
 import com.google.common.collect.Maps;
 
 import java.util.Map;
+import java.util.Random;
 
 public class VolumeThresholdCondition extends VolumeNoiseCondition {
     private static final Map<Long, VolumeThresholdCondition.Context> NOISES = Maps.newHashMap();
@@ -89,7 +89,7 @@ public class VolumeThresholdCondition extends VolumeNoiseCondition {
 
     public static class Context {
         public final OpenSimplexNoise noise;
-        public final RandomSource random;
+        public final Random random;
         public final long seed;
 
         double lastX = Integer.MIN_VALUE;
@@ -100,7 +100,7 @@ public class VolumeThresholdCondition extends VolumeNoiseCondition {
         Context(long seed) {
             this.seed = seed;
             this.noise = new OpenSimplexNoise(seed);
-            this.random = new ThreadSafeLegacyRandomSource(seed * 3 + 1);
+            this.random = new ThreadSafeLegacyRandom(seed * 3 + 1);
         }
     }
 }

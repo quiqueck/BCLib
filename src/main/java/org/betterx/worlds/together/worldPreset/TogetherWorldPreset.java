@@ -9,6 +9,7 @@ import org.betterx.worlds.together.world.event.WorldBootstrap;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.client.gui.screens.worldselection.WorldPreset;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
@@ -18,7 +19,6 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.LevelStem;
-import net.minecraft.world.level.levelgen.presets.WorldPreset;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -140,6 +140,11 @@ public class TogetherWorldPreset extends WorldPreset {
         Registry<LevelStem> reg = getDimensions(key);
         if (reg == null) return new HashMap<>();
         return DimensionsWrapper.build(reg);
+    }
+
+    @Override
+    public ChunkGenerator generator(RegistryAccess registryAccess, long l) {
+        return null;
     }
 
     private static class DimensionsWrapper {

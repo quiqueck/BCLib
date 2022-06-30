@@ -7,11 +7,12 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.placement.PlacementContext;
 import net.minecraft.world.level.levelgen.placement.PlacementFilter;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
+
+import java.util.Random;
 
 public class NoiseFilter extends PlacementFilter {
     public static final Codec<NoiseFilter> CODEC = RecordCodecBuilder.create(instance -> instance
@@ -47,7 +48,7 @@ public class NoiseFilter extends PlacementFilter {
     }
 
     @Override
-    protected boolean shouldPlace(PlacementContext ctx, RandomSource random, BlockPos pos) {
+    protected boolean shouldPlace(PlacementContext ctx, Random random, BlockPos pos) {
         final NormalNoise normalNoise = Noises.getOrCreateNoise(ctx.getLevel().registryAccess(), random, this.noise);
         final double v = normalNoise.getValue(pos.getX() * scaleXZ, pos.getY() * scaleY, pos.getZ() * scaleXZ);
         return v > minNoiseLevel && v < maxNoiseLevel;

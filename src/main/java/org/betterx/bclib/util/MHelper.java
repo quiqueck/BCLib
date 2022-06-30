@@ -2,8 +2,7 @@ package org.betterx.bclib.util;
 
 import com.mojang.math.Vector3f;
 import net.minecraft.core.Vec3i;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.levelgen.LegacyRandomSource;
+import net.minecraft.world.level.levelgen.LegacyRandom;
 
 import java.util.Random;
 
@@ -13,17 +12,17 @@ public class MHelper {
     public static final float PHI = (float) (Math.PI * (3 - Math.sqrt(5)));
     public static final float PI2 = (float) (Math.PI * 2);
     public static final Random RANDOM = new Random();
-    public static final RandomSource RANDOM_SOURCE = new LegacyRandomSource(RANDOM.nextLong());
+    public static final Random RANDOM_SOURCE = new LegacyRandom(RANDOM.nextLong());
 
-    public static int randRange(int min, int max, RandomSource random) {
+    public static int randRange(int min, int max, Random random) {
         return min + random.nextInt(max - min + 1);
     }
 
-    public static double randRange(double min, double max, RandomSource random) {
+    public static double randRange(double min, double max, Random random) {
         return min + random.nextDouble() * (max - min);
     }
 
-    public static float randRange(float min, float max, RandomSource random) {
+    public static float randRange(float min, float max, Random random) {
         return min + random.nextFloat() * (max - min);
     }
 
@@ -143,7 +142,7 @@ public class MHelper {
         return h ^ (h >> 16);
     }
 
-    public static <T> void shuffle(T[] array, RandomSource random) {
+    public static <T> void shuffle(T[] array, Random random) {
         for (int i = 0; i < array.length; i++) {
             int i2 = random.nextInt(array.length);
             T element = array[i];
@@ -198,14 +197,14 @@ public class MHelper {
         return (float) Math.acos(dot / Math.sqrt(length1 * length2));
     }
 
-    public static Vector3f randomHorizontal(RandomSource random) {
+    public static Vector3f randomHorizontal(Random random) {
         float angleY = randRange(0, PI2, random);
         float vx = (float) Math.sin(angleY);
         float vz = (float) Math.cos(angleY);
         return new Vector3f(vx, 0, vz);
     }
 
-    public static Vec3i[] getOffsets(RandomSource random) {
+    public static Vec3i[] getOffsets(Random random) {
         shuffle(RANDOM_OFFSETS, random);
         return RANDOM_OFFSETS;
     }

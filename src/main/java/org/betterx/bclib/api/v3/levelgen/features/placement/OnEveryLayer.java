@@ -5,7 +5,6 @@ import org.betterx.bclib.util.BlocksHelper;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -14,6 +13,7 @@ import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Stream;
 
 public class OnEveryLayer
@@ -47,7 +47,7 @@ public class OnEveryLayer
     @Override
     public Stream<BlockPos> getPositions(
             PlacementContext ctx,
-            RandomSource random,
+            Random random,
             BlockPos pos
     ) {
 

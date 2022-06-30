@@ -2,12 +2,14 @@ package org.betterx.worlds.together.mixin.common;
 
 import org.betterx.worlds.together.chunkgenerator.ChunkGeneratorUtils;
 
+import com.mojang.authlib.GameProfileRepository;
+import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.datafixers.DataFixer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.Services;
 import net.minecraft.server.WorldStem;
 import net.minecraft.server.level.progress.ChunkProgressListenerFactory;
 import net.minecraft.server.packs.repository.PackRepository;
+import net.minecraft.server.players.GameProfileCache;
 import net.minecraft.world.level.storage.LevelStorageSource;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -27,7 +29,9 @@ public class MinecraftServerMixinLate {
             WorldStem worldStem,
             Proxy proxy,
             DataFixer dataFixer,
-            Services services,
+            MinecraftSessionService minecraftSessionService,
+            GameProfileRepository gameProfileRepository,
+            GameProfileCache gameProfileCache,
             ChunkProgressListenerFactory chunkProgressListenerFactory,
             CallbackInfo ci
     ) {

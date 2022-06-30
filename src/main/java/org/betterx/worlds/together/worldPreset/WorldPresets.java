@@ -7,6 +7,7 @@ import org.betterx.worlds.together.tag.v3.TagManager;
 import org.betterx.worlds.together.tag.v3.TagRegistry;
 import org.betterx.worlds.together.worldPreset.client.WorldPresetsClient;
 
+import net.minecraft.client.gui.screens.worldselection.WorldPreset;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
@@ -15,7 +16,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.WorldPresetTags;
 import net.minecraft.world.level.dimension.LevelStem;
-import net.minecraft.world.level.levelgen.presets.WorldPreset;
 
 import com.google.common.collect.Maps;
 

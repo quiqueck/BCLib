@@ -6,7 +6,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -15,9 +14,11 @@ import net.minecraft.world.level.levelgen.structure.TemplateStructurePiece;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.BlockIgnoreProcessor;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureManager;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
+
+import java.util.Random;
 
 public class TemplatePiece extends TemplateStructurePiece {
     public static final StructurePieceType INSTANCE = setTemplatePieceId(
@@ -43,7 +44,7 @@ public class TemplatePiece extends TemplateStructurePiece {
 
 
     public TemplatePiece(
-            StructureTemplateManager structureTemplateManager,
+            StructureManager structureTemplateManager,
             ResourceLocation resourceLocation,
             BlockPos centerPos,
             Rotation rotation,
@@ -61,7 +62,7 @@ public class TemplatePiece extends TemplateStructurePiece {
         );
     }
 
-    public TemplatePiece(StructureTemplateManager structureTemplateManager, CompoundTag compoundTag) {
+    public TemplatePiece(StructureManager structureTemplateManager, CompoundTag compoundTag) {
         super(
                 INSTANCE,
                 compoundTag,
@@ -114,7 +115,7 @@ public class TemplatePiece extends TemplateStructurePiece {
             String string,
             BlockPos blockPos,
             ServerLevelAccessor serverLevelAccessor,
-            RandomSource randomSource,
+            Random Random,
             BoundingBox boundingBox
     ) {
 

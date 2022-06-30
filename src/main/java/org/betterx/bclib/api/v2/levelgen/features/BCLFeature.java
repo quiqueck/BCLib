@@ -21,7 +21,6 @@ import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.GenerationStep.Decoration;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -35,6 +34,7 @@ import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 
 /**
  * @param <F>
@@ -237,7 +237,7 @@ public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> 
         return proxy.getConfiguration();
     }
 
-    public boolean place(ServerLevel level, BlockPos pos, RandomSource random) {
+    public boolean place(ServerLevel level, BlockPos pos, Random random) {
         return place(this.getFeature(), this.getConfiguration(), level, pos, random);
     }
 
@@ -246,7 +246,7 @@ public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> 
             FeatureConfiguration config,
             ServerLevel level,
             BlockPos pos,
-            RandomSource random
+            Random random
     ) {
         if (config instanceof RandomPatchConfiguration rnd) {
             var configured = rnd.feature().value().feature().value();
@@ -273,7 +273,7 @@ public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> 
             Feature<NoneFeatureConfiguration> feature,
             ServerLevel level,
             BlockPos pos,
-            RandomSource random
+            Random random
     ) {
         return placeUnbound(feature, FeatureConfiguration.NONE, level, pos, random);
     }
@@ -283,7 +283,7 @@ public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> 
             FC config,
             ServerLevel level,
             BlockPos pos,
-            RandomSource random
+            Random random
     ) {
         return placeUnbound(feature, config, level, pos, random);
     }

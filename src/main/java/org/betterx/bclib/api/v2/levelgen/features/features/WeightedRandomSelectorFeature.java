@@ -1,7 +1,6 @@
 package org.betterx.bclib.api.v2.levelgen.features.features;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -9,6 +8,8 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.WeightedPlacedFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.RandomFeatureConfiguration;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+
+import java.util.Random;
 
 
 @Deprecated(forRemoval = true)
@@ -21,7 +22,7 @@ public class WeightedRandomSelectorFeature extends Feature<RandomFeatureConfigur
         final WorldGenLevel level = ctx.level();
         final ChunkGenerator generator = ctx.chunkGenerator();
         final RandomFeatureConfiguration cfg = ctx.config();
-        final RandomSource random = ctx.random();
+        final Random random = ctx.random();
         final BlockPos pos = ctx.origin();
 
         PlacedFeature selected = cfg.defaultFeature.value();

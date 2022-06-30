@@ -10,7 +10,6 @@ import org.betterx.bclib.items.BaseAnvilItem;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PickaxeItem;
@@ -33,10 +32,7 @@ import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseAnvilBlock extends AnvilBlock implements BlockModelProvider, CustomItemProvider {
@@ -124,7 +120,7 @@ public abstract class BaseAnvilBlock extends AnvilBlock implements BlockModelPro
         return 3;
     }
 
-    public BlockState damageAnvilUse(BlockState state, RandomSource random) {
+    public BlockState damageAnvilUse(BlockState state, Random random) {
         IntegerProperty durability = getDurabilityProp();
         int value = state.getValue(durability);
         if (value < getMaxDurability() && random.nextInt(8) == 0) {

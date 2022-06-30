@@ -7,7 +7,6 @@ import org.betterx.bclib.util.BlocksHelper;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
@@ -16,6 +15,7 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 
 import java.util.Optional;
+import java.util.Random;
 
 @Deprecated(forRemoval = true)
 public class ScatterFeature<FC extends ScatterFeatureConfig>
@@ -29,7 +29,7 @@ public class ScatterFeature<FC extends ScatterFeatureConfig>
     public boolean place(FeaturePlaceContext<FC> featurePlaceContext) {
         final WorldGenLevel level = featurePlaceContext.level();
         final BlockPos origin = featurePlaceContext.origin();
-        final RandomSource random = featurePlaceContext.random();
+        final Random random = featurePlaceContext.random();
 
         ScatterFeatureConfig config = featurePlaceContext.config();
         Optional<Direction> direction = getTipDirection(level, origin, random, config);
@@ -52,7 +52,7 @@ public class ScatterFeature<FC extends ScatterFeatureConfig>
             Direction direction,
             int centerHeight,
             ScatterFeatureConfig config,
-            RandomSource random
+            Random random
     ) {
         if (config.isValidBase(level.getBlockState(basePos))) {
             final Direction surfaceDirection = direction.getOpposite();
@@ -131,7 +131,7 @@ public class ScatterFeature<FC extends ScatterFeatureConfig>
             Direction direction,
             int height,
             ScatterFeatureConfig config,
-            RandomSource random,
+            Random random,
             boolean force
     ) {
         if (force || BlocksHelper.isFreeSpace(level, origin, direction, height, BlocksHelper::isFree)) {
@@ -149,7 +149,7 @@ public class ScatterFeature<FC extends ScatterFeatureConfig>
             Direction direction,
             int height,
             ScatterFeatureConfig config,
-            RandomSource random
+            Random random
     ) {
 
         final BlockPos.MutableBlockPos POS = origin.mutable();
@@ -163,14 +163,14 @@ public class ScatterFeature<FC extends ScatterFeatureConfig>
     private Optional<Direction> getTipDirection(
             LevelAccessor levelAccessor,
             BlockPos blockPos,
-            RandomSource randomSource,
+            Random Random,
             ScatterFeatureConfig config
     ) {
         boolean onCeil = config.floorChance < 1 && config.isValidBase(levelAccessor.getBlockState(blockPos.above()));
         boolean onFloor = config.floorChance > 0 && config.isValidBase(levelAccessor.getBlockState(blockPos.below()));
 
         if (onCeil && onFloor) {
-            return Optional.of(config.isFloor(randomSource) ? Direction.DOWN : Direction.UP);
+            return Optional.of(config.isFloor(Random) ? Direction.DOWN : Direction.UP);
         }
         if (onCeil) {
             return Optional.of(Direction.DOWN);
@@ -183,24 +183,24 @@ public class ScatterFeature<FC extends ScatterFeatureConfig>
 
     private void createPatchOfBaseBlocks(
             LevelAccessor levelAccessor,
-            RandomSource randomSource,
+            Random Random,
             BlockPos blockPos,
             ScatterFeatureConfig config
     ) {
-        if (config.baseState.isPresent() && config.baseReplaceChance > 0 && randomSource.nextFloat() < config.baseReplaceChance) {
+        if (config.baseState.isPresent() && config.baseReplaceChance > 0 && Random.nextFloat() < config.baseReplaceChance) {
             final BlockState baseState = config.baseState.get();
             BlockPos pos;
             for (Direction direction : Direction.Plane.HORIZONTAL) {
-                if (randomSource.nextFloat() > config.chanceOfDirectionalSpread) continue;
+                if (Random.nextFloat() > config.chanceOfDirectionalSpread) continue;
                 pos = blockPos.relative(direction);
                 placeBaseBlockIfPossible(levelAccessor, pos, baseState);
 
-                if (randomSource.nextFloat() > config.chanceOfSpreadRadius2) continue;
-                pos = pos.relative(Direction.getRandom(randomSource));
+                if (Random.nextFloat() > config.chanceOfSpreadRadius2) continue;
+                pos = pos.relative(Direction.getRandom(Random));
                 placeBaseBlockIfPossible(levelAccessor, pos, baseState);
 
-                if (randomSource.nextFloat() > config.chanceOfSpreadRadius3) continue;
-                pos = pos.relative(Direction.getRandom(randomSource));
+                if (Random.nextFloat() > config.chanceOfSpreadRadius3) continue;
+                pos = pos.relative(Direction.getRandom(Random));
                 placeBaseBlockIfPossible(levelAccessor, pos, baseState);
             }
             placeBaseBlockIfPossible(levelAccessor, blockPos, baseState);
@@ -222,7 +222,7 @@ public class ScatterFeature<FC extends ScatterFeatureConfig>
     public boolean grow(
             ServerLevelAccessor level,
             BlockPos origin,
-            RandomSource random,
+            Random random,
             FC config
     ) {
         Optional<Direction> oDirection = getTipDirection(level, origin, random, config);

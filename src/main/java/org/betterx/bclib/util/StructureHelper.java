@@ -5,7 +5,6 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -18,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
+import java.util.Random;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -88,7 +88,7 @@ public class StructureHelper {
             StructureTemplate structure,
             Rotation rotation,
             Mirror mirror,
-            RandomSource random
+            Random random
     ) {
         placeCenteredBottom(world, pos, structure, rotation, mirror, makeBox(pos), random);
     }
@@ -100,7 +100,7 @@ public class StructureHelper {
             Rotation rotation,
             Mirror mirror,
             BoundingBox bounds,
-            RandomSource random
+            Random random
     ) {
         BlockPos offset = offsetPos(pos, structure, rotation, mirror);
         StructurePlaceSettings placementData = new StructurePlaceSettings().setRotation(rotation)

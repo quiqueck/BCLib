@@ -5,7 +5,6 @@ import org.betterx.worlds.together.tag.v3.CommonBlockTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ClipContext.Fluid;
 import net.minecraft.world.level.LevelAccessor;
@@ -157,7 +156,7 @@ public class BlocksHelper {
      * @param random - {@link Random}.
      * @return {@link Direction}.
      */
-    public static Direction randomHorizontal(RandomSource random) {
+    public static Direction randomHorizontal(Random random) {
         return HORIZONTAL[random.nextInt(4)];
     }
 
@@ -167,7 +166,7 @@ public class BlocksHelper {
      * @param random - {@link Random}.
      * @return {@link Direction}.
      */
-    public static Direction randomDirection(RandomSource random) {
+    public static Direction randomDirection(Random random) {
         return DIRECTIONS[random.nextInt(6)];
     }
 

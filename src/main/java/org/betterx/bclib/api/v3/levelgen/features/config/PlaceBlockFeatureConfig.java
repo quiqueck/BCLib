@@ -2,7 +2,6 @@ package org.betterx.bclib.api.v3.levelgen.features.config;
 
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.RandomSource;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
@@ -13,6 +12,7 @@ import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvi
 import net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStateProvider;
 
 import java.util.List;
+import java.util.Random;
 
 public abstract class PlaceBlockFeatureConfig implements FeatureConfiguration {
 
@@ -59,7 +59,7 @@ public abstract class PlaceBlockFeatureConfig implements FeatureConfiguration {
         this.stateProvider = blocks;
     }
 
-    public BlockState getRandomBlock(RandomSource random, BlockPos pos) {
+    public BlockState getRandomBlock(Random random, BlockPos pos) {
         return this.stateProvider.getState(random, pos);
     }
 

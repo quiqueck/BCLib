@@ -217,7 +217,7 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
 //                old.disableMobGeneration(),
 //                old.aquifersEnabled(),
 //                old.oreVeinsEnabled(),
-//                old.useLegacyRandomSource()
+//                old.useLegacyRandom()
 //        );
 //
 //

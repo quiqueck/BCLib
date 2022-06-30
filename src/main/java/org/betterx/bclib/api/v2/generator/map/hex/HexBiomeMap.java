@@ -7,7 +7,6 @@ import org.betterx.bclib.interfaces.TriConsumer;
 import org.betterx.bclib.noise.OpenSimplexNoise;
 import org.betterx.bclib.util.MHelper;
 
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 
@@ -81,7 +80,7 @@ public class HexBiomeMap implements BiomeMap {
         final ChunkPos pos = new ChunkPos(cx, cz);
         HexBiomeChunk chunk = chunks.get(pos);
         if (chunk == null) {
-            WorldgenRandom random = new WorldgenRandom(RandomSource.create(MHelper.getSeed(seed, cx, cz)));
+            WorldgenRandom random = new WorldgenRandom(Random.create(MHelper.getSeed(seed, cx, cz)));
             chunk = new HexBiomeChunk(random, picker);
             if (update && processor != null) {
                 processor.accept(cx, cz, chunk.getSide());

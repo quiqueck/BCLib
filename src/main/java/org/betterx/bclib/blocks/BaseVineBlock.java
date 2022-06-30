@@ -10,7 +10,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -38,6 +37,7 @@ import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import com.google.common.collect.Lists;
 
 import java.util.List;
+import java.util.Random;
 import java.util.function.Function;
 
 @SuppressWarnings("deprecation")
@@ -145,7 +145,7 @@ public class BaseVineBlock extends BaseBlockNotFull implements RenderLayerProvid
     }
 
     @Override
-    public boolean isBonemealSuccess(Level level, RandomSource random, BlockPos pos, BlockState state) {
+    public boolean isBonemealSuccess(Level level, Random random, BlockPos pos, BlockState state) {
         while (level.getBlockState(pos).getBlock() == this) {
             pos = pos.below();
         }
@@ -153,7 +153,7 @@ public class BaseVineBlock extends BaseBlockNotFull implements RenderLayerProvid
     }
 
     @Override
-    public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
+    public void performBonemeal(ServerLevel level, Random random, BlockPos pos, BlockState state) {
         while (level.getBlockState(pos).getBlock() == this) {
             pos = pos.below();
         }

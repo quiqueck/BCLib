@@ -5,7 +5,6 @@ import org.betterx.bclib.util.WeightedList;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
@@ -13,6 +12,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
@@ -162,7 +162,7 @@ public class BonemealAPI {
     public static BiConsumer<Level, BlockPos> getLandGrass(
             ResourceLocation biomeID,
             Block terrain,
-            RandomSource random
+            Random random
     ) {
         Map<Block, WeightedList<BiConsumer<Level, BlockPos>>> map = LAND_GRASS_BIOMES.get(biomeID);
         WeightedList<BiConsumer<Level, BlockPos>> list;
@@ -180,7 +180,7 @@ public class BonemealAPI {
     public static BiConsumer<Level, BlockPos> getWaterGrass(
             ResourceLocation biomeID,
             Block terrain,
-            RandomSource random
+            Random random
     ) {
         Map<Block, WeightedList<BiConsumer<Level, BlockPos>>> map = WATER_GRASS_BIOMES.get(biomeID);
         WeightedList<BiConsumer<Level, BlockPos>> list;

@@ -6,7 +6,6 @@ import org.betterx.bclib.util.MHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -27,6 +26,7 @@ import com.google.common.collect.Lists;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class BaseCropBlock extends BasePlantBlock {
     public static final IntegerProperty AGE = IntegerProperty.create("age", 0, 3);
@@ -81,7 +81,7 @@ public class BaseCropBlock extends BasePlantBlock {
     }
 
     @Override
-    public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
+    public void performBonemeal(ServerLevel level, Random random, BlockPos pos, BlockState state) {
         int age = state.getValue(AGE);
         if (age < 3) {
             BlocksHelper.setWithUpdate(level, pos, state.setValue(AGE, age + 1));
@@ -94,13 +94,13 @@ public class BaseCropBlock extends BasePlantBlock {
     }
 
     @Override
-    public boolean isBonemealSuccess(Level level, RandomSource random, BlockPos pos, BlockState state) {
+    public boolean isBonemealSuccess(Level level, Random random, BlockPos pos, BlockState state) {
         return state.getValue(AGE) < 3;
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+    public void tick(BlockState state, ServerLevel world, BlockPos pos, Random random) {
         super.tick(state, world, pos, random);
         if (isBonemealSuccess(world, random, pos, state) && random.nextInt(8) == 0) {
             performBonemeal(world, random, pos, state);

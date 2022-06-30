@@ -5,16 +5,15 @@ import org.betterx.bclib.noise.OpenSimplexNoise;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.util.KeyDispatchDataCodec;
-import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.ConstantFloat;
 import net.minecraft.util.valueproviders.FloatProvider;
 import net.minecraft.world.level.levelgen.SurfaceRules;
-import net.minecraft.world.level.levelgen.ThreadSafeLegacyRandomSource;
+import net.minecraft.world.level.levelgen.ThreadSafeLegacyRandom;
 
 import com.google.common.collect.Maps;
 
 import java.util.Map;
+import java.util.Random;
 
 public class ThresholdCondition extends SurfaceNoiseCondition {
     private static final Map<Long, Context> NOISES = Maps.newHashMap();
@@ -27,7 +26,6 @@ public class ThresholdCondition extends SurfaceNoiseCondition {
                     Codec.DOUBLE.fieldOf("scale_z").orElse(0.1).forGetter(p -> p.scaleZ)
             )
             .apply(instance, ThresholdCondition::new));
-    public static final KeyDispatchDataCodec<ThresholdCondition> KEY_CODEC = KeyDispatchDataCodec.of(CODEC);
     private final Context noiseContext;
     private final double threshold;
     private final FloatProvider range;
@@ -58,13 +56,13 @@ public class ThresholdCondition extends SurfaceNoiseCondition {
     }
 
     @Override
-    public KeyDispatchDataCodec<? extends SurfaceRules.ConditionSource> codec() {
-        return KEY_CODEC;
+    public Codec<? extends SurfaceRules.ConditionSource> codec() {
+        return CODEC;
     }
 
     static class Context {
         public final OpenSimplexNoise noise;
-        public final RandomSource random;
+        public final Random random;
         public final long seed;
 
         public double lastX = Integer.MIN_VALUE;
@@ -74,7 +72,7 @@ public class ThresholdCondition extends SurfaceNoiseCondition {
         Context(long seed) {
             this.seed = seed;
             this.noise = new OpenSimplexNoise(seed);
-            this.random = new ThreadSafeLegacyRandomSource(seed * 2);
+            this.random = new ThreadSafeLegacyRandom(seed * 2);
         }
     }
 }

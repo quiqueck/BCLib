@@ -4,11 +4,12 @@ import org.betterx.bclib.api.v3.levelgen.features.config.PillarFeatureConfig;
 import org.betterx.bclib.util.BlocksHelper;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+
+import java.util.Random;
 
 public class PillarFeature extends Feature<PillarFeatureConfig> {
     public PillarFeature() {
@@ -21,7 +22,7 @@ public class PillarFeature extends Feature<PillarFeatureConfig> {
         int height;
         final WorldGenLevel level = featurePlaceContext.level();
         final PillarFeatureConfig config = featurePlaceContext.config();
-        final RandomSource rnd = featurePlaceContext.random();
+        final Random rnd = featurePlaceContext.random();
         int maxHeight = config.maxHeight.sample(rnd);
         int minHeight = config.minHeight.sample(rnd);
         BlockPos.MutableBlockPos posnow = featurePlaceContext.origin().mutable();

@@ -8,7 +8,6 @@ import com.mojang.datafixers.util.Function15;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -18,6 +17,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfigur
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 
 import java.util.Optional;
+import java.util.Random;
 
 public abstract class ScatterFeatureConfig implements FeatureConfiguration {
     public interface Instancer<T extends ScatterFeatureConfig> extends Function15<BlockStateProvider, Optional<BlockStateProvider>, Optional<BlockStateProvider>, Optional<BlockState>, Float, Float, Float, Float, Integer, Integer, Float, Float, Float, Boolean, IntProvider, T> {
@@ -76,13 +76,13 @@ public abstract class ScatterFeatureConfig implements FeatureConfiguration {
     }
 
 
-    public boolean isFloor(RandomSource random) {
+    public boolean isFloor(Random random) {
         return random.nextFloat() < floorChance;
     }
 
     public abstract boolean isValidBase(BlockState state);
 
-    public abstract BlockState createBlock(int height, int maxHeight, RandomSource random, BlockPos pos);
+    public abstract BlockState createBlock(int height, int maxHeight, Random random, BlockPos pos);
 
     public static <T extends ScatterFeatureConfig> Codec<T> buildCodec(Instancer<T> instancer) {
         return RecordCodecBuilder.create((instance) -> instance
@@ -420,7 +420,7 @@ public abstract class ScatterFeatureConfig implements FeatureConfiguration {
         }
 
         @Override
-        public BlockState createBlock(int height, int maxHeight, RandomSource random, BlockPos pos) {
+        public BlockState createBlock(int height, int maxHeight, Random random, BlockPos pos) {
             if (height == 0) return this.bottomBlock.getState(random, pos);
             return height == maxHeight
                     ? this.tipBlock.getState(random, pos)
@@ -480,7 +480,7 @@ public abstract class ScatterFeatureConfig implements FeatureConfiguration {
         }
 
         @Override
-        public BlockState createBlock(int height, int maxHeight, RandomSource random, BlockPos pos) {
+        public BlockState createBlock(int height, int maxHeight, Random random, BlockPos pos) {
             if (height == 0) return this.bottomBlock.getState(random, pos);
             if (height == 1) return this.clusterBlock.getState(random, pos);
             return this.tipBlock.getState(random, pos);
@@ -538,7 +538,7 @@ public abstract class ScatterFeatureConfig implements FeatureConfiguration {
         }
 
         @Override
-        public BlockState createBlock(int height, int maxHeight, RandomSource random, BlockPos pos) {
+        public BlockState createBlock(int height, int maxHeight, Random random, BlockPos pos) {
             if (height == maxHeight) return this.tipBlock.getState(random, pos);
             if (height == maxHeight - 1) return this.clusterBlock.getState(random, pos);
             return this.bottomBlock.getState(random, pos);

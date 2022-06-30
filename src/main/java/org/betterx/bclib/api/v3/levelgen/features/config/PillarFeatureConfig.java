@@ -6,7 +6,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.world.level.WorldGenLevel;
@@ -15,10 +14,12 @@ import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 
+import java.util.Random;
+
 public class PillarFeatureConfig implements FeatureConfiguration {
     @FunctionalInterface
     public interface StateTransform {
-        BlockState apply(int height, int maxHeight, BlockState inputState, BlockPos pos, RandomSource rnd);
+        BlockState apply(int height, int maxHeight, BlockState inputState, BlockPos pos, Random rnd);
     }
 
     @FunctionalInterface
@@ -31,7 +32,7 @@ public class PillarFeatureConfig implements FeatureConfiguration {
                 BlockPos abovePos,
                 WorldGenLevel level,
                 BlockPredicate allowedPlacement,
-                RandomSource rnd
+                Random rnd
         );
     }
 
@@ -129,7 +130,7 @@ public class PillarFeatureConfig implements FeatureConfiguration {
         this.allowedPlacement = allowedPlacement;
     }
 
-    public BlockState transform(int currentHeight, int maxHeight, BlockPos pos, RandomSource rnd) {
+    public BlockState transform(int currentHeight, int maxHeight, BlockPos pos, Random rnd) {
         BlockState state = stateProvider.getState(rnd, pos);
         return transformer.stateTransform.apply(currentHeight, maxHeight, state, pos, rnd);
     }

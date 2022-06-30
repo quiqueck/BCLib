@@ -4,7 +4,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.placement.PlacementContext;
@@ -12,6 +11,7 @@ import net.minecraft.world.level.levelgen.placement.PlacementFilter;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 
 import java.util.Optional;
+import java.util.Random;
 import org.jetbrains.annotations.NotNull;
 
 public class IsNextTo extends PlacementFilter {
@@ -47,7 +47,7 @@ public class IsNextTo extends PlacementFilter {
     }
 
     @Override
-    protected boolean shouldPlace(PlacementContext ctx, RandomSource random, BlockPos pos) {
+    protected boolean shouldPlace(PlacementContext ctx, Random random, BlockPos pos) {
         WorldGenLevel level = ctx.getLevel();
 
         pos = pos.offset(this.offset);

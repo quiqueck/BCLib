@@ -8,12 +8,12 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.util.KeyDispatchDataCodec;
-import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.FloatProvider;
 import net.minecraft.util.valueproviders.UniformFloat;
 import net.minecraft.world.level.levelgen.SurfaceRules;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
+
+import java.util.Random;
 
 public class RoughNoiseCondition implements SurfaceRules.ConditionSource {
     public static final Codec<RoughNoiseCondition> CODEC = RecordCodecBuilder.create(instance -> instance
@@ -32,8 +32,6 @@ public class RoughNoiseCondition implements SurfaceRules.ConditionSource {
                             maxThreshold1
                     )
             ));
-
-    public static final KeyDispatchDataCodec<RoughNoiseCondition> KEY_CODEC = KeyDispatchDataCodec.of(CODEC);
 
     private final ResourceKey<NormalNoise.NoiseParameters> noise;
     private final double minThreshold;
@@ -77,17 +75,17 @@ public class RoughNoiseCondition implements SurfaceRules.ConditionSource {
     }
 
     @Override
-    public KeyDispatchDataCodec<? extends SurfaceRules.ConditionSource> codec() {
-        return KEY_CODEC;
+    public Codec<? extends SurfaceRules.ConditionSource> codec() {
+        return CODEC;
     }
 
     @Override
     public SurfaceRules.Condition apply(final SurfaceRules.Context context2) {
         final SurfaceRulesContextAccessor ctx = SurfaceRulesContextAccessor.class.cast(context2);
         final NormalNoise normalNoise = ctx.getRandomState().getOrCreateNoise(this.noise);
-        final RandomSource roughnessSource = ctx.getRandomState()
-                                                .getOrCreateRandomFactory(Noises.ROUGHNESS_NOISE.location())
-                                                .fromHashOf(Noises.ROUGHNESS_NOISE.location());
+        final Random roughnessSource = ctx.getRandomState()
+                                          .getOrCreateRandomFactory(Noises.ROUGHNESS_NOISE.location())
+                                          .fromHashOf(Noises.ROUGHNESS_NOISE.location());
 
         class NoiseThresholdCondition extends SurfaceRules.LazyCondition {
             NoiseThresholdCondition() {

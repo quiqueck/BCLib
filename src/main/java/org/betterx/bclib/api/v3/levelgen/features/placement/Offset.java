@@ -5,7 +5,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.placement.PlacementContext;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
@@ -13,6 +12,7 @@ import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import com.google.common.collect.Maps;
 
 import java.util.Map;
+import java.util.Random;
 import java.util.stream.Stream;
 
 public class Offset extends PlacementModifier {
@@ -38,7 +38,7 @@ public class Offset extends PlacementModifier {
     @Override
     public Stream<BlockPos> getPositions(
             PlacementContext placementContext,
-            RandomSource randomSource,
+            Random Random,
             BlockPos blockPos
     ) {
         return Stream.of(blockPos.offset(offset));

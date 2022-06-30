@@ -8,7 +8,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.SectionPos;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.levelgen.placement.PlacementContext;
@@ -16,6 +15,7 @@ import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Stream;
 
 public class FindSolidInDirection extends PlacementModifier {
@@ -93,19 +93,19 @@ public class FindSolidInDirection extends PlacementModifier {
         return new FindSolidInDirection(Direction.UP, dist, offset);
     }
 
-    public Direction randomDirection(RandomSource random) {
+    public Direction randomDirection(Random random) {
         return direction.get(provider.sample(random));
     }
 
     @Override
     public Stream<BlockPos> getPositions(
             PlacementContext placementContext,
-            RandomSource randomSource,
+            Random Random,
             BlockPos blockPos
     ) {
         var builder = Stream.<BlockPos>builder();
         if (randomSelect) {
-            submitSingle(placementContext, blockPos, builder, randomDirection(randomSource));
+            submitSingle(placementContext, blockPos, builder, randomDirection(Random));
         } else {
             for (Direction d : direction) {
                 submitSingle(placementContext, blockPos, builder, d);

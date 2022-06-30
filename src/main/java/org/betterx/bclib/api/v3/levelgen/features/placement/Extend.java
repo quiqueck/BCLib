@@ -4,13 +4,13 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.levelgen.placement.PlacementContext;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 
+import java.util.Random;
 import java.util.stream.Stream;
 
 public class Extend extends PlacementModifier {
@@ -38,7 +38,7 @@ public class Extend extends PlacementModifier {
     @Override
     public Stream<BlockPos> getPositions(
             PlacementContext placementContext,
-            RandomSource random,
+            Random random,
             BlockPos blockPos
     ) {
         var builder = Stream.<BlockPos>builder();

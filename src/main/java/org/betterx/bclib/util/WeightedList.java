@@ -1,7 +1,5 @@
 package org.betterx.bclib.util;
 
-import net.minecraft.util.RandomSource;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -30,7 +28,7 @@ public class WeightedList<T> {
      * @param random - {@link Random}.
      * @return {@link T} value.
      */
-    public T get(RandomSource random) {
+    public T get(Random random) {
         if (maxWeight < 1) {
             return null;
         }

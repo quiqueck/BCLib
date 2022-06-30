@@ -32,7 +32,6 @@ import net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.PalettedContainer;
-import net.minecraft.world.level.chunk.PalettedContainerRO;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.GenerationStep.Decoration;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
@@ -152,7 +151,7 @@ public class BiomeAPI {
             TagManager.BIOMES.add(BiomeTags.IS_NETHER, bclbiome.getBiome());
             TagManager.BIOMES.add(CommonBiomeTags.IN_NETHER, bclbiome.getBiome());
         } else if (dim != null && dim.is(BiomeType.END)) {
-            TagManager.BIOMES.add(BiomeTags.IS_END, bclbiome.getBiome());
+            TagManager.BIOMES.add(CommonBiomeTags.IN_END, bclbiome.getBiome());
         }
 
         bclbiome.afterRegistration();
@@ -440,10 +439,10 @@ public class BiomeAPI {
     public static Holder<Biome> getBiomeHolder(Biome biome) {
         if (InternalBiomeAPI.biomeRegistry != null) {
             Optional<ResourceKey<Biome>> key = InternalBiomeAPI.biomeRegistry.getResourceKey(biome);
-            if (key.isPresent()) return InternalBiomeAPI.biomeRegistry.getOrCreateHolderOrThrow(key.get());
+            if (key.isPresent()) return InternalBiomeAPI.biomeRegistry.getOrCreateHolder(key.get());
         }
 
-        return BuiltinRegistries.BIOME.getOrCreateHolderOrThrow(BiomeAPI.getBiomeKey(biome));
+        return BuiltinRegistries.BIOME.getOrCreateHolder(BiomeAPI.getBiomeKey(biome));
     }
 
     public static Holder<Biome> getBiomeHolder(ResourceLocation biome) {
@@ -500,7 +499,7 @@ public class BiomeAPI {
 
     @Nullable
     public static Holder<Biome> getFromRegistry(ResourceKey<Biome> key) {
-        return BuiltinRegistries.BIOME.getOrCreateHolderOrThrow(key);
+        return BuiltinRegistries.BIOME.getOrCreateHolder(key);
     }
 
     public static boolean isDatapackBiome(ResourceLocation biomeID) {
@@ -786,12 +785,8 @@ public class BiomeAPI {
      */
     public static void setBiome(ChunkAccess chunk, BlockPos pos, Holder<Biome> biome) {
         int sectionY = (pos.getY() - chunk.getMinBuildHeight()) >> 4;
-        PalettedContainerRO<Holder<Biome>> biomes = chunk.getSection(sectionY).getBiomes();
-        if (biomes instanceof PalettedContainer<Holder<Biome>> palette) {
-            palette.set((pos.getX() & 15) >> 2, (pos.getY() & 15) >> 2, (pos.getZ() & 15) >> 2, biome);
-        } else {
-            BCLib.LOGGER.warning("Unable to change Biome at " + pos);
-        }
+        PalettedContainer<Holder<Biome>> palette = chunk.getSection(sectionY).getBiomes();
+        palette.set((pos.getX() & 15) >> 2, (pos.getY() & 15) >> 2, (pos.getZ() & 15) >> 2, biome);
     }
 
     /**
