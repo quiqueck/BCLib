@@ -109,32 +109,32 @@ public class InternalBiomeAPI {
      * Load biomes from Fabric API. For internal usage only.
      */
     public static void loadFabricAPIBiomes() {
-        FabricBiomesData.NETHER_BIOMES.forEach((key) -> {
-            if (!BiomeAPI.hasBiome(key.location())) {
-                Optional<Holder<Biome>> optional = BuiltinRegistries.BIOME.getHolder(key);
-                if (optional.isPresent()) {
-                    BiomeAPI.registerNetherBiome(optional.get().value());
-                }
-            }
-        });
-
-        FabricBiomesData.END_LAND_BIOMES.forEach((key, weight) -> {
-            if (!BiomeAPI.hasBiome(key.location())) {
-                Optional<Holder<Biome>> optional = BuiltinRegistries.BIOME.getHolder(key);
-                if (optional.isPresent()) {
-                    BiomeAPI.registerEndLandBiome(optional.get(), weight);
-                }
-            }
-        });
-
-        FabricBiomesData.END_VOID_BIOMES.forEach((key, weight) -> {
-            if (!BiomeAPI.hasBiome(key.location())) {
-                Optional<Holder<Biome>> optional = BuiltinRegistries.BIOME.getHolder(key);
-                if (optional.isPresent()) {
-                    BiomeAPI.registerEndVoidBiome(optional.get(), weight);
-                }
-            }
-        });
+//        FabricBiomesData.NETHER_BIOMES.forEach((key) -> {
+//            if (!BiomeAPI.hasBiome(key.location())) {
+//                Optional<Holder<Biome>> optional = BuiltinRegistries.BIOME.getHolder(key);
+//                if (optional.isPresent()) {
+//                    BiomeAPI.registerNetherBiome(optional.get().value());
+//                }
+//            }
+//        });
+//
+//        FabricBiomesData.END_LAND_BIOMES.forEach((key, weight) -> {
+//            if (!BiomeAPI.hasBiome(key.location())) {
+//                Optional<Holder<Biome>> optional = BuiltinRegistries.BIOME.getHolder(key);
+//                if (optional.isPresent()) {
+//                    BiomeAPI.registerEndLandBiome(optional.get(), weight);
+//                }
+//            }
+//        });
+//
+//        FabricBiomesData.END_VOID_BIOMES.forEach((key, weight) -> {
+//            if (!BiomeAPI.hasBiome(key.location())) {
+//                Optional<Holder<Biome>> optional = BuiltinRegistries.BIOME.getHolder(key);
+//                if (optional.isPresent()) {
+//                    BiomeAPI.registerEndVoidBiome(optional.get(), weight);
+//                }
+//            }
+//        });
     }
 
     /**

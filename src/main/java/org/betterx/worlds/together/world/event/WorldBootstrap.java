@@ -231,17 +231,21 @@ public class WorldBootstrap {
         ) {
             try {
                 var levelStorageAccess = levelSource.createAccess(levelID);
-                Helpers.initializeWorldConfig(levelStorageAccess, false);
+                try {
+                    Helpers.initializeWorldConfig(levelStorageAccess, false);
 
-                //Helpers.setupWorld();
-                WorldEventsImpl.BEFORE_WORLD_LOAD.emit(e -> e.prepareWorld(
-                        levelStorageAccess,
-                        TogetherWorldPreset.loadWorldDimensions(),
-                        false
-                ));
+                    //Helpers.setupWorld();
+                    WorldEventsImpl.BEFORE_WORLD_LOAD.emit(e -> e.prepareWorld(
+                            levelStorageAccess,
+                            TogetherWorldPreset.loadWorldDimensions(),
+                            false
+                    ));
+                } catch (Exception e) {
+                    BCLib.LOGGER.error("Failed to initialize data in world", e);
+                }
                 levelStorageAccess.close();
             } catch (Exception e) {
-                BCLib.LOGGER.error("Failed to initialize data in world", e);
+                BCLib.LOGGER.error("Failed to acquire storage access", e);
             }
         }
 
