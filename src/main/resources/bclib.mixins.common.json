@@ -27,7 +27,6 @@
     "PistonBaseBlockMixin",
     "PortalShapeMixin",
     "PotionBrewingAccessor",
-    "PresetEditorMixin",
     "RecipeManagerAccessor",
     "RecipeManagerMixin",
     "ServerLevelMixin",

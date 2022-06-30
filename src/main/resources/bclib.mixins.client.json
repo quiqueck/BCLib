@@ -12,6 +12,7 @@
     "MinecraftMixin",
     "ModelBakeryMixin",
     "ModelManagerMixin",
+    "PresetEditorMixin",
     "SignEditScreenMixin",
     "TextureAtlasMixin"
   ],

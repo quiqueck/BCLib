@@ -1,4 +1,4 @@
-package org.betterx.bclib.mixin.common;
+package org.betterx.bclib.mixin.client;
 
 import net.minecraft.client.gui.screens.worldselection.PresetEditor;
 
