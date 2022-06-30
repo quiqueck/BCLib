@@ -22,6 +22,21 @@ dependencies {
 }
 ```
 
+You should also add a dependency to `fabirc.mod.json`. BCLib uses Semantic versioning, so adding the dependcy as follows
+should respect that and ensure that your mod is not loaded with an incompatible version of BCLib:
+
+```
+"depends": {
+  ...
+  "bclib": "2.0.x"
+},
+"breaks": {
+  "bclib": "<2.0.6"
+}
+```
+
+In this example `2.0.6` is the BCLIb Version you are building against.
+
 ## Features:
 
 ### Rendering
