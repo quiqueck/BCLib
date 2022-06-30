@@ -66,16 +66,16 @@ public class BaseBarrelBlock extends BarrelBlock implements BlockModelProvider {
     @Override
     public InteractionResult use(
             BlockState state,
-            Level world,
+            Level level,
             BlockPos pos,
             Player player,
             InteractionHand hand,
             BlockHitResult hit
     ) {
-        if (world.isClientSide) {
+        if (level.isClientSide) {
             return InteractionResult.SUCCESS;
         } else {
-            BlockEntity blockEntity = world.getBlockEntity(pos);
+            BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof BaseBarrelBlockEntity) {
                 player.openMenu((BaseBarrelBlockEntity) blockEntity);
                 player.awardStat(Stats.OPEN_BARREL);
@@ -90,7 +90,7 @@ public class BaseBarrelBlock extends BarrelBlock implements BlockModelProvider {
     public void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof BaseBarrelBlockEntity) {
-            ((BaseBarrelBlockEntity) blockEntity).tick();
+            ((BaseBarrelBlockEntity) blockEntity).recheckOpen();
         }
     }
 
