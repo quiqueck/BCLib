@@ -9,8 +9,8 @@ import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.ConstantFloat;
 import net.minecraft.util.valueproviders.FloatProvider;
-import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.level.levelgen.SurfaceRules;
+import net.minecraft.world.level.levelgen.ThreadSafeLegacyRandomSource;
 
 import com.google.common.collect.Maps;
 
@@ -74,7 +74,7 @@ public class ThresholdCondition extends SurfaceNoiseCondition {
         Context(long seed) {
             this.seed = seed;
             this.noise = new OpenSimplexNoise(seed);
-            this.random = new LegacyRandomSource(seed * 2);
+            this.random = new ThreadSafeLegacyRandomSource(seed * 2);
         }
     }
 }
