@@ -17,10 +17,13 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
 
 public abstract class TemplateStructure extends Structure {
     protected final List<Config> configs;
@@ -73,16 +76,15 @@ public abstract class TemplateStructure extends Structure {
     }
 
     protected boolean isLavaPlaceable(BlockState state, BlockState before) {
-        return state.is(Blocks.AIR) && before.is(Blocks.LAVA);
+        return (state == null || state.is(Blocks.AIR)) && before.is(Blocks.LAVA);
     }
 
     protected boolean isFloorPlaceable(BlockState state, BlockState before) {
-        return state.is(Blocks.AIR) && before.getMaterial().isSolid();
+        return (state == null || state.is(Blocks.AIR)) && before.getMaterial().isSolid();
     }
 
     @Override
     public Optional<GenerationStub> findGenerationPoint(GenerationContext ctx) {
-
         WorldGenerationContext worldGenerationContext = new WorldGenerationContext(
                 ctx.chunkGenerator(),
                 ctx.heightAccessor()
@@ -90,22 +92,26 @@ public abstract class TemplateStructure extends Structure {
         final Config config = randomConfig(ctx.random());
         if (config == null) return Optional.empty();
         ChunkPos chunkPos = ctx.chunkPos();
-        final int x = chunkPos.getMiddleBlockX();
-        final int z = chunkPos.getMiddleBlockZ();
-        NoiseColumn column = ctx.chunkGenerator().getBaseColumn(x, z, ctx.heightAccessor(), ctx.randomState());
+        final int x = chunkPos.getMinBlockX();
+        final int z = chunkPos.getMinBlockZ();
         StructureTemplate structureTemplate = ctx.structureTemplateManager().getOrCreate(config.location);
 
 
-        BiPredicate<BlockState, BlockState> isCorrectBase;
-        int searchStep;
+        final BiPredicate<BlockState, BlockState> isCorrectBase;
+        final int searchStep;
+        final int minBaseCount;
+        final float minAirRatio = 0.6f;
         if (config.type == StructurePlacementType.LAVA) {
             isCorrectBase = this::isLavaPlaceable;
+            minBaseCount = 5;
             searchStep = 1;
         } else if (config.type == StructurePlacementType.CEIL) {
             isCorrectBase = this::isFloorPlaceable;
+            minBaseCount = 3;
             searchStep = -1;
         } else {
             isCorrectBase = this::isFloorPlaceable;
+            minBaseCount = 3;
             searchStep = 1;
         }
 
@@ -117,16 +123,6 @@ public abstract class TemplateStructure extends Structure {
                 worldGenerationContext.getGenDepth()
                         - 4
                         - (searchStep > 0 ? (structureTemplate.getSize(Rotation.NONE).getY() + config.offsetY) : 0);
-        int y = searchStep > 0 ? seaLevel : maxHeight - 1;
-        BlockState state = column.getBlock(y - searchStep);
-
-        for (; y < maxHeight && y >= seaLevel; y += searchStep) {
-            BlockState before = state;
-            state = column.getBlock(y);
-            if (isCorrectBase.test(state, before)) break;
-        }
-        if (y >= maxHeight || y < seaLevel) return Optional.empty();
-        if (!BCLStructure.isValidBiome(ctx, y)) return Optional.empty();
 
         BlockPos halfSize = new BlockPos(
                 structureTemplate.getSize().getX() / 2,
@@ -135,13 +131,58 @@ public abstract class TemplateStructure extends Structure {
         );
         Rotation rotation = StructureNBT.getRandomRotation(ctx.random());
         Mirror mirror = StructureNBT.getRandomMirror(ctx.random());
-        BlockPos centerPos = new BlockPos(
+        BlockPos.MutableBlockPos centerPos = new BlockPos.MutableBlockPos(
                 x,
-                y - (searchStep == 1 ? 0 : (structureTemplate.getSize(Rotation.NONE).getY())),
+                0,
                 z
         );
         BoundingBox boundingBox = structureTemplate.getBoundingBox(centerPos, rotation, halfSize, mirror);
 
+        var noiseColumns = ImmutableList
+                .of(
+                        new BlockPos(boundingBox.getCenter().getX(), 0, boundingBox.getCenter().getZ()),
+                        new BlockPos(boundingBox.minX(), 0, boundingBox.minZ()),
+                        new BlockPos(boundingBox.maxX(), 0, boundingBox.minZ()),
+                        new BlockPos(boundingBox.minX(), 0, boundingBox.maxZ()),
+                        new BlockPos(boundingBox.maxX(), 0, boundingBox.maxZ())
+                )
+                .stream()
+                .map(blockPos -> ctx.chunkGenerator().getBaseColumn(
+                        blockPos.getX(),
+                        blockPos.getZ(),
+                        ctx.heightAccessor(),
+                        ctx.randomState()
+                ))
+                .collect(Collectors.toList());
+
+        int y = noiseColumns
+                .stream()
+                .map(column -> findY(column, isCorrectBase, searchStep, seaLevel, maxHeight))
+                .reduce(
+                        searchStep > 0 ? Integer.MAX_VALUE : Integer.MIN_VALUE,
+                        (p, c) -> searchStep > 0 ? Math.min(p, c) : Math.max(p, c)
+                );
+
+        if (y >= maxHeight || y < seaLevel) return Optional.empty();
+        if (!BCLStructure.isValidBiome(ctx, y)) return Optional.empty();
+
+        int baseCount = noiseColumns
+                .stream()
+                .map(column -> isCorrectBase.test(null, column.getBlock(y - searchStep)))
+                .filter(b -> b)
+                .map(b -> 1)
+                .reduce(0, (p, c) -> p + c);
+
+        if (baseCount < minBaseCount) return Optional.empty();
+
+        float airRatio = noiseColumns
+                .stream()
+                .map(column -> airRatio(column, y, boundingBox.getYSpan(), searchStep))
+                .reduce(0.0f, (p, c) -> p + c) / noiseColumns.size();
+
+        if (airRatio < minAirRatio) return Optional.empty();
+
+        centerPos.setY(y - (searchStep == 1 ? 0 : (structureTemplate.getSize(Rotation.NONE).getY())));
 
         // if (!structure.canGenerate(ctx.chunkGenerator()., centerPos))
         return Optional.of(new GenerationStub(
@@ -163,6 +204,37 @@ public abstract class TemplateStructure extends Structure {
         ));
 
     }
+
+    private float airRatio(NoiseColumn column, int y, int height, int searchStep) {
+        int airCount = 0;
+        for (int i = y; i < y + height && i > y - height; i += searchStep) {
+            BlockState state = column.getBlock(i);
+            if (state.isAir() || state.getMaterial().isReplaceable()) {
+                airCount++;
+            }
+        }
+        return airCount / (float) height;
+    }
+
+
+    private int findY(
+            NoiseColumn column,
+            BiPredicate<BlockState, BlockState> isCorrectBase,
+            int searchStep,
+            int seaLevel,
+            int maxHeight
+    ) {
+        int y = searchStep > 0 ? seaLevel : maxHeight - 1;
+        BlockState state = column.getBlock(y - searchStep);
+
+        for (; y < maxHeight && y >= seaLevel; y += searchStep) {
+            BlockState before = state;
+            state = column.getBlock(y);
+            if (isCorrectBase.test(state, before)) break;
+        }
+        return y;
+    }
+
 
     public record Config(ResourceLocation location, int offsetY, StructurePlacementType type, float chance) {
         public static final Codec<Config> CODEC =
