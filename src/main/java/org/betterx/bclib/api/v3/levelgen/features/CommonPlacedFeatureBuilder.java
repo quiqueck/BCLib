@@ -283,11 +283,15 @@ abstract class CommonPlacedFeatureBuilder<F extends Feature<FC>, FC extends Feat
      * @see #findSolidSurface(Direction, int) for Details
      */
     public T findSolidSurface(Direction dir, int distance) {
-        return modifier(new FindSolidInDirection(dir, distance));
+        return modifier(new FindSolidInDirection(dir, distance, 0));
     }
 
     public T findSolidSurface(List<Direction> dir, int distance, boolean randomSelect) {
-        return modifier(new FindSolidInDirection(dir, distance, randomSelect));
+        return modifier(new FindSolidInDirection(dir, distance, randomSelect, 0));
+    }
+
+    public T onWalls(int distance, int depth) {
+        return modifier(new FindSolidInDirection(PlaceFacingBlockConfig.HORIZONTAL, distance, false, depth));
     }
 
     public T heightmap() {
@@ -390,11 +394,19 @@ abstract class CommonPlacedFeatureBuilder<F extends Feature<FC>, FC extends Feat
         return (T) this.count(countPerLayer).squarePlacement().underEveryLayerMin4().onlyInBiome();
     }
 
-    public T betterNetherWall(int countPerLayer) {
+    public T betterNetherOnWall(int countPerLayer) {
         return (T) this.count(countPerLayer)
                        .squarePlacement()
                        .randomHeight4FromFloorCeil()
-                       .modifier(new FindSolidInDirection(PlaceFacingBlockConfig.HORIZONTAL, 12, false))
+                       .onWalls(16, 0)
+                       .onlyInBiome();
+    }
+
+    public T betterNetherInWall(int countPerLayer) {
+        return (T) this.count(countPerLayer)
+                       .squarePlacement()
+                       .randomHeight4FromFloorCeil()
+                       .onWalls(16, 1)
                        .onlyInBiome();
     }
 
