@@ -7,7 +7,6 @@ import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 import org.betterx.bclib.config.ConfigKeeper.StringArrayEntry;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.interfaces.BiomeMap;
-import org.betterx.bclib.interfaces.TheEndBiomeDataAccessor;
 import org.betterx.worlds.together.biomesource.BiomeSourceWithConfig;
 
 import com.mojang.serialization.Codec;
@@ -17,6 +16,7 @@ import net.minecraft.core.QuartPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.SectionPos;
 import net.minecraft.resources.RegistryOps;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biome;
@@ -24,8 +24,6 @@ import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.levelgen.DensityFunction;
-
-import net.fabricmc.fabric.impl.biome.TheEndBiomeData;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -110,34 +108,44 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
                 StringArrayEntry.class
         ).getValue();
         this.possibleBiomes().forEach(biome -> {
-            ResourceLocation key = biome.unwrapKey().orElseThrow().location();
+            ResourceKey<Biome> key = biome.unwrapKey().orElseThrow();
+            ResourceLocation biomeID = key.location();
 
 
-            if (!BiomeAPI.hasBiome(key)) {
-                BCLBiome bclBiome = new BCLBiome(key, biome.value());
+            if (!BiomeAPI.hasBiome(biomeID)) {
+                BCLBiome bclBiome = new BCLBiome(biomeID, biome.value());
 
-                if (includeVoid.contains(key.toString())) {
+                if (includeVoid.contains(biomeID.toString())) {
                     endVoidBiomePicker.addBiome(bclBiome);
                 } else {
                     endLandBiomePicker.addBiome(bclBiome);
                 }
             } else {
-                BCLBiome bclBiome = BiomeAPI.getBiome(key);
+                BCLBiome bclBiome = BiomeAPI.getBiome(biomeID);
                 if (bclBiome != BiomeAPI.EMPTY_BIOME) {
                     if (bclBiome.getParentBiome() == null) {
                         if (config.withVoidBiomes) {
-                            if (BiomeAPI.wasRegisteredAsEndVoidBiome(key) || includeVoid.contains(key.toString())) {
+                            if (BiomeAPI.wasRegisteredAsEndVoidBiome(biomeID)
+                                    || TheEndBiomesHelper.isIntendedForEndBarrens(key)
+                                    || includeVoid.contains(biomeID.toString())
+                            ) {
                                 endVoidBiomePicker.addBiome(bclBiome);
-                            } else if (BiomeAPI.wasRegisteredAsEndLandBiome(key) || includeLand.contains(key.toString())) {
+                            } else if (BiomeAPI.wasRegisteredAsEndLandBiome(biomeID)
+                                    || TheEndBiomesHelper.isIntendedForEndLand(key)
+                                    || includeLand.contains(biomeID.toString())
+                            ) {
                                 endLandBiomePicker.addBiome(bclBiome);
                             }
                         } else {
-                            if (BiomeAPI.wasRegisteredAsEndLandBiome(key) || includeLand.contains(key.toString())) {
+                            if (BiomeAPI.wasRegisteredAsEndLandBiome(biomeID)
+                                    || TheEndBiomesHelper.isIntendedForEndLand(key)
+                                    || includeLand.contains(biomeID.toString())
+                            ) {
                                 endLandBiomePicker.addBiome(bclBiome);
                                 endVoidBiomePicker.addBiome(bclBiome);
                             }
-                            if (!key.equals(Biomes.SMALL_END_ISLANDS.location()) && !key.equals(Biomes.THE_END.location())
-                                    && (BiomeAPI.wasRegisteredAsEndVoidBiome(key) || includeVoid.contains(key.toString()))
+                            if (!biomeID.equals(Biomes.SMALL_END_ISLANDS.location()) && !biomeID.equals(Biomes.THE_END.location())
+                                    && (BiomeAPI.wasRegisteredAsEndVoidBiome(biomeID) || includeVoid.contains(biomeID.toString()))
                             ) {
                                 endVoidBiomePicker.addBiome(bclBiome);
                             }
@@ -186,24 +194,12 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
                 "end_void_biomes",
                 StringArrayEntry.class
         ).getValue());
-        if (TheEndBiomeData.createOverrides(biomeRegistry) instanceof TheEndBiomeDataAccessor acc) {
-            return getBiomes(
-                    biomeRegistry,
-                    new ArrayList<>(0),
-                    include,
-                    (biome, location) ->
-                            BCLibEndBiomeSource.isValidNonVanillaEndBiome(biome, location) ||
-                                    acc.bcl_isNonVanillaAndCanGenerateInEnd(biome.unwrapKey().orElseThrow())
-
-            );
-        } else {
-            return getBiomes(
-                    biomeRegistry,
-                    new ArrayList<>(0),
-                    include,
-                    BCLibEndBiomeSource::isValidNonVanillaEndBiome
-            );
-        }
+        return getBiomes(
+                biomeRegistry,
+                new ArrayList<>(0),
+                include,
+                BCLibEndBiomeSource::isValidNonVanillaEndBiome
+        );
     }
 
     private static List<Holder<Biome>> getBiomes(Registry<Biome> biomeRegistry) {
@@ -218,31 +214,21 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
                 StringArrayEntry.class
         ).getValue());
 
-        if (TheEndBiomeData.createOverrides(biomeRegistry) instanceof TheEndBiomeDataAccessor acc) {
-            return getBiomes(
-                    biomeRegistry,
-                    new ArrayList<>(0),
-                    include,
-                    (biome, location) ->
-                            BCLibEndBiomeSource.isValidEndBiome(biome, location) || acc.bcl_canGenerateInEnd(
-                                    biome.unwrapKey().orElseThrow())
-
-            );
-        } else {
-            return getBiomes(biomeRegistry, new ArrayList<>(0), include, BCLibEndBiomeSource::isValidEndBiome);
-        }
+        return getBiomes(biomeRegistry, new ArrayList<>(0), include, BCLibEndBiomeSource::isValidEndBiome);
     }
 
 
     private static boolean isValidEndBiome(Holder<Biome> biome, ResourceLocation location) {
         return biome.is(BiomeTags.IS_END) ||
-                BiomeAPI.wasRegisteredAsEndBiome(location);
+                BiomeAPI.wasRegisteredAsEndBiome(location) ||
+                TheEndBiomesHelper.isIntendedForAny(biome.unwrapKey().orElse(null));
     }
 
     private static boolean isValidNonVanillaEndBiome(Holder<Biome> biome, ResourceLocation location) {
         return biome.is(BiomeTags.IS_END) ||
                 BiomeAPI.wasRegisteredAs(location, BiomeAPI.BiomeType.BCL_END_LAND) ||
-                BiomeAPI.wasRegisteredAs(location, BiomeAPI.BiomeType.BCL_END_VOID);
+                BiomeAPI.wasRegisteredAs(location, BiomeAPI.BiomeType.BCL_END_VOID) ||
+                TheEndBiomesHelper.isIntendedForAny(biome.unwrapKey().orElse(null));
     }
 
     public static void register() {
