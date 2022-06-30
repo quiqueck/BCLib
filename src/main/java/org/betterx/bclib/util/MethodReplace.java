@@ -19,6 +19,7 @@ public class MethodReplace {
         MethodReplace.item = item;
     }
 
+    @Deprecated(forRemoval = true)
     public static void addBlockReplace(Block block, Function<BlockStateBase, Boolean> blockReplace) {
         MethodReplace.blockReplace = blockReplace;
         MethodReplace.block = block;
@@ -35,6 +36,7 @@ public class MethodReplace {
     }
 
     @Nullable
+    @Deprecated(forRemoval = true)
     public static Function<BlockStateBase, Boolean> getBlockReplace(Block block) {
         if (MethodReplace.block != block) {
             return null;

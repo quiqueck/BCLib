@@ -9,7 +9,6 @@
     "BiomeGenerationSettingsAccessor",
     "BiomeMixin",
     "BiomeSourceMixin",
-    "BlockStateBaseMixin",
     "BoneMealItemMixin",
     "ChunkGeneratorAccessor",
     "ChunkGeneratorMixin",
