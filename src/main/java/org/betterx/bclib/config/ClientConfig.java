@@ -66,6 +66,12 @@ public class ClientConfig extends NamedPathConfig {
             "rendering"
     );
 
+    public static final ConfigToken<Float> FOG_DENSITY = ConfigToken.Float(
+            1.0f,
+            "FogDensity",
+            "rendering"
+    );
+
     public ClientConfig() {
         super(BCLib.MOD_ID, "client", false);
     }
@@ -104,5 +110,9 @@ public class ClientConfig extends NamedPathConfig {
 
     public boolean renderCustomFog() {
         return get(CUSTOM_FOG_RENDERING);
+    }
+
+    public float fogDensity() {
+        return get(FOG_DENSITY);
     }
 }

@@ -48,7 +48,12 @@ public class CustomFogRenderer {
             return false;
         }
 
-        float fog = getFogDensity(entity.level, entity.getX(), entity.getEyeY(), entity.getZ());
+        float fog = getFogDensity(
+                entity.level,
+                entity.getX(),
+                entity.getEyeY(),
+                entity.getZ()
+        ) * Configs.CLIENT_CONFIG.fogDensity();
         BackgroundInfo.fogDensity = fog;
 
         if (thickFog(thickFog, entity.level)) {
@@ -78,7 +83,6 @@ public class CustomFogRenderer {
                 BackgroundInfo.blindness = 0;
             }
         }
-
         RenderSystem.setShaderFogStart(fogStart);
         RenderSystem.setShaderFogEnd(fogEnd);
 
