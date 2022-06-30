@@ -115,6 +115,18 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
         return this.output.copy();
     }
 
+    public static int getHammerSlot(Container c) {
+        ItemStack h = c.getItem(0);
+        if (!h.isEmpty() && h.is(CommonItemTags.HAMMERS)) return 0;
+
+        //this is the default slot
+        return 1;
+    }
+
+    public static int getIngredientSlot(Container c) {
+        return Math.abs(getHammerSlot(c) - 1);
+    }
+
     public ItemStack getHammer(Container c) {
         ItemStack h = c.getItem(1);
         if (!h.isEmpty() && h.is(CommonItemTags.HAMMERS)) return h;

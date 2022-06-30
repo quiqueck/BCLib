@@ -5,13 +5,16 @@ import org.betterx.bclib.blocks.LeveledAnvilBlock;
 import org.betterx.bclib.interfaces.AnvilScreenHandlerExtended;
 import org.betterx.bclib.recipes.AnvilRecipe;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
 
 import org.spongepowered.asm.mixin.Final;
@@ -76,75 +79,50 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu implements AnvilSc
         }
     }
 
+    @Inject(method = "method_24922", at = @At(value = "HEAD"), cancellable = true)
+    private static void bclib_onDamageAnvil(Player player, Level level, BlockPos blockPos, CallbackInfo ci) {
+        BlockState blockState = level.getBlockState(blockPos);
+        if (blockState.getBlock() instanceof BaseAnvilBlock anvil) {
+            BlockState damaged = anvil.damageAnvilUse(blockState, player.getRandom());
+            bcl_destroyWhenNull(level, blockPos, damaged);
+            ci.cancel();
+        }
+    }
+
+    private static void bcl_destroyWhenNull(Level level, BlockPos blockPos, BlockState damaged) {
+        if (damaged == null) {
+            level.removeBlock(blockPos, false);
+            level.levelEvent(LevelEvent.SOUND_ANVIL_BROKEN, blockPos, 0);
+        } else {
+            level.setBlock(blockPos, damaged, 2);
+            level.levelEvent(LevelEvent.SOUND_ANVIL_USED, blockPos, 0);
+        }
+    }
+
     @Inject(method = "onTake", at = @At("HEAD"), cancellable = true)
     protected void bclib_onTakeAnvilOutput(Player player, ItemStack stack, CallbackInfo info) {
         if (be_currentRecipe != null) {
-            inputSlots.getItem(0).shrink(be_currentRecipe.getInputCount());
+            final int ingredientSlot = AnvilRecipe.getIngredientSlot(inputSlots);
+
+            inputSlots.getItem(ingredientSlot).shrink(be_currentRecipe.getInputCount());
             stack = be_currentRecipe.craft(inputSlots, player);
             slotsChanged(inputSlots);
-            access.execute((world, blockPos) -> {
-                final BlockState anvilState = world.getBlockState(blockPos);
+            access.execute((level, blockPos) -> {
+                final BlockState anvilState = level.getBlockState(blockPos);
                 final Block anvilBlock = anvilState.getBlock();
                 if (anvilBlock instanceof BaseAnvilBlock) {
                     final BaseAnvilBlock anvil = (BaseAnvilBlock) anvilBlock;
                     if (!player.getAbilities().instabuild && anvilState.is(BlockTags.ANVIL) && player.getRandom()
                                                                                                      .nextDouble() < 0.1) {
                         BlockState damagedState = anvil.damageAnvilUse(anvilState, player.getRandom());
-                        if (damagedState == null) {
-                            world.removeBlock(blockPos, false);
-                            world.levelEvent(1029, blockPos, 0);
-                        } else {
-                            world.setBlock(blockPos, damagedState, 2);
-                            world.levelEvent(1030, blockPos, 0);
-                        }
+                        bcl_destroyWhenNull(level, blockPos, damagedState);
                     } else {
-                        world.levelEvent(1030, blockPos, 0);
+                        level.levelEvent(LevelEvent.SOUND_ANVIL_USED, blockPos, 0);
                     }
                 }
             });
             info.cancel();
-            return;
         }
-
-        this.access.execute((level, blockPos) -> {
-            BlockState blockState = level.getBlockState(blockPos);
-            if (blockState.getBlock() instanceof BaseAnvilBlock) {
-                info.cancel();
-                if (!player.getAbilities().instabuild) {
-                    player.giveExperienceLevels(-this.cost.get());
-                }
-
-                this.inputSlots.setItem(0, ItemStack.EMPTY);
-                if (this.repairItemCountCost > 0) {
-                    ItemStack itemStack2 = this.inputSlots.getItem(1);
-                    if (!itemStack2.isEmpty() && itemStack2.getCount() > this.repairItemCountCost) {
-                        itemStack2.shrink(this.repairItemCountCost);
-                        this.inputSlots.setItem(1, itemStack2);
-                    } else {
-                        this.inputSlots.setItem(1, ItemStack.EMPTY);
-                    }
-                } else {
-                    this.inputSlots.setItem(1, ItemStack.EMPTY);
-                }
-
-                this.cost.set(0);
-
-                if (!player.getAbilities().instabuild && blockState.is(BlockTags.ANVIL) && player.getRandom()
-                                                                                                 .nextFloat() < 0.12F) {
-                    BaseAnvilBlock anvil = (BaseAnvilBlock) blockState.getBlock();
-                    BlockState damaged = anvil.damageAnvilUse(blockState, player.getRandom());
-                    if (damaged == null) {
-                        level.removeBlock(blockPos, false);
-                        level.levelEvent(1029, blockPos, 0);
-                    } else {
-                        level.setBlock(blockPos, damaged, 2);
-                        level.levelEvent(1030, blockPos, 0);
-                    }
-                } else {
-                    level.levelEvent(1030, blockPos, 0);
-                }
-            }
-        });
     }
 
     @Inject(method = "createResult", at = @At("HEAD"), cancellable = true)
