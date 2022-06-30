@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
-import java.util.stream.Collectors;
 
 public abstract class TemplateStructure extends Structure {
     protected final List<Config> configs;
@@ -81,6 +80,14 @@ public abstract class TemplateStructure extends Structure {
 
     protected boolean isFloorPlaceable(BlockState state, BlockState before) {
         return (state == null || state.is(Blocks.AIR)) && before.getMaterial().isSolid();
+    }
+
+    protected int erosion(RandomSource rnd) {
+        return 0;
+    }
+
+    protected boolean cover(RandomSource rnd) {
+        return false;
     }
 
     @Override
@@ -152,8 +159,7 @@ public abstract class TemplateStructure extends Structure {
                         blockPos.getZ(),
                         ctx.heightAccessor(),
                         ctx.randomState()
-                ))
-                .collect(Collectors.toList());
+                )).toList();
 
         int y = noiseColumns
                 .stream()
@@ -199,7 +205,9 @@ public abstract class TemplateStructure extends Structure {
                                         ),
                                         rotation,
                                         mirror,
-                                        halfSize
+                                        halfSize,
+                                        erosion(ctx.random()),
+                                        cover(ctx.random())
                                 ))
         ));
 
