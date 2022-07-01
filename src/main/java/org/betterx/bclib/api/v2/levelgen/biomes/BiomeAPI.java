@@ -117,14 +117,14 @@ public class BiomeAPI {
 
 
     public static final BCLBiome THE_END = registerCenterBiome(getFromRegistry(Biomes.THE_END));
-    public static final BCLBiome END_MIDLANDS = registerSubBiome(
-            THE_END,
-            getFromRegistry(Biomes.END_MIDLANDS).value(),
+
+    public static final BCLBiome END_HIGHLANDS = registerEndLandBiome(
+            getFromRegistry(Biomes.END_HIGHLANDS),
             0.5F
     );
-    public static final BCLBiome END_HIGHLANDS = registerSubBiome(
-            THE_END,
-            getFromRegistry(Biomes.END_HIGHLANDS).value(),
+    public static final BCLBiome END_MIDLANDS = registerSubBiome(
+            END_HIGHLANDS,
+            getFromRegistry(Biomes.END_MIDLANDS).value(),
             0.5F
     );
 
@@ -302,7 +302,7 @@ public class BiomeAPI {
     public static BCLBiome registerEndVoidBiome(Holder<Biome> biome) {
         BCLBiome bclBiome = new BCLBiome(biome.value(), null);
 
-        registerBiome(bclBiome, BiomeType.END_VOID);
+        registerBiome(bclBiome, BiomeType.OTHER_END_VOID);
         return bclBiome;
     }
 
@@ -334,7 +334,7 @@ public class BiomeAPI {
                 VanillaBiomeSettings.createVanilla().setGenChance(genChance).build()
         );
 
-        registerBiome(bclBiome, BiomeType.END_VOID);
+        registerBiome(bclBiome, BiomeType.OTHER_END_VOID);
         return bclBiome;
     }
 

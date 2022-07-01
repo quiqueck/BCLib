@@ -125,7 +125,10 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
                 if (bclBiome != BiomeAPI.EMPTY_BIOME) {
                     if (bclBiome.getParentBiome() == null) {
                         if (config.withVoidBiomes) {
-                            if (BiomeAPI.wasRegisteredAsEndVoidBiome(biomeID)
+                            if (biomeID.equals(Biomes.THE_END.location())) {
+                                //we discard those Biomes
+                            } else if (BiomeAPI.wasRegisteredAsEndVoidBiome(biomeID)
+                                    || biomeID.equals(Biomes.SMALL_END_ISLANDS.location())
                                     || TheEndBiomesHelper.isIntendedForEndBarrens(key)
                                     || includeVoid.contains(biomeID.toString())
                             ) {
@@ -137,16 +140,17 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
                                 endLandBiomePicker.addBiome(bclBiome);
                             }
                         } else {
-                            if (BiomeAPI.wasRegisteredAsEndLandBiome(biomeID)
+                            if (biomeID.equals(Biomes.SMALL_END_ISLANDS.location())
+                                    || biomeID.equals(Biomes.THE_END.location())
+                            ) {
+                                //we discard those Biomes
+                            } else if (BiomeAPI.wasRegisteredAsEndLandBiome(biomeID)
                                     || TheEndBiomesHelper.isIntendedForEndLand(key)
                                     || includeLand.contains(biomeID.toString())
                             ) {
                                 endLandBiomePicker.addBiome(bclBiome);
                                 endVoidBiomePicker.addBiome(bclBiome);
-                            }
-                            if (!biomeID.equals(Biomes.SMALL_END_ISLANDS.location()) && !biomeID.equals(Biomes.THE_END.location())
-                                    && (BiomeAPI.wasRegisteredAsEndVoidBiome(biomeID) || includeVoid.contains(biomeID.toString()))
-                            ) {
+                            } else if (BiomeAPI.wasRegisteredAsEndVoidBiome(biomeID) || includeVoid.contains(biomeID.toString())) {
                                 endVoidBiomePicker.addBiome(bclBiome);
                             }
 
@@ -272,7 +276,6 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
             mapLand.clearCache();
             mapVoid.clearCache();
         }
-
         if (config.generatorVersion == BCLEndBiomeSourceConfig.EndBiomeGeneratorType.VANILLA || endLandFunction == null) {
             if (dist <= (long) config.innerVoidRadiusSquared) {
                 return this.centerBiome;

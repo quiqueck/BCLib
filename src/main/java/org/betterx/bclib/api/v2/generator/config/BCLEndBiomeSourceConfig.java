@@ -31,7 +31,7 @@ public class BCLEndBiomeSourceConfig implements BiomeSourceConfig<BCLibEndBiomeS
     public static final BCLEndBiomeSourceConfig MINECRAFT_18 = new BCLEndBiomeSourceConfig(
             EndBiomeMapType.HEX,
             EndBiomeGeneratorType.PAULEVS,
-            false,
+            true,
             MINECRAFT_17.innerVoidRadiusSquared
     );
     public static final BCLEndBiomeSourceConfig DEFAULT = MINECRAFT_18;

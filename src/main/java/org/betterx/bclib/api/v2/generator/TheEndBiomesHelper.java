@@ -75,7 +75,7 @@ public class TheEndBiomesHelper {
      * and any biomes added to the End as midland biome by mods.
      */
     public static boolean isIntendedForEndMidlands(ResourceKey<Biome> biome) {
-        return get().bcl_canGenerateAsEndMidlandBiome(biome);
+        return get().bcl_canGenerateAsEndMidlandBiome(biome) && !get().bcl_canGenerateAsEndBiome(biome);
     }
 
     /**
@@ -83,7 +83,8 @@ public class TheEndBiomesHelper {
      * and any biomes added to the End as barrens biome by mods.
      */
     public static boolean isIntendedForEndBarrens(ResourceKey<Biome> biome) {
-        return get().bcl_canGenerateAsEndBarrensBiome(biome);
+        return get().bcl_canGenerateAsEndBarrensBiome(biome) && !get().bcl_canGenerateAsEndBiome(biome) && !get().bcl_canGenerateAsEndMidlandBiome(
+                biome);
     }
 
     public static boolean isIntendedForEndLand(ResourceKey<Biome> biome) {
