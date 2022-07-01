@@ -190,6 +190,8 @@ public abstract class TemplateStructure extends Structure {
 
         centerPos.setY(y - (searchStep == 1 ? 0 : (structureTemplate.getSize(Rotation.NONE).getY())));
 
+        int erosion = erosion(ctx.random());
+        boolean cover = cover(ctx.random());
         // if (!structure.canGenerate(ctx.chunkGenerator()., centerPos))
         return Optional.of(new GenerationStub(
                 centerPos,
@@ -206,8 +208,8 @@ public abstract class TemplateStructure extends Structure {
                                         rotation,
                                         mirror,
                                         halfSize,
-                                        erosion(ctx.random()),
-                                        cover(ctx.random())
+                                        erosion,
+                                        cover
                                 ))
         ));
 

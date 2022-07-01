@@ -1,10 +1,13 @@
 package org.betterx.bclib.api.v2.levelgen.structures;
 
 import org.betterx.bclib.BCLib;
+import org.betterx.bclib.util.BlocksHelper;
 import org.betterx.bclib.util.MHelper;
 import org.betterx.bclib.util.StructureErode;
+import org.betterx.worlds.together.tag.v3.CommonBlockTags;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
@@ -14,9 +17,9 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.TemplateStructurePiece;
@@ -165,12 +168,30 @@ public class TemplatePiece extends TemplateStructurePiece {
             ChunkPos chunkPos,
             BlockPos blockPos
     ) {
+        BlockState coverState = null;
+        if (cover) {
+            BlockPos.MutableBlockPos mPos = new BlockPos(
+                    this.boundingBox.minX() - 1,
+                    blockPos.getY(),
+                    this.boundingBox.minZ() - 1
+            ).mutable();
+            if (BlocksHelper.findOnSurroundingSurface(
+                    world,
+                    mPos,
+                    Direction.DOWN,
+                    8,
+                    s -> s.is(CommonBlockTags.TERRAIN)
+            )) {
+                mPos.move(Direction.DOWN);
+                coverState = world.getBlockState(mPos);
+            }
+        }
         super.postProcess(world, structureManager, chunkGenerator, random, boundingBox, chunkPos, blockPos);
         BoundingBox bounds = BoundingBox.fromCorners(new Vec3i(
-                this.boundingBox.minX(),
+                boundingBox.minX(),
                 this.boundingBox.minY(),
-                this.boundingBox.minZ()
-        ), new Vec3i(this.boundingBox.maxX(), this.boundingBox.maxX(), this.boundingBox.maxZ()));
+                boundingBox.minZ()
+        ), new Vec3i(boundingBox.maxX(), this.boundingBox.maxY(), boundingBox.maxZ()));
 
         if (erosion > 0) {
             int x1 = MHelper.min(bounds.maxX(), this.boundingBox.maxX());
@@ -182,7 +203,8 @@ public class TemplatePiece extends TemplateStructurePiece {
         }
 
         if (cover) {
-            StructureErode.cover(world, bounds, random, Blocks.END_STONE.defaultBlockState());
+            System.out.println("CoverState:" + coverState + ", " + blockPos + " " + boundingBox.getCenter());
+            StructureErode.cover(world, bounds, random, coverState);
         }
     }
 }
