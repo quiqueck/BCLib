@@ -2,13 +2,13 @@ package org.betterx.worlds.together.mixin.client;
 
 import org.betterx.worlds.together.levelgen.WorldGenUtil;
 import org.betterx.worlds.together.world.event.WorldBootstrap;
+import org.betterx.worlds.together.worldPreset.WorldPreset;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.client.gui.screens.worldselection.WorldGenSettingsComponent;
-import net.minecraft.client.gui.screens.worldselection.WorldPreset;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.WorldLoader;

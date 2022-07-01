@@ -8,13 +8,22 @@ accessible	class	net/minecraft/world/level/levelgen/SurfaceRules$SurfaceRule
 accessible	class	net/minecraft/world/level/levelgen/SurfaceRules$LazyXZCondition
 accessible	class	net/minecraft/world/level/levelgen/SurfaceRules$LazyCondition
 accessible	class	net/minecraft/world/level/levelgen/SurfaceRules$SequenceRuleSource
-accessible  class   net/minecraft/world/level/levelgen/presets/WorldPresets$Bootstrap
 extendable  class   net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator
-accessible  class   net/minecraft/data/BuiltinRegistries$RegistryBootstrap
 accessible class net/minecraft/world/level/levelgen/SurfaceRules$SequenceRuleSource
+accessible class net/minecraft/core/Registry$RegistryBootstrap
+accessible class net/minecraft/tags/Tag$ElementEntry
+accessible class net/minecraft/tags/Tag$TagEntry
 
 #Methods
-accessible method net/minecraft/client/gui/screens/worldselection/WorldGenSettingsComponent updateSettings (Lnet/minecraft/client/gui/screens/worldselection/WorldCreationContext$Updater;)V
 accessible method net/minecraft/world/level/storage/loot/LootPool <init> ([Lnet/minecraft/world/level/storage/loot/entries/LootPoolEntryContainer;[Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition;[Lnet/minecraft/world/level/storage/loot/functions/LootItemFunction;Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;)V
-accessible method net/minecraft/world/entity/ai/village/poi/PoiTypes register (Lnet/minecraft/core/Registry;Lnet/minecraft/resources/ResourceKey;Ljava/util/Set;II)Lnet/minecraft/world/entity/ai/village/poi/PoiType;
 accessible method net/minecraft/world/level/levelgen/SurfaceRules$SequenceRuleSource <init> (Ljava/util/List;)V
+accessible method net/minecraft/core/Registry registerSimple (Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/core/Registry$RegistryBootstrap;)Lnet/minecraft/core/Registry;
+
+#Fields
+accessible field net/minecraft/client/gui/screens/worldselection/WorldPreset FLAT Lnet/minecraft/client/gui/screens/worldselection/WorldPreset;
+accessible field net/minecraft/client/gui/screens/worldselection/WorldPreset LARGE_BIOMES Lnet/minecraft/client/gui/screens/worldselection/WorldPreset;
+accessible field net/minecraft/client/gui/screens/worldselection/WorldPreset AMPLIFIED Lnet/minecraft/client/gui/screens/worldselection/WorldPreset;
+accessible field net/minecraft/client/gui/screens/worldselection/WorldPreset SINGLE_BIOME_SURFACE Lnet/minecraft/client/gui/screens/worldselection/WorldPreset;
+accessible field net/minecraft/client/gui/screens/worldselection/WorldPreset PRESETS Ljava/util/List;
+accessible field net/minecraft/client/gui/screens/worldselection/WorldPreset EDITORS Ljava/util/Map;
+

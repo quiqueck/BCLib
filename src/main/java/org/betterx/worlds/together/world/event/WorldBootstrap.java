@@ -9,12 +9,11 @@ import org.betterx.worlds.together.surfaceRules.SurfaceRuleUtil;
 import org.betterx.worlds.together.world.WorldConfig;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
 import org.betterx.worlds.together.worldPreset.WorldGenSettingsComponentAccessor;
+import org.betterx.worlds.together.worldPreset.WorldPreset;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
 
 import net.minecraft.client.gui.screens.worldselection.WorldGenSettingsComponent;
-import net.minecraft.client.gui.screens.worldselection.WorldPreset;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.nbt.Tag;
@@ -96,7 +95,7 @@ public class WorldBootstrap {
                 var presetKey = currentPreset.get().unwrapKey();
                 if (presetKey.isPresent()) {
                     Optional<Holder<WorldPreset>> newPreset = LAST_REGISTRY_ACCESS
-                            .registryOrThrow(Registry.WORLD_PRESET_REGISTRY)
+                            .registryOrThrow(WorldPresets.WORLD_PRESET_REGISTRY)
                             .getHolder(presetKey.get());
                     if (newPreset.isPresent()) currentPreset = newPreset;
                 }

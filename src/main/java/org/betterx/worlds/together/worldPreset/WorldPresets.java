@@ -7,14 +7,12 @@ import org.betterx.worlds.together.tag.v3.TagManager;
 import org.betterx.worlds.together.tag.v3.TagRegistry;
 import org.betterx.worlds.together.worldPreset.client.WorldPresetsClient;
 
-import net.minecraft.client.gui.screens.worldselection.WorldPreset;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.WorldPresetTags;
 import net.minecraft.world.level.dimension.LevelStem;
 
 import com.google.common.collect.Maps;
@@ -23,15 +21,43 @@ import java.util.Map;
 import org.jetbrains.annotations.ApiStatus;
 
 public class WorldPresets {
+    public static final ResourceKey<Registry<WorldPreset>> WORLD_PRESET_REGISTRY
+            = ResourceKey.createRegistryKey(WorldsTogether.makeID("worldgen/world_preset"));
+
+    public static final Registry<WorldPreset> WORLD_PRESET
+            = Registry.registerSimple(WORLD_PRESET_REGISTRY, (registry) -> null);
 
     public static final TagRegistry.Simple<WorldPreset> WORLD_PRESETS =
-            TagManager.registerType(BuiltinRegistries.WORLD_PRESET, "tags/worldgen/world_preset");
+            TagManager.registerType(WORLD_PRESET, "tags/worldgen/world_preset");
+
+
     private static Map<ResourceKey<WorldPreset>, PresetBuilder> BUILDERS = Maps.newHashMap();
-    private static ResourceKey<WorldPreset> DEFAULT = net.minecraft.world.level.levelgen.presets.WorldPresets.NORMAL;
+
+    private static ResourceKey<WorldPreset> NORMAL = ResourceKey.create(
+            WORLD_PRESET_REGISTRY,
+            WorldsTogether.makeID("vanilla_normal")
+    );
+    private static ResourceKey<WorldPreset> LARGE_BIOMES = ResourceKey.create(
+            WORLD_PRESET_REGISTRY,
+            WorldsTogether.makeID("vanilla_large_biomes")
+    );
+    private static ResourceKey<WorldPreset> AMPLIFIED = ResourceKey.create(
+            WORLD_PRESET_REGISTRY,
+            WorldsTogether.makeID("vanilla_amplified")
+    );
+    private static ResourceKey<WorldPreset> FLAT = ResourceKey.create(
+            WORLD_PRESET_REGISTRY,
+            WorldsTogether.makeID("vanilla_flat")
+    );
+    private static ResourceKey<WorldPreset> SINGLE_BIOME_SURFACE = ResourceKey.create(
+            WORLD_PRESET_REGISTRY,
+            WorldsTogether.makeID("vanilla_single_biome_surface")
+    );
+    private static ResourceKey<WorldPreset> DEFAULT = NORMAL;
 
     public static Holder<WorldPreset> get(RegistryAccess access, ResourceKey<WorldPreset> key) {
         return ((access != null) ? access : BuiltinRegistries.ACCESS)
-                .registryOrThrow(Registry.WORLD_PRESET_REGISTRY)
+                .registryOrThrow(WORLD_PRESET_REGISTRY)
                 .getHolderOrThrow(key);
     }
 
@@ -46,9 +72,9 @@ public class WorldPresets {
      * @return The key you may use to reference your new Preset
      */
     private static ResourceKey<WorldPreset> register(ResourceLocation loc, boolean visibleInUI) {
-        ResourceKey<WorldPreset> key = ResourceKey.create(Registry.WORLD_PRESET_REGISTRY, loc);
+        ResourceKey<WorldPreset> key = ResourceKey.create(WORLD_PRESET_REGISTRY, loc);
         if (visibleInUI) {
-            if (!didExplicitlySetDefault && DEFAULT == net.minecraft.world.level.levelgen.presets.WorldPresets.NORMAL) {
+            if (!didExplicitlySetDefault && DEFAULT == NORMAL) {
                 DEFAULT = key;
             }
             WORLD_PRESETS.addUntyped(WorldPresetTags.NORMAL, key.location());
@@ -111,6 +137,41 @@ public class WorldPresets {
                 LevelStem overworldStem,
                 WorldGenUtil.Context netherContext,
                 WorldGenUtil.Context endContext
+        );
+    }
+
+    static {
+        Registry.register(
+                WORLD_PRESET,
+                NORMAL,
+                new WorldPreset(net.minecraft.client.gui.screens.worldselection.WorldPreset.NORMAL)
+        );
+
+        Registry.register(
+                WORLD_PRESET,
+                LARGE_BIOMES,
+                new WorldPreset(net.minecraft.client.gui.screens.worldselection.WorldPreset.LARGE_BIOMES)
+        );
+
+
+        Registry.register(
+                WORLD_PRESET,
+                AMPLIFIED,
+                new WorldPreset(net.minecraft.client.gui.screens.worldselection.WorldPreset.AMPLIFIED)
+        );
+
+
+        Registry.register(
+                WORLD_PRESET,
+                FLAT,
+                new WorldPreset(net.minecraft.client.gui.screens.worldselection.WorldPreset.FLAT)
+        );
+
+
+        Registry.register(
+                WORLD_PRESET,
+                SINGLE_BIOME_SURFACE,
+                new WorldPreset(net.minecraft.client.gui.screens.worldselection.WorldPreset.SINGLE_BIOME_SURFACE)
         );
     }
 }

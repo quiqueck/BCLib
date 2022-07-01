@@ -1,8 +1,8 @@
 package org.betterx.worlds.together.worldPreset.client;
 
 import org.betterx.bclib.registry.PresetsRegistryClient;
+import org.betterx.worlds.together.worldPreset.WorldPreset;
 
-import net.minecraft.client.gui.screens.worldselection.WorldPreset;
 import net.minecraft.resources.ResourceKey;
 
 import net.fabricmc.api.EnvType;

@@ -9,7 +9,6 @@ import org.betterx.worlds.together.world.event.WorldBootstrap;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.client.gui.screens.worldselection.WorldPreset;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
@@ -25,7 +24,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
-public class TogetherWorldPreset extends WorldPreset {
+public class TogetherWorldPreset extends org.betterx.worlds.together.worldPreset.WorldPreset {
     public final int sortOrder;
 
     private static int NEXT_IN_SORT_ORDER = 1000;

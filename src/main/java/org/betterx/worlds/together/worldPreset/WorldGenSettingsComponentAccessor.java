@@ -1,6 +1,5 @@
 package org.betterx.worlds.together.worldPreset;
 
-import net.minecraft.client.gui.screens.worldselection.WorldPreset;
 import net.minecraft.core.Holder;
 
 import java.util.Optional;

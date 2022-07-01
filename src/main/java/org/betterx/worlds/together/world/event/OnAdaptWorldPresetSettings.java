@@ -1,6 +1,7 @@
 package org.betterx.worlds.together.world.event;
 
-import net.minecraft.client.gui.screens.worldselection.WorldPreset;
+import org.betterx.worlds.together.worldPreset.WorldPreset;
+
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
 

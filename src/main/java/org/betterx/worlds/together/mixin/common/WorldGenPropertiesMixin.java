@@ -1,19 +1,22 @@
 package org.betterx.worlds.together.mixin.common;
 
+import org.betterx.worlds.together.worldPreset.WorldPreset;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
 
-import net.minecraft.client.gui.screens.worldselection.WorldPreset;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.dedicated.DedicatedServerProperties;
 
+import com.google.gson.JsonObject;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(DedicatedServerProperties.WorldGenProperties.class)
 public class WorldGenPropertiesMixin {
-    @ModifyArg(method = "create", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/levelgen/presets/WorldPreset;createWorldGenSettings(JZZ)Lnet/minecraft/world/level/levelgen/WorldGenSettings;"))
-    public long bcl_create(long seed) {
+    @Inject(method = "<init>", at = @At(value = "TAIL"))
+    private static void bcl_create(String string, JsonObject jsonObject, boolean bl, String string2, CallbackInfo ci) {
         return seed;
     }
 

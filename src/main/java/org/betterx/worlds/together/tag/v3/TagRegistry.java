@@ -7,20 +7,17 @@ import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagEntry;
+import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
-import net.minecraft.tags.TagLoader;
 import net.minecraft.tags.TagManager;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.biome.Biome;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -87,7 +84,7 @@ public class TagRegistry<T> {
             return makeTag(modID, "has_structure/" + name);
         }
 
-        public void apply(Map<ResourceLocation, List<TagLoader.EntryWithSource>> tagsMap) {
+        public void apply(Map<ResourceLocation, Tag.Builder> tagsMap) {
             InternalBiomeAPI._runBiomeTagAdders();
             super.apply(tagsMap);
         }
@@ -124,7 +121,7 @@ public class TagRegistry<T> {
     }
 
     public final String directory;
-    private final Map<ResourceLocation, Set<TagEntry>> tags = Maps.newConcurrentMap();
+    private final Map<ResourceLocation, Set<Tag.Entry>> tags = Maps.newConcurrentMap();
     public final ResourceKey<? extends Registry<T>> registryKey;
     private final Function<T, ResourceLocation> locationProvider;
 
@@ -142,11 +139,11 @@ public class TagRegistry<T> {
         getSetForTag(tagID);
     }
 
-    public Set<TagEntry> getSetForTag(ResourceLocation tagID) {
+    public Set<Tag.Entry> getSetForTag(ResourceLocation tagID) {
         return tags.computeIfAbsent(tagID, k -> Sets.newHashSet());
     }
 
-    public Set<TagEntry> getSetForTag(TagKey<T> tag) {
+    public Set<Tag.Entry> getSetForTag(TagKey<T> tag) {
         if (tag == null) {
             return new HashSet<>();
         }
@@ -192,10 +189,10 @@ public class TagRegistry<T> {
 
     public void addUntyped(TagKey<T> tagID, ResourceLocation... elements) {
         if (isFrozen) BCLib.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
-        Set<TagEntry> set = getSetForTag(tagID);
+        Set<Tag.Entry> set = getSetForTag(tagID);
         for (ResourceLocation id : elements) {
             if (id != null) {
-                set.add(TagEntry.element(id));
+                set.add(new Tag.ElementEntry(id));
             }
         }
     }
@@ -208,11 +205,11 @@ public class TagRegistry<T> {
 
     public void addOtherTags(TagKey<T> tagID, TagKey<T>... tags) {
         if (isFrozen) BCLib.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
-        Set<TagEntry> set = getSetForTag(tagID);
+        Set<Tag.Entry> set = getSetForTag(tagID);
         for (TagKey<T> tag : tags) {
             ResourceLocation id = tag.location();
             if (id != null) {
-                set.add(TagEntry.tag(id));
+                set.add(new Tag.TagEntry(id));
             }
         }
     }
@@ -225,11 +222,11 @@ public class TagRegistry<T> {
      */
     protected void add(TagKey<T> tagID, T... elements) {
         if (isFrozen) BCLib.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
-        Set<TagEntry> set = getSetForTag(tagID);
+        Set<Tag.Entry> set = getSetForTag(tagID);
         for (T element : elements) {
             ResourceLocation id = locationProvider.apply(element);
             if (id != null) {
-                set.add(TagEntry.element(id));
+                set.add(new Tag.ElementEntry(id));
             }
         }
     }
@@ -243,11 +240,11 @@ public class TagRegistry<T> {
     @Deprecated(forRemoval = true)
     protected void add(ResourceLocation tagID, T... elements) {
         if (isFrozen) BCLib.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
-        Set<TagEntry> set = getSetForTag(tagID);
+        Set<Tag.Entry> set = getSetForTag(tagID);
         for (T element : elements) {
             ResourceLocation id = locationProvider.apply(element);
             if (id != null) {
-                set.add(TagEntry.element(id));
+                set.add(new Tag.ElementEntry(id));
             }
         }
     }
@@ -259,22 +256,22 @@ public class TagRegistry<T> {
         }
     }
 
-    public void forEach(BiConsumer<ResourceLocation, Set<TagEntry>> consumer) {
+    public void forEach(BiConsumer<ResourceLocation, Set<Tag.Entry>> consumer) {
         tags.forEach(consumer);
     }
 
-    public void apply(Map<ResourceLocation, List<TagLoader.EntryWithSource>> tagsMap) {
+    public void apply(Map<ResourceLocation, Tag.Builder> tagsMap) {
 
         //this.isFrozen = true;
-        this.forEach((id, ids) -> apply(id, tagsMap.computeIfAbsent(id, key -> Lists.newArrayList()), ids));
+        this.forEach((id, ids) -> apply(id, tagsMap.computeIfAbsent(id, key -> new Tag.Builder()), ids));
     }
 
-    private static List<TagLoader.EntryWithSource> apply(
+    private static Tag.Builder apply(
             ResourceLocation id,
-            List<TagLoader.EntryWithSource> builder,
-            Set<TagEntry> ids
+            Tag.Builder builder,
+            Set<Tag.Entry> ids
     ) {
-        ids.forEach(value -> builder.add(new TagLoader.EntryWithSource(value, BCLib.MOD_ID)));
+        ids.forEach(value -> builder.add(new Tag.BuilderEntry(value, BCLib.MOD_ID)));
         return builder;
     }
 }

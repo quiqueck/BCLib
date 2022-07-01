@@ -1,10 +1,10 @@
 package org.betterx.bclib.presets;
 
+import org.betterx.worlds.together.flatLevel.FlatLevelGeneratorPreset;
 import org.betterx.worlds.together.tag.v3.TagRegistry;
 
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.levelgen.flat.FlatLevelGeneratorPreset;
 
 /**
  * @deprecated Use {@link org.betterx.worlds.together.flatLevel.FlatLevelPresets} instead

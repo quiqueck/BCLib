@@ -1,9 +1,9 @@
 package org.betterx.worlds.together.mixin.client;
 
 import org.betterx.worlds.together.worldPreset.WorldGenSettingsComponentAccessor;
+import org.betterx.worlds.together.worldPreset.WorldPreset;
 
 import net.minecraft.client.gui.screens.worldselection.WorldGenSettingsComponent;
-import net.minecraft.client.gui.screens.worldselection.WorldPreset;
 import net.minecraft.core.Holder;
 
 import org.spongepowered.asm.mixin.Mixin;

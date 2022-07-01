@@ -7,10 +7,10 @@ import org.betterx.worlds.together.chunkgenerator.EnforceableChunkGenerator;
 import org.betterx.worlds.together.world.BiomeSourceWithSeed;
 import org.betterx.worlds.together.world.WorldConfig;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
+import org.betterx.worlds.together.worldPreset.WorldPreset;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
 
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.gui.screens.worldselection.WorldPreset;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
@@ -37,7 +37,7 @@ public class WorldGenUtil {
             boolean generateBonusChest
     ) {
         WorldGenSettings settings = registryAccess
-                .registryOrThrow(Registry.WORLD_PRESET_REGISTRY)
+                .registryOrThrow(WorldPresets.WORLD_PRESET_REGISTRY)
                 .getHolderOrThrow(preset)
                 .value()
                 .createWorldGenSettings(seed, generateStructures, generateBonusChest);

@@ -27,9 +27,9 @@ public class SurfaceRuleRegistry {
     }
 
     @ApiStatus.Internal
-    public static Holder<AssignedSurfaceRule> bootstrap(Registry<AssignedSurfaceRule> registry) {
+    public static Holder<AssignedSurfaceRule> bootstrap() {
         return BuiltinRegistries.register(
-                registry,
+                BUILTIN_SURFACE_RULES,
                 WorldsTogether.makeID("dummy"),
                 new AssignedSurfaceRule(
                         SurfaceRules.state(Blocks.YELLOW_CONCRETE.defaultBlockState()),

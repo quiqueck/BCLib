@@ -9,8 +9,8 @@ import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
-import net.minecraft.tags.TagLoader;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
@@ -19,7 +19,6 @@ import net.minecraft.world.level.block.Block;
 
 import com.google.common.collect.Maps;
 
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -254,9 +253,9 @@ public class TagAPI {
 
 
     @Deprecated(forRemoval = true)
-    public static <T> Map<ResourceLocation, List<TagLoader.EntryWithSource>> apply(
+    public static <T> Map<ResourceLocation, Tag.Builder> apply(
             String directory,
-            Map<ResourceLocation, List<TagLoader.EntryWithSource>> tagsMap
+            Map<ResourceLocation, Tag.Builder> tagsMap
     ) {
         TagType<?> type = TYPES.get(directory);
         if (type != null) {
