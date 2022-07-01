@@ -203,7 +203,7 @@ public class TemplatePiece extends TemplateStructurePiece {
         }
 
         if (cover) {
-            System.out.println("CoverState:" + coverState + ", " + blockPos + " " + boundingBox.getCenter());
+            //System.out.println("CoverState:" + coverState + ", " + blockPos + " " + boundingBox.getCenter());
             StructureErode.cover(world, bounds, random, coverState);
         }
     }
