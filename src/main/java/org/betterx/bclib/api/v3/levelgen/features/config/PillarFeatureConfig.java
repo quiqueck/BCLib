@@ -14,7 +14,10 @@ import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 
+import java.util.Arrays;
+import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class PillarFeatureConfig implements FeatureConfiguration {
     @FunctionalInterface
@@ -65,9 +68,13 @@ public class PillarFeatureConfig implements FeatureConfiguration {
         );
 
 
-        public static final StringRepresentable.EnumCodec<KnownTransformers> CODEC = StringRepresentable
-                .fromEnum(KnownTransformers::values);
-
+        public static final Codec<KnownTransformers> CODEC = StringRepresentable
+                .fromEnum(KnownTransformers::values, KnownTransformers::byName);
+        private static final Map<String, KnownTransformers> BY_NAME = Arrays.stream(KnownTransformers.values())
+                                                                            .collect(Collectors.toMap(
+                                                                                    KnownTransformers::name,
+                                                                                    a -> a
+                                                                            ));
 
         public final String name;
         public final StateTransform stateTransform;
@@ -91,6 +98,10 @@ public class PillarFeatureConfig implements FeatureConfiguration {
         @Override
         public String getSerializedName() {
             return this.name;
+        }
+
+        public static KnownTransformers byName(String string) {
+            return BY_NAME.get(string);
         }
     }
 

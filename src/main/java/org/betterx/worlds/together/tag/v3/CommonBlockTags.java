@@ -35,8 +35,10 @@ public class CommonBlockTags {
     public static final TagKey<Block> TERRAIN = TagManager.BLOCKS.makeCommonTag("terrain");
     public static final TagKey<Block> NETHER_TERRAIN = TagManager.BLOCKS.makeCommonTag("nether_terrain");
 
+    public static final TagKey<Block> NETHER_CARVER_REPLACEABLES = TagManager.BLOCKS.makeCommonTag(
+            "nether_carver_replaceables");
+
     static void prepareTags() {
-        TagManager.BLOCKS.add(SCULK_LIKE, Blocks.SCULK);
         TagManager.BLOCKS.addOtherTags(DRAGON_IMMUNE, BlockTags.DRAGON_IMMUNE);
 
         TagManager.BLOCKS.add(END_STONES, Blocks.END_STONE);
@@ -67,8 +69,7 @@ public class CommonBlockTags {
                 Blocks.SAND,
                 Blocks.RED_SAND,
                 Blocks.GLOWSTONE,
-                Blocks.BONE_BLOCK,
-                Blocks.SCULK
+                Blocks.BONE_BLOCK
         );
         TagManager.BLOCKS.addOtherTags(
                 TERRAIN,
@@ -102,14 +103,13 @@ public class CommonBlockTags {
         TagManager.BLOCKS.add(CommonBlockTags.CHEST, Blocks.CHEST);
 
         TagManager.BLOCKS.add(
-                BlockTags.NETHER_CARVER_REPLACEABLES,
+                NETHER_CARVER_REPLACEABLES,
                 Blocks.BASALT,
                 Blocks.RED_SAND,
-                Blocks.MAGMA_BLOCK,
-                Blocks.SCULK
+                Blocks.MAGMA_BLOCK
         );
         TagManager.BLOCKS.addOtherTags(
-                BlockTags.NETHER_CARVER_REPLACEABLES,
+                NETHER_CARVER_REPLACEABLES,
                 CommonBlockTags.NETHER_STONES,
                 CommonBlockTags.NETHERRACK
         );

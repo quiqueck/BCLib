@@ -122,7 +122,7 @@ public class TogetherWorldPreset extends org.betterx.worlds.together.worldPreset
 
     public static Registry<LevelStem> getDimensions(ResourceKey<WorldPreset> key) {
         RegistryAccess access = WorldBootstrap.getLastRegistryAccessOrElseBuiltin();
-        var preset = access.registryOrThrow(Registry.WORLD_PRESET_REGISTRY).getHolder(key);
+        var preset = access.registryOrThrow(WorldPresets.WORLD_PRESET_REGISTRY).getHolder(key);
         if (preset.isEmpty()) return null;
         return preset
                 .get()

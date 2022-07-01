@@ -6,11 +6,11 @@ import org.betterx.bclib.api.v2.generator.config.BCLNetherBiomeSourceConfig;
 import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
 import org.betterx.worlds.together.levelgen.WorldGenUtil;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
+import org.betterx.worlds.together.worldPreset.WorldPreset;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
 
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.dimension.LevelStem;
-import net.minecraft.world.level.levelgen.presets.WorldPreset;
 
 import java.util.Map;
 

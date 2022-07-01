@@ -2,7 +2,8 @@ package org.betterx.bclib.util;
 
 import com.mojang.math.Vector3f;
 import net.minecraft.core.Vec3i;
-import net.minecraft.world.level.levelgen.LegacyRandom;
+import net.minecraft.world.level.levelgen.LegacyRandomSource;
+import net.minecraft.world.level.levelgen.RandomSource;
 
 import java.util.Random;
 
@@ -12,7 +13,7 @@ public class MHelper {
     public static final float PHI = (float) (Math.PI * (3 - Math.sqrt(5)));
     public static final float PI2 = (float) (Math.PI * 2);
     public static final Random RANDOM = new Random();
-    public static final Random RANDOM_SOURCE = new LegacyRandom(RANDOM.nextLong());
+    public static final RandomSource RANDOM_SOURCE = new LegacyRandomSource(RANDOM.nextLong());
 
     public static int randRange(int min, int max, Random random) {
         return min + random.nextInt(max - min + 1);

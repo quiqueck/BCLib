@@ -8,7 +8,7 @@ import org.betterx.bclib.noise.OpenSimplexNoise;
 import org.betterx.bclib.util.MHelper;
 
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.levelgen.LegacyRandom;
+import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 
 import com.google.common.collect.Maps;
@@ -29,7 +29,7 @@ public class SquareBiomeMap implements BiomeMap {
     private TriConsumer<Integer, Integer, Integer> processor;
 
     public SquareBiomeMap(long seed, int size, BiomePicker picker) {
-        random = new WorldgenRandom(new LegacyRandom(seed));
+        random = new WorldgenRandom(new LegacyRandomSource(seed));
         noiseX = new OpenSimplexNoise(random.nextLong());
         noiseZ = new OpenSimplexNoise(random.nextLong());
         this.sizeXZ = size;

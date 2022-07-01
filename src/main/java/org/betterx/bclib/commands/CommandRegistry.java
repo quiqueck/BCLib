@@ -7,7 +7,6 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
@@ -29,12 +28,12 @@ import java.util.Map;
 
 public class CommandRegistry {
     public static void register() {
-        CommandRegistrationCallback.EVENT.register(CommandRegistry::register);
+        CommandRegistrationCallback.EVENT.register((a, b, c) -> register(a, c));
     }
+
 
     private static void register(
             CommandDispatcher<CommandSourceStack> dispatcher,
-            CommandBuildContext commandBuildContext,
             Commands.CommandSelection commandSelection
     ) {
         dispatcher.register(
@@ -43,10 +42,6 @@ public class CommandRegistry {
                         .then(Commands.literal("request_garbage_collection")
                                       .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
                                       .executes(ctx -> requestGC(ctx))
-                        )
-                        .then(Commands.literal("dump_datapack")
-                                      .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
-                                      .executes(ctx -> DumpDatapack.dumpDatapack(ctx))
                         )
                         .then(Commands.literal("debug_ore")
                                       .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
