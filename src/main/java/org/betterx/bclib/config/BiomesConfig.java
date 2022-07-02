@@ -79,6 +79,13 @@ public class BiomesConfig extends PathConfig {
                                    .toList();
     }
 
+    public List<String> getExcludeMatching(BiomeAPI.BiomeType type) {
+        var list = getBiomeExcludeMap().get(type);
+        if (list == null) return List.of();
+        return list;
+    }
+
+
     public Map<BiomeAPI.BiomeType, List<String>> getBiomeIncludeMap() {
         if (BIOME_INCLUDE_LIST == null) {
             BIOME_INCLUDE_LIST = new HashMap<>();

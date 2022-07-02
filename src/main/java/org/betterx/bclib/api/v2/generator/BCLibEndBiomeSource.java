@@ -93,7 +93,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
         super(biomeRegistry, list, seed);
         this.config = config;
         var includeMap = Configs.BIOMES_CONFIG.getBiomeIncludeMap();
-        var excludeList = Configs.BIOMES_CONFIG.getBiomeExcludeMap().get(BiomeAPI.BiomeType.END);
+        var excludeList = Configs.BIOMES_CONFIG.getExcludeMatching(BiomeAPI.BiomeType.END);
 
         endLandBiomePicker = new BiomePicker(biomeRegistry);
         endVoidBiomePicker = new BiomePicker(biomeRegistry);

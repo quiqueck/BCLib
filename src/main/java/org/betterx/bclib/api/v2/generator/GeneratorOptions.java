@@ -2,43 +2,28 @@ package org.betterx.bclib.api.v2.generator;
 
 import org.betterx.bclib.config.Configs;
 
-import net.minecraft.util.Mth;
-
 import java.awt.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class GeneratorOptions {
-    private static int biomeSizeNether;
-    private static int biomeVSizeNether;
     private static BiFunction<Point, Integer, Boolean> endLandFunction;
-    private static boolean customNetherBiomeSource = true;
-    private static boolean customEndBiomeSource = true;
-    private static boolean verticalBiomes = true;
-    private static long farEndBiomesSqr = 1000000;
     private static boolean fixEndBiomeSource = true;
     private static boolean fixNetherBiomeSource = true;
 
     public static void init() {
-        biomeSizeNether = Configs.GENERATOR_CONFIG.getInt("nether.biomeMap", "biomeSize", 256);
-        biomeVSizeNether = Configs.GENERATOR_CONFIG.getInt(
-                "nether.biomeMap",
-                "biomeVerticalSize(onlyInTallNether)",
-                86
-        );
-        customNetherBiomeSource = Configs.GENERATOR_CONFIG.getBoolean("options", "customNetherBiomeSource", true);
-        customEndBiomeSource = Configs.GENERATOR_CONFIG.getBoolean("options", "customEndBiomeSource", true);
-        verticalBiomes = Configs.GENERATOR_CONFIG.getBoolean("options", "verticalBiomesInTallNether", true);
         fixEndBiomeSource = Configs.GENERATOR_CONFIG.getBoolean("options.biomeSource", "fixEndBiomeSource", true);
         fixNetherBiomeSource = Configs.GENERATOR_CONFIG.getBoolean("options.biomeSource", "fixNetherBiomeSource", true);
     }
 
+    @Deprecated(forRemoval = true)
     public static int getBiomeSizeNether() {
-        return Mth.clamp(biomeSizeNether, 1, 8192);
+        return 256;
     }
 
+    @Deprecated(forRemoval = true)
     public static int getVerticalBiomeSizeNether() {
-        return Mth.clamp(biomeVSizeNether, 1, 8192);
+        return 86;
     }
 
     @Deprecated(forRemoval = true)
@@ -68,8 +53,9 @@ public class GeneratorOptions {
         return endLandFunction;
     }
 
+    @Deprecated(forRemoval = true)
     public static long getFarEndBiomes() {
-        return farEndBiomesSqr;
+        return 1000000;
     }
 
     /**
@@ -77,8 +63,8 @@ public class GeneratorOptions {
      *
      * @param distance
      */
+    @Deprecated(forRemoval = true)
     public static void setFarEndBiomes(int distance) {
-        GeneratorOptions.farEndBiomesSqr = (long) distance * (long) distance;
     }
 
     /**
@@ -86,21 +72,25 @@ public class GeneratorOptions {
      *
      * @param distanceSqr the distance squared
      */
+    @Deprecated(forRemoval = true)
     public static void setFarEndBiomesSqr(long distanceSqr) {
-        GeneratorOptions.farEndBiomesSqr = distanceSqr;
+
     }
 
+    @Deprecated(forRemoval = true)
     public static boolean customNetherBiomeSource() {
-        return customNetherBiomeSource;
+        return true;
     }
 
+    @Deprecated(forRemoval = true)
     public static boolean customEndBiomeSource() {
-        return customEndBiomeSource;
+        return true;
     }
 
 
+    @Deprecated(forRemoval = true)
     public static boolean useVerticalBiomes() {
-        return verticalBiomes;
+        return true;
     }
 
     public static boolean fixEndBiomeSource() {

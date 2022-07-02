@@ -5,7 +5,6 @@ import org.betterx.bclib.api.v2.generator.config.BCLNetherBiomeSourceConfig;
 import org.betterx.bclib.api.v2.generator.map.MapStack;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
-import org.betterx.bclib.config.ConfigKeeper.StringArrayEntry;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.interfaces.BiomeMap;
 import org.betterx.bclib.util.TriFunction;
@@ -116,20 +115,16 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
     }
 
     private static List<Holder<Biome>> getBclBiomes(Registry<Biome> biomeRegistry) {
-        List<String> include = Configs.BIOMES_CONFIG.getEntry("force_include", "nether_biomes", StringArrayEntry.class)
-                                                    .getValue();
-        List<String> exclude = Configs.BIOMES_CONFIG.getEntry("force_exclude", "nether_biomes", StringArrayEntry.class)
-                                                    .getValue();
+        List<String> include = Configs.BIOMES_CONFIG.getIncludeMatching(BiomeAPI.BiomeType.NETHER);
+        List<String> exclude = Configs.BIOMES_CONFIG.getExcludeMatching(BiomeAPI.BiomeType.NETHER);
 
         return getBiomes(biomeRegistry, exclude, include, BCLibNetherBiomeSource::isValidNonVanillaNetherBiome);
     }
 
 
     private static List<Holder<Biome>> getBiomes(Registry<Biome> biomeRegistry) {
-        List<String> include = Configs.BIOMES_CONFIG.getEntry("force_include", "nether_biomes", StringArrayEntry.class)
-                                                    .getValue();
-        List<String> exclude = Configs.BIOMES_CONFIG.getEntry("force_exclude", "nether_biomes", StringArrayEntry.class)
-                                                    .getValue();
+        List<String> include = Configs.BIOMES_CONFIG.getIncludeMatching(BiomeAPI.BiomeType.NETHER);
+        List<String> exclude = Configs.BIOMES_CONFIG.getExcludeMatching(BiomeAPI.BiomeType.NETHER);
 
         return getBiomes(biomeRegistry, exclude, include, BCLibNetherBiomeSource::isValidNetherBiome);
     }
@@ -177,19 +172,19 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
     @Override
     protected void onInitMap(long seed) {
         TriFunction<Long, Integer, BiomePicker, BiomeMap> mapConstructor = config.mapVersion.mapBuilder;
-        if (maxHeight > 128 && GeneratorOptions.useVerticalBiomes()) {
+        if (maxHeight > config.biomeSizeVertical * 1.5 && config.useVerticalBiomes) {
             this.biomeMap = new MapStack(
                     seed,
-                    GeneratorOptions.getBiomeSizeNether(),
+                    config.biomeSize,
                     biomePicker,
-                    GeneratorOptions.getVerticalBiomeSizeNether(),
+                    config.biomeSizeVertical,
                     maxHeight,
                     mapConstructor
             );
         } else {
             this.biomeMap = mapConstructor.apply(
                     seed,
-                    GeneratorOptions.getBiomeSizeNether(),
+                    config.biomeSize,
                     biomePicker
             );
         }

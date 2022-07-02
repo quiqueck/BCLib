@@ -207,7 +207,10 @@ public class WorldSetupScreen extends BCLibScreen {
             BCLNetherBiomeSourceConfig netherConfig = new BCLNetherBiomeSourceConfig(
                     netherLegacy.isChecked()
                             ? BCLNetherBiomeSourceConfig.NetherBiomeMapType.SQUARE
-                            : BCLNetherBiomeSourceConfig.NetherBiomeMapType.HEX
+                            : BCLNetherBiomeSourceConfig.NetherBiomeMapType.HEX,
+                    BCLNetherBiomeSourceConfig.DEFAULT.biomeSize,
+                    BCLNetherBiomeSourceConfig.DEFAULT.biomeSizeVertical,
+                    BCLNetherBiomeSourceConfig.DEFAULT.useVerticalBiomes
             );
 
             ChunkGenerator netherGenerator = betterxDimensions.get(LevelStem.NETHER);
