@@ -25,8 +25,10 @@ import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
 import java.awt.*;
+import java.util.HashMap;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
 import org.jetbrains.annotations.NotNull;
 
@@ -188,7 +190,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
     private static List<Holder<Biome>> getBclBiomes(Registry<Biome> biomeRegistry) {
         return getBiomes(
                 biomeRegistry,
-                new ArrayList<>(0),
+                Configs.BIOMES_CONFIG.getExcludeMatching(BiomeAPI.BiomeType.END),
                 Configs.BIOMES_CONFIG.getIncludeMatching(BiomeAPI.BiomeType.END),
                 BCLibEndBiomeSource::isValidNonVanillaEndBiome
         );
@@ -197,7 +199,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
     private static List<Holder<Biome>> getBiomes(Registry<Biome> biomeRegistry) {
         return getBiomes(
                 biomeRegistry,
-                new ArrayList<>(0),
+                Configs.BIOMES_CONFIG.getExcludeMatching(BiomeAPI.BiomeType.END),
                 Configs.BIOMES_CONFIG.getIncludeMatching(BiomeAPI.BiomeType.END),
                 BCLibEndBiomeSource::isValidEndBiome
         );
