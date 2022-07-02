@@ -187,7 +187,11 @@ public class WorldSetupScreen extends BCLibScreen {
                             ? BCLEndBiomeSourceConfig.EndBiomeGeneratorType.PAULEVS
                             : BCLEndBiomeSourceConfig.EndBiomeGeneratorType.VANILLA,
                     generateEndVoid.isChecked(),
-                    BCLEndBiomeSourceConfig.DEFAULT.innerVoidRadiusSquared
+                    BCLEndBiomeSourceConfig.DEFAULT.innerVoidRadiusSquared,
+                    BCLEndBiomeSourceConfig.DEFAULT.centerBiomesSize,
+                    BCLEndBiomeSourceConfig.DEFAULT.voidBiomesSize,
+                    BCLEndBiomeSourceConfig.DEFAULT.landBiomesSize,
+                    BCLEndBiomeSourceConfig.DEFAULT.barrensBiomesSize
             );
 
             ChunkGenerator endGenerator = betterxDimensions.get(LevelStem.END);

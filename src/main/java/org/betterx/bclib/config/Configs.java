@@ -18,7 +18,7 @@ public class Configs {
     public static final MainConfig MAIN_CONFIG = new MainConfig();
 
     public static final PathConfig RECIPE_CONFIG = new PathConfig(BCLib.MOD_ID, "recipes");
-    public static final PathConfig BIOMES_CONFIG = new PathConfig(BCLib.MOD_ID, "biomes", false);
+    public static final BiomesConfig BIOMES_CONFIG = new BiomesConfig();
 
     public static final String MAIN_PATCH_CATEGORY = "patches";
 
@@ -28,6 +28,7 @@ public class Configs {
         GENERATOR_CONFIG.saveChanges();
         BIOMES_CONFIG.saveChanges();
     }
+
 
     static {
         BIOMES_CONFIG.keeper.registerEntry(

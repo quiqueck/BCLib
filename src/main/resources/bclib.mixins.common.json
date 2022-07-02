@@ -33,7 +33,7 @@
     "ShovelItemAccessor",
     "StructuresAccessor",
     "SurfaceRulesContextAccessor",
-    "TheEndBiomeDataMixin",
+    "TheEndBiomesMixin",
     "WorldGenRegionMixin",
     "elytra.LivingEntityMixin",
     "shears.BeehiveBlockMixin",

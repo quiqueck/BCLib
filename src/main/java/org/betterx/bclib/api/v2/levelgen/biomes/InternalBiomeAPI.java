@@ -34,8 +34,30 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 public class InternalBiomeAPI {
+    public static final BiomeAPI.BiomeType OTHER_NETHER = new BiomeAPI.BiomeType(
+            "OTHER_NETHER",
+            BiomeAPI.BiomeType.NETHER
+    );
+    public static final BiomeAPI.BiomeType OTHER_END_LAND = new BiomeAPI.BiomeType(
+            "OTHER_END_LAND",
+            BiomeAPI.BiomeType.END_LAND
+    );
+    public static final BiomeAPI.BiomeType OTHER_END_VOID = new BiomeAPI.BiomeType(
+            "OTHER_END_VOID",
+            BiomeAPI.BiomeType.END_VOID
+    );
+    public static final BiomeAPI.BiomeType OTHER_END_CENTER = new BiomeAPI.BiomeType(
+            "OTHER_END_CENTER",
+            BiomeAPI.BiomeType.END_CENTER
+    );
+    public static final BiomeAPI.BiomeType OTHER_END_BARRENS = new BiomeAPI.BiomeType(
+            "OTHER_END_BARRENS",
+            BiomeAPI.BiomeType.END_BARRENS
+    );
     static final Map<Biome, BCLBiome> CLIENT = Maps.newHashMap();
     static final Map<Holder<PlacedFeature>, Integer> FEATURE_ORDER = Maps.newHashMap();
     static final MutableInt FEATURE_ORDER_ID = new MutableInt(0);
@@ -245,6 +267,94 @@ public class InternalBiomeAPI {
     }
 
     private static final Set<ResourceLocation> BIOMES_TO_SORT = Sets.newHashSet();
+
+
+    /**
+     * Register {@link BCLBiome} wrapper for {@link Biome}.
+     * After that biome will be added to BCLib End Biome Generator and into Fabric Biome API as a land biome (will generate only on islands).
+     *
+     * @param biome The source biome to wrap
+     * @return {@link BCLBiome}
+     */
+    public static BCLBiome wrapNativeBiome(ResourceKey<Biome> biome, BiomeAPI.BiomeType type) {
+        return wrapNativeBiome(biome, -1, type);
+    }
+
+    /**
+     * Register {@link BCLBiome} wrapper for {@link Biome}.
+     * After that biome will be added to BCLib End Biome Generator and into Fabric Biome API as a land biome (will generate only on islands).
+     *
+     * @param biome     The source biome to wrap
+     * @param genChance generation chance. If <0 the default genChance is used
+     * @return {@link BCLBiome}
+     */
+    public static BCLBiome wrapNativeBiome(ResourceKey<Biome> biome, float genChance, BiomeAPI.BiomeType type) {
+        return wrapNativeBiome(
+                biome,
+                genChance < 0 ? null : VanillaBiomeSettings.createVanilla().setGenChance(genChance).build(),
+                type
+        );
+    }
+
+    public static BCLBiome wrapNativeBiome(
+            ResourceKey<Biome> biome,
+            BCLBiome edgeBiome,
+            int edgeBiomeSize,
+            float genChance,
+            BiomeAPI.BiomeType type
+    ) {
+        VanillaBiomeSettings.Builder settings = VanillaBiomeSettings.createVanilla();
+        if (genChance >= 0) settings.setGenChance(genChance);
+        settings.setEdge(edgeBiome);
+        settings.setEdgeSize(edgeBiomeSize);
+        return wrapNativeBiome(biome, settings.build(), type);
+    }
+
+    /**
+     * Register {@link BCLBiome} wrapper for {@link Biome}.
+     * After that biome will be added to BCLib End Biome Generator and into Fabric Biome API as a land biome (will generate only on islands).
+     *
+     * @param biome   The source biome to wrap
+     * @param setings the {@link VanillaBiomeSettings} to use
+     * @return {@link BCLBiome}
+     */
+    private static BCLBiome wrapNativeBiome(
+            ResourceKey<Biome> biome,
+            VanillaBiomeSettings setings,
+            BiomeAPI.BiomeType type
+    ) {
+        BCLBiome bclBiome = BiomeAPI.getBiome(biome.location());
+        if (bclBiome == BiomeAPI.EMPTY_BIOME) {
+            bclBiome = new BCLBiome(
+                    BiomeAPI.getFromRegistry(biome).value(),
+                    setings
+            );
+        }
+
+        BiomeAPI.registerBiome(bclBiome, type);
+        return bclBiome;
+    }
+
+    /**
+     * Register {@link BCLBiome} wrapper for {@link Biome}.
+     * After that biome will be added to BCLib End Biome Generator and into Fabric Biome API as a land biome (will generate only on islands).
+     *
+     * @param biome     The source biome to wrap
+     * @param genChance generation chance.
+     * @return {@link BCLBiome}
+     */
+    static BCLBiome wrapNativeBiome(Biome biome, float genChance, BiomeAPI.BiomeType type) {
+        BCLBiome bclBiome = BiomeAPI.getBiome(biome);
+        if (bclBiome == BiomeAPI.EMPTY_BIOME) {
+            bclBiome = new BCLBiome(
+                    biome,
+                    genChance < 0 ? null : VanillaBiomeSettings.createVanilla().setGenChance(genChance).build()
+            );
+        }
+
+        BiomeAPI.registerBiome(bclBiome, type);
+        return bclBiome;
+    }
 
     static {
         DynamicRegistrySetupCallback.EVENT.register(registryManager -> {

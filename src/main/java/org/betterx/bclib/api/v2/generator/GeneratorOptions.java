@@ -11,8 +11,6 @@ import java.util.function.Function;
 public class GeneratorOptions {
     private static int biomeSizeNether;
     private static int biomeVSizeNether;
-    private static int biomeSizeEndLand;
-    private static int biomeSizeEndVoid;
     private static BiFunction<Point, Integer, Boolean> endLandFunction;
     private static boolean customNetherBiomeSource = true;
     private static boolean customEndBiomeSource = true;
@@ -28,8 +26,6 @@ public class GeneratorOptions {
                 "biomeVerticalSize(onlyInTallNether)",
                 86
         );
-        biomeSizeEndLand = Configs.GENERATOR_CONFIG.getInt("end.biomeMap", "biomeSizeLand", 256);
-        biomeSizeEndVoid = Configs.GENERATOR_CONFIG.getInt("end.biomeMap", "biomeSizeVoid", 256);
         customNetherBiomeSource = Configs.GENERATOR_CONFIG.getBoolean("options", "customNetherBiomeSource", true);
         customEndBiomeSource = Configs.GENERATOR_CONFIG.getBoolean("options", "customEndBiomeSource", true);
         verticalBiomes = Configs.GENERATOR_CONFIG.getBoolean("options", "verticalBiomesInTallNether", true);
@@ -45,12 +41,14 @@ public class GeneratorOptions {
         return Mth.clamp(biomeVSizeNether, 1, 8192);
     }
 
+    @Deprecated(forRemoval = true)
     public static int getBiomeSizeEndLand() {
-        return Mth.clamp(biomeSizeEndLand, 1, 8192);
+        return 256;
     }
 
+    @Deprecated(forRemoval = true)
     public static int getBiomeSizeEndVoid() {
-        return Mth.clamp(biomeSizeEndVoid, 1, 8192);
+        return 256;
     }
 
     /**

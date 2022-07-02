@@ -3,7 +3,7 @@ package org.betterx.bclib.interfaces;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 
-public interface TheEndBiomeDataAccessor {
+public interface TheEndBiomesAccessor {
     boolean bcl_canGenerateAsEndBiome(ResourceKey<Biome> key);
 
     boolean bcl_canGenerateAsEndMidlandBiome(ResourceKey<Biome> key);

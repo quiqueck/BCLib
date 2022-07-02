@@ -78,7 +78,11 @@ public class LevelGenEvents {
                                     inputConfig.mapVersion,
                                     BCLEndBiomeSourceConfig.EndBiomeGeneratorType.VANILLA,
                                     false,
-                                    inputConfig.innerVoidRadiusSquared
+                                    inputConfig.innerVoidRadiusSquared,
+                                    inputConfig.centerBiomesSize,
+                                    inputConfig.voidBiomesSize,
+                                    inputConfig.landBiomesSize,
+                                    inputConfig.barrensBiomesSize
                             ));
                         }
                     }

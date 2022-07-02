@@ -115,6 +115,22 @@ public class BCLBiome extends BCLBiomeSettings {
     }
 
     /**
+     * Set biome edge for this biome instance. If there is already an edge, the
+     * biome is added as subBiome to the current edge-biome
+     *
+     * @param edge The new edge
+     * @return same {@link BCLBiome}.
+     */
+    public BCLBiome addEdge(BCLBiome edge) {
+        if (this.edge != null) {
+            this.edge.addSubBiome(edge);
+        } else {
+            this.setEdge(edge);
+        }
+        return this;
+    }
+
+    /**
      * Adds sub-biome into this biome instance. Biome chance will be interpreted as a sub-biome generation chance.
      * Biome itself has chance 1.0 compared to all its sub-biomes.
      *
