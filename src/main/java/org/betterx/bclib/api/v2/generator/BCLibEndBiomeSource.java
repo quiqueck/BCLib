@@ -268,7 +268,8 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
                 ? ((long) config.innerVoidRadiusSquared + 1)
                 : (long) posX * (long) posX + (long) posZ * (long) posZ;
 
-        if ((biomeX & 63) == 0 && (biomeZ & 63) == 0) {
+
+        if ((biomeX & 63) == 0 || (biomeZ & 63) == 0) {
             mapLand.clearCache();
             mapVoid.clearCache();
             mapCenter.clearCache();
