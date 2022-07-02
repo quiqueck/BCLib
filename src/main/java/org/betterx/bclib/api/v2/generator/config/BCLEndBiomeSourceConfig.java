@@ -31,7 +31,7 @@ public class BCLEndBiomeSourceConfig implements BiomeSourceConfig<BCLibEndBiomeS
             EndBiomeMapType.SQUARE,
             EndBiomeGeneratorType.PAULEVS,
             true,
-            1000000,
+            VANILLA.innerVoidRadiusSquared * 16 * 16,
             256,
             256,
             256,
@@ -69,19 +69,19 @@ public class BCLEndBiomeSourceConfig implements BiomeSourceConfig<BCLibEndBiomeS
                             .forGetter(o -> o.innerVoidRadiusSquared),
                     Codec.INT
                             .fieldOf("center_biomes_size")
-                            .orElse(DEFAULT.innerVoidRadiusSquared)
+                            .orElse(DEFAULT.centerBiomesSize)
                             .forGetter(o -> o.centerBiomesSize),
                     Codec.INT
                             .fieldOf("void_biomes_size")
-                            .orElse(DEFAULT.innerVoidRadiusSquared)
+                            .orElse(DEFAULT.voidBiomesSize)
                             .forGetter(o -> o.voidBiomesSize),
                     Codec.INT
                             .fieldOf("land_biomes_size")
-                            .orElse(DEFAULT.innerVoidRadiusSquared)
+                            .orElse(DEFAULT.landBiomesSize)
                             .forGetter(o -> o.landBiomesSize),
                     Codec.INT
                             .fieldOf("barrens_biomes_size")
-                            .orElse(DEFAULT.innerVoidRadiusSquared)
+                            .orElse(DEFAULT.barrensBiomesSize)
                             .forGetter(o -> o.barrensBiomesSize)
             )
             .apply(instance, BCLEndBiomeSourceConfig::new));
