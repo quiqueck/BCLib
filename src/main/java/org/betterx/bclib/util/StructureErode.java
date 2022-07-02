@@ -261,6 +261,7 @@ public class StructureErode {
             for (int z = bounds.minZ(); z <= bounds.maxZ(); z++) {
                 mut.setZ(z);
                 BlockState top = BiomeAPI.findTopMaterial(world.getBiome(mut)).orElse(defaultBlock);
+                if (top == null) continue;
                 for (int y = bounds.maxY(); y >= bounds.minY(); y--) {
                     mut.setY(y);
                     BlockState state = world.getBlockState(mut);
