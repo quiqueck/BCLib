@@ -59,13 +59,25 @@ public class BiomePicker {
 
     public void rebuild() {
         WeightedList<ActualBiome> list = new WeightedList<>();
-        if (biomes.isEmpty()) {
+
+        biomes.forEach(biome -> {
+            if (biome.isValid)
+                list.add(biome, biome.bclBiome.getGenChance());
+        });
+        //only a single biome, we need to add the edges as well
+        if (list.size() == 1) {
+            ActualBiome biome = list.get(0);
+
+            if (biome.getEdge() != null) {
+                float defaultBiomeSize = 128;
+                float edgeSize = (biome.bclBiome.getEdgeSize() * list.getWeight(0)) / defaultBiomeSize;
+                list.add(biome.getEdge(), edgeSize);
+            }
+        }
+
+        //no Biome, make sure we add at least one, otherwise bad things will happen
+        if (list.isEmpty()) {
             list.add(create(BiomeAPI.EMPTY_BIOME), 1);
-        } else {
-            biomes.forEach(biome -> {
-                if (biome.isValid)
-                    list.add(biome, biome.bclBiome.getGenChance());
-            });
         }
 
 
@@ -130,6 +142,17 @@ public class BiomePicker {
 
         public boolean isSame(ActualBiome e) {
             return bclBiome.isSame(e.bclBiome);
+        }
+
+        @Override
+        public String toString() {
+            return "ActualBiome{" +
+                    "key=" + key.location() +
+                    ", subbiomes=" + subbiomes.size() +
+                    ", edge=" + (edge != null ? edge.key.location() : "null") +
+                    ", parent=" + (parent != null ? parent.key.location() : "null") +
+                    ", isValid=" + isValid +
+                    '}';
         }
     }
 }
