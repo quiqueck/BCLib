@@ -80,9 +80,12 @@ public class BiomesConfig extends PathConfig {
     }
 
     public List<String> getExcludeMatching(BiomeAPI.BiomeType type) {
-        var list = getBiomeExcludeMap().get(type);
-        if (list == null) return List.of();
-        return list;
+        return getBiomeExcludeMap().entrySet()
+                                   .stream()
+                                   .filter(e -> e.getKey().is(type))
+                                   .map(e -> e.getValue())
+                                   .flatMap(Collection::stream)
+                                   .toList();
     }
 
 
