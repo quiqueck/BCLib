@@ -285,7 +285,7 @@ public class InternalBiomeAPI {
      * After that biome will be added to BCLib End Biome Generator and into Fabric Biome API as a land biome (will generate only on islands).
      *
      * @param biome     The source biome to wrap
-     * @param genChance generation chance. If <0 the default genChance is used
+     * @param genChance generation chance. If &lt;0 the default genChance is used
      * @return {@link BCLBiome}
      */
     public static BCLBiome wrapNativeBiome(ResourceKey<Biome> biome, float genChance, BiomeAPI.BiomeType type) {
