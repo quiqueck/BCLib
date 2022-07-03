@@ -1,5 +1,6 @@
 package org.betterx.bclib.api.v2.generator;
 
+import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 import org.betterx.bclib.util.WeighTree;
@@ -23,6 +24,7 @@ public class BiomePicker {
     public final Registry<Biome> biomeRegistry;
     private final List<ActualBiome> biomes = Lists.newArrayList();
     private final List<String> allowedBiomes;
+    public final ActualBiome fallbackBiome;
     private WeighTree<ActualBiome> tree;
 
     public BiomePicker(Registry<Biome> biomeRegistry) {
@@ -36,6 +38,7 @@ public class BiomePicker {
                 .map(h -> h.unwrapKey())
                 .filter(o -> o.isPresent())
                 .map(o -> o.get().location().toString()).toList() : null;
+        this.fallbackBiome = create(BiomeAPI.EMPTY_BIOME);
     }
 
     private boolean isAllowed(BCLBiome b) {
@@ -50,11 +53,13 @@ public class BiomePicker {
     }
 
     public void addBiome(BCLBiome biome) {
-        biomes.add(create(biome));
+        ActualBiome a = create(biome);
+        BCLib.LOGGER.info("Adding Biome " + a + " from " + biome);
+        biomes.add(a);
     }
 
     public ActualBiome getBiome(WorldgenRandom random) {
-        return biomes.isEmpty() ? null : tree.get(random);
+        return biomes.isEmpty() ? fallbackBiome : tree.get(random);
     }
 
     public void rebuild() {
