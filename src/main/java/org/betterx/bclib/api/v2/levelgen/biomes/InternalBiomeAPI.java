@@ -108,7 +108,7 @@ public class InternalBiomeAPI {
                 BIOMES_TO_SORT.forEach(id -> {
                     Biome b = biomeRegistry.get(id);
                     if (b != null) {
-                        BCLib.LOGGER.info("Sorting Features in Biome: " + id + "(" + b + ")");
+                        BCLib.LOGGER.info("Found non fabric/bclib Biome: " + id + "(" + b + ")");
                         BiomeAPI.sortBiomeFeatures(b);
                     } else {
                         BCLib.LOGGER.info("Unknown Biome: " + id);
