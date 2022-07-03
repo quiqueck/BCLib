@@ -3,6 +3,7 @@ package org.betterx.bclib.api.v2.levelgen.biomes;
 import org.betterx.bclib.util.WeightedList;
 import org.betterx.worlds.together.tag.v3.TagManager;
 
+import net.minecraft.core.Registry;
 import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -28,7 +29,8 @@ public class BCLBiome extends BCLBiomeSettings {
     private final WeightedList<BCLBiome> subbiomes = new WeightedList<>();
     private final Map<String, Object> customData = Maps.newHashMap();
     private final ResourceLocation biomeID;
-    private final Biome biome;
+    private final ResourceKey<Biome> biomeKey;
+    final Biome biomeToRegister;
 
     private final List<Climate.ParameterPoint> parameterPoints = Lists.newArrayList();
 
@@ -49,43 +51,74 @@ public class BCLBiome extends BCLBiomeSettings {
      * @param biomeID {@link ResourceLocation} biome ID.
      */
     protected BCLBiome(ResourceLocation biomeID) {
-        this(biomeID, BuiltinRegistries.BIOME.get(biomeID), null);
+        this(ResourceKey.create(Registry.BIOME_REGISTRY, biomeID), null);
     }
 
     /**
      * Create wrapper for existing biome using biome instance from {@link BuiltinRegistries}.
      *
-     * @param biome {@link Biome} to wrap.
+     * @param biomeToRegister {@link Biome} to wrap.
      */
-    protected BCLBiome(Biome biome) {
-        this(biome, null);
+    @Deprecated(forRemoval = true)
+    protected BCLBiome(Biome biomeToRegister) {
+        this(biomeToRegister, null);
     }
 
     /**
      * Create wrapper for existing biome using biome instance from {@link BuiltinRegistries}.
      *
-     * @param biome    {@link Biome} to wrap.
-     * @param settings The Settings for this Biome or {@code null} if you want to apply default settings
+     * @param biomeToRegister {@link Biome} to wrap.
+     * @param settings        The Settings for this Biome or {@code null} if you want to apply default settings
      */
-    protected BCLBiome(Biome biome, VanillaBiomeSettings settings) {
-        this(BiomeAPI.getBiomeID(biome), biome, settings);
+    @Deprecated(forRemoval = true)
+    protected BCLBiome(Biome biomeToRegister, VanillaBiomeSettings settings) {
+        this(BiomeAPI.getBiomeID(biomeToRegister), biomeToRegister, settings);
     }
 
-    public BCLBiome(ResourceLocation biomeID, Biome biome) {
-        this(biomeID, biome, null);
+    /**
+     * Create wrapper for existing biome using biome instance from {@link BuiltinRegistries}.
+     *
+     * @param biomeToRegister {@link Biome} to wrap.
+     * @param biomeID         Teh ResoureLocation for this Biome
+     */
+    @Deprecated(forRemoval = true)
+    public BCLBiome(ResourceLocation biomeID, Biome biomeToRegister) {
+        this(biomeID, biomeToRegister, null);
     }
 
     /**
      * Create a new Biome
      *
-     * @param biomeID  {@link ResourceLocation} biome ID.
-     * @param biome    {@link Biome} to wrap.
+     * @param biomeID         {@link ResourceLocation} biome ID.
+     * @param biomeToRegister {@link Biome} to wrap.
+     * @param defaults        The Settings for this Biome or null if you want to apply the defaults
+     */
+    protected BCLBiome(ResourceLocation biomeID, Biome biomeToRegister, BCLBiomeSettings defaults) {
+        this(ResourceKey.create(Registry.BIOME_REGISTRY, biomeID), biomeToRegister, defaults);
+    }
+
+    /**
+     * Create a new Biome
+     *
+     * @param biomeKey {@link ResourceKey<Biome>} of the wrapped Biome
      * @param defaults The Settings for this Biome or null if you want to apply the defaults
      */
-    protected BCLBiome(ResourceLocation biomeID, Biome biome, BCLBiomeSettings defaults) {
+    protected BCLBiome(ResourceKey<Biome> biomeKey, BCLBiomeSettings defaults) {
+        this(biomeKey, null, defaults);
+    }
+
+    /**
+     * Create a new Biome
+     *
+     * @param biomeKey        {@link ResourceKey<Biome>} of the wrapped Biome
+     * @param biomeToRegister The biome you want to use when this instance gets registered through the {@link BiomeAPI}
+     * @param defaults        The Settings for this Biome or null if you want to apply the defaults
+     */
+    protected BCLBiome(ResourceKey<Biome> biomeKey, Biome biomeToRegister, BCLBiomeSettings defaults) {
+        this.biomeToRegister = biomeToRegister;
         this.subbiomes.add(this, 1.0F);
-        this.biomeID = biomeID;
-        this.biome = biome;
+        this.biomeID = biomeKey.location();
+        this.biomeKey = biomeKey;
 
         if (defaults != null) {
             defaults.applyWithDefaults(this);
@@ -203,16 +236,26 @@ public class BCLBiome extends BCLBiomeSettings {
      *
      * @return {@link Biome}.
      */
-    public Biome getBiome() {
-        return biome;
+    @Deprecated(forRemoval = true)
+    public Biome getBiomeOld() {
+        if (biomeToRegister != null) return biomeToRegister;
+        return BiomeAPI.getFromBuiltinRegistry(biomeKey).value();
+    }
+
+    /**
+     * Getter for biomeKey
+     *
+     * @return {@link ResourceKey<Biome>}.
+     */
+    public ResourceKey<Biome> getBiomeKey() {
+        return biomeKey;
     }
 
     /**
      * For internal use from BiomeAPI only
      */
     void afterRegistration() {
-        ResourceKey<Biome> key = BuiltinRegistries.BIOME.getResourceKey(getBiome()).orElseThrow();
-        this.biomeTags.forEach(tagKey -> TagManager.BIOMES.add(tagKey, biome));
+        this.biomeTags.forEach(tagKey -> TagManager.BIOMES.add(tagKey, this));
     }
 
 

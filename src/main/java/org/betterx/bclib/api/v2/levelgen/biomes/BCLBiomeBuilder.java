@@ -10,6 +10,7 @@ import org.betterx.bclib.util.ColorUtil;
 import org.betterx.bclib.util.Pair;
 import org.betterx.bclib.util.TriFunction;
 import org.betterx.worlds.together.surfaceRules.SurfaceRuleRegistry;
+import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -72,7 +73,6 @@ public class BCLBiomeBuilder {
 
     private final List<Climate.ParameterPoint> parameters = Lists.newArrayList();
 
-    //BiomeTags.IS_NETHER
     private float temperature;
     private float fogDensity;
     private float genChance;
@@ -81,6 +81,8 @@ public class BCLBiomeBuilder {
     private int edgeSize;
     private BCLBiome edge;
     private boolean vertical;
+
+    private BiomeAPI.BiomeType biomeType;
 
 
     /**
@@ -106,11 +108,23 @@ public class BCLBiomeBuilder {
         INSTANCE.carvers.clear();
         INSTANCE.parameters.clear();
         INSTANCE.tags.clear();
+        INSTANCE.biomeType = null;
         return INSTANCE;
     }
 
     public BCLBiomeBuilder addNetherClimateParamater(float temperature, float humidity) {
         parameters.add(Climate.parameters(temperature, humidity, 0, 0, 0, 0, 0));
+        return this;
+    }
+
+    /**
+     * Set the type for this Biome. If the type was set, the Biome can be registered.
+     *
+     * @param type selected Type
+     * @return same {@link BCLBiomeBuilder} instance.
+     */
+    public BCLBiomeBuilder type(BiomeAPI.BiomeType type) {
+        this.biomeType = type;
         return this;
     }
 
@@ -724,26 +738,6 @@ public class BCLBiomeBuilder {
         return this;
     }
 
-    /**
-     * Finalize biome creation.
-     *
-     * @return created {@link BCLBiome} instance.
-     */
-    public BCLBiome build() {
-        return build((BiomeSupplier<BCLBiome>) BCLBiome::new);
-    }
-
-    /**
-     * Finalize biome creation.
-     *
-     * @param biomeConstructor {@link BiFunction} biome constructor.
-     * @return created {@link BCLBiome} instance.
-     * @deprecated Replaced with {@link #build(BiomeSupplier)}
-     */
-    @Deprecated(forRemoval = true)
-    public <T extends BCLBiome> T build(BiFunction<ResourceLocation, Biome, T> biomeConstructor) {
-        return build((id, biome, settings) -> biomeConstructor.apply(id, biome));
-    }
 
     private static BiomeGenerationSettings fixGenerationSettings(BiomeGenerationSettings settings) {
         //Fabric Biome Modification API can not handle an empty carver map, thus we will create one with
@@ -760,43 +754,6 @@ public class BCLBiomeBuilder {
         return settings;
     }
 
-    /**
-     * Finalize biome creation.
-     *
-     * @param biomeConstructor {@link BiomeSupplier} biome constructor.
-     * @return created {@link BCLBiome} instance.
-     */
-    public <T extends BCLBiome> T build(BiomeSupplier<T> biomeConstructor) {
-        BiomeBuilder builder = new BiomeBuilder()
-                .precipitation(precipitation)
-                .temperature(temperature)
-                .downfall(downfall);
-
-        builder.mobSpawnSettings(getSpawns().build());
-        builder.specialEffects(getEffects().build());
-
-        builder.generationSettings(fixGenerationSettings(getGeneration().build()));
-
-        BCLBiomeSettings settings = BCLBiomeSettings.createBCL()
-                                                    .setTerrainHeight(height)
-                                                    .setFogDensity(fogDensity)
-                                                    .setGenChance(genChance)
-                                                    .setEdgeSize(edgeSize)
-                                                    .setEdge(edge)
-                                                    .setVertical(vertical)
-                                                    .build();
-
-        final Biome biome = builder.build();
-        final T res = biomeConstructor.apply(biomeID, biome, settings);
-        res.addBiomeTags(tags);
-        //res.setSurface(surfaceRule);
-        SurfaceRuleRegistry.registerRule(biomeID, surfaceRule, biomeID);
-        res.addClimateParameters(parameters);
-
-
-        //carvers.forEach(cfg -> BiomeAPI.addBiomeCarver(biome, cfg.second, cfg.first));
-        return res;
-    }
 
     /**
      * Get or create {@link BiomeSpecialEffects.Builder} for biome visual effects.
@@ -836,5 +793,66 @@ public class BCLBiomeBuilder {
             generationSettings = new BiomeGenerationSettings.Builder();
         }
         return generationSettings;
+    }
+
+    /**
+     * Finalize biome creation.
+     *
+     * @return created {@link BCLBiome} instance.
+     */
+    public BCLBiome build() {
+        return build((BiomeSupplier<BCLBiome>) BCLBiome::new);
+    }
+
+    /**
+     * Finalize biome creation.
+     *
+     * @param biomeConstructor {@link BiFunction} biome constructor.
+     * @return created {@link BCLBiome} instance.
+     * @deprecated Replaced with {@link #build(BiomeSupplier)}
+     */
+    @Deprecated(forRemoval = true)
+    public <T extends BCLBiome> T build(BiFunction<ResourceLocation, Biome, T> biomeConstructor) {
+        return build((id, biome, settings) -> biomeConstructor.apply(id, biome));
+    }
+
+    /**
+     * Finalize biome creation.
+     *
+     * @param biomeConstructor {@link BiomeSupplier} biome constructor.
+     * @return created {@link BCLBiome} instance.
+     */
+    public <T extends BCLBiome> T build(BiomeSupplier<T> biomeConstructor) {
+        BiomeBuilder builder = new BiomeBuilder()
+                .precipitation(precipitation)
+                .temperature(temperature)
+                .downfall(downfall);
+
+        builder.mobSpawnSettings(getSpawns().build());
+        builder.specialEffects(getEffects().build());
+
+        builder.generationSettings(fixGenerationSettings(getGeneration().build()));
+
+        BCLBiomeSettings settings = BCLBiomeSettings.createBCL()
+                                                    .setTerrainHeight(height)
+                                                    .setFogDensity(fogDensity)
+                                                    .setGenChance(genChance)
+                                                    .setEdgeSize(edgeSize)
+                                                    .setEdge(edge)
+                                                    .setVertical(vertical)
+                                                    .build();
+
+        final Biome biome = builder.build();
+        final T res = biomeConstructor.apply(biomeID, biome, settings);
+        tags.forEach(tagKey -> TagManager.BIOMES.add(tagKey, res));
+
+        //res.addBiomeTags(tags);
+        //res.setSurface(surfaceRule);
+        SurfaceRuleRegistry.registerRule(biomeID, surfaceRule, biomeID);
+        res.addClimateParameters(parameters);
+
+
+        //carvers.forEach(cfg -> BiomeAPI.addBiomeCarver(biome, cfg.second, cfg.first));
+        return res;
     }
 }

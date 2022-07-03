@@ -26,7 +26,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData;
 import net.minecraft.world.level.block.state.BlockState;
@@ -174,19 +173,29 @@ public class BiomeAPI {
      * @return {@link BCLBiome}
      */
     public static BCLBiome registerBiome(BCLBiome bclbiome, BiomeType dim) {
-        if (BuiltinRegistries.BIOME.get(bclbiome.getID()) == null) {
-            final Biome biome = bclbiome.getBiome();
-            ResourceLocation loc = bclbiome.getID();
-            Registry.register(BuiltinRegistries.BIOME, loc, biome);
+        return registerBiome(bclbiome, dim, BuiltinRegistries.BIOME);
+    }
+
+    /**
+     * Register {@link BCLBiome} instance and its {@link Biome} if necessary.
+     *
+     * @param bclbiome {@link BCLBiome}
+     * @param dim      The Dimension fo rthis Biome
+     * @return {@link BCLBiome}
+     */
+    static BCLBiome registerBiome(BCLBiome bclbiome, BiomeType dim, Registry<Biome> registryOrNull) {
+        if (registryOrNull != null && bclbiome.biomeToRegister != null && registryOrNull.get(bclbiome.getID()) == null) {
+            Registry.register(registryOrNull, bclbiome.getBiomeKey(), bclbiome.biomeToRegister);
         }
+
         ID_MAP.put(bclbiome.getID(), bclbiome);
         BiomeType.BIOME_TYPE_MAP.put(bclbiome.getID(), dim);
 
         if (dim != null && dim.is(BiomeType.NETHER)) {
-            TagManager.BIOMES.add(BiomeTags.IS_NETHER, bclbiome.getBiome());
-            TagManager.BIOMES.add(CommonBiomeTags.IN_NETHER, bclbiome.getBiome());
+            TagManager.BIOMES.add(BiomeTags.IS_NETHER, bclbiome);
+            TagManager.BIOMES.add(CommonBiomeTags.IN_NETHER, bclbiome);
         } else if (dim != null && dim.is(BiomeType.END)) {
-            TagManager.BIOMES.add(BiomeTags.IS_END, bclbiome.getBiome());
+            TagManager.BIOMES.add(BiomeTags.IS_END, bclbiome);
         }
 
         bclbiome.afterRegistration();
@@ -234,10 +243,10 @@ public class BiomeAPI {
         registerBiome(biome, BiomeType.BCL_END_LAND);
 
         float weight = biome.getGenChance();
-        ResourceKey<Biome> key = getBiomeKey(biome.getBiome());
+        ResourceKey<Biome> key = biome.getBiomeKey();
         if (biome.allowFabricRegistration()) {
             if (biome.isEdgeBiome()) {
-                ResourceKey<Biome> parentKey = getBiomeKey(biome.getParentBiome().getBiome());
+                ResourceKey<Biome> parentKey = biome.getParentBiome().getBiomeKey();
                 TheEndBiomes.addMidlandsBiome(parentKey, key, weight);
             } else {
                 TheEndBiomes.addHighlandsBiome(key, weight);
@@ -258,7 +267,7 @@ public class BiomeAPI {
         registerBiome(biome, BiomeType.BCL_END_VOID);
 
         float weight = biome.getGenChance();
-        ResourceKey<Biome> key = getBiomeKey(biome.getBiome());
+        ResourceKey<Biome> key = biome.getBiomeKey();
         if (biome.allowFabricRegistration()) {
             TheEndBiomes.addSmallIslandsBiome(key, weight);
         }
@@ -277,7 +286,7 @@ public class BiomeAPI {
         registerBiome(biome, BiomeType.BCL_END_CENTER);
 
         float weight = biome.getGenChance();
-        ResourceKey<Biome> key = getBiomeKey(biome.getBiome());
+        ResourceKey<Biome> key = biome.getBiomeKey();
         if (biome.allowFabricRegistration()) {
             TheEndBiomes.addMainIslandBiome(key, weight);
         }
@@ -296,9 +305,9 @@ public class BiomeAPI {
         registerBiome(biome, BiomeType.BCL_END_BARRENS);
 
         float weight = biome.getGenChance();
-        ResourceKey<Biome> key = getBiomeKey(biome.getBiome());
+        ResourceKey<Biome> key = biome.getBiomeKey();
         if (biome.allowFabricRegistration()) {
-            ResourceKey<Biome> parentKey = getBiomeKey(highlandBiome.getBiome());
+            ResourceKey<Biome> parentKey = highlandBiome.getBiomeKey();
             TheEndBiomes.addBarrensBiome(parentKey, key, weight);
         }
         return biome;
@@ -416,23 +425,29 @@ public class BiomeAPI {
     }
 
     public static Holder<Biome> getBiomeHolder(BCLBiome biome) {
-        return getBiomeHolder(biome.getBiome());
+        return getBiomeHolder(biome.getBiomeKey());
     }
 
     public static Holder<Biome> getBiomeHolder(Biome biome) {
+        Optional<ResourceKey<Biome>> key = Optional.empty();
         if (InternalBiomeAPI.biomeRegistry != null) {
-            Optional<ResourceKey<Biome>> key = InternalBiomeAPI.biomeRegistry.getResourceKey(biome);
-            if (key.isPresent()) return InternalBiomeAPI.biomeRegistry.getOrCreateHolderOrThrow(key.get());
+            key = InternalBiomeAPI.biomeRegistry.getResourceKey(biome);
+        } else {
+            key = BuiltinRegistries.BIOME.getResourceKey(biome);
         }
 
-        return BuiltinRegistries.BIOME.getOrCreateHolderOrThrow(BiomeAPI.getBiomeKey(biome));
+        return getBiomeHolder(key.orElseThrow());
+    }
+
+    public static Holder<Biome> getBiomeHolder(ResourceKey<Biome> biomeKey) {
+        if (InternalBiomeAPI.biomeRegistry != null) {
+            return InternalBiomeAPI.biomeRegistry.getOrCreateHolderOrThrow(biomeKey);
+        }
+        return BuiltinRegistries.BIOME.getOrCreateHolderOrThrow(biomeKey);
     }
 
     public static Holder<Biome> getBiomeHolder(ResourceLocation biome) {
-        if (InternalBiomeAPI.biomeRegistry != null) {
-            return getBiomeHolder(InternalBiomeAPI.biomeRegistry.get(biome));
-        }
-        return getBiomeHolder(BuiltinRegistries.BIOME.get(biome));
+        return getBiomeHolder(ResourceKey.create(Registry.BIOME_REGISTRY, biome));
     }
 
     /**
@@ -475,18 +490,45 @@ public class BiomeAPI {
         return ID_MAP.containsKey(biomeID);
     }
 
-    @Nullable
-    public static Holder<Biome> getFromRegistry(ResourceLocation key) {
-        return BuiltinRegistries.BIOME.getHolder(ResourceKey.create(Registry.BIOME_REGISTRY, key)).orElseThrow();
+    public static Holder<Biome> getFromRegistry(ResourceLocation biomeID) {
+        if (InternalBiomeAPI.biomeRegistry != null)
+            return InternalBiomeAPI.biomeRegistry.getHolder(ResourceKey.create(Registry.BIOME_REGISTRY, biomeID))
+                                                 .orElseThrow();
+        return getFromBuiltinRegistry(biomeID);
     }
 
     @Nullable
     public static Holder<Biome> getFromRegistry(ResourceKey<Biome> key) {
+        if (InternalBiomeAPI.biomeRegistry != null)
+            return InternalBiomeAPI.biomeRegistry.getHolder(key).orElseThrow();
+        return getFromBuiltinRegistry(key);
+    }
+
+    @Nullable
+    public static Holder<Biome> getFromBuiltinRegistry(ResourceLocation biomeID) {
+        return BuiltinRegistries.BIOME.getHolder(ResourceKey.create(Registry.BIOME_REGISTRY, biomeID)).orElseThrow();
+    }
+
+    @Nullable
+    public static Holder<Biome> getFromBuiltinRegistry(ResourceKey<Biome> key) {
         return BuiltinRegistries.BIOME.getOrCreateHolderOrThrow(key);
     }
 
+    @Deprecated(forRemoval = true)
+    public static boolean registryContains(ResourceKey<Biome> key) {
+        if (InternalBiomeAPI.biomeRegistry != null)
+            return InternalBiomeAPI.biomeRegistry.containsKey(key);
+        return builtinRegistryContains(key);
+    }
+
+    @Nullable
+    @Deprecated(forRemoval = true)
+    public static boolean builtinRegistryContains(ResourceKey<Biome> key) {
+        return BuiltinRegistries.BIOME.containsKey(key);
+    }
+
     public static boolean isDatapackBiome(ResourceLocation biomeID) {
-        return getFromRegistry(biomeID) == null;
+        return getFromBuiltinRegistry(biomeID) == null;
     }
 
     public static boolean wasRegisteredAs(ResourceLocation biomeID, BiomeType dim) {
@@ -619,16 +661,16 @@ public class BiomeAPI {
     }
 
     static void sortBiomeFeatures(Biome biome) {
-        BiomeGenerationSettings settings = biome.getGenerationSettings();
-        BiomeGenerationSettingsAccessor accessor = (BiomeGenerationSettingsAccessor) settings;
-        List<HolderSet<PlacedFeature>> featureList = CollectionsUtil.getMutable(accessor.bclib_getFeatures());
-        final int size = featureList.size();
-        for (int i = 0; i < size; i++) {
-            List<Holder<PlacedFeature>> features = getFeaturesListCopy(featureList, i);
-            sortFeatures(features);
-            featureList.set(i, HolderSet.direct(features));
-        }
-        accessor.bclib_setFeatures(featureList);
+//        BiomeGenerationSettings settings = biome.getGenerationSettings();
+//        BiomeGenerationSettingsAccessor accessor = (BiomeGenerationSettingsAccessor) settings;
+//        List<HolderSet<PlacedFeature>> featureList = CollectionsUtil.getMutable(accessor.bclib_getFeatures());
+//        final int size = featureList.size();
+//        for (int i = 0; i < size; i++) {
+//            List<Holder<PlacedFeature>> features = getFeaturesListCopy(featureList, i);
+//            sortFeatures(features);
+//            featureList.set(i, HolderSet.direct(features));
+//        }
+//        accessor.bclib_setFeatures(featureList);
     }
 
     /**
@@ -846,7 +888,7 @@ public class BiomeAPI {
     public static BCLBiome registerNetherBiome(BCLBiome bclBiome) {
         registerBiome(bclBiome, BiomeType.BCL_NETHER);
 
-        ResourceKey<Biome> key = getBiomeKey(bclBiome.getBiome());
+        ResourceKey<Biome> key = bclBiome.getBiomeKey();
         if (bclBiome.allowFabricRegistration()) {
             bclBiome.forEachClimateParameter(p -> NetherBiomes.addNetherBiome(key, p));
         }

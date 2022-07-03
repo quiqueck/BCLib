@@ -81,13 +81,16 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
         biomePicker = new BiomePicker(biomeRegistry);
 
         this.possibleBiomes().forEach(biome -> {
-            ResourceLocation key = biome.unwrapKey().orElseThrow().location();
-
-            if (!BiomeAPI.hasBiome(key)) {
-                BCLBiome bclBiome = new BCLBiome(key, biome.value());
+            ResourceLocation biomeID = biome.unwrapKey().orElseThrow().location();
+            if (!biome.isBound()) {
+                BCLib.LOGGER.warning("Biome " + biomeID.toString() + " is requested but not yet bound.");
+                return;
+            }
+            if (!BiomeAPI.hasBiome(biomeID)) {
+                BCLBiome bclBiome = new BCLBiome(biomeID, biome.value());
                 biomePicker.addBiome(bclBiome);
             } else {
-                BCLBiome bclBiome = BiomeAPI.getBiome(key);
+                BCLBiome bclBiome = BiomeAPI.getBiome(biomeID);
 
                 if (bclBiome != BiomeAPI.EMPTY_BIOME) {
                     if (bclBiome.getParentBiome() == null) {

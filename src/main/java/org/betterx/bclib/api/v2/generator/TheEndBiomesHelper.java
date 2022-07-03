@@ -17,7 +17,7 @@ import org.jetbrains.annotations.ApiStatus;
  */
 public class TheEndBiomesHelper {
     @ApiStatus.Internal
-    public static Map<BiomeAPI.BiomeType, Set<ResourceKey<Biome>>> END_BIOMES = new HashMap<>();
+    private static Map<BiomeAPI.BiomeType, Set<ResourceKey<Biome>>> END_BIOMES = new HashMap<>();
 
     @ApiStatus.Internal
     public static void add(BiomeAPI.BiomeType type, ResourceKey<Biome> biome) {

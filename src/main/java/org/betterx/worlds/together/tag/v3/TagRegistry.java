@@ -1,6 +1,7 @@
 package org.betterx.worlds.together.tag.v3;
 
 import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
 
 import net.minecraft.core.DefaultedRegistry;
@@ -81,6 +82,23 @@ public class TagRegistry<T> {
     public static class Biomes extends Simple<Biome> {
         Biomes(String directory, Function<Biome, ResourceLocation> locationProvider) {
             super(Registry.BIOME_REGISTRY, directory, locationProvider);
+        }
+
+        /**
+         * Adds one Tag to multiple Elements.
+         *
+         * @param tagID    {@link TagKey< Biome >} tag ID.
+         * @param elements array of Elements to add into tag.
+         */
+        public void add(TagKey<Biome> tagID, BCLBiome... elements) {
+            if (isFrozen) BCLib.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
+            Set<TagEntry> set = getSetForTag(tagID);
+            for (BCLBiome element : elements) {
+                ResourceLocation id = element.getID();
+                if (id != null) {
+                    set.add(TagEntry.element(id));
+                }
+            }
         }
 
         public TagKey<Biome> makeStructureTag(String modID, String name) {

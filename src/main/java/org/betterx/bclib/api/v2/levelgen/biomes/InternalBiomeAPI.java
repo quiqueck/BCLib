@@ -273,31 +273,31 @@ public class InternalBiomeAPI {
      * Register {@link BCLBiome} wrapper for {@link Biome}.
      * After that biome will be added to BCLib End Biome Generator and into Fabric Biome API as a land biome (will generate only on islands).
      *
-     * @param biome The source biome to wrap
+     * @param biomeKey The source biome to wrap
      * @return {@link BCLBiome}
      */
-    public static BCLBiome wrapNativeBiome(ResourceKey<Biome> biome, BiomeAPI.BiomeType type) {
-        return wrapNativeBiome(biome, -1, type);
+    public static BCLBiome wrapNativeBiome(ResourceKey<Biome> biomeKey, BiomeAPI.BiomeType type) {
+        return wrapNativeBiome(biomeKey, -1, type);
     }
 
     /**
      * Register {@link BCLBiome} wrapper for {@link Biome}.
      * After that biome will be added to BCLib End Biome Generator and into Fabric Biome API as a land biome (will generate only on islands).
      *
-     * @param biome     The source biome to wrap
+     * @param biomeKey  The source biome to wrap
      * @param genChance generation chance. If &lt;0 the default genChance is used
      * @return {@link BCLBiome}
      */
-    public static BCLBiome wrapNativeBiome(ResourceKey<Biome> biome, float genChance, BiomeAPI.BiomeType type) {
+    public static BCLBiome wrapNativeBiome(ResourceKey<Biome> biomeKey, float genChance, BiomeAPI.BiomeType type) {
         return wrapNativeBiome(
-                biome,
+                biomeKey,
                 genChance < 0 ? null : VanillaBiomeSettings.createVanilla().setGenChance(genChance).build(),
                 type
         );
     }
 
     public static BCLBiome wrapNativeBiome(
-            ResourceKey<Biome> biome,
+            ResourceKey<Biome> biomeKey,
             BCLBiome edgeBiome,
             int edgeBiomeSize,
             float genChance,
@@ -307,28 +307,25 @@ public class InternalBiomeAPI {
         if (genChance >= 0) settings.setGenChance(genChance);
         settings.setEdge(edgeBiome);
         settings.setEdgeSize(edgeBiomeSize);
-        return wrapNativeBiome(biome, settings.build(), type);
+        return wrapNativeBiome(biomeKey, settings.build(), type);
     }
 
     /**
      * Register {@link BCLBiome} wrapper for {@link Biome}.
      * After that biome will be added to BCLib End Biome Generator and into Fabric Biome API as a land biome (will generate only on islands).
      *
-     * @param biome   The source biome to wrap
-     * @param setings the {@link VanillaBiomeSettings} to use
+     * @param biomeKey The source biome to wrap
+     * @param setings  the {@link VanillaBiomeSettings} to use
      * @return {@link BCLBiome}
      */
     private static BCLBiome wrapNativeBiome(
-            ResourceKey<Biome> biome,
+            ResourceKey<Biome> biomeKey,
             VanillaBiomeSettings setings,
             BiomeAPI.BiomeType type
     ) {
-        BCLBiome bclBiome = BiomeAPI.getBiome(biome.location());
+        BCLBiome bclBiome = BiomeAPI.getBiome(biomeKey.location());
         if (bclBiome == BiomeAPI.EMPTY_BIOME) {
-            bclBiome = new BCLBiome(
-                    BiomeAPI.getFromRegistry(biome).value(),
-                    setings
-            );
+            bclBiome = new BCLBiome(biomeKey, setings);
         }
 
         BiomeAPI.registerBiome(bclBiome, type);
@@ -343,6 +340,7 @@ public class InternalBiomeAPI {
      * @param genChance generation chance.
      * @return {@link BCLBiome}
      */
+    @Deprecated(forRemoval = true)
     static BCLBiome wrapNativeBiome(Biome biome, float genChance, BiomeAPI.BiomeType type) {
         BCLBiome bclBiome = BiomeAPI.getBiome(biome);
         if (bclBiome == BiomeAPI.EMPTY_BIOME) {
@@ -352,7 +350,7 @@ public class InternalBiomeAPI {
             );
         }
 
-        BiomeAPI.registerBiome(bclBiome, type);
+        BiomeAPI.registerBiome(bclBiome, type, null);
         return bclBiome;
     }
 
@@ -369,5 +367,15 @@ public class InternalBiomeAPI {
                         }
                     });
         });
+    }
+
+    public static boolean registryContainsBound(ResourceKey<Biome> key) {
+        Registry<Biome> reg = biomeRegistry;
+        if (reg == null) reg = BuiltinRegistries.BIOME;
+
+        if (reg.containsKey(key)) {
+            return reg.getOrCreateHolderOrThrow(key).isBound();
+        }
+        return false;
     }
 }

@@ -114,7 +114,10 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
             String biomeStr = biomeID.toString();
             //exclude everything that was listed
             if (excludeList != null && excludeList.contains(biomeStr)) return;
-
+            if (!biome.isBound()) {
+                BCLib.LOGGER.warning("Biome " + biomeStr + " is requested but not yet bound.");
+                return;
+            }
             final BCLBiome bclBiome;
             if (!BiomeAPI.hasBiome(biomeID)) {
                 bclBiome = new BCLBiome(biomeID, biome.value());
