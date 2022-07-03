@@ -146,7 +146,9 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
                     }
 
                     if (!didForceAdd) {
-                        if (BiomeAPI.wasRegisteredAs(biomeID, BiomeAPI.BiomeType.END_CENTER)
+                        if (BiomeAPI.wasRegisteredAs(biomeID, BiomeAPI.BiomeType.END_IGNORE)) {
+                            //we should not add this biome anywhere, so just ignore it
+                        } else if (BiomeAPI.wasRegisteredAs(biomeID, BiomeAPI.BiomeType.END_CENTER)
                                 || TheEndBiomesHelper.canGenerateAsMainIslandBiome(key)) {
                             endCenterBiomePicker.addBiome(bclBiome);
                         } else if (BiomeAPI.wasRegisteredAs(biomeID, BiomeAPI.BiomeType.END_LAND)

@@ -64,6 +64,7 @@ public class BiomeAPI {
         public static final BiomeType NETHER = new BiomeType("NETHER");
         public static final BiomeType BCL_NETHER = new BiomeType("BCL_NETHER", NETHER);
         public static final BiomeType END = new BiomeType("END");
+        public static final BiomeType END_IGNORE = new BiomeType("END_IGNORE", END);
         public static final BiomeType END_LAND = new BiomeType("END_LAND", END);
         public static final BiomeType END_VOID = new BiomeType("END_VOID", END);
         public static final BiomeType END_CENTER = new BiomeType("END_CENTER", END);
