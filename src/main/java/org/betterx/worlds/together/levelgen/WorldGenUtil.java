@@ -3,6 +3,7 @@ package org.betterx.worlds.together.levelgen;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.biomesource.BiomeSourceWithConfig;
 import org.betterx.worlds.together.chunkgenerator.EnforceableChunkGenerator;
+import org.betterx.worlds.together.world.BiomeSourceWithNoiseRelatedSettings;
 import org.betterx.worlds.together.world.BiomeSourceWithSeed;
 import org.betterx.worlds.together.world.WorldConfig;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
@@ -19,6 +20,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
@@ -45,6 +47,11 @@ public class WorldGenUtil {
         for (LevelStem stem : settings.dimensions()) {
             if (stem.generator().getBiomeSource() instanceof BiomeSourceWithSeed bcl) {
                 bcl.setSeed(seed);
+            }
+
+            if (stem.generator().getBiomeSource() instanceof BiomeSourceWithNoiseRelatedSettings bcl
+                    && stem.generator() instanceof NoiseBasedChunkGenerator noiseGenerator) {
+                bcl.onLoadGeneratorSettings(noiseGenerator.generatorSettings().value());
             }
         }
 

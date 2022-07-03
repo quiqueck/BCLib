@@ -9,6 +9,7 @@ import org.betterx.worlds.together.biomesource.MergeableBiomeSource;
 import org.betterx.worlds.together.chunkgenerator.EnforceableChunkGenerator;
 import org.betterx.worlds.together.chunkgenerator.InjectableSurfaceRules;
 import org.betterx.worlds.together.chunkgenerator.RestorableBiomeSource;
+import org.betterx.worlds.together.world.BiomeSourceWithNoiseRelatedSettings;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -71,8 +72,8 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
     ) {
         super(registry, registry2, biomeSource, holder);
         initialBiomeSource = biomeSource;
-        if (biomeSource instanceof BCLBiomeSource bcl) {
-            bcl.setMaxHeight(holder.value().noiseSettings().height());
+        if (biomeSource instanceof BiomeSourceWithNoiseRelatedSettings bcl) {
+            bcl.onLoadGeneratorSettings(holder.value());
         }
 
         if (WorldsTogether.RUNS_TERRABLENDER) {
