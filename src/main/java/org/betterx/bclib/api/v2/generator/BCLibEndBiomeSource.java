@@ -159,6 +159,9 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
                         } else if (BiomeAPI.wasRegisteredAs(biomeID, BiomeAPI.BiomeType.END_VOID)
                                 || TheEndBiomesHelper.canGenerateAsSmallIslandsBiome(key)) {
                             endVoidBiomePicker.addBiome(bclBiome);
+                        } else {
+                            BCLib.LOGGER.info("Found End Biome " + biomeStr + " that was not registers with fabric or bclib. Assuming end-land Biome...");
+                            endLandBiomePicker.addBiome(bclBiome);
                         }
                     }
                 }
