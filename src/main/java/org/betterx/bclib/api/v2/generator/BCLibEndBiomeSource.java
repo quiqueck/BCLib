@@ -62,9 +62,9 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
     private BiomeMap mapBarrens;
 
     private final BiomePicker endLandBiomePicker;
-    private final BiomePicker endVoidBiomePicker;
-    private final BiomePicker endCenterBiomePicker;
-    private final BiomePicker endBarrensBiomePicker;
+    private BiomePicker endVoidBiomePicker;
+    private BiomePicker endCenterBiomePicker;
+    private BiomePicker endBarrensBiomePicker;
 
     private BCLEndBiomeSourceConfig config;
 
@@ -170,6 +170,20 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
         endVoidBiomePicker.rebuild();
         endBarrensBiomePicker.rebuild();
         endCenterBiomePicker.rebuild();
+
+        if (endVoidBiomePicker.isEmpty()) {
+            BCLib.LOGGER.info("No Void Biomes found. Disabling by using barrens");
+            endVoidBiomePicker = endBarrensBiomePicker;
+        }
+        if (endBarrensBiomePicker.isEmpty()) {
+            BCLib.LOGGER.info("No Barrens Biomes found. Disabling by using land Biomes");
+            endBarrensBiomePicker = endLandBiomePicker;
+            endVoidBiomePicker = endLandBiomePicker;
+        }
+        if (endCenterBiomePicker.isEmpty()) {
+            BCLib.LOGGER.warning("No Center Island Biomes found. Forcing use of vanilla center.");
+            endCenterBiomePicker.addBiome(BiomeAPI.THE_END);
+        }
 
         this.endLandFunction = GeneratorOptions.getEndLandFunction();
         this.pos = new Point();

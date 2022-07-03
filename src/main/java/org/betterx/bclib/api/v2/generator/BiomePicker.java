@@ -62,6 +62,10 @@ public class BiomePicker {
         return biomes.isEmpty() ? fallbackBiome : tree.get(random);
     }
 
+    public boolean isEmpty() {
+        return biomes.isEmpty();
+    }
+
     public void rebuild() {
         WeightedList<ActualBiome> list = new WeightedList<>();
 
