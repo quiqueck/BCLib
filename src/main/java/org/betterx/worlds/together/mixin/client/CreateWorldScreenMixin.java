@@ -34,7 +34,7 @@ public class CreateWorldScreenMixin {
     public WorldGenSettingsComponent worldGenSettingsComponent;
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void bcl_init(
+    private void wt_init(
             Screen screen,
             DataPackConfig dataPackConfig,
             WorldGenSettingsComponent worldGenSettingsComponent,
@@ -45,13 +45,13 @@ public class CreateWorldScreenMixin {
 
     //Change the WorldPreset that is selected by default on the Create World Screen
     @ModifyArg(method = "openFresh", index = 1, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/worldselection/WorldGenSettingsComponent;<init>(Lnet/minecraft/client/gui/screens/worldselection/WorldCreationContext;Ljava/util/Optional;Ljava/util/OptionalLong;)V"))
-    private static Optional<ResourceKey<WorldPreset>> bcl_NewDefault(Optional<ResourceKey<WorldPreset>> preset) {
+    private static Optional<ResourceKey<WorldPreset>> wt_NewDefault(Optional<ResourceKey<WorldPreset>> preset) {
         return Optional.of(WorldPresets.getDEFAULT());
     }
 
     //Make sure the WorldGenSettings used to populate the create screen match the default WorldPreset
     @ModifyArg(method = "openFresh", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/WorldLoader;load(Lnet/minecraft/server/WorldLoader$InitConfig;Lnet/minecraft/server/WorldLoader$WorldDataSupplier;Lnet/minecraft/server/WorldLoader$ResultFactory;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"))
-    private static WorldLoader.WorldDataSupplier<WorldGenSettings> bcl_NewDefaultSettings(WorldLoader.WorldDataSupplier<WorldGenSettings> worldDataSupplier) {
+    private static WorldLoader.WorldDataSupplier<WorldGenSettings> wt_NewDefaultSettings(WorldLoader.WorldDataSupplier<WorldGenSettings> worldDataSupplier) {
         return (resourceManager, dataPackConfig) -> {
             Pair<WorldGenSettings, RegistryAccess.Frozen> res = worldDataSupplier.get(resourceManager, dataPackConfig);
             return WorldGenUtil.defaultWorldDataSupplier(res.getSecond());
@@ -60,7 +60,7 @@ public class CreateWorldScreenMixin {
 
     //this is called when a new world is first created
     @Inject(method = "createNewWorldDirectory", at = @At("RETURN"))
-    void bcl_createNewWorld(CallbackInfoReturnable<Optional<LevelStorageSource.LevelStorageAccess>> cir) {
+    void wt_createNewWorld(CallbackInfoReturnable<Optional<LevelStorageSource.LevelStorageAccess>> cir) {
         WorldBootstrap.InGUI.registryReadyOnNewWorld(this.worldGenSettingsComponent);
         WorldBootstrap.InGUI.setupNewWorld(cir.getReturnValue(), this.worldGenSettingsComponent);
     }
