@@ -70,6 +70,8 @@ public class BCLib implements ModInitializer {
         PlacementModifiers.ensureStaticInitialization();
         Configs.save();
 
+        WorldsTogether.FORCE_SERVER_TO_BETTERX_PRESET = Configs.SERVER_CONFIG.forceBetterXPreset();
+
         if (false && isDevEnvironment()) {
             BCLBiome theYellow = BCLBiomeBuilder
                     .start(makeID("the_yellow"))

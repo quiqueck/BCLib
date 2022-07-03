@@ -12,6 +12,7 @@ import net.fabricmc.loader.api.FabricLoader;
 
 public class WorldsTogether {
     public static boolean SURPRESS_EXPERIMENTAL_DIALOG = false;
+    public static boolean FORCE_SERVER_TO_BETTERX_PRESET = false;
     public static final String MOD_ID = "worlds_together";
     public static final Logger LOGGER = new Logger(MOD_ID);
     public static final boolean RUNS_TERRABLENDER = FabricLoader.getInstance()

@@ -15,7 +15,6 @@
     "ChunkGeneratorsMixin",
     "ComposterBlockAccessor",
     "CraftingMenuMixin",
-    "DedicatedServerPropertiesMixin",
     "DiggerItemMixin",
     "EnchantingTableBlockMixin",
     "ItemStackMixin",
