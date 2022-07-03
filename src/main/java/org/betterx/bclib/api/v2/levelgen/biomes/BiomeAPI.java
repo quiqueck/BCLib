@@ -184,7 +184,9 @@ public class BiomeAPI {
      * @return {@link BCLBiome}
      */
     static BCLBiome registerBiome(BCLBiome bclbiome, BiomeType dim, Registry<Biome> registryOrNull) {
-        if (registryOrNull != null && bclbiome.biomeToRegister != null && registryOrNull.get(bclbiome.getID()) == null) {
+        if (registryOrNull != null
+                && bclbiome.biomeToRegister != null
+                && registryOrNull.get(bclbiome.getID()) == null) {
             Registry.register(registryOrNull, bclbiome.getBiomeKey(), bclbiome.biomeToRegister);
         }
 
