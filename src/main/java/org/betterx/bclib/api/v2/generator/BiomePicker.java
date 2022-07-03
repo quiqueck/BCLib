@@ -1,6 +1,5 @@
 package org.betterx.bclib.api.v2.generator;
 
-import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 import org.betterx.bclib.util.WeighTree;
@@ -54,7 +53,6 @@ public class BiomePicker {
 
     public void addBiome(BCLBiome biome) {
         ActualBiome a = create(biome);
-        BCLib.LOGGER.info("Adding Biome " + a + " from " + biome);
         biomes.add(a);
     }
 
