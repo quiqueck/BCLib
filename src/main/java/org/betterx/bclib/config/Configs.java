@@ -5,8 +5,6 @@ import org.betterx.bclib.BCLib;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import java.util.Collections;
-
 public class Configs {
     // Client and Server-Config must be the first entries. They are not part of the Auto-Sync process
     // But will be needed by other Auto-Sync Config-Files
@@ -27,25 +25,5 @@ public class Configs {
         RECIPE_CONFIG.saveChanges();
         GENERATOR_CONFIG.saveChanges();
         BIOMES_CONFIG.saveChanges();
-    }
-
-
-    static {
-        BIOMES_CONFIG.keeper.registerEntry(
-                new ConfigKey("end_land_biomes", "force_include"),
-                new ConfigKeeper.StringArrayEntry(Collections.EMPTY_LIST)
-        );
-        BIOMES_CONFIG.keeper.registerEntry(
-                new ConfigKey("end_void_biomes", "force_include"),
-                new ConfigKeeper.StringArrayEntry(Collections.EMPTY_LIST)
-        );
-        BIOMES_CONFIG.keeper.registerEntry(
-                new ConfigKey("nether_biomes", "force_include"),
-                new ConfigKeeper.StringArrayEntry(Collections.EMPTY_LIST)
-        );
-        BIOMES_CONFIG.keeper.registerEntry(
-                new ConfigKey("nether_biomes", "force_exclude"),
-                new ConfigKeeper.StringArrayEntry(Collections.EMPTY_LIST)
-        );
     }
 }
