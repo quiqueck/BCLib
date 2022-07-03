@@ -196,6 +196,7 @@ public class BiomeAPI {
             TagManager.BIOMES.add(CommonBiomeTags.IN_NETHER, bclbiome);
         } else if (dim != null && dim.is(BiomeType.END)) {
             TagManager.BIOMES.add(BiomeTags.IS_END, bclbiome);
+            TagManager.BIOMES.add(CommonBiomeTags.IN_END, bclbiome);
         }
 
         bclbiome.afterRegistration();
@@ -335,6 +336,7 @@ public class BiomeAPI {
      * @param biome - {@link Holder<Biome>} from world.
      * @return {@link BCLBiome} or {@code BiomeAPI.EMPTY_BIOME}.
      */
+    @Deprecated(forRemoval = true)
     public static BCLBiome getFromBiome(Holder<Biome> biome) {
         if (InternalBiomeAPI.biomeRegistry == null) {
             return EMPTY_BIOME;

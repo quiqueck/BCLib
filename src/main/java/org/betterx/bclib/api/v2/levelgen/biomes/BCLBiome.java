@@ -1,7 +1,6 @@
 package org.betterx.bclib.api.v2.levelgen.biomes;
 
 import org.betterx.bclib.util.WeightedList;
-import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.core.Registry;
 import net.minecraft.data.BuiltinRegistries;
@@ -255,7 +254,7 @@ public class BCLBiome extends BCLBiomeSettings {
      * For internal use from BiomeAPI only
      */
     void afterRegistration() {
-        this.biomeTags.forEach(tagKey -> TagManager.BIOMES.add(tagKey, this));
+
     }
 
 
@@ -327,13 +326,6 @@ public class BCLBiome extends BCLBiomeSettings {
         return biomeID.toString();
     }
 
-    /**
-     * Adds structures to this biome. For internal use only.
-     * Used inside {@link BCLBiomeBuilder}.
-     */
-    void addBiomeTags(Set<TagKey<Biome>> tags) {
-        biomeTags.addAll(tags);
-    }
 
     /**
      * Adds structures to this biome. For internal use only.
