@@ -177,9 +177,11 @@ public class InternalBiomeAPI {
                                                                                      .map(e -> e.getKey());
             if (s != null) {
                 s.forEach(id -> {
-                    Holder<Biome> biomeHolder = BiomeAPI.getBiomeHolder(id);
-                    if (biomeHolder.isBound()) {
+                    Holder<Biome> biomeHolder = BiomeAPI.getFromRegistry(id);
+                    if (biomeHolder != null && biomeHolder.isBound()) {
                         mod.getValue().forEach(c -> c.accept(id, biomeHolder));
+                    } else {
+                        BCLib.LOGGER.info("No Holder for " + id);
                     }
                 });
             }

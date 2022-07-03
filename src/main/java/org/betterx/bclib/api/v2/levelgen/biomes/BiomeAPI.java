@@ -511,12 +511,12 @@ public class BiomeAPI {
 
     @Nullable
     public static Holder<Biome> getFromBuiltinRegistry(ResourceLocation biomeID) {
-        return BuiltinRegistries.BIOME.getHolder(ResourceKey.create(Registry.BIOME_REGISTRY, biomeID)).orElseThrow();
+        return BuiltinRegistries.BIOME.getHolder(ResourceKey.create(Registry.BIOME_REGISTRY, biomeID)).orElse(null);
     }
 
     @Nullable
     public static Holder<Biome> getFromBuiltinRegistry(ResourceKey<Biome> key) {
-        return BuiltinRegistries.BIOME.getOrCreateHolderOrThrow(key);
+        return BuiltinRegistries.BIOME.getHolder(key).orElse(null);
     }
 
     @Deprecated(forRemoval = true)
