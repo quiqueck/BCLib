@@ -236,7 +236,7 @@ public class BCLBiome extends BCLBiomeSettings {
      * @return {@link Biome}.
      */
     @Deprecated(forRemoval = true)
-    public Biome getBiomeOld() {
+    public Biome getBiome() {
         if (biomeToRegister != null) return biomeToRegister;
         return BiomeAPI.getFromBuiltinRegistry(biomeKey).value();
     }
