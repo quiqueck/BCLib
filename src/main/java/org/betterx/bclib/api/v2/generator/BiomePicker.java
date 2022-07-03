@@ -52,8 +52,7 @@ public class BiomePicker {
     }
 
     public void addBiome(BCLBiome biome) {
-        ActualBiome a = create(biome);
-        biomes.add(a);
+        biomes.add(create(biome));
     }
 
     public ActualBiome getBiome(WorldgenRandom random) {
