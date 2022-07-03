@@ -11,7 +11,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class MHelper {
     static class ThreadLocalRandomSource implements RandomSource {
         ThreadLocalRandomSource(long seed) {
-            this.setSeed(seed);
+            
         }
 
         @Override
