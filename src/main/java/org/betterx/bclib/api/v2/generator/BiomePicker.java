@@ -106,7 +106,7 @@ public class BiomePicker {
 
             this.key = biomeRegistry.getResourceKey(biomeRegistry.get(bclBiome.getID())).orElse(null);
             this.biome = key != null ? biomeRegistry.getOrCreateHolderOrThrow(key) : null;
-            this.isValid = key != null;
+            this.isValid = key != null && biome != null && biome.isBound();
             bclBiome.forEachSubBiome((b, w) -> {
                 if (isAllowed(b))
                     subbiomes.add(create(b), w);
