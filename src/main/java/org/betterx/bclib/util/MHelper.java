@@ -3,17 +3,74 @@ package org.betterx.bclib.util;
 import com.mojang.math.Vector3f;
 import net.minecraft.core.Vec3i;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.levelgen.LegacyRandomSource;
+import net.minecraft.world.level.levelgen.PositionalRandomFactory;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class MHelper {
+    static class ThreadLocalRandomSource implements RandomSource {
+        ThreadLocalRandomSource(long seed) {
+            this.setSeed(seed);
+        }
+
+        @Override
+        public RandomSource fork() {
+            return this;
+        }
+
+        @Override
+        public PositionalRandomFactory forkPositional() {
+            return null;
+        }
+
+        @Override
+        public void setSeed(long l) {
+            ThreadLocalRandom.current().setSeed(l);
+        }
+
+        @Override
+        public int nextInt() {
+            return ThreadLocalRandom.current().nextInt();
+        }
+
+        @Override
+        public int nextInt(int i) {
+            return ThreadLocalRandom.current().nextInt(i);
+        }
+
+        @Override
+        public long nextLong() {
+            return ThreadLocalRandom.current().nextLong();
+        }
+
+        @Override
+        public boolean nextBoolean() {
+            return ThreadLocalRandom.current().nextBoolean();
+        }
+
+        @Override
+        public float nextFloat() {
+            return ThreadLocalRandom.current().nextFloat();
+        }
+
+        @Override
+        public double nextDouble() {
+            return ThreadLocalRandom.current().nextDouble();
+        }
+
+        @Override
+        public double nextGaussian() {
+            return ThreadLocalRandom.current().nextGaussian();
+        }
+    }
+
     private static final Vec3i[] RANDOM_OFFSETS = new Vec3i[3 * 3 * 3 - 1];
     private static final float RAD_TO_DEG = 57.295779513082320876798154814105F;
     public static final float PHI = (float) (Math.PI * (3 - Math.sqrt(5)));
     public static final float PI2 = (float) (Math.PI * 2);
     public static final Random RANDOM = new Random();
-    public static final RandomSource RANDOM_SOURCE = new LegacyRandomSource(RANDOM.nextLong());
+    public static final RandomSource RANDOM_SOURCE = new ThreadLocalRandomSource(RANDOM.nextLong());
 
     public static int randRange(int min, int max, RandomSource random) {
         return min + random.nextInt(max - min + 1);
