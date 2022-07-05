@@ -1,0 +1,18 @@
+accessWidener   v1  named
+
+# Classes
+accessible	class	net/minecraft/server/MinecraftServer$ReloadableResources
+accessible	class	net/minecraft/world/level/levelgen/SurfaceRules$Context
+accessible	class	net/minecraft/world/level/levelgen/SurfaceRules$Condition
+accessible	class	net/minecraft/world/level/levelgen/SurfaceRules$SurfaceRule
+accessible	class	net/minecraft/world/level/levelgen/SurfaceRules$LazyXZCondition
+accessible	class	net/minecraft/world/level/levelgen/SurfaceRules$LazyCondition
+accessible	class	net/minecraft/world/level/levelgen/SurfaceRules$SequenceRuleSource
+accessible  class   net/minecraft/world/level/levelgen/presets/WorldPresets$Bootstrap
+extendable  class   net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator
+accessible  class   net/minecraft/data/BuiltinRegistries$RegistryBootstrap
+accessible class net/minecraft/world/level/levelgen/SurfaceRules$SequenceRuleSource
+
+#Methods
+accessible method net/minecraft/client/gui/screens/worldselection/WorldGenSettingsComponent updateSettings (Lnet/minecraft/client/gui/screens/worldselection/WorldCreationContext$Updater;)V
+accessible method net/minecraft/world/level/levelgen/SurfaceRules$SequenceRuleSource <init> (Ljava/util/List;)V

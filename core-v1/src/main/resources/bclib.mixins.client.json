@@ -1,0 +1,22 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "org.betterx.bclib.mixin.client",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "AnvilScreenMixin",
+    "BlockMixin",
+    "ClientRecipeBookMixin",
+    "FogRendererMixin",
+    "GameMixin",
+    "MinecraftMixin",
+    "ModelBakeryMixin",
+    "ModelManagerMixin",
+    "PresetEditorMixin",
+    "SignEditScreenMixin",
+    "TextureAtlasMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

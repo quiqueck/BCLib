@@ -1,0 +1,13 @@
+archivesBaseName = project.together_archives_base_name
+version = getSubprojectVersion(project)
+
+loom {
+    accessWidenerPath = file("src/main/resources/worlds_together.accesswidener")
+}
+
+moduleDependencies(project, [])
+
+
+jar {
+    from "../LICENSE"
+}

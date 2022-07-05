@@ -1,0 +1,46 @@
+def getSubprojectVersion(project) {
+    // Get the version from the gradle.properties file
+    return project.properties["${project.name}-version"]
+}
+
+def compileOnlyDependencies(project, List<String> depNames) {
+    project.dependencies {
+        depNames.each {
+            modCompileOnly it
+        }
+    }
+}
+
+def moduleDependencies(project, List<String> depNames) {
+    def deps = depNames.iterator().collect { project.dependencies.project(path: ":$it", configuration: 'namedElements') }
+
+    project.dependencies {
+        deps.each {
+            api it
+        }
+    }
+
+    // As we manually handle the maven artifacts, we need to also manually specify the deps.
+    project.publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                pom.withXml {
+                    def depsNode = asNode().appendNode("dependencies")
+                    deps.each {
+                        def depNode = depsNode.appendNode("dependency")
+                        depNode.appendNode("groupId", it.group)
+                        depNode.appendNode("artifactId", it.name)
+                        depNode.appendNode("version", it.version)
+                        depNode.appendNode("scope", "compile")
+                    }
+                }
+            }
+        }
+    }
+}
+
+ext {
+    getSubprojectVersion = this.&getSubprojectVersion
+    moduleDependencies = this.&moduleDependencies
+    compileOnlyDependencies = this.&compileOnlyDependencies
+}

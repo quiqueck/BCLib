@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "id": "worlds_together",
+  "version": "2.0.10",
+  "name": "WorldsTogether",
+  "description": "A library for World Preset/Loading Management",
+  "authors": [
+    "Quiqueck"
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/bclib",
+    "issues": "https://github.com/quiqueck/bclib/issues",
+    "sources": "https://github.com/quiqueck/bclib"
+  },
+  "license": "MIT",
+  "icon": "assets/worlds_together/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "org.betterx.worlds.together.WorldsTogether"
+    ],
+    "client": [
+      "org.betterx.worlds.together.client.WorldsTogetherClient"
+    ]
+  },
+  "accessWidener": "worlds_together.accesswidener",
+  "mixins": [
+    "together.mixins.common.json",
+    "together.mixins.client.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.6",
+    "fabric": ">=0.56.0",
+    "minecraft": "1.19"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "title.link.bclib.discord": "https://discord.gg/kYuATbYbKW"
+      }
+    }
+  }
+}

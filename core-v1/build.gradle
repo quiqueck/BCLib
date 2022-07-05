@@ -1,0 +1,23 @@
+archivesBaseName = "core-v1"
+version = getSubprojectVersion(project)
+
+loom {
+    accessWidenerPath = file("src/main/resources/bclib.accesswidener")
+}
+
+moduleDependencies(project, ["together-v1"])
+//compileOnlyDependencies(project, [
+//        "com.terraformersmc:modmenu:${project.modmenu_version}"
+//])
+
+repositories {
+    maven { url 'https://maven.terraformersmc.com/releases' }
+}
+
+dependencies {
+    modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+}
+
+jar {
+    from "../LICENSE"
+}
