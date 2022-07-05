@@ -3,13 +3,6 @@ def getSubprojectVersion(project) {
     return project.properties["${project.name}-version"]
 }
 
-def compileOnlyDependencies(project, List<String> depNames) {
-    project.dependencies {
-        depNames.each {
-            modCompileOnly it
-        }
-    }
-}
 
 def moduleDependencies(project, List<String> depNames) {
     def deps = depNames.iterator().collect { project.dependencies.project(path: ":$it", configuration: 'namedElements') }
