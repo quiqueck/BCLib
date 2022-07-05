@@ -844,7 +844,7 @@ public class BCLBiomeBuilder {
 
         final Biome biome = builder.build();
         final T res = biomeConstructor.apply(biomeID, biome, settings);
-        tags.forEach(tagKey -> TagManager.BIOMES.add(tagKey, res));
+        tags.forEach(tagKey -> TagManager.BIOMES.add(tagKey, res.getBiomeKey()));
 
         //res.addBiomeTags(tags);
         //res.setSurface(surfaceRule);

@@ -8,4 +8,6 @@ public class WorldEvents {
     public static final Event<OnFinalizeLevelStem> ON_FINALIZE_LEVEL_STEM = WorldEventsImpl.ON_FINALIZE_LEVEL_STEM;
     public static final Event<OnWorldPatch> PATCH_WORLD = WorldEventsImpl.PATCH_WORLD;
     public static final Event<OnAdaptWorldPresetSettings> ADAPT_WORLD_PRESET = WorldEventsImpl.ADAPT_WORLD_PRESET;
+
+    public static final Event<BeforeAddingTags> BEFORE_ADDING_TAGS = WorldEventsImpl.BEFORE_ADDING_TAGS;
 }

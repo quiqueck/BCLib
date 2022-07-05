@@ -6,6 +6,7 @@ import org.betterx.worlds.together.chunkgenerator.EnforceableChunkGenerator;
 import org.betterx.worlds.together.world.BiomeSourceWithNoiseRelatedSettings;
 import org.betterx.worlds.together.world.BiomeSourceWithSeed;
 import org.betterx.worlds.together.world.WorldConfig;
+import org.betterx.worlds.together.world.event.WorldBootstrap;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
 
@@ -15,6 +16,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -164,5 +166,18 @@ public class WorldGenUtil {
             }
         }
         return settings;
+    }
+
+    public static ResourceLocation getBiomeID(Biome biome) {
+        ResourceLocation id = null;
+        RegistryAccess access = WorldBootstrap.getLastRegistryAccessOrElseBuiltin();
+
+        id = access.registryOrThrow(Registry.BIOME_REGISTRY).getKey(biome);
+
+        if (id == null) {
+            WorldsTogether.LOGGER.error("Unable to get ID for " + biome + ".");
+        }
+
+        return id;
     }
 }

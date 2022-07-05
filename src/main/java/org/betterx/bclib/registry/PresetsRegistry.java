@@ -4,6 +4,7 @@ import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.generator.config.BCLEndBiomeSourceConfig;
 import org.betterx.bclib.api.v2.generator.config.BCLNetherBiomeSourceConfig;
 import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
+import org.betterx.worlds.together.entrypoints.WorldPresetBootstrap;
 import org.betterx.worlds.together.levelgen.WorldGenUtil;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
@@ -14,11 +15,11 @@ import net.minecraft.world.level.levelgen.presets.WorldPreset;
 
 import java.util.Map;
 
-public class PresetsRegistry {
+public class PresetsRegistry implements WorldPresetBootstrap {
     public static ResourceKey<WorldPreset> BCL_WORLD;
     public static ResourceKey<WorldPreset> BCL_WORLD_17;
 
-    public static void onLoad() {
+    public void bootstrapWorldPresets() {
         BCL_WORLD =
                 WorldPresets.register(
                         BCLib.makeID("normal"),

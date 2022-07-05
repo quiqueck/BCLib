@@ -19,9 +19,9 @@ import org.betterx.bclib.recipes.AnvilRecipe;
 import org.betterx.bclib.recipes.CraftingRecipes;
 import org.betterx.bclib.registry.BaseBlockEntities;
 import org.betterx.bclib.registry.BaseRegistry;
-import org.betterx.bclib.util.Logger;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.tag.v3.TagManager;
+import org.betterx.worlds.together.util.Logger;
 import org.betterx.worlds.together.world.WorldConfig;
 
 import net.minecraft.resources.ResourceLocation;
@@ -41,7 +41,6 @@ public class BCLib implements ModInitializer {
     @Override
     public void onInitialize() {
         LevelGenEvents.register();
-        WorldsTogether.onInitialize();
         BlockPredicates.ensureStaticInitialization();
         BaseRegistry.register();
         GeneratorOptions.init();

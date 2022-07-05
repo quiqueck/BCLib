@@ -195,11 +195,11 @@ public class BiomeAPI {
         BiomeType.BIOME_TYPE_MAP.put(bclbiome.getID(), dim);
 
         if (dim != null && dim.is(BiomeType.NETHER)) {
-            TagManager.BIOMES.add(BiomeTags.IS_NETHER, bclbiome);
-            TagManager.BIOMES.add(CommonBiomeTags.IN_NETHER, bclbiome);
+            TagManager.BIOMES.add(BiomeTags.IS_NETHER, bclbiome.getBiomeKey());
+            TagManager.BIOMES.add(CommonBiomeTags.IN_NETHER, bclbiome.getBiomeKey());
         } else if (dim != null && dim.is(BiomeType.END)) {
-            TagManager.BIOMES.add(BiomeTags.IS_END, bclbiome);
-            TagManager.BIOMES.add(CommonBiomeTags.IN_END, bclbiome);
+            TagManager.BIOMES.add(BiomeTags.IS_END, bclbiome.getBiomeKey());
+            TagManager.BIOMES.add(CommonBiomeTags.IN_END, bclbiome.getBiomeKey());
         }
 
         bclbiome.afterRegistration();

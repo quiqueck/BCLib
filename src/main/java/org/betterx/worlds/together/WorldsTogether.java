@@ -1,16 +1,17 @@
 package org.betterx.worlds.together;
 
-import org.betterx.bclib.util.Logger;
 import org.betterx.worlds.together.surfaceRules.SurfaceRuleRegistry;
 import org.betterx.worlds.together.tag.v3.TagManager;
+import org.betterx.worlds.together.util.Logger;
 import org.betterx.worlds.together.world.WorldConfig;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
 
 import net.minecraft.resources.ResourceLocation;
 
+import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 
-public class WorldsTogether {
+public class WorldsTogether implements ModInitializer {
     public static boolean SURPRESS_EXPERIMENTAL_DIALOG = false;
     public static boolean FORCE_SERVER_TO_BETTERX_PRESET = false;
     public static final String MOD_ID = "worlds_together";
@@ -23,7 +24,7 @@ public class WorldsTogether {
         return FabricLoader.getInstance().isDevelopmentEnvironment();
     }
 
-    public static void onInitialize() {
+    public void onInitialize() {
         TagManager.ensureStaticallyLoaded();
         SurfaceRuleRegistry.ensureStaticallyLoaded();
 

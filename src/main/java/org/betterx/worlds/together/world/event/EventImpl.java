@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 
-class EventImpl<T> implements Event<T> {
+public class EventImpl<T> implements Event<T> {
     final List<T> handlers = new LinkedList<>();
 
     public final boolean on(T handler) {

@@ -10,6 +10,7 @@ import java.util.List;
 /**
  * @deprecated Please use {@link org.betterx.bclib.api.v3.levelgen.features.config.TemplateFeatureConfig} instead
  */
+@Deprecated(forRemoval = true)
 public class TemplateFeatureConfig extends org.betterx.bclib.api.v3.levelgen.features.config.TemplateFeatureConfig {
 
     public TemplateFeatureConfig(ResourceLocation location, int offsetY, StructurePlacementType type) {

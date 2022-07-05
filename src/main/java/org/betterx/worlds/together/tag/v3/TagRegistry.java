@@ -1,8 +1,7 @@
 package org.betterx.worlds.together.tag.v3;
 
-import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
-import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
+import org.betterx.worlds.together.WorldsTogether;
 
 import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Registry;
@@ -90,8 +89,26 @@ public class TagRegistry<T> {
          * @param tagID    {@link TagKey< Biome >} tag ID.
          * @param elements array of Elements to add into tag.
          */
+        public void add(TagKey<Biome> tagID, ResourceKey<Biome>... elements) {
+            if (isFrozen) WorldsTogether.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
+            Set<TagEntry> set = getSetForTag(tagID);
+            for (ResourceKey<Biome> element : elements) {
+                ResourceLocation id = element.location();
+                if (id != null) {
+                    set.add(TagEntry.element(id));
+                }
+            }
+        }
+
+        /**
+         * Adds one Tag to multiple Elements.
+         *
+         * @param tagID    {@link TagKey< Biome >} tag ID.
+         * @param elements array of Elements to add into tag.
+         */
+        @Deprecated(forRemoval = true)
         public void add(TagKey<Biome> tagID, BCLBiome... elements) {
-            if (isFrozen) BCLib.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
+            if (isFrozen) WorldsTogether.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
             Set<TagEntry> set = getSetForTag(tagID);
             for (BCLBiome element : elements) {
                 ResourceLocation id = element.getID();
@@ -106,7 +123,6 @@ public class TagRegistry<T> {
         }
 
         public void apply(Map<ResourceLocation, List<TagLoader.EntryWithSource>> tagsMap) {
-            InternalBiomeAPI._runBiomeTagAdders();
             super.apply(tagsMap);
         }
     }
@@ -209,7 +225,7 @@ public class TagRegistry<T> {
     }
 
     public void addUntyped(TagKey<T> tagID, ResourceLocation... elements) {
-        if (isFrozen) BCLib.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
+        if (isFrozen) WorldsTogether.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
         Set<TagEntry> set = getSetForTag(tagID);
         for (ResourceLocation id : elements) {
             if (id != null) {
@@ -225,7 +241,7 @@ public class TagRegistry<T> {
     }
 
     public void addOtherTags(TagKey<T> tagID, TagKey<T>... tags) {
-        if (isFrozen) BCLib.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
+        if (isFrozen) WorldsTogether.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
         Set<TagEntry> set = getSetForTag(tagID);
         for (TagKey<T> tag : tags) {
             ResourceLocation id = tag.location();
@@ -242,7 +258,7 @@ public class TagRegistry<T> {
      * @param elements array of Elements to add into tag.
      */
     protected void add(TagKey<T> tagID, T... elements) {
-        if (isFrozen) BCLib.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
+        if (isFrozen) WorldsTogether.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
         Set<TagEntry> set = getSetForTag(tagID);
         for (T element : elements) {
             ResourceLocation id = locationProvider.apply(element);
@@ -260,7 +276,7 @@ public class TagRegistry<T> {
 
     @Deprecated(forRemoval = true)
     protected void add(ResourceLocation tagID, T... elements) {
-        if (isFrozen) BCLib.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
+        if (isFrozen) WorldsTogether.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
         Set<TagEntry> set = getSetForTag(tagID);
         for (T element : elements) {
             ResourceLocation id = locationProvider.apply(element);
@@ -292,7 +308,7 @@ public class TagRegistry<T> {
             List<TagLoader.EntryWithSource> builder,
             Set<TagEntry> ids
     ) {
-        ids.forEach(value -> builder.add(new TagLoader.EntryWithSource(value, BCLib.MOD_ID)));
+        ids.forEach(value -> builder.add(new TagLoader.EntryWithSource(value, WorldsTogether.MOD_ID)));
         return builder;
     }
 }

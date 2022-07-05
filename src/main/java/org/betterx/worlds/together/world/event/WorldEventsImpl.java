@@ -1,6 +1,9 @@
 package org.betterx.worlds.together.world.event;
 
-class WorldEventsImpl {
+import org.jetbrains.annotations.ApiStatus;
+
+@ApiStatus.Internal
+public class WorldEventsImpl {
     public static final EventImpl<OnWorldRegistryReady> WORLD_REGISTRY_READY = new EventImpl<>();
     public static final EventImpl<BeforeWorldLoad> BEFORE_WORLD_LOAD = new EventImpl<>();
     public static final EventImpl<BeforeServerWorldLoad> BEFORE_SERVER_WORLD_LOAD = new EventImpl<>();
@@ -10,4 +13,6 @@ class WorldEventsImpl {
 
     public static final PatchWorldEvent PATCH_WORLD = new PatchWorldEvent();
     public static final AdaptWorldPresetSettingEvent ADAPT_WORLD_PRESET = new AdaptWorldPresetSettingEvent();
+
+    public static final EventImpl<BeforeAddingTags> BEFORE_ADDING_TAGS = new EventImpl<>();
 }

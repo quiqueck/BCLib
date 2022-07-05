@@ -1,8 +1,8 @@
 package org.betterx.worlds.together.tag.v3;
 
-import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
-import org.betterx.bclib.api.v2.tag.TagAPI;
+import org.betterx.worlds.together.levelgen.WorldGenUtil;
 import org.betterx.worlds.together.mixin.common.DiggerItemAccessor;
+import org.betterx.worlds.together.world.event.WorldEventsImpl;
 
 import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Registry;
@@ -62,7 +62,7 @@ public class TagManager {
                 "tags/worldgen/biome",
                 (dir) -> new TagRegistry.Biomes(
                         dir,
-                        b -> BiomeAPI.getBiomeID(b)
+                        b -> WorldGenUtil.getBiomeID(b)
                 )
         );
     }
@@ -105,7 +105,7 @@ public class TagManager {
             String directory,
             Map<ResourceLocation, List<TagLoader.EntryWithSource>> tagsMap
     ) {
-        tagsMap = TagAPI.apply(directory, tagsMap);
+        WorldEventsImpl.BEFORE_ADDING_TAGS.emit(e -> e.apply(directory, tagsMap));
 
         TagRegistry<?> type = TYPES.get(directory);
         if (type != null) {

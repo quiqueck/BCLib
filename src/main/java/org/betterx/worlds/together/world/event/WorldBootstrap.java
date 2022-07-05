@@ -1,6 +1,5 @@
 package org.betterx.worlds.together.world.event;
 
-import org.betterx.bclib.BCLib;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.levelgen.WorldGenUtil;
 import org.betterx.worlds.together.mixin.common.RegistryOpsAccessor;
@@ -56,10 +55,6 @@ public class WorldBootstrap {
 
         private static void initializeWorldConfig(File levelBaseDir, boolean newWorld) {
             WorldConfig.load(new File(levelBaseDir, "data"));
-
-            if (newWorld) {
-                WorldConfig.saveFile(BCLib.MOD_ID);
-            }
         }
 
         private static void onRegistryReady(RegistryAccess a) {
@@ -115,7 +110,7 @@ public class WorldBootstrap {
         public static void setupWorld(LevelStorageSource.LevelStorageAccess levelStorageAccess) {
             File levelDat = levelStorageAccess.getLevelPath(LevelResource.LEVEL_DATA_FILE).toFile();
             if (!levelDat.exists()) {
-                BCLib.LOGGER.info("Creating a new World, no fixes needed");
+                WorldsTogether.LOGGER.info("Creating a new World, no fixes needed");
                 final Map<ResourceKey<LevelStem>, ChunkGenerator> settings = Helpers.defaultServerDimensions();
 
                 Helpers.initializeWorldConfig(levelStorageAccess, true);
@@ -241,11 +236,11 @@ public class WorldBootstrap {
                             false
                     ));
                 } catch (Exception e) {
-                    BCLib.LOGGER.error("Failed to initialize data in world", e);
+                    WorldsTogether.LOGGER.error("Failed to initialize data in world", e);
                 }
                 levelStorageAccess.close();
             } catch (Exception e) {
-                BCLib.LOGGER.error("Failed to acquire storage access", e);
+                WorldsTogether.LOGGER.error("Failed to acquire storage access", e);
             }
         }
 
@@ -260,7 +255,7 @@ public class WorldBootstrap {
                 result = WorldEventsImpl.PATCH_WORLD.applyPatches(levelStorageAccess, onResume);
                 levelStorageAccess.close();
             } catch (Exception e) {
-                BCLib.LOGGER.error("Failed to initialize data in world", e);
+                WorldsTogether.LOGGER.error("Failed to initialize data in world", e);
             }
 
             return result;
@@ -287,7 +282,7 @@ public class WorldBootstrap {
                 InGUI.setupNewWorldCommon(levelStorageAccess, worldPreset, worldGenSettings);
                 levelStorageAccess.close();
             } catch (Exception e) {
-                BCLib.LOGGER.error("Failed to initialize data in world", e);
+                WorldsTogether.LOGGER.error("Failed to initialize data in world", e);
             }
         }
     }
@@ -315,7 +310,7 @@ public class WorldBootstrap {
             return WorldGenUtil.repairBiomeSourceInAllDimensions(acc.bcl_getRegistryAccess(), worldGenSettings);
             //.repairSettingsOnLoad(LAST_REGISTRY_ACCESS, worldGenSettings);
         } else {
-            BCLib.LOGGER.error("Unable to obtain registryAccess when enforcing generators.");
+            WorldsTogether.LOGGER.error("Unable to obtain registryAccess when enforcing generators.");
         }
         return worldGenSettings;
     }

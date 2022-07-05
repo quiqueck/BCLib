@@ -7,19 +7,25 @@ import org.betterx.bclib.api.v2.datafixer.DataFixerAPI;
 import org.betterx.bclib.api.v2.generator.BCLibEndBiomeSource;
 import org.betterx.bclib.api.v2.generator.config.BCLEndBiomeSourceConfig;
 import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
+import org.betterx.bclib.api.v2.tag.TagAPI;
 import org.betterx.bclib.registry.PresetsRegistry;
+import org.betterx.worlds.together.tag.v3.TagManager;
+import org.betterx.worlds.together.world.WorldConfig;
 import org.betterx.worlds.together.world.event.WorldEvents;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagLoader;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.storage.LevelStorageSource;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -40,6 +46,21 @@ public class LevelGenEvents {
 
         WorldEvents.PATCH_WORLD.on(LevelGenEvents::patchExistingWorld);
         WorldEvents.ADAPT_WORLD_PRESET.on(LevelGenEvents::adaptWorldPresetSettings);
+
+        WorldEvents.BEFORE_ADDING_TAGS.on(LevelGenEvents::appplyTags);
+    }
+
+    private static void appplyTags(
+            String directory,
+            Map<ResourceLocation, List<TagLoader.EntryWithSource>> tagsMap
+    ) {
+        //make sure we include Tags registered by the deprecated API
+        TagAPI.apply(directory, tagsMap);
+
+        
+        if (directory.equals(TagManager.BIOMES.directory)) {
+            InternalBiomeAPI._runBiomeTagAdders();
+        }
     }
 
 
@@ -103,6 +124,7 @@ public class LevelGenEvents {
     ) {
         setupWorld();
         if (isNewWorld) {
+            WorldConfig.saveFile(BCLib.MOD_ID);
             DataFixerAPI.initializePatchData();
         } else {
             LevelGenUtil.migrateGeneratorSettings();
@@ -117,6 +139,7 @@ public class LevelGenEvents {
         setupWorld();
 
         if (isNewWorld) {
+            WorldConfig.saveFile(BCLib.MOD_ID);
             DataFixerAPI.initializePatchData();
         } else {
             LevelGenUtil.migrateGeneratorSettings();

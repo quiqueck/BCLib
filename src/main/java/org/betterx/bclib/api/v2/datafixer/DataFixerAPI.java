@@ -7,7 +7,7 @@ import org.betterx.bclib.client.gui.screens.LevelFixErrorScreen;
 import org.betterx.bclib.client.gui.screens.LevelFixErrorScreen.Listener;
 import org.betterx.bclib.client.gui.screens.ProgressScreen;
 import org.betterx.bclib.config.Configs;
-import org.betterx.bclib.util.Logger;
+import org.betterx.worlds.together.util.Logger;
 import org.betterx.worlds.together.world.WorldConfig;
 
 import net.minecraft.Util;
