@@ -234,12 +234,16 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
 
 
     private static boolean isValidEndBiome(Holder<Biome> biome, ResourceLocation location) {
+        if (BiomeAPI.wasRegisteredAs(location, BiomeAPI.BiomeType.END_IGNORE)) return false;
+        
         return biome.is(BiomeTags.IS_END) ||
                 BiomeAPI.wasRegisteredAsEndBiome(location) ||
                 TheEndBiomesHelper.canGenerateInEnd(biome.unwrapKey().orElse(null));
     }
 
     private static boolean isValidNonVanillaEndBiome(Holder<Biome> biome, ResourceLocation location) {
+        if (BiomeAPI.wasRegisteredAs(location, BiomeAPI.BiomeType.END_IGNORE)) return false;
+
         return biome.is(BiomeTags.IS_END) ||
                 BiomeAPI.wasRegisteredAs(location, BiomeAPI.BiomeType.BCL_END_LAND) ||
                 BiomeAPI.wasRegisteredAs(location, BiomeAPI.BiomeType.BCL_END_VOID) ||
