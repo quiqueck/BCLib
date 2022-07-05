@@ -8,11 +8,6 @@ buildscript {
     }
 }
 
-
-//archivesBaseName = project.archives_base_name
-//version = project.mod_version
-//group = project.maven_group
-
 apply from: "gradle/bclib-common.gradle"
 
 repositories {
@@ -50,6 +45,7 @@ allprojects {
     }
 
     tasks.withType(JavaCompile).configureEach {
+        options.encoding = "UTF-8"
         it.options.release = 17
     }
 
@@ -72,7 +68,7 @@ allprojects {
     }
 
     loom {
-        // shareRemapCaches = true
+        shareRemapCaches = true
     }
 
     tasks.withType(ProcessResources).configureEach {
@@ -95,13 +91,6 @@ allprojects {
 
 subprojects {
     javadoc.enabled = false
-
-    afterEvaluate {
-        // Disable the gen sources task on sub projects
-//        genCommonSourcesWithCfr.enabled = false
-//        genCommonSourcesWithFernFlower.enabled = false
-//        unpickCommonJar.enabled = false
-    }
 }
 
 javadoc {
@@ -110,7 +99,6 @@ javadoc {
         encoding = "UTF-8"
         charSet = "UTF-8"
         memberLevel = JavadocMemberLevel.PACKAGE
-        // Disable the crazy super-strict doclint tool in Java 8
         addStringOption("Xdoclint:none", "-quiet")
     }
 

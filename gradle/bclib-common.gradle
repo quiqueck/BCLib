@@ -19,24 +19,6 @@ def moduleDependencies(project, List<String> depNames) {
             api it
         }
     }
-
-//    // As we manually handle the maven artifacts, we need to also manually specify the deps.
-//    project.publishing {
-//        publications {
-//            mavenJava(MavenPublication) {
-//                pom.withXml {
-//                    def depsNode = asNode().appendNode("dependencies")
-//                    deps.each {
-//                        def depNode = depsNode.appendNode("dependency")
-//                        depNode.appendNode("groupId", it.group)
-//                        depNode.appendNode("artifactId", it.name)
-//                        depNode.appendNode("version", it.version)
-//                        depNode.appendNode("scope", "compile")
-//                    }
-//                }
-//            }
-//        }
-//    }
 }
 
 ext {
