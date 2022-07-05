@@ -11,4 +11,3 @@ pluginManagement {
 
 
 include("together-v1")
-include("core-v1")

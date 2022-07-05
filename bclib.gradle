@@ -24,6 +24,22 @@ repositories {
     maven { url 'https://maven.terraformersmc.com/releases' }
 }
 
+archivesBaseName = project.archives_base_name
+version = project.mod_version
+
+loom {
+    accessWidenerPath = file("src/main/resources/bclib.accesswidener")
+}
+
+moduleDependencies(project, ["together-v1"])
+repositories {
+    maven { url 'https://maven.terraformersmc.com/releases' }
+}
+
+dependencies {
+    modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+}
+
 allprojects {
     group = project.maven_group
     apply plugin: "java-library"

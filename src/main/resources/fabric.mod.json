@@ -29,12 +29,13 @@
     ],
     "modmenu": [
       "org.betterx.bclib.integration.modmenu.ModMenuEntryPoint"
+    ],
+    "worlds_together": [
+      "org.betterx.bclib.registry.PresetsRegistry"
     ]
   },
   "accessWidener": "bclib.accesswidener",
   "mixins": [
-    "together.mixins.common.json",
-    "together.mixins.client.json",
     "bclib.mixins.common.json",
     "bclib.mixins.client.json"
   ],
