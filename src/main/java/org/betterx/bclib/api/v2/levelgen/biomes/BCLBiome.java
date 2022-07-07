@@ -127,6 +127,16 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
         return instance.group(a.t0, a.t1, a.t2, a.t3, a.t4, a.t5, a.t6, a.t7, a.t8, a.t9, a.t10, p12, p13);
     }
 
+    public static <T extends BCLBiome, P12, P13, P14> Products.P14<RecordCodecBuilder.Mu<T>, Float, Float, Float, Integer, Boolean, Optional<ResourceLocation>, ResourceLocation, Optional<List<Climate.ParameterPoint>>, Optional<ResourceLocation>, Optional<WeightedList<ResourceLocation>>, Optional<String>, P12, P13, P14> codecWithSettings(
+            RecordCodecBuilder.Instance<T> instance,
+            final RecordCodecBuilder<T, P12> p12,
+            final RecordCodecBuilder<T, P13> p13,
+            final RecordCodecBuilder<T, P14> p14
+    ) {
+        CodecAttributes<T> a = new CodecAttributes<>();
+        return instance.group(a.t0, a.t1, a.t2, a.t3, a.t4, a.t5, a.t6, a.t7, a.t8, a.t9, a.t10, p12, p13, p14);
+    }
+
     public static <T extends BCLBiome> Products.P11<RecordCodecBuilder.Mu<T>, Float, Float, Float, Integer, Boolean, Optional<ResourceLocation>, ResourceLocation, Optional<List<Climate.ParameterPoint>>, Optional<ResourceLocation>, Optional<WeightedList<ResourceLocation>>, Optional<String>> codecWithSettings(
             RecordCodecBuilder.Instance<T> instance
     ) {
