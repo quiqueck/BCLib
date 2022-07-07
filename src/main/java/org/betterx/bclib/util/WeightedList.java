@@ -93,6 +93,7 @@ public class WeightedList<T> {
             if (weight <= weights.get(i)) {
                 return values.get(i);
             }
+            weight -= weights.get(i);
         }
         return null;
     }
