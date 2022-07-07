@@ -2,13 +2,13 @@ package org.betterx.bclib.api.v2.generator;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.generator.config.BCLNetherBiomeSourceConfig;
+import org.betterx.bclib.api.v2.generator.config.MapBuilderFunction;
 import org.betterx.bclib.api.v2.generator.map.MapStack;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.interfaces.BiomeMap;
-import org.betterx.bclib.util.TriFunction;
 import org.betterx.worlds.together.biomesource.BiomeSourceWithConfig;
 import org.betterx.worlds.together.biomesource.ReloadableBiomeSource;
 
@@ -181,7 +181,7 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
 
     @Override
     protected void onInitMap(long seed) {
-        TriFunction<Long, Integer, BiomePicker, BiomeMap> mapConstructor = config.mapVersion.mapBuilder;
+        MapBuilderFunction mapConstructor = config.mapVersion.mapBuilder;
         if (maxHeight > config.biomeSizeVertical * 1.5 && config.useVerticalBiomes) {
             this.biomeMap = new MapStack(
                     seed,
@@ -192,7 +192,7 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
                     mapConstructor
             );
         } else {
-            this.biomeMap = mapConstructor.apply(
+            this.biomeMap = mapConstructor.create(
                     seed,
                     config.biomeSize,
                     biomePicker

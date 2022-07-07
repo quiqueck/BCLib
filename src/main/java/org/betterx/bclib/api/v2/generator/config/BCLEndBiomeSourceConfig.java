@@ -2,11 +2,8 @@ package org.betterx.bclib.api.v2.generator.config;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.generator.BCLibEndBiomeSource;
-import org.betterx.bclib.api.v2.generator.BiomePicker;
 import org.betterx.bclib.api.v2.generator.map.hex.HexBiomeMap;
 import org.betterx.bclib.api.v2.generator.map.square.SquareBiomeMap;
-import org.betterx.bclib.interfaces.BiomeMap;
-import org.betterx.bclib.util.TriFunction;
 import org.betterx.worlds.together.biomesource.config.BiomeSourceConfig;
 
 import com.mojang.serialization.Codec;
@@ -114,9 +111,9 @@ public class BCLEndBiomeSourceConfig implements BiomeSourceConfig<BCLibEndBiomeS
 
         public static final Codec<EndBiomeMapType> CODEC = StringRepresentable.fromEnum(EndBiomeMapType::values);
         public final String name;
-        public final @NotNull TriFunction<Long, Integer, BiomePicker, BiomeMap> mapBuilder;
+        public final @NotNull MapBuilderFunction mapBuilder;
 
-        EndBiomeMapType(String name, @NotNull TriFunction<Long, Integer, BiomePicker, BiomeMap> mapBuilder) {
+        EndBiomeMapType(String name, @NotNull MapBuilderFunction mapBuilder) {
             this.name = name;
             this.mapBuilder = mapBuilder;
         }

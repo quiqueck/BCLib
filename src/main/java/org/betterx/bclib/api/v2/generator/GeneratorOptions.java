@@ -7,7 +7,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class GeneratorOptions {
-    private static BiFunction<Point, Integer, Boolean> endLandFunction;
+    //private static BiFunction<Point, Integer, Boolean> endLandFunction;
     private static boolean fixEndBiomeSource = true;
     private static boolean fixNetherBiomeSource = true;
 
@@ -42,15 +42,17 @@ public class GeneratorOptions {
      */
     @Deprecated(forRemoval = true)
     public static void setEndLandFunction(Function<Point, Boolean> endLandFunction) {
-        GeneratorOptions.endLandFunction = (p, h) -> endLandFunction.apply(p);
+        //GeneratorOptions.endLandFunction = (p, h) -> endLandFunction.apply(p);
     }
 
+    @Deprecated(forRemoval = true)
     public static void setEndLandFunction(BiFunction<Point, Integer, Boolean> endLandFunction) {
-        GeneratorOptions.endLandFunction = endLandFunction;
+        ///GeneratorOptions.endLandFunction = endLandFunction;
     }
 
+    @Deprecated(forRemoval = true)
     public static BiFunction<Point, Integer, Boolean> getEndLandFunction() {
-        return endLandFunction;
+        return (a, b) -> true;//endLandFunction;
     }
 
     @Deprecated(forRemoval = true)

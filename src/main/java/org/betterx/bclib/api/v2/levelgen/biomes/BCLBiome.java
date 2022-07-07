@@ -290,7 +290,7 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
         return this;
     }
 
-    BiomeAPI.BiomeType getIntendedType() {
+    public BiomeAPI.BiomeType getIntendedType() {
         return this.intendedType;
     }
 

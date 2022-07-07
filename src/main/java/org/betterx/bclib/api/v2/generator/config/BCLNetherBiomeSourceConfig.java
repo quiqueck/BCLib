@@ -1,11 +1,8 @@
 package org.betterx.bclib.api.v2.generator.config;
 
 import org.betterx.bclib.api.v2.generator.BCLibNetherBiomeSource;
-import org.betterx.bclib.api.v2.generator.BiomePicker;
 import org.betterx.bclib.api.v2.generator.map.hex.HexBiomeMap;
 import org.betterx.bclib.api.v2.generator.map.square.SquareBiomeMap;
-import org.betterx.bclib.interfaces.BiomeMap;
-import org.betterx.bclib.util.TriFunction;
 import org.betterx.worlds.together.biomesource.config.BiomeSourceConfig;
 
 import com.mojang.serialization.Codec;
@@ -110,9 +107,9 @@ public class BCLNetherBiomeSourceConfig implements BiomeSourceConfig<BCLibNether
 
         public static final Codec<NetherBiomeMapType> CODEC = StringRepresentable.fromEnum(NetherBiomeMapType::values);
         public final String name;
-        public final TriFunction<Long, Integer, BiomePicker, BiomeMap> mapBuilder;
+        public final MapBuilderFunction mapBuilder;
 
-        NetherBiomeMapType(String name, TriFunction<Long, Integer, BiomePicker, BiomeMap> mapBuilder) {
+        NetherBiomeMapType(String name, MapBuilderFunction mapBuilder) {
             this.name = name;
             this.mapBuilder = mapBuilder;
         }
