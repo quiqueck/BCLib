@@ -176,7 +176,7 @@ public abstract class BiomeDecider {
      * @param quarterY      The quarter Block Coordinate (which is blockY/4)
      * @param quarterZ      The quarter Block Coordinate (which is blockZ/4)
      * @return The <em>suggestedType</em> if this decider does not plan to provide a Biome, or a unique BiomeType.
-     * The Biome Source will call {@link BiomeDecider#selectBiome(BiomeAPI.BiomeType)} with the finally chosen type
+     * The Biome Source will call {@link BiomeDecider#canProvideBiome(BiomeAPI.BiomeType)} with the finally chosen type
      * for all available Deciders.
      */
     public BiomeAPI.BiomeType suggestType(
@@ -222,7 +222,7 @@ public abstract class BiomeDecider {
      * @param quarterZ      The quarter Block Coordinate (which is blockZ/4)
      * @param maxHeight
      * @return The <em>suggestedType</em> if this decider does not plan to provide a Biome, or a unique BiomeType.
-     * The Biome Source will call {@link BiomeDecider#selectBiome(BiomeAPI.BiomeType)} with the finally chosen type
+     * The Biome Source will call {@link BiomeDecider#canProvideBiome(BiomeAPI.BiomeType)} with the finally chosen type
      * for all available Deciders.
      */
     public abstract BiomeAPI.BiomeType suggestType(
