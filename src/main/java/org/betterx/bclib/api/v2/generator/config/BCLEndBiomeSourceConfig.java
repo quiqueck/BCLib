@@ -1,5 +1,6 @@
 package org.betterx.bclib.api.v2.generator.config;
 
+import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.generator.BCLibEndBiomeSource;
 import org.betterx.bclib.api.v2.generator.BiomePicker;
 import org.betterx.bclib.api.v2.generator.map.hex.HexBiomeMap;
@@ -39,8 +40,8 @@ public class BCLEndBiomeSourceConfig implements BiomeSourceConfig<BCLibEndBiomeS
     );
     public static final BCLEndBiomeSourceConfig MINECRAFT_18 = new BCLEndBiomeSourceConfig(
             EndBiomeMapType.HEX,
-            EndBiomeGeneratorType.PAULEVS,
-            true,
+            BCLib.RUNS_NULLSCAPE ? EndBiomeGeneratorType.VANILLA : EndBiomeGeneratorType.PAULEVS,
+            BCLib.RUNS_NULLSCAPE ? false : true,
             MINECRAFT_17.innerVoidRadiusSquared,
             MINECRAFT_17.centerBiomesSize,
             MINECRAFT_17.voidBiomesSize,

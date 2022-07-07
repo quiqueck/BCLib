@@ -39,6 +39,10 @@ public class BCLib implements ModInitializer {
     public static final String MOD_ID = "bclib";
     public static final Logger LOGGER = new Logger(MOD_ID);
 
+    public static final boolean RUNS_NULLSCAPE = FabricLoader.getInstance()
+                                                             .getModContainer("nullscape")
+                                                             .isPresent();
+
     @Override
     public void onInitialize() {
         LevelGenEvents.register();
