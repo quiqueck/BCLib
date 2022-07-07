@@ -2,6 +2,7 @@ package org.betterx.worlds.together.levelgen;
 
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.biomesource.BiomeSourceWithConfig;
+import org.betterx.worlds.together.biomesource.ReloadableBiomeSource;
 import org.betterx.worlds.together.chunkgenerator.EnforceableChunkGenerator;
 import org.betterx.worlds.together.world.BiomeSourceWithNoiseRelatedSettings;
 import org.betterx.worlds.together.world.BiomeSourceWithSeed;
@@ -141,6 +142,7 @@ public class WorldGenUtil {
     ) {
         var dimensions = TogetherWorldPreset.loadWorldDimensions();
         for (var entry : settings.dimensions().entrySet()) {
+            boolean didRepair = false;
             ResourceKey<LevelStem> key = entry.getKey();
             LevelStem loadedStem = entry.getValue();
 
@@ -156,12 +158,19 @@ public class WorldGenUtil {
                             loadedChunkGenerator,
                             settings
                     );
+                    didRepair = true;
                 } else if (loadedChunkGenerator.getBiomeSource() instanceof BiomeSourceWithConfig bs) {
                     if (referenceGenerator.getBiomeSource() instanceof BiomeSourceWithConfig refbs) {
                         if (!refbs.getTogetherConfig().sameConfig(bs.getTogetherConfig())) {
                             bs.setTogetherConfig(refbs.getTogetherConfig());
                         }
                     }
+                }
+            }
+
+            if (!didRepair) {
+                if (loadedStem.generator().getBiomeSource() instanceof ReloadableBiomeSource reload) {
+                    reload.reloadBiomes();
                 }
             }
         }

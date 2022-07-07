@@ -154,6 +154,10 @@ public class WorldBootstrap {
             }
         }
 
+        public static void registryReady(RegistryAccess access) {
+            Helpers.onRegistryReady(access);
+        }
+
         public static void setupNewWorld(
                 Optional<LevelStorageSource.LevelStorageAccess> levelStorageAccess,
                 WorldGenSettingsComponent worldGenSettingsComponent

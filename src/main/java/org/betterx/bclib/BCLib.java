@@ -8,6 +8,7 @@ import org.betterx.bclib.api.v2.generator.GeneratorOptions;
 import org.betterx.bclib.api.v2.levelgen.LevelGenEvents;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeBuilder;
+import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 import org.betterx.bclib.api.v2.levelgen.structures.TemplatePiece;
 import org.betterx.bclib.api.v2.levelgen.surface.rules.Conditions;
@@ -42,6 +43,7 @@ public class BCLib implements ModInitializer {
     public void onInitialize() {
         LevelGenEvents.register();
         BlockPredicates.ensureStaticInitialization();
+        BCLBiomeRegistry.ensureStaticallyLoaded();
         BaseRegistry.register();
         GeneratorOptions.init();
         BaseBlockEntities.register();

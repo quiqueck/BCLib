@@ -1,7 +1,7 @@
 package org.betterx.bclib.api.v2.generator;
 
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
-import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
+import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
 import org.betterx.bclib.util.WeighTree;
 import org.betterx.bclib.util.WeightedList;
 
@@ -37,7 +37,7 @@ public class BiomePicker {
                 .map(h -> h.unwrapKey())
                 .filter(o -> o.isPresent())
                 .map(o -> o.get().location().toString()).toList() : null;
-        this.fallbackBiome = create(BiomeAPI.EMPTY_BIOME);
+        this.fallbackBiome = create(BCLBiomeRegistry.EMPTY_BIOME);
     }
 
     private boolean isAllowed(BCLBiome b) {
@@ -83,7 +83,7 @@ public class BiomePicker {
 
         //no Biome, make sure we add at least one, otherwise bad things will happen
         if (list.isEmpty()) {
-            list.add(create(BiomeAPI.EMPTY_BIOME), 1);
+            list.add(create(BCLBiomeRegistry.EMPTY_BIOME), 1);
         }
 
 
@@ -160,5 +160,14 @@ public class BiomePicker {
                     ", isValid=" + isValid +
                     '}';
         }
+    }
+
+    @Override
+    public String toString() {
+        return "BiomePicker{" +
+                "biomes=" + biomes.size() + " (" + all.size() + ")" +
+                ", biomeRegistry=" + biomeRegistry +
+                ", type=" + super.toString() +
+                '}';
     }
 }

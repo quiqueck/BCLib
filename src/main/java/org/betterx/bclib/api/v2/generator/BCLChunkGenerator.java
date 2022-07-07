@@ -6,6 +6,7 @@ import org.betterx.bclib.interfaces.NoiseGeneratorSettingsProvider;
 import org.betterx.bclib.mixin.common.ChunkGeneratorAccessor;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.biomesource.MergeableBiomeSource;
+import org.betterx.worlds.together.biomesource.ReloadableBiomeSource;
 import org.betterx.worlds.together.chunkgenerator.EnforceableChunkGenerator;
 import org.betterx.worlds.together.chunkgenerator.InjectableSurfaceRules;
 import org.betterx.worlds.together.chunkgenerator.RestorableBiomeSource;
@@ -110,6 +111,8 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
             if (this instanceof ChunkGeneratorAccessor acc) {
                 if (initialBiomeSource instanceof MergeableBiomeSource bs) {
                     acc.bcl_setBiomeSource(bs.mergeWithBiomeSource(getBiomeSource()));
+                } else if (initialBiomeSource instanceof ReloadableBiomeSource bs) {
+                    bs.reloadBiomes();
                 }
 
                 rebuildFeaturesPerStep(getBiomeSource());

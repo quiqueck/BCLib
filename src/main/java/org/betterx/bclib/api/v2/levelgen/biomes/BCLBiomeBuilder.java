@@ -54,6 +54,7 @@ public class BCLBiomeBuilder {
     public interface BiomeSupplier<T> extends TriFunction<ResourceLocation, Biome, BCLBiomeSettings, T> {
     }
 
+
     private static final BCLBiomeBuilder INSTANCE = new BCLBiomeBuilder();
     private static final SurfaceRules.ConditionSource SURFACE_NOISE = SurfaceRules.noiseCondition(
             Noises.SOUL_SAND_LAYER,
@@ -709,6 +710,64 @@ public class BCLBiomeBuilder {
         return this;
     }
 
+    /**
+     * Changes the type for the Biome. The intended Type defines in which Dimension a
+     * Biome is allowed to spawn. Currently each Biome can only spawn in one dimension
+     *
+     * @param type The intended type
+     * @return same {@link BCLBiomeBuilder} instance.
+     */
+    public BCLBiomeBuilder intendedType(BiomeAPI.BiomeType type) {
+        this.biomeType = type;
+        return this;
+    }
+
+
+    /**
+     * Changes the intended type for the Biome to an EndLand Biome
+     *
+     * @return same {@link BCLBiomeBuilder} instance.
+     */
+    public BCLBiomeBuilder endLandBiome() {
+        return intendedType(BiomeAPI.BiomeType.BCL_END_LAND);
+    }
+
+    /**
+     * Changes the intended type for the Biome to an EndVoid (aka small islands) Biome
+     *
+     * @return same {@link BCLBiomeBuilder} instance.
+     */
+    public BCLBiomeBuilder endVoidBiome() {
+        return intendedType(BiomeAPI.BiomeType.BCL_END_VOID);
+    }
+
+    /**
+     * Changes the intended type for the Biome to an Endbarrens Biome
+     *
+     * @return same {@link BCLBiomeBuilder} instance.
+     */
+    public BCLBiomeBuilder endBarrensBiome() {
+        return intendedType(BiomeAPI.BiomeType.BCL_END_BARRENS);
+    }
+
+    /**
+     * Changes the intended type for the Biome to an End Center Island Biome
+     *
+     * @return same {@link BCLBiomeBuilder} instance.
+     */
+    public BCLBiomeBuilder endCenterBiome() {
+        return intendedType(BiomeAPI.BiomeType.BCL_END_CENTER);
+    }
+
+    /**
+     * Changes the intended type for the Biome to a Nether Biome
+     *
+     * @return same {@link BCLBiomeBuilder} instance.
+     */
+    public BCLBiomeBuilder netherBiome() {
+        return intendedType(BiomeAPI.BiomeType.BCL_NETHER);
+    }
+
     public BCLBiomeBuilder tag(TagKey<Biome>... tag) {
         for (TagKey<Biome> t : tag) {
             tags.add(t);
@@ -850,6 +909,8 @@ public class BCLBiomeBuilder {
         //res.setSurface(surfaceRule);
         SurfaceRuleRegistry.registerRule(biomeID, surfaceRule, biomeID);
         res.addClimateParameters(parameters);
+        if (biomeType != null)
+            res._setIntendedType(biomeType);
 
 
         //carvers.forEach(cfg -> BiomeAPI.addBiomeCarver(biome, cfg.second, cfg.first));

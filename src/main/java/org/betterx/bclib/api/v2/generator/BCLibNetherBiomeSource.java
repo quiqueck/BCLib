@@ -4,11 +4,13 @@ import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.generator.config.BCLNetherBiomeSourceConfig;
 import org.betterx.bclib.api.v2.generator.map.MapStack;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
+import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.interfaces.BiomeMap;
 import org.betterx.bclib.util.TriFunction;
 import org.betterx.worlds.together.biomesource.BiomeSourceWithConfig;
+import org.betterx.worlds.together.biomesource.ReloadableBiomeSource;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -26,7 +28,7 @@ import net.fabricmc.fabric.api.biome.v1.NetherBiomes;
 import java.util.List;
 import java.util.Set;
 
-public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourceWithConfig<BCLibNetherBiomeSource, BCLNetherBiomeSourceConfig> {
+public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourceWithConfig<BCLibNetherBiomeSource, BCLNetherBiomeSourceConfig>, ReloadableBiomeSource {
     public static final Codec<BCLibNetherBiomeSource> CODEC = RecordCodecBuilder
             .create(instance -> instance
                     .group(
@@ -49,7 +51,7 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
                     .apply(instance, instance.stable(BCLibNetherBiomeSource::new))
             );
     private BiomeMap biomeMap;
-    private final BiomePicker biomePicker;
+    private BiomePicker biomePicker;
     private BCLNetherBiomeSourceConfig config;
 
     public BCLibNetherBiomeSource(Registry<Biome> biomeRegistry, BCLNetherBiomeSourceConfig config) {
@@ -78,6 +80,13 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
     ) {
         super(biomeRegistry, list, seed);
         this.config = config;
+        rebuildBiomePicker();
+        if (initMaps) {
+            initMap(seed);
+        }
+    }
+
+    private void rebuildBiomePicker() {
         biomePicker = new BiomePicker(biomeRegistry);
 
         this.possibleBiomes().forEach(biome -> {
@@ -87,12 +96,13 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
                 return;
             }
             if (!BiomeAPI.hasBiome(biomeID)) {
+
                 BCLBiome bclBiome = new BCLBiome(biomeID, biome.value());
                 biomePicker.addBiome(bclBiome);
             } else {
                 BCLBiome bclBiome = BiomeAPI.getBiome(biomeID);
 
-                if (bclBiome != BiomeAPI.EMPTY_BIOME) {
+                if (bclBiome != BCLBiomeRegistry.EMPTY_BIOME) {
                     if (bclBiome.getParentBiome() == null) {
                         biomePicker.addBiome(bclBiome);
                     }
@@ -101,9 +111,6 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
         });
 
         biomePicker.rebuild();
-        if (initMaps) {
-            initMap(seed);
-        }
     }
 
     protected BCLBiomeSource cloneForDatapack(Set<Holder<Biome>> datapackBiomes) {
@@ -211,6 +218,12 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
     @Override
     public void setTogetherConfig(BCLNetherBiomeSourceConfig newConfig) {
         this.config = newConfig;
+        initMap(currentSeed);
+    }
+
+    @Override
+    public void reloadBiomes() {
+        rebuildBiomePicker();
         initMap(currentSeed);
     }
 }

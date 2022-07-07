@@ -1,16 +1,70 @@
 package org.betterx.bclib.util;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.RandomSource;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class WeightedList<T> {
+
+
     private final List<Float> weights = new ArrayList<Float>();
     private final List<T> values = new ArrayList<T>();
     private float maxWeight;
+
+    public static <T> Codec<Pair<Float, T>> pairCodec(Codec<T> elementCodec, String fieldName) {
+        return Pair.pairCodec(Codec.FLOAT, elementCodec, "weight", fieldName);
+    }
+
+    public static <T> Codec<WeightedList<T>> listCodec(Codec<T> elementCodec, String fieldName, String elementName) {
+        return RecordCodecBuilder.create(instance -> instance
+                .group(
+                        pairCodec(elementCodec, elementName).listOf()
+                                                            .fieldOf(fieldName)
+                                                            .forGetter(WeightedList::pairs)
+                )
+                .apply(instance, WeightedList::new)
+        );
+    }
+
+    private List<Pair<Float, T>> pairs() {
+        List<Pair<Float, T>> pairs = new ArrayList<>(weights.size());
+        for (int i = 0; i < weights.size(); i++) {
+            pairs.add(new Pair<>(weights.get(i), values.get(i)));
+        }
+        return pairs;
+    }
+
+    private WeightedList(List<Pair<Float, T>> pairs) {
+        maxWeight = 0;
+        for (var pair : pairs) {
+            maxWeight += pair.first;
+            weights.add(pair.first);
+            values.add(pair.second);
+        }
+    }
+
+    public WeightedList() {
+    }
+
+    public <R> WeightedList<R> map(Function<T, R> map) {
+        List<Pair<Float, R>> pairs = new ArrayList<>(weights.size());
+        for (int i = 0; i < weights.size(); i++) {
+            pairs.add(new Pair<>(weights.get(i), map.apply(values.get(i))));
+        }
+        return new WeightedList<>(pairs);
+    }
+
+    public void addAll(WeightedList<T> other) {
+        weights.addAll(other.weights);
+        values.addAll(other.values);
+        maxWeight += other.maxWeight;
+    }
 
     /**
      * Adds value with specified weight to the list

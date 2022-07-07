@@ -165,16 +165,10 @@ public class InternalBiomeAPI {
     public static void _runBiomeTagAdders() {
         for (var mod : TAG_ADDERS.entrySet()) {
             Stream<ResourceLocation> s = null;
-            if (mod.getKey() == Level.NETHER) s = BiomeAPI.BiomeType.BIOME_TYPE_MAP.entrySet()
-                                                                                   .stream()
-                                                                                   .filter(e -> e.getValue()
-                                                                                                 .is(BiomeAPI.BiomeType.NETHER))
-                                                                                   .map(e -> e.getKey());
-            else if (mod.getKey() == Level.END) s = BiomeAPI.BiomeType.BIOME_TYPE_MAP.entrySet()
-                                                                                     .stream()
-                                                                                     .filter(e -> e.getValue().is(
-                                                                                             BiomeAPI.BiomeType.END))
-                                                                                     .map(e -> e.getKey());
+            if (mod.getKey() == Level.NETHER)
+                s = BCLBiomeRegistry.getAll(BiomeAPI.BiomeType.NETHER).map(k -> k.location());
+            else if (mod.getKey() == Level.END)
+                s = BCLBiomeRegistry.getAll(BiomeAPI.BiomeType.END).map(k -> k.location());
             if (s != null) {
                 s.forEach(id -> {
                     Holder<Biome> biomeHolder = BiomeAPI.getFromRegistry(id);
@@ -326,11 +320,12 @@ public class InternalBiomeAPI {
             BiomeAPI.BiomeType type
     ) {
         BCLBiome bclBiome = BiomeAPI.getBiome(biomeKey.location());
-        if (bclBiome == BiomeAPI.EMPTY_BIOME) {
+        if (bclBiome == BCLBiomeRegistry.EMPTY_BIOME) {
             bclBiome = new BCLBiome(biomeKey, setings);
+            bclBiome._setIntendedType(type);
         }
 
-        BiomeAPI.registerBiome(bclBiome, type);
+        BiomeAPI.registerBiome(bclBiome);
         return bclBiome;
     }
 
@@ -345,7 +340,7 @@ public class InternalBiomeAPI {
     @Deprecated(forRemoval = true)
     static BCLBiome wrapNativeBiome(Biome biome, float genChance, BiomeAPI.BiomeType type) {
         BCLBiome bclBiome = BiomeAPI.getBiome(biome);
-        if (bclBiome == BiomeAPI.EMPTY_BIOME) {
+        if (bclBiome == BCLBiomeRegistry.EMPTY_BIOME) {
             bclBiome = new BCLBiome(
                     biome,
                     genChance < 0 ? null : VanillaBiomeSettings.createVanilla().setGenChance(genChance).build()
@@ -363,7 +358,7 @@ public class InternalBiomeAPI {
                     .event(oBiomeRegistry.get())
                     .register((rawId, id, biome) -> {
                         BCLBiome b = BiomeAPI.getBiome(id);
-                        if (!"minecraft".equals(id.getNamespace()) && (b == null || b == BiomeAPI.EMPTY_BIOME)) {
+                        if (!"minecraft".equals(id.getNamespace()) && (b == null || b == BCLBiomeRegistry.EMPTY_BIOME)) {
                             //BCLib.LOGGER.info(" #### " + rawId + ", " + biome + ", " + id);
                             BIOMES_TO_SORT.add(id);
                         }

@@ -1,9 +1,10 @@
 package org.betterx.bclib.commands;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
+import org.betterx.bclib.api.v2.levelgen.biomes.BiomeData;
+import org.betterx.bclib.blocks.BaseStairsBlock;
+
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.serialization.Codec;
@@ -27,8 +28,11 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTestType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraft.world.level.material.Fluid;
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.blocks.BaseStairsBlock;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.awt.Taskbar.Feature;
 import java.io.File;
@@ -113,13 +117,15 @@ public class DumpDatapack {
                     while (obj instanceof Holder<?>) {
                         obj = ((Holder<?>) obj).value();
                     }
-    
+
                     if (obj instanceof BiomeSource || obj instanceof Feature) {
                         System.out.print("");
                     }
-    
+
                     if (obj instanceof Structure s) {
                         codec[0] = s.type().codec();
+                    } else if (obj instanceof BCLBiome s) {
+                        codec[0] = BiomeData.CODEC;
                     } else if (obj instanceof StructureProcessorList s) {
                         codec[0] = StructureProcessorType.LIST_OBJECT_CODEC;
                     } else if (obj instanceof GameEvent) {
@@ -134,9 +140,9 @@ public class DumpDatapack {
                         codec[0] = registry.value().byNameCodec();
                     } else if (obj instanceof PosRuleTestType<?>) {
                         codec[0] = registry.value().byNameCodec();
-                    }else if (obj instanceof WorldGenSettings) {
+                    } else if (obj instanceof WorldGenSettings) {
                         codec[0] = registry.value().byNameCodec();
-                    }else if (obj instanceof LevelStem) {
+                    } else if (obj instanceof LevelStem) {
                         codec[0] = registry.value().byNameCodec();
                     }
 
@@ -225,8 +231,8 @@ public class DumpDatapack {
                             }
                         }
                     }
-                    
-                    if (codec[0]==null){
+
+                    if (codec[0] == null) {
                         codec[0] = registry.value().byNameCodec();
                     }
 
