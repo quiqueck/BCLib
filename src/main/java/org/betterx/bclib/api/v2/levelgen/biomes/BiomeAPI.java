@@ -194,6 +194,19 @@ public class BiomeAPI {
             if (parentOrNull != null) str += " -> " + parentOrNull;
             return str;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            BiomeType biomeType = (BiomeType) o;
+            return name.equals(biomeType.name);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name);
+        }
     }
 
     /**
