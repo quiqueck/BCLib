@@ -1,6 +1,7 @@
 package org.betterx.bclib.api.v2.generator;
 
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
+import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
 import org.betterx.worlds.together.biomesource.BiomeSourceFromRegistry;
 import org.betterx.worlds.together.biomesource.MergeableBiomeSource;
 import org.betterx.worlds.together.world.BiomeSourceWithNoiseRelatedSettings;
@@ -21,6 +22,7 @@ import java.util.Set;
 
 public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceWithSeed, MergeableBiomeSource<BCLBiomeSource>, BiomeSourceWithNoiseRelatedSettings, BiomeSourceFromRegistry<BCLBiomeSource> {
     protected final Registry<Biome> biomeRegistry;
+    private int registryModificationCounter;
     protected long currentSeed;
     protected int maxHeight;
 
@@ -40,9 +42,14 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
             long seed
     ) {
         super(preInit(biomeRegistry, list));
-
+        this.registryModificationCounter = InternalBiomeAPI.getBiomeRegistryModificationCount(biomeRegistry);
         this.biomeRegistry = biomeRegistry;
         this.currentSeed = seed;
+    }
+
+    @Override
+    public boolean didBiomeRegistryChange() {
+        return this.registryModificationCounter != InternalBiomeAPI.getBiomeRegistryModificationCount(biomeRegistry);
     }
 
     final public void setSeed(long seed) {

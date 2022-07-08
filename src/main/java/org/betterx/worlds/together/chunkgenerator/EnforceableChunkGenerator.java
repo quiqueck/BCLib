@@ -2,6 +2,7 @@ package org.betterx.worlds.together.chunkgenerator;
 
 import org.betterx.worlds.together.biomesource.BiomeSourceFromRegistry;
 import org.betterx.worlds.together.biomesource.BiomeSourceWithConfig;
+import org.betterx.worlds.together.biomesource.MergeableBiomeSource;
 
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
@@ -20,7 +21,7 @@ public interface EnforceableChunkGenerator<G extends ChunkGenerator> {
             WorldGenSettings settings
     );
 
-    default boolean needsChunkGeneratorRepair(ChunkGenerator chunkGenerator) {
+    default boolean togetherShouldRepair(ChunkGenerator chunkGenerator) {
         ChunkGenerator self = (ChunkGenerator) this;
         if (this == chunkGenerator || chunkGenerator == null) return false;
 
@@ -33,7 +34,11 @@ public interface EnforceableChunkGenerator<G extends ChunkGenerator> {
                 return true;
         }
         if (one instanceof BiomeSourceFromRegistry ba && two instanceof BiomeSourceFromRegistry bb) {
-            if (ba.sameRegistryButDifferentBiomes(bb))
+            if (ba.togetherBiomeSourceContentChanged(bb))
+                return true;
+        }
+        if (one instanceof MergeableBiomeSource ba) {
+            if (ba.togetherShouldMerge(two))
                 return true;
         }
 

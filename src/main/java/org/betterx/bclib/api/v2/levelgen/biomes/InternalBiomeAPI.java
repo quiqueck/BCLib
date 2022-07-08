@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.ApiStatus;
@@ -60,6 +61,8 @@ public class InternalBiomeAPI {
     );
     static final Map<Biome, BCLBiome> CLIENT = Maps.newHashMap();
     static final Map<Holder<PlacedFeature>, Integer> FEATURE_ORDER = Maps.newHashMap();
+
+    static final Map<Registry<Biome>, AtomicInteger> BIOME_ADDITIONS = Maps.newHashMap();
     static final MutableInt FEATURE_ORDER_ID = new MutableInt(0);
     static final Map<ResourceKey<LevelStem>, List<BiConsumer<ResourceLocation, Holder<Biome>>>> MODIFICATIONS = Maps.newHashMap();
     static final Map<ResourceKey, List<BiConsumer<ResourceLocation, Holder<Biome>>>> TAG_ADDERS = Maps.newHashMap();
@@ -359,11 +362,28 @@ public class InternalBiomeAPI {
                     .register((rawId, id, biome) -> {
                         BCLBiome b = BiomeAPI.getBiome(id);
                         if (!"minecraft".equals(id.getNamespace()) && (b == null || b == BCLBiomeRegistry.EMPTY_BIOME)) {
-                            //BCLib.LOGGER.info(" #### " + rawId + ", " + biome + ", " + id);
+                            BCLib.LOGGER.info(" #### " + rawId + ", " + biome + ", " + id);
                             BIOMES_TO_SORT.add(id);
+                            BIOME_ADDITIONS.computeIfAbsent(oBiomeRegistry.get(), reg -> new AtomicInteger(0))
+                                           .incrementAndGet();
                         }
                     });
         });
+    }
+
+    /**
+     * The BCLBiomeSource keeps track of Modifications that happen after the BiomeSource was initialized.
+     * This appears to happen especially for new Worlds where the Biome Source is deserialized
+     * when the WolrdPreset registry is built for the CreateScreen. However Farbic Biomes are not yet
+     * added to the biomeRegistry at this stage.
+     * The counter is incremented in the DynamicRegistrySetupCallback.EVENT for the Biome Registry
+     *
+     * @param registry The registry you want to check
+     * @return The current number of additions since the world creation was started
+     */
+    public static int getBiomeRegistryModificationCount(Registry<Biome> registry) {
+        if (registry == null) return 0;
+        return BIOME_ADDITIONS.computeIfAbsent(registry, reg -> new AtomicInteger(0)).get();
     }
 
     public static boolean registryContainsBound(ResourceKey<Biome> key) {

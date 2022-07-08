@@ -30,6 +30,8 @@ import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
+import org.jetbrains.annotations.ApiStatus;
+
 public class WorldGenUtil {
     public static final String TAG_PRESET = "preset";
     public static final String TAG_GENERATOR = "generator";
@@ -136,6 +138,7 @@ public class WorldGenUtil {
 
 
     @SuppressWarnings("unchecked")
+    @ApiStatus.Internal
     public static WorldGenSettings repairBiomeSourceInAllDimensions(
             RegistryAccess registryAccess,
             WorldGenSettings settings
@@ -148,9 +151,25 @@ public class WorldGenUtil {
 
             ChunkGenerator referenceGenerator = dimensions.get(key);
             if (referenceGenerator instanceof EnforceableChunkGenerator enforcer) {
+                // This list contains the vanilla default level stem (only available if a new world is loaded) as well as
+                // The currently loaded stem
+                if (WorldBootstrap.getDefaultCreateWorldPresetSettings() != null) {
+                    LevelStem vanillaDefaultStem = WorldBootstrap.getDefaultCreateWorldPresetSettings()
+                                                                 .dimensions()
+                                                                 .get(key);
+
+                    loadedStem = vanillaDefaultStem;
+                }
+
+
+                // now compare the reference world settings (the ones that were created when the world was
+                // started) with the settings that were loaded by the game.
+                // If those do not match, we will create a new ChunkGenerator / BiomeSources with appropriate
+                // settings
+
                 final ChunkGenerator loadedChunkGenerator = loadedStem.generator();
 
-                if (enforcer.needsChunkGeneratorRepair(loadedChunkGenerator)) {
+                if (enforcer.togetherShouldRepair(loadedChunkGenerator)) {
                     settings = enforcer.enforceGeneratorInWorldGenSettings(
                             registryAccess,
                             key,
@@ -168,11 +187,13 @@ public class WorldGenUtil {
                 }
             }
 
+
             if (!didRepair) {
                 if (loadedStem.generator().getBiomeSource() instanceof ReloadableBiomeSource reload) {
                     reload.reloadBiomes();
                 }
             }
+
         }
         return settings;
     }

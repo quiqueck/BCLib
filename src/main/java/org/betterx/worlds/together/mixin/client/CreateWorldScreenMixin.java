@@ -54,6 +54,7 @@ public class CreateWorldScreenMixin {
     private static WorldLoader.WorldDataSupplier<WorldGenSettings> wt_NewDefaultSettings(WorldLoader.WorldDataSupplier<WorldGenSettings> worldDataSupplier) {
         return (resourceManager, dataPackConfig) -> {
             Pair<WorldGenSettings, RegistryAccess.Frozen> res = worldDataSupplier.get(resourceManager, dataPackConfig);
+            WorldBootstrap.InGUI.setDefaultCreateWorldSettings(res.getFirst());
             return WorldGenUtil.defaultWorldDataSupplier(res.getSecond());
         };
     }
