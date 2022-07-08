@@ -1,6 +1,7 @@
 package org.betterx.bclib.client.render;
 
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
+import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.util.BackgroundInfo;
@@ -116,7 +117,7 @@ public class CustomFogRenderer {
 
     private static boolean shouldIgnore(Level level, int x, int y, int z) {
         Biome biome = level.getBiome(MUT_POS.set(x, y, z)).value();
-        return BiomeAPI.getRenderBiome(biome) == BiomeAPI.EMPTY_BIOME;
+        return BiomeAPI.getRenderBiome(biome) == BCLBiomeRegistry.EMPTY_BIOME;
     }
 
     private static float getFogDensityI(Level level, int x, int y, int z) {

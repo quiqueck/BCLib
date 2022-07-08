@@ -3,10 +3,20 @@ package org.betterx.bclib.util;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
+
+/**
+ * @deprecated Please use {@link org.betterx.worlds.together.util.Logger} instead
+ */
+@Deprecated(forRemoval = true)
 public final class Logger {
     private static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger();
     private final String modPref;
 
+
+    /**
+     * @deprecated Please use {@link org.betterx.worlds.together.util.Logger#Logger(String)} instead
+     */
+    @Deprecated(forRemoval = true)
     public Logger(String modID) {
         this.modPref = "[" + modID + "] ";
     }

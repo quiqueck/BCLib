@@ -1,8 +1,20 @@
 package org.betterx.bclib.util;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import java.util.Objects;
 
 public class Pair<A, B> {
+    public static <A, B> Codec<Pair<A, B>> pairCodec(Codec<A> a, Codec<B> b, String first, String second) {
+        return RecordCodecBuilder.create(instance -> instance
+                .group(
+                        a.fieldOf(first).forGetter(o -> o.first),
+                        b.fieldOf(second).forGetter(o -> o.second)
+                )
+                .apply(instance, Pair::new));
+    }
+
     public final A first;
     public final B second;
 

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "bclib",
-  "version": "2.0.8",
+  "version": "2.0.11",
   "name": "BCLib",
   "description": "A library for BetterX team mods",
   "authors": [
@@ -29,6 +29,9 @@
     ],
     "modmenu": [
       "org.betterx.bclib.integration.modmenu.ModMenuEntryPoint"
+    ],
+    "worlds_together": [
+      "org.betterx.bclib.registry.PresetsRegistry"
     ]
   },
   "accessWidener": "bclib.accesswidener",

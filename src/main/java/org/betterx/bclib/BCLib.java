@@ -8,6 +8,7 @@ import org.betterx.bclib.api.v2.generator.GeneratorOptions;
 import org.betterx.bclib.api.v2.levelgen.LevelGenEvents;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeBuilder;
+import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 import org.betterx.bclib.api.v2.levelgen.structures.TemplatePiece;
 import org.betterx.bclib.api.v2.levelgen.surface.rules.Conditions;
@@ -19,9 +20,9 @@ import org.betterx.bclib.recipes.AnvilRecipe;
 import org.betterx.bclib.recipes.CraftingRecipes;
 import org.betterx.bclib.registry.BaseBlockEntities;
 import org.betterx.bclib.registry.BaseRegistry;
-import org.betterx.bclib.util.Logger;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.tag.v3.TagManager;
+import org.betterx.worlds.together.util.Logger;
 import org.betterx.worlds.together.world.WorldConfig;
 
 import net.minecraft.resources.ResourceLocation;
@@ -38,11 +39,15 @@ public class BCLib implements ModInitializer {
     public static final String MOD_ID = "bclib";
     public static final Logger LOGGER = new Logger(MOD_ID);
 
+    public static final boolean RUNS_NULLSCAPE = FabricLoader.getInstance()
+                                                             .getModContainer("nullscape")
+                                                             .isPresent();
+
     @Override
     public void onInitialize() {
         LevelGenEvents.register();
-        WorldsTogether.onInitialize();
         BlockPredicates.ensureStaticInitialization();
+        BCLBiomeRegistry.ensureStaticallyLoaded();
         BaseRegistry.register();
         GeneratorOptions.init();
         BaseBlockEntities.register();
@@ -69,6 +74,8 @@ public class BCLib implements ModInitializer {
         TemplatePiece.ensureStaticInitialization();
         PlacementModifiers.ensureStaticInitialization();
         Configs.save();
+
+        WorldsTogether.FORCE_SERVER_TO_BETTERX_PRESET = Configs.SERVER_CONFIG.forceBetterXPreset();
 
         if (false && isDevEnvironment()) {
             BCLBiome theYellow = BCLBiomeBuilder

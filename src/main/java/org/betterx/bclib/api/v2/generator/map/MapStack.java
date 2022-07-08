@@ -1,11 +1,11 @@
 package org.betterx.bclib.api.v2.generator.map;
 
 import org.betterx.bclib.api.v2.generator.BiomePicker;
+import org.betterx.bclib.api.v2.generator.config.MapBuilderFunction;
 import org.betterx.bclib.interfaces.BiomeChunk;
 import org.betterx.bclib.interfaces.BiomeMap;
 import org.betterx.bclib.interfaces.TriConsumer;
 import org.betterx.bclib.noise.OpenSimplexNoise;
-import org.betterx.bclib.util.TriFunction;
 
 import net.minecraft.util.Mth;
 
@@ -26,7 +26,7 @@ public class MapStack implements BiomeMap {
             BiomePicker picker,
             int mapHeight,
             int worldHeight,
-            TriFunction<Long, Integer, BiomePicker, BiomeMap> mapConstructor
+            MapBuilderFunction mapConstructor
     ) {
         final int mapCount = Mth.ceil((float) worldHeight / mapHeight);
         this.maxIndex = mapCount - 1;
@@ -37,7 +37,7 @@ public class MapStack implements BiomeMap {
         maps = new BiomeMap[mapCount];
         Random random = new Random(seed);
         for (int i = 0; i < mapCount; i++) {
-            maps[i] = mapConstructor.apply(random.nextLong(), size, picker);
+            maps[i] = mapConstructor.create(random.nextLong(), size, picker);
             maps[i].setChunkProcessor(this::onChunkCreation);
         }
         noise = new OpenSimplexNoise(random.nextInt());

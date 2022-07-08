@@ -16,7 +16,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 public class SurfaceRuleRegistry {
     public static final ResourceKey<Registry<AssignedSurfaceRule>> SURFACE_RULES_REGISTRY =
-            createRegistryKey(WorldsTogether.makeID("worldgen/surface_rules"));
+            createRegistryKey(WorldsTogether.makeID("worldgen/betterx/surface_rules"));
     public static final Predicate<ResourceKey<LevelStem>> NON_MANAGED_DIMENSIONS = dim -> dim != LevelStem.NETHER && dim != LevelStem.END;
     public static final Predicate<ResourceKey<LevelStem>> ALL_DIMENSIONS = dim -> true;
 

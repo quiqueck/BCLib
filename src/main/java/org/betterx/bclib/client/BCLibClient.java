@@ -6,8 +6,8 @@ import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
 import org.betterx.bclib.client.models.CustomModelBakery;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.registry.BaseBlockEntityRenders;
+import org.betterx.bclib.registry.PresetsRegistryClient;
 import org.betterx.worlds.together.WorldsTogether;
-import org.betterx.worlds.together.client.WorldsTogetherClient;
 
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
@@ -31,7 +31,7 @@ public class BCLibClient implements ClientModInitializer, ModelResourceProvider,
         ModelLoadingRegistry.INSTANCE.registerResourceProvider(rm -> this);
         ModelLoadingRegistry.INSTANCE.registerVariantProvider(rm -> this);
 
-        WorldsTogetherClient.onInitializeClient();
+        PresetsRegistryClient.onLoad();
         WorldsTogether.SURPRESS_EXPERIMENTAL_DIALOG = Configs.CLIENT_CONFIG.suppressExperimentalDialog();
         //dumpDatapack();
     }

@@ -11,8 +11,8 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
 public abstract class DefaultFeature extends Feature<NoneFeatureConfiguration> {
-    protected static final BlockState AIR = Blocks.AIR.defaultBlockState();
-    protected static final BlockState WATER = Blocks.WATER.defaultBlockState();
+    public static final BlockState AIR = Blocks.AIR.defaultBlockState();
+    public static final BlockState WATER = Blocks.WATER.defaultBlockState();
 
     public DefaultFeature() {
         super(NoneFeatureConfiguration.CODEC);

@@ -1,5 +1,6 @@
 package org.betterx.worlds.together.chunkgenerator;
 
+import org.betterx.worlds.together.biomesource.BiomeSourceFromRegistry;
 import org.betterx.worlds.together.biomesource.BiomeSourceWithConfig;
 
 import net.minecraft.core.RegistryAccess;
@@ -28,8 +29,14 @@ public interface EnforceableChunkGenerator<G extends ChunkGenerator> {
         if (one == two) return false;
 
         if (one instanceof BiomeSourceWithConfig<?, ?> ba && two instanceof BiomeSourceWithConfig<?, ?> bb) {
-            return !ba.getTogetherConfig().couldSetWithoutRepair(bb.getTogetherConfig());
+            if (!ba.getTogetherConfig().couldSetWithoutRepair(bb.getTogetherConfig()))
+                return true;
         }
+        if (one instanceof BiomeSourceFromRegistry ba && two instanceof BiomeSourceFromRegistry bb) {
+            if (ba.sameRegistryButDifferentBiomes(bb))
+                return true;
+        }
+
         return !one.getClass().isAssignableFrom(two.getClass()) && !two.getClass().isAssignableFrom(one.getClass());
     }
 }

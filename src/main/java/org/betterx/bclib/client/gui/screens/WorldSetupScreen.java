@@ -185,7 +185,11 @@ public class WorldSetupScreen extends BCLibScreen {
                             ? BCLEndBiomeSourceConfig.EndBiomeGeneratorType.PAULEVS
                             : BCLEndBiomeSourceConfig.EndBiomeGeneratorType.VANILLA,
                     generateEndVoid.isChecked(),
-                    BCLEndBiomeSourceConfig.DEFAULT.innerVoidRadiusSquared
+                    BCLEndBiomeSourceConfig.DEFAULT.innerVoidRadiusSquared,
+                    BCLEndBiomeSourceConfig.DEFAULT.centerBiomesSize,
+                    BCLEndBiomeSourceConfig.DEFAULT.voidBiomesSize,
+                    BCLEndBiomeSourceConfig.DEFAULT.landBiomesSize,
+                    BCLEndBiomeSourceConfig.DEFAULT.barrensBiomesSize
             );
 
             ChunkGenerator endGenerator = betterxDimensions.get(LevelStem.END);
@@ -201,7 +205,10 @@ public class WorldSetupScreen extends BCLibScreen {
             BCLNetherBiomeSourceConfig netherConfig = new BCLNetherBiomeSourceConfig(
                     netherLegacy.isChecked()
                             ? BCLNetherBiomeSourceConfig.NetherBiomeMapType.SQUARE
-                            : BCLNetherBiomeSourceConfig.NetherBiomeMapType.HEX
+                            : BCLNetherBiomeSourceConfig.NetherBiomeMapType.HEX,
+                    BCLNetherBiomeSourceConfig.DEFAULT.biomeSize,
+                    BCLNetherBiomeSourceConfig.DEFAULT.biomeSizeVertical,
+                    BCLNetherBiomeSourceConfig.DEFAULT.useVerticalBiomes
             );
 
             ChunkGenerator netherGenerator = betterxDimensions.get(LevelStem.NETHER);

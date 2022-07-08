@@ -24,7 +24,6 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
-import java.util.stream.Collectors;
 
 public abstract class TemplateStructure extends StructureFeature {
     protected final List<Config> configs;
@@ -82,6 +81,14 @@ public abstract class TemplateStructure extends StructureFeature {
 
     protected boolean isFloorPlaceable(BlockState state, BlockState before) {
         return (state == null || state.is(Blocks.AIR)) && before.getMaterial().isSolid();
+    }
+
+    protected int erosion(RandomSource rnd) {
+        return 0;
+    }
+
+    protected boolean cover(RandomSource rnd) {
+        return false;
     }
 
     @Override
@@ -153,8 +160,7 @@ public abstract class TemplateStructure extends StructureFeature {
                         blockPos.getZ(),
                         ctx.heightAccessor(),
                         ctx.randomState()
-                ))
-                .collect(Collectors.toList());
+                )).toList();
 
         int y = noiseColumns
                 .stream()
@@ -185,6 +191,8 @@ public abstract class TemplateStructure extends StructureFeature {
 
         centerPos.setY(y - (searchStep == 1 ? 0 : (structureTemplate.getSize(Rotation.NONE).getY())));
 
+        int erosion = erosion(ctx.random());
+        boolean cover = cover(ctx.random());
         // if (!structure.canGenerate(ctx.chunkGenerator()., centerPos))
         return Optional.of(new GenerationStub(
                 centerPos,
@@ -200,7 +208,9 @@ public abstract class TemplateStructure extends StructureFeature {
                                         ),
                                         rotation,
                                         mirror,
-                                        halfSize
+                                        halfSize,
+                                        erosion,
+                                        cover
                                 ))
         ));
 

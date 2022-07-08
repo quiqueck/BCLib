@@ -1,7 +1,9 @@
 package org.betterx.bclib.api.v2.generator;
 
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
+import org.betterx.worlds.together.biomesource.BiomeSourceFromRegistry;
 import org.betterx.worlds.together.biomesource.MergeableBiomeSource;
+import org.betterx.worlds.together.world.BiomeSourceWithNoiseRelatedSettings;
 import org.betterx.worlds.together.world.BiomeSourceWithSeed;
 
 import net.minecraft.core.Holder;
@@ -9,6 +11,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
+import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 
 import com.google.common.collect.Sets;
 
@@ -16,7 +19,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceWithSeed, MergeableBiomeSource<BCLBiomeSource> {
+public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceWithSeed, MergeableBiomeSource<BCLBiomeSource>, BiomeSourceWithNoiseRelatedSettings, BiomeSourceFromRegistry {
     protected final Registry<Biome> biomeRegistry;
     protected long currentSeed;
     protected int maxHeight;
@@ -109,5 +112,13 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
     public BCLBiomeSource mergeWithBiomeSource(BiomeSource inputBiomeSource) {
         final Set<Holder<Biome>> datapackBiomes = inputBiomeSource.possibleBiomes();
         return this.createCopyForDatapack(datapackBiomes);
+    }
+
+    public void onLoadGeneratorSettings(NoiseGeneratorSettings generator) {
+        this.setMaxHeight(generator.noiseSettings().height());
+    }
+
+    public Registry<Biome> getBiomeRegistry() {
+        return biomeRegistry;
     }
 }

@@ -1,15 +1,14 @@
 package org.betterx.bclib.api.v2.generator.config;
 
+import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.generator.BCLibEndBiomeSource;
-import org.betterx.bclib.api.v2.generator.BiomePicker;
 import org.betterx.bclib.api.v2.generator.map.hex.HexBiomeMap;
 import org.betterx.bclib.api.v2.generator.map.square.SquareBiomeMap;
-import org.betterx.bclib.interfaces.BiomeMap;
-import org.betterx.bclib.util.TriFunction;
 import org.betterx.worlds.together.biomesource.config.BiomeSourceConfig;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.util.Mth;
 import net.minecraft.util.StringRepresentable;
 
 import java.util.Objects;
@@ -20,19 +19,31 @@ public class BCLEndBiomeSourceConfig implements BiomeSourceConfig<BCLibEndBiomeS
             EndBiomeMapType.VANILLA,
             EndBiomeGeneratorType.VANILLA,
             true,
-            4096
+            4096,
+            128,
+            128,
+            128,
+            128
     );
     public static final BCLEndBiomeSourceConfig MINECRAFT_17 = new BCLEndBiomeSourceConfig(
             EndBiomeMapType.SQUARE,
             EndBiomeGeneratorType.PAULEVS,
             true,
-            1000000
+            VANILLA.innerVoidRadiusSquared * 16 * 16,
+            256,
+            256,
+            256,
+            256
     );
     public static final BCLEndBiomeSourceConfig MINECRAFT_18 = new BCLEndBiomeSourceConfig(
             EndBiomeMapType.HEX,
-            EndBiomeGeneratorType.PAULEVS,
-            false,
-            MINECRAFT_17.innerVoidRadiusSquared
+            BCLib.RUNS_NULLSCAPE ? EndBiomeGeneratorType.VANILLA : EndBiomeGeneratorType.PAULEVS,
+            BCLib.RUNS_NULLSCAPE ? false : true,
+            MINECRAFT_17.innerVoidRadiusSquared,
+            MINECRAFT_17.centerBiomesSize,
+            MINECRAFT_17.voidBiomesSize,
+            MINECRAFT_17.landBiomesSize,
+            MINECRAFT_17.barrensBiomesSize
     );
     public static final BCLEndBiomeSourceConfig DEFAULT = MINECRAFT_18;
 
@@ -53,7 +64,23 @@ public class BCLEndBiomeSourceConfig implements BiomeSourceConfig<BCLibEndBiomeS
                     Codec.INT
                             .fieldOf("inner_void_radius_squared")
                             .orElse(DEFAULT.innerVoidRadiusSquared)
-                            .forGetter(o -> o.innerVoidRadiusSquared)
+                            .forGetter(o -> o.innerVoidRadiusSquared),
+                    Codec.INT
+                            .fieldOf("center_biomes_size")
+                            .orElse(DEFAULT.centerBiomesSize)
+                            .forGetter(o -> o.centerBiomesSize),
+                    Codec.INT
+                            .fieldOf("void_biomes_size")
+                            .orElse(DEFAULT.voidBiomesSize)
+                            .forGetter(o -> o.voidBiomesSize),
+                    Codec.INT
+                            .fieldOf("land_biomes_size")
+                            .orElse(DEFAULT.landBiomesSize)
+                            .forGetter(o -> o.landBiomesSize),
+                    Codec.INT
+                            .fieldOf("barrens_biomes_size")
+                            .orElse(DEFAULT.barrensBiomesSize)
+                            .forGetter(o -> o.barrensBiomesSize)
             )
             .apply(instance, BCLEndBiomeSourceConfig::new));
 
@@ -61,12 +88,20 @@ public class BCLEndBiomeSourceConfig implements BiomeSourceConfig<BCLibEndBiomeS
             @NotNull EndBiomeMapType mapVersion,
             @NotNull EndBiomeGeneratorType generatorVersion,
             boolean withVoidBiomes,
-            int innerVoidRadiusSquared
+            int innerVoidRadiusSquared,
+            int centerBiomesSize,
+            int voidBiomesSize,
+            int landBiomesSize,
+            int barrensBiomesSize
     ) {
         this.mapVersion = mapVersion;
         this.generatorVersion = generatorVersion;
         this.withVoidBiomes = withVoidBiomes;
         this.innerVoidRadiusSquared = innerVoidRadiusSquared;
+        this.barrensBiomesSize = Mth.clamp(barrensBiomesSize, 1, 8192);
+        this.voidBiomesSize = Mth.clamp(voidBiomesSize, 1, 8192);
+        this.centerBiomesSize = Mth.clamp(centerBiomesSize, 1, 8192);
+        this.landBiomesSize = Mth.clamp(landBiomesSize, 1, 8192);
     }
 
     public enum EndBiomeMapType implements StringRepresentable {
@@ -76,9 +111,9 @@ public class BCLEndBiomeSourceConfig implements BiomeSourceConfig<BCLibEndBiomeS
 
         public static final Codec<EndBiomeMapType> CODEC = StringRepresentable.fromEnum(EndBiomeMapType::values);
         public final String name;
-        public final @NotNull TriFunction<Long, Integer, BiomePicker, BiomeMap> mapBuilder;
+        public final @NotNull MapBuilderFunction mapBuilder;
 
-        EndBiomeMapType(String name, @NotNull TriFunction<Long, Integer, BiomePicker, BiomeMap> mapBuilder) {
+        EndBiomeMapType(String name, @NotNull MapBuilderFunction mapBuilder) {
             this.name = name;
             this.mapBuilder = mapBuilder;
         }
@@ -122,13 +157,22 @@ public class BCLEndBiomeSourceConfig implements BiomeSourceConfig<BCLibEndBiomeS
     public final boolean withVoidBiomes;
     public final int innerVoidRadiusSquared;
 
+    public final int voidBiomesSize;
+    public final int centerBiomesSize;
+    public final int landBiomesSize;
+    public final int barrensBiomesSize;
+
     @Override
     public String toString() {
-        return "BCLibEndBiomeSourceConfig{" +
+        return "BCLEndBiomeSourceConfig{" +
                 "mapVersion=" + mapVersion +
                 ", generatorVersion=" + generatorVersion +
                 ", withVoidBiomes=" + withVoidBiomes +
                 ", innerVoidRadiusSquared=" + innerVoidRadiusSquared +
+                ", voidBiomesSize=" + voidBiomesSize +
+                ", centerBiomesSize=" + centerBiomesSize +
+                ", landBiomesSize=" + landBiomesSize +
+                ", barrensBiomesSize=" + barrensBiomesSize +
                 '}';
     }
 
@@ -148,13 +192,22 @@ public class BCLEndBiomeSourceConfig implements BiomeSourceConfig<BCLibEndBiomeS
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof BCLEndBiomeSourceConfig)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         BCLEndBiomeSourceConfig that = (BCLEndBiomeSourceConfig) o;
-        return withVoidBiomes == that.withVoidBiomes && innerVoidRadiusSquared == that.innerVoidRadiusSquared && mapVersion == that.mapVersion && generatorVersion == that.generatorVersion;
+        return withVoidBiomes == that.withVoidBiomes && innerVoidRadiusSquared == that.innerVoidRadiusSquared && voidBiomesSize == that.voidBiomesSize && centerBiomesSize == that.centerBiomesSize && landBiomesSize == that.landBiomesSize && barrensBiomesSize == that.barrensBiomesSize && mapVersion == that.mapVersion && generatorVersion == that.generatorVersion;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(mapVersion, generatorVersion, withVoidBiomes, innerVoidRadiusSquared);
+        return Objects.hash(
+                mapVersion,
+                generatorVersion,
+                withVoidBiomes,
+                innerVoidRadiusSquared,
+                voidBiomesSize,
+                centerBiomesSize,
+                landBiomesSize,
+                barrensBiomesSize
+        );
     }
 }

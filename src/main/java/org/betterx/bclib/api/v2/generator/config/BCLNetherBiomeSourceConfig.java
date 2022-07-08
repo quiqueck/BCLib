@@ -1,15 +1,13 @@
 package org.betterx.bclib.api.v2.generator.config;
 
 import org.betterx.bclib.api.v2.generator.BCLibNetherBiomeSource;
-import org.betterx.bclib.api.v2.generator.BiomePicker;
 import org.betterx.bclib.api.v2.generator.map.hex.HexBiomeMap;
 import org.betterx.bclib.api.v2.generator.map.square.SquareBiomeMap;
-import org.betterx.bclib.interfaces.BiomeMap;
-import org.betterx.bclib.util.TriFunction;
 import org.betterx.worlds.together.biomesource.config.BiomeSourceConfig;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.util.Mth;
 import net.minecraft.util.StringRepresentable;
 
 import java.util.Objects;
@@ -17,13 +15,22 @@ import org.jetbrains.annotations.NotNull;
 
 public class BCLNetherBiomeSourceConfig implements BiomeSourceConfig<BCLibNetherBiomeSource> {
     public static final BCLNetherBiomeSourceConfig VANILLA = new BCLNetherBiomeSourceConfig(
-            NetherBiomeMapType.VANILLA
+            NetherBiomeMapType.VANILLA,
+            256,
+            86,
+            false
     );
     public static final BCLNetherBiomeSourceConfig MINECRAFT_17 = new BCLNetherBiomeSourceConfig(
-            NetherBiomeMapType.SQUARE
+            NetherBiomeMapType.SQUARE,
+            256,
+            86,
+            true
     );
     public static final BCLNetherBiomeSourceConfig MINECRAFT_18 = new BCLNetherBiomeSourceConfig(
-            NetherBiomeMapType.HEX
+            NetherBiomeMapType.HEX,
+            MINECRAFT_17.biomeSize,
+            MINECRAFT_17.biomeSizeVertical,
+            MINECRAFT_17.useVerticalBiomes
     );
     public static final BCLNetherBiomeSourceConfig DEFAULT = MINECRAFT_18;
 
@@ -32,13 +39,32 @@ public class BCLNetherBiomeSourceConfig implements BiomeSourceConfig<BCLibNether
                     BCLNetherBiomeSourceConfig.NetherBiomeMapType.CODEC
                             .fieldOf("map_type")
                             .orElse(DEFAULT.mapVersion)
-                            .forGetter(o -> o.mapVersion)
+                            .forGetter(o -> o.mapVersion),
+                    Codec.INT.fieldOf("biome_size").orElse(DEFAULT.biomeSize).forGetter(o -> o.biomeSize),
+                    Codec.INT.fieldOf("biome_size_vertical")
+                             .orElse(DEFAULT.biomeSizeVertical)
+                             .forGetter(o -> o.biomeSizeVertical),
+                    Codec.BOOL.fieldOf("use_vertical_biomes")
+                              .orElse(DEFAULT.useVerticalBiomes)
+                              .forGetter(o -> o.useVerticalBiomes)
             )
             .apply(instance, BCLNetherBiomeSourceConfig::new));
     public final @NotNull NetherBiomeMapType mapVersion;
+    public final int biomeSize;
+    public final int biomeSizeVertical;
 
-    public BCLNetherBiomeSourceConfig(@NotNull NetherBiomeMapType mapVersion) {
+    public final boolean useVerticalBiomes;
+
+    public BCLNetherBiomeSourceConfig(
+            @NotNull NetherBiomeMapType mapVersion,
+            int biomeSize,
+            int biomeSizeVertical,
+            boolean useVerticalBiomes
+    ) {
         this.mapVersion = mapVersion;
+        this.biomeSize = Mth.clamp(biomeSize, 1, 8192);
+        this.biomeSizeVertical = Mth.clamp(biomeSizeVertical, 1, 8192);
+        this.useVerticalBiomes = useVerticalBiomes;
     }
 
     @Override
@@ -81,9 +107,9 @@ public class BCLNetherBiomeSourceConfig implements BiomeSourceConfig<BCLibNether
 
         public static final Codec<NetherBiomeMapType> CODEC = StringRepresentable.fromEnum(NetherBiomeMapType::values);
         public final String name;
-        public final TriFunction<Long, Integer, BiomePicker, BiomeMap> mapBuilder;
+        public final MapBuilderFunction mapBuilder;
 
-        NetherBiomeMapType(String name, TriFunction<Long, Integer, BiomePicker, BiomeMap> mapBuilder) {
+        NetherBiomeMapType(String name, MapBuilderFunction mapBuilder) {
             this.name = name;
             this.mapBuilder = mapBuilder;
         }

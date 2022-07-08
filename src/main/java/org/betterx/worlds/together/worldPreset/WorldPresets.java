@@ -1,7 +1,8 @@
 package org.betterx.worlds.together.worldPreset;
 
-import org.betterx.bclib.registry.PresetsRegistry;
 import org.betterx.worlds.together.WorldsTogether;
+import org.betterx.worlds.together.entrypoints.EntrypointUtil;
+import org.betterx.worlds.together.entrypoints.WorldPresetBootstrap;
 import org.betterx.worlds.together.levelgen.WorldGenUtil;
 import org.betterx.worlds.together.tag.v3.TagManager;
 import org.betterx.worlds.together.tag.v3.TagRegistry;
@@ -109,7 +110,8 @@ public class WorldPresets {
             WorldGenUtil.Context netherContext,
             WorldGenUtil.Context endContext
     ) {
-        PresetsRegistry.onLoad();
+        EntrypointUtil.getCommon(WorldPresetBootstrap.class)
+                      .forEach(e -> e.bootstrapWorldPresets());
 
         for (Map.Entry<ResourceKey<WorldPreset>, PresetBuilder> e : BUILDERS.entrySet()) {
             TogetherWorldPreset preset = e.getValue().create(overworldStem, netherContext, endContext);

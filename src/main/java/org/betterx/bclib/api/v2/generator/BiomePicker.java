@@ -1,7 +1,7 @@
 package org.betterx.bclib.api.v2.generator;
 
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
-import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
+import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
 import org.betterx.bclib.util.WeighTree;
 import org.betterx.bclib.util.WeightedList;
 
@@ -23,6 +23,7 @@ public class BiomePicker {
     public final Registry<Biome> biomeRegistry;
     private final List<ActualBiome> biomes = Lists.newArrayList();
     private final List<String> allowedBiomes;
+    public final ActualBiome fallbackBiome;
     private WeighTree<ActualBiome> tree;
 
     public BiomePicker(Registry<Biome> biomeRegistry) {
@@ -36,6 +37,7 @@ public class BiomePicker {
                 .map(h -> h.unwrapKey())
                 .filter(o -> o.isPresent())
                 .map(o -> o.get().location().toString()).toList() : null;
+        this.fallbackBiome = create(BCLBiomeRegistry.EMPTY_BIOME);
     }
 
     private boolean isAllowed(BCLBiome b) {
@@ -54,18 +56,34 @@ public class BiomePicker {
     }
 
     public ActualBiome getBiome(WorldgenRandom random) {
-        return biomes.isEmpty() ? null : tree.get(random);
+        return biomes.isEmpty() ? fallbackBiome : tree.get(random);
+    }
+
+    public boolean isEmpty() {
+        return biomes.isEmpty();
     }
 
     public void rebuild() {
         WeightedList<ActualBiome> list = new WeightedList<>();
-        if (biomes.isEmpty()) {
-            list.add(create(BiomeAPI.EMPTY_BIOME), 1);
-        } else {
-            biomes.forEach(biome -> {
-                if (biome.isValid)
-                    list.add(biome, biome.bclBiome.getGenChance());
-            });
+
+        biomes.forEach(biome -> {
+            if (biome.isValid)
+                list.add(biome, biome.bclBiome.getGenChance());
+        });
+        //only a single biome, we need to add the edges as well
+        if (list.size() == 1) {
+            ActualBiome biome = list.get(0);
+
+            if (biome.getEdge() != null) {
+                float defaultBiomeSize = 128;
+                float edgeSize = (biome.bclBiome.getEdgeSize() * list.getWeight(0)) / defaultBiomeSize;
+                list.add(biome.getEdge(), edgeSize);
+            }
+        }
+
+        //no Biome, make sure we add at least one, otherwise bad things will happen
+        if (list.isEmpty()) {
+            list.add(create(BCLBiomeRegistry.EMPTY_BIOME), 1);
         }
 
 
@@ -88,7 +106,7 @@ public class BiomePicker {
 
             this.key = biomeRegistry.getResourceKey(biomeRegistry.get(bclBiome.getID())).orElse(null);
             this.biome = key != null ? biomeRegistry.getOrCreateHolderOrThrow(key) : null;
-            this.isValid = key != null;
+            this.isValid = key != null && biome != null && biome.isBound();
             bclBiome.forEachSubBiome((b, w) -> {
                 if (isAllowed(b))
                     subbiomes.add(create(b), w);
@@ -131,5 +149,25 @@ public class BiomePicker {
         public boolean isSame(ActualBiome e) {
             return bclBiome.isSame(e.bclBiome);
         }
+
+        @Override
+        public String toString() {
+            return "ActualBiome{" +
+                    "key=" + key.location() +
+                    ", subbiomes=" + subbiomes.size() +
+                    ", edge=" + (edge != null ? edge.key.location() : "null") +
+                    ", parent=" + (parent != null ? parent.key.location() : "null") +
+                    ", isValid=" + isValid +
+                    '}';
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "BiomePicker{" +
+                "biomes=" + biomes.size() + " (" + all.size() + ")" +
+                ", biomeRegistry=" + biomeRegistry +
+                ", type=" + super.toString() +
+                '}';
     }
 }

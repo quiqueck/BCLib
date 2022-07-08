@@ -3,9 +3,12 @@ package org.betterx.worlds.together.levelgen;
 import org.betterx.bclib.util.MHelper;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.biomesource.BiomeSourceWithConfig;
+import org.betterx.worlds.together.biomesource.ReloadableBiomeSource;
 import org.betterx.worlds.together.chunkgenerator.EnforceableChunkGenerator;
+import org.betterx.worlds.together.world.BiomeSourceWithNoiseRelatedSettings;
 import org.betterx.worlds.together.world.BiomeSourceWithSeed;
 import org.betterx.worlds.together.world.WorldConfig;
+import org.betterx.worlds.together.world.event.WorldBootstrap;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
 import org.betterx.worlds.together.worldPreset.WorldPreset;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
@@ -20,6 +23,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
@@ -45,6 +49,11 @@ public class WorldGenUtil {
         for (LevelStem stem : settings.dimensions()) {
             if (stem.generator().getBiomeSource() instanceof BiomeSourceWithSeed bcl) {
                 bcl.setSeed(seed);
+            }
+
+            if (stem.generator().getBiomeSource() instanceof BiomeSourceWithNoiseRelatedSettings bcl
+                    && stem.generator() instanceof NoiseBasedChunkGenerator noiseGenerator) {
+                bcl.onLoadGeneratorSettings(noiseGenerator.generatorSettings().value());
             }
         }
 
@@ -132,6 +141,7 @@ public class WorldGenUtil {
     ) {
         var dimensions = TogetherWorldPreset.loadWorldDimensions();
         for (var entry : settings.dimensions().entrySet()) {
+            boolean didRepair = false;
             ResourceKey<LevelStem> key = entry.getKey();
             LevelStem loadedStem = entry.getValue();
 
@@ -147,6 +157,7 @@ public class WorldGenUtil {
                             loadedChunkGenerator,
                             settings
                     );
+                    didRepair = true;
                 } else if (loadedChunkGenerator.getBiomeSource() instanceof BiomeSourceWithConfig bs) {
                     if (referenceGenerator.getBiomeSource() instanceof BiomeSourceWithConfig refbs) {
                         if (!refbs.getTogetherConfig().sameConfig(bs.getTogetherConfig())) {
@@ -155,7 +166,26 @@ public class WorldGenUtil {
                     }
                 }
             }
+
+            if (!didRepair) {
+                if (loadedStem.generator().getBiomeSource() instanceof ReloadableBiomeSource reload) {
+                    reload.reloadBiomes();
+                }
+            }
         }
         return settings;
+    }
+
+    public static ResourceLocation getBiomeID(Biome biome) {
+        ResourceLocation id = null;
+        RegistryAccess access = WorldBootstrap.getLastRegistryAccessOrElseBuiltin();
+
+        id = access.registryOrThrow(Registry.BIOME_REGISTRY).getKey(biome);
+
+        if (id == null) {
+            WorldsTogether.LOGGER.error("Unable to get ID for " + biome + ".");
+        }
+
+        return id;
     }
 }

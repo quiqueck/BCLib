@@ -1,7 +1,7 @@
 package org.betterx.worlds.together.tag.v3;
 
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
+import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
+import org.betterx.worlds.together.WorldsTogether;
 
 import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Registry;
@@ -188,7 +188,7 @@ public class TagRegistry<T> {
     }
 
     public void addUntyped(TagKey<T> tagID, ResourceLocation... elements) {
-        if (isFrozen) BCLib.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
+        if (isFrozen) WorldsTogether.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
         Set<Tag.Entry> set = getSetForTag(tagID);
         for (ResourceLocation id : elements) {
             if (id != null) {
@@ -204,7 +204,7 @@ public class TagRegistry<T> {
     }
 
     public void addOtherTags(TagKey<T> tagID, TagKey<T>... tags) {
-        if (isFrozen) BCLib.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
+        if (isFrozen) WorldsTogether.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
         Set<Tag.Entry> set = getSetForTag(tagID);
         for (TagKey<T> tag : tags) {
             ResourceLocation id = tag.location();
@@ -221,7 +221,7 @@ public class TagRegistry<T> {
      * @param elements array of Elements to add into tag.
      */
     protected void add(TagKey<T> tagID, T... elements) {
-        if (isFrozen) BCLib.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
+        if (isFrozen) WorldsTogether.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
         Set<Tag.Entry> set = getSetForTag(tagID);
         for (T element : elements) {
             ResourceLocation id = locationProvider.apply(element);
@@ -239,7 +239,7 @@ public class TagRegistry<T> {
 
     @Deprecated(forRemoval = true)
     protected void add(ResourceLocation tagID, T... elements) {
-        if (isFrozen) BCLib.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
+        if (isFrozen) WorldsTogether.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
         Set<Tag.Entry> set = getSetForTag(tagID);
         for (T element : elements) {
             ResourceLocation id = locationProvider.apply(element);
@@ -271,7 +271,7 @@ public class TagRegistry<T> {
             Tag.Builder builder,
             Set<Tag.Entry> ids
     ) {
-        ids.forEach(value -> builder.add(new Tag.BuilderEntry(value, BCLib.MOD_ID)));
+        ids.forEach(value -> builder.add(new Tag.BuilderEntry(value, WorldsTogether.MOD_ID)));
         return builder;
     }
 }

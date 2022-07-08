@@ -103,6 +103,22 @@ public class BCLBiomeSettings {
         }
     }
 
+    BCLBiomeSettings(
+            float terrainHeight,
+            float fogDensity,
+            float genChance,
+            int edgeSize,
+            boolean vertical,
+            BCLBiome edge
+    ) {
+        this.terrainHeight = terrainHeight;
+        this.fogDensity = fogDensity;
+        this.genChance = genChance;
+        this.edgeSize = edgeSize;
+        this.vertical = vertical;
+        this.edge = edge;
+    }
+
     protected BCLBiomeSettings() {
         this.terrainHeight = 0.1F;
         this.fogDensity = 1.0F;

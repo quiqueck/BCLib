@@ -1,6 +1,5 @@
 package org.betterx.worlds.together.util;
 
-import org.betterx.bclib.BCLib;
 import org.betterx.worlds.together.WorldsTogether;
 
 import net.fabricmc.loader.api.*;
@@ -261,8 +260,6 @@ public class ModUtil {
      * @return The version of the locally installed Mod
      */
     public static String getModVersion(String modID) {
-        if (modID == WorldsTogether.MOD_ID) modID = BCLib.MOD_ID;
-
         Optional<ModContainer> optional = FabricLoader.getInstance()
                                                       .getModContainer(modID);
         if (optional.isPresent()) {

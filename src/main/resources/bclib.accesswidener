@@ -9,6 +9,8 @@ accessible	class	net/minecraft/world/level/levelgen/SurfaceRules$LazyXZCondition
 accessible	class	net/minecraft/world/level/levelgen/SurfaceRules$LazyCondition
 accessible	class	net/minecraft/world/level/levelgen/SurfaceRules$SequenceRuleSource
 extendable  class   net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator
+accessible  class   net/minecraft/data/BuiltinRegistries$RegistryBootstrap
+accessible class net/minecraft/core/Registry$RegistryBootstrap
 accessible class net/minecraft/world/level/levelgen/SurfaceRules$SequenceRuleSource
 accessible class net/minecraft/core/Registry$RegistryBootstrap
 accessible class net/minecraft/tags/Tag$ElementEntry
@@ -27,3 +29,5 @@ accessible field net/minecraft/client/gui/screens/worldselection/WorldPreset SIN
 accessible field net/minecraft/client/gui/screens/worldselection/WorldPreset PRESETS Ljava/util/List;
 accessible field net/minecraft/client/gui/screens/worldselection/WorldPreset EDITORS Ljava/util/Map;
 
+
+accessible method net/minecraft/core/Registry registerSimple (Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/core/Registry$RegistryBootstrap;)Lnet/minecraft/core/Registry;

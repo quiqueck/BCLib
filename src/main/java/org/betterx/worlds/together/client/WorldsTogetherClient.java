@@ -2,8 +2,10 @@ package org.betterx.worlds.together.client;
 
 import org.betterx.worlds.together.worldPreset.client.WorldPresetsClient;
 
-public class WorldsTogetherClient {
-    public static void onInitializeClient() {
+import net.fabricmc.api.ClientModInitializer;
+
+public class WorldsTogetherClient implements ClientModInitializer {
+    public void onInitializeClient() {
         WorldPresetsClient.setupClientside();
     }
 }

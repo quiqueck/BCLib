@@ -32,7 +32,7 @@ public abstract class WorldOpenFlowsMixin {
     protected abstract void doLoadLevel(Screen screen, String levelID, boolean safeMode, boolean canAskForBackup);
 
     @Inject(method = "loadLevel", cancellable = true, at = @At("HEAD"))
-    private void bcl_callFixerOnLoad(Screen screen, String levelID, CallbackInfo ci) {
+    private void wt_callFixerOnLoad(Screen screen, String levelID, CallbackInfo ci) {
         WorldBootstrap.InGUI.setupLoadedWorld(levelID, this.levelSource);
 
         //if (DataFixerAPI.fixData(this.levelSource, levelID, true, (appliedFixes) -> {
@@ -53,7 +53,7 @@ public abstract class WorldOpenFlowsMixin {
     }
 
     @Inject(method = "createFreshLevel", at = @At("HEAD"))
-    public void bcl_createFreshLevel(
+    public void wt_createFreshLevel(
             String levelID,
             LevelSettings levelSettings,
             RegistryAccess registryAccess,
@@ -64,7 +64,7 @@ public abstract class WorldOpenFlowsMixin {
     }
 
     @Inject(method = "createLevelFromExistingSettings", at = @At("HEAD"))
-    public void bcl_createLevelFromExistingSettings(
+    public void wt_createLevelFromExistingSettings(
             LevelStorageSource.LevelStorageAccess levelStorageAccess,
             ReloadableServerResources reloadableServerResources,
             RegistryAccess.Frozen frozen,

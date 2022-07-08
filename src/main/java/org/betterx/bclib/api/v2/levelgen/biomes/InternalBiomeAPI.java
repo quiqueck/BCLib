@@ -34,8 +34,30 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 public class InternalBiomeAPI {
+    public static final BiomeAPI.BiomeType OTHER_NETHER = new BiomeAPI.BiomeType(
+            "OTHER_NETHER",
+            BiomeAPI.BiomeType.NETHER
+    );
+    public static final BiomeAPI.BiomeType OTHER_END_LAND = new BiomeAPI.BiomeType(
+            "OTHER_END_LAND",
+            BiomeAPI.BiomeType.END_LAND
+    );
+    public static final BiomeAPI.BiomeType OTHER_END_VOID = new BiomeAPI.BiomeType(
+            "OTHER_END_VOID",
+            BiomeAPI.BiomeType.END_VOID
+    );
+    public static final BiomeAPI.BiomeType OTHER_END_CENTER = new BiomeAPI.BiomeType(
+            "OTHER_END_CENTER",
+            BiomeAPI.BiomeType.END_CENTER
+    );
+    public static final BiomeAPI.BiomeType OTHER_END_BARRENS = new BiomeAPI.BiomeType(
+            "OTHER_END_BARRENS",
+            BiomeAPI.BiomeType.END_BARRENS
+    );
     static final Map<Biome, BCLBiome> CLIENT = Maps.newHashMap();
     static final Map<Holder<PlacedFeature>, Integer> FEATURE_ORDER = Maps.newHashMap();
     static final MutableInt FEATURE_ORDER_ID = new MutableInt(0);
@@ -86,7 +108,7 @@ public class InternalBiomeAPI {
                 BIOMES_TO_SORT.forEach(id -> {
                     Biome b = biomeRegistry.get(id);
                     if (b != null) {
-                        BCLib.LOGGER.info("Sorting Features in Biome: " + id + "(" + b + ")");
+                        BCLib.LOGGER.info("Found non fabric/bclib Biome: " + id + "(" + b + ")");
                         BiomeAPI.sortBiomeFeatures(b);
                     } else {
                         BCLib.LOGGER.info("Unknown Biome: " + id);
@@ -143,21 +165,17 @@ public class InternalBiomeAPI {
     public static void _runBiomeTagAdders() {
         for (var mod : TAG_ADDERS.entrySet()) {
             Stream<ResourceLocation> s = null;
-            if (mod.getKey() == Level.NETHER) s = BiomeAPI.BiomeType.BIOME_TYPE_MAP.entrySet()
-                                                                                   .stream()
-                                                                                   .filter(e -> e.getValue()
-                                                                                                 .is(BiomeAPI.BiomeType.NETHER))
-                                                                                   .map(e -> e.getKey());
-            else if (mod.getKey() == Level.END) s = BiomeAPI.BiomeType.BIOME_TYPE_MAP.entrySet()
-                                                                                     .stream()
-                                                                                     .filter(e -> e.getValue().is(
-                                                                                             BiomeAPI.BiomeType.END))
-                                                                                     .map(e -> e.getKey());
+            if (mod.getKey() == Level.NETHER)
+                s = BCLBiomeRegistry.getAll(BiomeAPI.BiomeType.NETHER).map(k -> k.location());
+            else if (mod.getKey() == Level.END)
+                s = BCLBiomeRegistry.getAll(BiomeAPI.BiomeType.END).map(k -> k.location());
             if (s != null) {
                 s.forEach(id -> {
-                    Holder<Biome> biomeHolder = BiomeAPI.getBiomeHolder(id);
-                    if (biomeHolder.isBound()) {
+                    Holder<Biome> biomeHolder = BiomeAPI.getFromRegistry(id);
+                    if (biomeHolder != null && biomeHolder.isBound()) {
                         mod.getValue().forEach(c -> c.accept(id, biomeHolder));
+                    } else {
+                        BCLib.LOGGER.info("No Holder for " + id);
                     }
                 });
             }
@@ -246,6 +264,93 @@ public class InternalBiomeAPI {
 
     private static final Set<ResourceLocation> BIOMES_TO_SORT = Sets.newHashSet();
 
+
+    /**
+     * Register {@link BCLBiome} wrapper for {@link Biome}.
+     * After that biome will be added to BCLib End Biome Generator and into Fabric Biome API as a land biome (will generate only on islands).
+     *
+     * @param biomeKey The source biome to wrap
+     * @return {@link BCLBiome}
+     */
+    public static BCLBiome wrapNativeBiome(ResourceKey<Biome> biomeKey, BiomeAPI.BiomeType type) {
+        return wrapNativeBiome(biomeKey, -1, type);
+    }
+
+    /**
+     * Register {@link BCLBiome} wrapper for {@link Biome}.
+     * After that biome will be added to BCLib End Biome Generator and into Fabric Biome API as a land biome (will generate only on islands).
+     *
+     * @param biomeKey  The source biome to wrap
+     * @param genChance generation chance. If &lt;0 the default genChance is used
+     * @return {@link BCLBiome}
+     */
+    public static BCLBiome wrapNativeBiome(ResourceKey<Biome> biomeKey, float genChance, BiomeAPI.BiomeType type) {
+        return wrapNativeBiome(
+                biomeKey,
+                genChance < 0 ? null : VanillaBiomeSettings.createVanilla().setGenChance(genChance).build(),
+                type
+        );
+    }
+
+    public static BCLBiome wrapNativeBiome(
+            ResourceKey<Biome> biomeKey,
+            BCLBiome edgeBiome,
+            int edgeBiomeSize,
+            float genChance,
+            BiomeAPI.BiomeType type
+    ) {
+        VanillaBiomeSettings.Builder settings = VanillaBiomeSettings.createVanilla();
+        if (genChance >= 0) settings.setGenChance(genChance);
+        settings.setEdge(edgeBiome);
+        settings.setEdgeSize(edgeBiomeSize);
+        return wrapNativeBiome(biomeKey, settings.build(), type);
+    }
+
+    /**
+     * Register {@link BCLBiome} wrapper for {@link Biome}.
+     * After that biome will be added to BCLib End Biome Generator and into Fabric Biome API as a land biome (will generate only on islands).
+     *
+     * @param biomeKey The source biome to wrap
+     * @param setings  the {@link VanillaBiomeSettings} to use
+     * @return {@link BCLBiome}
+     */
+    private static BCLBiome wrapNativeBiome(
+            ResourceKey<Biome> biomeKey,
+            VanillaBiomeSettings setings,
+            BiomeAPI.BiomeType type
+    ) {
+        BCLBiome bclBiome = BiomeAPI.getBiome(biomeKey.location());
+        if (bclBiome == BCLBiomeRegistry.EMPTY_BIOME) {
+            bclBiome = new BCLBiome(biomeKey, setings);
+            bclBiome._setIntendedType(type);
+        }
+
+        BiomeAPI.registerBiome(bclBiome);
+        return bclBiome;
+    }
+
+    /**
+     * Register {@link BCLBiome} wrapper for {@link Biome}.
+     * After that biome will be added to BCLib End Biome Generator and into Fabric Biome API as a land biome (will generate only on islands).
+     *
+     * @param biome     The source biome to wrap
+     * @param genChance generation chance.
+     * @return {@link BCLBiome}
+     */
+    @Deprecated(forRemoval = true)
+    static BCLBiome wrapNativeBiome(Biome biome, float genChance, BiomeAPI.BiomeType type) {
+        BCLBiome bclBiome = BiomeAPI.getBiome(biome);
+        if (bclBiome == BCLBiomeRegistry.EMPTY_BIOME) {
+            bclBiome = new BCLBiome(
+                    biome,
+                    genChance < 0 ? null : VanillaBiomeSettings.createVanilla().setGenChance(genChance).build()
+            );
+        }
+
+        BiomeAPI.registerBiome(bclBiome, type, null);
+        return bclBiome;
+    }
+
     static {
         DynamicRegistrySetupCallback.EVENT.register(registryManager -> {
             Optional<? extends Registry<Biome>> oBiomeRegistry = registryManager.registry(Registry.BIOME_REGISTRY);
@@ -253,11 +358,21 @@ public class InternalBiomeAPI {
                     .event(oBiomeRegistry.get())
                     .register((rawId, id, biome) -> {
                         BCLBiome b = BiomeAPI.getBiome(id);
-                        if (!"minecraft".equals(id.getNamespace()) && (b == null || b == BiomeAPI.EMPTY_BIOME)) {
+                        if (!"minecraft".equals(id.getNamespace()) && (b == null || b == BCLBiomeRegistry.EMPTY_BIOME)) {
                             //BCLib.LOGGER.info(" #### " + rawId + ", " + biome + ", " + id);
                             BIOMES_TO_SORT.add(id);
                         }
                     });
         });
+    }
+
+    public static boolean registryContainsBound(ResourceKey<Biome> key) {
+        Registry<Biome> reg = biomeRegistry;
+        if (reg == null) reg = BuiltinRegistries.BIOME;
+
+        if (reg.containsKey(key)) {
+            return reg.getOrCreateHolderOrThrow(key).isBound();
+        }
+        return false;
     }
 }
