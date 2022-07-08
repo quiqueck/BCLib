@@ -9,12 +9,12 @@ accessible	class	net/minecraft/world/level/levelgen/SurfaceRules$LazyXZCondition
 accessible	class	net/minecraft/world/level/levelgen/SurfaceRules$LazyCondition
 accessible	class	net/minecraft/world/level/levelgen/SurfaceRules$SequenceRuleSource
 extendable  class   net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator
-accessible  class   net/minecraft/data/BuiltinRegistries$RegistryBootstrap
 accessible class net/minecraft/core/Registry$RegistryBootstrap
 accessible class net/minecraft/world/level/levelgen/SurfaceRules$SequenceRuleSource
 accessible class net/minecraft/core/Registry$RegistryBootstrap
 accessible class net/minecraft/tags/Tag$ElementEntry
 accessible class net/minecraft/tags/Tag$TagEntry
+accessible class net/minecraft/client/Minecraft$ExperimentalDialogType
 
 #Methods
 accessible method net/minecraft/world/level/storage/loot/LootPool <init> ([Lnet/minecraft/world/level/storage/loot/entries/LootPoolEntryContainer;[Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition;[Lnet/minecraft/world/level/storage/loot/functions/LootItemFunction;Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;)V

@@ -12,8 +12,9 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.StructureManager;
+import net.minecraft.world.level.StructureFeatureManager;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -66,7 +67,7 @@ public class TemplatePiece extends TemplateStructurePiece {
     }
 
     public TemplatePiece(
-            StructureTemplateManager structureTemplateManager,
+            StructureManager structureTemplateManager,
             ResourceLocation resourceLocation,
             BlockPos centerPos,
             Rotation rotation,
@@ -161,9 +162,9 @@ public class TemplatePiece extends TemplateStructurePiece {
     @Override
     public void postProcess(
             WorldGenLevel world,
-            StructureManager structureManager,
+            StructureFeatureManager structureManager,
             ChunkGenerator chunkGenerator,
-            RandomSource random,
+            Random random,
             BoundingBox boundingBox,
             ChunkPos chunkPos,
             BlockPos blockPos

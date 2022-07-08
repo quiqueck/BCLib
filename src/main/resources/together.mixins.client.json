@@ -5,8 +5,8 @@
   "compatibilityLevel": "JAVA_17",
   "client": [
     "CreateWorldScreenMixin",
-    "WorldGenSettingsComponentMixin",
-    "WorldOpenFlowsMixin"
+    "MinecraftMixin",
+    "WorldGenSettingsComponentMixin"
   ],
   "injectors": {
     "defaultRequire": 1
