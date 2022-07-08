@@ -19,7 +19,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceWithSeed, MergeableBiomeSource<BCLBiomeSource>, BiomeSourceWithNoiseRelatedSettings, BiomeSourceFromRegistry {
+public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceWithSeed, MergeableBiomeSource<BCLBiomeSource>, BiomeSourceWithNoiseRelatedSettings, BiomeSourceFromRegistry<BCLBiomeSource> {
     protected final Registry<Biome> biomeRegistry;
     protected long currentSeed;
     protected int maxHeight;
