@@ -246,18 +246,18 @@ public class WorldGenUtil {
             ChunkGenerator referenceGenerator = dimensions.get(key);
             if (referenceGenerator instanceof EnforceableChunkGenerator enforcer) {
 
-                // probably not a datapack, so we need to check what other mods would have
-                // added to the vanilla settings
-                if (loadedStem.generator() instanceof EnforceableChunkGenerator) {
-                    // This list contains the vanilla default level stem (only available if a new world is loaded) as well as
-                    // The currently loaded stem
-                    var vanillaDimensionMap = WorldGenUtil.getDimensionsWithModData(net.minecraft.world.level.levelgen.presets.WorldPresets.NORMAL);
-
-                    LevelStem vanillaDefaultStem = vanillaDimensionMap.get(key);
-                    if (vanillaDefaultStem != null) {
-                        loadedStem = vanillaDefaultStem;
-                    }
-                }
+//                // probably not a datapack, so we need to check what other mods would have
+//                // added to the vanilla settings
+//                if (loadedStem.generator() instanceof EnforceableChunkGenerator) {
+//                    // This list contains the vanilla default level stem (only available if a new world is loaded) as well as
+//                    // The currently loaded stem
+//                    var vanillaDimensionMap = WorldGenUtil.getDimensionsWithModData(net.minecraft.world.level.levelgen.presets.WorldPresets.NORMAL);
+//
+//                    LevelStem vanillaDefaultStem = vanillaDimensionMap.get(key);
+//                    if (vanillaDefaultStem != null) {
+//                        loadedStem = vanillaDefaultStem;
+//                    }
+//                }
 
 
                 // now compare the reference world settings (the ones that were created when the world was
