@@ -57,7 +57,7 @@ public class LevelGenEvents {
         //make sure we include Tags registered by the deprecated API
         TagAPI.apply(directory, tagsMap);
 
-        
+
         if (directory.equals(TagManager.BIOMES.directory)) {
             InternalBiomeAPI._runBiomeTagAdders();
         }
@@ -79,8 +79,6 @@ public class LevelGenEvents {
 
         //We probably loaded a Datapack for the End
         if (!(endStem.generator().getBiomeSource() instanceof BCLibEndBiomeSource)) {
-
-
             if (currentPreset.isPresent()) {
                 if (currentPreset.get().value() instanceof TogetherWorldPreset worldPreset) {
                     ResourceKey worldPresetKey = currentPreset.get().unwrapKey().orElse(null);
