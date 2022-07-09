@@ -1,8 +1,10 @@
 package org.betterx.bclib.api.v2.generator;
 
+import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
 import org.betterx.worlds.together.biomesource.BiomeSourceFromRegistry;
+import org.betterx.worlds.together.biomesource.BiomeSourceHelper;
 import org.betterx.worlds.together.biomesource.MergeableBiomeSource;
 import org.betterx.worlds.together.world.BiomeSourceWithNoiseRelatedSettings;
 import org.betterx.worlds.together.world.BiomeSourceWithSeed;
@@ -19,6 +21,7 @@ import com.google.common.collect.Sets;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceWithSeed, MergeableBiomeSource<BCLBiomeSource>, BiomeSourceWithNoiseRelatedSettings, BiomeSourceFromRegistry<BCLBiomeSource> {
     protected final Registry<Biome> biomeRegistry;
@@ -54,7 +57,7 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
 
     final public void setSeed(long seed) {
         if (seed != currentSeed) {
-            System.out.println(this + " set Seed: " + seed);
+            BCLib.LOGGER.debug(this + "\n    --> new seed = " + seed);
             this.currentSeed = seed;
             initMap(seed);
         }
@@ -67,14 +70,14 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
      */
     final public void setMaxHeight(int maxHeight) {
         if (this.maxHeight != maxHeight) {
-            System.out.println(this + " set Max Height: " + maxHeight);
+            BCLib.LOGGER.debug(this + "\n    --> new height = " + maxHeight);
             this.maxHeight = maxHeight;
             onHeightChange(maxHeight);
         }
     }
 
     protected final void initMap(long seed) {
-        System.out.println(this + " updates Map");
+        BCLib.LOGGER.debug(this + "\n    --> Map Update");
         onInitMap(seed);
     }
 
@@ -88,6 +91,11 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
     }
 
     protected abstract BCLBiomeSource cloneForDatapack(Set<Holder<Biome>> datapackBiomes);
+
+    @NotNull
+    protected String getNamespaces() {
+        return BiomeSourceHelper.getNamespaces(possibleBiomes());
+    }
 
     public interface ValidBiomePredicate {
         boolean isValid(Holder<Biome> biome, ResourceLocation location);

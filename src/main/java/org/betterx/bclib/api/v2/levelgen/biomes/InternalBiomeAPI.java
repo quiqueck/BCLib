@@ -236,7 +236,8 @@ public class InternalBiomeAPI {
     }
 
     public static void applyModifications(BiomeSource source, ResourceKey<LevelStem> dimension) {
-        BCLib.LOGGER.info("Apply Modifications for " + dimension.location() + " BiomeSource " + source);
+        BCLib.LOGGER.info("\nApply Modifications for " + dimension.location() + source.toString()
+                                                                                      .replace("\n", "\n    "));
         /*if (dimension.location().equals(LevelStem.NETHER)){
             if (source instanceof BCLBiomeSource s) {
                 NetherBiomes.useLegacyGeneration = s.biomeSourceVersion==BCLBiomeSource.BIOME_SOURCE_VERSION_SQUARE;

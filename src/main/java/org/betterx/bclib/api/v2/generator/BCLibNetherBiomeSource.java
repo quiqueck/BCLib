@@ -96,8 +96,8 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
                 return;
             }
             if (!BiomeAPI.hasBiome(biomeID)) {
-
-                BCLBiome bclBiome = new BCLBiome(biomeID, biome.value());
+                BCLBiome bclBiome = new BCLBiome(biomeID, biome.value(), BiomeAPI.BiomeType.NETHER);
+                BiomeAPI.registerBiome(bclBiome);
                 biomePicker.addBiome(bclBiome);
             } else {
                 BCLBiome bclBiome = BiomeAPI.getBiome(biomeID);
@@ -114,17 +114,27 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
     }
 
     protected BCLBiomeSource cloneForDatapack(Set<Holder<Biome>> datapackBiomes) {
-        datapackBiomes.addAll(getBclBiomes(this.biomeRegistry));
+        datapackBiomes.addAll(getNonVanillaBiomes(this.biomeRegistry));
+        datapackBiomes.addAll(possibleBiomes().stream()
+                                              .filter(h -> !h.unwrapKey()
+                                                             .orElseThrow()
+                                                             .location()
+                                                             .getNamespace()
+                                                             .equals("minecraft"))
+                                              .toList());
         return new BCLibNetherBiomeSource(
                 this.biomeRegistry,
-                datapackBiomes.stream().toList(),
+                datapackBiomes.stream()
+                              .filter(b -> b.isValidInRegistry(biomeRegistry) && b.unwrapKey()
+                                                                                  .orElse(null) != BCLBiomeRegistry.EMPTY_BIOME.getBiomeKey())
+                              .toList(),
                 this.currentSeed,
                 config,
                 true
         );
     }
 
-    private static List<Holder<Biome>> getBclBiomes(Registry<Biome> biomeRegistry) {
+    private static List<Holder<Biome>> getNonVanillaBiomes(Registry<Biome> biomeRegistry) {
         List<String> include = Configs.BIOMES_CONFIG.getIncludeMatching(BiomeAPI.BiomeType.NETHER);
         List<String> exclude = Configs.BIOMES_CONFIG.getExcludeMatching(BiomeAPI.BiomeType.NETHER);
 
@@ -147,14 +157,15 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
     }
 
     private static boolean isValidNonVanillaNetherBiome(Holder<Biome> biome, ResourceLocation location) {
-        return (
-                !"minecraft".equals(location.getNamespace()) &&
-                        NetherBiomes.canGenerateInNether(biome.unwrapKey().get())) ||
-                BiomeAPI.wasRegisteredAs(location, BiomeAPI.BiomeType.BCL_NETHER);
-    }
+        if (BiomeAPI.wasRegisteredAs(location, BiomeAPI.BiomeType.END_IGNORE) || biome.unwrapKey()
+                                                                                      .orElseThrow()
+                                                                                      .location()
+                                                                                      .getNamespace()
+                                                                                      .equals("minecraft"))
+            return false;
 
-    public static <T> void debug(Object el, Registry<T> reg) {
-        System.out.println("Unknown " + el + " in " + reg);
+        return NetherBiomes.canGenerateInNether(biome.unwrapKey().get()) ||
+                BiomeAPI.wasRegisteredAsNetherBiome(location);
     }
 
     public static void register() {
@@ -207,7 +218,12 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
 
     @Override
     public String toString() {
-        return "BCLib - Nether BiomeSource (" + Integer.toHexString(hashCode()) + ", config=" + config + ", seed=" + currentSeed + ", height=" + maxHeight + ", biomes=" + possibleBiomes().size() + ")";
+        return "\nBCLib - Nether BiomeSource (" + Integer.toHexString(hashCode()) + ")" +
+                "\n    biomes     = " + possibleBiomes().size() +
+                "\n    namespaces = " + getNamespaces() +
+                "\n    seed       = " + currentSeed +
+                "\n    height     = " + maxHeight +
+                "\n    config     = " + config;
     }
 
     @Override

@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiFunction;
 import org.jetbrains.annotations.NotNull;
 
 public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWithConfig<BCLibEndBiomeSource, BCLEndBiomeSourceConfig>, ReloadableBiomeSource {
@@ -57,7 +56,6 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
                                                               )
     );
     private final Point pos;
-    private final BiFunction<Point, Integer, Boolean> endLandFunction;
     private BiomeMap mapLand;
     private BiomeMap mapVoid;
     private BiomeMap mapCenter;
@@ -99,7 +97,6 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
         this.config = config;
         rebuildBiomePickers();
 
-        this.endLandFunction = GeneratorOptions.getEndLandFunction();
         this.pos = new Point();
 
         if (initMaps) {
@@ -434,7 +431,13 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
 
     @Override
     public String toString() {
-        return "BCLib - The End BiomeSource (" + Integer.toHexString(hashCode()) + ", config=" + config + ", seed=" + currentSeed + ", height=" + maxHeight + ", customLand=" + (endLandFunction != null) + ", biomes=" + possibleBiomes().size() + ")";
+        return "\nBCLib - The End BiomeSource (" + Integer.toHexString(hashCode()) + ")" +
+                "\n    biomes     = " + possibleBiomes().size() +
+                "\n    namespaces = " + getNamespaces() +
+                "\n    seed       = " + currentSeed +
+                "\n    height     = " + maxHeight +
+                "\n    deciders   = " + deciders.size() +
+                "\n    config     = " + config;
     }
 
     @Override

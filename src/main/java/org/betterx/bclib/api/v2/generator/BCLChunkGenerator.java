@@ -78,13 +78,12 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
         }
 
         if (WorldsTogether.RUNS_TERRABLENDER) {
-            BCLib.LOGGER.info("Make sure features are loaded from terrablender for " + biomeSource);
+            BCLib.LOGGER.info("Make sure features are loaded from terrablender" + biomeSource);
 
             //terrablender is invalidating the feature initialization
             //we redo it at this point, otherwise we will get blank biomes
             rebuildFeaturesPerStep(biomeSource);
         }
-        System.out.println("Chunk Generator: " + this + " (biomeSource: " + biomeSource + ")");
     }
 
     private void rebuildFeaturesPerStep(BiomeSource biomeSource) {
