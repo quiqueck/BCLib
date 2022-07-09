@@ -13,6 +13,8 @@ import com.mojang.serialization.codecs.KeyDispatchCodec;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.tags.TagEntry;
 import net.minecraft.tags.TagFile;
@@ -45,24 +47,32 @@ import java.nio.file.Files;
 
 public class DumpDatapack {
     static int dumpDatapack(CommandContext<CommandSourceStack> ctx) {
-        dumpDatapack(ctx.getSource().getLevel().registryAccess());
+        File base = new File(System.getProperty("user.dir"), "bclib_datapack_dump");
+        dumpDatapack(base, ctx.getSource().getLevel().registryAccess());
+
+        ctx.getSource().sendSuccess(
+                Component.literal("Succesfully written to:\n    ").append(
+                        Component.literal(base.toString()).setStyle(Style.EMPTY.withUnderlined(true))
+                ),
+                false
+        );
         return Command.SINGLE_SUCCESS;
     }
 
-    public static void dumpDatapack(RegistryAccess registryAccess) {
+    public static void dumpDatapack(File base, RegistryAccess registryAccess) {
         final RegistryOps<JsonElement> registryOps = RegistryOps.create(JsonOps.INSTANCE, registryAccess);
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder = gsonBuilder.setPrettyPrinting();
         Gson gson = gsonBuilder.create();
-        registryAccess.registries().forEach(r -> dumpDatapack(r, registryOps, gson));
+        registryAccess.registries().forEach(r -> dumpDatapack(base, r, registryOps, gson));
     }
 
     private static <T> void dumpDatapack(
+            File base,
             RegistryAccess.RegistryEntry<T> registry,
             RegistryOps<JsonElement> registryOps,
             Gson gson
     ) {
-        File base = new File(System.getProperty("user.dir"), "bclib_datapack_dump");
         BCLib.LOGGER.info(registry.key().toString());
         // Tag Output
         registry.value()
@@ -261,5 +271,6 @@ public class DumpDatapack {
                         BCLib.LOGGER.error("     !!! Could not determine Codec: " + obj.getClass());
                     }
                 });
+
     }
 }
