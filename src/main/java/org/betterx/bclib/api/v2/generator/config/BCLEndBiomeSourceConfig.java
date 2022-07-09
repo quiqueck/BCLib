@@ -179,7 +179,7 @@ public class BCLEndBiomeSourceConfig implements BiomeSourceConfig<BCLibEndBiomeS
     @Override
     public boolean couldSetWithoutRepair(BiomeSourceConfig<?> input) {
         if (input instanceof BCLEndBiomeSourceConfig cfg) {
-            return withVoidBiomes == cfg.withVoidBiomes && mapVersion == cfg.mapVersion;
+            return withVoidBiomes == cfg.withVoidBiomes && mapVersion == cfg.mapVersion && generatorVersion == cfg.generatorVersion;
         }
         return false;
     }
