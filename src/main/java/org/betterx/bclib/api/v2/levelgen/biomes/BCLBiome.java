@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 
@@ -242,9 +243,20 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
      * @param biomeID         Teh ResoureLocation for this Biome
      */
     @Deprecated(forRemoval = true)
-    //this constructor should become package private and not get removed
     public BCLBiome(ResourceLocation biomeID, Biome biomeToRegister) {
-        this(biomeID, biomeToRegister, null);
+        this(biomeID, biomeToRegister, (BCLBiomeSettings) null);
+    }
+
+    /**
+     * Create wrapper for existing biome using biome instance from {@link BuiltinRegistries}.
+     *
+     * @param biomeToRegister {@link Biome} to wrap.
+     * @param biomeID         Teh ResoureLocation for this Biome
+     */
+    @ApiStatus.Internal
+    public BCLBiome(ResourceLocation biomeID, Biome biomeToRegister, BiomeAPI.BiomeType type) {
+        this(biomeID, biomeToRegister, (BCLBiomeSettings) null);
+        setIntendedType(type);
     }
 
     /**

@@ -140,7 +140,8 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
             }
             final BCLBiome bclBiome;
             if (!BiomeAPI.hasBiome(biomeID)) {
-                bclBiome = new BCLBiome(biomeID, biome.value());
+                bclBiome = new BCLBiome(biomeID, biome.value(), BiomeAPI.BiomeType.END_LAND);
+                BiomeAPI.registerBiome(bclBiome);
             } else {
                 bclBiome = BiomeAPI.getBiome(biomeID);
             }
@@ -232,11 +233,20 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
     }
 
     protected BCLBiomeSource cloneForDatapack(Set<Holder<Biome>> datapackBiomes) {
-        datapackBiomes.addAll(getBclBiomes(this.biomeRegistry));
+        datapackBiomes.addAll(getNonVanillaBiomes(this.biomeRegistry));
+        datapackBiomes.addAll(possibleBiomes().stream()
+                                              .filter(h -> !h.unwrapKey()
+                                                             .orElseThrow()
+                                                             .location()
+                                                             .getNamespace()
+                                                             .equals("minecraft"))
+                                              .toList());
+
         return new BCLibEndBiomeSource(
                 this.biomeRegistry,
                 datapackBiomes.stream()
-                              .filter(b -> b.unwrapKey().orElse(null) != BCLBiomeRegistry.EMPTY_BIOME.getBiomeKey())
+                              .filter(b -> b.isValidInRegistry(biomeRegistry) && b.unwrapKey()
+                                                                                  .orElse(null) != BCLBiomeRegistry.EMPTY_BIOME.getBiomeKey())
                               .toList(),
                 this.currentSeed,
                 this.config,
@@ -244,7 +254,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
         );
     }
 
-    private static List<Holder<Biome>> getBclBiomes(Registry<Biome> biomeRegistry) {
+    private static List<Holder<Biome>> getNonVanillaBiomes(Registry<Biome> biomeRegistry) {
         return getBiomes(
                 biomeRegistry,
                 Configs.BIOMES_CONFIG.getExcludeMatching(BiomeAPI.BiomeType.END),
@@ -272,13 +282,15 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
     }
 
     private static boolean isValidNonVanillaEndBiome(Holder<Biome> biome, ResourceLocation location) {
-        if (BiomeAPI.wasRegisteredAs(location, BiomeAPI.BiomeType.END_IGNORE)) return false;
+        if (BiomeAPI.wasRegisteredAs(location, BiomeAPI.BiomeType.END_IGNORE) || biome.unwrapKey()
+                                                                                      .orElseThrow()
+                                                                                      .location()
+                                                                                      .getNamespace()
+                                                                                      .equals("minecraft"))
+            return false;
 
         return biome.is(BiomeTags.IS_END) ||
-                BiomeAPI.wasRegisteredAs(location, BiomeAPI.BiomeType.BCL_END_LAND) ||
-                BiomeAPI.wasRegisteredAs(location, BiomeAPI.BiomeType.BCL_END_VOID) ||
-                BiomeAPI.wasRegisteredAs(location, BiomeAPI.BiomeType.BCL_END_CENTER) ||
-                BiomeAPI.wasRegisteredAs(location, BiomeAPI.BiomeType.BCL_END_BARRENS) ||
+                BiomeAPI.wasRegisteredAsEndBiome(location) ||
                 TheEndBiomesHelper.canGenerateInEnd(biome.unwrapKey().orElse(null));
     }
 
