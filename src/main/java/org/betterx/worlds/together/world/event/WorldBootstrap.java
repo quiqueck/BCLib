@@ -33,12 +33,6 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 public class WorldBootstrap {
-    private static WorldGenSettings DEFAULT_CREATE_WORLD_PRESET_SETTINGS;
-
-    public static WorldGenSettings getDefaultCreateWorldPresetSettings() {
-        return DEFAULT_CREATE_WORLD_PRESET_SETTINGS;
-    }
-
     private static RegistryAccess LAST_REGISTRY_ACCESS = null;
 
     public static RegistryAccess getLastRegistryAccess() {
@@ -150,12 +144,6 @@ public class WorldBootstrap {
     }
 
     public static class InGUI {
-
-
-        public static void setDefaultCreateWorldSettings(WorldGenSettings worldGenSettings) {
-            DEFAULT_CREATE_WORLD_PRESET_SETTINGS = worldGenSettings;
-        }
-
         public static void registryReadyOnNewWorld(WorldGenSettingsComponent worldGenSettingsComponent) {
             Helpers.onRegistryReady(worldGenSettingsComponent.registryHolder());
         }
@@ -240,8 +228,7 @@ public class WorldBootstrap {
                 String levelID,
                 LevelStorageSource levelSource
         ) {
-            //when we load a world, we do not want to reuse the default world settings
-            DEFAULT_CREATE_WORLD_PRESET_SETTINGS = null;
+            WorldGenUtil.clearPreloadedWorldPresets();
             try {
                 var levelStorageAccess = levelSource.createAccess(levelID);
                 try {
@@ -285,6 +272,7 @@ public class WorldBootstrap {
         ) {
             //LifeCycleAPI._runBeforeLevelLoad();
             WorldEventsImpl.ON_WORLD_LOAD.emit(OnWorldLoad::onLoad);
+            WorldGenUtil.clearPreloadedWorldPresets();
         }
     }
 

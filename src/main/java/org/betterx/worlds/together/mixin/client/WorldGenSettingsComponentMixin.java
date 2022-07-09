@@ -1,19 +1,13 @@
 package org.betterx.worlds.together.mixin.client;
 
-import org.betterx.worlds.together.mixin.common.WorldPresetAccessor;
-import org.betterx.worlds.together.world.event.WorldBootstrap;
+import org.betterx.worlds.together.levelgen.WorldGenUtil;
 import org.betterx.worlds.together.worldPreset.WorldGenSettingsComponentAccessor;
 
 import net.minecraft.client.gui.screens.worldselection.WorldCreationContext;
 import net.minecraft.client.gui.screens.worldselection.WorldGenSettingsComponent;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
-import net.minecraft.world.level.levelgen.presets.WorldPresets;
 
-import com.google.common.collect.ImmutableMap;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.gen.Accessor;
@@ -22,7 +16,6 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -47,38 +40,17 @@ public abstract class WorldGenSettingsComponentMixin implements WorldGenSettings
                                                               .location()
                                                               .getNamespace()
                                                               .equals("minecraft"));
+        
+
         List<Holder<WorldPreset>> custom = list
                 .stream()
                 .filter(p -> !vanilla.test(p))
                 .collect(Collectors.toCollection(LinkedList::new));
 
-        Registry<WorldPreset> registry = settings.registryAccess().registryOrThrow(Registry.WORLD_PRESET_REGISTRY);
-
         custom.addAll(list
                 .stream()
                 .filter(vanilla)
-                // this code will inject the original vanilla default dimensions into the WorldPreset list that is
-                // used on the world type selection button. This is supposed to mitigate the issue described
-                // here: https://github.com/quiqueck/BCLib/issues/20
-                // it may be removed once this behaviour is fixed in either fabric or vanilla
-                .map(p -> {
-                    if (WorldBootstrap.getDefaultCreateWorldPresetSettings() != null) {
-                        ResourceKey<WorldPreset> key = p.unwrapKey().orElseThrow();
-                        if (key.location().equals(WorldPresets.NORMAL.location())) {
-                            ImmutableMap.Builder<ResourceKey<LevelStem>, LevelStem> map = ImmutableMap.builder();
-                            for (Map.Entry<ResourceKey<LevelStem>, LevelStem> entry : WorldBootstrap.getDefaultCreateWorldPresetSettings()
-                                                                                                    .dimensions()
-                                                                                                    .entrySet()) {
-                                map.put(entry.getKey(), entry.getValue());
-                            }
-
-                            if (p.value() instanceof WorldPresetAccessor ax) {
-                                ax.bcl_setDimensions(map.build());
-                            }
-                        }
-                    }
-                    return p;
-                })
+                .map(WorldGenUtil::reloadWithModData)
                 .toList());
 
         return custom;

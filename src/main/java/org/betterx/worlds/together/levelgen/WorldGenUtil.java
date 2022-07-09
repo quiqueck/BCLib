@@ -4,6 +4,7 @@ import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.biomesource.BiomeSourceWithConfig;
 import org.betterx.worlds.together.biomesource.ReloadableBiomeSource;
 import org.betterx.worlds.together.chunkgenerator.EnforceableChunkGenerator;
+import org.betterx.worlds.together.mixin.common.WorldPresetAccessor;
 import org.betterx.worlds.together.world.BiomeSourceWithNoiseRelatedSettings;
 import org.betterx.worlds.together.world.BiomeSourceWithSeed;
 import org.betterx.worlds.together.world.WorldConfig;
@@ -12,12 +13,16 @@ import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
 
 import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.JsonOps;
+import net.minecraft.Util;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -30,6 +35,11 @@ import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.gson.JsonElement;
+
+import java.util.HashMap;
+import java.util.Map;
 import org.jetbrains.annotations.ApiStatus;
 
 public class WorldGenUtil {
@@ -78,9 +88,93 @@ public class WorldGenUtil {
         );
     }
 
-    public static Pair<WorldGenSettings, RegistryAccess.Frozen> defaultWorldDataSupplier(RegistryAccess.Frozen frozen) {
-        WorldGenSettings worldGenSettings = createDefaultWorldFromPreset(frozen);
+    @ApiStatus.Internal
+    public static Pair<WorldGenSettings, RegistryAccess.Frozen> defaultWorldDataSupplier(
+            RegistryOps<JsonElement> loaderOps,
+            RegistryAccess.Frozen frozen
+    ) {
+        WorldGenSettings defaultGen = createDefaultWorldFromPreset(frozen);
+        RegistryOps<JsonElement> registryOps = RegistryOps.create(JsonOps.INSTANCE, frozen);
+        WorldGenSettings worldGenSettings = WorldGenSettings.CODEC
+                .encodeStart(registryOps, defaultGen)
+                .flatMap(json -> WorldGenSettings.CODEC.parse(
+                        loaderOps,
+                        json
+                ))
+                .getOrThrow(
+                        false,
+                        Util.prefix(
+                                "Error parsing worldgen settings after loading data packs: ",
+                                WorldsTogether.LOGGER::error
+                        )
+                );
+//        WorldGenSettings worldGenSettings = createDefaultWorldFromPreset(frozen);
         return Pair.of(worldGenSettings, frozen);
+    }
+
+    private static final Map<ResourceKey<WorldPreset>, Map<ResourceKey<LevelStem>, LevelStem>> WORLD_PRESET_MAP = new HashMap<>();
+
+    @ApiStatus.Internal
+    public static Map<ResourceKey<LevelStem>, LevelStem> getDimensionsWithModData(ResourceKey<WorldPreset> preset) {
+        var data = WORLD_PRESET_MAP.get(preset);
+        if (data == null) return new HashMap<>();
+        return data;
+    }
+
+    @ApiStatus.Internal
+    public static Holder<WorldPreset> reloadWithModData(Holder<WorldPreset> preset) {
+        if (preset.value() instanceof WorldPresetAccessor acc) {
+            var data = WORLD_PRESET_MAP.get(preset.unwrapKey().orElseThrow());
+            if (data != null) {
+                acc.bcl_setDimensions(data);
+            }
+        }
+        return preset;
+    }
+
+    public static void clearPreloadedWorldPresets() {
+        WORLD_PRESET_MAP.clear();
+    }
+
+    public static void preloadWorldPresets(ResourceManager resourceManager, RegistryAccess.Writable writable) {
+        clearPreloadedWorldPresets();
+        Registry<WorldPreset> registry = writable.registryOrThrow(Registry.WORLD_PRESET_REGISTRY);
+        //for (ResourceKey<WorldPreset> key : registry.registryKeySet())
+        ResourceKey<WorldPreset> key = net.minecraft.world.level.levelgen.presets.WorldPresets.NORMAL;
+        {
+            RegistryOps<JsonElement> loaderOps = RegistryOps.createAndLoad(
+                    JsonOps.INSTANCE, writable, resourceManager
+            );
+            Holder<WorldPreset> in = registry.getHolderOrThrow(key);
+            if (in.unwrapKey().isPresent()) {
+                RegistryOps<JsonElement> registryOps = RegistryOps.create(JsonOps.INSTANCE, writable);
+                WorldGenSettings settings = WorldGenUtil.createWorldFromPreset(
+                        in.unwrapKey().orElseThrow(),
+                        writable,
+                        RandomSource.create().nextLong(),
+                        true,
+                        false
+                );
+                WorldGenSettings worldGenSettings = WorldGenSettings.CODEC
+                        .encodeStart(registryOps, settings)
+                        .flatMap(json -> WorldGenSettings.CODEC.parse(
+                                loaderOps,
+                                json
+                        ))
+                        .getOrThrow(
+                                false,
+                                Util.prefix(
+                                        "Error parsing world preset settings  after loading data packs: ",
+                                        WorldsTogether.LOGGER::error
+                                )
+                        );
+                ImmutableMap.Builder<ResourceKey<LevelStem>, LevelStem> map = ImmutableMap.builder();
+                for (Map.Entry<ResourceKey<LevelStem>, LevelStem> entry : worldGenSettings.dimensions().entrySet()) {
+                    map.put(entry.getKey(), entry.getValue());
+                }
+                WORLD_PRESET_MAP.put(key, map.build());
+            }
+        }
     }
 
     public static WorldGenSettings createDefaultWorldFromPreset(RegistryAccess registryAccess, long seed) {
@@ -153,11 +247,10 @@ public class WorldGenUtil {
             if (referenceGenerator instanceof EnforceableChunkGenerator enforcer) {
                 // This list contains the vanilla default level stem (only available if a new world is loaded) as well as
                 // The currently loaded stem
-                if (WorldBootstrap.getDefaultCreateWorldPresetSettings() != null) {
-                    LevelStem vanillaDefaultStem = WorldBootstrap.getDefaultCreateWorldPresetSettings()
-                                                                 .dimensions()
-                                                                 .get(key);
+                var vanillaDimensionMap = WorldGenUtil.getDimensionsWithModData(net.minecraft.world.level.levelgen.presets.WorldPresets.NORMAL);
 
+                LevelStem vanillaDefaultStem = vanillaDimensionMap.get(key);
+                if (vanillaDefaultStem != null) {
                     loadedStem = vanillaDefaultStem;
                 }
 
