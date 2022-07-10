@@ -71,13 +71,6 @@ public class CraftingRecipes {
                   .checkConfig(Configs.RECIPE_CONFIG)
                   .build();
 
-        GridRecipe.make(BCLib.MOD_ID, "tag_hopper", Blocks.HOPPER)
-                  .setShape("I I", "ICI", " I ")
-                  .addMaterial('I', CommonItemTags.IRON_INGOTS)
-                  .addMaterial('C', CommonItemTags.CHEST)
-                  .checkConfig(Configs.RECIPE_CONFIG)
-                  .build();
-
         GridRecipe.make(BCLib.MOD_ID, "tag_shulker_box", Blocks.SHULKER_BOX)
                   .setShape("S", "C", "S")
                   .addMaterial('S', Items.SHULKER_SHELL)
