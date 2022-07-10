@@ -125,7 +125,7 @@ public class BCLBiomeRegistry {
         return getBclBiomesRegistry(access)
                 .entrySet()
                 .stream()
-                .filter(e -> e.getValue().getIntendedType().is(BiomeAPI.BiomeType.END))
+                .filter(e -> e.getValue().getIntendedType().is(dim))
                 .map(e -> e.getKey());
     }
 
