@@ -360,7 +360,10 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
 
         BiomeAPI.BiomeType suggestedType;
 
-        if (config.generatorVersion == BCLEndBiomeSourceConfig.EndBiomeGeneratorType.VANILLA) {
+        // this is a crude way to fix this issue...
+        // basically this condition should not exist. The BetterEnd BiomeDeciders
+        // should do the else part
+        if (!BCLib.RUNS_BETTER_END || config.generatorVersion == BCLEndBiomeSourceConfig.EndBiomeGeneratorType.VANILLA) {
             int x = (SectionPos.blockToSectionCoord(posX) * 2 + 1) * 8;
             int z = (SectionPos.blockToSectionCoord(posZ) * 2 + 1) * 8;
             double d = sampler.erosion().compute(new DensityFunction.SinglePointContext(x, posY, z));

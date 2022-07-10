@@ -43,6 +43,10 @@ public class BCLib implements ModInitializer {
                                                              .getModContainer("nullscape")
                                                              .isPresent();
 
+    public static final boolean RUNS_BETTER_END = FabricLoader.getInstance()
+                                                              .getModContainer("betterend")
+                                                              .isPresent();
+
     @Override
     public void onInitialize() {
         LevelGenEvents.register();
