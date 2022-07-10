@@ -360,57 +360,32 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
 
         BiomeAPI.BiomeType suggestedType;
 
-        // this is a crude way to fix this issue...
-        // basically this condition should not exist. The BetterEnd BiomeDeciders
-        // should do the else part
-        if (!BCLib.RUNS_BETTER_END || config.generatorVersion == BCLEndBiomeSourceConfig.EndBiomeGeneratorType.VANILLA) {
-            int x = (SectionPos.blockToSectionCoord(posX) * 2 + 1) * 8;
-            int z = (SectionPos.blockToSectionCoord(posZ) * 2 + 1) * 8;
-            double d = sampler.erosion().compute(new DensityFunction.SinglePointContext(x, posY, z));
-            if (dist <= (long) config.innerVoidRadiusSquared) {
-                suggestedType = BiomeAPI.BiomeType.END_CENTER;
-            } else {
-                if (d > 0.25) {
-                    suggestedType = BiomeAPI.BiomeType.END_LAND; //highlands
-                } else if (d >= -0.0625) {
-                    suggestedType = BiomeAPI.BiomeType.END_LAND; //midlands
-                } else {
-                    suggestedType = d < -0.21875
-                            ? BiomeAPI.BiomeType.END_VOID //small islands
-                            : (config.withVoidBiomes
-                                    ? BiomeAPI.BiomeType.END_BARRENS
-                                    : BiomeAPI.BiomeType.END_LAND); //barrens
-                }
-            }
 
-            final BiomeAPI.BiomeType originalType = suggestedType;
-            for (BiomeDecider decider : deciders) {
-                suggestedType = decider
-                        .suggestType(
-                                originalType,
-                                suggestedType,
-                                d,
-                                maxHeight,
-                                posX,
-                                posY,
-                                posZ,
-                                biomeX,
-                                biomeY,
-                                biomeZ
-                        );
-            }
+        int x = (SectionPos.blockToSectionCoord(posX) * 2 + 1) * 8;
+        int z = (SectionPos.blockToSectionCoord(posZ) * 2 + 1) * 8;
+        double d = sampler.erosion().compute(new DensityFunction.SinglePointContext(x, posY, z));
+        if (dist <= (long) config.innerVoidRadiusSquared) {
+            suggestedType = BiomeAPI.BiomeType.END_CENTER;
         } else {
-            pos.setLocation(biomeX, biomeZ);
-            final BiomeAPI.BiomeType originalType = (dist <= (long) config.innerVoidRadiusSquared
-                    ? BiomeAPI.BiomeType.END_CENTER
-                    : BiomeAPI.BiomeType.END_LAND);
-            suggestedType = originalType;
-
-            for (BiomeDecider decider : deciders) {
-                suggestedType = decider
-                        .suggestType(originalType, suggestedType, maxHeight, posX, posY, posZ, biomeX, biomeY, biomeZ);
+            if (d > 0.25) {
+                suggestedType = BiomeAPI.BiomeType.END_LAND; //highlands
+            } else if (d >= -0.0625) {
+                suggestedType = BiomeAPI.BiomeType.END_LAND; //midlands
+            } else {
+                suggestedType = d < -0.21875
+                        ? BiomeAPI.BiomeType.END_VOID //small islands
+                        : (config.withVoidBiomes
+                                ? BiomeAPI.BiomeType.END_BARRENS
+                                : BiomeAPI.BiomeType.END_LAND); //barrens
             }
         }
+
+        final BiomeAPI.BiomeType originalType = suggestedType;
+        for (BiomeDecider decider : deciders) {
+            suggestedType = decider
+                    .suggestType(originalType, suggestedType, d, maxHeight, posX, posY, posZ, biomeX, biomeY, biomeZ);
+        }
+
 
         BiomePicker.ActualBiome result;
         for (BiomeDecider decider : deciders) {
