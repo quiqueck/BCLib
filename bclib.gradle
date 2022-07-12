@@ -10,6 +10,7 @@ buildscript {
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
+
 archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
@@ -32,6 +33,7 @@ dependencies {
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    forge "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
     modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
 
     //useApi "vazkii.patchouli:Patchouli:1.16.4-${project.patchouli_version}"

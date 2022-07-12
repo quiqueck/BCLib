@@ -1,8 +1,8 @@
 plugins {
-	id 'idea'
-	id 'eclipse'
-	id 'fabric-loom' version "${loom_version}"
-	id 'maven-publish'
+    id 'idea'
+    id 'eclipse'
+    id 'dev.architectury.loom' version "${loom_version}"
+    id 'maven-publish'
 }
 
 apply from: "bclib.gradle"
