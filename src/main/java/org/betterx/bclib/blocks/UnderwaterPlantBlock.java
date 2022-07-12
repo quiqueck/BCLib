@@ -32,7 +32,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import com.google.common.collect.Lists;
 
@@ -60,7 +59,7 @@ public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements R
     }
 
     public static Properties baseUnderwaterPlantSettings(Material mat, int light) {
-        Properties props = FabricBlockSettings
+        Properties props = Properties
                 .of(mat)
                 .sound(SoundType.WET_GRASS)
                 .noCollission()
