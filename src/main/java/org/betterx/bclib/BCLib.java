@@ -45,6 +45,7 @@ public class BCLib implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        WorldsTogether.onInitialize();
         LevelGenEvents.register();
         BlockPredicates.ensureStaticInitialization();
         BCLBiomeRegistry.ensureStaticallyLoaded();

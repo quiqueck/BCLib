@@ -8,10 +8,9 @@ import org.betterx.worlds.together.worldPreset.WorldPresets;
 
 import net.minecraft.resources.ResourceLocation;
 
-import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 
-public class WorldsTogether implements ModInitializer {
+public class WorldsTogether {
     public static boolean SURPRESS_EXPERIMENTAL_DIALOG = false;
     public static boolean FORCE_SERVER_TO_BETTERX_PRESET = false;
     public static final String MOD_ID = "worlds_together";
@@ -24,14 +23,13 @@ public class WorldsTogether implements ModInitializer {
         return FabricLoader.getInstance().isDevelopmentEnvironment();
     }
 
-    public void onInitialize() {
+    public static void onInitialize() {
         TagManager.ensureStaticallyLoaded();
         SurfaceRuleRegistry.ensureStaticallyLoaded();
 
 
         WorldConfig.registerModCache(WorldsTogether.MOD_ID);
         WorldPresets.ensureStaticallyLoaded();
-
     }
 
     public static ResourceLocation makeID(String s) {

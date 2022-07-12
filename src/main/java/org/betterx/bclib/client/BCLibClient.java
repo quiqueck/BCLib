@@ -8,6 +8,7 @@ import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.registry.BaseBlockEntityRenders;
 import org.betterx.bclib.registry.PresetsRegistryClient;
 import org.betterx.worlds.together.WorldsTogether;
+import org.betterx.worlds.together.client.WorldsTogetherClient;
 
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
@@ -23,6 +24,7 @@ public class BCLibClient implements ClientModInitializer, ModelResourceProvider,
 
     @Override
     public void onInitializeClient() {
+        WorldsTogetherClient.onInitializeClient();
         ModIntegrationAPI.registerAll();
         BaseBlockEntityRenders.register();
         DataExchangeAPI.prepareClientside();
