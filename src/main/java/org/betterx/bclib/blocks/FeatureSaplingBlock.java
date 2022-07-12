@@ -35,7 +35,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import java.util.Collections;
 import java.util.List;
@@ -55,7 +54,7 @@ public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfig
 
     public FeatureSaplingBlock(FeatureSupplier<F, FC> featureSupplier) {
         this(
-                FabricBlockSettings.of(Material.PLANT)
+                Properties.of(Material.PLANT)
                                    .collidable(false)
                                    .instabreak()
                                    .sound(SoundType.GRASS)
@@ -66,7 +65,7 @@ public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfig
 
     public FeatureSaplingBlock(int light, FeatureSupplier<F, FC> featureSupplier) {
         this(
-                FabricBlockSettings.of(Material.PLANT)
+                Properties.of(Material.PLANT)
                                    .collidable(false)
                                    .luminance(light)
                                    .instabreak()
@@ -87,7 +86,7 @@ public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfig
     @Deprecated(forRemoval = true)
     public FeatureSaplingBlock(Function<BlockState, org.betterx.bclib.api.v2.levelgen.features.BCLFeature> featureSupplier) {
         this(
-                FabricBlockSettings.of(Material.PLANT)
+                Properties.of(Material.PLANT)
                                    .collidable(false)
                                    .instabreak()
                                    .sound(SoundType.GRASS)
@@ -102,7 +101,7 @@ public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfig
             Function<BlockState, org.betterx.bclib.api.v2.levelgen.features.BCLFeature> featureSupplier
     ) {
         this(
-                FabricBlockSettings.of(Material.PLANT)
+                Properties.of(Material.PLANT)
                                    .collidable(false)
                                    .luminance(light)
                                    .instabreak()

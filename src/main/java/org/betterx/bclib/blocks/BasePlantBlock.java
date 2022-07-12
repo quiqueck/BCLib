@@ -36,7 +36,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import com.google.common.collect.Lists;
 
@@ -62,10 +61,10 @@ public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderL
     }
 
     public static Properties basePlantSettings(Material mat, int light) {
-        Properties props = FabricBlockSettings
+        Properties props = Properties
                 .of(mat)
-                .sounds(SoundType.GRASS)
-                .noCollision()
+                .sound(SoundType.GRASS)
+                .noCollission()
                 .offsetType(BlockBehaviour.OffsetType.XZ);
         if (light > 0) props.lightLevel(s -> light);
         return props;
@@ -103,9 +102,9 @@ public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderL
     @Deprecated(forRemoval = true)
     public BasePlantBlock(boolean replaceable, int light, SettingsExtender propMod) {
         this(
-                propMod.amend(FabricBlockSettings
+                propMod.amend(Properties
                         .of(replaceable ? Material.REPLACEABLE_PLANT : Material.PLANT)
-                        .luminance(light)
+                        .lightLevel((state)->light)
                         .sound(SoundType.GRASS)
                         .noCollission()
                         .offsetType(BlockBehaviour.OffsetType.XZ)

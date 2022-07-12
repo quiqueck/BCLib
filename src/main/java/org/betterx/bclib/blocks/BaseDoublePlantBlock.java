@@ -34,8 +34,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-
 import com.google.common.collect.Lists;
 
 import java.util.List;
@@ -47,7 +45,7 @@ public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements R
 
     public BaseDoublePlantBlock() {
         this(
-                FabricBlockSettings.of(Material.PLANT)
+                Properties.of(Material.PLANT)
                                    .sound(SoundType.GRASS)
                                    .noCollission()
                                    .offsetType(BlockBehaviour.OffsetType.NONE)
@@ -56,7 +54,7 @@ public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements R
 
     public BaseDoublePlantBlock(int light) {
         this(
-                FabricBlockSettings.of(Material.PLANT)
+                Properties.of(Material.PLANT)
                                    .sound(SoundType.GRASS)
                                    .lightLevel((state) -> state.getValue(TOP) ? light : 0)
                                    .noCollission()

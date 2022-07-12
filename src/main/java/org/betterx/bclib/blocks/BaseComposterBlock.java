@@ -16,7 +16,6 @@ import net.minecraft.world.level.storage.loot.LootContext;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class BaseComposterBlock extends ComposterBlock implements BlockModelProvider {
     public BaseComposterBlock(Block source) {
-        super(FabricBlockSettings.copyOf(source));
+        super(Properties.of(source.defaultBlockState().getMaterial()));
     }
 
     @Override

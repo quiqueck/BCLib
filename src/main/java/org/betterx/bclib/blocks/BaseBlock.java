@@ -10,7 +10,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.storage.loot.LootContext;
 
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import java.util.Collections;
 import java.util.List;
@@ -68,9 +67,9 @@ public class BaseBlock extends Block implements BlockModelProvider {
      * @param settings            The properties as created by the Block
      * @return The reconfigured {@code settings}
      */
-    static FabricBlockSettings acceptAndReturn(
-            Consumer<FabricBlockSettings> customizeProperties,
-            FabricBlockSettings settings
+    static Properties acceptAndReturn(
+            Consumer<Properties> customizeProperties,
+            Properties settings
     ) {
         customizeProperties.accept(settings);
         return settings;
