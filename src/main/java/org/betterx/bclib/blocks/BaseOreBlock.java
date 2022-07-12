@@ -28,8 +28,6 @@ import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
@@ -46,9 +44,9 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
 
     public BaseOreBlock(Supplier<Item> drop, int minCount, int maxCount, int experience, int miningLevel) {
         this(
-                FabricBlockSettings
+                Properties
                         .of(Material.STONE, MaterialColor.SAND)
-                        .requiresTool()
+                        .requiresCorrectToolForDrops()
                         .destroyTime(3F)
                         .explosionResistance(9F)
                         .sound(SoundType.STONE),

@@ -12,6 +12,7 @@ import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PickaxeItem;
 import net.minecraft.world.level.block.AnvilBlock;
@@ -27,8 +28,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -44,7 +43,7 @@ public abstract class BaseAnvilBlock extends AnvilBlock implements BlockModelPro
     public IntegerProperty durability;
 
     public BaseAnvilBlock(MaterialColor color) {
-        this(FabricBlockSettings.copyOf(Blocks.ANVIL).color(color));
+        this(Properties.copy(Blocks.ANVIL).color(color));
     }
 
     public BaseAnvilBlock(BlockBehaviour.Properties properties) {
@@ -97,7 +96,7 @@ public abstract class BaseAnvilBlock extends AnvilBlock implements BlockModelPro
     }
 
     @Override
-    public BlockItem getCustomItem(ResourceLocation blockID, FabricItemSettings settings) {
+    public BlockItem getCustomItem(ResourceLocation blockID, Item.Properties settings) {
         return new BaseAnvilItem(this, settings);
     }
 

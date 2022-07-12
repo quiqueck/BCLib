@@ -16,7 +16,6 @@ import net.minecraft.world.item.Item;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.impl.client.indigo.renderer.helper.ColorHelper;
 
 import com.google.common.collect.Maps;
 
@@ -267,8 +266,23 @@ public class ColorUtil {
         return HSBtoRGB(FLOAT_BUFFER[0], FLOAT_BUFFER[1], FLOAT_BUFFER[2]);
     }
 
+    public static int multiplyColor(int color1, int color2) {
+        if (color1 == -1) {
+            return color2;
+        } else if (color2 == -1) {
+            return color1;
+        }
+
+        final int alpha = ((color1 >> 24) & 0xFF) * ((color2 >> 24) & 0xFF) / 0xFF;
+        final int red = ((color1 >> 16) & 0xFF) * ((color2 >> 16) & 0xFF) / 0xFF;
+        final int green = ((color1 >> 8) & 0xFF) * ((color2 >> 8) & 0xFF) / 0xFF;
+        final int blue = (color1 & 0xFF) * (color2 & 0xFF) / 0xFF;
+
+        return (alpha << 24) | (red << 16) | (green << 8) | blue;
+    }
+
     public static int applyTint(int color, int tint) {
-        return colorBrigtness(ColorHelper.multiplyColor(color, tint), 1.5F);
+        return colorBrigtness(multiplyColor(color, tint), 1.5F);
     }
 
     public static int colorDistance(int color1, int color2) {

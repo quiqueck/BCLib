@@ -19,7 +19,6 @@ import net.minecraft.world.level.storage.loot.LootContext;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,7 +30,7 @@ public class BaseWallBlock extends WallBlock implements BlockModelProvider {
     private final Block parent;
 
     public BaseWallBlock(Block source) {
-        super(FabricBlockSettings.copyOf(source).noOcclusion());
+        super(Properties.copy(source).noOcclusion());
         this.parent = source;
     }
 

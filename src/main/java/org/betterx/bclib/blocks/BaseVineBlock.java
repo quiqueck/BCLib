@@ -33,8 +33,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-
 import com.google.common.collect.Lists;
 
 import java.util.List;
@@ -59,7 +57,7 @@ public class BaseVineBlock extends BaseBlockNotFull implements RenderLayerProvid
 
     public BaseVineBlock(int light, boolean bottomOnly, Function<Properties, Properties> propMod) {
         this(
-                propMod.apply(FabricBlockSettings
+                propMod.apply(Properties
                         .of(Material.PLANT)
                         .sound(SoundType.GRASS)
                         .lightLevel((state) -> bottomOnly ? state.getValue(SHAPE) == TripleShape.BOTTOM

@@ -17,7 +17,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,9 +27,9 @@ public class BaseGlassBlock extends BaseBlockNotFull implements AddMineablePicka
     }
 
     public BaseGlassBlock(Block block, float resistance) {
-        super(FabricBlockSettings.copyOf(block)
-                                 .resistance(resistance)
-                                 .nonOpaque()
+        super(Properties.copy(block)
+                                 .explosionResistance(resistance)
+                                 .noOcclusion()
                                  .isSuffocating((arg1, arg2, arg3) -> false)
                                  .isViewBlocking((arg1, arg2, arg3) -> false));
     }

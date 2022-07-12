@@ -38,7 +38,6 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import com.google.common.collect.Maps;
 
@@ -54,9 +53,9 @@ public class BaseTerrainBlock extends BaseBlock {
     private Block pathBlock;
 
     public BaseTerrainBlock(Block baseBlock, MaterialColor color) {
-        super(FabricBlockSettings
-                .copyOf(baseBlock)
-                .materialColor(color)
+        super(Properties
+                .copy(baseBlock)
+                .color(color)
                 .sound(BlockSounds.TERRAIN_SOUND)
                 .randomTicks()
         );

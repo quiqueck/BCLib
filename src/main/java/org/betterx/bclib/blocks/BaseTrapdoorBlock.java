@@ -21,14 +21,13 @@ import net.minecraft.world.level.storage.loot.LootContext;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import java.util.*;
 import org.jetbrains.annotations.Nullable;
 
 public class BaseTrapdoorBlock extends TrapDoorBlock implements RenderLayerProvider, BlockModelProvider {
     public BaseTrapdoorBlock(Block source) {
-        this(FabricBlockSettings.copyOf(source).strength(3.0F, 3.0F).noOcclusion());
+        this(Properties.copy(source).strength(3.0F, 3.0F).noOcclusion());
     }
 
     public BaseTrapdoorBlock(BlockBehaviour.Properties properties) {

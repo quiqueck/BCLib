@@ -8,16 +8,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-
 import java.util.function.BiFunction;
 
 public class ItemEntry extends ComplexMaterialEntry {
-    final BiFunction<ComplexMaterial, FabricItemSettings, Item> initFunction;
+    final BiFunction<ComplexMaterial, Item.Properties, Item> initFunction;
 
     TagKey<Item>[] itemTags;
 
-    public ItemEntry(String suffix, BiFunction<ComplexMaterial, FabricItemSettings, Item> initFunction) {
+    public ItemEntry(String suffix, BiFunction<ComplexMaterial, Item.Properties, Item> initFunction) {
         super(suffix);
         this.initFunction = initFunction;
     }
@@ -27,7 +25,7 @@ public class ItemEntry extends ComplexMaterialEntry {
         return this;
     }
 
-    public Item init(ComplexMaterial material, FabricItemSettings itemSettings, ItemRegistry registry) {
+    public Item init(ComplexMaterial material, Item.Properties itemSettings, ItemRegistry registry) {
         ResourceLocation location = getLocation(material.getModID(), material.getBaseName());
         Item item = initFunction.apply(material, itemSettings);
         registry.register(location, item);

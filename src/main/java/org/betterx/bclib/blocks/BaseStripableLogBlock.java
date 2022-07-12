@@ -17,13 +17,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.phys.BlockHitResult;
 
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 public class BaseStripableLogBlock extends BaseRotatedPillarBlock {
     private final Block striped;
 
     public BaseStripableLogBlock(MaterialColor color, Block striped) {
-        super(FabricBlockSettings.copyOf(striped).color(color));
+        super(Properties.copy(striped).color(color));
         this.striped = striped;
     }
 

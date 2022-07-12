@@ -4,11 +4,10 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.block.Block;
 
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 public class BaseStoneButtonBlock extends BaseButtonBlock {
     public BaseStoneButtonBlock(Block source) {
-        super(source, FabricBlockSettings.copyOf(source).noOcclusion(), false);
+        super(source, Properties.copy(source).noOcclusion(), false);
     }
 
     @Override

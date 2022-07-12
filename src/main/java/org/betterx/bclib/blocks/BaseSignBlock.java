@@ -17,6 +17,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -40,8 +41,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import java.util.Collections;
 import java.util.List;
@@ -61,7 +60,7 @@ public class BaseSignBlock extends SignBlock implements BlockModelProvider, Cust
     private final Block parent;
 
     public BaseSignBlock(Block source) {
-        super(FabricBlockSettings.copyOf(source).strength(1.0F, 1.0F).noCollission().noOcclusion(), WoodType.OAK);
+        super(Properties.copy(source).strength(1.0F, 1.0F).noCollission().noOcclusion(), WoodType.OAK);
         this.registerDefaultState(this.stateDefinition.any()
                                                       .setValue(ROTATION, 0)
                                                       .setValue(FLOOR, false)
@@ -194,7 +193,7 @@ public class BaseSignBlock extends SignBlock implements BlockModelProvider, Cust
     }
 
     @Override
-    public BlockItem getCustomItem(ResourceLocation blockID, FabricItemSettings settings) {
+    public BlockItem getCustomItem(ResourceLocation blockID, Item.Properties settings) {
         return new BlockItem(this, settings.stacksTo(16));
     }
 }

@@ -23,7 +23,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import com.google.common.collect.Maps;
 
@@ -39,7 +38,7 @@ public class BasePathBlock extends BaseBlockNotFull {
     private Block baseBlock;
 
     public BasePathBlock(Block source) {
-        super(FabricBlockSettings.copyOf(source).isValidSpawn((state, world, pos, type) -> false));
+        super(Properties.copy(source).isValidSpawn((state, world, pos, type) -> false));
         this.baseBlock = Blocks.DIRT;
         if (source instanceof BaseTerrainBlock) {
             BaseTerrainBlock terrain = (BaseTerrainBlock) source;

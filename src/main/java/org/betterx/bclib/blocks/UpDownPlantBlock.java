@@ -27,7 +27,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import com.google.common.collect.Lists;
 
@@ -37,7 +36,7 @@ public abstract class UpDownPlantBlock extends BaseBlockNotFull implements Rende
     private static final VoxelShape SHAPE = box(4, 0, 4, 12, 16, 12);
 
     public UpDownPlantBlock() {
-        this(FabricBlockSettings
+        this(Properties
                 .of(Material.PLANT)
                 .sound(SoundType.GRASS)
                 .noCollission()
