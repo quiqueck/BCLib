@@ -112,9 +112,9 @@ public class TogetherWorldPreset extends WorldPreset {
         if (!presetNBT.contains("dimensions")) {
             return DEFAULT_DIMENSIONS_WRAPPER.dimensions;
         }
-
+        Dynamic<Tag> dynamicOps = new Dynamic<>(registryOps);
         Optional<DimensionsWrapper> oLevelStem = DimensionsWrapper.CODEC
-                .parse(new Dynamic<>(registryOps, presetNBT))
+                .parse(NbtOps.INSTANCE, presetNBT)
                 .resultOrPartial(WorldsTogether.LOGGER::error);
 
 

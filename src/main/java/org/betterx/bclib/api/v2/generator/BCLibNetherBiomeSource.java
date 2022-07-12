@@ -7,6 +7,7 @@ import org.betterx.bclib.api.v2.generator.map.MapStack;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
+import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.interfaces.BiomeMap;
 import org.betterx.worlds.together.biomesource.BiomeSourceWithConfig;
@@ -97,7 +98,7 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
             }
             if (!BiomeAPI.hasBiome(biomeID)) {
                 BCLBiome bclBiome = new BCLBiome(biomeID, biome.value(), BiomeAPI.BiomeType.NETHER);
-                BiomeAPI.registerBiome(bclBiome);
+                InternalBiomeAPI.registerBCLBiomeData(bclBiome);
                 biomePicker.addBiome(bclBiome);
             } else {
                 BCLBiome bclBiome = BiomeAPI.getBiome(biomeID);

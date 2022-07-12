@@ -111,8 +111,8 @@ public class InternalBiomeAPI {
                 BIOMES_TO_SORT.forEach(id -> {
                     Biome b = biomeRegistry.get(id);
                     if (b != null) {
-                        BCLib.LOGGER.info("Found non fabric/bclib Biome: " + id + "(" + b + ")");
-                        BiomeAPI.sortBiomeFeatures(b);
+//                        BCLib.LOGGER.info("Found non fabric/bclib Biome: " + id + "(" + b + ")");
+//                        BiomeAPI.sortBiomeFeatures(b);
                     } else {
                         BCLib.LOGGER.info("Unknown Biome: " + id);
                     }
@@ -329,7 +329,7 @@ public class InternalBiomeAPI {
             bclBiome._setIntendedType(type);
         }
 
-        BiomeAPI.registerBiome(bclBiome);
+        registerBuiltinBiome(bclBiome);
         return bclBiome;
     }
 
@@ -395,5 +395,20 @@ public class InternalBiomeAPI {
             return reg.getOrCreateHolderOrThrow(key).isBound();
         }
         return false;
+    }
+
+    public static void registerBCLBiomeData(BCLBiome biome) {
+        BCLBiomeRegistry.register(registryAccess, biome);
+    }
+
+    /**
+     * Register {@link BCLBiome} instance and its {@link Biome} if necessary.
+     *
+     * @param bclbiome {@link BCLBiome}
+     * @return {@link BCLBiome}
+     */
+
+    public static BCLBiome registerBuiltinBiome(BCLBiome bclbiome) {
+        return BiomeAPI.registerBiome(bclbiome, BuiltinRegistries.BIOME);
     }
 }

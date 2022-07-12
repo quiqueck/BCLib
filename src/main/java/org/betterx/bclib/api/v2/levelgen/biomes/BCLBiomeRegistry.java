@@ -42,16 +42,43 @@ public class BCLBiomeRegistry {
      **/
     public static final BCLBiome EMPTY_BIOME = new BCLBiome(Biomes.THE_VOID.location());
 
-    public static Codec<? extends BCLBiome> registerBiomeCodec(
+    /**
+     * Register a codec for a custom subclass of {@link BCLBiome}. Each subclass needs to provide
+     * a codec, otherwise the instance will get rebuild as a regular BCLib biome loosing the Type
+     * of the class as well as all member values
+     *
+     * @param location A {@link ResourceLocation} identifying this class
+     * @param codec    The matching Codec
+     * @return The codec that will get used
+     */
+    public static <E extends BCLBiome> Codec<E> registerBiomeCodec(
             ResourceLocation location,
-            KeyDispatchDataCodec<? extends BCLBiome> codec
+            KeyDispatchDataCodec<E> codec
     ) {
         Registry.register(BIOME_CODECS, location, codec.codec());
         return codec.codec();
     }
 
+    @Deprecated(forRemoval = true)
     public static ResourceKey<BCLBiome> register(BCLBiome biome) {
-        Registry.register(BUILTIN_BCL_BIOMES, biome.getBCLBiomeKey(), biome);
+        return register(null, biome);
+    }
+
+    /**
+     * Register new Biome Data
+     *
+     * @param access The {@link RegistryAccess} to use. If null, we will use the
+     *               built inregistry ({@link BCLBiomeRegistry#BUILTIN_BCL_BIOMES})
+     * @param biome  The Biome Data to register
+     * @return The resource-key for the registry
+     */
+    @ApiStatus.Internal
+    public static ResourceKey<BCLBiome> register(RegistryAccess access, BCLBiome biome) {
+        Registry.register(
+                access == null ? BUILTIN_BCL_BIOMES : access.registryOrThrow(BCL_BIOMES_REGISTRY),
+                biome.getBCLBiomeKey(),
+                biome
+        );
         return biome.getBCLBiomeKey();
     }
 

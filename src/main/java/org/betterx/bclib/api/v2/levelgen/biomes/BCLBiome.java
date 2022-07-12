@@ -27,6 +27,18 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 
+/**
+ * Stores additional Data for a {@link Biome}. Instances of {@link BCLBiome} are linked to
+ * Biomes using a {@link ResourceKey<Biome>}. The data is registerd and Stored in
+ * {@link BCLBiomeRegistry#BCL_BIOMES_REGISTRY} registries, allowing them to be overriden by Datapacks.
+ * <p>
+ * As such, if you extend BCLBiome with custom types, especially if those new type have a custom state,
+ * you need to provide a Codec for your class using
+ * {@link BCLBiomeRegistry#registerBiomeCodec(ResourceLocation, KeyDispatchDataCodec)}.
+ * <p>
+ * You may use {@link BCLBiome#codecWithSettings(RecordCodecBuilder.Instance)} to create a Codec that includes
+ * all default settings for {@link BCLBiome} as well as additional Data for your specific subclass.
+ */
 public class BCLBiome extends BCLBiomeSettings implements BiomeData {
     public static final Codec<BCLBiome> CODEC = RecordCodecBuilder.create(instance -> codecWithSettings(instance).apply(
             instance,

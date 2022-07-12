@@ -5,6 +5,7 @@ import org.betterx.bclib.api.v2.generator.config.BCLEndBiomeSourceConfig;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
+import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.interfaces.BiomeMap;
 import org.betterx.worlds.together.biomesource.BiomeSourceWithConfig;
@@ -138,7 +139,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
             final BCLBiome bclBiome;
             if (!BiomeAPI.hasBiome(biomeID)) {
                 bclBiome = new BCLBiome(biomeID, biome.value(), BiomeAPI.BiomeType.END_LAND);
-                BiomeAPI.registerBiome(bclBiome);
+                InternalBiomeAPI.registerBCLBiomeData(bclBiome);
             } else {
                 bclBiome = BiomeAPI.getBiome(biomeID);
             }

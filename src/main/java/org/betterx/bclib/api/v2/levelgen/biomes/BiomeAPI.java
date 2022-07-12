@@ -270,14 +270,9 @@ public class BiomeAPI {
             InternalBiomeAPI.OTHER_END_VOID
     );
 
-    /**
-     * Register {@link BCLBiome} instance and its {@link Biome} if necessary.
-     *
-     * @param bclbiome {@link BCLBiome}
-     * @return {@link BCLBiome}
-     */
+    @Deprecated(forRemoval = true)
     public static BCLBiome registerBiome(BCLBiome bclbiome) {
-        return registerBiome(bclbiome, BuiltinRegistries.BIOME);
+        return InternalBiomeAPI.registerBuiltinBiome(bclbiome);
     }
 
     /**
@@ -318,7 +313,7 @@ public class BiomeAPI {
                 && registryOrNull.get(bclbiome.getID()) == null) {
             Registry.register(registryOrNull, bclbiome.getBiomeKey(), bclbiome.biomeToRegister);
 
-            BCLBiomeRegistry.register(bclbiome);
+            BCLBiomeRegistry.register(null, bclbiome);
         }
 
         if (dim != null && dim.is(BiomeType.NETHER)) {
@@ -792,8 +787,9 @@ public class BiomeAPI {
      *
      * @param biome The {@link Biome} to sort the features for
      */
+    @Deprecated(forRemoval = true)
     public static void sortBiomeFeatures(Holder<Biome> biome) {
-        sortBiomeFeatures(biome.value());
+        //sortBiomeFeatures(biome.value());
     }
 
     static void sortBiomeFeatures(Biome biome) {
@@ -879,7 +875,6 @@ public class BiomeAPI {
                                                                                            .flatMap(HolderSet::stream)
                                                                                            .map(Holder::value)
                                                                                            .collect(Collectors.toSet()));
-
         accessor.bclib_setFeatures(allFeatures);
         accessor.bclib_setFeatureSet(featureSet);
         accessor.bclib_setFlowerFeatures(flowerFeatures);
