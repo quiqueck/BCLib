@@ -19,7 +19,6 @@ import net.minecraft.world.level.storage.loot.LootContext;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +28,7 @@ public class BaseChestBlock extends ChestBlock implements BlockModelProvider {
     private final Block parent;
 
     public BaseChestBlock(Block source) {
-        super(FabricBlockSettings.copyOf(source).noOcclusion(), () -> BaseBlockEntities.CHEST);
+        super(Properties.copy(source).noOcclusion(), () -> BaseBlockEntities.CHEST);
         this.parent = source;
     }
 

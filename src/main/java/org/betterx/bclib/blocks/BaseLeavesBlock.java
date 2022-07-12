@@ -27,8 +27,6 @@ import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-
 import com.google.common.collect.Lists;
 
 import java.util.Collections;
@@ -38,17 +36,17 @@ import java.util.function.Consumer;
 public class BaseLeavesBlock extends LeavesBlock implements BlockModelProvider, RenderLayerProvider, TagProvider, AddMineableShears, AddMineableHoe {
     protected final Block sapling;
 
-    private static FabricBlockSettings makeLeaves(MaterialColor color) {
-        return FabricBlockSettings
-                .copyOf(Blocks.OAK_LEAVES)
-                .mapColor(color)
+    private static Properties makeLeaves(MaterialColor color) {
+        return Properties
+                .copy(Blocks.OAK_LEAVES)
+                .color(color)
                 //.requiresTool()
-                .allowsSpawning((state, world, pos, type) -> false)
-                .suffocates((state, world, pos) -> false)
-                .blockVision((state, world, pos) -> false);
+                .isValidSpawn((state, world, pos, type) -> false)
+                .isSuffocating((state, world, pos) -> false)
+                .isViewBlocking((state, world, pos) -> false);
     }
 
-    public BaseLeavesBlock(Block sapling, MaterialColor color, Consumer<FabricBlockSettings> customizeProperties) {
+    public BaseLeavesBlock(Block sapling, MaterialColor color, Consumer<Properties> customizeProperties) {
         super(BaseBlock.acceptAndReturn(customizeProperties, makeLeaves(color)));
         this.sapling = sapling;
     }
@@ -57,9 +55,9 @@ public class BaseLeavesBlock extends LeavesBlock implements BlockModelProvider, 
             Block sapling,
             MaterialColor color,
             int light,
-            Consumer<FabricBlockSettings> customizeProperties
+            Consumer<Properties> customizeProperties
     ) {
-        super(BaseBlock.acceptAndReturn(customizeProperties, makeLeaves(color).luminance(light)));
+        super(BaseBlock.acceptAndReturn(customizeProperties, makeLeaves(color).lightLevel(ignored->light)));
         this.sapling = sapling;
     }
 
@@ -69,7 +67,7 @@ public class BaseLeavesBlock extends LeavesBlock implements BlockModelProvider, 
     }
 
     public BaseLeavesBlock(Block sapling, MaterialColor color, int light) {
-        super(makeLeaves(color).luminance(light));
+        super(makeLeaves(color).lightLevel(ignored->light));
         this.sapling = sapling;
     }
 

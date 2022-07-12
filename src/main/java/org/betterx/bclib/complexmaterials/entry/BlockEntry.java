@@ -8,26 +8,25 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
 import java.util.function.BiFunction;
 
 public class BlockEntry extends ComplexMaterialEntry {
-    final BiFunction<ComplexMaterial, FabricBlockSettings, Block> initFunction;
+    final BiFunction<ComplexMaterial, BlockBehaviour.Properties, Block> initFunction;
     final boolean hasItem;
 
     TagKey<Block>[] blockTags;
     TagKey<Item>[] itemTags;
 
-    public BlockEntry(String suffix, BiFunction<ComplexMaterial, FabricBlockSettings, Block> initFunction) {
+    public BlockEntry(String suffix, BiFunction<ComplexMaterial, BlockBehaviour.Properties, Block> initFunction) {
         this(suffix, true, initFunction);
     }
 
     public BlockEntry(
             String suffix,
             boolean hasItem,
-            BiFunction<ComplexMaterial, FabricBlockSettings, Block> initFunction
+            BiFunction<ComplexMaterial, BlockBehaviour.Properties, Block> initFunction
     ) {
         super(suffix);
         this.initFunction = initFunction;
@@ -44,7 +43,7 @@ public class BlockEntry extends ComplexMaterialEntry {
         return this;
     }
 
-    public Block init(ComplexMaterial material, FabricBlockSettings blockSettings, BlockRegistry registry) {
+    public Block init(ComplexMaterial material, BlockBehaviour.Properties blockSettings, BlockRegistry registry) {
         ResourceLocation location = getLocation(material.getModID(), material.getBaseName());
         Block block = initFunction.apply(material, blockSettings);
         if (hasItem) {

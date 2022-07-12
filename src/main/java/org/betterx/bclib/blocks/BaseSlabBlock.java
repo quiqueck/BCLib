@@ -12,6 +12,7 @@ import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SlabBlock;
@@ -21,8 +22,6 @@ import net.minecraft.world.level.storage.loot.LootContext;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +38,7 @@ public class BaseSlabBlock extends SlabBlock implements BlockModelProvider, Cust
     }
 
     public BaseSlabBlock(Block source, boolean fireproof) {
-        super(FabricBlockSettings.copyOf(source));
+        super(Properties.copy(source));
         this.parent = source;
         this.fireproof = fireproof;
     }
@@ -90,8 +89,8 @@ public class BaseSlabBlock extends SlabBlock implements BlockModelProvider, Cust
     }
 
     @Override
-    public BlockItem getCustomItem(ResourceLocation blockID, FabricItemSettings settings) {
-        if (fireproof) settings = settings.fireproof();
+    public BlockItem getCustomItem(ResourceLocation blockID, Item.Properties settings) {
+        if (fireproof) settings = settings.fireResistant();
         return new BlockItem(this, settings);
     }
 }

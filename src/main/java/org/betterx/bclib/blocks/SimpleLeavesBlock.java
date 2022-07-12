@@ -16,14 +16,12 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-
 import java.util.List;
 
 public class SimpleLeavesBlock extends BaseBlockNotFull implements RenderLayerProvider, TagProvider, AddMineableShears, AddMineableHoe {
     public SimpleLeavesBlock(MaterialColor color) {
         this(
-                FabricBlockSettings
+                Properties
                         .of(Material.LEAVES)
                         .strength(0.2F)
                         .color(color)
@@ -37,9 +35,9 @@ public class SimpleLeavesBlock extends BaseBlockNotFull implements RenderLayerPr
 
     public SimpleLeavesBlock(MaterialColor color, int light) {
         this(
-                FabricBlockSettings
+                Properties
                         .of(Material.LEAVES)
-                        .luminance(light)
+                        .lightLevel(ignored->light)
                         .color(color)
                         .strength(0.2F)
                         .sound(SoundType.GRASS)

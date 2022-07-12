@@ -39,7 +39,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import java.util.Map;
 import java.util.Optional;
@@ -53,7 +52,7 @@ public class StalactiteBlock extends BaseBlockNotFull implements SimpleWaterlogg
     private static final VoxelShape[] SHAPES;
 
     public StalactiteBlock(Block source) {
-        this(FabricBlockSettings.copy(source).noOcclusion());
+        this(Properties.copy(source).noOcclusion());
     }
 
     public StalactiteBlock(BlockBehaviour.Properties properties) {

@@ -7,8 +7,6 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -34,9 +32,9 @@ public abstract class BaseRegistry<T> {
 
     public abstract void registerItem(ResourceLocation id, Item item);
 
-    public FabricItemSettings makeItemSettings() {
-        FabricItemSettings properties = new FabricItemSettings();
-        return (FabricItemSettings) properties.tab(creativeTab);
+    public Item.Properties makeItemSettings() {
+        Item.Properties properties = new Item.Properties();
+        return properties.tab(creativeTab);
     }
 
     private void registerInternal() {

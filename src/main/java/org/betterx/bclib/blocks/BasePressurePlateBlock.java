@@ -17,7 +17,6 @@ import net.minecraft.world.level.storage.loot.LootContext;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +28,7 @@ public class BasePressurePlateBlock extends PressurePlateBlock implements BlockM
     private final Block parent;
 
     public BasePressurePlateBlock(Sensitivity rule, Block source) {
-        super(rule, FabricBlockSettings.copyOf(source).noCollission().noOcclusion().strength(0.5F));
+        super(rule, Properties.copy(source).noCollission().noOcclusion().strength(0.5F));
         this.parent = source;
     }
 

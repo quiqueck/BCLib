@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class BaseComposterBlock extends ComposterBlock implements BlockModelProvider {
     public BaseComposterBlock(Block source) {
-        super(Properties.of(source.defaultBlockState().getMaterial()));
+        super(Properties.copy(source));
     }
 
     @Override

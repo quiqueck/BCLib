@@ -31,7 +31,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -43,7 +42,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class BaseFurnaceBlock extends FurnaceBlock implements BlockModelProvider, RenderLayerProvider {
     public BaseFurnaceBlock(Block source) {
-        this(FabricBlockSettings.copyOf(source).luminance(state -> state.getValue(LIT) ? 13 : 0));
+        this(Properties.copy(source).lightLevel(state -> state.getValue(LIT) ? 13 : 0));
     }
 
     public BaseFurnaceBlock(BlockBehaviour.Properties properties) {

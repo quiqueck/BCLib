@@ -55,7 +55,7 @@ public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfig
     public FeatureSaplingBlock(FeatureSupplier<F, FC> featureSupplier) {
         this(
                 Properties.of(Material.PLANT)
-                                   .collidable(false)
+                                   .noCollission()
                                    .instabreak()
                                    .sound(SoundType.GRASS)
                                    .randomTicks(),
@@ -66,8 +66,8 @@ public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfig
     public FeatureSaplingBlock(int light, FeatureSupplier<F, FC> featureSupplier) {
         this(
                 Properties.of(Material.PLANT)
-                                   .collidable(false)
-                                   .luminance(light)
+                                    .noCollission()
+                                   .lightLevel(ignored->light)
                                    .instabreak()
                                    .sound(SoundType.GRASS)
                                    .randomTicks(),
@@ -87,7 +87,7 @@ public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfig
     public FeatureSaplingBlock(Function<BlockState, org.betterx.bclib.api.v2.levelgen.features.BCLFeature> featureSupplier) {
         this(
                 Properties.of(Material.PLANT)
-                                   .collidable(false)
+                                    .noCollission()
                                    .instabreak()
                                    .sound(SoundType.GRASS)
                                    .randomTicks(),
@@ -102,8 +102,8 @@ public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfig
     ) {
         this(
                 Properties.of(Material.PLANT)
-                                   .collidable(false)
-                                   .luminance(light)
+                          .noCollission()
+                                   .lightLevel(ignored->light)
                                    .instabreak()
                                    .sound(SoundType.GRASS)
                                    .randomTicks(),

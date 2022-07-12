@@ -15,7 +15,6 @@ import net.minecraft.world.level.storage.loot.LootContext;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +28,7 @@ public class BaseRotatedPillarBlock extends RotatedPillarBlock implements BlockM
     }
 
     public BaseRotatedPillarBlock(Block block) {
-        this(FabricBlockSettings.copyOf(block));
+        this(Properties.copy(block));
     }
 
     @Override

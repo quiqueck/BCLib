@@ -18,7 +18,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class BaseBookshelfBlock extends BaseBlock {
     public BaseBookshelfBlock(Block source) {
-        this(FabricBlockSettings.copyOf(source));
+        this(Properties.copy(source));
     }
 
     public BaseBookshelfBlock(BlockBehaviour.Properties properties) {

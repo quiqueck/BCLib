@@ -34,7 +34,6 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import java.util.List;
 import java.util.Map;
@@ -43,7 +42,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class BaseBarrelBlock extends BarrelBlock implements BlockModelProvider {
     public BaseBarrelBlock(Block source) {
-        this(FabricBlockSettings.copyOf(source).noOcclusion());
+        this(Properties.copy(source).noOcclusion());
     }
 
     public BaseBarrelBlock(BlockBehaviour.Properties properties) {
