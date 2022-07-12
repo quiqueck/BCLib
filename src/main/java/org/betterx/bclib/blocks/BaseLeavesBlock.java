@@ -22,6 +22,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -48,7 +49,11 @@ public class BaseLeavesBlock extends LeavesBlock implements BlockModelProvider, 
                 .blockVision((state, world, pos) -> false);
     }
 
-    public BaseLeavesBlock(Block sapling, MaterialColor color, Consumer<FabricBlockSettings> customizeProperties) {
+    public BaseLeavesBlock(
+            Block sapling,
+            MaterialColor color,
+            Consumer<BlockBehaviour.Properties> customizeProperties
+    ) {
         super(BaseBlock.acceptAndReturn(customizeProperties, makeLeaves(color)));
         this.sapling = sapling;
     }
@@ -57,7 +62,7 @@ public class BaseLeavesBlock extends LeavesBlock implements BlockModelProvider, 
             Block sapling,
             MaterialColor color,
             int light,
-            Consumer<FabricBlockSettings> customizeProperties
+            Consumer<BlockBehaviour.Properties> customizeProperties
     ) {
         super(BaseBlock.acceptAndReturn(customizeProperties, makeLeaves(color).luminance(light)));
         this.sapling = sapling;
