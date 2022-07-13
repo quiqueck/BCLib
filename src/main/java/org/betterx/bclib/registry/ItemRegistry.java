@@ -9,6 +9,7 @@ import org.betterx.bclib.items.tool.BaseAxeItem;
 import org.betterx.bclib.items.tool.BaseHoeItem;
 import org.betterx.bclib.items.tool.BasePickaxeItem;
 import org.betterx.bclib.items.tool.BaseShearsItem;
+import org.betterx.bclib.models.RecordItemModelProvider;
 import org.betterx.worlds.together.tag.v3.CommonItemTags;
 import org.betterx.worlds.together.tag.v3.TagManager;
 import org.betterx.worlds.together.tag.v3.ToolTags;
@@ -34,12 +35,14 @@ public class ItemRegistry extends BaseRegistry<Item> {
     }
 
     public Item registerDisc(ResourceLocation itemId, int power, SoundEvent sound, int lengthInSeconds) {
-        BaseDiscItem item = new BaseDiscItem(power, sound, makeItemSettings().stacksTo(1), lengthInSeconds);
-
-        if (!config.getBoolean("musicDiscs", itemId.getPath(), true)) {
-            return item;
+        RecordItem item = BaseDiscItem.create(power, sound, makeItemSettings().stacksTo(1), lengthInSeconds);
+        if (item != null) {
+            RecordItemModelProvider.add(item);
+            if (!config.getBoolean("musicDiscs", itemId.getPath(), true)) {
+                return item;
+            }
+            register(itemId, item);
         }
-        register(itemId, item);
         return item;
     }
 

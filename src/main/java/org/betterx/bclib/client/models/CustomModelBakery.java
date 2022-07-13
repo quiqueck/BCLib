@@ -4,6 +4,7 @@ import org.betterx.bclib.api.v2.ModIntegrationAPI;
 import org.betterx.bclib.client.render.EmissiveTextureInfo;
 import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.ItemModelProvider;
+import org.betterx.bclib.models.RecordItemModelProvider;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.renderer.block.BlockModelShaper;
@@ -58,16 +59,23 @@ public class CustomModelBakery {
             }
         });
 
-        Registry.ITEM.stream().parallel().filter(item -> item instanceof ItemModelProvider).forEach(item -> {
-            ResourceLocation registryID = Registry.ITEM.getKey(item);
-            ResourceLocation storageID = new ResourceLocation(
-                    registryID.getNamespace(),
-                    "models/item/" + registryID.getPath() + ".json"
-            );
-            if (resourceManager.getResource(storageID).isEmpty()) {
-                addItemModel(registryID, (ItemModelProvider) item);
-            }
-        });
+        Registry.ITEM.stream()
+                     .parallel()
+                     .filter(item -> item instanceof ItemModelProvider || RecordItemModelProvider.has(item))
+                     .forEach(item -> {
+                         ResourceLocation registryID = Registry.ITEM.getKey(item);
+                         ResourceLocation storageID = new ResourceLocation(
+                                 registryID.getNamespace(),
+                                 "models/item/" + registryID.getPath() + ".json"
+                         );
+                         final ItemModelProvider provider = (item instanceof ItemModelProvider)
+                                 ? (ItemModelProvider) item
+                                 : RecordItemModelProvider.get(item);
+
+                         if (resourceManager.getResource(storageID).isEmpty()) {
+                             addItemModel(registryID, provider);
+                         }
+                     });
     }
 
     private void addBlockModel(ResourceLocation blockID, Block block) {
