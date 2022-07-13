@@ -398,7 +398,11 @@ public class InternalBiomeAPI {
     }
 
     public static void registerBCLBiomeData(BCLBiome biome) {
-        BCLBiomeRegistry.register(registryAccess, biome);
+        try {
+            BCLBiomeRegistry.register(registryAccess, biome);
+        } catch (IllegalStateException e) {
+            BCLib.LOGGER.warning("Unable to register Dummy Biome Entry for " + biome.getID());
+        }
     }
 
     /**
