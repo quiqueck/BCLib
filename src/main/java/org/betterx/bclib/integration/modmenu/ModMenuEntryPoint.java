@@ -26,6 +26,7 @@ public class ModMenuEntryPoint implements ModMenuApi {
 
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
+        //return (parent) -> new TestScreen(Component.literal("Hello Test"));
         return (parent) -> new MainScreen(parent);
     }
 
