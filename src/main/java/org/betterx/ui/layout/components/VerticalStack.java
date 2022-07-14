@@ -3,8 +3,11 @@ package org.betterx.ui.layout.components;
 
 import org.betterx.ui.layout.components.input.MouseEvent;
 import org.betterx.ui.layout.components.render.ComponentRenderer;
+import org.betterx.ui.layout.values.Alignment;
 import org.betterx.ui.layout.values.DynamicSize;
 import org.betterx.ui.layout.values.Rectangle;
+
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -23,8 +26,9 @@ public class VerticalStack<R extends ComponentRenderer> extends Component<R> {
     @Override
     protected int updateContainerWidth(int containerWidth) {
         int myWidth = width.calculateOrFill(containerWidth);
+        components.stream().forEach(c -> c.width.calculateOrFill(myWidth));
         for (Component<?> c : components) {
-            c.updateContainerWidth(myWidth);
+            c.updateContainerWidth(c.width.calculatedSize());
         }
         return myWidth;
     }
@@ -50,7 +54,10 @@ public class VerticalStack<R extends ComponentRenderer> extends Component<R> {
 
         int offset = 0;
         for (Component<?> c : components) {
-            c.setRelativeBounds(0, offset);
+            int delta = relativeBounds.width - c.width.calculatedSize();
+            if (c.hAlign == Alignment.MIN) delta = 0;
+            else if (c.hAlign == Alignment.CENTER) delta /= 2;
+            c.setRelativeBounds(delta, offset);
             offset += c.relativeBounds.height;
         }
     }
@@ -89,10 +96,10 @@ public class VerticalStack<R extends ComponentRenderer> extends Component<R> {
     }
 
     @Override
-    protected void renderInBounds(Rectangle renderBounds, Rectangle clipRect) {
-        super.renderInBounds(renderBounds, clipRect);
+    protected void renderInBounds(PoseStack poseStack, Rectangle renderBounds, Rectangle clipRect) {
+        super.renderInBounds(poseStack, renderBounds, clipRect);
         for (Component<?> c : components) {
-            c.render(renderBounds, clipRect);
+            c.render(poseStack, renderBounds, clipRect);
         }
     }
 
@@ -105,8 +112,33 @@ public class VerticalStack<R extends ComponentRenderer> extends Component<R> {
         }
     }
 
+    public static VerticalStack<?> centered(Component<?> c) {
+        return new VerticalStack<>(DynamicSize.relative(1), DynamicSize.relative(1)).addFiller().add(c).addFiller();
+    }
+
+    public static VerticalStack<?> bottom(Component<?> c) {
+        return new VerticalStack<>(DynamicSize.relative(1), DynamicSize.relative(1)).add(c).addFiller();
+    }
+
     public VerticalStack<R> add(Component<?> c) {
         this.components.add(c);
         return this;
+    }
+
+    private VerticalStack<R> addEmpty(DynamicSize size) {
+        this.components.add(new Empty(DynamicSize.fixed(0), size));
+        return this;
+    }
+
+    public VerticalStack<R> addSpacer(int size) {
+        return addEmpty(DynamicSize.fixed(size));
+    }
+
+    public VerticalStack<R> addSpacer(float percentage) {
+        return addEmpty(DynamicSize.relative(percentage));
+    }
+
+    public VerticalStack<R> addFiller() {
+        return addEmpty(DynamicSize.fill());
     }
 }

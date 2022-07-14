@@ -25,6 +25,10 @@ public class DynamicSize {
         return new DynamicSize(SizeType.FIT_CONTENT);
     }
 
+    public static DynamicSize fitOrFill() {
+        return new DynamicSize(SizeType.FIT_CONTENT_OR_FILL);
+    }
+
     public int calculatedSize() {
         return calculatedSize;
     }
@@ -67,7 +71,7 @@ public class DynamicSize {
 
     public int calculateOrFill(int parentSize) {
         calculatedSize = calculate(parentSize);
-        if (sizeType instanceof SizeType.Fill) {
+        if (sizeType instanceof SizeType.Fill || sizeType instanceof SizeType.FitContentOrFill) {
             calculatedSize = parentSize;
         }
 
@@ -75,7 +79,7 @@ public class DynamicSize {
     }
 
     public double fillWeight() {
-        if (sizeType instanceof SizeType.Fill fill) {
+        if (sizeType instanceof SizeType.Fill fill || sizeType instanceof SizeType.FitContentOrFill) {
             return 1;
         }
         return 0;

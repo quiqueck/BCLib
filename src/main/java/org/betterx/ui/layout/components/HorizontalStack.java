@@ -1,8 +1,12 @@
 package org.betterx.ui.layout.components;
 
-import org.betterx.ui.layout.components.render.*;
-import org.betterx.ui.layout.components.input.*;
-import org.betterx.ui.layout.values.*;
+import org.betterx.ui.layout.components.input.MouseEvent;
+import org.betterx.ui.layout.components.render.ComponentRenderer;
+import org.betterx.ui.layout.values.Alignment;
+import org.betterx.ui.layout.values.DynamicSize;
+import org.betterx.ui.layout.values.Rectangle;
+
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -36,8 +40,9 @@ public class HorizontalStack<R extends ComponentRenderer> extends Component<R> {
     @Override
     protected int updateContainerHeight(int containerHeight) {
         int myHeight = height.calculateOrFill(containerHeight);
+        components.stream().forEach(c -> c.height.calculateOrFill(myHeight));
         for (Component<?> c : components) {
-            c.updateContainerHeight(myHeight);
+            c.updateContainerHeight(c.height.calculatedSize());
         }
         return myHeight;
     }
@@ -49,7 +54,10 @@ public class HorizontalStack<R extends ComponentRenderer> extends Component<R> {
 
         int offset = 0;
         for (Component<?> c : components) {
-            c.setRelativeBounds(offset, 0);
+            int delta = relativeBounds.height - c.height.calculatedSize();
+            if (c.hAlign == Alignment.MIN) delta = 0;
+            else if (c.hAlign == Alignment.CENTER) delta /= 2;
+            c.setRelativeBounds(offset, delta);
             offset += c.relativeBounds.width;
         }
     }
@@ -89,10 +97,10 @@ public class HorizontalStack<R extends ComponentRenderer> extends Component<R> {
 //    }
 
     @Override
-    protected void renderInBounds(Rectangle renderBounds, Rectangle clipRect) {
-        super.renderInBounds(renderBounds, clipRect);
+    protected void renderInBounds(PoseStack poseStack, Rectangle renderBounds, Rectangle clipRect) {
+        super.renderInBounds(poseStack, renderBounds, clipRect);
         for (Component<?> c : components) {
-            c.render(renderBounds, clipRect);
+            c.render(poseStack, renderBounds, clipRect);
         }
     }
 
@@ -105,8 +113,33 @@ public class HorizontalStack<R extends ComponentRenderer> extends Component<R> {
         }
     }
 
+    public static HorizontalStack<?> centered(Component<?> c) {
+        return new HorizontalStack<>(DynamicSize.relative(1), DynamicSize.relative(1)).addFiller().add(c).addFiller();
+    }
+
+    public static HorizontalStack<?> bottom(Component<?> c) {
+        return new HorizontalStack<>(DynamicSize.relative(1), DynamicSize.relative(1)).add(c).addFiller();
+    }
+
     public HorizontalStack<R> add(Component<?> c) {
         this.components.add(c);
         return this;
+    }
+
+    private HorizontalStack<R> addEmpty(DynamicSize size) {
+        this.components.add(new Empty(size, DynamicSize.fixed(0)));
+        return this;
+    }
+
+    public HorizontalStack<R> addSpacer(int size) {
+        return addEmpty(DynamicSize.fixed(size));
+    }
+
+    public HorizontalStack<R> addSpacer(float percentage) {
+        return addEmpty(DynamicSize.relative(percentage));
+    }
+
+    public HorizontalStack<R> addFiller() {
+        return addEmpty(DynamicSize.fill());
     }
 }

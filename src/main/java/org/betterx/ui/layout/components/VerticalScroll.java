@@ -6,6 +6,8 @@ import org.betterx.ui.layout.components.render.ScrollerRenderer;
 import org.betterx.ui.layout.values.DynamicSize;
 import org.betterx.ui.layout.values.Rectangle;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+
 public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRenderer> extends Component<R> {
     protected Component<?> child;
     protected final RS scrollerRenderer;
@@ -33,7 +35,8 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
     protected int updateContainerWidth(int containerWidth) {
         int myWidth = width.calculateOrFill(containerWidth);
         if (child != null) {
-            child.updateContainerWidth(myWidth);
+            child.width.calculateOrFill(myWidth);
+            child.updateContainerWidth(child.width.calculatedSize());
         }
         return myWidth;
     }
@@ -42,7 +45,8 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
     protected int updateContainerHeight(int containerHeight) {
         int myHeight = height.calculateOrFill(containerHeight);
         if (child != null) {
-            child.updateContainerHeight(myHeight);
+            child.height.calculateOrFill(myHeight);
+            child.updateContainerHeight(child.height.calculatedSize());
         }
         return myHeight;
     }
@@ -77,17 +81,21 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
     }
 
     @Override
-    protected void renderInBounds(Rectangle renderBounds, Rectangle clipRect) {
-        super.renderInBounds(renderBounds, clipRect);
+    protected void renderInBounds(PoseStack poseStack, Rectangle renderBounds, Rectangle clipRect) {
+        super.renderInBounds(poseStack, renderBounds, clipRect);
 
         if (showScrollBar()) {
             if (child != null) {
-                child.render(renderBounds.movedBy(0, scrollerOffset(), scrollerRenderer.scrollerWidth(), 0), clipRect);
+                child.render(
+                        poseStack,
+                        renderBounds.movedBy(0, scrollerOffset(), scrollerRenderer.scrollerWidth(), 0),
+                        clipRect
+                );
             }
             scrollerRenderer.renderScrollBar(renderBounds, saveScrollerY(), scrollerHeight);
         } else {
             if (child != null) {
-                child.render(renderBounds, clipRect);
+                child.render(poseStack, renderBounds, clipRect);
             }
         }
     }
