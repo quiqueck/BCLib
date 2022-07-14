@@ -4,12 +4,14 @@ package org.betterx.ui.layout.components;
 import org.betterx.ui.layout.components.input.MouseEvent;
 import org.betterx.ui.layout.values.Rectangle;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+
 public class Panel implements ComponentWithBounds {
     protected Component<?> child;
     public final Rectangle bounds;
 
     public Panel(int width, int height) {
-        bounds = new Rectangle(50, 50, width, height);
+        bounds = new Rectangle(0, 0, width, height);
     }
 
     public void setChild(Component<?> c) {
@@ -30,9 +32,9 @@ public class Panel implements ComponentWithBounds {
         }
     }
 
-    public void render() {
+    public void render(PoseStack poseStack) {
         if (child != null) {
-            child.render(bounds, bounds);
+            child.render(poseStack, bounds, bounds);
         }
     }
 
