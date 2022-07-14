@@ -104,12 +104,14 @@ public class VerticalStack<R extends ComponentRenderer> extends Component<R> {
     }
 
     @Override
-    void mouseEvent(MouseEvent event, int x, int y) {
+    boolean mouseEvent(MouseEvent event, int x, int y) {
         if (!onMouseEvent(event, x, y)) {
             for (Component<?> c : components) {
-                c.mouseEvent(event, x - relativeBounds.left, y - relativeBounds.top);
+                if (c.mouseEvent(event, x - relativeBounds.left, y - relativeBounds.top))
+                    return true;
             }
         }
+        return false;
     }
 
     public static VerticalStack<?> centered(Component<?> c) {
@@ -140,5 +142,99 @@ public class VerticalStack<R extends ComponentRenderer> extends Component<R> {
 
     public VerticalStack<R> addFiller() {
         return addEmpty(DynamicSize.fill());
+    }
+
+    @Override
+    public void mouseMoved(double x, double y) {
+        for (Component<?> c : components) {
+            c.mouseMoved(x - relativeBounds.left, y - relativeBounds.top);
+        }
+    }
+
+    @Override
+    public boolean mouseClicked(double x, double y, int button) {
+        for (Component<?> c : components) {
+            if (c.mouseClicked(x - relativeBounds.left, y - relativeBounds.top, button))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean mouseReleased(double x, double y, int button) {
+        for (Component<?> c : components) {
+            if (c.mouseReleased(x - relativeBounds.left, y - relativeBounds.top, button))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean mouseDragged(double x, double y, int button, double x2, double y2) {
+        for (Component<?> c : components) {
+            if (c.mouseDragged(
+                    x - relativeBounds.left,
+                    y - relativeBounds.top,
+                    button,
+                    x2 - relativeBounds.left,
+                    y2 - relativeBounds.top
+            ))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean mouseScrolled(double x, double y, double f) {
+        for (Component<?> c : components) {
+            if (c.mouseScrolled(x - relativeBounds.left, y - relativeBounds.top, f))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean keyPressed(int i, int j, int k) {
+        for (Component<?> c : components) {
+            if (c.keyPressed(i, j, k))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean keyReleased(int i, int j, int k) {
+        for (Component<?> c : components) {
+            if (c.keyReleased(i, j, k))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean charTyped(char cc, int i) {
+        for (Component<?> c : components) {
+            if (c.charTyped(cc, i))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean changeFocus(boolean bl) {
+        for (Component<?> c : components) {
+            if (c.changeFocus(bl))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isMouseOver(double x, double y) {
+        for (Component<?> c : components) {
+            if (c.isMouseOver(x, y))
+                return true;
+        }
+        return false;
     }
 }

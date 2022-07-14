@@ -58,4 +58,46 @@ public class TestScreen extends Screen {
         main.render(poseStack);
         super.render(poseStack, i, j, f);
     }
+
+    @Override
+    public boolean mouseClicked(double x, double y, int button) {
+        boolean res = super.mouseClicked(x, y, button);
+        if (!res) {
+            res = main.mouseClicked(x, y, button);
+        }
+        return res;
+    }
+
+    @Override
+    public boolean mouseReleased(double d, double e, int i) {
+        boolean res = super.mouseReleased(d, e, i);
+        if (!res) {
+            res = main.mouseReleased(d, e, i);
+        }
+        return res;
+    }
+
+    @Override
+    public void mouseMoved(double d, double e) {
+        super.mouseMoved(d, e);
+        main.mouseMoved(d, e);
+    }
+
+    @Override
+    public boolean mouseDragged(double d, double e, int i, double f, double g) {
+        boolean res = super.mouseDragged(d, e, i, f, g);
+        if (!res) {
+            res = main.mouseDragged(d, e, i, f, g);
+        }
+        return res;
+    }
+
+    @Override
+    public boolean mouseScrolled(double d, double e, double f) {
+        boolean res = super.mouseScrolled(d, e, f);
+        if (!res) {
+            res = main.mouseScrolled(d, e, f);
+        }
+        return res;
+    }
 }

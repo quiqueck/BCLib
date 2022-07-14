@@ -72,12 +72,14 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
     }
 
     @Override
-    void mouseEvent(MouseEvent event, int x, int y) {
+    boolean mouseEvent(MouseEvent event, int x, int y) {
         if (!onMouseEvent(event, x, y)) {
             if (child != null) {
-                child.mouseEvent(event, x - relativeBounds.left, y - relativeBounds.top - scrollerOffset());
+                if (child.mouseEvent(event, x - relativeBounds.left, y - relativeBounds.top - scrollerOffset()))
+                    return true;
             }
         }
+        return false;
     }
 
     @Override
@@ -108,7 +110,7 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
     public boolean onMouseEvent(MouseEvent event, int x, int y) {
         if (event == MouseEvent.DOWN) {
             Rectangle scroller = scrollerRenderer.getScrollerBounds(relativeBounds);
-            Rectangle picker = scrollerRenderer.getPickerBounds(relativeBounds, saveScrollerY(), scrollerHeight);
+            Rectangle picker = scrollerRenderer.getPickerBounds(scroller, saveScrollerY(), scrollerHeight);
             if (picker.contains(x, y)) {
                 mouseDown = true;
                 mouseDownY = y;
@@ -117,7 +119,7 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
             }
         } else if (event == MouseEvent.UP) {
             mouseDown = false;
-        } else if (event == MouseEvent.MOVE && mouseDown) {
+        } else if (event == MouseEvent.DRAG && mouseDown) {
             int delta = y - mouseDownY;
             scrollerY = scrollerDownY + delta;
             return true;
@@ -146,5 +148,89 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
 
     public boolean showScrollBar() {
         return child.relativeBounds.height > relativeBounds.height;
+    }
+
+    @Override
+    public void mouseMoved(double x, double y) {
+        if (child != null)
+            child.mouseMoved(x, y);
+    }
+
+    @Override
+    public boolean mouseClicked(double x, double y, int button) {
+        Rectangle scroller = scrollerRenderer.getScrollerBounds(relativeBounds);
+        Rectangle picker = scrollerRenderer.getPickerBounds(scroller, saveScrollerY(), scrollerHeight);
+        if (picker.contains((int) x, (int) y)) {
+            mouseDown = true;
+            mouseDownY = (int) y;
+            scrollerDownY = saveScrollerY();
+            return true;
+        }
+
+        if (child != null)
+            return child.mouseClicked(x, y, button);
+        return false;
+    }
+
+    @Override
+    public boolean mouseReleased(double x, double y, int button) {
+        mouseDown = false;
+        if (child != null)
+            return child.mouseReleased(x - relativeBounds.left, y - relativeBounds.top, button);
+        return false;
+    }
+
+    @Override
+    public boolean mouseDragged(double x, double y, int button, double x2, double y2) {
+        if (mouseDown) {
+            int delta = (int) y - mouseDownY;
+            scrollerY = scrollerDownY + delta;
+            return true;
+        }
+        if (child != null)
+            return child.mouseDragged(x, y, button, x2, y2);
+        return false;
+    }
+
+    @Override
+    public boolean mouseScrolled(double x, double y, double f) {
+        if (child != null)
+            return child.mouseScrolled(x, y, f);
+        return false;
+    }
+
+    @Override
+    public boolean keyPressed(int i, int j, int k) {
+        if (child != null)
+            return child.keyPressed(i, j, k);
+        return false;
+    }
+
+    @Override
+    public boolean keyReleased(int i, int j, int k) {
+        if (child != null)
+            return child.keyReleased(i, j, k);
+        return false;
+    }
+
+    @Override
+    public boolean charTyped(char c, int i) {
+        if (child != null)
+            return child.charTyped(c, i);
+        return false;
+    }
+
+    @Override
+    public boolean changeFocus(boolean bl) {
+        if (child != null)
+            return child.changeFocus(bl);
+        return false;
+    }
+
+    @Override
+    public boolean isMouseOver(double x, double y) {
+        if (child != null)
+            return child.isMouseOver(x, y);
+        return false;
     }
 }

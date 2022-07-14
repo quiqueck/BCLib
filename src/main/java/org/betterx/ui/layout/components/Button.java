@@ -62,7 +62,7 @@ public class Button extends Component<ButtonRenderer> {
         mouseX = x;
         mouseY = y;
         if (vanillaButton != null && relativeBounds.contains(x, y)) {
-
+            if (event == MouseEvent.DOWN) return vanillaButton.mouseClicked(x, y, 0);
 
             return true;
         }
@@ -91,4 +91,80 @@ public class Button extends Component<ButtonRenderer> {
     public int getContentHeight() {
         return renderer.getHeight(component);
     }
+
+    @Override
+    public void mouseMoved(double x, double y) {
+        if (vanillaButton != null)
+            vanillaButton.mouseMoved(x - relativeBounds.left, y - relativeBounds.top);
+    }
+
+    @Override
+    public boolean mouseClicked(double x, double y, int button) {
+        if (vanillaButton != null)
+            return vanillaButton.mouseClicked(x - relativeBounds.left, y - relativeBounds.top, button);
+        return false;
+    }
+
+    @Override
+    public boolean mouseReleased(double x, double y, int button) {
+        if (vanillaButton != null)
+            return vanillaButton.mouseReleased(x - relativeBounds.left, y - relativeBounds.top, button);
+        return false;
+    }
+
+    @Override
+    public boolean mouseDragged(double x, double y, int button, double x2, double y2) {
+        if (vanillaButton != null)
+            return vanillaButton.mouseDragged(
+                    x - relativeBounds.left,
+                    y - relativeBounds.top,
+                    button,
+                    x2 - relativeBounds.left,
+                    y2 - relativeBounds.top
+            );
+        return false;
+    }
+
+    @Override
+    public boolean mouseScrolled(double x, double y, double f) {
+        if (vanillaButton != null)
+            return vanillaButton.mouseScrolled(x - relativeBounds.left, y - relativeBounds.top, f);
+        return false;
+    }
+
+    @Override
+    public boolean keyPressed(int i, int j, int k) {
+        if (vanillaButton != null)
+            return vanillaButton.keyPressed(i, j, k);
+        return false;
+    }
+
+    @Override
+    public boolean keyReleased(int i, int j, int k) {
+        if (vanillaButton != null)
+            return vanillaButton.keyReleased(i, j, k);
+        return false;
+    }
+
+    @Override
+    public boolean charTyped(char c, int i) {
+        if (vanillaButton != null)
+            return vanillaButton.charTyped(c, i);
+        return false;
+    }
+
+    @Override
+    public boolean changeFocus(boolean bl) {
+        if (vanillaButton != null)
+            return vanillaButton.changeFocus(bl);
+        return false;
+    }
+
+    @Override
+    public boolean isMouseOver(double x, double y) {
+        if (vanillaButton != null)
+            return vanillaButton.isMouseOver(x, y);
+        return false;
+    }
+
 }

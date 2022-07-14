@@ -7,8 +7,9 @@ import org.betterx.ui.layout.values.DynamicSize;
 import org.betterx.ui.layout.values.Rectangle;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 
-public abstract class Component<R extends ComponentRenderer> implements ComponentWithBounds {
+public abstract class Component<R extends ComponentRenderer> implements ComponentWithBounds, GuiEventListener {
     protected final R renderer;
     protected final DynamicSize width;
     protected final DynamicSize height;
@@ -78,8 +79,8 @@ public abstract class Component<R extends ComponentRenderer> implements Componen
         }
     }
 
-    void mouseEvent(MouseEvent event, int x, int y) {
-        onMouseEvent(event, x, y);
+    boolean mouseEvent(MouseEvent event, int x, int y) {
+        return onMouseEvent(event, x, y);
     }
 
     public boolean onMouseEvent(MouseEvent event, int x, int y) {
