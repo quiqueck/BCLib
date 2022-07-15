@@ -5,6 +5,10 @@ import org.betterx.ui.layout.values.DynamicSize;
 
 import net.minecraft.network.chat.Component;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+@Environment(EnvType.CLIENT)
 public class Checkbox extends AbstractVanillaComponent<net.minecraft.client.gui.components.Checkbox, Checkbox> {
     @FunctionalInterface
     public interface SelectionChanged {
