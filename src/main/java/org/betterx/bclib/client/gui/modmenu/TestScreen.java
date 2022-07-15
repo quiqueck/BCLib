@@ -26,7 +26,7 @@ public class TestScreen extends Screen {
         VerticalStack<?> rows = new VerticalStack<>(DynamicSize.fit(), DynamicSize.relative(1));
 
         rows.addFiller();
-        rows.add(new Range<Integer>(
+        rows.add(new Range<>(
                 DynamicSize.fill(), DynamicSize.fit(),
                 Component.literal("Integer"),
                 10, 90, 20,
@@ -35,6 +35,15 @@ public class TestScreen extends Screen {
                 }
         ));
         rows.addSpacer(8);
+        rows.add(new Range<>(
+                DynamicSize.fill(), DynamicSize.fit(),
+                Component.literal("Float"),
+                10f, 90f, 20f,
+                (slider, value) -> {
+                    System.out.println(value);
+                }
+        ));
+        rows.addSpacer(16);
         rows.add(new Button(
                         DynamicSize.fit(), DynamicSize.fit(),
                         Component.literal("test"),

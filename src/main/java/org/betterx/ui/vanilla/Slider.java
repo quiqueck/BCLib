@@ -52,7 +52,7 @@ public class Slider<N extends Number> extends AbstractSliderButton {
         this.minValue = minValue;
         this.maxValue = maxValue;
         this.onChange = onChange;
-        
+
         this.updateMessage();
     }
 
@@ -81,6 +81,18 @@ public class Slider<N extends Number> extends AbstractSliderButton {
     }
 
     protected String valueToString(N value) {
+        if (minValue instanceof Float || minValue instanceof Double) {
+            double v = value.doubleValue();
+            double m = maxValue.doubleValue();
+            if (m > 1000)
+                return "" + (int) v;
+            if (m > 100)
+                return String.format("%.1f", v);
+            if (m > 10)
+                return String.format("%.2f", v);
+
+            return String.format("%.4f", v);
+        }
         return "" + value;
     }
 
