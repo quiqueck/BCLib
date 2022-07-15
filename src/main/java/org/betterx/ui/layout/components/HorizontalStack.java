@@ -1,7 +1,7 @@
 package org.betterx.ui.layout.components;
 
 import org.betterx.ui.layout.components.input.RelativeContainerEventHandler;
-import org.betterx.ui.layout.components.render.ComponentRenderer;
+import org.betterx.ui.layout.components.render.NullRenderer;
 import org.betterx.ui.layout.values.Alignment;
 import org.betterx.ui.layout.values.DynamicSize;
 
@@ -9,13 +9,9 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
-public class HorizontalStack<R extends ComponentRenderer> extends AbstractStack<R, HorizontalStack<R>> implements RelativeContainerEventHandler {
+public class HorizontalStack extends AbstractStack<NullRenderer, HorizontalStack> implements RelativeContainerEventHandler {
     public HorizontalStack(DynamicSize width, DynamicSize height) {
         super(width, height);
-    }
-
-    public HorizontalStack(DynamicSize width, DynamicSize height, R renderer) {
-        super(width, height, renderer);
     }
 
     @Override
@@ -71,15 +67,15 @@ public class HorizontalStack<R extends ComponentRenderer> extends AbstractStack<
         return components.stream().map(c -> c.height.calculateFixed()).reduce(0, Integer::max);
     }
 
-    public static HorizontalStack<?> centered(Component<?> c) {
-        return new HorizontalStack<>(DynamicSize.relative(1), DynamicSize.relative(1)).addFiller().add(c).addFiller();
+    public static HorizontalStack centered(Component<?> c) {
+        return new HorizontalStack(DynamicSize.relative(1), DynamicSize.relative(1)).addFiller().add(c).addFiller();
     }
 
-    public static HorizontalStack<?> bottom(Component<?> c) {
-        return new HorizontalStack<>(DynamicSize.relative(1), DynamicSize.relative(1)).add(c).addFiller();
+    public static HorizontalStack bottom(Component<?> c) {
+        return new HorizontalStack(DynamicSize.relative(1), DynamicSize.relative(1)).add(c).addFiller();
     }
 
-    protected HorizontalStack<R> addEmpty(DynamicSize size) {
+    protected HorizontalStack addEmpty(DynamicSize size) {
         this.components.add(new Empty(size, DynamicSize.fixed(0)));
         return this;
     }

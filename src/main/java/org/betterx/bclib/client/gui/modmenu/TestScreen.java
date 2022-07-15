@@ -22,8 +22,7 @@ public class TestScreen extends Screen {
     protected void init() {
         super.init();
         main = new Panel(this.width, this.height);
-        HorizontalStack<?> columns = new HorizontalStack<>(DynamicSize.relative(1), DynamicSize.relative(1));
-        VerticalStack<?> rows = new VerticalStack<>(DynamicSize.fit(), DynamicSize.relative(1));
+        VerticalStack rows = new VerticalStack(DynamicSize.fit(), DynamicSize.relative(1));
 
         rows.addFiller();
         rows.add(new Range<>(
