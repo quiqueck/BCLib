@@ -26,12 +26,12 @@ public class TestScreen extends LayoutScreen {
 
         rows.addFiller();
         rows.add(new Text(
-                        DynamicSize.fitOrFill(), DynamicSize.fit(),
+                        DynamicSize.fitOrFill(), DynamicSize.fixed(20),
                         Component.literal("Some Text")
                 ).alignRight()
         );
         rows.add(new Text(
-                        DynamicSize.fitOrFill(), DynamicSize.fit(),
+                        DynamicSize.fitOrFill(), DynamicSize.fixed(20),
                         Component.literal("Some other, longer Text")
                 ).centerHorizontal()
         );

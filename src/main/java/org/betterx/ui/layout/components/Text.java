@@ -48,6 +48,10 @@ public class Text extends Component<Text.TextRenderer> {
             return getFont().width(c.getVisualOrderText());
         }
 
+        @Override
+        public int getHeight(net.minecraft.network.chat.Component c) {
+            return TextProvider.super.getLineHeight(c);
+        }
 
         @Override
         public void renderInBounds(PoseStack stack, int x, int y, float a, Rectangle bounds, Rectangle clipRect) {
