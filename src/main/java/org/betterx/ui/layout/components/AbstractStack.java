@@ -8,18 +8,22 @@ import org.betterx.ui.layout.values.Rectangle;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import java.util.LinkedList;
 import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class Stack<R extends ComponentRenderer, T extends Stack<R, T>> extends Component<R> implements RelativeContainerEventHandler {
+@Environment(EnvType.CLIENT)
+public abstract class AbstractStack<R extends ComponentRenderer, T extends AbstractStack<R, T>> extends Component<R> implements RelativeContainerEventHandler {
     protected final List<Component<?>> components = new LinkedList<>();
 
-    public Stack(DynamicSize width, DynamicSize height) {
+    public AbstractStack(DynamicSize width, DynamicSize height) {
         this(width, height, null);
     }
 
-    public Stack(DynamicSize width, DynamicSize height, R renderer) {
+    public AbstractStack(DynamicSize width, DynamicSize height, R renderer) {
         super(width, height, renderer);
     }
 

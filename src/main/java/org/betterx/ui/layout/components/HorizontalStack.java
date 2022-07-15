@@ -9,7 +9,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
-public class HorizontalStack<R extends ComponentRenderer> extends Stack<R, HorizontalStack<R>> implements RelativeContainerEventHandler {
+public class HorizontalStack<R extends ComponentRenderer> extends AbstractStack<R, HorizontalStack<R>> implements RelativeContainerEventHandler {
     public HorizontalStack(DynamicSize width, DynamicSize height) {
         super(width, height);
     }

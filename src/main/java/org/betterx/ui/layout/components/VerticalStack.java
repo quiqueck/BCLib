@@ -10,7 +10,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
-public class VerticalStack<R extends ComponentRenderer> extends Stack<R, VerticalStack<R>> implements RelativeContainerEventHandler {
+public class VerticalStack<R extends ComponentRenderer> extends AbstractStack<R, VerticalStack<R>> implements RelativeContainerEventHandler {
     public VerticalStack(DynamicSize width, DynamicSize height) {
         super(width, height);
     }
