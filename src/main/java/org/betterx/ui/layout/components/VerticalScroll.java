@@ -1,6 +1,5 @@
 package org.betterx.ui.layout.components;
 
-import org.betterx.ui.layout.components.input.MouseEvent;
 import org.betterx.ui.layout.components.render.ComponentRenderer;
 import org.betterx.ui.layout.components.render.ScrollerRenderer;
 import org.betterx.ui.layout.values.DynamicSize;
@@ -8,6 +7,10 @@ import org.betterx.ui.layout.values.Rectangle;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+@Environment(EnvType.CLIENT)
 public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRenderer> extends Component<R> {
     protected Component<?> child;
     protected final RS scrollerRenderer;
@@ -72,17 +75,6 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
     }
 
     @Override
-    boolean mouseEvent(MouseEvent event, int x, int y) {
-        if (!onMouseEvent(event, x, y)) {
-            if (child != null) {
-                if (child.mouseEvent(event, x - relativeBounds.left, y - relativeBounds.top - scrollerOffset()))
-                    return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
     protected void renderInBounds(
             PoseStack poseStack,
             int x,
@@ -112,27 +104,6 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
     private boolean mouseDown = false;
     private int mouseDownY = 0;
     private int scrollerDownY = 0;
-
-    @Override
-    public boolean onMouseEvent(MouseEvent event, int x, int y) {
-        if (event == MouseEvent.DOWN) {
-            Rectangle scroller = scrollerRenderer.getScrollerBounds(relativeBounds);
-            Rectangle picker = scrollerRenderer.getPickerBounds(scroller, saveScrollerY(), scrollerHeight);
-            if (picker.contains(x, y)) {
-                mouseDown = true;
-                mouseDownY = y;
-                scrollerDownY = saveScrollerY();
-                return true;
-            }
-        } else if (event == MouseEvent.UP) {
-            mouseDown = false;
-        } else if (event == MouseEvent.DRAG && mouseDown) {
-            int delta = y - mouseDownY;
-            scrollerY = scrollerDownY + delta;
-            return true;
-        }
-        return mouseDown;
-    }
 
     protected void updateScrollViewMetrics() {
         final int view = relativeBounds.height;

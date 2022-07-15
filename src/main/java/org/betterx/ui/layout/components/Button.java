@@ -1,6 +1,5 @@
 package org.betterx.ui.layout.components;
 
-import org.betterx.ui.layout.components.input.MouseEvent;
 import org.betterx.ui.layout.components.render.ComponentRenderer;
 import org.betterx.ui.layout.values.DynamicSize;
 import org.betterx.ui.layout.values.Rectangle;
@@ -9,6 +8,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+@Environment(EnvType.CLIENT)
 class ButtonRenderer implements ComponentRenderer {
     Button linkedButton;
 
@@ -35,6 +38,7 @@ class ButtonRenderer implements ComponentRenderer {
     }
 }
 
+@Environment(EnvType.CLIENT)
 public class Button extends Component<ButtonRenderer> {
     int mouseX, mouseY;
     final net.minecraft.network.chat.Component component;
@@ -55,18 +59,6 @@ public class Button extends Component<ButtonRenderer> {
         this.component = component;
         this.onPress = onPress;
         this.onTooltip = onTooltip;
-    }
-
-    @Override
-    public boolean onMouseEvent(MouseEvent event, int x, int y) {
-        mouseX = x;
-        mouseY = y;
-        if (vanillaButton != null && relativeBounds.contains(x, y)) {
-            if (event == MouseEvent.DOWN) return vanillaButton.mouseClicked(x, y, 0);
-
-            return true;
-        }
-        return super.onMouseEvent(event, x, y);
     }
 
     @Override

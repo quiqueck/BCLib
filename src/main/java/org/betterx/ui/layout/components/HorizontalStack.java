@@ -1,6 +1,5 @@
 package org.betterx.ui.layout.components;
 
-import org.betterx.ui.layout.components.input.MouseEvent;
 import org.betterx.ui.layout.components.input.RelativeContainerEventHandler;
 import org.betterx.ui.layout.components.render.ComponentRenderer;
 import org.betterx.ui.layout.values.Alignment;
@@ -10,10 +9,14 @@ import org.betterx.ui.layout.values.Rectangle;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import java.util.LinkedList;
 import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
+@Environment(EnvType.CLIENT)
 public class HorizontalStack<R extends ComponentRenderer> extends Component<R> implements RelativeContainerEventHandler {
     protected final List<Component<?>> components = new LinkedList<>();
 
@@ -112,17 +115,6 @@ public class HorizontalStack<R extends ComponentRenderer> extends Component<R> i
         for (Component<?> c : components) {
             c.render(poseStack, x, y, a, renderBounds, clipRect);
         }
-    }
-
-    @Override
-    boolean mouseEvent(MouseEvent event, int x, int y) {
-        if (!onMouseEvent(event, x, y)) {
-            for (Component<?> c : components) {
-                if (c.mouseEvent(event, x - relativeBounds.left, y - relativeBounds.top))
-                    return true;
-            }
-        }
-        return false;
     }
 
     public static HorizontalStack<?> centered(Component<?> c) {

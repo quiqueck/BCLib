@@ -1,7 +1,6 @@
 package org.betterx.ui.layout.components;
 
 
-import org.betterx.ui.layout.components.input.MouseEvent;
 import org.betterx.ui.layout.components.input.RelativeContainerEventHandler;
 import org.betterx.ui.layout.values.Rectangle;
 
@@ -11,9 +10,13 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
+@Environment(EnvType.CLIENT)
 public class Panel implements ComponentWithBounds, RelativeContainerEventHandler, NarratableEntry, Widget {
     protected Component<?> child;
     List<? extends GuiEventListener> listeners = List.of();
@@ -26,13 +29,6 @@ public class Panel implements ComponentWithBounds, RelativeContainerEventHandler
     public void setChild(Component<?> c) {
         this.child = c;
         listeners = List.of(c);
-    }
-
-    public boolean mouseEvent(MouseEvent event, int x, int y) {
-        if (child != null) {
-            return child.mouseEvent(event, x - bounds.left, y - bounds.top);
-        }
-        return false;
     }
 
     public void calculateLayout() {

@@ -1,5 +1,9 @@
 package org.betterx.ui.layout.values;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+@Environment(EnvType.CLIENT)
 public class Rectangle {
     public static final Rectangle ZERO = new Rectangle(0, 0, 0, 0);
     public final int left;

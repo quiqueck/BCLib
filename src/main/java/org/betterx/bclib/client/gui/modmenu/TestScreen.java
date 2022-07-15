@@ -10,6 +10,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+@Environment(EnvType.CLIENT)
 public class TestScreen extends Screen {
     public TestScreen(Component component) {
         super(component);
@@ -50,7 +54,7 @@ public class TestScreen extends Screen {
         rows.addFiller();
         main.setChild(HorizontalStack.centered(rows));
         main.calculateLayout();
-        
+
         addRenderableWidget(main);
     }
 

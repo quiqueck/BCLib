@@ -1,6 +1,5 @@
 package org.betterx.ui.layout.components;
 
-import org.betterx.ui.layout.components.input.MouseEvent;
 import org.betterx.ui.layout.components.render.ComponentRenderer;
 import org.betterx.ui.layout.values.Alignment;
 import org.betterx.ui.layout.values.DynamicSize;
@@ -9,6 +8,10 @@ import org.betterx.ui.layout.values.Rectangle;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+@Environment(EnvType.CLIENT)
 public abstract class Component<R extends ComponentRenderer> implements ComponentWithBounds, GuiEventListener {
     protected final R renderer;
     protected final DynamicSize width;
@@ -84,14 +87,6 @@ public abstract class Component<R extends ComponentRenderer> implements Componen
         if (renderer != null) {
             renderer.renderInBounds(poseStack, x, y, a, renderBounds, clipRect);
         }
-    }
-
-    boolean mouseEvent(MouseEvent event, int x, int y) {
-        return onMouseEvent(event, x, y);
-    }
-
-    public boolean onMouseEvent(MouseEvent event, int x, int y) {
-        return false;
     }
 
     @Override
