@@ -1,6 +1,7 @@
 package org.betterx.bclib.client.gui.modmenu;
 
 import org.betterx.bclib.BCLib;
+import org.betterx.ui.ColorUtil;
 import org.betterx.ui.layout.components.*;
 import org.betterx.ui.layout.values.DynamicSize;
 import org.betterx.ui.layout.values.Size;
@@ -43,6 +44,12 @@ public class TestScreen extends LayoutScreen {
                         BCLib.makeID("icon.png"),
                         new Size(512, 512)
                 ).centerHorizontal()
+        );
+        rows.add(new MultiLineText(
+                        DynamicSize.fill(), DynamicSize.fit(),
+                        Component.literal(
+                                "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.")
+                ).setColor(ColorUtil.LIGHT_PURPLE).centerHorizontal()
         );
         rows.addSpacer(16);
         rows.add(new Range<>(
