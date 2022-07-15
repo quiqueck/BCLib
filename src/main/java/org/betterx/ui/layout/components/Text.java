@@ -1,5 +1,6 @@
 package org.betterx.ui.layout.components;
 
+import org.betterx.ui.ColorUtil;
 import org.betterx.ui.layout.components.render.ComponentRenderer;
 import org.betterx.ui.layout.components.render.TextProvider;
 import org.betterx.ui.layout.values.Alignment;
@@ -11,7 +12,7 @@ import net.minecraft.client.gui.GuiComponent;
 
 public class Text extends Component<Text.TextRenderer> {
     final net.minecraft.network.chat.Component text;
-    int color = 0xA0A0A0;
+    int color = ColorUtil.DEFAULT_TEXT;
 
     public Text(
             DynamicSize width,

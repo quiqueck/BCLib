@@ -6,9 +6,9 @@ import org.betterx.bclib.api.v2.levelgen.surface.SurfaceRuleBuilder;
 import org.betterx.bclib.entity.BCLEntityWrapper;
 import org.betterx.bclib.mixin.common.BiomeGenerationSettingsAccessor;
 import org.betterx.bclib.util.CollectionsUtil;
-import org.betterx.bclib.util.ColorUtil;
 import org.betterx.bclib.util.Pair;
 import org.betterx.bclib.util.TriFunction;
+import org.betterx.ui.ColorUtil;
 import org.betterx.worlds.together.surfaceRules.SurfaceRuleRegistry;
 import org.betterx.worlds.together.tag.v3.TagManager;
 
