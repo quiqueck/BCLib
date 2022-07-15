@@ -8,11 +8,14 @@ import org.betterx.ui.layout.values.DynamicSize;
 import org.betterx.ui.layout.values.Rectangle;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.components.events.ContainerEventHandler;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 
 import java.util.LinkedList;
 import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
-public class VerticalStack<R extends ComponentRenderer> extends Component<R> {
+public class VerticalStack<R extends ComponentRenderer> extends Component<R> implements ContainerEventHandler {
     protected final List<Component<?>> components = new LinkedList<>();
 
     public VerticalStack(DynamicSize width, DynamicSize height) {
@@ -145,96 +148,126 @@ public class VerticalStack<R extends ComponentRenderer> extends Component<R> {
     }
 
     @Override
-    public void mouseMoved(double x, double y) {
-        for (Component<?> c : components) {
-            c.mouseMoved(x - relativeBounds.left, y - relativeBounds.top);
-        }
+    public List<? extends GuiEventListener> children() {
+        return components;
+    }
+
+    boolean dragging;
+
+    @Override
+    public boolean isDragging() {
+        return dragging;
     }
 
     @Override
-    public boolean mouseClicked(double x, double y, int button) {
-        for (Component<?> c : components) {
-            if (c.mouseClicked(x - relativeBounds.left, y - relativeBounds.top, button))
-                return true;
-        }
-        return false;
+    public void setDragging(boolean bl) {
+        dragging = bl;
+    }
+
+    GuiEventListener focused;
+
+    @Nullable
+    @Override
+    public GuiEventListener getFocused() {
+        return focused;
     }
 
     @Override
-    public boolean mouseReleased(double x, double y, int button) {
-        for (Component<?> c : components) {
-            if (c.mouseReleased(x - relativeBounds.left, y - relativeBounds.top, button))
-                return true;
-        }
-        return false;
+    public void setFocused(@Nullable GuiEventListener guiEventListener) {
+        focused = guiEventListener;
     }
 
-    @Override
-    public boolean mouseDragged(double x, double y, int button, double x2, double y2) {
-        for (Component<?> c : components) {
-            if (c.mouseDragged(
-                    x - relativeBounds.left,
-                    y - relativeBounds.top,
-                    button,
-                    x2 - relativeBounds.left,
-                    y2 - relativeBounds.top
-            ))
-                return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean mouseScrolled(double x, double y, double f) {
-        for (Component<?> c : components) {
-            if (c.mouseScrolled(x - relativeBounds.left, y - relativeBounds.top, f))
-                return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean keyPressed(int i, int j, int k) {
-        for (Component<?> c : components) {
-            if (c.keyPressed(i, j, k))
-                return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean keyReleased(int i, int j, int k) {
-        for (Component<?> c : components) {
-            if (c.keyReleased(i, j, k))
-                return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean charTyped(char cc, int i) {
-        for (Component<?> c : components) {
-            if (c.charTyped(cc, i))
-                return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean changeFocus(boolean bl) {
-        for (Component<?> c : components) {
-            if (c.changeFocus(bl))
-                return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isMouseOver(double x, double y) {
-        for (Component<?> c : components) {
-            if (c.isMouseOver(x, y))
-                return true;
-        }
-        return false;
-    }
+//    @Override
+//    public void mouseMoved(double x, double y) {
+//        for (Component<?> c : components) {
+//            c.mouseMoved(x - relativeBounds.left, y - relativeBounds.top);
+//        }
+//    }
+//
+//    @Override
+//    public boolean mouseClicked(double x, double y, int button) {
+//        for (Component<?> c : components) {
+//            if (c.mouseClicked(x - relativeBounds.left, y - relativeBounds.top, button))
+//                return true;
+//        }
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean mouseReleased(double x, double y, int button) {
+//        for (Component<?> c : components) {
+//            if (c.mouseReleased(x - relativeBounds.left, y - relativeBounds.top, button))
+//                return true;
+//        }
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean mouseDragged(double x, double y, int button, double x2, double y2) {
+//        for (Component<?> c : components) {
+//            if (c.mouseDragged(
+//                    x - relativeBounds.left,
+//                    y - relativeBounds.top,
+//                    button,
+//                    x2 - relativeBounds.left,
+//                    y2 - relativeBounds.top
+//            ))
+//                return true;
+//        }
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean mouseScrolled(double x, double y, double f) {
+//        for (Component<?> c : components) {
+//            if (c.mouseScrolled(x - relativeBounds.left, y - relativeBounds.top, f))
+//                return true;
+//        }
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean keyPressed(int i, int j, int k) {
+//        for (Component<?> c : components) {
+//            if (c.keyPressed(i, j, k))
+//                return true;
+//        }
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean keyReleased(int i, int j, int k) {
+//        for (Component<?> c : components) {
+//            if (c.keyReleased(i, j, k))
+//                return true;
+//        }
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean charTyped(char cc, int i) {
+//        for (Component<?> c : components) {
+//            if (c.charTyped(cc, i))
+//                return true;
+//        }
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean changeFocus(boolean bl) {
+//        for (Component<?> c : components) {
+//            if (c.changeFocus(bl))
+//                return true;
+//        }
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean isMouseOver(double x, double y) {
+//        for (Component<?> c : components) {
+//            if (c.isMouseOver(x, y))
+//                return true;
+//        }
+//        return false;
+//    }
 }
