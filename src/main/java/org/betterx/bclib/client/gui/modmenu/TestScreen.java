@@ -1,9 +1,6 @@
 package org.betterx.bclib.client.gui.modmenu;
 
-import org.betterx.ui.layout.components.Button;
-import org.betterx.ui.layout.components.HorizontalStack;
-import org.betterx.ui.layout.components.Panel;
-import org.betterx.ui.layout.components.VerticalStack;
+import org.betterx.ui.layout.components.*;
 import org.betterx.ui.layout.values.DynamicSize;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -27,15 +24,22 @@ public class TestScreen extends Screen {
         main = new Panel(this.width, this.height);
         HorizontalStack<?> columns = new HorizontalStack<>(DynamicSize.relative(1), DynamicSize.relative(1));
         VerticalStack<?> rows = new VerticalStack<>(DynamicSize.fit(), DynamicSize.relative(1));
-//        columns.add(new Empty(DynamicSize.fill(), DynamicSize.fill()));
-//        columns.add(rows);
-//        columns.add(new Empty(DynamicSize.fill(), DynamicSize.fill()));
 
         rows.addFiller();
+        rows.add(new Range<Integer>(
+                DynamicSize.fill(), DynamicSize.fit(),
+                Component.literal("Integer"),
+                10, 90, 20,
+                (slider, value) -> {
+                    System.out.println(value);
+                }
+        ));
+        rows.addSpacer(8);
         rows.add(new Button(
                         DynamicSize.fit(), DynamicSize.fit(),
                         Component.literal("test"),
                         (bt) -> {
+                            System.out.println("clicked test");
                         },
                         (bt, pose, x, y) -> {
                         }
@@ -46,6 +50,7 @@ public class TestScreen extends Screen {
                         DynamicSize.fit(), DynamicSize.fit(),
                         Component.literal("Hello World"),
                         (bt) -> {
+                            System.out.println("clicked hello");
                         },
                         (bt, pose, x, y) -> {
                         }
