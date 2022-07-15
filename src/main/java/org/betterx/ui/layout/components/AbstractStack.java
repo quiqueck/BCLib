@@ -46,15 +46,15 @@ public abstract class AbstractStack<R extends ComponentRenderer, T extends Abstr
     @Override
     protected void renderInBounds(
             PoseStack poseStack,
-            int x,
-            int y,
-            float a,
+            int mouseX,
+            int mouseY,
+            float deltaTicks,
             Rectangle renderBounds,
             Rectangle clipRect
     ) {
-        super.renderInBounds(poseStack, x, y, a, renderBounds, clipRect);
+        super.renderInBounds(poseStack, mouseX, mouseY, deltaTicks, renderBounds, clipRect);
         for (Component<?> c : components) {
-            c.render(poseStack, x, y, a, renderBounds, clipRect);
+            c.render(poseStack, mouseX, mouseY, deltaTicks, renderBounds, clipRect);
         }
     }
 

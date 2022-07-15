@@ -54,7 +54,14 @@ public class Text extends Component<Text.TextRenderer> {
         }
 
         @Override
-        public void renderInBounds(PoseStack stack, int x, int y, float a, Rectangle bounds, Rectangle clipRect) {
+        public void renderInBounds(
+                PoseStack stack,
+                int mouseX,
+                int mouseY,
+                float deltaTicks,
+                Rectangle bounds,
+                Rectangle clipRect
+        ) {
             if (linkedComponent != null) {
                 int left = bounds.width - getWidth(linkedComponent.text);
                 if (linkedComponent.hAlign == Alignment.MIN) left = 0;

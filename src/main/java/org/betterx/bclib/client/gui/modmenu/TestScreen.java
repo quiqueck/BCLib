@@ -1,7 +1,9 @@
 package org.betterx.bclib.client.gui.modmenu;
 
+import org.betterx.bclib.BCLib;
 import org.betterx.ui.layout.components.*;
 import org.betterx.ui.layout.values.DynamicSize;
+import org.betterx.ui.layout.values.Size;
 import org.betterx.ui.vanilla.LayoutScreen;
 
 import net.minecraft.client.gui.screens.Screen;
@@ -33,6 +35,13 @@ public class TestScreen extends LayoutScreen {
         rows.add(new Text(
                         DynamicSize.fitOrFill(), DynamicSize.fixed(20),
                         Component.literal("Some other, longer Text")
+                ).centerHorizontal()
+        );
+        rows.addSpacer(16);
+        rows.add(new Image(
+                        DynamicSize.fixed(24), DynamicSize.fixed(24),
+                        BCLib.makeID("icon.png"),
+                        new Size(512, 512)
                 ).centerHorizontal()
         );
         rows.addSpacer(16);
@@ -72,7 +81,7 @@ public class TestScreen extends LayoutScreen {
                 }
         ));
         rows.add(cb1);
-        rows.addSpacer(32);
+        rows.addSpacer(16);
         rows.add(new Button(
                         DynamicSize.fit(), DynamicSize.fit(),
                         Component.literal("test"),

@@ -3,6 +3,7 @@ package org.betterx.ui.layout.components;
 import org.betterx.ui.layout.components.render.ComponentRenderer;
 import org.betterx.ui.layout.components.render.NullRenderer;
 import org.betterx.ui.layout.components.render.ScrollerRenderer;
+import org.betterx.ui.layout.values.Alignment;
 import org.betterx.ui.layout.values.DynamicSize;
 import org.betterx.ui.layout.values.Rectangle;
 import org.betterx.ui.vanilla.VanillaScrollerRenderer;
@@ -59,7 +60,7 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
     protected int updateContainerWidth(int containerWidth) {
         int myWidth = width.calculateOrFill(containerWidth);
         if (child != null) {
-            child.width.calculateOrFill(myWidth - (scrollerRenderer.scrollerPadding() + scrollerRenderer.scrollerWidth()));
+            child.width.calculateOrFill(myWidth - scrollerWidth());
             child.updateContainerWidth(child.width.calculatedSize());
         }
         return myWidth;
@@ -75,9 +76,13 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
         return myHeight;
     }
 
+    protected int scrollerWidth() {
+        return scrollerRenderer.scrollerWidth() + scrollerRenderer.scrollerPadding();
+    }
+
     @Override
     public int getContentWidth() {
-        return scrollerRenderer.scrollerWidth() + scrollerRenderer.scrollerPadding() + (child != null
+        return scrollerWidth() + (child != null
                 ? child.getContentWidth()
                 : 0);
     }
@@ -91,8 +96,20 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
     void setRelativeBounds(int left, int top) {
         super.setRelativeBounds(left, top);
 
-        if (child != null)
-            child.setRelativeBounds(0, 0);
+        if (child != null) {
+            int width = relativeBounds.width;
+            boolean willNeedScrollBar = child.height.calculatedSize() > relativeBounds.height;
+            if (willNeedScrollBar) width -= scrollerWidth();
+            int childTop = width - child.width.calculatedSize();
+            if (child.hAlign == Alignment.MIN) childTop = 0;
+            else if (child.hAlign == Alignment.CENTER) childTop /= 2;
+
+            int childLeft = relativeBounds.height - child.height.calculatedSize();
+            if (child.vAlign == Alignment.MIN) childLeft = 0;
+            else if (child.vAlign == Alignment.CENTER) childLeft /= 2;
+
+            child.setRelativeBounds(childLeft, childTop);
+        }
 
         updateScrollViewMetrics();
     }
@@ -100,13 +117,13 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
     @Override
     protected void renderInBounds(
             PoseStack poseStack,
-            int x,
-            int y,
-            float a,
+            int mouseX,
+            int mouseY,
+            float deltaTicks,
             Rectangle renderBounds,
             Rectangle clipRect
     ) {
-        super.renderInBounds(poseStack, x, y, a, renderBounds, clipRect);
+        super.renderInBounds(poseStack, mouseX, mouseY, deltaTicks, renderBounds, clipRect);
 
         if (showScrollBar()) {
             if (child != null) {
@@ -114,13 +131,8 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
                 poseStack.translate(0, scrollerOffset(), 0);
                 setClippingRect(clipRect);
                 child.render(
-                        poseStack, x, y, a,
-                        renderBounds.movedBy(
-                                0,
-                                scrollerOffset(),
-                                scrollerRenderer.scrollerWidth() + scrollerRenderer.scrollerPadding(),
-                                0
-                        ),
+                        poseStack, mouseX, mouseY, deltaTicks,
+                        renderBounds.movedBy(0, scrollerOffset(), scrollerWidth(), 0),
                         clipRect
                 );
                 setClippingRect(null);
@@ -129,7 +141,7 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
             scrollerRenderer.renderScrollBar(renderBounds, saveScrollerY(), scrollerHeight);
         } else {
             if (child != null) {
-                child.render(poseStack, x, y, a, renderBounds, clipRect);
+                child.render(poseStack, mouseX, mouseY, deltaTicks, renderBounds, clipRect);
             }
         }
     }

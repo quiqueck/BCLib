@@ -82,28 +82,35 @@ public abstract class Component<R extends ComponentRenderer> implements Componen
         );
     }
 
-    public void render(PoseStack poseStack, int x, int y, float a, Rectangle parentBounds, Rectangle clipRect) {
+    public void render(
+            PoseStack poseStack,
+            int mouseX,
+            int mouseY,
+            float deltaTicks,
+            Rectangle parentBounds,
+            Rectangle clipRect
+    ) {
         Rectangle r = relativeBounds.movedBy(parentBounds.left, parentBounds.top);
         Rectangle clip = r.intersect(clipRect);
         poseStack.pushPose();
         poseStack.translate(relativeBounds.left, relativeBounds.top, 0);
         if (r.overlaps(clip)) {
-            renderInBounds(poseStack, x - relativeBounds.left, y - relativeBounds.top, a, r, clip);
+            renderInBounds(poseStack, mouseX - relativeBounds.left, mouseY - relativeBounds.top, deltaTicks, r, clip);
         }
         poseStack.popPose();
     }
 
     protected void renderInBounds(
             PoseStack poseStack,
-            int x,
-            int y,
-            float a,
+            int mouseX,
+            int mouseY,
+            float deltaTicks,
             Rectangle renderBounds,
             Rectangle clipRect
     ) {
         if (renderer != null) {
             setClippingRect(clipRect);
-            renderer.renderInBounds(poseStack, x, y, a, renderBounds, clipRect);
+            renderer.renderInBounds(poseStack, mouseX, mouseY, deltaTicks, renderBounds, clipRect);
             setClippingRect(null);
         }
     }

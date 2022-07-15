@@ -19,13 +19,20 @@ public class AbstractVanillaComponentRenderer<C extends AbstractWidget, V extend
     }
 
     @Override
-    public void renderInBounds(PoseStack poseStack, int x, int y, float a, Rectangle bounds, Rectangle clipRect) {
+    public void renderInBounds(
+            PoseStack poseStack,
+            int mouseX,
+            int mouseY,
+            float deltaTicks,
+            Rectangle bounds,
+            Rectangle clipRect
+    ) {
         if (linkedComponent != null) {
             if (linkedComponent.vanillaComponent != null) {
                 if (!linkedComponent.enabled) {
                     linkedComponent.vanillaComponent.setAlpha(linkedComponent.alpha / 2);
                 }
-                linkedComponent.vanillaComponent.render(poseStack, x, y, a);
+                linkedComponent.vanillaComponent.render(poseStack, mouseX, mouseY, deltaTicks);
                 if (!linkedComponent.enabled) {
                     linkedComponent.vanillaComponent.setAlpha(linkedComponent.alpha);
                 }

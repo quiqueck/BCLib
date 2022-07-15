@@ -10,7 +10,14 @@ import net.fabricmc.api.Environment;
 @Environment(EnvType.CLIENT)
 public class NullRenderer implements ComponentRenderer {
     @Override
-    public void renderInBounds(PoseStack stack, int x, int y, float a, Rectangle bounds, Rectangle clipRect) {
-        
+    public void renderInBounds(
+            PoseStack stack,
+            int mouseX,
+            int mouseY,
+            float deltaTicks,
+            Rectangle bounds,
+            Rectangle clipRect
+    ) {
+
     }
 }

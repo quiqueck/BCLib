@@ -9,5 +9,12 @@ import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
 public interface ComponentRenderer {
-    void renderInBounds(PoseStack stack, int x, int y, float a, Rectangle bounds, Rectangle clipRect);
+    void renderInBounds(
+            PoseStack stack,
+            int mouseX,
+            int mouseY,
+            float deltaTicks,
+            Rectangle bounds,
+            Rectangle clipRect
+    );
 }
