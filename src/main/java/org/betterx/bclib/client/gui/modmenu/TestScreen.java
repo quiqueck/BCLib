@@ -44,6 +44,25 @@ public class TestScreen extends Screen {
                 }
         ));
         rows.addSpacer(16);
+        Checkbox cb1 = new Checkbox(
+                DynamicSize.fit(), DynamicSize.fit(),
+                Component.literal("Some Sub-State"),
+                false, true,
+                (checkbox, value) -> {
+                    System.out.println(value);
+                }
+        );
+        rows.add(new Checkbox(
+                DynamicSize.fit(), DynamicSize.fit(),
+                Component.literal("Some Selectable State"),
+                false, true,
+                (checkbox, value) -> {
+                    System.out.println(value);
+                    cb1.setEnabled(value);
+                }
+        ));
+        rows.add(cb1);
+        rows.addSpacer(16);
         rows.add(new Button(
                         DynamicSize.fit(), DynamicSize.fit(),
                         Component.literal("test"),

@@ -35,7 +35,13 @@ public class AbstractVanillaComponentRenderer<C extends AbstractWidget, V extend
     public void renderInBounds(PoseStack poseStack, int x, int y, float a, Rectangle bounds, Rectangle clipRect) {
         if (linkedComponent != null) {
             if (linkedComponent.vanillaComponent != null) {
+                if (!linkedComponent.enabled) {
+                    linkedComponent.vanillaComponent.setAlpha(linkedComponent.alpha / 2);
+                }
                 linkedComponent.vanillaComponent.render(poseStack, x, y, a);
+                if (!linkedComponent.enabled) {
+                    linkedComponent.vanillaComponent.setAlpha(linkedComponent.alpha);
+                }
             }
 
         }
