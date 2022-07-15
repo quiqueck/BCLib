@@ -1,13 +1,10 @@
 package org.betterx.ui.layout.components;
 
+import org.betterx.ui.layout.components.render.ButtonRenderer;
 import org.betterx.ui.layout.values.DynamicSize;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
-@Environment(EnvType.CLIENT)
-class ButtonRenderer extends AbstractVanillaComponentRenderer<net.minecraft.client.gui.components.Button, Button> {
-}
 
 @Environment(EnvType.CLIENT)
 public class Button extends AbstractVanillaComponent<net.minecraft.client.gui.components.Button, Button> {
