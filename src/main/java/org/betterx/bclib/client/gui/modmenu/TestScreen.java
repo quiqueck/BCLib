@@ -25,6 +25,12 @@ public class TestScreen extends Screen {
         VerticalStack rows = new VerticalStack(DynamicSize.fit(), DynamicSize.relative(1));
 
         rows.addFiller();
+        rows.add(new Text(
+                        DynamicSize.fitOrFill(), DynamicSize.fit(),
+                        Component.literal("Some Text")
+                ).centerHorizontal()
+        );
+        rows.addSpacer(16);
         rows.add(new Range<>(
                 DynamicSize.fill(), DynamicSize.fit(),
                 Component.literal("Integer"),
