@@ -1,9 +1,11 @@
 package org.betterx.ui.layout.components;
 
 import org.betterx.ui.layout.components.render.ComponentRenderer;
+import org.betterx.ui.layout.components.render.NullRenderer;
 import org.betterx.ui.layout.components.render.ScrollerRenderer;
 import org.betterx.ui.layout.values.DynamicSize;
 import org.betterx.ui.layout.values.Rectangle;
+import org.betterx.ui.vanilla.VanillaScrollerRenderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
@@ -30,6 +32,25 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
         this.scrollerRenderer = scrollerRenderer;
     }
 
+    public static VerticalScroll<NullRenderer, VanillaScrollerRenderer> create(Component<?> c) {
+        return create(DynamicSize.relative(1), DynamicSize.relative(1), c);
+    }
+
+    public static VerticalScroll<NullRenderer, VanillaScrollerRenderer> create(
+            DynamicSize width,
+            DynamicSize height,
+            Component<?> c
+    ) {
+        VerticalScroll<NullRenderer, VanillaScrollerRenderer> res = new VerticalScroll<>(
+                width,
+                height,
+                VanillaScrollerRenderer.DEFAULT,
+                null
+        );
+        res.setChild(c);
+        return res;
+    }
+
     public void setChild(Component<?> c) {
         this.child = c;
     }
@@ -38,7 +59,7 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
     protected int updateContainerWidth(int containerWidth) {
         int myWidth = width.calculateOrFill(containerWidth);
         if (child != null) {
-            child.width.calculateOrFill(myWidth);
+            child.width.calculateOrFill(myWidth - (scrollerRenderer.scrollerPadding() + scrollerRenderer.scrollerWidth()));
             child.updateContainerWidth(child.width.calculatedSize());
         }
         return myWidth;
@@ -56,7 +77,9 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
 
     @Override
     public int getContentWidth() {
-        return child != null ? child.getContentWidth() : 0;
+        return scrollerRenderer.scrollerWidth() + scrollerRenderer.scrollerPadding() + (child != null
+                ? child.getContentWidth()
+                : 0);
     }
 
     @Override
@@ -87,11 +110,21 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
 
         if (showScrollBar()) {
             if (child != null) {
+                poseStack.pushPose();
+                poseStack.translate(0, scrollerOffset(), 0);
+                setClippingRect(clipRect);
                 child.render(
                         poseStack, x, y, a,
-                        renderBounds.movedBy(0, scrollerOffset(), scrollerRenderer.scrollerWidth(), 0),
+                        renderBounds.movedBy(
+                                0,
+                                scrollerOffset(),
+                                scrollerRenderer.scrollerWidth() + scrollerRenderer.scrollerPadding(),
+                                0
+                        ),
                         clipRect
                 );
+                setClippingRect(null);
+                poseStack.popPose();
             }
             scrollerRenderer.renderScrollBar(renderBounds, saveScrollerY(), scrollerHeight);
         } else {

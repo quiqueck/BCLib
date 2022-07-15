@@ -2,8 +2,8 @@ package org.betterx.bclib.client.gui.modmenu;
 
 import org.betterx.ui.layout.components.*;
 import org.betterx.ui.layout.values.DynamicSize;
+import org.betterx.ui.vanilla.LayoutScreen;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -11,23 +11,28 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
-public class TestScreen extends Screen {
+public class TestScreen extends LayoutScreen {
     public TestScreen(Component component) {
         super(component);
     }
 
-    Panel main;
+    public TestScreen(Screen parent, Component component) {
+        super(parent, component);
+    }
 
     @Override
-    protected void init() {
-        super.init();
-        main = new Panel(this.width, this.height);
-        VerticalStack rows = new VerticalStack(DynamicSize.fit(), DynamicSize.relative(1));
+    protected org.betterx.ui.layout.components.Component<?> initContent() {
+        VerticalStack rows = new VerticalStack(DynamicSize.fit(), DynamicSize.fitOrFill());
 
         rows.addFiller();
         rows.add(new Text(
                         DynamicSize.fitOrFill(), DynamicSize.fit(),
                         Component.literal("Some Text")
+                ).alignRight()
+        );
+        rows.add(new Text(
+                        DynamicSize.fitOrFill(), DynamicSize.fit(),
+                        Component.literal("Some other, longer Text")
                 ).centerHorizontal()
         );
         rows.addSpacer(16);
@@ -67,7 +72,7 @@ public class TestScreen extends Screen {
                 }
         ));
         rows.add(cb1);
-        rows.addSpacer(16);
+        rows.addSpacer(32);
         rows.add(new Button(
                         DynamicSize.fit(), DynamicSize.fit(),
                         Component.literal("test"),
@@ -90,15 +95,7 @@ public class TestScreen extends Screen {
                 ).centerHorizontal()
         );
         rows.addFiller();
-        main.setChild(HorizontalStack.centered(rows));
-        main.calculateLayout();
 
-        addRenderableWidget(main);
-    }
-
-    @Override
-    public void render(PoseStack poseStack, int i, int j, float f) {
-        renderDirtBackground(i);
-        super.render(poseStack, i, j, f);
+        return HorizontalStack.centered(VerticalScroll.create(DynamicSize.fit(), DynamicSize.relative(1), rows));
     }
 }

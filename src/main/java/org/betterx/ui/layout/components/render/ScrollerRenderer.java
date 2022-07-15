@@ -12,7 +12,11 @@ public interface ScrollerRenderer {
         return 16;
     }
     default int scrollerWidth() {
-        return 16;
+        return 8;
+    }
+
+    default int scrollerPadding() {
+        return 2;
     }
 
     default Rectangle getScrollerBounds(Rectangle renderBounds) {

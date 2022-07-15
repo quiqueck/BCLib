@@ -68,11 +68,11 @@ public class HorizontalStack extends AbstractStack<NullRenderer, HorizontalStack
     }
 
     public static HorizontalStack centered(Component<?> c) {
-        return new HorizontalStack(DynamicSize.relative(1), DynamicSize.relative(1)).addFiller().add(c).addFiller();
+        return new HorizontalStack(DynamicSize.fill(), DynamicSize.fill()).addFiller().add(c).addFiller();
     }
 
     public static HorizontalStack bottom(Component<?> c) {
-        return new HorizontalStack(DynamicSize.relative(1), DynamicSize.relative(1)).add(c).addFiller();
+        return new HorizontalStack(DynamicSize.fill(), DynamicSize.fill()).add(c).addFiller();
     }
 
     protected HorizontalStack addEmpty(DynamicSize size) {

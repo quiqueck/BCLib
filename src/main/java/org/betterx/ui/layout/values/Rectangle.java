@@ -26,6 +26,10 @@ public class Rectangle {
         return top + height;
     }
 
+    public Size size() {
+        return new Size(width, height);
+    }
+
     public Rectangle movedBy(int left, int top) {
         return new Rectangle(this.left + left, this.top + top, this.width, this.height);
     }

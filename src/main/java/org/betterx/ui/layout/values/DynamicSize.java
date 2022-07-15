@@ -76,7 +76,7 @@ public class DynamicSize {
     public int calculateOrFill(int parentSize) {
         calculatedSize = calculate(parentSize);
         if (sizeType instanceof SizeType.Fill || sizeType instanceof SizeType.FitContentOrFill) {
-            calculatedSize = parentSize;
+            calculatedSize = Math.max(parentSize, calculatedSize);
         }
 
         return calculatedSize;

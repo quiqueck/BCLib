@@ -1,6 +1,7 @@
 package org.betterx.ui.vanilla;
 
 import org.betterx.ui.layout.components.Panel;
+import org.betterx.ui.layout.components.Text;
 import org.betterx.ui.layout.components.VerticalStack;
 import org.betterx.ui.layout.values.DynamicSize;
 
@@ -45,16 +46,19 @@ public abstract class LayoutScreen extends Screen {
     protected org.betterx.ui.layout.components.Component<?> addTitle(org.betterx.ui.layout.components.Component<?> content) {
         VerticalStack rows = new VerticalStack(DynamicSize.relative(1), DynamicSize.relative(1));
 
-        //rows.add(this.title, GridLayout.Alignment.CENTER, this);
+        rows.add(new Text(DynamicSize.fill(), DynamicSize.fit(), title).centerHorizontal());
         rows.addSpacer(15);
         rows.add(content);
         return rows;
     }
 
+    protected void renderBackground(PoseStack poseStack, int i, int j, float f) {
+        renderDirtBackground(i);
+    }
 
     @Override
     public void render(PoseStack poseStack, int i, int j, float f) {
-        renderDirtBackground(i);
+        renderBackground(poseStack, i, j, f);
         super.render(poseStack, i, j, f);
     }
 

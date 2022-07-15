@@ -5,7 +5,9 @@ import org.betterx.ui.layout.values.Alignment;
 import org.betterx.ui.layout.values.DynamicSize;
 import org.betterx.ui.layout.values.Rectangle;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 
 import net.fabricmc.api.EnvType;
@@ -65,6 +67,21 @@ public abstract class Component<R extends ComponentRenderer> implements Componen
         return height.calculatedSize();
     }
 
+    protected final void setClippingRect(Rectangle clippingRect) {
+        if (clippingRect == null) {
+            RenderSystem.disableScissor();
+            return;
+        }
+        final double uiScale = Minecraft.getInstance().getWindow().getGuiScale();
+        final int windowHeight = Minecraft.getInstance().getWindow().getHeight();
+        RenderSystem.enableScissor(
+                (int) (clippingRect.left * uiScale),
+                (int) (windowHeight - clippingRect.bottom() * uiScale),
+                (int) (clippingRect.width * uiScale),
+                (int) (clippingRect.height * uiScale)
+        );
+    }
+
     public void render(PoseStack poseStack, int x, int y, float a, Rectangle parentBounds, Rectangle clipRect) {
         Rectangle r = relativeBounds.movedBy(parentBounds.left, parentBounds.top);
         Rectangle clip = r.intersect(clipRect);
@@ -85,7 +102,9 @@ public abstract class Component<R extends ComponentRenderer> implements Componen
             Rectangle clipRect
     ) {
         if (renderer != null) {
+            setClippingRect(clipRect);
             renderer.renderInBounds(poseStack, x, y, a, renderBounds, clipRect);
+            setClippingRect(null);
         }
     }
 
