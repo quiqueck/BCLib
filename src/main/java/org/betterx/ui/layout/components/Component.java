@@ -62,20 +62,27 @@ public abstract class Component<R extends ComponentRenderer> implements Componen
         return height.calculatedSize();
     }
 
-    public void render(PoseStack poseStack, Rectangle parentBounds, Rectangle clipRect) {
+    public void render(PoseStack poseStack, int x, int y, float a, Rectangle parentBounds, Rectangle clipRect) {
         Rectangle r = relativeBounds.movedBy(parentBounds.left, parentBounds.top);
         Rectangle clip = r.intersect(clipRect);
         poseStack.pushPose();
         poseStack.translate(relativeBounds.left, relativeBounds.top, 0);
         if (r.overlaps(clip)) {
-            renderInBounds(poseStack, r, clip);
+            renderInBounds(poseStack, x - relativeBounds.left, y - relativeBounds.top, a, r, clip);
         }
         poseStack.popPose();
     }
 
-    protected void renderInBounds(PoseStack poseStack, Rectangle renderBounds, Rectangle clipRect) {
+    protected void renderInBounds(
+            PoseStack poseStack,
+            int x,
+            int y,
+            float a,
+            Rectangle renderBounds,
+            Rectangle clipRect
+    ) {
         if (renderer != null) {
-            renderer.renderInBounds(poseStack, renderBounds, clipRect);
+            renderer.renderInBounds(poseStack, x, y, a, renderBounds, clipRect);
         }
     }
 

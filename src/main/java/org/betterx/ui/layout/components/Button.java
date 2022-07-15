@@ -21,14 +21,14 @@ class ButtonRenderer implements ComponentRenderer {
     }
 
     public int getHeight(net.minecraft.network.chat.Component c) {
-        return getFont().lineHeight + 12;
+        return getFont().lineHeight + 11;
     }
 
     @Override
-    public void renderInBounds(PoseStack poseStack, Rectangle bounds, Rectangle clipRect) {
+    public void renderInBounds(PoseStack poseStack, int x, int y, float a, Rectangle bounds, Rectangle clipRect) {
         if (linkedButton != null) {
             if (linkedButton.vanillaButton != null) {
-                linkedButton.vanillaButton.render(poseStack, linkedButton.mouseX, linkedButton.mouseY, 1);
+                linkedButton.vanillaButton.render(poseStack, x, y, a);
             }
 
         }
@@ -94,6 +94,8 @@ public class Button extends Component<ButtonRenderer> {
 
     @Override
     public void mouseMoved(double x, double y) {
+        mouseX = (int) x;
+        mouseY = (int) y;
         if (vanillaButton != null)
             vanillaButton.mouseMoved(x - relativeBounds.left, y - relativeBounds.top);
     }

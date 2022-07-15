@@ -1,20 +1,20 @@
 package org.betterx.ui.layout.components;
 
 import org.betterx.ui.layout.components.input.MouseEvent;
+import org.betterx.ui.layout.components.input.RelativeContainerEventHandler;
 import org.betterx.ui.layout.components.render.ComponentRenderer;
 import org.betterx.ui.layout.values.Alignment;
 import org.betterx.ui.layout.values.DynamicSize;
 import org.betterx.ui.layout.values.Rectangle;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 
 import java.util.LinkedList;
 import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
-public class HorizontalStack<R extends ComponentRenderer> extends Component<R> implements ContainerEventHandler {
+public class HorizontalStack<R extends ComponentRenderer> extends Component<R> implements RelativeContainerEventHandler {
     protected final List<Component<?>> components = new LinkedList<>();
 
     public HorizontalStack(DynamicSize width, DynamicSize height) {
@@ -100,10 +100,17 @@ public class HorizontalStack<R extends ComponentRenderer> extends Component<R> i
 //    }
 
     @Override
-    protected void renderInBounds(PoseStack poseStack, Rectangle renderBounds, Rectangle clipRect) {
-        super.renderInBounds(poseStack, renderBounds, clipRect);
+    protected void renderInBounds(
+            PoseStack poseStack,
+            int x,
+            int y,
+            float a,
+            Rectangle renderBounds,
+            Rectangle clipRect
+    ) {
+        super.renderInBounds(poseStack, x, y, a, renderBounds, clipRect);
         for (Component<?> c : components) {
-            c.render(poseStack, renderBounds, clipRect);
+            c.render(poseStack, x, y, a, renderBounds, clipRect);
         }
     }
 
@@ -151,6 +158,11 @@ public class HorizontalStack<R extends ComponentRenderer> extends Component<R> i
     @Override
     public List<? extends GuiEventListener> children() {
         return components;
+    }
+
+    @Override
+    public Rectangle getInputBounds() {
+        return relativeBounds;
     }
 
     boolean dragging;

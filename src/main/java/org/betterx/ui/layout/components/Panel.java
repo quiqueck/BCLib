@@ -2,11 +2,11 @@ package org.betterx.ui.layout.components;
 
 
 import org.betterx.ui.layout.components.input.MouseEvent;
+import org.betterx.ui.layout.components.input.RelativeContainerEventHandler;
 import org.betterx.ui.layout.values.Rectangle;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Widget;
-import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -14,7 +14,7 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
-public class Panel implements ComponentWithBounds, ContainerEventHandler, NarratableEntry, Widget {
+public class Panel implements ComponentWithBounds, RelativeContainerEventHandler, NarratableEntry, Widget {
     protected Component<?> child;
     List<? extends GuiEventListener> listeners = List.of();
     public final Rectangle bounds;
@@ -43,12 +43,6 @@ public class Panel implements ComponentWithBounds, ContainerEventHandler, Narrat
         }
     }
 
-    public void render(PoseStack poseStack) {
-        if (child != null) {
-            child.render(poseStack, bounds, bounds);
-        }
-    }
-
     @Override
     public Rectangle getRelativeBounds() {
         return bounds;
@@ -57,6 +51,11 @@ public class Panel implements ComponentWithBounds, ContainerEventHandler, Narrat
     @Override
     public List<? extends GuiEventListener> children() {
         return listeners;
+    }
+
+    @Override
+    public Rectangle getInputBounds() {
+        return bounds;
     }
 
     boolean dragging = false;
@@ -95,8 +94,10 @@ public class Panel implements ComponentWithBounds, ContainerEventHandler, Narrat
     }
 
     @Override
-    public void render(PoseStack poseStack, int i, int j, float f) {
-        render(poseStack);
+    public void render(PoseStack poseStack, int x, int y, float a) {
+        if (child != null) {
+            child.render(poseStack, x - bounds.left, y - bounds.top, a, bounds, bounds);
+        }
     }
     //    @Override
 //    public void mouseMoved(double x, double y) {

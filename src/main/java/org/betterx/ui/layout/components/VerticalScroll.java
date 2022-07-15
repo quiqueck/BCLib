@@ -83,13 +83,20 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
     }
 
     @Override
-    protected void renderInBounds(PoseStack poseStack, Rectangle renderBounds, Rectangle clipRect) {
-        super.renderInBounds(poseStack, renderBounds, clipRect);
+    protected void renderInBounds(
+            PoseStack poseStack,
+            int x,
+            int y,
+            float a,
+            Rectangle renderBounds,
+            Rectangle clipRect
+    ) {
+        super.renderInBounds(poseStack, x, y, a, renderBounds, clipRect);
 
         if (showScrollBar()) {
             if (child != null) {
                 child.render(
-                        poseStack,
+                        poseStack, x, y, a,
                         renderBounds.movedBy(0, scrollerOffset(), scrollerRenderer.scrollerWidth(), 0),
                         clipRect
                 );
@@ -97,7 +104,7 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
             scrollerRenderer.renderScrollBar(renderBounds, saveScrollerY(), scrollerHeight);
         } else {
             if (child != null) {
-                child.render(poseStack, renderBounds, clipRect);
+                child.render(poseStack, x, y, a, renderBounds, clipRect);
             }
         }
     }

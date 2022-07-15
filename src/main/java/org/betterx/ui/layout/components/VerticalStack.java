@@ -2,20 +2,20 @@ package org.betterx.ui.layout.components;
 
 
 import org.betterx.ui.layout.components.input.MouseEvent;
+import org.betterx.ui.layout.components.input.RelativeContainerEventHandler;
 import org.betterx.ui.layout.components.render.ComponentRenderer;
 import org.betterx.ui.layout.values.Alignment;
 import org.betterx.ui.layout.values.DynamicSize;
 import org.betterx.ui.layout.values.Rectangle;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 
 import java.util.LinkedList;
 import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
-public class VerticalStack<R extends ComponentRenderer> extends Component<R> implements ContainerEventHandler {
+public class VerticalStack<R extends ComponentRenderer> extends Component<R> implements RelativeContainerEventHandler {
     protected final List<Component<?>> components = new LinkedList<>();
 
     public VerticalStack(DynamicSize width, DynamicSize height) {
@@ -99,10 +99,17 @@ public class VerticalStack<R extends ComponentRenderer> extends Component<R> imp
     }
 
     @Override
-    protected void renderInBounds(PoseStack poseStack, Rectangle renderBounds, Rectangle clipRect) {
-        super.renderInBounds(poseStack, renderBounds, clipRect);
+    protected void renderInBounds(
+            PoseStack poseStack,
+            int x,
+            int y,
+            float a,
+            Rectangle renderBounds,
+            Rectangle clipRect
+    ) {
+        super.renderInBounds(poseStack, x, y, a, renderBounds, clipRect);
         for (Component<?> c : components) {
-            c.render(poseStack, renderBounds, clipRect);
+            c.render(poseStack, x, y, a, renderBounds, clipRect);
         }
     }
 
@@ -152,6 +159,11 @@ public class VerticalStack<R extends ComponentRenderer> extends Component<R> imp
         return components;
     }
 
+    @Override
+    public Rectangle getInputBounds() {
+        return relativeBounds;
+    }
+
     boolean dragging;
 
     @Override
@@ -177,7 +189,7 @@ public class VerticalStack<R extends ComponentRenderer> extends Component<R> imp
         focused = guiEventListener;
     }
 
-//    @Override
+    //    @Override
 //    public void mouseMoved(double x, double y) {
 //        for (Component<?> c : components) {
 //            c.mouseMoved(x - relativeBounds.left, y - relativeBounds.top);

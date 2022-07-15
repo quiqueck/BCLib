@@ -50,7 +50,7 @@ public class TestScreen extends Screen {
         rows.addFiller();
         main.setChild(HorizontalStack.centered(rows));
         main.calculateLayout();
-
+        
         addRenderableWidget(main);
     }
 
