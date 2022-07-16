@@ -1,5 +1,6 @@
 package org.betterx.worlds.together.worldPreset;
 
+import org.betterx.bclib.BCLib;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.levelgen.WorldGenUtil;
 import org.betterx.worlds.together.mixin.common.WorldPresetAccessor;
@@ -11,6 +12,7 @@ import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -103,6 +105,9 @@ public class TogetherWorldPreset extends WorldPreset {
 
     public static @NotNull Map<ResourceKey<LevelStem>, ChunkGenerator> loadWorldDimensions() {
         final RegistryAccess registryAccess = WorldBootstrap.getLastRegistryAccessOrElseBuiltin();
+        if (registryAccess == BuiltinRegistries.ACCESS) {
+            BCLib.LOGGER.info("Loading from builtin Registry");
+        }
         final RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
         if (DEFAULT_DIMENSIONS_WRAPPER == null) {
             DEFAULT_DIMENSIONS_WRAPPER = new DimensionsWrapper(TogetherWorldPreset.getDimensionsMap(WorldPresets.getDEFAULT()));
@@ -112,9 +117,9 @@ public class TogetherWorldPreset extends WorldPreset {
         if (!presetNBT.contains("dimensions")) {
             return DEFAULT_DIMENSIONS_WRAPPER.dimensions;
         }
-        Dynamic<Tag> dynamicOps = new Dynamic<>(registryOps);
+
         Optional<DimensionsWrapper> oLevelStem = DimensionsWrapper.CODEC
-                .parse(NbtOps.INSTANCE, presetNBT)
+                .parse(new Dynamic<>(registryOps, presetNBT))
                 .resultOrPartial(WorldsTogether.LOGGER::error);
 
 
