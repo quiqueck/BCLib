@@ -1,18 +1,18 @@
 package org.betterx.ui.layout.components;
 
-import org.betterx.ui.layout.values.DynamicSize;
+import org.betterx.ui.layout.values.Value;
 
 import net.minecraft.client.gui.components.AbstractWidget;
 
-public abstract class AbstractVanillaComponent<C extends AbstractWidget, V extends AbstractVanillaComponent<C, V>> extends Component<AbstractVanillaComponentRenderer<C, V>> {
+public abstract class AbstractVanillaComponent<C extends AbstractWidget, V extends AbstractVanillaComponent<C, V>> extends LayoutComponent<AbstractVanillaComponentRenderer<C, V>> {
     protected C vanillaComponent;
     protected final net.minecraft.network.chat.Component component;
     protected float alpha = 1.0f;
     protected boolean enabled = true;
 
     public AbstractVanillaComponent(
-            DynamicSize width,
-            DynamicSize height,
+            Value width,
+            Value height,
             AbstractVanillaComponentRenderer<C, V> renderer,
             net.minecraft.network.chat.Component component
     ) {

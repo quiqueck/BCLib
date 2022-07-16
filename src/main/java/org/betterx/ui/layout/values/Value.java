@@ -4,33 +4,33 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
-public class DynamicSize {
+public class Value {
     private SizeType sizeType;
     private int calculatedSize;
 
-    public DynamicSize(SizeType sizeType) {
+    public Value(SizeType sizeType) {
         this.sizeType = sizeType;
         this.calculatedSize = 0;
     }
 
-    public static DynamicSize fixed(int size) {
-        return new DynamicSize(new SizeType.Fixed(size));
+    public static Value fixed(int size) {
+        return new Value(new SizeType.Fixed(size));
     }
 
-    public static DynamicSize relative(double percentage) {
-        return new DynamicSize(new SizeType.Relative(percentage));
+    public static Value relative(double percentage) {
+        return new Value(new SizeType.Relative(percentage));
     }
 
-    public static DynamicSize fill() {
-        return new DynamicSize(SizeType.FILL);
+    public static Value fill() {
+        return new Value(SizeType.FILL);
     }
 
-    public static DynamicSize fit() {
-        return new DynamicSize(SizeType.FIT_CONTENT);
+    public static Value fit() {
+        return new Value(SizeType.FIT_CONTENT);
     }
 
-    public static DynamicSize fitOrFill() {
-        return new DynamicSize(SizeType.FIT_CONTENT_OR_FILL);
+    public static Value fitOrFill() {
+        return new Value(SizeType.FIT_CONTENT_OR_FILL);
     }
 
     public int calculatedSize() {
@@ -42,7 +42,7 @@ public class DynamicSize {
         return value;
     }
 
-    public DynamicSize attachComponent(SizeType.FitContent.ContentSizeSupplier c) {
+    public Value attachComponent(SizeType.FitContent.ContentSizeSupplier c) {
         if (sizeType instanceof SizeType.FitContent fit && fit.contentSize() == null) {
             sizeType = fit.copyForSupplier(c);
         }

@@ -4,8 +4,8 @@ import org.betterx.ui.layout.components.render.ComponentRenderer;
 import org.betterx.ui.layout.components.render.NullRenderer;
 import org.betterx.ui.layout.components.render.ScrollerRenderer;
 import org.betterx.ui.layout.values.Alignment;
-import org.betterx.ui.layout.values.DynamicSize;
 import org.betterx.ui.layout.values.Rectangle;
+import org.betterx.ui.layout.values.Value;
 import org.betterx.ui.vanilla.VanillaScrollerRenderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -14,8 +14,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
-public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRenderer> extends Component<R> {
-    protected Component<?> child;
+public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRenderer> extends LayoutComponent<R> {
+    protected LayoutComponent<?> child;
     protected final RS scrollerRenderer;
 
     protected int dist;
@@ -24,23 +24,23 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
     protected int travel;
     protected int topOffset;
 
-    public VerticalScroll(DynamicSize width, DynamicSize height, RS scrollerRenderer) {
+    public VerticalScroll(Value width, Value height, RS scrollerRenderer) {
         this(width, height, scrollerRenderer, null);
     }
 
-    public VerticalScroll(DynamicSize width, DynamicSize height, RS scrollerRenderer, R renderer) {
+    public VerticalScroll(Value width, Value height, RS scrollerRenderer, R renderer) {
         super(width, height, renderer);
         this.scrollerRenderer = scrollerRenderer;
     }
 
-    public static VerticalScroll<NullRenderer, VanillaScrollerRenderer> create(Component<?> c) {
-        return create(DynamicSize.relative(1), DynamicSize.relative(1), c);
+    public static VerticalScroll<NullRenderer, VanillaScrollerRenderer> create(LayoutComponent<?> c) {
+        return create(Value.relative(1), Value.relative(1), c);
     }
 
     public static VerticalScroll<NullRenderer, VanillaScrollerRenderer> create(
-            DynamicSize width,
-            DynamicSize height,
-            Component<?> c
+            Value width,
+            Value height,
+            LayoutComponent<?> c
     ) {
         VerticalScroll<NullRenderer, VanillaScrollerRenderer> res = new VerticalScroll<>(
                 width,
@@ -52,7 +52,7 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
         return res;
     }
 
-    public void setChild(Component<?> c) {
+    public void setChild(LayoutComponent<?> c) {
         this.child = c;
     }
 

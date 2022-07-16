@@ -1,7 +1,7 @@
 package org.betterx.ui.layout.components;
 
 import org.betterx.ui.layout.components.render.CheckboxRenderer;
-import org.betterx.ui.layout.values.DynamicSize;
+import org.betterx.ui.layout.values.Value;
 
 import net.minecraft.network.chat.Component;
 
@@ -21,8 +21,8 @@ public class Checkbox extends AbstractVanillaComponent<net.minecraft.client.gui.
     private final SelectionChanged onSelectionChange;
 
     public Checkbox(
-            DynamicSize width,
-            DynamicSize height,
+            Value width,
+            Value height,
             Component component,
             boolean selected, boolean showLabel,
             SelectionChanged onSelectionChange

@@ -2,8 +2,8 @@ package org.betterx.ui.layout.components;
 
 import org.betterx.ui.layout.components.render.ComponentRenderer;
 import org.betterx.ui.layout.values.Alignment;
-import org.betterx.ui.layout.values.DynamicSize;
 import org.betterx.ui.layout.values.Rectangle;
+import org.betterx.ui.layout.values.Value;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -14,15 +14,15 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
-public abstract class Component<R extends ComponentRenderer> implements ComponentWithBounds, GuiEventListener {
+public abstract class LayoutComponent<R extends ComponentRenderer> implements ComponentWithBounds, GuiEventListener {
     protected final R renderer;
-    protected final DynamicSize width;
-    protected final DynamicSize height;
+    protected final Value width;
+    protected final Value height;
     protected Rectangle relativeBounds;
     protected Alignment vAlign = Alignment.MIN;
     protected Alignment hAlign = Alignment.MIN;
 
-    public Component(DynamicSize width, DynamicSize height, R renderer) {
+    public LayoutComponent(Value width, Value height, R renderer) {
         this.width = width.attachComponent(this::getContentWidth);
         this.height = height.attachComponent(this::getContentHeight);
         this.renderer = renderer;
@@ -120,32 +120,32 @@ public abstract class Component<R extends ComponentRenderer> implements Componen
         return super.toString() + "(" + relativeBounds + ", " + width.calculatedSize() + "x" + height.calculatedSize() + ")";
     }
 
-    public Component<R> alignTop() {
+    public LayoutComponent<R> alignTop() {
         vAlign = Alignment.MIN;
         return this;
     }
 
-    public Component<R> alignBottom() {
+    public LayoutComponent<R> alignBottom() {
         vAlign = Alignment.MAX;
         return this;
     }
 
-    public Component<R> centerVertical() {
+    public LayoutComponent<R> centerVertical() {
         vAlign = Alignment.CENTER;
         return this;
     }
 
-    public Component<R> alignLeft() {
+    public LayoutComponent<R> alignLeft() {
         hAlign = Alignment.MIN;
         return this;
     }
 
-    public Component<R> alignRight() {
+    public LayoutComponent<R> alignRight() {
         hAlign = Alignment.MAX;
         return this;
     }
 
-    public Component<R> centerHorizontal() {
+    public LayoutComponent<R> centerHorizontal() {
         hAlign = Alignment.CENTER;
         return this;
     }

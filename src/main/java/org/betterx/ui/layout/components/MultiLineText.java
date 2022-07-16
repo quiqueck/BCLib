@@ -4,20 +4,20 @@ import org.betterx.ui.ColorUtil;
 import org.betterx.ui.layout.components.render.ComponentRenderer;
 import org.betterx.ui.layout.components.render.TextProvider;
 import org.betterx.ui.layout.values.Alignment;
-import org.betterx.ui.layout.values.DynamicSize;
 import org.betterx.ui.layout.values.Rectangle;
+import org.betterx.ui.layout.values.Value;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.MultiLineLabel;
 
-public class MultiLineText extends Component<MultiLineText.MultiLineTextRenderer> {
+public class MultiLineText extends LayoutComponent<MultiLineText.MultiLineTextRenderer> {
     final net.minecraft.network.chat.Component text;
     int color = ColorUtil.DEFAULT_TEXT;
     protected MultiLineLabel multiLineLabel;
 
     public MultiLineText(
-            DynamicSize width,
-            DynamicSize height,
+            Value width,
+            Value height,
             final net.minecraft.network.chat.Component text
     ) {
         super(width, height, new MultiLineTextRenderer());

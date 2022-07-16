@@ -1,8 +1,8 @@
 package org.betterx.ui.layout.components;
 
 import org.betterx.ui.layout.components.render.ComponentRenderer;
-import org.betterx.ui.layout.values.DynamicSize;
 import org.betterx.ui.layout.values.Rectangle;
+import org.betterx.ui.layout.values.Value;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
@@ -10,10 +10,10 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
-public abstract class CustomRenderComponent<C extends CustomRenderComponent<C>> extends Component<CustomRenderComponent.CustomRenderRenderer<C>> {
+public abstract class CustomRenderComponent<C extends CustomRenderComponent<C>> extends LayoutComponent<CustomRenderComponent.CustomRenderRenderer<C>> {
     public CustomRenderComponent(
-            DynamicSize width,
-            DynamicSize height
+            Value width,
+            Value height
     ) {
         super(width, height, new CustomRenderRenderer<>());
         renderer.linkedComponent = (C) this;

@@ -3,14 +3,14 @@ package org.betterx.ui.layout.components;
 import org.betterx.ui.layout.components.input.RelativeContainerEventHandler;
 import org.betterx.ui.layout.components.render.NullRenderer;
 import org.betterx.ui.layout.values.Alignment;
-import org.betterx.ui.layout.values.DynamicSize;
+import org.betterx.ui.layout.values.Value;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
 public class HorizontalStack extends AbstractStack<NullRenderer, HorizontalStack> implements RelativeContainerEventHandler {
-    public HorizontalStack(DynamicSize width, DynamicSize height) {
+    public HorizontalStack(Value width, Value height) {
         super(width, height);
     }
 
@@ -22,7 +22,7 @@ public class HorizontalStack extends AbstractStack<NullRenderer, HorizontalStack
         int freeWidth = Math.max(0, myWidth - fixedWidth);
         fillWidth(myWidth, freeWidth);
 
-        for (Component<?> c : components) {
+        for (LayoutComponent<?> c : components) {
             c.updateContainerWidth(c.width.calculatedSize());
         }
 
@@ -33,7 +33,7 @@ public class HorizontalStack extends AbstractStack<NullRenderer, HorizontalStack
     protected int updateContainerHeight(int containerHeight) {
         int myHeight = height.calculateOrFill(containerHeight);
         components.stream().forEach(c -> c.height.calculateOrFill(myHeight));
-        for (Component<?> c : components) {
+        for (LayoutComponent<?> c : components) {
             c.updateContainerHeight(c.height.calculatedSize());
         }
         return myHeight;
@@ -45,7 +45,7 @@ public class HorizontalStack extends AbstractStack<NullRenderer, HorizontalStack
         super.setRelativeBounds(left, top);
 
         int offset = 0;
-        for (Component<?> c : components) {
+        for (LayoutComponent<?> c : components) {
             int delta = relativeBounds.height - c.height.calculatedSize();
             if (c.hAlign == Alignment.MIN) delta = 0;
             else if (c.hAlign == Alignment.CENTER) delta /= 2;
@@ -67,16 +67,27 @@ public class HorizontalStack extends AbstractStack<NullRenderer, HorizontalStack
         return components.stream().map(c -> c.height.calculateFixed()).reduce(0, Integer::max);
     }
 
-    public static HorizontalStack centered(Component<?> c) {
-        return new HorizontalStack(DynamicSize.fill(), DynamicSize.fill()).addFiller().add(c).addFiller();
+    public static HorizontalStack centered(LayoutComponent<?> c) {
+        return new HorizontalStack(Value.fill(), Value.fill()).addFiller().add(c).addFiller();
     }
 
-    public static HorizontalStack bottom(Component<?> c) {
-        return new HorizontalStack(DynamicSize.fill(), DynamicSize.fill()).add(c).addFiller();
+    public static HorizontalStack bottom(LayoutComponent<?> c) {
+        return new HorizontalStack(Value.fill(), Value.fill()).add(c).addFiller();
     }
 
-    protected HorizontalStack addEmpty(DynamicSize size) {
-        this.components.add(new Empty(size, DynamicSize.fixed(0)));
+    protected HorizontalStack addEmpty(Value size) {
+        this.components.add(new Empty(size, Value.fixed(0)));
         return this;
+    }
+
+    public VerticalStack addColumn(Value width, Value height) {
+        VerticalStack stack = new VerticalStack(width, height);
+        add(stack);
+        return stack;
+    }
+
+
+    public VerticalStack addColumn() {
+        return addColumn(Value.fit(), Value.fit());
     }
 }

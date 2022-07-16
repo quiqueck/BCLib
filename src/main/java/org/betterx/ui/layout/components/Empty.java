@@ -1,15 +1,15 @@
 package org.betterx.ui.layout.components;
 
-import org.betterx.ui.layout.values.DynamicSize;
+import org.betterx.ui.layout.values.Value;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
-public class Empty extends Component {
+public class Empty extends LayoutComponent {
     public Empty(
-            DynamicSize width,
-            DynamicSize height
+            Value width,
+            Value height
     ) {
         super(width, height, null);
     }

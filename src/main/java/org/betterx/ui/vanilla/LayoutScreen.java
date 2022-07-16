@@ -1,10 +1,7 @@
 package org.betterx.ui.vanilla;
 
-import org.betterx.ui.layout.components.HorizontalStack;
-import org.betterx.ui.layout.components.Panel;
-import org.betterx.ui.layout.components.Text;
-import org.betterx.ui.layout.components.VerticalStack;
-import org.betterx.ui.layout.values.DynamicSize;
+import org.betterx.ui.layout.components.*;
+import org.betterx.ui.layout.values.Value;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.Screen;
@@ -49,7 +46,7 @@ public abstract class LayoutScreen extends Screen {
     @Nullable
     public final Screen parent;
 
-    protected abstract org.betterx.ui.layout.components.Component<?> initContent();
+    protected abstract LayoutComponent<?> initContent();
 
     @Override
     protected final void init() {
@@ -61,18 +58,24 @@ public abstract class LayoutScreen extends Screen {
         addRenderableWidget(main);
     }
 
-    protected org.betterx.ui.layout.components.Component<?> addTitle(org.betterx.ui.layout.components.Component<?> content) {
-        VerticalStack rows = new VerticalStack(DynamicSize.fill(), DynamicSize.fill());
+    protected LayoutComponent<?> buildTitle() {
+
+        var text = new Text(Value.fill(), Value.fit(), title).centerHorizontal();
+        return text;
+    }
+
+    protected LayoutComponent<?> addTitle(LayoutComponent<?> content) {
+        VerticalStack rows = new VerticalStack(Value.fill(), Value.fill());
 
         if (topPadding > 0) rows.addSpacer(topPadding);
-        rows.add(new Text(DynamicSize.fill(), DynamicSize.fit(), title).centerHorizontal());
+        rows.add(buildTitle());
         rows.addSpacer(15);
         rows.add(content);
         if (bottomPadding > 0) rows.addSpacer(bottomPadding);
 
         if (sidePadding <= 0) return rows;
 
-        HorizontalStack cols = new HorizontalStack(DynamicSize.fill(), DynamicSize.fill());
+        HorizontalStack cols = new HorizontalStack(Value.fill(), Value.fill());
         cols.addSpacer(sidePadding);
         cols.add(rows);
         cols.addSpacer(sidePadding);

@@ -4,19 +4,19 @@ import org.betterx.ui.ColorUtil;
 import org.betterx.ui.layout.components.render.ComponentRenderer;
 import org.betterx.ui.layout.components.render.TextProvider;
 import org.betterx.ui.layout.values.Alignment;
-import org.betterx.ui.layout.values.DynamicSize;
 import org.betterx.ui.layout.values.Rectangle;
+import org.betterx.ui.layout.values.Value;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiComponent;
 
-public class Text extends Component<Text.TextRenderer> {
+public class Text extends LayoutComponent<Text.TextRenderer> {
     final net.minecraft.network.chat.Component text;
     int color = ColorUtil.DEFAULT_TEXT;
 
     public Text(
-            DynamicSize width,
-            DynamicSize height,
+            Value width,
+            Value height,
             net.minecraft.network.chat.Component text
 
     ) {

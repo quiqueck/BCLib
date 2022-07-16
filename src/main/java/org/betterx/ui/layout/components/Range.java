@@ -1,7 +1,7 @@
 package org.betterx.ui.layout.components;
 
 import org.betterx.ui.layout.components.render.RangeRenderer;
-import org.betterx.ui.layout.values.DynamicSize;
+import org.betterx.ui.layout.values.Value;
 import org.betterx.ui.vanilla.Slider;
 
 import net.minecraft.network.chat.Component;
@@ -17,8 +17,8 @@ public class Range<N extends Number> extends AbstractVanillaComponent<Slider<N>,
     private final N initialValue;
 
     public Range(
-            DynamicSize width,
-            DynamicSize height,
+            Value width,
+            Value height,
             Component component,
             N minValue,
             N maxValue,
@@ -33,8 +33,8 @@ public class Range<N extends Number> extends AbstractVanillaComponent<Slider<N>,
     }
 
     public Range(
-            DynamicSize width,
-            DynamicSize height,
+            Value width,
+            Value height,
             N minValue,
             N maxValue,
             N initialValue,

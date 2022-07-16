@@ -1,7 +1,7 @@
 package org.betterx.ui.layout.components;
 
 import org.betterx.ui.layout.components.render.ButtonRenderer;
-import org.betterx.ui.layout.values.DynamicSize;
+import org.betterx.ui.layout.values.Value;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -12,8 +12,8 @@ public class Button extends AbstractVanillaComponent<net.minecraft.client.gui.co
     final net.minecraft.client.gui.components.Button.OnTooltip onTooltip;
 
     public Button(
-            DynamicSize width,
-            DynamicSize height,
+            Value width,
+            Value height,
             net.minecraft.network.chat.Component component,
             net.minecraft.client.gui.components.Button.OnPress onPress,
             net.minecraft.client.gui.components.Button.OnTooltip onTooltip

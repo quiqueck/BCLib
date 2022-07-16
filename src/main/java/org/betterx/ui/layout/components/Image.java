@@ -1,8 +1,8 @@
 package org.betterx.ui.layout.components;
 
-import org.betterx.ui.layout.values.DynamicSize;
 import org.betterx.ui.layout.values.Rectangle;
 import org.betterx.ui.layout.values.Size;
+import org.betterx.ui.layout.values.Value;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -21,11 +21,11 @@ public class Image extends CustomRenderComponent {
     protected float alpha;
     protected Size resourceSize;
 
-    public Image(DynamicSize width, DynamicSize height, ResourceLocation location) {
+    public Image(Value width, Value height, ResourceLocation location) {
         this(width, height, location, new Size(16, 16));
     }
 
-    public Image(DynamicSize width, DynamicSize height, ResourceLocation location, Size resourceSize) {
+    public Image(Value width, Value height, ResourceLocation location, Size resourceSize) {
         super(width, height);
         this.location = location;
         this.uvRect = new Rectangle(0, 0, resourceSize.width(), resourceSize.height());

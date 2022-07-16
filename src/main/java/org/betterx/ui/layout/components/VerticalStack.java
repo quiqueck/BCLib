@@ -4,14 +4,14 @@ package org.betterx.ui.layout.components;
 import org.betterx.ui.layout.components.input.RelativeContainerEventHandler;
 import org.betterx.ui.layout.components.render.NullRenderer;
 import org.betterx.ui.layout.values.Alignment;
-import org.betterx.ui.layout.values.DynamicSize;
+import org.betterx.ui.layout.values.Value;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
 public class VerticalStack extends AbstractStack<NullRenderer, VerticalStack> implements RelativeContainerEventHandler {
-    public VerticalStack(DynamicSize width, DynamicSize height) {
+    public VerticalStack(Value width, Value height) {
         super(width, height);
     }
 
@@ -19,7 +19,7 @@ public class VerticalStack extends AbstractStack<NullRenderer, VerticalStack> im
     protected int updateContainerWidth(int containerWidth) {
         int myWidth = width.calculateOrFill(containerWidth);
         components.stream().forEach(c -> c.width.calculateOrFill(myWidth));
-        for (Component<?> c : components) {
+        for (LayoutComponent<?> c : components) {
             c.updateContainerWidth(c.width.calculatedSize());
         }
         return myWidth;
@@ -33,7 +33,7 @@ public class VerticalStack extends AbstractStack<NullRenderer, VerticalStack> im
         int freeHeight = Math.max(0, myHeight - fixedHeight);
         fillHeight(myHeight, freeHeight);
 
-        for (Component<?> c : components) {
+        for (LayoutComponent<?> c : components) {
             c.updateContainerHeight(c.height.calculatedSize());
         }
 
@@ -45,7 +45,7 @@ public class VerticalStack extends AbstractStack<NullRenderer, VerticalStack> im
         super.setRelativeBounds(left, top);
 
         int offset = 0;
-        for (Component<?> c : components) {
+        for (LayoutComponent<?> c : components) {
             int delta = relativeBounds.width - c.width.calculatedSize();
             if (c.hAlign == Alignment.MIN) delta = 0;
             else if (c.hAlign == Alignment.CENTER) delta /= 2;
@@ -67,16 +67,26 @@ public class VerticalStack extends AbstractStack<NullRenderer, VerticalStack> im
         return (int) (fixedHeight / (1 - percentage));
     }
 
-    public static VerticalStack centered(Component<?> c) {
-        return new VerticalStack(DynamicSize.relative(1), DynamicSize.relative(1)).addFiller().add(c).addFiller();
+    public static VerticalStack centered(LayoutComponent<?> c) {
+        return new VerticalStack(Value.relative(1), Value.relative(1)).addFiller().add(c).addFiller();
     }
 
-    public static VerticalStack bottom(Component<?> c) {
-        return new VerticalStack(DynamicSize.relative(1), DynamicSize.relative(1)).add(c).addFiller();
+    public static VerticalStack bottom(LayoutComponent<?> c) {
+        return new VerticalStack(Value.relative(1), Value.relative(1)).add(c).addFiller();
     }
 
-    protected VerticalStack addEmpty(DynamicSize size) {
-        this.components.add(new Empty(DynamicSize.fixed(0), size));
+    protected VerticalStack addEmpty(Value size) {
+        this.components.add(new Empty(Value.fixed(0), size));
         return this;
+    }
+
+    public HorizontalStack addRow(Value width, Value height) {
+        HorizontalStack stack = new HorizontalStack(width, height);
+        add(stack);
+        return stack;
+    }
+
+    public HorizontalStack addRow() {
+        return addRow(Value.fit(), Value.fit());
     }
 }
