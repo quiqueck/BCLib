@@ -1,12 +1,13 @@
 package org.betterx.ui.layout.components;
 
+import org.betterx.ui.layout.components.render.NullRenderer;
 import org.betterx.ui.layout.values.Value;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
-public class Empty extends LayoutComponent {
+public class Empty extends LayoutComponent<NullRenderer, Empty> {
     public Empty(
             Value width,
             Value height

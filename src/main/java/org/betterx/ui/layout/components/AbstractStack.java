@@ -6,6 +6,7 @@ import org.betterx.ui.layout.components.render.NullRenderer;
 import org.betterx.ui.layout.values.Rectangle;
 import org.betterx.ui.layout.values.Size;
 import org.betterx.ui.layout.values.Value;
+import org.betterx.ui.vanilla.Slider;
 import org.betterx.ui.vanilla.VanillaScrollerRenderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -21,8 +22,8 @@ import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
 @Environment(EnvType.CLIENT)
-public abstract class AbstractStack<R extends ComponentRenderer, T extends AbstractStack<R, T>> extends LayoutComponent<R> implements RelativeContainerEventHandler {
-    protected final List<LayoutComponent<?>> components = new LinkedList<>();
+public abstract class AbstractStack<R extends ComponentRenderer, T extends AbstractStack<R, T>> extends LayoutComponent<R, T> implements RelativeContainerEventHandler {
+    protected final List<LayoutComponent<?, ?>> components = new LinkedList<>();
 
     public AbstractStack(Value width, Value height) {
         this(width, height, null);
@@ -58,12 +59,12 @@ public abstract class AbstractStack<R extends ComponentRenderer, T extends Abstr
             Rectangle clipRect
     ) {
         super.renderInBounds(poseStack, mouseX, mouseY, deltaTicks, renderBounds, clipRect);
-        for (LayoutComponent<?> c : components) {
+        for (LayoutComponent<?, ?> c : components) {
             c.render(poseStack, mouseX, mouseY, deltaTicks, renderBounds, clipRect);
         }
     }
 
-    public T add(LayoutComponent<?> c) {
+    public T add(LayoutComponent<?, ?> c) {
         this.components.add(c);
         return (T) this;
     }
@@ -144,32 +145,68 @@ public abstract class AbstractStack<R extends ComponentRenderer, T extends Abstr
             Component component,
             net.minecraft.client.gui.components.Button.OnPress onPress
     ) {
-        return addButton(width, height, component, onPress, net.minecraft.client.gui.components.Button.NO_TOOLTIP);
-    }
-
-    public Button addButton(
-            Value width, Value height,
-            Component component,
-            net.minecraft.client.gui.components.Button.OnPress onPress,
-            net.minecraft.client.gui.components.Button.OnTooltip onTooltip
-    ) {
-        Button b = new Button(width, height, component, onPress, onTooltip);
+        Button b = new Button(width, height, component, onPress);
         add(b);
         return b;
     }
 
-    public VerticalScroll<NullRenderer, VanillaScrollerRenderer> addScrollable(LayoutComponent content) {
+    public VerticalScroll<NullRenderer, VanillaScrollerRenderer> addScrollable(LayoutComponent<?, ?> content) {
         return addScrollable(Value.fill(), Value.fill(), content);
     }
 
     public VerticalScroll<NullRenderer, VanillaScrollerRenderer> addScrollable(
             Value width,
-            Value heihght,
-            LayoutComponent content
+            Value height,
+            LayoutComponent<?, ?> content
     ) {
         VerticalScroll<NullRenderer, VanillaScrollerRenderer> s = VerticalScroll.create(width, height, content);
         add(s);
         return s;
+    }
+
+    public Text addText(Value width, Value height, net.minecraft.network.chat.Component text) {
+        Text t = new Text(width, height, text);
+        add(t);
+        return t;
+    }
+
+    public MultiLineText addMultilineText(Value width, Value height, net.minecraft.network.chat.Component text) {
+        MultiLineText t = new MultiLineText(width, height, text);
+        add(t);
+        return t;
+    }
+
+    public Range<Integer> addRange(
+            Value width, Value height,
+            net.minecraft.network.chat.Component titleOrNull,
+            int minValue, int maxValue, int initialValue,
+            Slider.SliderValueChanged<Integer> onChange
+    ) {
+        Range<Integer> r = new Range<>(width, height, titleOrNull, minValue, maxValue, initialValue, onChange);
+        add(r);
+        return r;
+    }
+
+    public Range<Float> addRange(
+            Value width, Value height,
+            net.minecraft.network.chat.Component titleOrNull,
+            float minValue, float maxValue, float initialValue,
+            Slider.SliderValueChanged<Float> onChange
+    ) {
+        Range<Float> r = new Range<>(width, height, titleOrNull, minValue, maxValue, initialValue, onChange);
+        add(r);
+        return r;
+    }
+
+    public Range<Double> addRange(
+            Value width, Value height,
+            net.minecraft.network.chat.Component titleOrNull,
+            double minValue, double maxValue, double initialValue,
+            Slider.SliderValueChanged<Double> onChange
+    ) {
+        Range<Double> r = new Range<>(width, height, titleOrNull, minValue, maxValue, initialValue, onChange);
+        add(r);
+        return r;
     }
 }
 

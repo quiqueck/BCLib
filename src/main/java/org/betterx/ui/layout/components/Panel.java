@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Environment(EnvType.CLIENT)
 public class Panel implements ComponentWithBounds, RelativeContainerEventHandler, NarratableEntry, Widget {
-    protected LayoutComponent<?> child;
+    protected LayoutComponent<?, ?> child;
     List<? extends GuiEventListener> listeners = List.of();
     public final Rectangle bounds;
 
@@ -30,7 +30,7 @@ public class Panel implements ComponentWithBounds, RelativeContainerEventHandler
         bounds = new Rectangle(left, top, width, height);
     }
 
-    public void setChild(LayoutComponent<?> c) {
+    public void setChild(LayoutComponent<?, ?> c) {
         this.child = c;
         listeners = List.of(c);
     }

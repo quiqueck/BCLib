@@ -39,11 +39,11 @@ public abstract class LayoutScreenWithIcon extends LayoutScreen {
     }
 
     @Override
-    protected LayoutComponent<?> buildTitle() {
-        LayoutComponent<?> title = super.buildTitle();
-        HorizontalStack row = new HorizontalStack(Value.fill(), Value.fit());
+    protected LayoutComponent<?, ?> buildTitle() {
+        LayoutComponent<?, ?> title = super.buildTitle();
+        HorizontalStack row = new HorizontalStack(Value.fill(), Value.fit()).setDebugName("title bar");
         row.addFiller();
-        row.addIcon(icon, Size.of(512));
+        row.addIcon(icon, Size.of(512)).setDebugName("icon");
         row.addSpacer(4);
         row.add(title);
         row.addFiller();

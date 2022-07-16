@@ -14,8 +14,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
-public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRenderer> extends LayoutComponent<R> {
-    protected LayoutComponent<?> child;
+public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRenderer> extends LayoutComponent<R, VerticalScroll<R, RS>> {
+    protected LayoutComponent<?, ?> child;
     protected final RS scrollerRenderer;
 
     protected int dist;
@@ -33,14 +33,14 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
         this.scrollerRenderer = scrollerRenderer;
     }
 
-    public static VerticalScroll<NullRenderer, VanillaScrollerRenderer> create(LayoutComponent<?> c) {
+    public static VerticalScroll<NullRenderer, VanillaScrollerRenderer> create(LayoutComponent<?, ?> c) {
         return create(Value.relative(1), Value.relative(1), c);
     }
 
     public static VerticalScroll<NullRenderer, VanillaScrollerRenderer> create(
             Value width,
             Value height,
-            LayoutComponent<?> c
+            LayoutComponent<?, ?> c
     ) {
         VerticalScroll<NullRenderer, VanillaScrollerRenderer> res = new VerticalScroll<>(
                 width,
@@ -52,7 +52,7 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
         return res;
     }
 
-    public void setChild(LayoutComponent<?> c) {
+    public void setChild(LayoutComponent<?, ?> c) {
         this.child = c;
     }
 

@@ -83,7 +83,7 @@ public class MainScreen extends LayoutScreenWithIcon {
     @Override
     protected LayoutComponent initContent() {
 
-        VerticalStack content = new VerticalStack(Value.fit(), Value.fit());
+        VerticalStack content = new VerticalStack(Value.fit(), Value.fit()).setDebugName("content");
 
         Configs.GENERATOR_CONFIG.getAllOptions()
                                 .stream()
@@ -101,11 +101,9 @@ public class MainScreen extends LayoutScreenWithIcon {
                              .forEach(o -> addRow(content, Configs.CLIENT_CONFIG, o));
 
 
-        VerticalStack grid = new VerticalStack(Value.fill(), Value.fill());
+        VerticalStack grid = new VerticalStack(Value.fill(), Value.fill()).setDebugName("main grid");
         grid.addScrollable(content);
         grid.addSpacer(8);
-        HorizontalStack row = grid.addRow();
-        row.addFiller();
         grid.addButton(Value.fit(), Value.fit(), CommonComponents.GUI_DONE, (button) -> {
             Configs.CLIENT_CONFIG.saveChanges();
             Configs.GENERATOR_CONFIG.saveChanges();

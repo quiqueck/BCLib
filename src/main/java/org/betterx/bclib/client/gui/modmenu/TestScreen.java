@@ -24,7 +24,7 @@ public class TestScreen extends LayoutScreen {
     }
 
     @Override
-    protected LayoutComponent<?> initContent() {
+    protected LayoutComponent<?, ?> initContent() {
         VerticalStack rows = new VerticalStack(Value.fit(), Value.fitOrFill());
 
         rows.addFiller();
@@ -94,8 +94,6 @@ public class TestScreen extends LayoutScreen {
                         Component.literal("test"),
                         (bt) -> {
                             System.out.println("clicked test");
-                        },
-                        (bt, pose, x, y) -> {
                         }
                 ).centerHorizontal()
         );
@@ -105,8 +103,6 @@ public class TestScreen extends LayoutScreen {
                         Component.literal("Hello World"),
                         (bt) -> {
                             System.out.println("clicked hello");
-                        },
-                        (bt, pose, x, y) -> {
                         }
                 ).centerHorizontal()
         );

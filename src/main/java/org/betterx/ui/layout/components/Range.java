@@ -40,11 +40,7 @@ public class Range<N extends Number> extends AbstractVanillaComponent<Slider<N>,
             N initialValue,
             Slider.SliderValueChanged<N> onChange
     ) {
-        super(width, height, new RangeRenderer<>(), null);
-        this.onChange = onChange;
-        this.minValue = minValue;
-        this.maxValue = maxValue;
-        this.initialValue = initialValue;
+        this(width, height, null, minValue, maxValue, initialValue, onChange);
     }
 
     @Override

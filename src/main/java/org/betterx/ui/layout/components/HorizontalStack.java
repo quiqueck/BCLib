@@ -22,7 +22,7 @@ public class HorizontalStack extends AbstractStack<NullRenderer, HorizontalStack
         int freeWidth = Math.max(0, myWidth - fixedWidth);
         fillWidth(myWidth, freeWidth);
 
-        for (LayoutComponent<?> c : components) {
+        for (LayoutComponent<?, ?> c : components) {
             c.updateContainerWidth(c.width.calculatedSize());
         }
 
@@ -33,7 +33,7 @@ public class HorizontalStack extends AbstractStack<NullRenderer, HorizontalStack
     protected int updateContainerHeight(int containerHeight) {
         int myHeight = height.calculateOrFill(containerHeight);
         components.stream().forEach(c -> c.height.calculateOrFill(myHeight));
-        for (LayoutComponent<?> c : components) {
+        for (LayoutComponent<?, ?> c : components) {
             c.updateContainerHeight(c.height.calculatedSize());
         }
         return myHeight;
@@ -45,7 +45,7 @@ public class HorizontalStack extends AbstractStack<NullRenderer, HorizontalStack
         super.setRelativeBounds(left, top);
 
         int offset = 0;
-        for (LayoutComponent<?> c : components) {
+        for (LayoutComponent<?, ?> c : components) {
             int delta = relativeBounds.height - c.height.calculatedSize();
             if (c.hAlign == Alignment.MIN) delta = 0;
             else if (c.hAlign == Alignment.CENTER) delta /= 2;
@@ -67,11 +67,11 @@ public class HorizontalStack extends AbstractStack<NullRenderer, HorizontalStack
         return components.stream().map(c -> c.height.calculateFixed()).reduce(0, Integer::max);
     }
 
-    public static HorizontalStack centered(LayoutComponent<?> c) {
+    public static HorizontalStack centered(LayoutComponent<?, ?> c) {
         return new HorizontalStack(Value.fill(), Value.fill()).addFiller().add(c).addFiller();
     }
 
-    public static HorizontalStack bottom(LayoutComponent<?> c) {
+    public static HorizontalStack bottom(LayoutComponent<?, ?> c) {
         return new HorizontalStack(Value.fill(), Value.fill()).add(c).addFiller();
     }
 

@@ -10,7 +10,7 @@ import org.betterx.ui.layout.values.Value;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiComponent;
 
-public class Text extends LayoutComponent<Text.TextRenderer> {
+public class Text extends LayoutComponent<Text.TextRenderer, Text> {
     final net.minecraft.network.chat.Component text;
     int color = ColorUtil.DEFAULT_TEXT;
 
@@ -18,7 +18,6 @@ public class Text extends LayoutComponent<Text.TextRenderer> {
             Value width,
             Value height,
             net.minecraft.network.chat.Component text
-
     ) {
         super(width, height, new TextRenderer());
         vAlign = Alignment.CENTER;

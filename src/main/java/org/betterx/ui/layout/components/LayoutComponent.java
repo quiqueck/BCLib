@@ -14,10 +14,11 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
-public abstract class LayoutComponent<R extends ComponentRenderer> implements ComponentWithBounds, GuiEventListener {
+public abstract class LayoutComponent<R extends ComponentRenderer, L extends LayoutComponent<R, L>> implements ComponentWithBounds, GuiEventListener {
     protected final R renderer;
     protected final Value width;
     protected final Value height;
+    protected String debugName;
     protected Rectangle relativeBounds;
     protected Alignment vAlign = Alignment.MIN;
     protected Alignment hAlign = Alignment.MIN;
@@ -94,7 +95,8 @@ public abstract class LayoutComponent<R extends ComponentRenderer> implements Co
         Rectangle clip = r.intersect(clipRect);
         poseStack.pushPose();
         poseStack.translate(relativeBounds.left, relativeBounds.top, 0);
-        if (r.overlaps(clip)) {
+        //if (r.overlaps(clip))
+        {
             renderInBounds(poseStack, mouseX - relativeBounds.left, mouseY - relativeBounds.top, deltaTicks, r, clip);
         }
         poseStack.popPose();
@@ -117,36 +119,45 @@ public abstract class LayoutComponent<R extends ComponentRenderer> implements Co
 
     @Override
     public String toString() {
-        return super.toString() + "(" + relativeBounds + ", " + width.calculatedSize() + "x" + height.calculatedSize() + ")";
+        return super.toString() + "(" +
+                (debugName == null ? "" : debugName + " - ") +
+                relativeBounds + ", " +
+                width.calculatedSize() + "x" + height.calculatedSize() +
+                ")";
     }
 
-    public LayoutComponent<R> alignTop() {
+    public L alignTop() {
         vAlign = Alignment.MIN;
-        return this;
+        return (L) this;
     }
 
-    public LayoutComponent<R> alignBottom() {
+    public L alignBottom() {
         vAlign = Alignment.MAX;
-        return this;
+        return (L) this;
     }
 
-    public LayoutComponent<R> centerVertical() {
+    public L centerVertical() {
         vAlign = Alignment.CENTER;
-        return this;
+        return (L) this;
     }
 
-    public LayoutComponent<R> alignLeft() {
+    public L alignLeft() {
         hAlign = Alignment.MIN;
-        return this;
+        return (L) this;
     }
 
-    public LayoutComponent<R> alignRight() {
+    public L alignRight() {
         hAlign = Alignment.MAX;
-        return this;
+        return (L) this;
     }
 
-    public LayoutComponent<R> centerHorizontal() {
+    public L centerHorizontal() {
         hAlign = Alignment.CENTER;
-        return this;
+        return (L) this;
+    }
+
+    public L setDebugName(String d) {
+        debugName = d;
+        return (L) this;
     }
 }

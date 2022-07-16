@@ -10,7 +10,7 @@ import org.betterx.ui.layout.values.Value;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.MultiLineLabel;
 
-public class MultiLineText extends LayoutComponent<MultiLineText.MultiLineTextRenderer> {
+public class MultiLineText extends LayoutComponent<MultiLineText.MultiLineTextRenderer, MultiLineText> {
     final net.minecraft.network.chat.Component text;
     int color = ColorUtil.DEFAULT_TEXT;
     protected MultiLineLabel multiLineLabel;

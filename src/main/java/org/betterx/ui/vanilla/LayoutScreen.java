@@ -46,7 +46,7 @@ public abstract class LayoutScreen extends Screen {
     @Nullable
     public final Screen parent;
 
-    protected abstract LayoutComponent<?> initContent();
+    protected abstract LayoutComponent<?, ?> initContent();
 
     @Override
     protected final void init() {
@@ -58,14 +58,13 @@ public abstract class LayoutScreen extends Screen {
         addRenderableWidget(main);
     }
 
-    protected LayoutComponent<?> buildTitle() {
-
-        var text = new Text(Value.fill(), Value.fit(), title).centerHorizontal();
+    protected LayoutComponent<?, ?> buildTitle() {
+        var text = new Text(Value.fill(), Value.fit(), title).centerHorizontal().setDebugName("title");
         return text;
     }
 
-    protected LayoutComponent<?> addTitle(LayoutComponent<?> content) {
-        VerticalStack rows = new VerticalStack(Value.fill(), Value.fill());
+    protected LayoutComponent<?, ?> addTitle(LayoutComponent<?, ?> content) {
+        VerticalStack rows = new VerticalStack(Value.fill(), Value.fill()).setDebugName("title stack");
 
         if (topPadding > 0) rows.addSpacer(topPadding);
         rows.add(buildTitle());
@@ -75,7 +74,7 @@ public abstract class LayoutScreen extends Screen {
 
         if (sidePadding <= 0) return rows;
 
-        HorizontalStack cols = new HorizontalStack(Value.fill(), Value.fill());
+        HorizontalStack cols = new HorizontalStack(Value.fill(), Value.fill()).setDebugName("padded side");
         cols.addSpacer(sidePadding);
         cols.add(rows);
         cols.addSpacer(sidePadding);

@@ -19,7 +19,7 @@ public class VerticalStack extends AbstractStack<NullRenderer, VerticalStack> im
     protected int updateContainerWidth(int containerWidth) {
         int myWidth = width.calculateOrFill(containerWidth);
         components.stream().forEach(c -> c.width.calculateOrFill(myWidth));
-        for (LayoutComponent<?> c : components) {
+        for (LayoutComponent<?, ?> c : components) {
             c.updateContainerWidth(c.width.calculatedSize());
         }
         return myWidth;
@@ -33,7 +33,7 @@ public class VerticalStack extends AbstractStack<NullRenderer, VerticalStack> im
         int freeHeight = Math.max(0, myHeight - fixedHeight);
         fillHeight(myHeight, freeHeight);
 
-        for (LayoutComponent<?> c : components) {
+        for (LayoutComponent<?, ?> c : components) {
             c.updateContainerHeight(c.height.calculatedSize());
         }
 
@@ -45,7 +45,7 @@ public class VerticalStack extends AbstractStack<NullRenderer, VerticalStack> im
         super.setRelativeBounds(left, top);
 
         int offset = 0;
-        for (LayoutComponent<?> c : components) {
+        for (LayoutComponent<?, ?> c : components) {
             int delta = relativeBounds.width - c.width.calculatedSize();
             if (c.hAlign == Alignment.MIN) delta = 0;
             else if (c.hAlign == Alignment.CENTER) delta /= 2;
@@ -67,11 +67,11 @@ public class VerticalStack extends AbstractStack<NullRenderer, VerticalStack> im
         return (int) (fixedHeight / (1 - percentage));
     }
 
-    public static VerticalStack centered(LayoutComponent<?> c) {
+    public static VerticalStack centered(LayoutComponent<?, ?> c) {
         return new VerticalStack(Value.relative(1), Value.relative(1)).addFiller().add(c).addFiller();
     }
 
-    public static VerticalStack bottom(LayoutComponent<?> c) {
+    public static VerticalStack bottom(LayoutComponent<?, ?> c) {
         return new VerticalStack(Value.relative(1), Value.relative(1)).add(c).addFiller();
     }
 

@@ -9,18 +9,22 @@ import net.fabricmc.api.Environment;
 @Environment(EnvType.CLIENT)
 public class Button extends AbstractVanillaComponent<net.minecraft.client.gui.components.Button, Button> {
     final net.minecraft.client.gui.components.Button.OnPress onPress;
-    final net.minecraft.client.gui.components.Button.OnTooltip onTooltip;
+    net.minecraft.client.gui.components.Button.OnTooltip onTooltip;
 
     public Button(
             Value width,
             Value height,
             net.minecraft.network.chat.Component component,
-            net.minecraft.client.gui.components.Button.OnPress onPress,
-            net.minecraft.client.gui.components.Button.OnTooltip onTooltip
+            net.minecraft.client.gui.components.Button.OnPress onPress
     ) {
         super(width, height, new ButtonRenderer(), component);
         this.onPress = onPress;
+        this.onTooltip = net.minecraft.client.gui.components.Button.NO_TOOLTIP;
+    }
+
+    public Button setOnToolTip(net.minecraft.client.gui.components.Button.OnTooltip onTooltip) {
         this.onTooltip = onTooltip;
+        return this;
     }
 
     @Override

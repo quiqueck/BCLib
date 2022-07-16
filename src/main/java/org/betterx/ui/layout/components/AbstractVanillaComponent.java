@@ -4,7 +4,7 @@ import org.betterx.ui.layout.values.Value;
 
 import net.minecraft.client.gui.components.AbstractWidget;
 
-public abstract class AbstractVanillaComponent<C extends AbstractWidget, V extends AbstractVanillaComponent<C, V>> extends LayoutComponent<AbstractVanillaComponentRenderer<C, V>> {
+public abstract class AbstractVanillaComponent<C extends AbstractWidget, V extends AbstractVanillaComponent<C, V>> extends LayoutComponent<AbstractVanillaComponentRenderer<C, V>, V> {
     protected C vanillaComponent;
     protected final net.minecraft.network.chat.Component component;
     protected float alpha = 1.0f;
