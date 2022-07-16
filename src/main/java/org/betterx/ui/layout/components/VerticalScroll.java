@@ -175,7 +175,7 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
 
     @Override
     public void mouseMoved(double x, double y) {
-        if (child != null)
+        if (child != null && relativeBounds.contains(x, y))
             child.mouseMoved(x, y);
     }
 
@@ -190,7 +190,7 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
             return true;
         }
 
-        if (child != null)
+        if (child != null && relativeBounds.contains(x, y))
             return child.mouseClicked(x, y, button);
         return false;
     }
@@ -198,7 +198,7 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
     @Override
     public boolean mouseReleased(double x, double y, int button) {
         mouseDown = false;
-        if (child != null)
+        if (child != null && relativeBounds.contains(x, y))
             return child.mouseReleased(x - relativeBounds.left, y - relativeBounds.top, button);
         return false;
     }
@@ -210,14 +210,14 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
             scrollerY = scrollerDownY + delta;
             return true;
         }
-        if (child != null)
+        if (child != null && relativeBounds.contains(x, y))
             return child.mouseDragged(x, y, button, x2, y2);
         return false;
     }
 
     @Override
     public boolean mouseScrolled(double x, double y, double f) {
-        if (child != null)
+        if (child != null && relativeBounds.contains(x, y))
             return child.mouseScrolled(x, y, f);
         return false;
     }
