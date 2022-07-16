@@ -6,7 +6,10 @@ import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.config.NamedPathConfig;
 import org.betterx.bclib.config.NamedPathConfig.ConfigTokenDescription;
 import org.betterx.bclib.config.NamedPathConfig.DependendConfigToken;
-import org.betterx.ui.layout.components.*;
+import org.betterx.ui.layout.components.Checkbox;
+import org.betterx.ui.layout.components.HorizontalStack;
+import org.betterx.ui.layout.components.LayoutComponent;
+import org.betterx.ui.layout.components.VerticalStack;
 import org.betterx.ui.layout.values.Value;
 import org.betterx.ui.vanilla.LayoutScreenWithIcon;
 
@@ -99,7 +102,7 @@ public class MainScreen extends LayoutScreenWithIcon {
 
 
         VerticalStack grid = new VerticalStack(Value.fill(), Value.fill());
-        grid.add(VerticalScroll.create(Value.fill(), Value.fill(), content));
+        grid.addScrollable(content);
         grid.addSpacer(8);
         HorizontalStack row = grid.addRow();
         row.addFiller();

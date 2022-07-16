@@ -43,6 +43,10 @@ public class Rectangle {
         return x >= left && x <= right() && y >= top && y <= bottom();
     }
 
+    public boolean contains(double x, double y) {
+        return x >= left && x <= right() && y >= top && y <= bottom();
+    }
+
     public Rectangle intersect(Rectangle r) {
         if (!overlaps(r)) return ZERO;
         int left = Math.max(this.left, r.left);

@@ -2,9 +2,11 @@ package org.betterx.ui.layout.components;
 
 import org.betterx.ui.layout.components.input.RelativeContainerEventHandler;
 import org.betterx.ui.layout.components.render.ComponentRenderer;
+import org.betterx.ui.layout.components.render.NullRenderer;
 import org.betterx.ui.layout.values.Rectangle;
 import org.betterx.ui.layout.values.Size;
 import org.betterx.ui.layout.values.Value;
+import org.betterx.ui.vanilla.VanillaScrollerRenderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -154,6 +156,20 @@ public abstract class AbstractStack<R extends ComponentRenderer, T extends Abstr
         Button b = new Button(width, height, component, onPress, onTooltip);
         add(b);
         return b;
+    }
+
+    public VerticalScroll<NullRenderer, VanillaScrollerRenderer> addScrollable(LayoutComponent content) {
+        return addScrollable(Value.fill(), Value.fill(), content);
+    }
+
+    public VerticalScroll<NullRenderer, VanillaScrollerRenderer> addScrollable(
+            Value width,
+            Value heihght,
+            LayoutComponent content
+    ) {
+        VerticalScroll<NullRenderer, VanillaScrollerRenderer> s = VerticalScroll.create(width, height, content);
+        add(s);
+        return s;
     }
 }
 
