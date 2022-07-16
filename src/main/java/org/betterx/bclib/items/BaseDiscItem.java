@@ -33,7 +33,7 @@ public class BaseDiscItem extends RecordItem {
     }
 
     public static RecordItem create(int comparatorOutput, SoundEvent sound, Properties settings, int lengthInSeconds) {
-        for (Constructor<?> c : RecordItem.class.getConstructors()) {
+        for (Constructor<?> c : RecordItem.class.getDeclaredConstructors()) {
             if (c.getParameterCount() == 4) {
                 var types = c.getParameterTypes();
                 if (types.length == 4) { //1.19.1 Constructor
@@ -69,7 +69,10 @@ public class BaseDiscItem extends RecordItem {
                 }
             }
         }
-        BCLib.LOGGER.error("No Constructor for RecordItems found.");
+        BCLib.LOGGER.error("No Constructor for RecordItems found:");
+        for (Constructor<?> c : RecordItem.class.getDeclaredConstructors()) {
+            BCLib.LOGGER.error("    - " + c);
+        }
         return null;
     }
 }
