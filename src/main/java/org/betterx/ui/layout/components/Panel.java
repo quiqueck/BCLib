@@ -100,15 +100,6 @@ public class Panel implements ComponentWithBounds, RelativeContainerEventHandler
         }
     }
 
-    @Override
-    public boolean isMouseOver(double x, double y) {
-        if (child != null) {
-            if (child.isMouseOver(x - bounds.left, y - bounds.top))
-                return true;
-        }
-        return bounds.contains(x, y);
-    }
-
 //    @Override
 //    public void mouseMoved(double x, double y) {
 //        if (child != null)

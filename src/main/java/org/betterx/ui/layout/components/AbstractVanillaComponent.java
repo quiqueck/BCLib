@@ -135,7 +135,7 @@ public abstract class AbstractVanillaComponent<C extends AbstractWidget, V exten
     @Override
     public boolean isMouseOver(double x, double y) {
         if (vanillaComponent != null && enabled)
-            return vanillaComponent.isMouseOver(x, y);
+            return vanillaComponent.isMouseOver(x - relativeBounds.left, y - relativeBounds.top);
         return false;
     }
 

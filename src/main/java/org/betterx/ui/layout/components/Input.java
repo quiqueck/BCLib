@@ -88,4 +88,9 @@ public class Input extends AbstractVanillaComponent<EditBox, Input> {
     public boolean changeFocus(boolean bl) {
         return super.changeFocus(bl);
     }
+
+    @Override
+    public boolean mouseClicked(double x, double y, int button) {
+        return super.mouseClicked(x, y, button);
+    }
 }

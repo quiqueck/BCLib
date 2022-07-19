@@ -16,10 +16,13 @@ public interface RelativeContainerEventHandler extends ContainerEventHandler {
 
     default Optional<GuiEventListener> getChildAt(double d, double e) {
         Rectangle r = getInputBounds();
-        return ContainerEventHandler.super.getChildAt(d - r.left, e - r.top);
+        return ContainerEventHandler.super.getChildAt(d, e);
     }
 
     default boolean mouseClicked(double d, double e, int i) {
+        if (getFocused() != null) {
+            getFocused().mouseClicked(d, e, i);
+        }
         Rectangle r = getInputBounds();
         return ContainerEventHandler.super.mouseClicked(d - r.left, e - r.top, i);
     }

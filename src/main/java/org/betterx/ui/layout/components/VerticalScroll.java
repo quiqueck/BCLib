@@ -255,12 +255,13 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
             );
         }
         if (!didCapture) {
-            scrollerY = scrollerY + delta;
+            scrollerY = Math.max(0, Math.min(travel, scrollerY)) + delta;
             return true;
+        } else {
+            System.out.println("Child did capture scroll");
         }
         return false;
     }
-
 
     GuiEventListener focused;
 
@@ -283,7 +284,6 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
         dragging = bl;
     }
 
-
     @Override
     public boolean isMouseOver(double x, double y) {
         if (child != null) {
@@ -292,6 +292,4 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
         }
         return relativeBounds.contains(x, y);
     }
-
-
 }

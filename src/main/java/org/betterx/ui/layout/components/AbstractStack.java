@@ -117,6 +117,7 @@ public abstract class AbstractStack<R extends ComponentRenderer, T extends Abstr
     public void setFocused(@Nullable GuiEventListener guiEventListener) {
         focused = guiEventListener;
     }
+    
 
     public Image addIcon(ResourceLocation location, Size resourceSize) {
         Image i = new Image(Value.fixed(24), Value.fixed(24), location, resourceSize);
@@ -219,6 +220,17 @@ public abstract class AbstractStack<R extends ComponentRenderer, T extends Abstr
 
     public ColorSwatch addColorSwatch(Value width, Value height, int color) {
         ColorSwatch c = new ColorSwatch(width, height, color);
+        add(c);
+        return c;
+    }
+
+    public ColorPicker addColorPicker(
+            Value width,
+            Value height,
+            net.minecraft.network.chat.Component titleOrNull,
+            int color
+    ) {
+        ColorPicker c = new ColorPicker(width, height, titleOrNull, color);
         add(c);
         return c;
     }
