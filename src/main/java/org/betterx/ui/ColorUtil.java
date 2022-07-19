@@ -165,16 +165,16 @@ public class ColorUtil {
         int color, shift;
         if (len == 3) {
             hexColor = ""
-                    + hexColor.charAt(2) + hexColor.charAt(2)
+                    + hexColor.charAt(0) + hexColor.charAt(0)
                     + hexColor.charAt(1) + hexColor.charAt(1)
-                    + hexColor.charAt(0) + hexColor.charAt(0);
+                    + hexColor.charAt(2) + hexColor.charAt(2);
             len = 6;
         } else if (len == 4) {
             hexColor = ""
-                    + hexColor.charAt(3) + hexColor.charAt(3)
-                    + hexColor.charAt(2) + hexColor.charAt(2)
+                    + hexColor.charAt(0) + hexColor.charAt(0)
                     + hexColor.charAt(1) + hexColor.charAt(1)
-                    + hexColor.charAt(0) + hexColor.charAt(0);
+                    + hexColor.charAt(2) + hexColor.charAt(2)
+                    + hexColor.charAt(3) + hexColor.charAt(3);
             len = 8;
         }
 
@@ -210,16 +210,16 @@ public class ColorUtil {
         int color, shift;
         if (len == 3) {
             hexColor = ""
-                    + hexColor.charAt(2) + hexColor.charAt(2)
+                    + hexColor.charAt(0) + hexColor.charAt(0)
                     + hexColor.charAt(1) + hexColor.charAt(1)
-                    + hexColor.charAt(0) + hexColor.charAt(0);
+                    + hexColor.charAt(2) + hexColor.charAt(2);
             len = 6;
         } else if (len == 4) {
             hexColor = ""
-                    + hexColor.charAt(3) + hexColor.charAt(3)
-                    + hexColor.charAt(2) + hexColor.charAt(2)
+                    + hexColor.charAt(0) + hexColor.charAt(0)
                     + hexColor.charAt(1) + hexColor.charAt(1)
-                    + hexColor.charAt(0) + hexColor.charAt(0);
+                    + hexColor.charAt(2) + hexColor.charAt(2)
+                    + hexColor.charAt(3) + hexColor.charAt(3);
             len = 8;
         }
 

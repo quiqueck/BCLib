@@ -208,5 +208,19 @@ public abstract class AbstractStack<R extends ComponentRenderer, T extends Abstr
         add(r);
         return r;
     }
+
+    public Input addInput(
+            Value width, Value height, net.minecraft.network.chat.Component titleOrNull, String initialValue
+    ) {
+        Input i = new Input(width, height, titleOrNull, initialValue);
+        add(i);
+        return i;
+    }
+
+    public ColorSwatch addColorSwatch(Value width, Value height, int color) {
+        ColorSwatch c = new ColorSwatch(width, height, color);
+        add(c);
+        return c;
+    }
 }
 

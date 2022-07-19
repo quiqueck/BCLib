@@ -78,4 +78,9 @@ public class Input extends AbstractVanillaComponent<EditBox, Input> {
 
         return this;
     }
+
+    @Override
+    protected Component contentComponent() {
+        return Component.literal(initialValue + "..");
+    }
 }
