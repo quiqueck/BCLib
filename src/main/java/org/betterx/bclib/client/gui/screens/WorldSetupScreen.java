@@ -1,13 +1,16 @@
 package org.betterx.bclib.client.gui.screens;
 
+import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.generator.BCLibEndBiomeSource;
 import org.betterx.bclib.api.v2.generator.BCLibNetherBiomeSource;
 import org.betterx.bclib.api.v2.generator.config.BCLEndBiomeSourceConfig;
 import org.betterx.bclib.api.v2.generator.config.BCLNetherBiomeSourceConfig;
 import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
-import org.betterx.bclib.client.gui.gridlayout.GridCheckboxCell;
-import org.betterx.bclib.client.gui.gridlayout.GridLayout;
 import org.betterx.bclib.registry.PresetsRegistry;
+import org.betterx.ui.layout.components.*;
+import org.betterx.ui.layout.values.Size;
+import org.betterx.ui.layout.values.Value;
+import org.betterx.ui.vanilla.LayoutScreen;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
 import org.betterx.worlds.together.worldPreset.WorldGenSettingsComponentAccessor;
 
@@ -17,6 +20,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.dimension.DimensionType;
@@ -31,143 +35,150 @@ import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
 @Environment(EnvType.CLIENT)
-public class WorldSetupScreen extends BCLibScreen {
+public class WorldSetupScreen extends LayoutScreen {
+    static final ResourceLocation BCLIB_LOGO_LOCATION = new ResourceLocation(BCLib.MOD_ID, "icon.png");
+
     private final WorldCreationContext context;
     private final CreateWorldScreen createWorldScreen;
 
     public WorldSetupScreen(@Nullable CreateWorldScreen parent, WorldCreationContext context) {
-        super(parent, Component.translatable("title.screen.bclib.worldgen.main"), 10, true);
+        super(parent, Component.translatable("title.screen.bclib.worldgen.main"), 10, 10, 10);
         this.context = context;
         this.createWorldScreen = parent;
     }
 
 
-    private GridCheckboxCell bclibEnd;
-    private GridCheckboxCell bclibNether;
-    GridCheckboxCell endLegacy;
-    GridCheckboxCell endCustomTerrain;
-    GridCheckboxCell generateEndVoid;
-    GridCheckboxCell netherLegacy;
+    private Checkbox bclibEnd;
+    private Checkbox bclibNether;
+    Checkbox endLegacy;
+    Checkbox endCustomTerrain;
+    Checkbox generateEndVoid;
+    Checkbox netherLegacy;
 
-    @Override
-    protected void initLayout() {
-        BCLEndBiomeSourceConfig endConfig = BCLEndBiomeSourceConfig.VANILLA;
-        BCLNetherBiomeSourceConfig netherConfig = BCLNetherBiomeSourceConfig.VANILLA;
-        if (createWorldScreen.worldGenSettingsComponent instanceof WorldGenSettingsComponentAccessor acc
-                && acc.bcl_getPreset()
-                      .isPresent() && acc.bcl_getPreset()
-                                         .get()
-                                         .value() instanceof TogetherWorldPreset wp) {
+    public LayoutComponent<?, ?> netherPage(BCLNetherBiomeSourceConfig netherConfig) {
+        VerticalStack content = new VerticalStack(Value.fill(), Value.fit()).centerHorizontal();
+        content.addSpacer(4);
 
-            LevelStem endStem = wp.getDimension(LevelStem.END);
-            if (endStem != null && endStem.generator().getBiomeSource() instanceof BCLibEndBiomeSource bs) {
-                endConfig = bs.getTogetherConfig();
-            }
-            LevelStem netherStem = wp.getDimension(LevelStem.NETHER);
-            if (netherStem != null && netherStem.generator().getBiomeSource() instanceof BCLibNetherBiomeSource bs) {
-                netherConfig = bs.getTogetherConfig();
-            }
-        }
+        bclibNether = content.addCheckbox(
+                Value.fit(), Value.fit(),
+                Component.translatable("title.screen.bclib.worldgen.custom_biome_source"),
+                netherConfig.mapVersion != BCLNetherBiomeSourceConfig.NetherBiomeMapType.VANILLA
+        );
 
-
-        final int BUTTON_HEIGHT = 20;
-        grid.addSpacerRow(20);
-
-        var row = grid.addRow();
-        var colNether = row.addColumn(0.5, GridLayout.GridValueType.PERCENTAGE);
-        var colEnd = row.addColumn(0.5, GridLayout.GridValueType.PERCENTAGE);
-
-        row = colNether.addRow();
-        row.addString(Component.translatable("title.bclib.the_nether"), GridLayout.Alignment.CENTER, this);
-        colNether.addSpacerRow(15);
-
-        var mainSettingsRow = colNether.addRow();
-        mainSettingsRow.addSpacer(16);
-        colNether.addSpacerRow(2);
-        row = colNether.addRow();
-        row.addSpacer(20);
-        netherLegacy = row.addCheckbox(
+        netherLegacy = content.indent(20).addCheckbox(
+                Value.fit(), Value.fit(),
                 Component.translatable("title.screen.bclib.worldgen.legacy_square"),
-                netherConfig.mapVersion == BCLNetherBiomeSourceConfig.NetherBiomeMapType.SQUARE,
-                1.0,
-                GridLayout.GridValueType.PERCENTAGE,
-                (state) -> {
-                }
-        );
-        bclibNether = mainSettingsRow.addCheckbox(
-                Component.translatable(
-                        "title.screen.bclib.worldgen.custom_biome_source"),
-                netherConfig.mapVersion != BCLNetherBiomeSourceConfig.NetherBiomeMapType.VANILLA,
-                1.0,
-                GridLayout.GridValueType.PERCENTAGE,
-                (state) -> {
-                    netherLegacy.setEnabled(state);
-                }
+                netherConfig.mapVersion == BCLNetherBiomeSourceConfig.NetherBiomeMapType.SQUARE
         );
 
 
-        row = colEnd.addRow(GridLayout.VerticalAlignment.CENTER);
-        row.addString(Component.translatable("title.bclib.the_end"), GridLayout.Alignment.CENTER, this);
-        colEnd.addSpacerRow(15);
-
-        mainSettingsRow = colEnd.addRow();
-        mainSettingsRow.addSpacer(16);
-        colEnd.addSpacerRow(2);
-        row = colEnd.addRow();
-        row.addSpacer(20);
-        endCustomTerrain = row.addCheckbox(
-                Component.translatable("title.screen.bclib.worldgen.custom_end_terrain"),
-                endConfig.generatorVersion != BCLEndBiomeSourceConfig.EndBiomeGeneratorType.VANILLA,
-                1.0,
-                GridLayout.GridValueType.PERCENTAGE,
-                (state) -> {
-                }
-        );
-
-        row = colEnd.addRow();
-        row.addSpacer(20);
-        generateEndVoid = row.addCheckbox(
-                Component.translatable("title.screen.bclib.worldgen.end_void"),
-                endConfig.withVoidBiomes,
-                1.0,
-                GridLayout.GridValueType.PERCENTAGE,
-                (state) -> {
-                }
-        );
-
-        row = colEnd.addRow();
-        row.addSpacer(20);
-        endLegacy = row.addCheckbox(
-                Component.translatable("title.screen.bclib.worldgen.legacy_square"),
-                endConfig.mapVersion == BCLEndBiomeSourceConfig.EndBiomeMapType.SQUARE,
-                1.0,
-                GridLayout.GridValueType.PERCENTAGE,
-                (state) -> {
-                }
-        );
-
-        bclibEnd = mainSettingsRow.addCheckbox(
-                Component.translatable(
-                        "title.screen.bclib.worldgen.custom_biome_source"),
-                endConfig.mapVersion != BCLEndBiomeSourceConfig.EndBiomeMapType.VANILLA,
-                1.0,
-                GridLayout.GridValueType.PERCENTAGE,
-                (state) -> {
-                    endLegacy.setEnabled(state);
-                    endCustomTerrain.setEnabled(state);
-                    generateEndVoid.setEnabled(state);
-                }
-        );
-
-
-        grid.addSpacerRow(36);
-        row = grid.addRow();
-        row.addFiller();
-        row.addButton(CommonComponents.GUI_DONE, BUTTON_HEIGHT, font, (button) -> {
-            updateSettings();
-            onClose();
+        bclibNether.onChange((cb, state) -> {
+            netherLegacy.setEnabled(state);
         });
-        grid.addSpacerRow(10);
+        return content.setDebugName("Nether page");
+    }
+
+    public LayoutComponent<?, ?> endPage(BCLEndBiomeSourceConfig endConfig) {
+        VerticalStack content = new VerticalStack(Value.fill(), Value.fit()).centerHorizontal();
+        content.addSpacer(4);
+        bclibEnd = content.addCheckbox(
+                Value.fit(), Value.fit(),
+                Component.translatable("title.screen.bclib.worldgen.custom_biome_source"),
+                endConfig.mapVersion != BCLEndBiomeSourceConfig.EndBiomeMapType.VANILLA
+        );
+
+        endLegacy = content.indent(20).addCheckbox(
+                Value.fit(), Value.fit(),
+                Component.translatable("title.screen.bclib.worldgen.legacy_square"),
+                endConfig.mapVersion == BCLEndBiomeSourceConfig.EndBiomeMapType.SQUARE
+        );
+
+        endCustomTerrain = content.indent(20).addCheckbox(
+                Value.fit(), Value.fit(),
+                Component.translatable("title.screen.bclib.worldgen.custom_end_terrain"),
+                endConfig.generatorVersion != BCLEndBiomeSourceConfig.EndBiomeGeneratorType.VANILLA
+        );
+
+        generateEndVoid = content.indent(20).addCheckbox(
+                Value.fit(), Value.fit(),
+                Component.translatable("title.screen.bclib.worldgen.end_void"),
+                endConfig.withVoidBiomes
+        );
+
+        content.addSpacer(12);
+        content.addText(Value.fit(), Value.fit(), Component.literal("Average Biome Size (in Chunks)"))
+               .centerHorizontal();
+        content.addHorizontalSeparator(8).alignTop();
+
+        Range<Integer> landBiomeSize = content.addRange(
+                Value.fixed(200),
+                Value.fit(),
+                Component.literal("Land"),
+                1,
+                512,
+                endConfig.landBiomesSize / 16
+        );
+
+        Range<Integer> voidBiomeSize = content.addRange(
+                Value.fixed(200),
+                Value.fit(),
+                Component.literal("Void"),
+                1,
+                512,
+                endConfig.voidBiomesSize / 16
+        );
+
+        Range<Integer> centerBiomeSize = content.addRange(
+                Value.fixed(200),
+                Value.fit(),
+                Component.literal("Center"),
+                1,
+                512,
+                endConfig.centerBiomesSize / 16
+        );
+
+        Range<Integer> barrensBiomeSize = content.addRange(
+                Value.fixed(200),
+                Value.fit(),
+                Component.literal("Barrens"),
+                1,
+                512,
+                endConfig.barrensBiomesSize / 16
+        );
+
+        content.addSpacer(12);
+        content.addText(Value.fit(), Value.fit(), Component.literal("Other Settings"))
+               .centerHorizontal();
+        content.addHorizontalSeparator(8).alignTop();
+
+        Range<Integer> innerRadius = content.addRange(
+                Value.fixed(200),
+                Value.fit(),
+                Component.literal("Central Void Radius"),
+                1,
+                512,
+                (int) Math.sqrt(endConfig.innerVoidRadiusSquared) / 16
+        );
+
+
+        bclibEnd.onChange((cb, state) -> {
+            endLegacy.setEnabled(state);
+            endCustomTerrain.setEnabled(state);
+            generateEndVoid.setEnabled(state);
+
+            landBiomeSize.setEnabled(state && endCustomTerrain.isChecked());
+            voidBiomeSize.setEnabled(state && endCustomTerrain.isChecked());
+            centerBiomeSize.setEnabled(state && endCustomTerrain.isChecked());
+            barrensBiomeSize.setEnabled(state && endCustomTerrain.isChecked());
+        });
+
+        endCustomTerrain.onChange((cb, state) -> {
+            landBiomeSize.setEnabled(state);
+            voidBiomeSize.setEnabled(state);
+            centerBiomeSize.setEnabled(state);
+            barrensBiomeSize.setEnabled(state);
+        });
+        return content.setDebugName("End Page");
     }
 
     private void updateSettings() {
@@ -256,5 +267,67 @@ public class WorldSetupScreen extends BCLibScreen {
         );
     }
 
+    @Override
+    protected LayoutComponent<?, ?> addTitle(LayoutComponent<?, ?> content) {
+        VerticalStack rows = new VerticalStack(Value.fill(), Value.fill()).setDebugName("title stack");
 
+        if (topPadding > 0) rows.addSpacer(topPadding);
+        rows.add(content);
+        if (bottomPadding > 0) rows.addSpacer(bottomPadding);
+
+        if (sidePadding <= 0) return rows;
+
+        HorizontalStack cols = new HorizontalStack(Value.fill(), Value.fill()).setDebugName("padded side");
+        cols.addSpacer(sidePadding);
+        cols.add(rows);
+        cols.addSpacer(sidePadding);
+        return cols;
+    }
+
+    @Override
+    protected LayoutComponent<?, ?> initContent() {
+        BCLEndBiomeSourceConfig endConfig = BCLEndBiomeSourceConfig.VANILLA;
+        BCLNetherBiomeSourceConfig netherConfig = BCLNetherBiomeSourceConfig.VANILLA;
+        if (createWorldScreen.worldGenSettingsComponent instanceof WorldGenSettingsComponentAccessor acc
+                && acc.bcl_getPreset()
+                      .isPresent() && acc.bcl_getPreset()
+                                         .get()
+                                         .value() instanceof TogetherWorldPreset wp) {
+
+            LevelStem endStem = wp.getDimension(LevelStem.END);
+            if (endStem != null && endStem.generator().getBiomeSource() instanceof BCLibEndBiomeSource bs) {
+                endConfig = bs.getTogetherConfig();
+            }
+            LevelStem netherStem = wp.getDimension(LevelStem.NETHER);
+            if (netherStem != null && netherStem.generator().getBiomeSource() instanceof BCLibNetherBiomeSource bs) {
+                netherConfig = bs.getTogetherConfig();
+            }
+        }
+
+        var netherPage = netherPage(netherConfig);
+        var endPage = endPage(endConfig);
+
+        Tabs main = new Tabs(Value.fill(), Value.fill());
+        main.addPage(Component.translatable("title.bclib.the_nether"), VerticalScroll.create(netherPage));
+        main.addPage(Component.translatable("title.bclib.the_end"), VerticalScroll.create(endPage));
+
+        HorizontalStack title = new HorizontalStack(Value.fit(), Value.fit()).setDebugName("title bar");
+        title.addIcon(BCLIB_LOGO_LOCATION, Size.of(512)).setDebugName("icon");
+        title.addSpacer(4);
+        title.add(super.buildTitle());
+
+        main.addFiller();
+        main.addComponent(title);
+
+
+        VerticalStack rows = new VerticalStack(Value.fill(), Value.fill());
+        rows.add(main);
+        rows.addSpacer(4);
+        rows.addButton(Value.fit(), Value.fit(), CommonComponents.GUI_DONE).onPress((bt) -> {
+            updateSettings();
+            onClose();
+        }).alignRight();
+
+        return rows;
+    }
 }
