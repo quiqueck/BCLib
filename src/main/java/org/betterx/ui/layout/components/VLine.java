@@ -9,10 +9,12 @@ import org.betterx.ui.layout.values.Value;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 public class VLine extends CustomRenderComponent {
-    private int color = ColorUtil.WHITE;
+    private int color = ColorUtil.DEFAULT_TEXT;
 
     public VLine(Value width, Value height) {
         super(width, height);
+        this.vAlign = Alignment.CENTER;
+        this.hAlign = Alignment.CENTER;
     }
 
     public VLine setColor(int color) {

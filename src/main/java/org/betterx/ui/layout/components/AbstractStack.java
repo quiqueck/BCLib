@@ -235,10 +235,26 @@ public abstract class AbstractStack<R extends ComponentRenderer, T extends Abstr
         return c;
     }
 
+    public HLine addHorizontalSeparator(int height) {
+        return addHLine(Value.relative(1.0 / 1.618033988749894), Value.fixed(height));
+    }
+
+    public HLine addHorizontalLine(int height) {
+        return addHLine(Value.fill(), Value.fixed(height));
+    }
+
     public HLine addHLine(Value width, Value height) {
         HLine l = new HLine(width, height);
         add(l);
         return l;
+    }
+
+    public VLine addVerticalSeparator(int width) {
+        return addVLine(Value.fixed(width), Value.relative(1.0 / 1.618033988749894));
+    }
+
+    public VLine addVerticalLine(int width) {
+        return addVLine(Value.fixed(width), Value.fill());
     }
 
     public VLine addVLine(Value width, Value height) {

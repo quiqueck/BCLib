@@ -38,7 +38,7 @@ public class TestScreen extends LayoutScreen {
                         Component.literal("Some other, longer Text")
                 ).centerHorizontal()
         );
-        rows.addSpacer(16);
+        rows.addHorizontalSeparator(16).alignTop();
         rows.add(new Input(Value.fitOrFill(), Value.fit(), Component.literal("Input"), "0xff00ff"));
         rows.add(new ColorSwatch(Value.fit(), Value.fit(), ColorUtil.LIGHT_PURPLE).centerHorizontal());
         rows.add(new ColorPicker(
@@ -52,7 +52,7 @@ public class TestScreen extends LayoutScreen {
                         Component.literal("Some blue text")
                 ).centerHorizontal().setColor(ColorUtil.BLUE)
         );
-        rows.addSpacer(16);
+        rows.addHLine(Value.fixed(32), Value.fixed(16));
         rows.add(new Image(
                         Value.fixed(24), Value.fixed(24),
                         BCLib.makeID("icon.png"),
@@ -66,7 +66,7 @@ public class TestScreen extends LayoutScreen {
                 ).setColor(ColorUtil.LIGHT_PURPLE).centerHorizontal()
         );
 
-        rows.addSpacer(16);
+        rows.addHorizontalLine(16);
         rows.add(new Range<>(
                 Value.fill(), Value.fit(),
                 Component.literal("Integer"),
