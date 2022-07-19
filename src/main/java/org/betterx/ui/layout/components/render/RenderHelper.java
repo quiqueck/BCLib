@@ -49,7 +49,7 @@ public class RenderHelper {
         innerFill(transform, x0, y, x1 + 1, y + 1, color);
     }
 
-    protected static void vLine(PoseStack poseStack, int x, int y0, int y1, int color) {
+    public static void vLine(PoseStack poseStack, int x, int y0, int y1, int color) {
         if (y1 < y0) {
             int m = y0;
             y0 = y1;

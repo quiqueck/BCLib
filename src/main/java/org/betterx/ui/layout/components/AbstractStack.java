@@ -117,7 +117,7 @@ public abstract class AbstractStack<R extends ComponentRenderer, T extends Abstr
     public void setFocused(@Nullable GuiEventListener guiEventListener) {
         focused = guiEventListener;
     }
-    
+
 
     public Image addIcon(ResourceLocation location, Size resourceSize) {
         Image i = new Image(Value.fixed(24), Value.fixed(24), location, resourceSize);
@@ -233,6 +233,18 @@ public abstract class AbstractStack<R extends ComponentRenderer, T extends Abstr
         ColorPicker c = new ColorPicker(width, height, titleOrNull, color);
         add(c);
         return c;
+    }
+
+    public HLine addHLine(Value width, Value height) {
+        HLine l = new HLine(width, height);
+        add(l);
+        return l;
+    }
+
+    public VLine addVLine(Value width, Value height) {
+        VLine l = new VLine(width, height);
+        add(l);
+        return l;
     }
 }
 

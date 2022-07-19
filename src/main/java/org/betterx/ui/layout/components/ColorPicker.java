@@ -39,9 +39,4 @@ public class ColorPicker extends HorizontalStack {
     public int getContentHeight() {
         return Math.max(swatch.getContentHeight(), input.getContentHeight());
     }
-
-    @Override
-    public boolean changeFocus(boolean bl) {
-        return input.changeFocus(bl);
-    }
 }
