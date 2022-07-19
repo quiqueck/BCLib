@@ -6,7 +6,6 @@ import org.betterx.ui.layout.components.render.NullRenderer;
 import org.betterx.ui.layout.values.Rectangle;
 import org.betterx.ui.layout.values.Size;
 import org.betterx.ui.layout.values.Value;
-import org.betterx.ui.vanilla.Slider;
 import org.betterx.ui.vanilla.VanillaScrollerRenderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -64,25 +63,6 @@ public abstract class AbstractStack<R extends ComponentRenderer, T extends Abstr
         }
     }
 
-    public T add(LayoutComponent<?, ?> c) {
-        this.components.add(c);
-        return (T) this;
-    }
-
-    protected abstract T addEmpty(Value size);
-
-    public T addSpacer(int size) {
-        return addEmpty(Value.fixed(size));
-    }
-
-    public T addSpacer(float percentage) {
-        return addEmpty(Value.relative(percentage));
-    }
-
-    public T addFiller() {
-        return addEmpty(Value.fill());
-    }
-
     @Override
     public List<? extends GuiEventListener> children() {
         return components;
@@ -118,44 +98,65 @@ public abstract class AbstractStack<R extends ComponentRenderer, T extends Abstr
         focused = guiEventListener;
     }
 
+    public boolean isEmpty() {
+        return components.isEmpty();
+    }
 
-    public Image addIcon(ResourceLocation location, Size resourceSize) {
+    protected abstract T addEmpty(Value size);
+
+    protected T add(LayoutComponent<?, ?> c) {
+        this.components.add(c);
+        return (T) this;
+    }
+
+    protected T addSpacer(int size) {
+        return addEmpty(Value.fixed(size));
+    }
+
+    protected T addSpacer(float percentage) {
+        return addEmpty(Value.relative(percentage));
+    }
+
+    protected T addFiller() {
+        return addEmpty(Value.fill());
+    }
+
+
+    protected Image addIcon(ResourceLocation location, Size resourceSize) {
         Image i = new Image(Value.fixed(24), Value.fixed(24), location, resourceSize);
         add(i);
         return i;
     }
 
-    public Image addImage(Value width, Value height, ResourceLocation location, Size resourceSize) {
+    protected Image addImage(Value width, Value height, ResourceLocation location, Size resourceSize) {
         Image i = new Image(width, height, location, resourceSize);
         add(i);
         return i;
     }
 
-    public Checkbox addCheckbox(
+    protected Checkbox addCheckbox(
             Value width, Value height, Component component,
-            boolean selected,
-            Checkbox.SelectionChanged onSelectionChange
+            boolean selected
     ) {
-        Checkbox c = new Checkbox(width, height, component, selected, true, onSelectionChange);
+        Checkbox c = new Checkbox(width, height, component, selected, true);
         add(c);
         return c;
     }
 
-    public Button addButton(
+    protected Button addButton(
             Value width, Value height,
-            Component component,
-            net.minecraft.client.gui.components.Button.OnPress onPress
+            Component component
     ) {
-        Button b = new Button(width, height, component, onPress);
+        Button b = new Button(width, height, component);
         add(b);
         return b;
     }
 
-    public VerticalScroll<NullRenderer, VanillaScrollerRenderer> addScrollable(LayoutComponent<?, ?> content) {
+    protected VerticalScroll<NullRenderer, VanillaScrollerRenderer> addScrollable(LayoutComponent<?, ?> content) {
         return addScrollable(Value.fill(), Value.fill(), content);
     }
 
-    public VerticalScroll<NullRenderer, VanillaScrollerRenderer> addScrollable(
+    protected VerticalScroll<NullRenderer, VanillaScrollerRenderer> addScrollable(
             Value width,
             Value height,
             LayoutComponent<?, ?> content
@@ -165,52 +166,49 @@ public abstract class AbstractStack<R extends ComponentRenderer, T extends Abstr
         return s;
     }
 
-    public Text addText(Value width, Value height, net.minecraft.network.chat.Component text) {
+    protected Text addText(Value width, Value height, net.minecraft.network.chat.Component text) {
         Text t = new Text(width, height, text);
         add(t);
         return t;
     }
 
-    public MultiLineText addMultilineText(Value width, Value height, net.minecraft.network.chat.Component text) {
+    protected MultiLineText addMultilineText(Value width, Value height, net.minecraft.network.chat.Component text) {
         MultiLineText t = new MultiLineText(width, height, text);
         add(t);
         return t;
     }
 
-    public Range<Integer> addRange(
+    protected Range<Integer> addRange(
             Value width, Value height,
             net.minecraft.network.chat.Component titleOrNull,
-            int minValue, int maxValue, int initialValue,
-            Slider.SliderValueChanged<Integer> onChange
+            int minValue, int maxValue, int initialValue
     ) {
-        Range<Integer> r = new Range<>(width, height, titleOrNull, minValue, maxValue, initialValue, onChange);
+        Range<Integer> r = new Range<>(width, height, titleOrNull, minValue, maxValue, initialValue);
         add(r);
         return r;
     }
 
-    public Range<Float> addRange(
+    protected Range<Float> addRange(
             Value width, Value height,
             net.minecraft.network.chat.Component titleOrNull,
-            float minValue, float maxValue, float initialValue,
-            Slider.SliderValueChanged<Float> onChange
+            float minValue, float maxValue, float initialValue
     ) {
-        Range<Float> r = new Range<>(width, height, titleOrNull, minValue, maxValue, initialValue, onChange);
+        Range<Float> r = new Range<>(width, height, titleOrNull, minValue, maxValue, initialValue);
         add(r);
         return r;
     }
 
-    public Range<Double> addRange(
+    protected Range<Double> addRange(
             Value width, Value height,
             net.minecraft.network.chat.Component titleOrNull,
-            double minValue, double maxValue, double initialValue,
-            Slider.SliderValueChanged<Double> onChange
+            double minValue, double maxValue, double initialValue
     ) {
-        Range<Double> r = new Range<>(width, height, titleOrNull, minValue, maxValue, initialValue, onChange);
+        Range<Double> r = new Range<>(width, height, titleOrNull, minValue, maxValue, initialValue);
         add(r);
         return r;
     }
 
-    public Input addInput(
+    protected Input addInput(
             Value width, Value height, net.minecraft.network.chat.Component titleOrNull, String initialValue
     ) {
         Input i = new Input(width, height, titleOrNull, initialValue);
@@ -218,13 +216,13 @@ public abstract class AbstractStack<R extends ComponentRenderer, T extends Abstr
         return i;
     }
 
-    public ColorSwatch addColorSwatch(Value width, Value height, int color) {
+    protected ColorSwatch addColorSwatch(Value width, Value height, int color) {
         ColorSwatch c = new ColorSwatch(width, height, color);
         add(c);
         return c;
     }
 
-    public ColorPicker addColorPicker(
+    protected ColorPicker addColorPicker(
             Value width,
             Value height,
             net.minecraft.network.chat.Component titleOrNull,
@@ -235,32 +233,39 @@ public abstract class AbstractStack<R extends ComponentRenderer, T extends Abstr
         return c;
     }
 
-    public HLine addHorizontalSeparator(int height) {
+    protected HLine addHorizontalSeparator(int height) {
         return addHLine(Value.relative(1.0 / 1.618033988749894), Value.fixed(height));
     }
 
-    public HLine addHorizontalLine(int height) {
+    protected HLine addHorizontalLine(int height) {
         return addHLine(Value.fill(), Value.fixed(height));
     }
 
-    public HLine addHLine(Value width, Value height) {
+    protected HLine addHLine(Value width, Value height) {
         HLine l = new HLine(width, height);
         add(l);
         return l;
     }
 
-    public VLine addVerticalSeparator(int width) {
+    protected VLine addVerticalSeparator(int width) {
         return addVLine(Value.fixed(width), Value.relative(1.0 / 1.618033988749894));
     }
 
-    public VLine addVerticalLine(int width) {
+    protected VLine addVerticalLine(int width) {
         return addVLine(Value.fixed(width), Value.fill());
     }
 
-    public VLine addVLine(Value width, Value height) {
+    protected VLine addVLine(Value width, Value height) {
         VLine l = new VLine(width, height);
         add(l);
         return l;
+    }
+
+    protected Container addContainered(Value width, Value height, LayoutComponent<?, ?> content) {
+        Container c = new Container(width, height);
+        c.addChild(content);
+        add(c);
+        return c;
     }
 }
 

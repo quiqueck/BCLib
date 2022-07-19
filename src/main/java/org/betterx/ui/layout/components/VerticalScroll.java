@@ -109,13 +109,13 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
             int width = relativeBounds.width;
             boolean willNeedScrollBar = child.height.calculatedSize() > relativeBounds.height;
             if (willNeedScrollBar) width -= scrollerWidth();
-            int childTop = width - child.width.calculatedSize();
-            if (child.hAlign == Alignment.MIN) childTop = 0;
-            else if (child.hAlign == Alignment.CENTER) childTop /= 2;
+            int childLeft = width - child.width.calculatedSize();
+            if (child.hAlign == Alignment.MIN) childLeft = 0;
+            else if (child.hAlign == Alignment.CENTER) childLeft /= 2;
 
-            int childLeft = relativeBounds.height - child.height.calculatedSize();
-            if (child.vAlign == Alignment.MIN) childLeft = 0;
-            else if (child.vAlign == Alignment.CENTER) childLeft /= 2;
+            int childTop = relativeBounds.height - child.height.calculatedSize();
+            if (child.vAlign == Alignment.MIN) childTop = 0;
+            else if (child.vAlign == Alignment.CENTER) childTop /= 2;
 
             child.setRelativeBounds(childLeft, childTop);
         }
@@ -265,21 +265,25 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
 
     GuiEventListener focused;
 
+    @Override
     @Nullable
     public GuiEventListener getFocused() {
         return focused;
     }
 
+    @Override
     public void setFocused(@Nullable GuiEventListener guiEventListener) {
         focused = guiEventListener;
     }
 
     boolean dragging;
 
+    @Override
     public boolean isDragging() {
         return this.dragging;
     }
 
+    @Override
     public void setDragging(boolean bl) {
         dragging = bl;
     }

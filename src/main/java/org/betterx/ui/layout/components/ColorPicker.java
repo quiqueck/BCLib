@@ -5,7 +5,11 @@ import org.betterx.ui.layout.values.Value;
 
 import net.minecraft.network.chat.Component;
 
-public class ColorPicker extends HorizontalStack {
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+@Environment(EnvType.CLIENT)
+public class ColorPicker extends AbstractHorizontalStack<ColorPicker> {
     ColorSwatch swatch;
     Input input;
 
@@ -28,15 +32,5 @@ public class ColorPicker extends HorizontalStack {
             swatch.setOffsetInner(true);
             swatch.setBorderColor(ColorUtil.RED);
         }
-    }
-
-    @Override
-    public int getContentWidth() {
-        return swatch.getContentWidth() + input.getContentWidth();
-    }
-
-    @Override
-    public int getContentHeight() {
-        return Math.max(swatch.getContentHeight(), input.getContentHeight());
     }
 }

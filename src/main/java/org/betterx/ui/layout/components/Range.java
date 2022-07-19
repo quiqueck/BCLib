@@ -11,7 +11,12 @@ import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
 public class Range<N extends Number> extends AbstractVanillaComponent<Slider<N>, Range<N>> {
-    private final Slider.SliderValueChanged<N> onChange;
+    @FunctionalInterface
+    public interface ValueChanged<N extends Number> {
+        void now(Range<N> range, N newValue);
+    }
+
+    private ValueChanged<N> onChange;
     private final N minValue;
     private final N maxValue;
     private final N initialValue;
@@ -22,11 +27,11 @@ public class Range<N extends Number> extends AbstractVanillaComponent<Slider<N>,
             Component component,
             N minValue,
             N maxValue,
-            N initialValue,
-            Slider.SliderValueChanged<N> onChange
+            N initialValue
     ) {
         super(width, height, new RangeRenderer<>(), component);
-        this.onChange = onChange;
+        this.onChange = (a, b) -> {
+        };
         this.minValue = minValue;
         this.maxValue = maxValue;
         this.initialValue = initialValue;
@@ -37,14 +42,19 @@ public class Range<N extends Number> extends AbstractVanillaComponent<Slider<N>,
             Value height,
             N minValue,
             N maxValue,
-            N initialValue,
-            Slider.SliderValueChanged<N> onChange
+            N initialValue
     ) {
-        this(width, height, null, minValue, maxValue, initialValue, onChange);
+        this(width, height, null, minValue, maxValue, initialValue);
+    }
+
+    public Range<N> onChange(ValueChanged<N> onChange) {
+        this.onChange = onChange;
+        return this;
     }
 
     @Override
     protected Slider<N> createVanillaComponent() {
+        Range<N> self = this;
         return new Slider<>(
                 0,
                 0,
@@ -54,7 +64,7 @@ public class Range<N extends Number> extends AbstractVanillaComponent<Slider<N>,
                 minValue,
                 maxValue,
                 initialValue,
-                onChange
+                (s, v) -> onChange.now(self, v)
         );
     }
 

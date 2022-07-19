@@ -61,7 +61,8 @@ public class MainScreen extends LayoutScreenWithIcon {
         Checkbox cb = row.addCheckbox(
                 Value.fit(), Value.fit(),
                 getComponent(config, option, "title"),
-                config.getRaw(option.token),
+                config.getRaw(option.token)
+        ).onChange(
                 (caller, state) -> {
                     config.set(option.token, state);
                     updateEnabledState();
@@ -104,7 +105,7 @@ public class MainScreen extends LayoutScreenWithIcon {
         VerticalStack grid = new VerticalStack(Value.fill(), Value.fill()).setDebugName("main grid");
         grid.addScrollable(content);
         grid.addSpacer(8);
-        grid.addButton(Value.fit(), Value.fit(), CommonComponents.GUI_DONE, (button) -> {
+        grid.addButton(Value.fit(), Value.fit(), CommonComponents.GUI_DONE).onPress((button) -> {
             Configs.CLIENT_CONFIG.saveChanges();
             Configs.GENERATOR_CONFIG.saveChanges();
             Configs.MAIN_CONFIG.saveChanges();

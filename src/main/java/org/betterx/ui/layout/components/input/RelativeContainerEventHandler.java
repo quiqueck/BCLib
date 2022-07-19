@@ -21,7 +21,7 @@ public interface RelativeContainerEventHandler extends ContainerEventHandler {
 
     default boolean mouseClicked(double d, double e, int i) {
         if (getFocused() != null) {
-            getFocused().mouseClicked(d, e, i);
+            //getFocused().mouseClicked(d, e, i);
         }
         Rectangle r = getInputBounds();
         return ContainerEventHandler.super.mouseClicked(d - r.left, e - r.top, i);

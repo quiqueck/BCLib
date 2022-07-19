@@ -25,6 +25,21 @@ public class TestScreen extends LayoutScreen {
 
     @Override
     protected LayoutComponent<?, ?> initContent() {
+        VerticalStack page1 = new VerticalStack(Value.fill(), Value.fit());
+        page1.addText(Value.fit(), Value.fit(), Component.literal("Page 1")).alignLeft().centerVertical();
+        page1.addButton(Value.fit(), Value.fit(), Component.literal("A")).onPress((bt) -> System.out.println("A"))
+             .centerHorizontal();
+
+        VerticalStack page2 = new VerticalStack(Value.fill(), Value.fit());
+        page2.addText(Value.fit(), Value.fit(), Component.literal("Page 2")).alignRight().centerVertical();
+        page1.addButton(Value.fit(), Value.fit(), Component.literal("B")).onPress((bt) -> System.out.println("B"))
+             .centerHorizontal();
+
+        Container c = new Container(Value.fill(), Value.fixed(40));
+        c.addChild(new Button(Value.fit(), Value.fit(), Component.literal("Containerd")).onPress(bt -> {
+            System.out.println("Containerd");
+        }).centerHorizontal().centerVertical());
+        c.setBackgroundColor(0x77000000);
         VerticalStack rows = new VerticalStack(Value.fit(), Value.fitOrFill());
 
         rows.addFiller();
@@ -39,6 +54,8 @@ public class TestScreen extends LayoutScreen {
                 ).centerHorizontal()
         );
         rows.addHorizontalSeparator(16).alignTop();
+        rows.add(new Tabs(Value.fixed(300), Value.fit()).addPage(Component.literal("PAGE 1"), page1)
+                                                        .addPage(Component.literal("PAGE 2"), page2));
         rows.add(new Input(Value.fitOrFill(), Value.fit(), Component.literal("Input"), "0xff00ff"));
         rows.add(new ColorSwatch(Value.fit(), Value.fit(), ColorUtil.LIGHT_PURPLE).centerHorizontal());
         rows.add(new ColorPicker(
@@ -53,6 +70,16 @@ public class TestScreen extends LayoutScreen {
                 ).centerHorizontal().setColor(ColorUtil.BLUE)
         );
         rows.addHLine(Value.fixed(32), Value.fixed(16));
+        rows.add(c);
+        rows.addCheckbox(
+                Value.fitOrFill(),
+                Value.fit(),
+                Component.literal("Hide"),
+                false
+        ).onChange(
+                (cb, state) -> c.setVisible(!state)
+        );
+        rows.addSpacer(16);
         rows.add(new Image(
                         Value.fixed(24), Value.fixed(24),
                         BCLib.makeID("icon.png"),
@@ -70,7 +97,8 @@ public class TestScreen extends LayoutScreen {
         rows.add(new Range<>(
                 Value.fill(), Value.fit(),
                 Component.literal("Integer"),
-                10, 90, 20,
+                10, 90, 20
+        ).onChange(
                 (slider, value) -> {
                     System.out.println(value);
                 }
@@ -79,7 +107,8 @@ public class TestScreen extends LayoutScreen {
         rows.add(new Range<>(
                 Value.fill(), Value.fit(),
                 Component.literal("Float"),
-                10f, 90f, 20f,
+                10f, 90f, 20f
+        ).onChange(
                 (slider, value) -> {
                     System.out.println(value);
                 }
@@ -88,7 +117,8 @@ public class TestScreen extends LayoutScreen {
         Checkbox cb1 = new Checkbox(
                 Value.fit(), Value.fit(),
                 Component.literal("Some Sub-State"),
-                false, true,
+                false, true
+        ).onChange(
                 (checkbox, value) -> {
                     System.out.println(value);
                 }
@@ -96,7 +126,8 @@ public class TestScreen extends LayoutScreen {
         rows.add(new Checkbox(
                 Value.fit(), Value.fit(),
                 Component.literal("Some Selectable State"),
-                false, true,
+                false, true
+        ).onChange(
                 (checkbox, value) -> {
                     System.out.println(value);
                     cb1.setEnabled(value);
@@ -106,7 +137,8 @@ public class TestScreen extends LayoutScreen {
         rows.addSpacer(16);
         rows.add(new Button(
                         Value.fit(), Value.fit(),
-                        Component.literal("test"),
+                        Component.literal("test")
+                ).onPress(
                         (bt) -> {
                             System.out.println("clicked test");
                         }
@@ -115,7 +147,8 @@ public class TestScreen extends LayoutScreen {
         rows.addSpacer(8);
         rows.add(new Button(
                         Value.fit(), Value.fit(),
-                        Component.literal("Hello World"),
+                        Component.literal("Hello World")
+                ).onPress(
                         (bt) -> {
                             System.out.println("clicked hello");
                         }

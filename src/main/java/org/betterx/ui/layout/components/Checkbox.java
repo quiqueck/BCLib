@@ -10,36 +10,44 @@ import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
 public class Checkbox extends AbstractVanillaComponent<net.minecraft.client.gui.components.Checkbox, Checkbox> {
+    public static SelectionChanged IGNORE_CHANGE = (a, b) -> {
+    };
+
     @FunctionalInterface
     public interface SelectionChanged {
-        void now(net.minecraft.client.gui.components.Checkbox checkBox, boolean selected);
+        void now(Checkbox checkBox, boolean selected);
     }
 
     private final boolean selected;
     private final boolean showLabel;
 
-    private final SelectionChanged onSelectionChange;
+    private SelectionChanged onSelectionChange;
 
     public Checkbox(
             Value width,
             Value height,
             Component component,
-            boolean selected, boolean showLabel,
-            SelectionChanged onSelectionChange
+            boolean selected, boolean showLabel
     ) {
         super(width, height, new CheckboxRenderer(), component);
+        onSelectionChange = IGNORE_CHANGE;
         this.selected = selected;
         this.showLabel = showLabel;
-        this.onSelectionChange = onSelectionChange;
     }
 
-    public boolean selected() {
+    public Checkbox onChange(SelectionChanged onSelectionChange) {
+        this.onSelectionChange = onSelectionChange;
+        return this;
+    }
+
+    public boolean isChecked() {
         if (vanillaComponent != null) return vanillaComponent.selected();
         return selected;
     }
 
     @Override
     protected net.minecraft.client.gui.components.Checkbox createVanillaComponent() {
+        Checkbox self = this;
         net.minecraft.client.gui.components.Checkbox cb = new net.minecraft.client.gui.components.Checkbox(
                 0, 0,
                 relativeBounds.width, relativeBounds.height,
@@ -50,11 +58,11 @@ public class Checkbox extends AbstractVanillaComponent<net.minecraft.client.gui.
             @Override
             public void onPress() {
                 super.onPress();
-                onSelectionChange.now(this, this.selected());
+                onSelectionChange.now(self, this.selected());
             }
         };
 
-        onSelectionChange.now(cb, cb.selected());
+        onSelectionChange.now(this, cb.selected());
         return cb;
     }
 }

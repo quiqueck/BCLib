@@ -1,5 +1,6 @@
 package org.betterx.ui.vanilla;
 
+import org.betterx.ui.ColorUtil;
 import org.betterx.ui.layout.components.*;
 import org.betterx.ui.layout.values.Value;
 
@@ -59,7 +60,9 @@ public abstract class LayoutScreen extends Screen {
     }
 
     protected LayoutComponent<?, ?> buildTitle() {
-        var text = new Text(Value.fill(), Value.fit(), title).centerHorizontal().setDebugName("title");
+        var text = new Text(Value.fit(), Value.fit(), title).centerHorizontal()
+                                                            .setColor(ColorUtil.WHITE)
+                                                            .setDebugName("title");
         return text;
     }
 
