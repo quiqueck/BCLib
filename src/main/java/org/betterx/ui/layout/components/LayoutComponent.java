@@ -160,4 +160,9 @@ public abstract class LayoutComponent<R extends ComponentRenderer, L extends Lay
         debugName = d;
         return (L) this;
     }
+
+    @Override
+    public boolean isMouseOver(double d, double e) {
+        return relativeBounds.contains(d, e);
+    }
 }

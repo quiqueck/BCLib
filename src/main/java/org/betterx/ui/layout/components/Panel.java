@@ -99,7 +99,13 @@ public class Panel implements ComponentWithBounds, RelativeContainerEventHandler
             child.render(poseStack, mouseX - bounds.left, mouseY - bounds.top, deltaTicks, bounds, bounds);
         }
     }
-    //    @Override
+
+    @Override
+    public boolean isMouseOver(double x, double y) {
+        return bounds.contains(x, y);
+    }
+
+//    @Override
 //    public void mouseMoved(double x, double y) {
 //        if (child != null)
 //            child.mouseMoved(x - bounds.left, y - bounds.top);
