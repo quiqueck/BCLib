@@ -239,10 +239,13 @@ public class Container extends LayoutComponent<Container.ContainerRenderer, Cont
     @Override
     public boolean isMouseOver(double x, double y) {
         if (visible) {
+            boolean res = false;
             for (var child : children) {
-                return child.isMouseOver(x, y);
+                res |= child.isMouseOver(x, y);
             }
+
+            return res || relativeBounds.contains(x, y);
         }
-        return relativeBounds.contains(x, y);
+        return false;
     }
 }

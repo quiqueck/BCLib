@@ -27,13 +27,28 @@ public class TestScreen extends LayoutScreen {
     protected LayoutComponent<?, ?> initContent() {
         VerticalStack page1 = new VerticalStack(Value.fill(), Value.fit());
         page1.addText(Value.fit(), Value.fit(), Component.literal("Page 1")).alignLeft().centerVertical();
-        page1.addButton(Value.fit(), Value.fit(), Component.literal("A")).onPress((bt) -> System.out.println("A"))
+        page1.addButton(Value.fit(), Value.fit(), Component.literal("A1")).onPress((bt) -> System.out.println("A1"))
              .centerHorizontal();
+        page1.addButton(Value.fit(), Value.fit(), Component.literal("A2")).onPress((bt) -> System.out.println("A2"))
+             .centerHorizontal();
+        page1.addButton(Value.fit(), Value.fit(), Component.literal("A3")).onPress((bt) -> System.out.println("A3"))
+             .centerHorizontal();
+        page1.addButton(Value.fit(), Value.fit(), Component.literal("A4")).onPress((bt) -> System.out.println("A4"))
+             .centerHorizontal();
+        page1.addRange(Value.fixed(100), Value.fit(), Component.literal("N1"), 0, 10, 5);
 
         VerticalStack page2 = new VerticalStack(Value.fill(), Value.fit());
         page2.addText(Value.fit(), Value.fit(), Component.literal("Page 2")).alignRight().centerVertical();
-        page1.addButton(Value.fit(), Value.fit(), Component.literal("B")).onPress((bt) -> System.out.println("B"))
+        page2.addButton(Value.fit(), Value.fit(), Component.literal("B1")).onPress((bt) -> System.out.println("B1"))
              .centerHorizontal();
+        page2.addButton(Value.fit(), Value.fit(), Component.literal("B2")).onPress((bt) -> System.out.println("B2"))
+             .centerHorizontal();
+        page2.addButton(Value.fit(), Value.fit(), Component.literal("B3")).onPress((bt) -> System.out.println("B3"))
+             .centerHorizontal();
+        page2.addButton(Value.fit(), Value.fit(), Component.literal("B4")).onPress((bt) -> System.out.println("B4"))
+             .centerHorizontal();
+        page2.addRange(Value.fixed(100), Value.fit(), Component.literal("N2"), 0, 10, 5);
+
 
         Container c = new Container(Value.fill(), Value.fixed(40));
         c.addChild(new Button(Value.fit(), Value.fit(), Component.literal("Containerd")).onPress(bt -> {
@@ -54,8 +69,14 @@ public class TestScreen extends LayoutScreen {
                 ).centerHorizontal()
         );
         rows.addHorizontalSeparator(16).alignTop();
-        rows.add(new Tabs(Value.fixed(300), Value.fit()).addPage(Component.literal("PAGE 1"), page1)
-                                                        .addPage(Component.literal("PAGE 2"), page2));
+        rows.add(new Tabs(Value.fixed(300), Value.fixed(80)).addPage(
+                                                                    Component.literal("PAGE 1"),
+                                                                    VerticalScroll.create(page1)
+                                                            )
+                                                            .addPage(
+                                                                    Component.literal("PAGE 2"),
+                                                                    VerticalScroll.create(page2)
+                                                            ));
         rows.add(new Input(Value.fitOrFill(), Value.fit(), Component.literal("Input"), "0xff00ff"));
         rows.add(new ColorSwatch(Value.fit(), Value.fit(), ColorUtil.LIGHT_PURPLE).centerHorizontal());
         rows.add(new ColorPicker(
