@@ -26,23 +26,23 @@ import java.util.List;
 import java.util.Map;
 
 public class ColorUtil {
-    public static final int BLACK = ChatFormatting.BLACK.getColor();
-    public static final int DARK_BLUE = ChatFormatting.DARK_BLUE.getColor();
-    public static final int DARK_GREEN = ChatFormatting.DARK_GREEN.getColor();
-    public static final int DARK_AQUA = ChatFormatting.DARK_AQUA.getColor();
-    public static final int DARK_RED = ChatFormatting.DARK_RED.getColor();
-    public static final int DARK_PURPLE = ChatFormatting.DARK_PURPLE.getColor();
-    public static final int GOLD = ChatFormatting.GOLD.getColor();
-    public static final int GRAY = ChatFormatting.GRAY.getColor();
-    public static final int DARK_GRAY = ChatFormatting.DARK_GRAY.getColor();
-    public static final int BLUE = ChatFormatting.BLUE.getColor();
-    public static final int GREEN = ChatFormatting.GREEN.getColor();
-    public static final int AQUA = ChatFormatting.AQUA.getColor();
-    public static final int RED = ChatFormatting.RED.getColor();
-    public static final int LIGHT_PURPLE = ChatFormatting.LIGHT_PURPLE.getColor();
-    public static final int YELLOW = ChatFormatting.YELLOW.getColor();
-    public static final int WHITE = ChatFormatting.WHITE.getColor();
-    public static final int DEFAULT_TEXT = 0xA0A0A0;
+    public static final int BLACK = ChatFormatting.BLACK.getColor() | 0xFF000000;
+    public static final int DARK_BLUE = ChatFormatting.DARK_BLUE.getColor() | 0xFF000000;
+    public static final int DARK_GREEN = ChatFormatting.DARK_GREEN.getColor() | 0xFF000000;
+    public static final int DARK_AQUA = ChatFormatting.DARK_AQUA.getColor() | 0xFF000000;
+    public static final int DARK_RED = ChatFormatting.DARK_RED.getColor() | 0xFF000000;
+    public static final int DARK_PURPLE = ChatFormatting.DARK_PURPLE.getColor() | 0xFF000000;
+    public static final int GOLD = ChatFormatting.GOLD.getColor() | 0xFF000000;
+    public static final int GRAY = ChatFormatting.GRAY.getColor() | 0xFF000000;
+    public static final int DARK_GRAY = ChatFormatting.DARK_GRAY.getColor() | 0xFF000000;
+    public static final int BLUE = ChatFormatting.BLUE.getColor() | 0xFF000000;
+    public static final int GREEN = ChatFormatting.GREEN.getColor() | 0xFF000000;
+    public static final int AQUA = ChatFormatting.AQUA.getColor() | 0xFF000000;
+    public static final int RED = ChatFormatting.RED.getColor() | 0xFF000000;
+    public static final int LIGHT_PURPLE = ChatFormatting.LIGHT_PURPLE.getColor() | 0xFF000000;
+    public static final int YELLOW = ChatFormatting.YELLOW.getColor() | 0xFF000000;
+    public static final int WHITE = ChatFormatting.WHITE.getColor() | 0xFF000000;
+    public static final int DEFAULT_TEXT = 0xFFA0A0A0;
     private static final float[] FLOAT_BUFFER = new float[4];
     private static final int ALPHA = 255 << 24;
 
@@ -146,13 +146,83 @@ public class ColorUtil {
         return 0xFF000000 | (r << 16) | (g << 8) | (b << 0);
     }
 
-    public static int parseHex(String hexColor) {
+    public static String toRGBHex(int color) {
+        return "#"
+                + Integer.toHexString((color >> 16) & 0xFF)
+                + Integer.toHexString((color >> 8) & 0xFF)
+                + Integer.toHexString(color & 0xFF);
+    }
+
+    public static boolean validHexColor(String hexColor) {
+        if (hexColor.startsWith("#")) hexColor = hexColor.substring(1);
+        if (hexColor.startsWith("0x")) hexColor = hexColor.substring(2);
+
         int len = hexColor.length();
-        if (len < 6 || len > 8 || len % 2 > 0) {
+        if (len != 6 && len != 8 && len != 3 && len != 4) {
+            return false;
+        }
+
+        int color, shift;
+        if (len == 3) {
+            hexColor = ""
+                    + hexColor.charAt(2) + hexColor.charAt(2)
+                    + hexColor.charAt(1) + hexColor.charAt(1)
+                    + hexColor.charAt(0) + hexColor.charAt(0);
+            len = 6;
+        } else if (len == 4) {
+            hexColor = ""
+                    + hexColor.charAt(3) + hexColor.charAt(3)
+                    + hexColor.charAt(2) + hexColor.charAt(2)
+                    + hexColor.charAt(1) + hexColor.charAt(1)
+                    + hexColor.charAt(0) + hexColor.charAt(0);
+            len = 8;
+        }
+
+        if (len == 6) {
+            color = 0xFF000000;
+            shift = 16;
+        } else {
+            color = 0;
+            shift = 24;
+        }
+
+        try {
+            String[] splited = hexColor.split("(?<=\\G.{2})");
+            for (String digit : splited) {
+                color |= Integer.valueOf(digit, 16) << shift;
+                shift -= 8;
+            }
+        } catch (NumberFormatException ex) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public static int parseHex(String hexColor) {
+        if (hexColor.startsWith("#")) hexColor = hexColor.substring(1);
+        if (hexColor.startsWith("0x")) hexColor = hexColor.substring(2);
+        int len = hexColor.length();
+        if (len != 6 && len != 8 && len != 3 && len != 4) {
             return -1;
         }
 
         int color, shift;
+        if (len == 3) {
+            hexColor = ""
+                    + hexColor.charAt(2) + hexColor.charAt(2)
+                    + hexColor.charAt(1) + hexColor.charAt(1)
+                    + hexColor.charAt(0) + hexColor.charAt(0);
+            len = 6;
+        } else if (len == 4) {
+            hexColor = ""
+                    + hexColor.charAt(3) + hexColor.charAt(3)
+                    + hexColor.charAt(2) + hexColor.charAt(2)
+                    + hexColor.charAt(1) + hexColor.charAt(1)
+                    + hexColor.charAt(0) + hexColor.charAt(0);
+            len = 8;
+        }
+
         if (len == 6) {
             color = 0xFF000000;
             shift = 16;
