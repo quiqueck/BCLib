@@ -112,4 +112,9 @@ public class Image extends CustomRenderComponent {
                 size.height()
         );
     }
+
+    @Override
+    public boolean isMouseOver(double d, double e) {
+        return false;
+    }
 }

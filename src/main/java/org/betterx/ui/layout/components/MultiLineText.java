@@ -97,4 +97,9 @@ public class MultiLineText extends LayoutComponent<MultiLineText.MultiLineTextRe
             }
         }
     }
+
+    @Override
+    public boolean isMouseOver(double d, double e) {
+        return false;
+    }
 }

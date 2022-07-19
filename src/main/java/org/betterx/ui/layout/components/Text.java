@@ -74,7 +74,10 @@ public class Text extends LayoutComponent<Text.TextRenderer, Text> {
                 GuiComponent.drawString(stack, getFont(), linkedComponent.text, left, top, linkedComponent.color);
             }
         }
+    }
 
-
+    @Override
+    public boolean isMouseOver(double d, double e) {
+        return false;
     }
 }

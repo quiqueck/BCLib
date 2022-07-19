@@ -38,5 +38,15 @@ public interface RelativeContainerEventHandler extends ContainerEventHandler {
         Rectangle r = getInputBounds();
         return ContainerEventHandler.super.mouseScrolled(d - r.left, e - r.top, f);
     }
+
+    default boolean isMouseOver(double x, double y) {
+        Rectangle r = getInputBounds();
+        boolean res = false;
+        for (GuiEventListener c : children()) {
+            res |= c.isMouseOver(x - r.left, y - r.top);
+        }
+
+        return res || r.contains(x, y);
+    }
 }
 

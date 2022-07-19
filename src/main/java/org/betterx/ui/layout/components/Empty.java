@@ -24,4 +24,9 @@ public class Empty extends LayoutComponent<NullRenderer, Empty> {
     public int getContentHeight() {
         return 0;
     }
+
+    @Override
+    public boolean isMouseOver(double d, double e) {
+        return false;
+    }
 }

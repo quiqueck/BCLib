@@ -83,4 +83,9 @@ public class Input extends AbstractVanillaComponent<EditBox, Input> {
     protected Component contentComponent() {
         return Component.literal(initialValue + "..");
     }
+
+    @Override
+    public boolean changeFocus(boolean bl) {
+        return super.changeFocus(bl);
+    }
 }

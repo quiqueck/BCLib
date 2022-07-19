@@ -9,12 +9,17 @@ import org.betterx.ui.layout.values.Value;
 import org.betterx.ui.vanilla.VanillaScrollerRenderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.components.events.ContainerEventHandler;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import java.util.List;
+import org.jetbrains.annotations.Nullable;
+
 @Environment(EnvType.CLIENT)
-public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRenderer> extends LayoutComponent<R, VerticalScroll<R, RS>> {
+public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRenderer> extends LayoutComponent<R, VerticalScroll<R, RS>> implements ContainerEventHandler {
     protected LayoutComponent<?, ?> child;
     protected final RS scrollerRenderer;
     protected Rectangle viewBounds;
@@ -53,8 +58,11 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
         return res;
     }
 
+    List<LayoutComponent<?, ?>> children = List.of();
+
     public void setChild(LayoutComponent<?, ?> c) {
         this.child = c;
+        children = List.of(child);
     }
 
     @Override
@@ -132,7 +140,7 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
                 poseStack.translate(0, scrollerOffset(), 0);
                 setClippingRect(clipRect);
                 child.render(
-                        poseStack, mouseX, mouseY, deltaTicks,
+                        poseStack, mouseX, mouseY - scrollerOffset(), deltaTicks,
                         renderBounds.movedBy(0, scrollerOffset(), scrollerWidth(), 0),
                         clipRect
                 );
@@ -177,7 +185,12 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
     @Override
     public void mouseMoved(double x, double y) {
         if (child != null && relativeBounds.contains(x, y))
-            child.mouseMoved(x - relativeBounds.left, y - relativeBounds.top - scrollerOffset());
+            ContainerEventHandler.super.mouseMoved(x - relativeBounds.left, y - relativeBounds.top - scrollerOffset());
+    }
+
+    @Override
+    public List<? extends GuiEventListener> children() {
+        return children;
     }
 
     @Override
@@ -192,7 +205,11 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
         }
 
         if (child != null && relativeBounds.contains(x, y))
-            return child.mouseClicked(x - relativeBounds.left, y - relativeBounds.top - scrollerOffset(), button);
+            return ContainerEventHandler.super.mouseClicked(
+                    x - relativeBounds.left,
+                    y - relativeBounds.top - scrollerOffset(),
+                    button
+            );
         return false;
     }
 
@@ -200,7 +217,11 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
     public boolean mouseReleased(double x, double y, int button) {
         mouseDown = false;
         if (child != null && relativeBounds.contains(x, y))
-            return child.mouseReleased(x - relativeBounds.left, y - relativeBounds.top - scrollerOffset(), button);
+            return ContainerEventHandler.super.mouseReleased(
+                    x - relativeBounds.left,
+                    y - relativeBounds.top - scrollerOffset(),
+                    button
+            );
         return false;
     }
 
@@ -212,7 +233,7 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
             return true;
         }
         if (child != null && relativeBounds.contains(x, y))
-            return child.mouseDragged(
+            return ContainerEventHandler.super.mouseDragged(
                     x - relativeBounds.left,
                     y - relativeBounds.top - scrollerOffset(),
                     button,
@@ -227,7 +248,11 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
     public boolean mouseScrolled(double x, double y, double delta) {
         boolean didCapture = false;
         if (child != null && relativeBounds.contains(x, y)) {
-            didCapture = child.mouseScrolled(x - relativeBounds.left, y - relativeBounds.top - scrollerOffset(), delta);
+            didCapture = ContainerEventHandler.super.mouseScrolled(
+                    x - relativeBounds.left,
+                    y - relativeBounds.top - scrollerOffset(),
+                    delta
+            );
         }
         if (!didCapture) {
             scrollerY = scrollerY + delta;
@@ -236,36 +261,37 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
         return false;
     }
 
-    @Override
-    public boolean keyPressed(int i, int j, int k) {
-        if (child != null)
-            return child.keyPressed(i, j, k);
-        return false;
+
+    GuiEventListener focused;
+
+    @Nullable
+    public GuiEventListener getFocused() {
+        return focused;
     }
 
-    @Override
-    public boolean keyReleased(int i, int j, int k) {
-        if (child != null)
-            return child.keyReleased(i, j, k);
-        return false;
+    public void setFocused(@Nullable GuiEventListener guiEventListener) {
+        focused = guiEventListener;
     }
 
-    @Override
-    public boolean charTyped(char c, int i) {
-        if (child != null)
-            return child.charTyped(c, i);
-        return false;
+    boolean dragging;
+
+    public boolean isDragging() {
+        return this.dragging;
     }
 
-    @Override
-    public boolean changeFocus(boolean bl) {
-        if (child != null)
-            return child.changeFocus(bl);
-        return false;
+    public void setDragging(boolean bl) {
+        dragging = bl;
     }
+
 
     @Override
     public boolean isMouseOver(double x, double y) {
+        if (child != null) {
+            if (child.isMouseOver(x - relativeBounds.left, y - relativeBounds.top - scrollerOffset()))
+                return true;
+        }
         return relativeBounds.contains(x, y);
     }
+
+
 }
