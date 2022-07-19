@@ -20,7 +20,7 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
     protected Rectangle viewBounds;
 
     protected int dist;
-    protected int scrollerY;
+    protected double scrollerY;
     protected int scrollerHeight;
     protected int travel;
     protected int topOffset;
@@ -163,7 +163,7 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
     }
 
     protected int saveScrollerY() {
-        return Math.max(0, Math.min(travel, scrollerY));
+        return (int) Math.max(0, Math.min(travel, scrollerY));
     }
 
     protected int scrollerOffset() {
@@ -222,10 +222,17 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
         return false;
     }
 
+
     @Override
-    public boolean mouseScrolled(double x, double y, double f) {
-        if (child != null && relativeBounds.contains(x, y))
-            return child.mouseScrolled(x - relativeBounds.left, y - relativeBounds.top - scrollerOffset(), f);
+    public boolean mouseScrolled(double x, double y, double delta) {
+        boolean didCapture = false;
+        if (child != null && relativeBounds.contains(x, y)) {
+            didCapture = child.mouseScrolled(x - relativeBounds.left, y - relativeBounds.top - scrollerOffset(), delta);
+        }
+        if (!didCapture) {
+            scrollerY = scrollerY + delta;
+            return true;
+        }
         return false;
     }
 
