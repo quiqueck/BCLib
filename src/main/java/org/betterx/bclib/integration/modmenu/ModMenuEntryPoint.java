@@ -1,6 +1,8 @@
 package org.betterx.bclib.integration.modmenu;
 
-import org.betterx.bclib.client.gui.modmenu.MainScreen;
+import org.betterx.bclib.client.gui.modmenu.TestScreen;
+
+import net.minecraft.network.chat.Component;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
@@ -26,8 +28,8 @@ public class ModMenuEntryPoint implements ModMenuApi {
 
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        //return (parent) -> new TestScreen(parent, Component.literal("Hello Test"));
-        return (parent) -> new MainScreen(parent);
+        return (parent) -> new TestScreen(parent, Component.literal("Hello Test"));
+        //return (parent) -> new MainScreen(parent);
     }
 
 

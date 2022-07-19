@@ -68,6 +68,10 @@ public class Range<N extends Number> extends AbstractVanillaComponent<Slider<N>,
         );
     }
 
+    public N getValue() {
+        return vanillaComponent.currentValue();
+    }
+
 
     @Override
     protected Component contentComponent() {

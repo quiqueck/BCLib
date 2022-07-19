@@ -1,6 +1,5 @@
 package org.betterx.ui.layout.components;
 
-import org.betterx.ui.layout.components.render.ComponentRenderer;
 import org.betterx.ui.layout.components.render.NullRenderer;
 import org.betterx.ui.layout.components.render.ScrollerRenderer;
 import org.betterx.ui.layout.values.Alignment;
@@ -19,10 +18,9 @@ import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
 @Environment(EnvType.CLIENT)
-public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRenderer> extends LayoutComponent<R, VerticalScroll<R, RS>> implements ContainerEventHandler {
+public class VerticalScroll<RS extends ScrollerRenderer> extends LayoutComponent<NullRenderer, VerticalScroll<RS>> implements ContainerEventHandler {
     protected LayoutComponent<?, ?> child;
     protected final RS scrollerRenderer;
-    protected Rectangle viewBounds;
 
     protected int dist;
     protected double scrollerY;
@@ -30,29 +28,26 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
     protected int travel;
     protected int topOffset;
 
-    public VerticalScroll(Value width, Value height, RS scrollerRenderer) {
-        this(width, height, scrollerRenderer, null);
-    }
+    protected boolean keepSpaceForScrollbar = true;
 
-    public VerticalScroll(Value width, Value height, RS scrollerRenderer, R renderer) {
-        super(width, height, renderer);
+    public VerticalScroll(Value width, Value height, RS scrollerRenderer) {
+        super(width, height, new NullRenderer());
         this.scrollerRenderer = scrollerRenderer;
     }
 
-    public static VerticalScroll<NullRenderer, VanillaScrollerRenderer> create(LayoutComponent<?, ?> c) {
+    public static VerticalScroll<VanillaScrollerRenderer> create(LayoutComponent<?, ?> c) {
         return create(Value.relative(1), Value.relative(1), c);
     }
 
-    public static VerticalScroll<NullRenderer, VanillaScrollerRenderer> create(
+    public static VerticalScroll<VanillaScrollerRenderer> create(
             Value width,
             Value height,
             LayoutComponent<?, ?> c
     ) {
-        VerticalScroll<NullRenderer, VanillaScrollerRenderer> res = new VerticalScroll<>(
+        VerticalScroll<VanillaScrollerRenderer> res = new VerticalScroll<>(
                 width,
                 height,
-                VanillaScrollerRenderer.DEFAULT,
-                null
+                VanillaScrollerRenderer.DEFAULT
         );
         res.setChild(c);
         return res;
@@ -60,9 +55,15 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
 
     List<LayoutComponent<?, ?>> children = List.of();
 
-    public void setChild(LayoutComponent<?, ?> c) {
+    public VerticalScroll<RS> setChild(LayoutComponent<?, ?> c) {
         this.child = c;
         children = List.of(child);
+        return this;
+    }
+
+    public VerticalScroll<RS> setKeepSpaceForScrollbar(boolean value) {
+        keepSpaceForScrollbar = value;
+        return this;
     }
 
     @Override
@@ -107,7 +108,7 @@ public class VerticalScroll<R extends ComponentRenderer, RS extends ScrollerRend
 
         if (child != null) {
             int width = relativeBounds.width;
-            boolean willNeedScrollBar = child.height.calculatedSize() > relativeBounds.height;
+            boolean willNeedScrollBar = keepSpaceForScrollbar || child.height.calculatedSize() > relativeBounds.height;
             if (willNeedScrollBar) width -= scrollerWidth();
             int childLeft = width - child.width.calculatedSize();
             if (child.hAlign == Alignment.MIN) childLeft = 0;

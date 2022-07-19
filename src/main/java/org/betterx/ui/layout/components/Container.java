@@ -47,7 +47,7 @@ public class Container extends LayoutComponent<Container.ContainerRenderer, Cont
     GuiEventListener focused = null;
     boolean visible = true;
 
-    int padding = 0;
+    int paddingLeft, paddingTop, paddingRight, paddingBottom;
 
     int backgroundColor = 0;
     int outlineColor = 0;
@@ -93,22 +93,29 @@ public class Container extends LayoutComponent<Container.ContainerRenderer, Cont
     }
 
     public Container setPadding(int padding) {
-        this.padding = padding;
-        return this;
+        return setPadding(padding, padding, padding, padding);
     }
 
-    public int getPadding() {
-        return padding;
+    public Container setPadding(int left, int top, int right, int bottom) {
+        this.paddingLeft = left;
+        this.paddingTop = top;
+        this.paddingRight = right;
+        this.paddingBottom = bottom;
+        return this;
     }
 
     @Override
     public int getContentWidth() {
-        return children.stream().map(LayoutComponent::getContentWidth).reduce(0, Math::max) + 2 * padding;
+        return children.stream()
+                       .map(LayoutComponent::getContentWidth)
+                       .reduce(0, Math::max) + paddingLeft + paddingRight;
     }
 
     @Override
     public int getContentHeight() {
-        return children.stream().map(LayoutComponent::getContentHeight).reduce(0, Math::max) + 2 * padding;
+        return children.stream()
+                       .map(LayoutComponent::getContentHeight)
+                       .reduce(0, Math::max) + paddingTop + paddingBottom;
     }
 
     @Override
@@ -146,7 +153,7 @@ public class Container extends LayoutComponent<Container.ContainerRenderer, Cont
     protected int updateContainerWidth(int containerWidth) {
         int myWidth = width.calculateOrFill(containerWidth);
         for (var child : children) {
-            child.width.calculateOrFill(myWidth - 2 * padding);
+            child.width.calculateOrFill(myWidth - (paddingLeft + paddingRight));
             child.updateContainerWidth(child.width.calculatedSize());
         }
         return myWidth;
@@ -156,7 +163,7 @@ public class Container extends LayoutComponent<Container.ContainerRenderer, Cont
     protected int updateContainerHeight(int containerHeight) {
         int myHeight = height.calculateOrFill(containerHeight);
         for (var child : children) {
-            child.height.calculateOrFill(myHeight - 2 * padding);
+            child.height.calculateOrFill(myHeight - (paddingTop + paddingBottom));
             child.updateContainerHeight(child.height.calculatedSize());
         }
         return myHeight;
@@ -190,15 +197,15 @@ public class Container extends LayoutComponent<Container.ContainerRenderer, Cont
         super.setRelativeBounds(left, top);
 
         for (var child : children) {
-            int childLeft = (relativeBounds.width - 2 * padding) - child.width.calculatedSize();
+            int childLeft = (relativeBounds.width - (paddingLeft + paddingRight)) - child.width.calculatedSize();
             if (child.hAlign == Alignment.MIN) childLeft = 0;
             else if (child.hAlign == Alignment.CENTER) childLeft /= 2;
 
-            int childTop = (relativeBounds.height - 2 * padding) - child.height.calculatedSize();
+            int childTop = (relativeBounds.height - (paddingTop + paddingBottom)) - child.height.calculatedSize();
             if (child.vAlign == Alignment.MIN) childTop = 0;
             else if (child.vAlign == Alignment.CENTER) childTop /= 2;
 
-            child.setRelativeBounds(padding + childLeft, padding + childTop);
+            child.setRelativeBounds(paddingLeft + childLeft, paddingTop + childTop);
         }
     }
 

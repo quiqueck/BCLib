@@ -2,7 +2,6 @@ package org.betterx.ui.layout.components;
 
 import org.betterx.ui.layout.components.input.RelativeContainerEventHandler;
 import org.betterx.ui.layout.components.render.ComponentRenderer;
-import org.betterx.ui.layout.components.render.NullRenderer;
 import org.betterx.ui.layout.values.Rectangle;
 import org.betterx.ui.layout.values.Size;
 import org.betterx.ui.layout.values.Value;
@@ -152,16 +151,16 @@ public abstract class AbstractStack<R extends ComponentRenderer, T extends Abstr
         return b;
     }
 
-    protected VerticalScroll<NullRenderer, VanillaScrollerRenderer> addScrollable(LayoutComponent<?, ?> content) {
+    protected VerticalScroll<VanillaScrollerRenderer> addScrollable(LayoutComponent<?, ?> content) {
         return addScrollable(Value.fill(), Value.fill(), content);
     }
 
-    protected VerticalScroll<NullRenderer, VanillaScrollerRenderer> addScrollable(
+    protected VerticalScroll<VanillaScrollerRenderer> addScrollable(
             Value width,
             Value height,
             LayoutComponent<?, ?> content
     ) {
-        VerticalScroll<NullRenderer, VanillaScrollerRenderer> s = VerticalScroll.create(width, height, content);
+        VerticalScroll<VanillaScrollerRenderer> s = VerticalScroll.create(width, height, content);
         add(s);
         return s;
     }

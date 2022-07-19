@@ -56,7 +56,7 @@ public class Slider<N extends Number> extends AbstractSliderButton {
         this.updateMessage();
     }
 
-    protected N currentValue() {
+    public N currentValue() {
         Double res = value * (maxValue.doubleValue() - minValue.doubleValue()) + minValue.doubleValue();
         if (minValue instanceof Integer) {
             return (N) (Integer) res.intValue();

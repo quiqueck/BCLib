@@ -1,6 +1,5 @@
 package org.betterx.ui.layout.components;
 
-import org.betterx.ui.layout.components.render.NullRenderer;
 import org.betterx.ui.layout.values.Size;
 import org.betterx.ui.layout.values.Value;
 import org.betterx.ui.vanilla.VanillaScrollerRenderer;
@@ -170,7 +169,7 @@ public class HorizontalStack extends AbstractHorizontalStack<HorizontalStack> {
     }
 
     @Override
-    public VerticalScroll<NullRenderer, VanillaScrollerRenderer> addScrollable(LayoutComponent<?, ?> content) {
+    public VerticalScroll<VanillaScrollerRenderer> addScrollable(LayoutComponent<?, ?> content) {
         return super.addScrollable(content);
     }
 
@@ -190,7 +189,7 @@ public class HorizontalStack extends AbstractHorizontalStack<HorizontalStack> {
     }
 
     @Override
-    public VerticalScroll<NullRenderer, VanillaScrollerRenderer> addScrollable(
+    public VerticalScroll<VanillaScrollerRenderer> addScrollable(
             Value width,
             Value height,
             LayoutComponent<?, ?> content

@@ -40,6 +40,11 @@ public class WorldSetupScreen extends LayoutScreen {
 
     private final WorldCreationContext context;
     private final CreateWorldScreen createWorldScreen;
+    private Range<Integer> landBiomeSize;
+    private Range<Integer> voidBiomeSize;
+    private Range<Integer> centerBiomeSize;
+    private Range<Integer> barrensBiomeSize;
+    private Range<Integer> innerRadius;
 
     public WorldSetupScreen(@Nullable CreateWorldScreen parent, WorldCreationContext context) {
         super(parent, Component.translatable("title.screen.bclib.worldgen.main"), 10, 10, 10);
@@ -57,7 +62,7 @@ public class WorldSetupScreen extends LayoutScreen {
 
     public LayoutComponent<?, ?> netherPage(BCLNetherBiomeSourceConfig netherConfig) {
         VerticalStack content = new VerticalStack(Value.fill(), Value.fit()).centerHorizontal();
-        content.addSpacer(4);
+        content.addSpacer(8);
 
         bclibNether = content.addCheckbox(
                 Value.fit(), Value.fit(),
@@ -75,12 +80,14 @@ public class WorldSetupScreen extends LayoutScreen {
         bclibNether.onChange((cb, state) -> {
             netherLegacy.setEnabled(state);
         });
+
+        content.addSpacer(8);
         return content.setDebugName("Nether page");
     }
 
     public LayoutComponent<?, ?> endPage(BCLEndBiomeSourceConfig endConfig) {
         VerticalStack content = new VerticalStack(Value.fill(), Value.fit()).centerHorizontal();
-        content.addSpacer(4);
+        content.addSpacer(8);
         bclibEnd = content.addCheckbox(
                 Value.fit(), Value.fit(),
                 Component.translatable("title.screen.bclib.worldgen.custom_biome_source"),
@@ -106,55 +113,55 @@ public class WorldSetupScreen extends LayoutScreen {
         );
 
         content.addSpacer(12);
-        content.addText(Value.fit(), Value.fit(), Component.literal("Average Biome Size (in Chunks)"))
+        content.addText(Value.fit(), Value.fit(), Component.translatable("title.screen.bclib.worldgen.avg_biome_size"))
                .centerHorizontal();
         content.addHorizontalSeparator(8).alignTop();
 
-        Range<Integer> landBiomeSize = content.addRange(
+        landBiomeSize = content.addRange(
                 Value.fixed(200),
                 Value.fit(),
-                Component.literal("Land"),
+                Component.translatable("title.screen.bclib.worldgen.land_biome_size"),
                 1,
                 512,
                 endConfig.landBiomesSize / 16
         );
 
-        Range<Integer> voidBiomeSize = content.addRange(
+        voidBiomeSize = content.addRange(
                 Value.fixed(200),
                 Value.fit(),
-                Component.literal("Void"),
+                Component.translatable("title.screen.bclib.worldgen.void_biome_size"),
                 1,
                 512,
                 endConfig.voidBiomesSize / 16
         );
 
-        Range<Integer> centerBiomeSize = content.addRange(
+        centerBiomeSize = content.addRange(
                 Value.fixed(200),
                 Value.fit(),
-                Component.literal("Center"),
+                Component.translatable("title.screen.bclib.worldgen.center_biome_size"),
                 1,
                 512,
                 endConfig.centerBiomesSize / 16
         );
 
-        Range<Integer> barrensBiomeSize = content.addRange(
+        barrensBiomeSize = content.addRange(
                 Value.fixed(200),
                 Value.fit(),
-                Component.literal("Barrens"),
+                Component.translatable("title.screen.bclib.worldgen.barrens_biome_size"),
                 1,
                 512,
                 endConfig.barrensBiomesSize / 16
         );
 
         content.addSpacer(12);
-        content.addText(Value.fit(), Value.fit(), Component.literal("Other Settings"))
+        content.addText(Value.fit(), Value.fit(), Component.translatable("title.screen.bclib.worldgen.other"))
                .centerHorizontal();
         content.addHorizontalSeparator(8).alignTop();
 
-        Range<Integer> innerRadius = content.addRange(
+        innerRadius = content.addRange(
                 Value.fixed(200),
                 Value.fit(),
-                Component.literal("Central Void Radius"),
+                Component.translatable("title.screen.bclib.worldgen.central_radius"),
                 1,
                 512,
                 (int) Math.sqrt(endConfig.innerVoidRadiusSquared) / 16
@@ -167,17 +174,23 @@ public class WorldSetupScreen extends LayoutScreen {
             generateEndVoid.setEnabled(state);
 
             landBiomeSize.setEnabled(state && endCustomTerrain.isChecked());
-            voidBiomeSize.setEnabled(state && endCustomTerrain.isChecked());
+            voidBiomeSize.setEnabled(state && endCustomTerrain.isChecked() && generateEndVoid.isChecked());
             centerBiomeSize.setEnabled(state && endCustomTerrain.isChecked());
             barrensBiomeSize.setEnabled(state && endCustomTerrain.isChecked());
         });
 
         endCustomTerrain.onChange((cb, state) -> {
             landBiomeSize.setEnabled(state);
-            voidBiomeSize.setEnabled(state);
+            voidBiomeSize.setEnabled(state && generateEndVoid.isChecked());
             centerBiomeSize.setEnabled(state);
             barrensBiomeSize.setEnabled(state);
         });
+
+        generateEndVoid.onChange((cb, state) -> {
+            voidBiomeSize.setEnabled(state && endCustomTerrain.isChecked());
+        });
+
+        content.addSpacer(8);
         return content.setDebugName("End Page");
     }
 
@@ -198,11 +211,11 @@ public class WorldSetupScreen extends LayoutScreen {
                             ? BCLEndBiomeSourceConfig.EndBiomeGeneratorType.PAULEVS
                             : BCLEndBiomeSourceConfig.EndBiomeGeneratorType.VANILLA,
                     generateEndVoid.isChecked(),
-                    BCLEndBiomeSourceConfig.DEFAULT.innerVoidRadiusSquared,
-                    BCLEndBiomeSourceConfig.DEFAULT.centerBiomesSize,
-                    BCLEndBiomeSourceConfig.DEFAULT.voidBiomesSize,
-                    BCLEndBiomeSourceConfig.DEFAULT.landBiomesSize,
-                    BCLEndBiomeSourceConfig.DEFAULT.barrensBiomesSize
+                    (int) Math.pow(innerRadius.getValue() * 16, 2),
+                    centerBiomeSize.getValue(),
+                    voidBiomeSize.getValue(),
+                    landBiomeSize.getValue(),
+                    barrensBiomeSize.getValue()
             );
 
             ChunkGenerator endGenerator = betterxDimensions.get(LevelStem.END);
@@ -307,7 +320,7 @@ public class WorldSetupScreen extends LayoutScreen {
         var netherPage = netherPage(netherConfig);
         var endPage = endPage(endConfig);
 
-        Tabs main = new Tabs(Value.fill(), Value.fill());
+        Tabs main = new Tabs(Value.fill(), Value.fill()).setPadding(8, 0, 0, 0);
         main.addPage(Component.translatable("title.bclib.the_nether"), VerticalScroll.create(netherPage));
         main.addPage(Component.translatable("title.bclib.the_end"), VerticalScroll.create(endPage));
 

@@ -79,8 +79,9 @@ public class Tabs extends AbstractVerticalStack<Tabs> {
         return this;
     }
 
-    public int getPadding() {
-        return content.getPadding();
+    public Tabs setPadding(int left, int top, int right, int bottom) {
+        content.setPadding(left, top, right, bottom);
+        return this;
     }
 
 
