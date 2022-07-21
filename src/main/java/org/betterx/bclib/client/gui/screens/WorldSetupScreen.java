@@ -1,6 +1,5 @@
 package org.betterx.bclib.client.gui.screens;
 
-import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.generator.BCLibEndBiomeSource;
 import org.betterx.bclib.api.v2.generator.BCLibNetherBiomeSource;
 import org.betterx.bclib.api.v2.generator.config.BCLEndBiomeSourceConfig;
@@ -9,7 +8,6 @@ import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
 import org.betterx.bclib.registry.PresetsRegistry;
 import org.betterx.ui.layout.components.*;
 import org.betterx.ui.layout.values.Size;
-import org.betterx.ui.layout.values.Value;
 import org.betterx.ui.vanilla.LayoutScreen;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
 import org.betterx.worlds.together.worldPreset.WorldGenSettingsComponentAccessor;
@@ -20,7 +18,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.dimension.DimensionType;
@@ -36,8 +33,6 @@ import org.jetbrains.annotations.Nullable;
 
 @Environment(EnvType.CLIENT)
 public class WorldSetupScreen extends LayoutScreen {
-    static final ResourceLocation BCLIB_LOGO_LOCATION = new ResourceLocation(BCLib.MOD_ID, "icon.png");
-
     private final WorldCreationContext context;
     private final CreateWorldScreen createWorldScreen;
     private Range<Integer> landBiomeSize;
@@ -61,17 +56,17 @@ public class WorldSetupScreen extends LayoutScreen {
     Checkbox netherLegacy;
 
     public LayoutComponent<?, ?> netherPage(BCLNetherBiomeSourceConfig netherConfig) {
-        VerticalStack content = new VerticalStack(Value.fill(), Value.fit()).centerHorizontal();
+        VerticalStack content = new VerticalStack(fill(), fit()).centerHorizontal();
         content.addSpacer(8);
 
         bclibNether = content.addCheckbox(
-                Value.fit(), Value.fit(),
+                fit(), fit(),
                 Component.translatable("title.screen.bclib.worldgen.custom_biome_source"),
                 netherConfig.mapVersion != BCLNetherBiomeSourceConfig.NetherBiomeMapType.VANILLA
         );
 
         netherLegacy = content.indent(20).addCheckbox(
-                Value.fit(), Value.fit(),
+                fit(), fit(),
                 Component.translatable("title.screen.bclib.worldgen.legacy_square"),
                 netherConfig.mapVersion == BCLNetherBiomeSourceConfig.NetherBiomeMapType.SQUARE
         );
@@ -86,40 +81,40 @@ public class WorldSetupScreen extends LayoutScreen {
     }
 
     public LayoutComponent<?, ?> endPage(BCLEndBiomeSourceConfig endConfig) {
-        VerticalStack content = new VerticalStack(Value.fill(), Value.fit()).centerHorizontal();
+        VerticalStack content = new VerticalStack(fill(), fit()).centerHorizontal();
         content.addSpacer(8);
         bclibEnd = content.addCheckbox(
-                Value.fit(), Value.fit(),
+                fit(), fit(),
                 Component.translatable("title.screen.bclib.worldgen.custom_biome_source"),
                 endConfig.mapVersion != BCLEndBiomeSourceConfig.EndBiomeMapType.VANILLA
         );
 
         endLegacy = content.indent(20).addCheckbox(
-                Value.fit(), Value.fit(),
+                fit(), fit(),
                 Component.translatable("title.screen.bclib.worldgen.legacy_square"),
                 endConfig.mapVersion == BCLEndBiomeSourceConfig.EndBiomeMapType.SQUARE
         );
 
         endCustomTerrain = content.indent(20).addCheckbox(
-                Value.fit(), Value.fit(),
+                fit(), fit(),
                 Component.translatable("title.screen.bclib.worldgen.custom_end_terrain"),
                 endConfig.generatorVersion != BCLEndBiomeSourceConfig.EndBiomeGeneratorType.VANILLA
         );
 
         generateEndVoid = content.indent(20).addCheckbox(
-                Value.fit(), Value.fit(),
+                fit(), fit(),
                 Component.translatable("title.screen.bclib.worldgen.end_void"),
                 endConfig.withVoidBiomes
         );
 
         content.addSpacer(12);
-        content.addText(Value.fit(), Value.fit(), Component.translatable("title.screen.bclib.worldgen.avg_biome_size"))
+        content.addText(fit(), fit(), Component.translatable("title.screen.bclib.worldgen.avg_biome_size"))
                .centerHorizontal();
         content.addHorizontalSeparator(8).alignTop();
 
         landBiomeSize = content.addRange(
-                Value.fixed(200),
-                Value.fit(),
+                fixed(200),
+                fit(),
                 Component.translatable("title.screen.bclib.worldgen.land_biome_size"),
                 1,
                 512,
@@ -127,8 +122,8 @@ public class WorldSetupScreen extends LayoutScreen {
         );
 
         voidBiomeSize = content.addRange(
-                Value.fixed(200),
-                Value.fit(),
+                fixed(200),
+                fit(),
                 Component.translatable("title.screen.bclib.worldgen.void_biome_size"),
                 1,
                 512,
@@ -136,8 +131,8 @@ public class WorldSetupScreen extends LayoutScreen {
         );
 
         centerBiomeSize = content.addRange(
-                Value.fixed(200),
-                Value.fit(),
+                fixed(200),
+                fit(),
                 Component.translatable("title.screen.bclib.worldgen.center_biome_size"),
                 1,
                 512,
@@ -145,8 +140,8 @@ public class WorldSetupScreen extends LayoutScreen {
         );
 
         barrensBiomeSize = content.addRange(
-                Value.fixed(200),
-                Value.fit(),
+                fixed(200),
+                fit(),
                 Component.translatable("title.screen.bclib.worldgen.barrens_biome_size"),
                 1,
                 512,
@@ -154,13 +149,13 @@ public class WorldSetupScreen extends LayoutScreen {
         );
 
         content.addSpacer(12);
-        content.addText(Value.fit(), Value.fit(), Component.translatable("title.screen.bclib.worldgen.other"))
+        content.addText(fit(), fit(), Component.translatable("title.screen.bclib.worldgen.other"))
                .centerHorizontal();
         content.addHorizontalSeparator(8).alignTop();
 
         innerRadius = content.addRange(
-                Value.fixed(200),
-                Value.fit(),
+                fixed(200),
+                fit(),
                 Component.translatable("title.screen.bclib.worldgen.central_radius"),
                 1,
                 512,
@@ -282,7 +277,7 @@ public class WorldSetupScreen extends LayoutScreen {
 
     @Override
     protected LayoutComponent<?, ?> addTitle(LayoutComponent<?, ?> content) {
-        VerticalStack rows = new VerticalStack(Value.fill(), Value.fill()).setDebugName("title stack");
+        VerticalStack rows = new VerticalStack(fill(), fill()).setDebugName("title stack");
 
         if (topPadding > 0) rows.addSpacer(topPadding);
         rows.add(content);
@@ -290,7 +285,7 @@ public class WorldSetupScreen extends LayoutScreen {
 
         if (sidePadding <= 0) return rows;
 
-        HorizontalStack cols = new HorizontalStack(Value.fill(), Value.fill()).setDebugName("padded side");
+        HorizontalStack cols = new HorizontalStack(fill(), fill()).setDebugName("padded side");
         cols.addSpacer(sidePadding);
         cols.add(rows);
         cols.addSpacer(sidePadding);
@@ -320,12 +315,12 @@ public class WorldSetupScreen extends LayoutScreen {
         var netherPage = netherPage(netherConfig);
         var endPage = endPage(endConfig);
 
-        Tabs main = new Tabs(Value.fill(), Value.fill()).setPadding(8, 0, 0, 0);
+        Tabs main = new Tabs(fill(), fill()).setPadding(8, 0, 0, 0);
         main.addPage(Component.translatable("title.bclib.the_nether"), VerticalScroll.create(netherPage));
         main.addPage(Component.translatable("title.bclib.the_end"), VerticalScroll.create(endPage));
 
-        HorizontalStack title = new HorizontalStack(Value.fit(), Value.fit()).setDebugName("title bar");
-        title.addIcon(BCLIB_LOGO_LOCATION, Size.of(512)).setDebugName("icon");
+        HorizontalStack title = new HorizontalStack(fit(), fit()).setDebugName("title bar");
+        title.addIcon(BCLibLayoutScreen.BCLIB_LOGO_LOCATION, Size.of(512)).setDebugName("icon");
         title.addSpacer(4);
         title.add(super.buildTitle());
 
@@ -333,10 +328,10 @@ public class WorldSetupScreen extends LayoutScreen {
         main.addComponent(title);
 
 
-        VerticalStack rows = new VerticalStack(Value.fill(), Value.fill());
+        VerticalStack rows = new VerticalStack(fill(), fill());
         rows.add(main);
         rows.addSpacer(4);
-        rows.addButton(Value.fit(), Value.fit(), CommonComponents.GUI_DONE).onPress((bt) -> {
+        rows.addButton(fit(), fit(), CommonComponents.GUI_DONE).onPress((bt) -> {
             updateSettings();
             onClose();
         }).alignRight();

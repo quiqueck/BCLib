@@ -8,6 +8,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 
+@Deprecated(forRemoval = true)
 @Environment(EnvType.CLIENT)
 public abstract class GridCustomRenderCell extends GridCell {
     protected GridCustomRenderCell(double width, GridValueType widthType, double height) {

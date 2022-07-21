@@ -1,8 +1,9 @@
 package org.betterx.bclib.client.gui.screens;
 
-import org.betterx.bclib.client.gui.gridlayout.GridColumn;
-import org.betterx.bclib.client.gui.gridlayout.GridLayout;
-import org.betterx.bclib.client.gui.gridlayout.GridRow;
+import org.betterx.ui.ColorUtil;
+import org.betterx.ui.layout.components.HorizontalStack;
+import org.betterx.ui.layout.components.LayoutComponent;
+import org.betterx.ui.layout.components.VerticalStack;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
@@ -12,47 +13,58 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
-public class LevelFixErrorScreen extends BCLibScreen {
+public class LevelFixErrorScreen extends BCLibLayoutScreen {
     private final String[] errors;
     final Listener onContinue;
 
     public LevelFixErrorScreen(Screen parent, String[] errors, Listener onContinue) {
-        super(parent, Component.translatable("title.bclib.datafixer.error"), 10, true);
+        super(parent, Component.translatable("title.bclib.datafixer.error"), 10, 10, 10);
         this.errors = errors;
         this.onContinue = onContinue;
     }
 
-    @Override
-    protected void initLayout() {
-        grid.addSpacerRow();
-        grid.addRow()
-            .addMessage(Component.translatable("message.bclib.datafixer.error"), font, GridLayout.Alignment.CENTER);
-        grid.addSpacerRow(8);
 
-        GridRow row = grid.addRow();
+    @Override
+    protected LayoutComponent<?, ?> initContent() {
+        VerticalStack grid = new VerticalStack(fill(), fill());
+        grid.addSpacer(4);
+        grid.addMultilineText(fill(), fit(), Component.translatable("message.bclib.datafixer.error"))
+            .centerHorizontal();
+        grid.addSpacer(8);
+
+        HorizontalStack row = new HorizontalStack(fill(), fit());
         row.addSpacer(10);
-        GridColumn col = row.addColumn(300, GridLayout.GridValueType.CONSTANT);
+        VerticalStack col = row.addColumn(fixed(300), fit());
+        grid.addScrollable(row);
+
         for (String error : errors) {
             Component dash = Component.literal("-");
             row = col.addRow();
-            row.addString(dash, this);
+            row.addText(fit(), fit(), dash);
 
             row.addSpacer(4);
-            row.addString(Component.literal(error), this);
+            row.addText(fit(), fit(), Component.literal(error)).setColor(ColorUtil.RED);
         }
+        grid.addSpacer(8);
 
-        grid.addSpacerRow(8);
-        row = grid.addRow();
-        row.addFiller();
-        row.addButton(Component.translatable("title.bclib.datafixer.error.continue"), 0.5f, 20, font, (n) -> {
+        row = grid.addRow().centerHorizontal();
+        row.addButton(
+                fit(), fit(),
+                Component.translatable("title.bclib.datafixer.error.continue")
+        ).setAlpha(0.5f).onPress((n) -> {
             onClose();
             onContinue.doContinue(true);
         });
-        row.addSpacer();
-        row.addButton(CommonComponents.GUI_CANCEL, 20, font, (n) -> {
+        row.addSpacer(4);
+        row.addButton(
+                fit(), fit(),
+                CommonComponents.GUI_CANCEL
+        ).onPress((n) -> {
             this.minecraft.setScreen(null);
         });
-        row.addFiller();
+
+
+        return grid;
     }
 
     @Environment(EnvType.CLIENT)

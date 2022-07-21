@@ -59,7 +59,7 @@ public abstract class LayoutScreen extends Screen {
             }
             this.minecraft.setScreen(this);
         }, uri, true);
-        
+
         Minecraft.getInstance().setScreen(cls);
     }
 
@@ -74,14 +74,14 @@ public abstract class LayoutScreen extends Screen {
     }
 
     protected LayoutComponent<?, ?> buildTitle() {
-        var text = new Text(Value.fit(), Value.fit(), title).centerHorizontal()
-                                                            .setColor(ColorUtil.WHITE)
-                                                            .setDebugName("title");
+        var text = new Text(fit(), fit(), title).centerHorizontal()
+                                                .setColor(ColorUtil.WHITE)
+                                                .setDebugName("title");
         return text;
     }
 
     protected LayoutComponent<?, ?> addTitle(LayoutComponent<?, ?> content) {
-        VerticalStack rows = new VerticalStack(Value.fill(), Value.fill()).setDebugName("title stack");
+        VerticalStack rows = new VerticalStack(fill(), fill()).setDebugName("title stack");
 
         if (topPadding > 0) rows.addSpacer(topPadding);
         rows.add(buildTitle());
@@ -91,7 +91,7 @@ public abstract class LayoutScreen extends Screen {
 
         if (sidePadding <= 0) return rows;
 
-        HorizontalStack cols = new HorizontalStack(Value.fill(), Value.fill()).setDebugName("padded side");
+        HorizontalStack cols = new HorizontalStack(fill(), fill()).setDebugName("padded side");
         cols.addSpacer(sidePadding);
         cols.add(rows);
         cols.addSpacer(sidePadding);
@@ -117,5 +117,25 @@ public abstract class LayoutScreen extends Screen {
     @Override
     public boolean isPauseScreen() {
         return true;
+    }
+
+    public static Value fit() {
+        return Value.fit();
+    }
+
+    public static Value fitOrFill() {
+        return Value.fitOrFill();
+    }
+
+    public static Value fill() {
+        return Value.fill();
+    }
+
+    public static Value fixed(int size) {
+        return Value.fixed(size);
+    }
+
+    public static Value relative(double percentage) {
+        return Value.relative(percentage);
     }
 }

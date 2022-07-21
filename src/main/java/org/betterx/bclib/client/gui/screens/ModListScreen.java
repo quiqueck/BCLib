@@ -1,11 +1,12 @@
 package org.betterx.bclib.client.gui.screens;
 
 import org.betterx.bclib.api.v2.dataexchange.handler.autosync.HelloClient;
-import org.betterx.bclib.client.gui.gridlayout.GridColumn;
 import org.betterx.bclib.client.gui.gridlayout.GridLayout;
-import org.betterx.bclib.client.gui.gridlayout.GridRow;
-import org.betterx.bclib.client.gui.gridlayout.GridScreen;
 import org.betterx.bclib.util.Triple;
+import org.betterx.ui.layout.components.HorizontalStack;
+import org.betterx.ui.layout.components.LayoutComponent;
+import org.betterx.ui.layout.components.Text;
+import org.betterx.ui.layout.components.VerticalStack;
 import org.betterx.worlds.together.util.ModUtil;
 import org.betterx.worlds.together.util.PathUtil;
 
@@ -21,8 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Environment(EnvType.CLIENT)
-public class ModListScreen extends BCLibScreen {
-
+public class ModListScreen extends BCLibLayoutScreen {
     private final List<ModUtil.ModInfo> mods;
     private final HelloClient.IServerModMap serverInfo;
     private final Component description;
@@ -73,7 +73,7 @@ public class ModListScreen extends BCLibScreen {
             List<ModUtil.ModInfo> mods,
             HelloClient.IServerModMap serverInfo
     ) {
-        super(parent, title, 10, true);
+        super(parent, title);
         this.mods = mods;
         this.serverInfo = serverInfo;
         this.description = description;
@@ -105,10 +105,9 @@ public class ModListScreen extends BCLibScreen {
 
 
     public static void addModDesc(
-            GridColumn grid,
+            VerticalStack grid,
             java.util.List<ModUtil.ModInfo> mods,
-            HelloClient.IServerModMap serverInfo,
-            GridScreen parent
+            HelloClient.IServerModMap serverInfo
     ) {
         final int STATE_OK = 6;
         final int STATE_SERVER_MISSING_CLIENT_MOD = 5;
@@ -190,6 +189,7 @@ public class ModListScreen extends BCLibScreen {
         });
 
         items.stream()
+             .filter(t -> t.second != STATE_SERVER_MISSING)
              .sorted(Comparator.comparing(a -> a.second + a.first.toLowerCase(Locale.ROOT)))
              .forEach(t -> {
                  final String name = t.first;
@@ -223,46 +223,46 @@ public class ModListScreen extends BCLibScreen {
                  }
                  Component dash = Component.literal("-");
                  Component typeTextComponent = Component.literal(typeText);
-                 GridRow row = grid.addRow();
+                 HorizontalStack row = grid.addRow();
 
-                 row.addString(dash, parent);
-
-                 row.addSpacer(4);
-                 row.addString(Component.literal(name), parent);
+                 Text dashText = row.addText(fit(), fit(), dash);
 
                  row.addSpacer(4);
-                 row.addString(typeTextComponent, color, parent);
+                 row.addText(fit(), fit(), Component.literal(name));
+
+                 row.addSpacer(4);
+                 row.addText(fit(), fit(), typeTextComponent).setColor(color);
 
                  if (!stateString.isEmpty()) {
                      row = grid.addRow();
-                     row.addSpacer(4 + parent.getWidth(dash));
-                     row.addString(Component.literal(stateString), GridLayout.COLOR_GRAY, parent);
+                     row.addSpacer(4 + dashText.getContentWidth());
+                     row.addText(fit(), fit(), Component.literal(stateString))
+                        .setColor(GridLayout.COLOR_GRAY);
                  }
 
-                 grid.addSpacerRow();
+                 grid.addSpacer(4);
              });
     }
 
+
     @Override
-    protected void initLayout() {
+    protected LayoutComponent<?, ?> initContent() {
+        VerticalStack grid = new VerticalStack(fill(), fill());
         if (description != null) {
-            grid.addSpacerRow();
-            grid.addRow().addMessage(description, font, GridLayout.Alignment.CENTER);
-            grid.addSpacerRow(8);
+            grid.addSpacer(4);
+            grid.addMultilineText(fill(), fit(), description).centerHorizontal();
+            grid.addSpacer(8);
         }
 
-        GridRow row = grid.addRow();
+        HorizontalStack row = new HorizontalStack(fill(), fit());
         row.addSpacer(10);
-        GridColumn col = row.addColumn(200, GridLayout.GridValueType.CONSTANT);
-        addModDesc(col, mods, serverInfo, this);
+        VerticalStack col = row.addColumn(fixed(200), fit());
+        addModDesc(col, mods, serverInfo);
+        grid.addScrollable(row);
 
-        grid.addSpacerRow(8);
-        row = grid.addRow();
-        row.addFiller();
-        row.addButton(buttonTitle, 20, font, (n) -> {
-            onClose();
-        });
-        row.addFiller();
+        grid.addSpacer(8);
+        grid.addButton(fit(), fit(), buttonTitle).onPress((n) -> onClose()).centerHorizontal();
+
+        return grid;
     }
-
 }

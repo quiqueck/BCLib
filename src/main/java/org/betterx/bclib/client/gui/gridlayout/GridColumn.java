@@ -5,6 +5,10 @@ import net.fabricmc.api.Environment;
 
 import java.util.List;
 
+/**
+ * @deprecated Please use {@link org.betterx.ui.layout.components.VerticalStack} instead
+ */
+@Deprecated(forRemoval = true)
 @Environment(EnvType.CLIENT)
 public class GridColumn extends GridContainer {
     GridColumn(double width) {

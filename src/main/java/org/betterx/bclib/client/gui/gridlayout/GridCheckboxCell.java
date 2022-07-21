@@ -8,6 +8,7 @@ import net.fabricmc.api.Environment;
 
 import java.util.function.Consumer;
 
+@Deprecated(forRemoval = true)
 @Environment(EnvType.CLIENT)
 class SignalingCheckBox extends Checkbox {
     private final Consumer<Boolean> onChange;
@@ -35,6 +36,7 @@ class SignalingCheckBox extends Checkbox {
     }
 }
 
+@Deprecated(forRemoval = true)
 @Environment(EnvType.CLIENT)
 public class GridCheckboxCell extends GridCell implements GridWidgetWithEnabledState {
     private boolean checked;

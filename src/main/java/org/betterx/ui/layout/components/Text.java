@@ -9,9 +9,10 @@ import org.betterx.ui.layout.values.Value;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.network.chat.Component;
 
 public class Text extends LayoutComponent<Text.TextRenderer, Text> {
-    final net.minecraft.network.chat.Component text;
+    net.minecraft.network.chat.Component text;
     int color = ColorUtil.DEFAULT_TEXT;
 
     public Text(
@@ -27,6 +28,11 @@ public class Text extends LayoutComponent<Text.TextRenderer, Text> {
 
     public Text setColor(int cl) {
         this.color = cl;
+        return this;
+    }
+
+    public Text setText(Component text) {
+        this.text = text;
         return this;
     }
 

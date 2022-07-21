@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.function.Function;
 
 
+@Deprecated(forRemoval = true)
 @Environment(EnvType.CLIENT)
 abstract class GridCellDefinition {
     public final float width;
@@ -57,6 +58,7 @@ abstract class GridCellDefinition {
     abstract protected GridElement buildElementAt(int left, int top, int width, final List<GridElement> collector);
 }
 
+@Deprecated(forRemoval = true)
 @Environment(EnvType.CLIENT)
 class GridElement extends GridTransform {
     final Function<GridTransform, Object> componentPlacer;
@@ -85,6 +87,7 @@ class GridElement extends GridTransform {
     }
 }
 
+@Deprecated(forRemoval = true)
 @Environment(EnvType.CLIENT)
 abstract class GridContainer extends GridCellDefinition {
     protected List<GridCellDefinition> cells;
@@ -99,6 +102,11 @@ abstract class GridContainer extends GridCellDefinition {
     }
 }
 
+
+/**
+ * @deprecated Please use {@link org.betterx.ui.layout.components.Panel} instead
+ */
+@Deprecated(forRemoval = true)
 @Environment(EnvType.CLIENT)
 public class GridLayout extends GridColumn {
     public static final int COLOR_WHITE = 0xFFFFFFFF;

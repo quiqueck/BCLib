@@ -9,6 +9,7 @@ import net.fabricmc.api.Environment;
 
 import java.util.List;
 
+@Deprecated(forRemoval = true)
 @Environment(EnvType.CLIENT)
 public class GridMessageCell extends GridCell {
     private final Font font;

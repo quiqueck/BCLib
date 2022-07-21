@@ -9,11 +9,13 @@ import org.betterx.ui.layout.values.Value;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.MultiLineLabel;
+import net.minecraft.network.chat.Component;
 
 public class MultiLineText extends LayoutComponent<MultiLineText.MultiLineTextRenderer, MultiLineText> {
-    final net.minecraft.network.chat.Component text;
+    net.minecraft.network.chat.Component text;
     int color = ColorUtil.DEFAULT_TEXT;
     protected MultiLineLabel multiLineLabel;
+    int bufferedContentWidth = 0;
 
     public MultiLineText(
             Value width,
@@ -23,10 +25,22 @@ public class MultiLineText extends LayoutComponent<MultiLineText.MultiLineTextRe
         super(width, height, new MultiLineTextRenderer());
         renderer.linkedComponent = this;
         this.text = text;
+        updatedContentWidth();
     }
 
     public MultiLineText setColor(int cl) {
         this.color = cl;
+        return this;
+    }
+
+    public MultiLineText setText(Component text) {
+        this.text = text;
+        this.updatedContentWidth();
+        
+        if (multiLineLabel != null) {
+            multiLineLabel = createVanillaComponent();
+        }
+
         return this;
     }
 
@@ -38,6 +52,19 @@ public class MultiLineText extends LayoutComponent<MultiLineText.MultiLineTextRe
         );
     }
 
+    protected void updatedContentWidth() {
+        String[] lines = text.getString().split("\n");
+        if (lines.length == 0) bufferedContentWidth = 0;
+        else {
+            String line = lines[0];
+            for (int i = 1; i < lines.length; i++)
+                if (lines[i].length() > line.length())
+                    line = lines[i];
+
+            bufferedContentWidth = renderer.getWidth(Component.literal(line));
+        }
+    }
+
     @Override
     void setRelativeBounds(int left, int top) {
         super.setRelativeBounds(left, top);
@@ -46,7 +73,7 @@ public class MultiLineText extends LayoutComponent<MultiLineText.MultiLineTextRe
 
     @Override
     public int getContentWidth() {
-        return renderer.getWidth(text);
+        return bufferedContentWidth;
     }
 
     @Override
@@ -56,6 +83,11 @@ public class MultiLineText extends LayoutComponent<MultiLineText.MultiLineTextRe
 
     protected static class MultiLineTextRenderer implements ComponentRenderer, TextProvider {
         MultiLineText linkedComponent;
+
+        @Override
+        public int getWidth(Component c) {
+            return getFont().width(c.getVisualOrderText());
+        }
 
         @Override
         public int getHeight(net.minecraft.network.chat.Component c) {

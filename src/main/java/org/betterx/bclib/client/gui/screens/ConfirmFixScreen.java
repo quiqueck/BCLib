@@ -1,9 +1,10 @@
 package org.betterx.bclib.client.gui.screens;
 
 
-import org.betterx.bclib.client.gui.gridlayout.GridCheckboxCell;
-import org.betterx.bclib.client.gui.gridlayout.GridLayout;
-import org.betterx.bclib.client.gui.gridlayout.GridRow;
+import org.betterx.ui.layout.components.Checkbox;
+import org.betterx.ui.layout.components.HorizontalStack;
+import org.betterx.ui.layout.components.LayoutComponent;
+import org.betterx.ui.layout.components.VerticalStack;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
@@ -15,7 +16,7 @@ import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.Nullable;
 
 @Environment(EnvType.CLIENT)
-public class ConfirmFixScreen extends BCLibScreen {
+public class ConfirmFixScreen extends BCLibLayoutScreen {
     protected final ConfirmFixScreen.Listener listener;
     private final Component description;
     protected int id;
@@ -27,46 +28,36 @@ public class ConfirmFixScreen extends BCLibScreen {
         this.description = Component.translatable("bclib.datafixer.backupWarning.message");
     }
 
-    protected void initLayout() {
-        final int BUTTON_HEIGHT = 20;
-
-        grid.addRow().addMessage(this.description, this.font, GridLayout.Alignment.CENTER);
-        grid.addSpacerRow();
-
-        GridRow row = grid.addRow();
-        GridCheckboxCell backup = row.addCheckbox(
-                Component.translatable("bclib.datafixer.backupWarning.backup"),
-                true,
-                BUTTON_HEIGHT,
-                this.font
-        );
-
-        grid.addSpacerRow(10);
-
-        row = grid.addRow();
-        GridCheckboxCell fix = row.addCheckbox(
-                Component.translatable("bclib.datafixer.backupWarning.fix"),
-                true,
-                BUTTON_HEIGHT,
-                this.font
-        );
-
-        grid.addSpacerRow(20);
-
-        row = grid.addRow();
-        row.addFiller();
-        row.addButton(CommonComponents.GUI_CANCEL, BUTTON_HEIGHT, this.font, (button) -> {
-            onClose();
-        });
-        row.addSpacer();
-        row.addButton(CommonComponents.GUI_PROCEED, BUTTON_HEIGHT, this.font, (button) -> {
-            this.listener.proceed(backup.isChecked(), fix.isChecked());
-        });
-        row.addFiller();
-    }
-
     public boolean shouldCloseOnEsc() {
         return true;
+    }
+
+    @Override
+    protected LayoutComponent<?, ?> initContent() {
+        VerticalStack grid = new VerticalStack(fill(), fill());
+        grid.addFiller();
+        grid.addMultilineText(fill(), fit(), this.description).centerHorizontal();
+        grid.addSpacer(8);
+        Checkbox backup = grid.addCheckbox(
+                fit(), fit(),
+                Component.translatable("bclib.datafixer.backupWarning.backup"),
+                true
+        );
+        grid.addSpacer(4);
+        Checkbox fix = grid.addCheckbox(
+                fit(), fit(),
+                Component.translatable("bclib.datafixer.backupWarning.fix"),
+                true
+        );
+        grid.addSpacer(20);
+
+        HorizontalStack row = grid.addRow().centerHorizontal();
+        row.addButton(fit(), fit(), CommonComponents.GUI_CANCEL).onPress((button) -> onClose());
+        row.addSpacer(4);
+        row.addButton(fit(), fit(), CommonComponents.GUI_PROCEED)
+           .onPress((button) -> this.listener.proceed(backup.isChecked(), fix.isChecked()));
+
+        return grid;
     }
 
     @Environment(EnvType.CLIENT)

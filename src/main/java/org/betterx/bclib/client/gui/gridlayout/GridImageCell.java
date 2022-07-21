@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+@Deprecated(forRemoval = true)
 @Environment(EnvType.CLIENT)
 public class GridImageCell extends GridCell {
     GridImageCell(

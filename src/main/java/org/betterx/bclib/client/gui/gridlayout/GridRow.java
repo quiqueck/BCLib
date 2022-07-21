@@ -15,6 +15,10 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+/**
+ * @deprecated Please use {@link org.betterx.ui.layout.components.HorizontalStack} instead
+ */
+@Deprecated(forRemoval = true)
 @Environment(EnvType.CLIENT)
 public class GridRow extends GridContainer {
     public final GridLayout.VerticalAlignment alignment;

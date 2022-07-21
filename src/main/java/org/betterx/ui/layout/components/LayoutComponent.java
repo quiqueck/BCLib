@@ -29,6 +29,12 @@ public abstract class LayoutComponent<R extends ComponentRenderer, L extends Lay
         this.renderer = renderer;
     }
 
+    public void reCalculateLayout() {
+        updateContainerWidth(relativeBounds.width);
+        updateContainerHeight(relativeBounds.height);
+        setRelativeBounds(relativeBounds.left, relativeBounds.top);
+    }
+
     protected int updateContainerWidth(int containerWidth) {
         return width.setCalculatedSize(containerWidth);
     }

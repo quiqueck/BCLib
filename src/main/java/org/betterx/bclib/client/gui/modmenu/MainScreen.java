@@ -10,7 +10,6 @@ import org.betterx.ui.layout.components.Checkbox;
 import org.betterx.ui.layout.components.HorizontalStack;
 import org.betterx.ui.layout.components.LayoutComponent;
 import org.betterx.ui.layout.components.VerticalStack;
-import org.betterx.ui.layout.values.Value;
 import org.betterx.ui.vanilla.LayoutScreenWithIcon;
 
 import net.minecraft.client.gui.screens.Screen;
@@ -59,7 +58,7 @@ public class MainScreen extends LayoutScreenWithIcon {
             row.addSpacer(option.leftPadding);
         }
         Checkbox cb = row.addCheckbox(
-                Value.fit(), Value.fit(),
+                fit(), fit(),
                 getComponent(config, option, "title"),
                 config.getRaw(option.token)
         ).onChange(
@@ -84,7 +83,7 @@ public class MainScreen extends LayoutScreenWithIcon {
     @Override
     protected LayoutComponent initContent() {
 
-        VerticalStack content = new VerticalStack(Value.fit(), Value.fit()).setDebugName("content");
+        VerticalStack content = new VerticalStack(fit(), fit()).setDebugName("content");
 
         Configs.GENERATOR_CONFIG.getAllOptions()
                                 .stream()
@@ -102,10 +101,10 @@ public class MainScreen extends LayoutScreenWithIcon {
                              .forEach(o -> addRow(content, Configs.CLIENT_CONFIG, o));
 
 
-        VerticalStack grid = new VerticalStack(Value.fill(), Value.fill()).setDebugName("main grid");
+        VerticalStack grid = new VerticalStack(fill(), fill()).setDebugName("main grid");
         grid.addScrollable(content);
         grid.addSpacer(8);
-        grid.addButton(Value.fit(), Value.fit(), CommonComponents.GUI_DONE).onPress((button) -> {
+        grid.addButton(fit(), fit(), CommonComponents.GUI_DONE).onPress((button) -> {
             Configs.CLIENT_CONFIG.saveChanges();
             Configs.GENERATOR_CONFIG.saveChanges();
             Configs.MAIN_CONFIG.saveChanges();

@@ -10,6 +10,7 @@ import net.fabricmc.api.Environment;
 import java.util.List;
 import java.util.function.Function;
 
+@Deprecated(forRemoval = true)
 @Environment(EnvType.CLIENT)
 class GridCell extends GridCellDefinition {
     public final float height;

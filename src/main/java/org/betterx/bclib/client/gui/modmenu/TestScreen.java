@@ -4,7 +4,6 @@ import org.betterx.bclib.BCLib;
 import org.betterx.ui.ColorUtil;
 import org.betterx.ui.layout.components.*;
 import org.betterx.ui.layout.values.Size;
-import org.betterx.ui.layout.values.Value;
 import org.betterx.ui.vanilla.LayoutScreen;
 
 import net.minecraft.client.gui.screens.Screen;
@@ -25,76 +24,76 @@ public class TestScreen extends LayoutScreen {
 
     @Override
     protected LayoutComponent<?, ?> initContent() {
-        VerticalStack page1 = new VerticalStack(Value.fill(), Value.fit());
-        page1.addText(Value.fit(), Value.fit(), Component.literal("Page 1")).alignLeft().centerVertical();
-        page1.addButton(Value.fit(), Value.fit(), Component.literal("A1")).onPress((bt) -> System.out.println("A1"))
+        VerticalStack page1 = new VerticalStack(fill(), fit());
+        page1.addText(fit(), fit(), Component.literal("Page 1")).alignLeft().centerVertical();
+        page1.addButton(fit(), fit(), Component.literal("A1")).onPress((bt) -> System.out.println("A1"))
              .centerHorizontal();
-        page1.addButton(Value.fit(), Value.fit(), Component.literal("A2")).onPress((bt) -> System.out.println("A2"))
+        page1.addButton(fit(), fit(), Component.literal("A2")).onPress((bt) -> System.out.println("A2"))
              .centerHorizontal();
-        page1.addButton(Value.fit(), Value.fit(), Component.literal("A3")).onPress((bt) -> System.out.println("A3"))
+        page1.addButton(fit(), fit(), Component.literal("A3")).onPress((bt) -> System.out.println("A3"))
              .centerHorizontal();
-        page1.addButton(Value.fit(), Value.fit(), Component.literal("A4")).onPress((bt) -> System.out.println("A4"))
+        page1.addButton(fit(), fit(), Component.literal("A4")).onPress((bt) -> System.out.println("A4"))
              .centerHorizontal();
-        page1.addRange(Value.fixed(100), Value.fit(), Component.literal("N1"), 0, 10, 5);
+        page1.addRange(fixed(100), fit(), Component.literal("N1"), 0, 10, 5);
 
-        VerticalStack page2 = new VerticalStack(Value.fill(), Value.fit());
-        page2.addText(Value.fit(), Value.fit(), Component.literal("Page 2")).alignRight().centerVertical();
-        page2.addButton(Value.fit(), Value.fit(), Component.literal("B1")).onPress((bt) -> System.out.println("B1"))
+        VerticalStack page2 = new VerticalStack(fill(), fit());
+        page2.addText(fit(), fit(), Component.literal("Page 2")).alignRight().centerVertical();
+        page2.addButton(fit(), fit(), Component.literal("B1")).onPress((bt) -> System.out.println("B1"))
              .centerHorizontal();
-        page2.addButton(Value.fit(), Value.fit(), Component.literal("B2")).onPress((bt) -> System.out.println("B2"))
+        page2.addButton(fit(), fit(), Component.literal("B2")).onPress((bt) -> System.out.println("B2"))
              .centerHorizontal();
-        page2.addButton(Value.fit(), Value.fit(), Component.literal("B3")).onPress((bt) -> System.out.println("B3"))
+        page2.addButton(fit(), fit(), Component.literal("B3")).onPress((bt) -> System.out.println("B3"))
              .centerHorizontal();
-        page2.addButton(Value.fit(), Value.fit(), Component.literal("B4")).onPress((bt) -> System.out.println("B4"))
+        page2.addButton(fit(), fit(), Component.literal("B4")).onPress((bt) -> System.out.println("B4"))
              .centerHorizontal();
-        page2.addRange(Value.fixed(100), Value.fit(), Component.literal("N2"), 0, 10, 5);
+        page2.addRange(fixed(100), fit(), Component.literal("N2"), 0, 10, 5);
 
 
-        Container c = new Container(Value.fill(), Value.fixed(40));
-        c.addChild(new Button(Value.fit(), Value.fit(), Component.literal("Containerd")).onPress(bt -> {
+        Container c = new Container(fill(), fixed(40));
+        c.addChild(new Button(fit(), fit(), Component.literal("Containerd")).onPress(bt -> {
             System.out.println("Containerd");
         }).centerHorizontal().centerVertical());
         c.setBackgroundColor(0x77000000);
-        VerticalStack rows = new VerticalStack(Value.fit(), Value.fitOrFill());
+        VerticalStack rows = new VerticalStack(fit(), fitOrFill());
 
         rows.addFiller();
         rows.add(new Text(
-                        Value.fitOrFill(), Value.fixed(20),
+                        fitOrFill(), fixed(20),
                         Component.literal("Some Text")
                 ).alignRight()
         );
         rows.add(new Text(
-                        Value.fitOrFill(), Value.fixed(20),
+                        fitOrFill(), fixed(20),
                         Component.literal("Some other, longer Text")
                 ).centerHorizontal()
         );
         rows.addHorizontalSeparator(16).alignTop();
-        rows.add(new Tabs(Value.fixed(300), Value.fixed(80)).addPage(
-                                                                    Component.literal("PAGE 1"),
-                                                                    VerticalScroll.create(page1)
-                                                            )
-                                                            .addPage(
-                                                                    Component.literal("PAGE 2"),
-                                                                    VerticalScroll.create(page2)
-                                                            ));
-        rows.add(new Input(Value.fitOrFill(), Value.fit(), Component.literal("Input"), "0xff00ff"));
-        rows.add(new ColorSwatch(Value.fit(), Value.fit(), ColorUtil.LIGHT_PURPLE).centerHorizontal());
+        rows.add(new Tabs(fixed(300), fixed(80)).addPage(
+                                                        Component.literal("PAGE 1"),
+                                                        VerticalScroll.create(page1)
+                                                )
+                                                .addPage(
+                                                        Component.literal("PAGE 2"),
+                                                        VerticalScroll.create(page2)
+                                                ));
+        rows.add(new Input(fitOrFill(), fit(), Component.literal("Input"), "0xff00ff"));
+        rows.add(new ColorSwatch(fit(), fit(), ColorUtil.LIGHT_PURPLE).centerHorizontal());
         rows.add(new ColorPicker(
-                Value.fill(),
-                Value.fit(),
+                fill(),
+                fit(),
                 Component.literal("Color"),
                 ColorUtil.GREEN
         ).centerHorizontal());
         rows.add(new Text(
-                        Value.fitOrFill(), Value.fixed(20),
+                        fitOrFill(), fixed(20),
                         Component.literal("Some blue text")
                 ).centerHorizontal().setColor(ColorUtil.BLUE)
         );
-        rows.addHLine(Value.fixed(32), Value.fixed(16));
+        rows.addHLine(fixed(32), fixed(16));
         rows.add(c);
         rows.addCheckbox(
-                Value.fitOrFill(),
-                Value.fit(),
+                fitOrFill(),
+                fit(),
                 Component.literal("Hide"),
                 false
         ).onChange(
@@ -102,13 +101,13 @@ public class TestScreen extends LayoutScreen {
         );
         rows.addSpacer(16);
         rows.add(new Image(
-                        Value.fixed(24), Value.fixed(24),
+                        fixed(24), fixed(24),
                         BCLib.makeID("icon.png"),
                         new Size(512, 512)
                 ).centerHorizontal()
         );
         rows.add(new MultiLineText(
-                        Value.fill(), Value.fit(),
+                        fill(), fit(),
                         Component.literal(
                                 "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.")
                 ).setColor(ColorUtil.LIGHT_PURPLE).centerHorizontal()
@@ -116,7 +115,7 @@ public class TestScreen extends LayoutScreen {
 
         rows.addHorizontalLine(16);
         rows.add(new Range<>(
-                Value.fill(), Value.fit(),
+                fill(), fit(),
                 Component.literal("Integer"),
                 10, 90, 20
         ).onChange(
@@ -126,7 +125,7 @@ public class TestScreen extends LayoutScreen {
         ));
         rows.addSpacer(8);
         rows.add(new Range<>(
-                Value.fill(), Value.fit(),
+                fill(), fit(),
                 Component.literal("Float"),
                 10f, 90f, 20f
         ).onChange(
@@ -136,7 +135,7 @@ public class TestScreen extends LayoutScreen {
         ));
         rows.addSpacer(16);
         Checkbox cb1 = new Checkbox(
-                Value.fit(), Value.fit(),
+                fit(), fit(),
                 Component.literal("Some Sub-State"),
                 false, true
         ).onChange(
@@ -145,7 +144,7 @@ public class TestScreen extends LayoutScreen {
                 }
         );
         rows.add(new Checkbox(
-                Value.fit(), Value.fit(),
+                fit(), fit(),
                 Component.literal("Some Selectable State"),
                 false, true
         ).onChange(
@@ -157,7 +156,7 @@ public class TestScreen extends LayoutScreen {
         rows.add(cb1);
         rows.addSpacer(16);
         rows.add(new Button(
-                        Value.fit(), Value.fit(),
+                        fit(), fit(),
                         Component.literal("test")
                 ).onPress(
                         (bt) -> {
@@ -167,7 +166,7 @@ public class TestScreen extends LayoutScreen {
         );
         rows.addSpacer(8);
         rows.add(new Button(
-                        Value.fit(), Value.fit(),
+                        fit(), fit(),
                         Component.literal("Hello World")
                 ).onPress(
                         (bt) -> {
@@ -177,6 +176,6 @@ public class TestScreen extends LayoutScreen {
         );
         rows.addFiller();
 
-        return HorizontalStack.centered(VerticalScroll.create(Value.fit(), Value.relative(1), rows));
+        return HorizontalStack.centered(VerticalScroll.create(fit(), relative(1), rows));
     }
 }

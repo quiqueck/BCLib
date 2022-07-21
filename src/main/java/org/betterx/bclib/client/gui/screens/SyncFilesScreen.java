@@ -1,9 +1,10 @@
 package org.betterx.bclib.client.gui.screens;
 
 import org.betterx.bclib.api.v2.dataexchange.handler.autosync.HelloClient;
-import org.betterx.bclib.client.gui.gridlayout.GridCheckboxCell;
-import org.betterx.bclib.client.gui.gridlayout.GridLayout;
-import org.betterx.bclib.client.gui.gridlayout.GridRow;
+import org.betterx.ui.layout.components.Checkbox;
+import org.betterx.ui.layout.components.HorizontalStack;
+import org.betterx.ui.layout.components.LayoutComponent;
+import org.betterx.ui.layout.components.VerticalStack;
 import org.betterx.worlds.together.util.ModUtil;
 
 import net.minecraft.client.Minecraft;
@@ -14,7 +15,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
-public class SyncFilesScreen extends BCLibScreen {
+public class SyncFilesScreen extends BCLibLayoutScreen {
     private final Component description;
     private final SyncFilesScreen.Listener listener;
     private final boolean hasConfigFiles;
@@ -44,29 +45,36 @@ public class SyncFilesScreen extends BCLibScreen {
         this.shouldDelete = deleteFiles > 0;
     }
 
-    protected void initLayout() {
+
+    public boolean shouldCloseOnEsc() {
+        return false;
+    }
+
+    @Override
+    protected LayoutComponent<?, ?> initContent() {
+        VerticalStack grid = new VerticalStack(fill(), fill());
         final int BUTTON_HEIGHT = 20;
 
-        grid.addRow()
-            .addMessage(this.description, this.font, GridLayout.Alignment.CENTER);
+        grid.addMultilineText(fill(), fit(), this.description).centerHorizontal();
 
-        grid.addSpacerRow(10);
+        grid.addSpacer(10);
 
-        GridRow row;
+        HorizontalStack row;
 
-
-        final GridCheckboxCell mods;
+        final Checkbox mods;
         row = grid.addRow();
         mods = row.addCheckbox(
+                fit(), fit(),
                 Component.translatable("message.bclib.syncfiles.mods"),
-                hasMods,
-                BUTTON_HEIGHT,
-                this.font
+                hasMods
         );
         mods.setEnabled(hasMods);
 
-        row.addSpacer();
-        row.addButton(Component.translatable("title.bclib.syncfiles.modInfo"), 20, font, (button) -> {
+        row.addSpacer(4);
+        row.addButton(
+                fit(), fit(),
+                Component.translatable("title.bclib.syncfiles.modInfo")
+        ).onPress((button) -> {
             ModListScreen scr = new ModListScreen(
                     this,
                     Component.translatable("title.bclib.syncfiles.modlist"),
@@ -77,51 +85,47 @@ public class SyncFilesScreen extends BCLibScreen {
             Minecraft.getInstance().setScreen(scr);
         });
 
-        grid.addSpacerRow();
+        grid.addSpacer(4);
 
 
-        final GridCheckboxCell configs;
+        final Checkbox configs;
         row = grid.addRow();
         configs = row.addCheckbox(
+                fit(), fit(),
                 Component.translatable("message.bclib.syncfiles.configs"),
-                hasConfigFiles,
-                BUTTON_HEIGHT,
-                this.font
+                hasConfigFiles
         );
         configs.setEnabled(hasConfigFiles);
 
-        grid.addSpacerRow();
+        grid.addSpacer(4);
 
         row = grid.addRow();
 
-        final GridCheckboxCell folder;
+        final Checkbox folder;
         folder = row.addCheckbox(
+                fit(), fit(),
                 Component.translatable("message.bclib.syncfiles.folders"),
-                hasFiles,
-                BUTTON_HEIGHT,
-                this.font
+                hasFiles
         );
         folder.setEnabled(hasFiles);
-        row.addSpacer();
+        row.addSpacer(4);
 
-        GridCheckboxCell delete;
+        Checkbox delete;
         delete = row.addCheckbox(
+                fit(), fit(),
                 Component.translatable("message.bclib.syncfiles.delete"),
-                shouldDelete,
-                BUTTON_HEIGHT,
-                this.font
+                shouldDelete
         );
         delete.setEnabled(shouldDelete);
 
 
-        grid.addSpacerRow(30);
-        row = grid.addRow();
-        row.addFiller();
-        row.addButton(CommonComponents.GUI_NO, BUTTON_HEIGHT, this.font, (button) -> {
+        grid.addSpacer(30);
+        row = grid.addRow().centerHorizontal();
+        row.addButton(fit(), fit(), CommonComponents.GUI_NO).onPress((button) -> {
             listener.proceed(false, false, false, false);
         });
-        row.addSpacer();
-        row.addButton(CommonComponents.GUI_YES, BUTTON_HEIGHT, this.font, (button) -> {
+        row.addSpacer(4);
+        row.addButton(fit(), fit(), CommonComponents.GUI_YES).onPress((button) -> {
             listener.proceed(
                     mods.isChecked(),
                     configs.isChecked(),
@@ -129,11 +133,8 @@ public class SyncFilesScreen extends BCLibScreen {
                     delete.isChecked()
             );
         });
-        row.addFiller();
-    }
 
-    public boolean shouldCloseOnEsc() {
-        return false;
+        return grid;
     }
 
     @Environment(EnvType.CLIENT)

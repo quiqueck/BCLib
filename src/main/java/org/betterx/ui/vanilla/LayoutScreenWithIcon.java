@@ -3,7 +3,6 @@ package org.betterx.ui.vanilla;
 import org.betterx.ui.layout.components.HorizontalStack;
 import org.betterx.ui.layout.components.LayoutComponent;
 import org.betterx.ui.layout.values.Size;
-import org.betterx.ui.layout.values.Value;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -41,7 +40,7 @@ public abstract class LayoutScreenWithIcon extends LayoutScreen {
     @Override
     protected LayoutComponent<?, ?> buildTitle() {
         LayoutComponent<?, ?> title = super.buildTitle();
-        HorizontalStack row = new HorizontalStack(Value.fill(), Value.fit()).setDebugName("title bar");
+        HorizontalStack row = new HorizontalStack(fill(), fit()).setDebugName("title bar");
         row.addFiller();
         row.addIcon(icon, Size.of(512)).setDebugName("icon");
         row.addSpacer(4);

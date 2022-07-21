@@ -42,7 +42,7 @@ public class ColorUtil {
     public static final int LIGHT_PURPLE = ChatFormatting.LIGHT_PURPLE.getColor() | 0xFF000000;
     public static final int YELLOW = ChatFormatting.YELLOW.getColor() | 0xFF000000;
     public static final int WHITE = ChatFormatting.WHITE.getColor() | 0xFF000000;
-    public static final int DEFAULT_TEXT = 0xFFA0A0A0;
+    public static final int DEFAULT_TEXT = WHITE;
     private static final float[] FLOAT_BUFFER = new float[4];
     private static final int ALPHA = 255 << 24;
 

@@ -3,6 +3,7 @@ package org.betterx.bclib.client.gui.gridlayout;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+@Deprecated(forRemoval = true)
 @Environment(EnvType.CLIENT)
 public class GridTransform {
     public final int left;

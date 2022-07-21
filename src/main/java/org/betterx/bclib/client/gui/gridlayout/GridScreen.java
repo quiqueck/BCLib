@@ -16,7 +16,10 @@ import net.fabricmc.api.Environment;
 
 import org.jetbrains.annotations.Nullable;
 
-
+/**
+ * @deprecated Use {@link org.betterx.ui.vanilla.LayoutScreen} or {@link org.betterx.ui.vanilla.LayoutScreenWithIcon} instead
+ */
+@Deprecated(forRemoval = true)
 @Environment(EnvType.CLIENT)
 public abstract class GridScreen extends Screen {
     protected GridLayout grid = null;
