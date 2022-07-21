@@ -28,5 +28,6 @@ bin/
 
 run/
 run-client/
+run-server/
 output/
 *.log
