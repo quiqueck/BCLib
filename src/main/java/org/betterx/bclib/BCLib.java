@@ -12,6 +12,7 @@ import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 import org.betterx.bclib.api.v2.levelgen.structures.TemplatePiece;
 import org.betterx.bclib.api.v2.levelgen.surface.rules.Conditions;
+import org.betterx.bclib.api.v2.poi.PoiManager;
 import org.betterx.bclib.api.v3.levelgen.features.blockpredicates.BlockPredicates;
 import org.betterx.bclib.api.v3.levelgen.features.placement.PlacementModifiers;
 import org.betterx.bclib.commands.CommandRegistry;
@@ -61,6 +62,7 @@ public class BCLib implements ModInitializer {
         AnvilRecipe.register();
         Conditions.registerAll();
         CommandRegistry.register();
+        PoiManager.registerAll();
 
         DataExchangeAPI.registerDescriptors(List.of(
                         HelloClient.DESCRIPTOR,

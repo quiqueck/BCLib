@@ -25,6 +25,7 @@
     "MobSpawnSettingsAccessor",
     "NoiseBasedChunkGeneratorMixin",
     "PistonBaseBlockMixin",
+    "PoiTypeMixin",
     "PortalShapeMixin",
     "PotionBrewingAccessor",
     "RecipeManagerAccessor",
