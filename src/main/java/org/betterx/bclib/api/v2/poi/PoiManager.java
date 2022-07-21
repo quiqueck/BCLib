@@ -1,5 +1,7 @@
 package org.betterx.bclib.api.v2.poi;
 
+import org.betterx.worlds.together.tag.v3.CommonPoiTags;
+
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -10,6 +12,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Set;
+import org.jetbrains.annotations.ApiStatus;
 
 public class PoiManager {
     public static BCLPoiType register(
@@ -31,5 +34,10 @@ public class PoiManager {
         if ((Object) type instanceof PoiTypeExtension ext) {
             ext.bcl_setTag(tag);
         }
+    }
+
+    @ApiStatus.Internal
+    public static void registerAll() {
+        PoiManager.setTag(PoiTypes.FISHERMAN, CommonPoiTags.FISHERMAN_WORKSTATION);
     }
 }
