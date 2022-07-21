@@ -77,9 +77,9 @@ public abstract class LayoutComponent<R extends ComponentRenderer, L extends Lay
         final int windowHeight = Minecraft.getInstance().getWindow().getHeight();
         RenderSystem.enableScissor(
                 (int) (clippingRect.left * uiScale),
-                (int) (windowHeight - clippingRect.bottom() * uiScale),
+                (int) (windowHeight - (clippingRect.bottom() + 1) * uiScale),
                 (int) (clippingRect.width * uiScale),
-                (int) (clippingRect.height * uiScale)
+                (int) ((clippingRect.height + 1) * uiScale)
         );
     }
 
