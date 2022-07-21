@@ -21,9 +21,7 @@ import java.util.Optional;
 @Mixin(RecipeManager.class)
 public abstract class RecipeManagerMixin {
     @Shadow
-    private <C extends Container, T extends Recipe<C>> Map<ResourceLocation, Recipe<C>> byType(RecipeType<T> type) {
-        return null;
-    }
+    protected abstract <C extends Container, T extends Recipe<C>> Map<ResourceLocation, T> byType(RecipeType<T> recipeType);
 
     @Inject(method = "getRecipeFor", at = @At(value = "HEAD"), cancellable = true)
     private <C extends Container, T extends Recipe<C>> void bclib_getRecipeFor(

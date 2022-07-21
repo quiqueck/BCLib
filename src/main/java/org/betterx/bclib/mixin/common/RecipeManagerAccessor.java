@@ -1,6 +1,7 @@
 package org.betterx.bclib.mixin.common;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -13,14 +14,14 @@ import java.util.Map;
 @Mixin(RecipeManager.class)
 public interface RecipeManagerAccessor {
     @Accessor("recipes")
-    Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> bclib_getRecipes();
+    <C extends Container, T extends Recipe<C>> Map<RecipeType<T>, Map<ResourceLocation, T>> bclib_getRecipes();
 
     @Accessor("recipes")
-    void bclib_setRecipes(Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> recipes);
+    <C extends Container, T extends Recipe<C>> void bclib_setRecipes(Map<RecipeType<T>, Map<ResourceLocation, T>> recipes);
 
     @Accessor("byName")
-    Map<ResourceLocation, Recipe<?>> bclib_getRecipesByName();
+    <C extends Container, T extends Recipe<C>> Map<ResourceLocation, T> bclib_getRecipesByName();
 
     @Accessor("byName")
-    void bclib_setRecipesByName(Map<ResourceLocation, Recipe<?>> recipes);
+    <C extends Container, T extends Recipe<C>> void bclib_setRecipesByName(Map<ResourceLocation, T> recipes);
 }

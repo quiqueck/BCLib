@@ -12,7 +12,6 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
 import java.util.*;
@@ -20,53 +19,65 @@ import java.util.Map.Entry;
 import java.util.function.Function;
 
 public class BCLRecipeManager {
-    private static final Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> RECIPES = Maps.newHashMap();
-    private static final Map<RecipeType<?>, Object> SORTED = Maps.newHashMap();
+    private static final Map<?, ? extends Map<?, ?>> _RECIPES = Maps.newHashMap();
+    private static final Map<?, ? extends List<?>> _SORTED = Maps.newHashMap();
     private static final String MINECRAFT = "minecraft";
+
+    @SuppressWarnings("unchecked")
+    private static <C extends Container, T extends Recipe<C>> Map<RecipeType<T>, Map<ResourceLocation, T>> RECIPES() {
+        return (Map<RecipeType<T>, Map<ResourceLocation, T>>) _RECIPES;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <C extends Container, T extends Recipe<C>> Map<RecipeType<T>, List<T>> SORTED() {
+        return (Map<RecipeType<T>, List<T>>) _SORTED;
+    }
 
     public static <C extends Container, T extends Recipe<C>> Optional<T> getSortedRecipe(
             RecipeType<T> type,
             C inventory,
             Level level,
-            Function<RecipeType<T>, Map<ResourceLocation, Recipe<C>>> getter
+            Function<RecipeType<T>, Map<ResourceLocation, T>> getter
     ) {
-        List<Recipe<C>> recipes = (List<Recipe<C>>) SORTED.computeIfAbsent(type, t -> {
-            Collection<Recipe<C>> values = getter.apply(type).values();
-            List<Recipe<C>> list = new ArrayList<>(values);
+        List<T> recipes = BCLRecipeManager.<C, T>SORTED().computeIfAbsent(type, t -> {
+            Collection<T> values = getter.apply(type).values();
+            List<T> list = new ArrayList<>(values);
             list.sort((v1, v2) -> {
                 boolean b1 = v1.getId().getNamespace().equals(MINECRAFT);
                 boolean b2 = v2.getId().getNamespace().equals(MINECRAFT);
                 return b1 ^ b2 ? (b1 ? 1 : -1) : v1.getId().compareTo(v2.getId());
             });
-            return ImmutableList.copyOf(list);
+            return list;
         });
-        return (Optional<T>) recipes.stream().filter(recipe -> recipe.matches(inventory, level)).findFirst();
+        return recipes.stream().filter(recipe -> recipe.matches(inventory, level)).findFirst();
     }
 
-    public static void addRecipe(RecipeType<?> type, Recipe<?> recipe) {
-        Map<ResourceLocation, Recipe<?>> list = RECIPES.computeIfAbsent(type, i -> Maps.newHashMap());
+    public static <C extends Container, T extends Recipe<C>> void addRecipe(RecipeType<T> type, T recipe) {
+        Map<ResourceLocation, T> list = BCLRecipeManager.<C, T>RECIPES().computeIfAbsent(type, i -> Maps.newHashMap());
         list.put(recipe.getId(), recipe);
     }
 
-    public static <T extends Recipe<?>> T getRecipe(RecipeType<T> type, ResourceLocation id) {
-        Map<ResourceLocation, Recipe<?>> map = RECIPES.get(type);
-        return map != null ? (T) map.get(id) : null;
+    public static <C extends Container, T extends Recipe<C>> T getRecipe(RecipeType<T> type, ResourceLocation id) {
+        Map<ResourceLocation, T> map = BCLRecipeManager.<C, T>RECIPES().get(type);
+        return map != null ? map.get(id) : null;
     }
 
-    public static Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> getMap(Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> recipes) {
-        Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> result = Maps.newHashMap();
+    public static <C extends Container, T extends Recipe<C>> Map<RecipeType<T>, Map<ResourceLocation, T>> getMap(
+            Map<RecipeType<T>, Map<ResourceLocation, T>> recipes
+    ) {
+        Map<RecipeType<T>, Map<ResourceLocation, T>> result = Maps.newHashMap();
 
-        for (RecipeType<?> type : recipes.keySet()) {
-            Map<ResourceLocation, Recipe<?>> typeList = Maps.newHashMap();
+        for (RecipeType<T> type : recipes.keySet()) {
+            Map<ResourceLocation, T> typeList = Maps.newHashMap();
             typeList.putAll(recipes.get(type));
             result.put(type, typeList);
         }
 
-        SORTED.clear();
-        RECIPES.forEach((type, list) -> {
+        SORTED().clear();
+        BCLRecipeManager.<C, T>RECIPES().forEach((type, list) -> {
             if (list != null) {
-                Map<ResourceLocation, Recipe<?>> typeList = result.computeIfAbsent(type, i -> Maps.newHashMap());
-                for (Entry<ResourceLocation, Recipe<?>> entry : list.entrySet()) {
+                Map<ResourceLocation, T> typeList = result.computeIfAbsent(type, i -> Maps.newHashMap());
+                for (Entry<ResourceLocation, T> entry : list.entrySet()) {
                     ResourceLocation id = entry.getKey();
                     typeList.computeIfAbsent(id, i -> entry.getValue());
                 }
@@ -76,14 +87,17 @@ public class BCLRecipeManager {
         return result;
     }
 
-    public static Map<ResourceLocation, Recipe<?>> getMapByName(Map<ResourceLocation, Recipe<?>> recipes) {
-        Map<ResourceLocation, Recipe<?>> result = CollectionsUtil.getMutable(recipes);
-        RECIPES.values()
-               .forEach(map -> map.forEach((location, recipe) -> result.computeIfAbsent(location, i -> recipe)));
+    public static <C extends Container, T extends Recipe<C>> Map<ResourceLocation, T> getMapByName(Map<ResourceLocation, T> recipes) {
+        Map<ResourceLocation, T> result = CollectionsUtil.getMutable(recipes);
+        BCLRecipeManager.<C, T>RECIPES().values()
+                        .forEach(map -> map.forEach((location, recipe) -> result.computeIfAbsent(
+                                location,
+                                i -> recipe
+                        )));
         return result;
     }
 
-    public static <S extends RecipeSerializer<T>, T extends Recipe<?>> S registerSerializer(
+    public static <C extends Container, S extends RecipeSerializer<T>, T extends Recipe<C>> S registerSerializer(
             String modID,
             String id,
             S serializer
@@ -91,7 +105,7 @@ public class BCLRecipeManager {
         return Registry.register(Registry.RECIPE_SERIALIZER, modID + ":" + id, serializer);
     }
 
-    public static <T extends Recipe<?>> RecipeType<T> registerType(String modID, String type) {
+    public static <C extends Container, T extends Recipe<C>> RecipeType<T> registerType(String modID, String type) {
         ResourceLocation recipeTypeId = new ResourceLocation(modID, type);
         return Registry.register(Registry.RECIPE_TYPE, recipeTypeId, new RecipeType<T>() {
             public String toString() {

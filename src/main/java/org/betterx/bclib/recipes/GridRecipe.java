@@ -22,7 +22,7 @@ public class GridRecipe {
     private ItemLike output;
 
     private String group;
-    private RecipeType<?> type;
+    private RecipeType<CraftingRecipe> type;
     private boolean shaped;
     private String[] shape;
     private final Map<Character, Ingredient> materialKeys = Maps.newHashMap();
