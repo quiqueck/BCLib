@@ -17,6 +17,7 @@ import org.betterx.bclib.api.v3.levelgen.features.blockpredicates.BlockPredicate
 import org.betterx.bclib.api.v3.levelgen.features.placement.PlacementModifiers;
 import org.betterx.bclib.commands.CommandRegistry;
 import org.betterx.bclib.config.Configs;
+import org.betterx.bclib.networking.VersionChecker;
 import org.betterx.bclib.recipes.AnvilRecipe;
 import org.betterx.bclib.recipes.CraftingRecipes;
 import org.betterx.bclib.registry.BaseBlockEntities;
@@ -79,7 +80,8 @@ public class BCLib implements ModInitializer {
         Configs.save();
 
         WorldsTogether.FORCE_SERVER_TO_BETTERX_PRESET = Configs.SERVER_CONFIG.forceBetterXPreset();
-
+        VersionChecker.registerMod(MOD_ID);
+        
         if (false && isDevEnvironment()) {
             BCLBiome theYellow = BCLBiomeBuilder
                     .start(makeID("the_yellow"))
@@ -150,7 +152,6 @@ public class BCLib implements ModInitializer {
                     .surface(Blocks.PURPLE_CONCRETE)
                     .build();
             BiomeAPI.registerNetherBiome(thePurple);
-
         }
     }
 

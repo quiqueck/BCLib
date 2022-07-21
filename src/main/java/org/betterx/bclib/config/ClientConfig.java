@@ -31,11 +31,10 @@ public class ClientConfig extends NamedPathConfig {
     );
     @ConfigUI(leftPadding = 8)
     public static final DependendConfigToken<Boolean> ACCEPT_MODS = DependendConfigToken.Boolean(
-            false,
+            true,
             "acceptMods",
             AutoSync.SYNC_CATEGORY,
-            (config) -> config.get(
-                    ENABLED)
+            (config) -> config.get(ENABLED)
     );
     @ConfigUI(leftPadding = 8)
     public static final DependendConfigToken<Boolean> DISPLAY_MOD_INFO = DependendConfigToken.Boolean(
@@ -70,6 +69,19 @@ public class ClientConfig extends NamedPathConfig {
             1.0f,
             "FogDensity",
             "rendering"
+    );
+
+    public static final ConfigToken<Boolean> SHOW_UPDATE_INFO = ConfigToken.Boolean(
+            true,
+            "showUpdateInfo",
+            "ui"
+    );
+
+    @ConfigUI(leftPadding = 8)
+    public static final ConfigToken<Boolean> NO_DONOR = ConfigToken.Boolean(
+            false,
+            "no_donor",
+            "version"
     );
 
     public ClientConfig() {
@@ -110,6 +122,14 @@ public class ClientConfig extends NamedPathConfig {
 
     public boolean renderCustomFog() {
         return get(CUSTOM_FOG_RENDERING);
+    }
+
+    public boolean showUpdateInfo() {
+        return get(SHOW_UPDATE_INFO);
+    }
+
+    public boolean isDonor() {
+        return !get(NO_DONOR);
     }
 
     public float fogDensity() {

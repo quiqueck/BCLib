@@ -26,7 +26,7 @@ public class BiomesConfig extends PathConfig {
     private static final BiomeAPI.BiomeType[] excludeTypes = {BiomeAPI.BiomeType.NETHER, BiomeAPI.BiomeType.END};
 
     public BiomesConfig() {
-        super(BCLib.MOD_ID, "biomes", false);
+        super(BCLib.MOD_ID, "biomes", true);
         for (var type : includeTypes) {
             keeper.registerEntry(
                     new ConfigKey(type.getName(), "force_include"),

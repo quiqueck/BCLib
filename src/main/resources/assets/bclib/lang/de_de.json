@@ -48,7 +48,6 @@
   "title.bclib.datafixer.error": "Fehler beim Reparieren der Welt",
   "message.bclib.datafixer.error": "Es gab Fehler beim Reparieren der Welt. Das bedeutet, dass dieser Level wahrscheinlich in einem inkonsistenten Zustand ist und Sie ihn nicht spielen sollten. Bitte stellen Sie Ihr Backup wieder her und beheben Sie die unten aufgeführten Fehler, bevor Sie es erneut versuchen.",
   "title.bclib.datafixer.error.continue": "Continue and Mark as Fixed",
-  "title.config.bclib.main.ui.suppressExperimentalDialogOnLoad": "Disable Experimental Warning Screen on Load",
   "tooltip.bclib.place_on": "Lebt auf: %s",
   "generator.bclib.normal": "BetterX",
   "title.screen.bclib.worldgen.main": "Welt-Generator Eigenschaften",
@@ -64,5 +63,18 @@
   "title.screen.bclib.worldgen.void_biome_size": "Kleine Inseln",
   "title.screen.bclib.worldgen.center_biome_size": "Zentralbiome",
   "title.screen.bclib.worldgen.barrens_biome_size": "Ödniss",
-  "title.screen.bclib.worldgen.central_radius": "Innerer Radius (in Chunks)"
+  "title.screen.bclib.worldgen.central_radius": "Innerer Radius (in Chunks)",
+  "title.config.bclib.client.rendering.customFogRendering": "Angepasster Nebel",
+  "title.config.bclib.client.rendering.netherThickFog": "Dicker Nether-Nebel",
+  "bclib.updates.curseforge_link": "[CurseForge]",
+  "bclib.updates.title": "Mod Aktualisierungen",
+  "bclib.updates.disable_check": "Nicht Prüfen",
+  "bclib.updates.donate_pre": "Gefallen Dir unsere Inhalte?\nDann erwäge eine kleine Spende :)",
+  "bclib.updates.donate": "Spenden",
+  "bclib.updates.description": "Einige der installierten Mods sind veraltet. Wir verbessern und erweitern ständig unseren Inhalt und stellen wichtige Fehlerbehebungen zur Verfügung.\nBitte aktualisiere Deine Mods über die unten angegebenen Links.",
+  "bclib.welcome.title": "Wilkommen bei BetterX",
+  "bclib.welcome.description": "... und ein riesiges herzliches **Dankeschön** für das Herunterladen und Spielen unserer Mods. Wir hoffen, dass sie euch genauso viel Spaß machen wie uns.\n\nBevor wir anfangen, gibt es ein paar Dinge, die wir einrichten müssen, also lest bitte den folgenden langweiligen Teil weiter.",
+  "bclib.welcome.donation": "Wenn Dir unsere Mods so gut gefallen, wie wir hoffen, dann denken Sie bitte über eine kleine Spende nach :)",
+  "bclib.welcome.updater.description": "BCLib enthält eine einfache Versionsüberprüfung, die Dich benachrichtigen kann, wenn neue Updates unserer Mods verfügbar sind. Dazu müssen wir eine Ressource von einem unserer Webserver abrufen. Um die Anfrage zu bearbeiten versenden wir zusammen mit Deiner IP-Address (wir müssen ja wissen wohin die Antwort gehen soll) auch Deine Minecraft-Version (damit wir die richtige Mod-Version auswählen können). Die übertragenen Daten werden von uns niemals für andere Zwecke verwendet, verarbeitet oder weitergegeben, müssen aber aus rechtlichen Gründen für 4 Wochen in unseren Log-Dateien gespeichert werden.",
+  "bclib.welcome.updater.title": "Versionsprüfung erlauben"
 }

@@ -14,6 +14,7 @@ public class Configs {
 
     public static final GeneratorConfig GENERATOR_CONFIG = new GeneratorConfig();
     public static final MainConfig MAIN_CONFIG = new MainConfig();
+    public static final CachedConfig CACHED_CONFIG = new CachedConfig();
 
     public static final PathConfig RECIPE_CONFIG = new PathConfig(BCLib.MOD_ID, "recipes");
     public static final BiomesConfig BIOMES_CONFIG = new BiomesConfig();

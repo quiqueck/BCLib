@@ -75,7 +75,7 @@ public class Text extends LayoutComponent<Text.TextRenderer, Text> {
 
                 int top = bounds.height - getLineHeight(linkedComponent.text);
                 if (linkedComponent.vAlign == Alignment.MIN) top = 0;
-                if (linkedComponent.vAlign == Alignment.CENTER) top /= 2;
+                if (linkedComponent.vAlign == Alignment.CENTER) top = top / 2 + 1;
 
                 GuiComponent.drawString(stack, getFont(), linkedComponent.text, left, top, linkedComponent.color);
             }

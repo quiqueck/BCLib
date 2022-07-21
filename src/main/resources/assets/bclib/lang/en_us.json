@@ -33,7 +33,7 @@
   "title.config.bclib.client.ui.suppressExperimentalDialogOnLoad": "Disable Experimental Warning Screen on Load",
   "title.bclib.syncfiles.modInfo": "Mod Info",
   "title.bclib.syncfiles.modlist": "Mod Information",
-  "message.bclib.syncfiles.modlist": "The following shows the state of your installed installed Mods.\n\nAll Mods that do not exist locally, or have a different version on the Server will be synchronized.",
+  "message.bclib.syncfiles.modlist": "The following shows the state of your installed Mods.\n\nAll Mods that do not exist locally, or have a different version on the Server will be synchronized.",
   "title.bclib.modmissmatch": "Mod Version Conflict",
   "message.bclib.modmissmatch": "Some Mods on this client do not match the version of Mods on the Server.\n\nMismatching Mods can result in odd game behavior or crashes. Please make sue that you use the same mods as the server.",
   "message.bclib.datafixer.progress.waitbackup": "Waiting for Backup to finish. This may take a while!",
@@ -65,5 +65,16 @@
   "title.screen.bclib.worldgen.center_biome_size": "Central Biomes",
   "title.screen.bclib.worldgen.barrens_biome_size": "Barrens",
   "title.screen.bclib.worldgen.central_radius": "Central Void Radius (in Chunks)",
-  "title.screen.bclib.worldgen.end_void": "Generate Small Islands"
+  "title.screen.bclib.worldgen.end_void": "Generate Small Islands",
+  "bclib.updates.curseforge_link": "[CurseForge]",
+  "bclib.updates.title": "Mod Updates",
+  "bclib.updates.disable_check": "Disable Check",
+  "bclib.updates.donate_pre": "Like our Content?\nPlease consider a small Donation :)",
+  "bclib.updates.donate": "Donate",
+  "bclib.updates.description": "Some of the installed mods are outdated. We continually improve and extend our content as well as provide important bug-fixes.\nPlease consider updating your mods using the provided links below.",
+  "bclib.welcome.title": "Welcome to BetterX",
+  "bclib.welcome.description": "... and a huge hearty **thank you** for downloading and playing our mods. We hope you enjoy them as much as we do.\n\nBefore we start, there are a few things we need to set up, so please continue reading the following boring part.",
+  "bclib.welcome.donation": "If, you enjoy our Mods as much as we hope you do, please consider a small Donation :)",
+  "bclib.welcome.updater.description": "BCLib includes a simple version checker that can notify you when new updates of our mods are available. To do this, we need to read a resource from one of our web servers. To process the request, together with your IP address (we need to know where to send the response) we also send your Minecraft version (so we can choose the right mod version). The transmitted data will never be used or processed by us for other purposes, but must be stored in our log files for 4 weeks for legal reasons.",
+  "bclib.welcome.updater.title": "Enable Version Check"
 }

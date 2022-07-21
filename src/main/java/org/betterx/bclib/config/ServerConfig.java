@@ -12,8 +12,7 @@ public class ServerConfig extends NamedPathConfig {
             true,
             "offerConfigs",
             AutoSync.SYNC_CATEGORY,
-            (config) -> config.get(
-                    ENABLED)
+            (config) -> config.get(ENABLED)
     );
     public static final DependendConfigToken<Boolean> OFFER_FILES = DependendConfigToken.Boolean(
             true,

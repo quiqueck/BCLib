@@ -10,12 +10,24 @@ import org.betterx.ui.layout.values.Value;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.util.FormattedCharSequence;
+
+import com.google.common.collect.ImmutableList;
+
+import java.util.Iterator;
+import java.util.List;
+
+record LineWithWidth(FormattedCharSequence text, int width) {
+}
 
 public class MultiLineText extends LayoutComponent<MultiLineText.MultiLineTextRenderer, MultiLineText> {
     net.minecraft.network.chat.Component text;
     int color = ColorUtil.DEFAULT_TEXT;
     protected MultiLineLabel multiLineLabel;
     int bufferedContentWidth = 0;
+    List<LineWithWidth> lines = List.of();
 
     public MultiLineText(
             Value width,
@@ -33,10 +45,25 @@ public class MultiLineText extends LayoutComponent<MultiLineText.MultiLineTextRe
         return this;
     }
 
+    public static Component parse(Component text) {
+        String[] parts = text.getString().split("\\*\\*");
+        if (parts.length > 0) {
+            boolean bold = false;
+            MutableComponent c = Component.literal(parts[0]);
+
+            for (int i = 1; i < parts.length; i++) {
+                bold = !bold;
+                c.append(Component.literal(parts[i]).setStyle(Style.EMPTY.withBold(bold)));
+            }
+            return c;
+        }
+        return text;
+    }
+
     public MultiLineText setText(Component text) {
         this.text = text;
         this.updatedContentWidth();
-        
+
         if (multiLineLabel != null) {
             multiLineLabel = createVanillaComponent();
         }
@@ -45,11 +72,14 @@ public class MultiLineText extends LayoutComponent<MultiLineText.MultiLineTextRe
     }
 
     protected MultiLineLabel createVanillaComponent() {
-        return MultiLineLabel.create(
-                renderer.getFont(),
-                text,
-                relativeBounds == null ? width.calculatedSize() : relativeBounds.width
-        );
+        final int wd = relativeBounds == null ? width.calculatedSize() : relativeBounds.width;
+        lines = renderer.getFont()
+                        .split(text, wd)
+                        .stream()
+                        .map((component) -> new LineWithWidth(component, renderer.getFont().width(component)))
+                        .collect(ImmutableList.toImmutableList());
+
+        return MultiLineLabel.create(renderer.getFont(), text, wd);
     }
 
     protected void updatedContentWidth() {
@@ -108,7 +138,6 @@ public class MultiLineText extends LayoutComponent<MultiLineText.MultiLineTextRe
                 Rectangle clipRect
         ) {
             if (linkedComponent != null && linkedComponent.multiLineLabel != null) {
-
                 int top = bounds.height - getHeight(linkedComponent.text);
                 if (linkedComponent.vAlign == Alignment.MIN) top = 0;
                 if (linkedComponent.vAlign == Alignment.CENTER) top /= 2;
@@ -119,6 +148,20 @@ public class MultiLineText extends LayoutComponent<MultiLineText.MultiLineTextRe
                             getLineHeight(linkedComponent.text),
                             linkedComponent.color
                     );
+                } else if (linkedComponent.hAlign == Alignment.MAX) {
+                    int lineY = 0;
+                    int lineHeight = getLineHeight(linkedComponent.text);
+
+                    for (Iterator<LineWithWidth> iter = linkedComponent.lines.iterator(); iter.hasNext(); lineY += lineHeight) {
+                        LineWithWidth textWithWidth = iter.next();
+                        getFont().drawShadow(
+                                stack,
+                                textWithWidth.text(),
+                                linkedComponent.width.calculatedSize() - textWithWidth.width(),
+                                lineY,
+                                linkedComponent.color
+                        );
+                    }
                 } else {
                     linkedComponent.multiLineLabel.renderLeftAligned(
                             stack, 0, top,

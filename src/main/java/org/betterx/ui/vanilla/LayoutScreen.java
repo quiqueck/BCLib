@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -137,5 +138,13 @@ public abstract class LayoutScreen extends Screen {
 
     public static Value relative(double percentage) {
         return Value.relative(percentage);
+    }
+
+    public static MutableComponent translatable(String key) {
+        return Component.translatable(key);
+    }
+
+    public static MutableComponent literal(String content) {
+        return Component.literal(content);
     }
 }
