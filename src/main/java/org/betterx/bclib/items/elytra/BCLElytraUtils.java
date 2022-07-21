@@ -14,5 +14,6 @@ public class BCLElytraUtils {
     }
 
     public static SlotProvider slotProvider = null;
-    public static BiConsumer<LivingEntity, ItemStack> onBreak = null;
+    public static BiConsumer<LivingEntity, ItemStack> onBreak =
+            (entity, chestStack) -> entity.broadcastBreakEvent(EquipmentSlot.CHEST);
 }
