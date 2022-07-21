@@ -57,10 +57,16 @@ public final class ConfigKeeper {
     }
 
     private static Pair<JsonElement, Pair<String, String>> find(JsonObject json, Pair<String, String> key) {
+        String kk = key.first + key.second;
         for (var entry : json.entrySet()) {
             final Pair<String, String> otherKey = ConfigKey.realKey(entry.getKey());
-            if (otherKey.first.equals(key.first)) return new Pair<>(entry.getValue(), otherKey);
+            if (kk.equals(entry)) return new Pair<>(entry.getValue(), otherKey);
         }
+
+//        for (var entry : json.entrySet()) {
+//            final Pair<String, String> otherKey = ConfigKey.realKey(entry.getKey());
+//            if (otherKey.first.equals(key.first)) return new Pair<>(entry.getValue(), otherKey);
+//        }
 
         return null;
     }

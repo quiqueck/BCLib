@@ -17,6 +17,8 @@ public class NamedPathConfig extends PathConfig {
         public final Boolean hidden;
         public final int leftPadding;
         public final int topPadding;
+        public final int minRange;
+        public final int maxRange;
 
         @SuppressWarnings("unchecked")
         ConfigTokenDescription(Field fl) throws IllegalAccessException {
@@ -28,10 +30,14 @@ public class NamedPathConfig extends PathConfig {
                 this.hidden = ui.hide();
                 leftPadding = ui.leftPadding();
                 topPadding = ui.topPadding();
+                minRange = ui.minValue();
+                maxRange = ui.maxValue();
             } else {
                 this.hidden = false;
                 this.leftPadding = 0;
                 topPadding = 0;
+                minRange = 0;
+                maxRange = 0;
             }
 
         }
@@ -95,6 +101,21 @@ public class NamedPathConfig extends PathConfig {
         ) {
             return new DependendConfigToken<Boolean>(
                     ConfigKeeper.BooleanEntry.class,
+                    defaultValue,
+                    entry,
+                    path,
+                    dependenciesTrue
+            );
+        }
+
+        public static DependendConfigToken<Float> Float(
+                float defaultValue,
+                String entry,
+                String path,
+                Predicate<NamedPathConfig> dependenciesTrue
+        ) {
+            return new DependendConfigToken<Float>(
+                    ConfigKeeper.FloatEntry.class,
                     defaultValue,
                     entry,
                     path,

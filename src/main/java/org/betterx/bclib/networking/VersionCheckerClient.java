@@ -14,7 +14,7 @@ import net.fabricmc.api.Environment;
 public class VersionCheckerClient extends VersionChecker {
 
     public static void presentUpdateScreen(Screen parent) {
-        if (!Configs.MAIN_CONFIG.didShowWelcomeScreen()) {
+        if (!Configs.CLIENT_CONFIG.didShowWelcomeScreen()) {
             Minecraft.getInstance().setScreen(new WelcomeScreen(parent));
 
         } else if (Configs.CLIENT_CONFIG.showUpdateInfo() && !VersionChecker.isEmpty()) {

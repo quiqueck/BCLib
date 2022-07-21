@@ -198,6 +198,7 @@ public abstract class Config {
     protected boolean setBoolean(ConfigKey key, boolean value) {
         try {
             ConfigKeeper.BooleanEntry entry = keeper.getEntry(key, ConfigKeeper.BooleanEntry.class);
+
             if (entry == null) return false;
             entry.setValue(value);
             return true;

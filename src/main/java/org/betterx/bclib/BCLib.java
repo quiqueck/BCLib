@@ -80,9 +80,8 @@ public class BCLib implements ModInitializer {
         Configs.save();
 
         WorldsTogether.FORCE_SERVER_TO_BETTERX_PRESET = Configs.SERVER_CONFIG.forceBetterXPreset();
-        if (isClient()) {
-            VersionChecker.registerMod(MOD_ID);
-        }
+        VersionChecker.registerMod(MOD_ID);
+
 
         if (false && isDevEnvironment()) {
             BCLBiome theYellow = BCLBiomeBuilder

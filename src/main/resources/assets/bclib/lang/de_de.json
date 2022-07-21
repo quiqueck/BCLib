@@ -76,5 +76,8 @@
   "bclib.welcome.description": "... und ein riesiges herzliches **Dankeschön** für das Herunterladen und Spielen unserer Mods. Wir hoffen, dass sie euch genauso viel Spaß machen wie uns.\n\nBevor wir anfangen, gibt es ein paar Dinge, die wir einrichten müssen, also lest bitte den folgenden langweiligen Teil weiter.",
   "bclib.welcome.donation": "Wenn Dir unsere Mods so gut gefallen, wie wir hoffen, dann denken Sie bitte über eine kleine Spende nach :)",
   "bclib.welcome.updater.description": "BCLib enthält eine einfache Versionsüberprüfung, die Dich benachrichtigen kann, wenn neue Updates unserer Mods verfügbar sind. Dazu müssen wir eine Ressource von einem unserer Webserver abrufen. Um die Anfrage zu bearbeiten versenden wir zusammen mit Deiner IP-Address (wir müssen ja wissen wohin die Antwort gehen soll) auch Deine Minecraft-Version (damit wir die richtige Mod-Version auswählen können). Die übertragenen Daten werden von uns niemals für andere Zwecke verwendet, verarbeitet oder weitergegeben, müssen aber aus rechtlichen Gründen für 4 Wochen in unseren Log-Dateien gespeichert werden.",
-  "bclib.welcome.updater.title": "Versionsprüfung erlauben"
+  "bclib.welcome.updater.title": "Versionsprüfung erlauben",
+  "title.config.bclib.main.version.check": "Versionsprüfung erlauben",
+  "title.config.bclib.client.ui.showUpdateInfo": "Anzeigen wenn neue Updates verfügabr sind",
+  "title.config.bclib.client.rendering.FogDensity": "Nebeldichte"
 }

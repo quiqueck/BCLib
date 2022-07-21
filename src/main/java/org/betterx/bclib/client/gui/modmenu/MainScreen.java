@@ -6,10 +6,7 @@ import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.config.NamedPathConfig;
 import org.betterx.bclib.config.NamedPathConfig.ConfigTokenDescription;
 import org.betterx.bclib.config.NamedPathConfig.DependendConfigToken;
-import org.betterx.ui.layout.components.Checkbox;
-import org.betterx.ui.layout.components.HorizontalStack;
-import org.betterx.ui.layout.components.LayoutComponent;
-import org.betterx.ui.layout.components.VerticalStack;
+import org.betterx.ui.layout.components.*;
 import org.betterx.ui.vanilla.LayoutScreenWithIcon;
 
 import net.minecraft.client.gui.screens.Screen;
@@ -43,11 +40,33 @@ public class MainScreen extends LayoutScreenWithIcon {
     protected <T> void addRow(VerticalStack grid, NamedPathConfig config, ConfigTokenDescription<T> option) {
         if (ConfigKeeper.BooleanEntry.class.isAssignableFrom(option.token.type)) {
             addCheckbox(grid, config, (ConfigTokenDescription<Boolean>) option);
+        } else if (ConfigKeeper.FloatEntry.class.isAssignableFrom(option.token.type)) {
+            addFloat(grid, config, (ConfigTokenDescription<Float>) option);
         }
 
         grid.addSpacer(2);
     }
 
+    protected void addFloat(VerticalStack grid, NamedPathConfig config, ConfigTokenDescription<Float> option) {
+        if (option.topPadding > 0) {
+            grid.addSpacer(option.topPadding);
+        }
+        HorizontalStack row = grid.addRow();
+        if (option.leftPadding > 0) {
+            row.addSpacer(option.leftPadding);
+        }
+        Range<Float> cb = row.addRange(
+                fixed(200), fit(),
+                getComponent(config, option, "title"),
+                option.minRange,
+                option.maxRange,
+                config.getRaw(option.token)
+        ).onChange(
+                (caller, state) -> {
+                    config.set(option.token, state);
+                }
+        );
+    }
 
     protected void addCheckbox(VerticalStack grid, NamedPathConfig config, ConfigTokenDescription<Boolean> option) {
         if (option.topPadding > 0) {

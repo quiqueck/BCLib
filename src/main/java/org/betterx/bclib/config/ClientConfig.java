@@ -4,11 +4,39 @@ import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.dataexchange.handler.autosync.AutoSync;
 
 public class ClientConfig extends NamedPathConfig {
+
+    @ConfigUI(hide = true)
+    public static final ConfigToken<Boolean> DID_SHOW_WELCOME = ConfigToken.Boolean(
+            false,
+            "didShowWelcome",
+            "version"
+    );
+    @ConfigUI(topPadding = 12)
+    public static final ConfigToken<Boolean> CHECK_VERSIONS = ConfigToken.Boolean(
+            true,
+            "check",
+            "version"
+    );
+    @ConfigUI(leftPadding = 8)
+    public static final ConfigToken<Boolean> SHOW_UPDATE_INFO = ConfigToken.Boolean(
+            true,
+            "showUpdateInfo",
+            "ui"
+    );
     public static final ConfigToken<Boolean> SUPPRESS_EXPERIMENTAL_DIALOG = ConfigToken.Boolean(
             false,
             "suppressExperimentalDialogOnLoad",
             "ui"
     );
+
+
+    @ConfigUI(hide = true)
+    public static final ConfigToken<Boolean> NO_DONOR = ConfigToken.Boolean(
+            false,
+            "iAmNotTheDonorType",
+            "ui"
+    );
+
 
     @ConfigUI(topPadding = 12)
     public static final ConfigToken<Boolean> ENABLED = ConfigToken.Boolean(true, "enabled", AutoSync.SYNC_CATEGORY);
@@ -41,48 +69,38 @@ public class ClientConfig extends NamedPathConfig {
             true,
             "displayModInfo",
             AutoSync.SYNC_CATEGORY,
-            (config) -> config.get(
-                    ENABLED)
+            (config) -> config.get(ENABLED)
     );
 
-    @ConfigUI(topPadding = 12)
+    @ConfigUI(leftPadding = 8)
     public static final ConfigToken<Boolean> DEBUG_HASHES = ConfigToken.Boolean(
             false,
             "debugHashes",
             AutoSync.SYNC_CATEGORY
     );
 
-    @ConfigUI(leftPadding = 8)
+    @ConfigUI(topPadding = 12)
     public static final ConfigToken<Boolean> CUSTOM_FOG_RENDERING = ConfigToken.Boolean(
             true,
             "customFogRendering",
             "rendering"
     );
     @ConfigUI(leftPadding = 8)
-    public static final ConfigToken<Boolean> NETHER_THICK_FOG = ConfigToken.Boolean(
+    public static final ConfigToken<Boolean> NETHER_THICK_FOG = DependendConfigToken.Boolean(
             true,
             "netherThickFog",
-            "rendering"
+            "rendering",
+            (config) -> config.get(CUSTOM_FOG_RENDERING)
     );
 
-    public static final ConfigToken<Float> FOG_DENSITY = ConfigToken.Float(
+    @ConfigUI(leftPadding = 8, minValue = 0, maxValue = 2)
+    public static final ConfigToken<Float> FOG_DENSITY = DependendConfigToken.Float(
             1.0f,
             "FogDensity",
-            "rendering"
+            "rendering",
+            (config) -> config.get(CUSTOM_FOG_RENDERING)
     );
 
-    public static final ConfigToken<Boolean> SHOW_UPDATE_INFO = ConfigToken.Boolean(
-            true,
-            "showUpdateInfo",
-            "ui"
-    );
-
-    @ConfigUI(leftPadding = 8)
-    public static final ConfigToken<Boolean> NO_DONOR = ConfigToken.Boolean(
-            false,
-            "no_donor",
-            "version"
-    );
 
     public ClientConfig() {
         super(BCLib.MOD_ID, "client", false);
@@ -134,5 +152,22 @@ public class ClientConfig extends NamedPathConfig {
 
     public float fogDensity() {
         return get(FOG_DENSITY);
+    }
+
+    public boolean checkVersions() {
+        return get(ClientConfig.CHECK_VERSIONS);
+    }
+
+
+    public void setCheckVersions(boolean newValue) {
+        set(ClientConfig.CHECK_VERSIONS, newValue);
+    }
+
+    public boolean didShowWelcomeScreen() {
+        return get(ClientConfig.DID_SHOW_WELCOME);
+    }
+
+    public void setDidShowWelcomeScreen() {
+        set(ClientConfig.DID_SHOW_WELCOME, true);
     }
 }

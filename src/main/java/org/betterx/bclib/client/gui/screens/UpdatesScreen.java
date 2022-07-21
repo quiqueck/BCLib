@@ -80,14 +80,13 @@ public class UpdatesScreen extends BCLibLayoutScreen {
 
         footer.addFiller();
         footer.addCheckbox(
-                      fit(),
-                      fit(),
+                      fit(), fit(),
                       Component.translatable("Disable Check"),
-                      !Configs.MAIN_CONFIG.checkVersions()
+                      !Configs.CLIENT_CONFIG.checkVersions()
               )
               .onChange((cb, state) -> {
-                  Configs.MAIN_CONFIG.setCheckVersions(!state);
-                  Configs.MAIN_CONFIG.saveChanges();
+                  Configs.CLIENT_CONFIG.setCheckVersions(!state);
+                  Configs.CLIENT_CONFIG.saveChanges();
               });
         footer.addSpacer(4);
         footer.addButton(fit(), fit(), CommonComponents.GUI_DONE).onPress((bt -> {

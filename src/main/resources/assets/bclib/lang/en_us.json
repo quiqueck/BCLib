@@ -76,5 +76,8 @@
   "bclib.welcome.description": "... and a huge hearty **thank you** for downloading and playing our mods. We hope you enjoy them as much as we do.\n\nBefore we start, there are a few things we need to set up, so please continue reading the following boring part.",
   "bclib.welcome.donation": "If you enjoy our Mods as much as we hope you do, please consider a small Donation :)",
   "bclib.welcome.updater.description": "BCLib includes a simple version checker that can notify you when new updates of our mods are available. To do this, we need to read a resource from one of our web servers. To process the request, together with your IP address (we need to know where to send the response) we also send your Minecraft version (so we can choose the right mod version). The transmitted data will never be used or processed by us for other purposes, but must be stored in our log files for 4 weeks for legal reasons.",
-  "bclib.welcome.updater.title": "Enable Version Check"
+  "bclib.welcome.updater.title": "Enable Version Check",
+  "title.config.bclib.main.version.check": "Enable Version Check",
+  "title.config.bclib.client.ui.showUpdateInfo": "Allow Update Reminder Screen",
+  "title.config.bclib.client.rendering.FogDensity": "Fog Density"
 }

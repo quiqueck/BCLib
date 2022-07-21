@@ -2,6 +2,7 @@ package org.betterx.bclib.client.gui.screens;
 
 import org.betterx.ui.layout.components.LayoutComponent;
 import org.betterx.ui.layout.components.VerticalStack;
+import org.betterx.ui.layout.values.Value;
 
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -34,7 +35,7 @@ public class ConfirmRestartScreen extends BCLibLayoutScreen {
     protected LayoutComponent<?, ?> initContent() {
         VerticalStack grid = new VerticalStack(fill(), fill());
         grid.addFiller();
-        grid.addMultilineText(fill(), fit(), this.description).centerHorizontal();
+        grid.addMultilineText(Value.relative(0.9), fit(), this.description).centerHorizontal();
         grid.addSpacer(10);
         grid.addButton(fit(), fit(), CommonComponents.GUI_PROCEED)
             .onPress((button) -> listener.proceed())

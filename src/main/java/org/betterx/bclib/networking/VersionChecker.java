@@ -57,8 +57,8 @@ public class VersionChecker implements Runnable {
     private static Thread versionChecker;
 
     public static void startCheck(boolean isClient) {
-        if (versionChecker == null) {
-            if (Configs.MAIN_CONFIG.checkVersions()) {
+        if (versionChecker == null && isClient) {
+            if (Configs.CLIENT_CONFIG.checkVersions() && Configs.CLIENT_CONFIG.didShowWelcomeScreen()) {
                 versionChecker = new Thread(isClient ? new VersionCheckerClient() : new VersionChecker());
                 versionChecker.start();
             }

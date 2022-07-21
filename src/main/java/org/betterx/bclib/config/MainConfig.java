@@ -19,21 +19,6 @@ public class MainConfig extends NamedPathConfig {
     );
 
 
-    @ConfigUI(hide = true)
-    public static final ConfigToken<Boolean> DID_SHOW_WELCOME = ConfigToken.Boolean(
-            false,
-            "did_show_welcome",
-            "version"
-    );
-
-    public static final ConfigToken<Boolean> CHECK_VERSIONS = DependendConfigToken.Boolean(
-            true,
-            "check",
-            "version",
-            (config) -> !config.get(DID_SHOW_WELCOME)
-    );
-
-
     public MainConfig() {
         super(BCLib.MOD_ID, "main", true, true);
     }
@@ -44,22 +29,5 @@ public class MainConfig extends NamedPathConfig {
 
     public boolean repairBiomes() {
         return get(REPAIR_BIOMES);
-    }
-
-    public boolean checkVersions() {
-        return get(CHECK_VERSIONS);
-    }
-
-    public boolean didShowWelcomeScreen() {
-        return get(DID_SHOW_WELCOME);
-    }
-
-    public void setDidShowWelcomeScreen() {
-        set(DID_SHOW_WELCOME, true);
-    }
-
-
-    public void setCheckVersions(boolean newValue) {
-        set(CHECK_VERSIONS, newValue);
     }
 }

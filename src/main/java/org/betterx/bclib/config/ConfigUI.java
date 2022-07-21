@@ -22,4 +22,14 @@ public @interface ConfigUI {
      * When a Widget is generated for this option, it will be indented by this Value
      */
     int topPadding() default 0;
+
+    /**
+     * When a Slider is generated, this will be the minimum Value
+     */
+    int minValue() default 0;
+
+    /**
+     * When a Slider is generated, this will be the maximu Value
+     */
+    int maxValue() default 0;
 }

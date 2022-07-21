@@ -1,9 +1,12 @@
 package org.betterx.bclib.client.gui.screens;
 
 import org.betterx.bclib.config.Configs;
+import org.betterx.bclib.networking.VersionChecker;
 import org.betterx.ui.ColorUtil;
 import org.betterx.ui.layout.components.*;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -37,19 +40,35 @@ public class WelcomeScreen extends BCLibLayoutScreen {
         }
 
         content.addHorizontalSeparator(48);
-        content.addCheckbox(fit(), fit(), translatable("bclib.welcome.updater.title"), true)
-               .onChange((cb, state) -> Configs.MAIN_CONFIG.setCheckVersions(state));
+        Checkbox check = content.addCheckbox(
+                                        fit(),
+                                        fit(),
+                                        translatable("bclib.welcome.updater.title"),
+                                        Configs.CLIENT_CONFIG.checkVersions()
+                                )
+                                .onChange((cb, state) -> {
+                                    Configs.CLIENT_CONFIG.setCheckVersions(state);
+                                });
         content.addSpacer(2);
-        content.indent(24)
-               .addMultilineText(fill(), fit(), translatable("bclib.welcome.updater.description"))
-               .setColor(ColorUtil.GRAY);
+        HorizontalStack dscBox = content.indent(24);
+        dscBox.addMultilineText(fill(), fit(), translatable("bclib.welcome.updater.description"))
+              .setColor(ColorUtil.GRAY);
+        dscBox.addSpacer(8);
 
         content.addSpacer(16);
         content.addButton(fit(), fit(), CommonComponents.GUI_PROCEED).onPress((bt) -> {
-            Configs.MAIN_CONFIG.setDidShowWelcomeScreen();
+            Configs.CLIENT_CONFIG.setDidShowWelcomeScreen();
+            Configs.CLIENT_CONFIG.setCheckVersions(check.isChecked());
+            Configs.CLIENT_CONFIG.saveChanges();
+            VersionChecker.startCheck(true);
             onClose();
         }).alignRight();
 
         return VerticalScroll.create(fill(), fill(), content);
+    }
+
+    @Override
+    protected void renderBackground(PoseStack poseStack, int i, int j, float f) {
+        GuiComponent.fill(poseStack, 0, 0, width, height, 0xBD343444);
     }
 }
