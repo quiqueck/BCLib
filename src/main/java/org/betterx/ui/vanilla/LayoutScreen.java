@@ -5,6 +5,9 @@ import org.betterx.ui.layout.components.*;
 import org.betterx.ui.layout.values.Value;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -48,6 +51,17 @@ public abstract class LayoutScreen extends Screen {
     public final Screen parent;
 
     protected abstract LayoutComponent<?, ?> initContent();
+
+    protected void openLink(String uri) {
+        ConfirmLinkScreen cls = new ConfirmLinkScreen(bl -> {
+            if (bl) {
+                Util.getPlatform().openUri(uri);
+            }
+            this.minecraft.setScreen(this);
+        }, uri, true);
+        
+        Minecraft.getInstance().setScreen(cls);
+    }
 
     @Override
     protected final void init() {
