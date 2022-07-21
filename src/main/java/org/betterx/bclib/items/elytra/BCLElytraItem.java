@@ -12,7 +12,12 @@ public interface BCLElytraItem extends FabricElytraItem {
 
     double getMovementFactor();
 
+
     default void doVanillaElytraTick(LivingEntity entity, ItemStack chestStack) {
+        vanillaElytraTick(entity, chestStack);
+    }
+
+    static void vanillaElytraTick(LivingEntity entity, ItemStack chestStack) {
         int nextRoll = entity.getFallFlyingTicks() + 1;
 
         if (!entity.level.isClientSide && nextRoll % 10 == 0) {
