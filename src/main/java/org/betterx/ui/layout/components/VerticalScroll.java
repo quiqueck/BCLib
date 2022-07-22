@@ -28,11 +28,14 @@ public class VerticalScroll<RS extends ScrollerRenderer> extends LayoutComponent
     protected int travel;
     protected int topOffset;
 
+    protected int scrollerPadding;
+
     protected boolean keepSpaceForScrollbar = true;
 
     public VerticalScroll(Value width, Value height, RS scrollerRenderer) {
         super(width, height, new NullRenderer());
         this.scrollerRenderer = scrollerRenderer;
+        this.scrollerPadding = scrollerRenderer.scrollerPadding();
     }
 
     public static VerticalScroll<VanillaScrollerRenderer> create(LayoutComponent<?, ?> c) {
@@ -58,6 +61,11 @@ public class VerticalScroll<RS extends ScrollerRenderer> extends LayoutComponent
     public VerticalScroll<RS> setChild(LayoutComponent<?, ?> c) {
         this.child = c;
         children = List.of(child);
+        return this;
+    }
+
+    public VerticalScroll<RS> setScrollerPadding(int pad) {
+        this.scrollerPadding = pad;
         return this;
     }
 
@@ -87,7 +95,7 @@ public class VerticalScroll<RS extends ScrollerRenderer> extends LayoutComponent
     }
 
     protected int scrollerWidth() {
-        return scrollerRenderer.scrollerWidth() + scrollerRenderer.scrollerPadding();
+        return scrollerRenderer.scrollerWidth() + scrollerPadding;
     }
 
     @Override

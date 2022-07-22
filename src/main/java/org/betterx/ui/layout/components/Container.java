@@ -255,4 +255,14 @@ public class Container extends LayoutComponent<Container.ContainerRenderer, Cont
         }
         return false;
     }
+
+    public static Container create(LayoutComponent<?, ?> content) {
+        return create(Value.fit(), Value.fit(), content);
+    }
+
+    public static Container create(Value width, Value height, LayoutComponent<?, ?> content) {
+        Container c = new Container(width, height);
+        c.addChild(content);
+        return c;
+    }
 }

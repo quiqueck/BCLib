@@ -4,6 +4,7 @@ import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.generator.config.BCLEndBiomeSourceConfig;
 import org.betterx.bclib.api.v2.generator.config.BCLNetherBiomeSourceConfig;
 import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
+import org.betterx.bclib.config.Configs;
 import org.betterx.worlds.together.entrypoints.WorldPresetBootstrap;
 import org.betterx.worlds.together.levelgen.WorldGenUtil;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
@@ -45,7 +46,10 @@ public class PresetsRegistry implements WorldPresetBootstrap {
                 false
         );
 
-        WorldPresets.setDEFAULT(BCL_WORLD);
+        if (Configs.CLIENT_CONFIG.forceBetterXPreset())
+            WorldPresets.setDEFAULT(BCL_WORLD);
+        else
+            WorldPresets.setDEFAULT(net.minecraft.world.level.levelgen.presets.WorldPresets.NORMAL);
     }
 
     public static TogetherWorldPreset buildPreset(

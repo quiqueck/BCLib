@@ -72,12 +72,16 @@
   "bclib.updates.donate_pre": "Gefallen Dir unsere Inhalte?\nDann erwäge eine kleine Spende :)",
   "bclib.updates.donate": "Spenden",
   "bclib.updates.description": "Einige der installierten Mods sind veraltet. Wir verbessern und erweitern ständig unseren Inhalt und stellen wichtige Fehlerbehebungen zur Verfügung.\nBitte aktualisiere Deine Mods über die unten angegebenen Links.",
-  "bclib.welcome.title": "Wilkommen bei BetterX",
+  "bclib.welcome.title": "Wilkommen bei ",
   "bclib.welcome.description": "... und ein riesiges herzliches **Dankeschön** für das Herunterladen und Spielen unserer Mods. Wir hoffen, dass sie euch genauso viel Spaß machen wie uns.\n\nBevor wir anfangen, gibt es ein paar Dinge, die wir einrichten müssen, also lest bitte den folgenden langweiligen Teil weiter.",
   "bclib.welcome.donation": "Wenn Dir unsere Mods so gut gefallen, wie wir hoffen, dann denken Sie bitte über eine kleine Spende nach :)",
-  "bclib.welcome.updater.description": "BCLib enthält eine einfache Versionsüberprüfung, die Dich benachrichtigen kann, wenn neue Updates unserer Mods verfügbar sind. Dazu müssen wir eine Ressource von einem unserer Webserver abrufen. Um die Anfrage zu bearbeiten versenden wir zusammen mit Deiner IP-Address (wir müssen ja wissen wohin die Antwort gehen soll) auch Deine Minecraft-Version (damit wir die richtige Mod-Version auswählen können). Die übertragenen Daten werden von uns niemals für andere Zwecke verwendet, verarbeitet oder weitergegeben, müssen aber aus rechtlichen Gründen für 4 Wochen in unseren Log-Dateien gespeichert werden.",
-  "bclib.welcome.updater.title": "Versionsprüfung erlauben",
-  "title.config.bclib.main.version.check": "Versionsprüfung erlauben",
+  "description.config.bclib.client.ui.check": "BCLib enthält eine einfache Versionsüberprüfung, die Dich benachrichtigen kann, wenn neue Updates unserer Mods verfügbar sind. Dazu müssen wir eine Ressource von einem unserer Webserver abrufen. Um die Anfrage zu bearbeiten versenden wir zusammen mit Deiner IP-Address (wir müssen ja wissen wohin die Antwort gehen soll) auch Deine Minecraft-Version (damit wir die richtige Mod-Version auswählen können). Die übertragenen Daten werden von uns niemals für andere Zwecke verwendet, verarbeitet oder weitergegeben, müssen aber aus rechtlichen Gründen für 4 Wochen in unseren Log-Dateien gespeichert werden.",
+  "title.config.bclib.client.client.ui.check": "Versionsprüfung erlauben",
   "title.config.bclib.client.ui.showUpdateInfo": "Anzeigen wenn neue Updates verfügabr sind",
-  "title.config.bclib.client.rendering.FogDensity": "Nebeldichte"
+  "title.config.bclib.client.rendering.FogDensity": "Nebeldichte",
+  "description.config.bclib.client.ui.suppressExperimentalDialogOnLoad": "Der Warnbildschirm wird immer dann angezeigt, wenn Deine Welt nicht die Einstellungen der Vanilla-Version verwendet. Dies kann passieren, wenn Du eine Welt in einer Vorschauversion startest, aber auch wenn Du Mods verwendest, um die Welterzeugung zu verändern. Wenn diese Option aktiviert ist, wird die Warnung übersprungen, wenn Du eine bestehende Welt lädst. Sie wird weiterhin angezeigt (als Erinnerung), wenn eine neue Welt erstellt wird.",
+  "title.config.bclib.client.ui.forceBetterXPreset": "BetterX als Standard-Welt-Typ verwenden",
+  "description.config.bclib.client.ui.forceBetterXPreset": "Der Welt-Typ bestimmt, wie eine Welt generiert wird. In den meisten Fällen solltet BetterX als Standardeinstellung beibehalten werden (Du kannst den Typ jederzeit im Welt-Erstellen-Bildschirm ändern). Dieser Typ ist für maximale Kompatibilität zwischen DataPacks, unserer Mod und anderen Fabric-Mods optimiert. Außerdem bietet er einige einzigartige Funktionen für BetterNether und BetterEnd. Du solltest diese Option nur deaktivieren, wenn Du einen Grund dazu hast!",
+  "title.config.bclib.client.ui.check": "Enable Version Check",
+  "warning.config.bclib.client.ui.forceBetterXPreset": "IN DEN MEISTEN FÄLLEN SOLLTE DIESE OPTION AKTIVIERT BLEIBEN.\n"
 }

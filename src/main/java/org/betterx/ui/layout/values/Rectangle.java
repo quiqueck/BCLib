@@ -18,6 +18,26 @@ public class Rectangle {
         this.height = height;
     }
 
+    public float aspect() {
+        return (float) width / height;
+    }
+
+    public Size sizeFromWidth(int width) {
+        return new Size(width, (int) (width / aspect()));
+    }
+
+    public Size sizeFromHeight(int height) {
+        return new Size((int) (height * aspect()), height);
+    }
+
+    public Size size(float scale) {
+        return new Size((int) (width * scale), (int) (height * scale));
+    }
+
+    public Size size() {
+        return new Size(width, height);
+    }
+
     public int right() {
         return left + width;
     }

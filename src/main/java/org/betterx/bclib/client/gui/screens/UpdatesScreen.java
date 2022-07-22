@@ -21,8 +21,7 @@ import net.fabricmc.loader.api.ModContainer;
 
 @Environment(EnvType.CLIENT)
 public class UpdatesScreen extends BCLibLayoutScreen {
-
-    public static final String DONATION_URL = "https://www.paypal.com/donate/?hosted_button_id=7VTXYRXBHZQZJ&item_name=BetterX%20Mods&cmd=_s-xclick";
+    public static final String DONATION_URL = "https://www.paypal.com/donate/?hosted_button_id=7VTXYRXBHZQZJ";
 
     public UpdatesScreen(Screen parent) {
         super(parent, Component.translatable("bclib.updates.title"), 10, 10, 10);

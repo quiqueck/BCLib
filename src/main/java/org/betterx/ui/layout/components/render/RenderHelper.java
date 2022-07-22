@@ -1,11 +1,16 @@
 package org.betterx.ui.layout.components.render;
 
 import org.betterx.ui.ColorUtil;
+import org.betterx.ui.layout.values.Rectangle;
+import org.betterx.ui.layout.values.Size;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.resources.ResourceLocation;
 
 public class RenderHelper {
     public static void outline(PoseStack poseStack, int x0, int y0, int x1, int y1, int color) {
@@ -78,5 +83,33 @@ public class RenderHelper {
         BufferUploader.drawWithShader(bufferBuilder.end());
         RenderSystem.enableTexture();
         RenderSystem.disableBlend();
+    }
+
+    public static void renderImage(
+            PoseStack stack,
+            int width, int height,
+            ResourceLocation location,
+            Rectangle uvRect,
+            Size resourceSize,
+            float alpha
+    ) {
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, location);
+        RenderSystem.enableBlend();
+        RenderSystem.blendFunc(
+                GlStateManager.SourceFactor.SRC_ALPHA,
+                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA
+        );
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
+        GuiComponent.blit(
+                stack,
+                0, 0, width, height,
+                uvRect.left,
+                uvRect.top,
+                uvRect.width,
+                uvRect.height,
+                resourceSize.width(),
+                resourceSize.height()
+        );
     }
 }

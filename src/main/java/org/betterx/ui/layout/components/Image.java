@@ -1,14 +1,11 @@
 package org.betterx.ui.layout.components;
 
+import org.betterx.ui.layout.components.render.RenderHelper;
 import org.betterx.ui.layout.values.Rectangle;
 import org.betterx.ui.layout.values.Size;
 import org.betterx.ui.layout.values.Value;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 
 import net.fabricmc.api.EnvType;
@@ -82,35 +79,7 @@ public class Image extends CustomRenderComponent {
             Rectangle bounds,
             Rectangle clipRect
     ) {
-        renderImage(stack, bounds, location, uvRect, resourceSize, alpha);
-    }
-
-    protected static void renderImage(
-            PoseStack stack,
-            Rectangle bounds,
-            ResourceLocation location,
-            Rectangle uvRect,
-            Size size,
-            float alpha
-    ) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, location);
-        RenderSystem.enableBlend();
-        RenderSystem.blendFunc(
-                GlStateManager.SourceFactor.SRC_ALPHA,
-                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA
-        );
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
-        GuiComponent.blit(
-                stack,
-                0, 0, bounds.width, bounds.height,
-                uvRect.left,
-                uvRect.top,
-                uvRect.width,
-                uvRect.height,
-                size.width(),
-                size.height()
-        );
+        RenderHelper.renderImage(stack, bounds.width, bounds.height, location, uvRect, resourceSize, alpha);
     }
 
     @Override

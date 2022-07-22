@@ -72,12 +72,15 @@
   "bclib.updates.donate_pre": "Like our Content?\nPlease consider a small Donation :)",
   "bclib.updates.donate": "Donate",
   "bclib.updates.description": "Some of the installed mods are outdated. We continually improve and extend our content as well as provide important bug-fixes.\nPlease consider updating your mods using the provided links below.",
-  "bclib.welcome.title": "Welcome to BetterX",
+  "bclib.welcome.title": "Welcome to ",
   "bclib.welcome.description": "... and a huge hearty **thank you** for downloading and playing our mods. We hope you enjoy them as much as we do.\n\nBefore we start, there are a few things we need to set up, so please continue reading the following boring part.",
   "bclib.welcome.donation": "If you enjoy our Mods as much as we hope you do, please consider a small Donation :)",
-  "bclib.welcome.updater.description": "BCLib includes a simple version checker that can notify you when new updates of our mods are available. To do this, we need to read a resource from one of our web servers. To process the request, together with your IP address (we need to know where to send the response) we also send your Minecraft version (so we can choose the right mod version). The transmitted data will never be used or processed by us for other purposes, but must be stored in our log files for 4 weeks for legal reasons.",
-  "bclib.welcome.updater.title": "Enable Version Check",
-  "title.config.bclib.main.version.check": "Enable Version Check",
+  "description.config.bclib.client.ui.check": "BCLib includes a simple version checker that can notify you when new updates of our mods are available. To do this, we need to read a resource from one of our web servers. To process the request, together with your IP address (we need to know where to send the response) we also send your Minecraft version (so we can choose the right mod version). The transmitted data will never be used or processed by us for other purposes, but must be stored in our log files for 4 weeks for legal reasons.",
+  "title.config.bclib.client.ui.check": "Enable Version Check",
   "title.config.bclib.client.ui.showUpdateInfo": "Allow Update Reminder Screen",
-  "title.config.bclib.client.rendering.FogDensity": "Fog Density"
+  "title.config.bclib.client.rendering.FogDensity": "Fog Density",
+  "description.config.bclib.client.ui.suppressExperimentalDialogOnLoad": "The warning screen appears whenever your world does not use the vanilla version settings. This can happen when you start a world in a preview version, but also when you use mods to change the world creation. If this option is enabled, the warning will be skipped when you load an existing world. It will still be displayed (as a reminder) when a new world is created.",
+  "title.config.bclib.client.ui.forceBetterXPreset": "Use BetterX as Default World-Type",
+  "warning.config.bclib.client.ui.forceBetterXPreset": "MOST LIKELY YOU WILL WANT TO KEEP THIS OPTION ENABLED.\n",
+  "description.config.bclib.client.ui.forceBetterXPreset": "The world type determines how a world is generated. In most cases, BetterX should be kept as the default (you can change the type at any time in the world creation screen). This type is optimized for maximum compatibility between DataPacks, our mod, and other Fabric mods. It also provides some unique features for BetterNether and BetterEnd. You should only disable this option if you have a reason to do so!"
 }

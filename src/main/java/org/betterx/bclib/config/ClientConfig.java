@@ -23,6 +23,13 @@ public class ClientConfig extends NamedPathConfig {
             "showUpdateInfo",
             "ui"
     );
+
+    @ConfigUI(hide = true)
+    public static final ConfigToken<Boolean> FORCE_BETTERX_PRESET = ConfigToken.Boolean(
+            true,
+            "forceBetterXPreset",
+            "ui"
+    );
     public static final ConfigToken<Boolean> SUPPRESS_EXPERIMENTAL_DIALOG = ConfigToken.Boolean(
             false,
             "suppressExperimentalDialogOnLoad",
@@ -134,6 +141,10 @@ public class ClientConfig extends NamedPathConfig {
         return get(SUPPRESS_EXPERIMENTAL_DIALOG);
     }
 
+    public void setSuppressExperimentalDialog(boolean newValue) {
+        set(ClientConfig.SUPPRESS_EXPERIMENTAL_DIALOG, newValue);
+    }
+
     public boolean netherThickFog() {
         return get(NETHER_THICK_FOG);
     }
@@ -169,5 +180,13 @@ public class ClientConfig extends NamedPathConfig {
 
     public void setDidShowWelcomeScreen() {
         set(ClientConfig.DID_SHOW_WELCOME, true);
+    }
+
+    public boolean forceBetterXPreset() {
+        return get(FORCE_BETTERX_PRESET);
+    }
+
+    public void setForceBetterXPreset(boolean v) {
+        set(FORCE_BETTERX_PRESET, v);
     }
 }
