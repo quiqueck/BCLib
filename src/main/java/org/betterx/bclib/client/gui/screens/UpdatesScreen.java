@@ -2,8 +2,6 @@ package org.betterx.bclib.client.gui.screens;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.config.Configs;
-import org.betterx.bclib.entrypoints.EntrypointUtil;
-import org.betterx.bclib.networking.VersionCheckEntryPoint;
 import org.betterx.bclib.networking.VersionChecker;
 import org.betterx.ui.ColorUtil;
 import org.betterx.ui.layout.components.HorizontalStack;
@@ -24,6 +22,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
+import net.fabricmc.loader.api.metadata.CustomValue;
 
 @Environment(EnvType.CLIENT)
 public class UpdatesScreen extends BCLibLayoutScreen {
@@ -38,12 +37,18 @@ public class UpdatesScreen extends BCLibLayoutScreen {
         if (modID.equals(BCLib.MOD_ID)) {
             return UPDATE_LOGO_LOCATION;
         }
-        return EntrypointUtil.getCommon(VersionCheckEntryPoint.class)
-                             .stream()
-                             .map(vc -> vc.updaterIcon(modID))
-                             .filter(r -> r != null)
-                             .findAny()
-                             .orElse(null);
+        ModContainer nfo = FabricLoader.getInstance().getModContainer(modID).orElse(null);
+        if (nfo != null) {
+            CustomValue element = nfo.getMetadata().getCustomValue("bclib");
+            if (element != null) {
+                CustomValue.CvObject obj = element.getAsObject();
+                if (obj != null) {
+                    CustomValue icon = obj.get("updater_icon");
+                    return new ResourceLocation(modID, icon.getAsString());
+                }
+            }
+        }
+        return null;
     }
 
     @Override
