@@ -72,7 +72,7 @@ public class WelcomeScreen extends BCLibLayoutScreen {
         Checkbox check = innerContent.addCheckbox(
                                              fit(),
                                              fit(),
-                                             translatable("title.config.bclib.client.ui.check"),
+                                             translatable("title.config.bclib.client.version.check"),
                                              Configs.CLIENT_CONFIG.checkVersions()
                                      )
                                      .onChange((cb, state) -> {
@@ -80,7 +80,7 @@ public class WelcomeScreen extends BCLibLayoutScreen {
                                      });
         innerContent.addSpacer(2);
         HorizontalStack dscBox = innerContent.indent(24);
-        dscBox.addMultilineText(fill(), fit(), translatable("description.config.bclib.client.ui.check"))
+        dscBox.addMultilineText(fill(), fit(), translatable("description.config.bclib.client.version.check"))
               .setColor(ColorUtil.GRAY);
         dscBox.addSpacer(8);
 

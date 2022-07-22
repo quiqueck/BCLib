@@ -1,11 +1,16 @@
 package org.betterx.bclib.client.gui.screens;
 
+import org.betterx.bclib.BCLib;
 import org.betterx.bclib.config.Configs;
+import org.betterx.bclib.entrypoints.EntrypointUtil;
+import org.betterx.bclib.networking.VersionCheckEntryPoint;
 import org.betterx.bclib.networking.VersionChecker;
 import org.betterx.ui.ColorUtil;
 import org.betterx.ui.layout.components.HorizontalStack;
 import org.betterx.ui.layout.components.LayoutComponent;
 import org.betterx.ui.layout.components.VerticalStack;
+import org.betterx.ui.layout.values.Size;
+import org.betterx.ui.layout.values.Value;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiComponent;
@@ -13,6 +18,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceLocation;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -27,6 +33,18 @@ public class UpdatesScreen extends BCLibLayoutScreen {
         super(parent, Component.translatable("bclib.updates.title"), 10, 10, 10);
     }
 
+    public ResourceLocation getUpdaterIcon(String modID) {
+        if (modID.equals(BCLib.MOD_ID)) {
+            return BCLibLayoutScreen.BCLIB_LOGO_LOCATION;
+        }
+        return EntrypointUtil.getCommon(VersionCheckEntryPoint.class)
+                             .stream()
+                             .map(vc -> vc.updaterIcon(modID))
+                             .filter(r -> r != null)
+                             .findAny()
+                             .orElse(null);
+    }
+
     @Override
     protected LayoutComponent<?, ?> initContent() {
         VerticalStack rows = new VerticalStack(relative(1), fit()).centerHorizontal();
@@ -37,8 +55,14 @@ public class UpdatesScreen extends BCLibLayoutScreen {
 
         VersionChecker.forEachUpdate((mod, cur, updated) -> {
             ModContainer nfo = FabricLoader.getInstance().getModContainer(mod).orElse(null);
-
-            HorizontalStack row = rows.addRow(relative(0.8), fit()).centerHorizontal();
+            ResourceLocation icon = getUpdaterIcon(mod);
+            HorizontalStack row = rows.addRow(fixed(320), fit()).centerHorizontal();
+            if (icon != null) {
+                row.addImage(Value.fit(), Value.fit(), icon, Size.of(32));
+                row.addSpacer(4);
+            } else {
+                row.addSpacer(36);
+            }
             if (nfo != null) {
                 row.addText(fit(), fit(), Component.literal(nfo.getMetadata().getName()))
                    .setColor(ColorUtil.WHITE);
@@ -54,7 +78,7 @@ public class UpdatesScreen extends BCLibLayoutScreen {
                 row.addButton(fit(), fit(), Component.translatable("bclib.updates.curseforge_link"))
                    .onPress((bt) -> {
                        this.openLink(nfo.getMetadata().getContact().get("homepage").get());
-                   });
+                   }).centerVertical();
             }
         });
 

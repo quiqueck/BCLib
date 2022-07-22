@@ -4,6 +4,8 @@ import org.betterx.bclib.BCLib;
 import org.betterx.bclib.config.Configs;
 import org.betterx.worlds.together.util.ModUtil;
 
+import net.fabricmc.loader.api.FabricLoader;
+
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -123,6 +125,10 @@ public class VersionChecker implements Runnable {
             BCLib.LOGGER.info("Received Version Info for minecraft=" + json.mc + ", loader=" + json.loader);
             if (json.mods != null) {
                 for (ModVersion mod : json.mods) {
+                    if (!KNOWN_MODS.contains(mod.n)) {
+                        if (FabricLoader.getInstance().getModContainer(mod.n).isPresent())
+                            registerMod(mod.n);
+                    }
                     if (mod.n != null && mod.v != null && KNOWN_MODS.contains(mod.n)) {
                         boolean isNew = ModUtil.isLargerVersion(mod.v, ModUtil.getModVersion(mod.n));
                         BCLib.LOGGER.info(" - " + mod.n + ":" + mod.v + (isNew ? " (update available)" : ""));

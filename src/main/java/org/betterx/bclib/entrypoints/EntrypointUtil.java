@@ -1,4 +1,4 @@
-package org.betterx.worlds.together.entrypoints;
+package org.betterx.bclib.entrypoints;
 
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -7,11 +7,11 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 public class EntrypointUtil {
-    private static <T extends WorldsTogetherEntrypoint> List<T> getEntryPoints(boolean client, Class<T> select) {
+    private static <T extends BCLibEntryPoint> List<T> getEntryPoints(boolean client, Class<T> select) {
         return FabricLoader.getInstance()
                            .getEntrypoints(
-                                   client ? "worlds_together_client" : "worlds_together",
-                                   WorldsTogetherEntrypoint.class
+                                   client ? "bclib_client" : "bclib",
+                                   BCLibEntryPoint.class
                            )
                            .stream()
                            .filter(o -> select.isAssignableFrom(o.getClass()))
@@ -20,12 +20,12 @@ public class EntrypointUtil {
     }
 
     @ApiStatus.Internal
-    public static <T extends WorldsTogetherEntrypoint> List<T> getCommon(Class<T> select) {
+    public static <T extends BCLibEntryPoint> List<T> getCommon(Class<T> select) {
         return getEntryPoints(false, select);
     }
 
     @ApiStatus.Internal
-    public static <T extends WorldsTogetherEntrypoint> List<T> getClient(Class<T> select) {
+    public static <T extends BCLibEntryPoint> List<T> getClient(Class<T> select) {
         return getEntryPoints(true, select);
     }
 }
