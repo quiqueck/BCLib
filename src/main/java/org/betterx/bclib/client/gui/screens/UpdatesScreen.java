@@ -28,6 +28,7 @@ import net.fabricmc.loader.api.ModContainer;
 @Environment(EnvType.CLIENT)
 public class UpdatesScreen extends BCLibLayoutScreen {
     public static final String DONATION_URL = "https://www.paypal.com/donate/?hosted_button_id=7VTXYRXBHZQZJ";
+    static final ResourceLocation UPDATE_LOGO_LOCATION = new ResourceLocation(BCLib.MOD_ID, "icon_updater.png");
 
     public UpdatesScreen(Screen parent) {
         super(parent, Component.translatable("bclib.updates.title"), 10, 10, 10);
@@ -35,7 +36,7 @@ public class UpdatesScreen extends BCLibLayoutScreen {
 
     public ResourceLocation getUpdaterIcon(String modID) {
         if (modID.equals(BCLib.MOD_ID)) {
-            return BCLibLayoutScreen.BCLIB_LOGO_LOCATION;
+            return UPDATE_LOGO_LOCATION;
         }
         return EntrypointUtil.getCommon(VersionCheckEntryPoint.class)
                              .stream()
@@ -51,7 +52,7 @@ public class UpdatesScreen extends BCLibLayoutScreen {
         rows.addMultilineText(fill(), fit(), Component.translatable("bclib.updates.description"))
             .centerHorizontal();
 
-        rows.addSpacer(16);
+        rows.addSpacer(8);
 
         VersionChecker.forEachUpdate((mod, cur, updated) -> {
             ModContainer nfo = FabricLoader.getInstance().getModContainer(mod).orElse(null);
@@ -83,7 +84,7 @@ public class UpdatesScreen extends BCLibLayoutScreen {
         });
 
         VerticalStack layout = new VerticalStack(relative(1), fill()).centerHorizontal();
-        layout.addSpacer(8);
+        //layout.addSpacer(8);
         layout.addScrollable(rows);
         layout.addSpacer(8);
 
