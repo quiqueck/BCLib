@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class BCLibLayoutScreen extends LayoutScreenWithIcon {
     static final ResourceLocation BCLIB_LOGO_LOCATION = new ResourceLocation(BCLib.MOD_ID, "icon.png");
+    static final ResourceLocation BCLIB_LOGO_WHITE_LOCATION = new ResourceLocation(BCLib.MOD_ID, "icon_bright.png");
 
     public BCLibLayoutScreen(
             Component component

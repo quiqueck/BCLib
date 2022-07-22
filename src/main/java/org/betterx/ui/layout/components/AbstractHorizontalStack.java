@@ -39,7 +39,7 @@ public class AbstractHorizontalStack<S extends AbstractHorizontalStack<S>> exten
         return myHeight;
     }
 
-
+    
     @Override
     void setRelativeBounds(int left, int top) {
         super.setRelativeBounds(left, top);

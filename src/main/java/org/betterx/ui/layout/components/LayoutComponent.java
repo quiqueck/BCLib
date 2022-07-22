@@ -20,6 +20,7 @@ public abstract class LayoutComponent<R extends ComponentRenderer, L extends Lay
     protected final Value height;
     protected String debugName;
     protected Rectangle relativeBounds;
+    protected Rectangle screenBounds;
     protected Alignment vAlign = Alignment.MIN;
     protected Alignment hAlign = Alignment.MIN;
 
@@ -33,6 +34,7 @@ public abstract class LayoutComponent<R extends ComponentRenderer, L extends Lay
         updateContainerWidth(relativeBounds.width);
         updateContainerHeight(relativeBounds.height);
         setRelativeBounds(relativeBounds.left, relativeBounds.top);
+        updateScreenBounds(screenBounds.left, screenBounds.top);
     }
 
     protected int updateContainerWidth(int containerWidth) {
@@ -48,11 +50,19 @@ public abstract class LayoutComponent<R extends ComponentRenderer, L extends Lay
         onBoundsChanged();
     }
 
+    public void updateScreenBounds(int worldX, int worldY) {
+        screenBounds = relativeBounds.movedBy(worldX, worldY);
+    }
+
     protected void onBoundsChanged() {
     }
 
     public Rectangle getRelativeBounds() {
         return relativeBounds;
+    }
+
+    public Rectangle getScreenBounds() {
+        return screenBounds;
     }
 
     public abstract int getContentWidth();
@@ -83,9 +93,9 @@ public abstract class LayoutComponent<R extends ComponentRenderer, L extends Lay
         final int windowHeight = Minecraft.getInstance().getWindow().getHeight();
         RenderSystem.enableScissor(
                 (int) (clippingRect.left * uiScale),
-                (int) (windowHeight - (clippingRect.bottom() + 1) * uiScale),
+                (int) (windowHeight - (clippingRect.bottom()) * uiScale),
                 (int) (clippingRect.width * uiScale),
-                (int) ((clippingRect.height + 1) * uiScale)
+                (int) ((clippingRect.height) * uiScale)
         );
     }
 

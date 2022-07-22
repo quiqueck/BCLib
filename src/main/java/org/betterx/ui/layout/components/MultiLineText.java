@@ -96,8 +96,8 @@ public class MultiLineText extends LayoutComponent<MultiLineText.MultiLineTextRe
     }
 
     @Override
-    void setRelativeBounds(int left, int top) {
-        super.setRelativeBounds(left, top);
+    protected void onBoundsChanged() {
+        super.onBoundsChanged();
         multiLineLabel = createVanillaComponent();
     }
 

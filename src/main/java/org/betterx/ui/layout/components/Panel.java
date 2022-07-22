@@ -40,6 +40,7 @@ public class Panel implements ComponentWithBounds, RelativeContainerEventHandler
             child.updateContainerWidth(bounds.width);
             child.updateContainerHeight(bounds.height);
             child.setRelativeBounds(0, 0);
+            child.updateScreenBounds(bounds.left, bounds.top);
         }
     }
 

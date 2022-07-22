@@ -7,11 +7,15 @@ import org.betterx.bclib.api.v2.generator.config.BCLNetherBiomeSourceConfig;
 import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
 import org.betterx.bclib.registry.PresetsRegistry;
 import org.betterx.ui.layout.components.*;
+import org.betterx.ui.layout.components.render.RenderHelper;
+import org.betterx.ui.layout.values.Rectangle;
 import org.betterx.ui.layout.values.Size;
 import org.betterx.ui.vanilla.LayoutScreen;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
 import org.betterx.worlds.together.worldPreset.WorldGenSettingsComponentAccessor;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.client.gui.screens.worldselection.WorldCreationContext;
 import net.minecraft.core.Holder;
@@ -292,6 +296,10 @@ public class WorldSetupScreen extends LayoutScreen {
         return cols;
     }
 
+    Button netherButton, endButton;
+    VerticalScroll<?> scroller;
+    HorizontalStack title;
+
     @Override
     protected LayoutComponent<?, ?> initContent() {
         BCLEndBiomeSourceConfig endConfig = BCLEndBiomeSourceConfig.VANILLA;
@@ -317,12 +325,19 @@ public class WorldSetupScreen extends LayoutScreen {
 
         Tabs main = new Tabs(fill(), fill()).setPadding(8, 0, 0, 0);
         main.addPage(Component.translatable("title.bclib.the_nether"), VerticalScroll.create(netherPage));
-        main.addPage(Component.translatable("title.bclib.the_end"), VerticalScroll.create(endPage));
+        main.addSpacer(8);
+        main.addPage(Component.translatable("title.bclib.the_end"), scroller = VerticalScroll.create(endPage));
+        netherButton = main.getButton(0);
+        endButton = main.getButton(1);
 
-        HorizontalStack title = new HorizontalStack(fit(), fit()).setDebugName("title bar");
-        title.addIcon(BCLibLayoutScreen.BCLIB_LOGO_LOCATION, Size.of(512)).setDebugName("icon");
+        title = new HorizontalStack(fit(), fit()).setDebugName("title bar").alignBottom();
+        title.addImage(fixed(22), fixed(22), BCLibLayoutScreen.BCLIB_LOGO_WHITE_LOCATION, Size.of(256))
+             .setDebugName("icon");
         title.addSpacer(4);
-        title.add(super.buildTitle());
+        VerticalStack logos = title.addColumn(fit(), fit());
+        logos.addImage(fixed(178 / 3), fixed(40 / 3), WelcomeScreen.BETTERX_LOCATION, Size.of(178, 40));
+        logos.add(super.buildTitle());
+        logos.addSpacer(2);
 
         main.addFiller();
         main.addComponent(title);
@@ -336,6 +351,118 @@ public class WorldSetupScreen extends LayoutScreen {
             onClose();
         }).alignRight();
 
+        main.onPageChange((tabs, idx) -> {
+            targetT = 1 - idx;
+        });
+
         return rows;
+    }
+
+    @Override
+    protected void renderBackground(PoseStack poseStack, int i, int j, float f) {
+        GuiComponent.fill(poseStack, 0, 0, width, height, 0xBD343444);
+    }
+
+    record IconState(int left, int top, int size) {
+        //easing curves from https://easings.net/de
+        static double easeInOutQuint(double t) {
+            return t < 0.5 ? 16 * t * t * t * t * t : 1 - Math.pow(-2 * t + 2, 5) / 2;
+        }
+
+        static double easeOutBounce(double x) {
+            final double n1 = 7.5625;
+            final double d1 = 2.75;
+
+            if (x < 1 / d1) {
+                return n1 * x * x;
+            } else if (x < 2 / d1) {
+                return n1 * (x -= 1.5 / d1) * x + 0.75;
+            } else if (x < 2.5 / d1) {
+                return n1 * (x -= 2.25 / d1) * x + 0.9375;
+            } else {
+                return n1 * (x -= 2.625 / d1) * x + 0.984375;
+            }
+        }
+
+        static int lerp(double t, int x0, int x1) {
+            return (int) ((1 - t) * x0 + t * x1);
+        }
+    }
+
+    IconState netherOff, netherOn, endOff, endOn;
+    double iconT = 0.5;
+    double targetT = 1;
+
+    @Override
+    public void render(PoseStack poseStack, int i, int j, float f) {
+        super.render(poseStack, i, j, f);
+        final double SPEED = 0.05;
+        if (targetT < iconT && iconT > 0) iconT = Math.max(0, iconT - f * SPEED);
+        else if (targetT > iconT && iconT < 1) iconT = Math.min(1, iconT + f * SPEED);
+
+        final double t;
+        if (iconT > 0 && iconT < 1) {
+            if (targetT > iconT) {
+                t = IconState.easeOutBounce(iconT);
+            } else {
+                t = 1 - IconState.easeOutBounce(1 - iconT);
+            }
+        } else t = iconT;
+
+        if (endButton != null) {
+            if (endOff == null) {
+                endOff = new IconState(
+                        endButton.getScreenBounds().right() - 12,
+                        endButton.getScreenBounds().top - 7,
+                        16
+                );
+                endOn = new IconState(
+                        (title.getScreenBounds().left - endButton.getScreenBounds().right()) / 2
+                                + endButton.getScreenBounds().right()
+                                - 14,
+                        scroller.getScreenBounds().top - 16,
+                        32
+                );
+            }
+            poseStack.pushPose();
+            poseStack.translate(
+                    IconState.lerp(t, endOn.left, endOff.left),
+                    IconState.lerp(t, endOn.top, endOff.top),
+                    0
+            );
+            int size = IconState.lerp(t, endOn.size, endOff.size);
+            RenderHelper.renderImage(
+                    poseStack, size, size,
+                    WelcomeScreen.ICON_BETTEREND,
+                    new Rectangle(0, 0, 32, 32),
+                    Size.of(32), 1
+            );
+            poseStack.popPose();
+        }
+
+        if (netherButton != null) {
+            if (netherOff == null) {
+                netherOff = new IconState(
+                        netherButton.getScreenBounds().right() - 12,
+                        netherButton.getScreenBounds().top - 7,
+                        16
+                );
+                netherOn = endOn;
+            }
+            poseStack.pushPose();
+            poseStack.translate(
+                    IconState.lerp(t, netherOff.left, netherOn.left),
+                    IconState.lerp(t, netherOff.top, netherOn.top),
+                    0
+            );
+            int size = IconState.lerp(t, netherOff.size, netherOn.size);
+            RenderHelper.renderImage(
+                    poseStack, size, size,
+                    WelcomeScreen.ICON_BETTERNETHER,
+                    new Rectangle(0, 0, 32, 32),
+                    Size.of(32), 1
+            );
+            poseStack.popPose();
+        }
     }
 }

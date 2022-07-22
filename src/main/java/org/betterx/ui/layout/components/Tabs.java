@@ -12,6 +12,11 @@ import java.util.List;
 
 @Environment(EnvType.CLIENT)
 public class Tabs extends AbstractVerticalStack<Tabs> {
+    @FunctionalInterface
+    public interface OnPageChange {
+        void now(Tabs tabs, int pageIndex);
+    }
+
     private final HorizontalStack buttons;
     private final Container content;
 
@@ -19,6 +24,8 @@ public class Tabs extends AbstractVerticalStack<Tabs> {
     private final List<Button> buttonList = new LinkedList<>();
 
     private int initialPage = 0;
+
+    private OnPageChange onPageChange;
 
 
     public Tabs(Value width, Value height) {
@@ -45,8 +52,15 @@ public class Tabs extends AbstractVerticalStack<Tabs> {
             for (Container cc : pageList) {
                 cc.setVisible(cc == c);
             }
+
             for (Button bb : buttonList) {
                 bb.glow = bb == b;
+            }
+
+            if (onPageChange != null) {
+                for (int i = 0; i < buttonList.size(); i++) {
+                    if (buttonList.get(i).glow) onPageChange.now(this, i);
+                }
             }
         });
         buttons.add(b);
@@ -54,6 +68,15 @@ public class Tabs extends AbstractVerticalStack<Tabs> {
 
 
         return this;
+    }
+
+    public Tabs onPageChange(OnPageChange e) {
+        this.onPageChange = e;
+        return this;
+    }
+
+    public Button getButton(int idx) {
+        return buttonList.get(idx);
     }
 
     public Tabs setBackgroundColor(int color) {
@@ -108,9 +131,10 @@ public class Tabs extends AbstractVerticalStack<Tabs> {
         return this;
     }
 
+
     @Override
-    void setRelativeBounds(int left, int top) {
-        super.setRelativeBounds(left, top);
+    protected void onBoundsChanged() {
+        super.onBoundsChanged();
         selectPage(initialPage);
     }
 

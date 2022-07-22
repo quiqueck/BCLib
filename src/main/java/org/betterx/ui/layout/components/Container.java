@@ -210,6 +210,14 @@ public class Container extends LayoutComponent<Container.ContainerRenderer, Cont
     }
 
     @Override
+    public void updateScreenBounds(int worldX, int worldY) {
+        super.updateScreenBounds(worldX, worldY);
+        for (LayoutComponent<?, ?> c : children) {
+            c.updateScreenBounds(screenBounds.left, screenBounds.top);
+        }
+    }
+
+    @Override
     public void mouseMoved(double d, double e) {
         if (visible)
             RelativeContainerEventHandler.super.mouseMoved(d, e);

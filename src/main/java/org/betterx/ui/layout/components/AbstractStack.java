@@ -48,6 +48,15 @@ public abstract class AbstractStack<R extends ComponentRenderer, T extends Abstr
     }
 
     @Override
+    public void updateScreenBounds(int worldX, int worldY) {
+        super.updateScreenBounds(worldX, worldY);
+        for (LayoutComponent<?, ?> c : components) {
+            c.updateScreenBounds(screenBounds.left, screenBounds.top);
+        }
+    }
+
+
+    @Override
     protected void renderInBounds(
             PoseStack poseStack,
             int mouseX,

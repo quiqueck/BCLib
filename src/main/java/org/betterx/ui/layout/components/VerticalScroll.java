@@ -133,6 +133,12 @@ public class VerticalScroll<RS extends ScrollerRenderer> extends LayoutComponent
     }
 
     @Override
+    public void updateScreenBounds(int worldX, int worldY) {
+        super.updateScreenBounds(worldX, worldY);
+        child.updateScreenBounds(screenBounds.left, screenBounds.top);
+    }
+
+    @Override
     protected void renderInBounds(
             PoseStack poseStack,
             int mouseX,
