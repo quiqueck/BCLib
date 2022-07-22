@@ -5,6 +5,7 @@ import org.betterx.bclib.client.gui.screens.UpdatesScreen;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.networking.VersionChecker;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.ChatFormatting;
@@ -109,7 +110,12 @@ public class PrintInfo {
         ctx.getSource().sendSuccess(footer, false);
 
         if (withUI && BCLib.isClient() && Configs.CLIENT_CONFIG.showUpdateInfo() && !VersionChecker.isEmpty()) {
-            Minecraft.getInstance().setScreen(new UpdatesScreen(Minecraft.getInstance().screen));
+            if (!RenderSystem.isOnRenderThread()) {
+                RenderSystem.recordRenderCall(() -> Minecraft.getInstance()
+                                                             .setScreen(new UpdatesScreen(Minecraft.getInstance().screen)));
+            } else {
+                Minecraft.getInstance().setScreen(new UpdatesScreen(Minecraft.getInstance().screen));
+            }
         }
         return Command.SINGLE_SUCCESS;
     }
