@@ -5,6 +5,7 @@ import org.betterx.bclib.util.CollectionsUtil;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -118,7 +119,7 @@ public class BCLRecipeManager {
         if (item instanceof Block) {
             return Registry.BLOCK.getKey((Block) item) != Registry.BLOCK.getDefaultKey();
         } else {
-            return Registry.ITEM.getKey(item.asItem()) != Registry.ITEM.getDefaultKey();
+            return item != Items.AIR && Registry.ITEM.getKey(item.asItem()) != Registry.ITEM.getDefaultKey();
         }
     }
 

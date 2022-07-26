@@ -1,5 +1,6 @@
 package org.betterx.bclib.recipes;
 
+import org.betterx.bclib.BCLib;
 import org.betterx.bclib.config.PathConfig;
 
 import net.minecraft.core.NonNullList;
@@ -7,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.ItemLike;
 
@@ -101,25 +103,38 @@ public class GridRecipe {
     private NonNullList<Ingredient> getMaterials(int width, int height) {
         NonNullList<Ingredient> materials = NonNullList.withSize(width * height, Ingredient.EMPTY);
         int pos = 0;
+        boolean hasNonEmpty = false;
         for (String line : shape) {
             for (int i = 0; i < width; i++) {
                 char c = line.charAt(i);
                 Ingredient material = materialKeys.get(c);
+                if (material != null && !material.isEmpty()) hasNonEmpty = true;
                 materials.set(pos++, material == null ? Ingredient.EMPTY : material);
             }
         }
+        if (!hasNonEmpty) return null;
         return materials;
     }
 
+
     public void build() {
         if (!exist) {
+            BCLib.LOGGER.warning("Unable to build Recipe " + id);
             return;
         }
 
         int height = shape.length;
         int width = shape[0].length();
         ItemStack result = new ItemStack(output, count);
+        if (result.is(Items.AIR)) {
+            BCLib.LOGGER.warning("Unable to build Recipe " + id + ": Result is AIR");
+            return;
+        }
         NonNullList<Ingredient> materials = this.getMaterials(width, height);
+        if (materials == null || materials.isEmpty()) {
+            BCLib.LOGGER.warning("Unable to build Recipe " + id + ": Empty Material List");
+            return;
+        }
 
         CraftingRecipe recipe = shaped ? new ShapedRecipe(
                 id,
@@ -129,6 +144,7 @@ public class GridRecipe {
                 materials,
                 result
         ) : new ShapelessRecipe(id, group, result, materials);
+
         BCLRecipeManager.addRecipe(type, recipe);
     }
 }
