@@ -7,6 +7,7 @@ import org.betterx.bclib.api.v2.datafixer.DataFixerAPI;
 import org.betterx.bclib.api.v2.generator.BCLibEndBiomeSource;
 import org.betterx.bclib.api.v2.generator.config.BCLEndBiomeSourceConfig;
 import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
+import org.betterx.bclib.api.v2.poi.PoiManager;
 import org.betterx.bclib.api.v2.tag.TagAPI;
 import org.betterx.bclib.registry.PresetsRegistry;
 import org.betterx.worlds.together.tag.v3.TagManager;
@@ -43,6 +44,7 @@ public class LevelGenEvents {
         WorldEvents.ON_WORLD_LOAD.on(LevelGenEvents::onWorldLoad);
         WorldEvents.WORLD_REGISTRY_READY.on(LevelGenEvents::onRegistryReady);
         WorldEvents.ON_FINALIZE_LEVEL_STEM.on(LevelGenEvents::finalizeStem);
+        WorldEvents.ON_FINALIZED_WORLD_LOAD.on(LevelGenEvents::finalizedWorldLoad);
 
         WorldEvents.PATCH_WORLD.on(LevelGenEvents::patchExistingWorld);
         WorldEvents.ADAPT_WORLD_PRESET.on(LevelGenEvents::adaptWorldPresetSettings);
@@ -50,13 +52,13 @@ public class LevelGenEvents {
         WorldEvents.BEFORE_ADDING_TAGS.on(LevelGenEvents::appplyTags);
     }
 
+
     private static void appplyTags(
             String directory,
             Map<ResourceLocation, List<TagLoader.EntryWithSource>> tagsMap
     ) {
         //make sure we include Tags registered by the deprecated API
         TagAPI.apply(directory, tagsMap);
-
 
         if (directory.equals(TagManager.BIOMES.directory)) {
             InternalBiomeAPI._runBiomeTagAdders();
@@ -155,5 +157,9 @@ public class LevelGenEvents {
             LevelStem levelStem
     ) {
         InternalBiomeAPI.applyModifications(levelStem.generator().getBiomeSource(), dimension);
+    }
+
+    private static void finalizedWorldLoad(WorldGenSettings worldGenSettings) {
+        PoiManager.updateStates();
     }
 }

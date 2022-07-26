@@ -10,6 +10,7 @@ public class WorldEventsImpl {
 
     public static final EventImpl<OnWorldLoad> ON_WORLD_LOAD = new EventImpl<>();
     public static final EventImpl<OnFinalizeLevelStem> ON_FINALIZE_LEVEL_STEM = new EventImpl<>();
+    public static final EventImpl<OnFinalizeWorldLoad> ON_FINALIZED_WORLD_LOAD = new EventImpl<>();
 
     public static final PatchWorldEvent PATCH_WORLD = new PatchWorldEvent();
     public static final AdaptWorldPresetSettingEvent ADAPT_WORLD_PRESET = new AdaptWorldPresetSettingEvent();

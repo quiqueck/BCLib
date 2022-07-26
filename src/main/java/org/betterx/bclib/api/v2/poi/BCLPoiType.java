@@ -45,7 +45,7 @@ public class BCLPoiType {
     }
 
     public void setTag(TagKey<Block> tag) {
-        org.betterx.bclib.api.v2.poi.PoiManager.setTag(type, tag);
+        org.betterx.bclib.api.v2.poi.PoiManager.setTag(key, tag);
     }
 
     public Optional<BlockPos> findPoiAround(

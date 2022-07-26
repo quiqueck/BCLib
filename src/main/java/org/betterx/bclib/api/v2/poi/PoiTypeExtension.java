@@ -5,4 +5,5 @@ import net.minecraft.world.level.block.Block;
 
 public interface PoiTypeExtension {
     void bcl_setTag(TagKey<Block> tag);
+    TagKey<Block> bcl_getTag();
 }

@@ -313,6 +313,8 @@ public class WorldBootstrap {
         }
         BCLib.LOGGER.info(output);
         SurfaceRuleUtil.injectSurfaceRulesToAllDimensions(worldGenSettings);
+
+        WorldEventsImpl.ON_FINALIZED_WORLD_LOAD.emit(e -> e.done(worldGenSettings));
     }
 
     public static WorldGenSettings enforceInNewWorld(WorldGenSettings worldGenSettings) {
