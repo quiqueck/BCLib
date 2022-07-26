@@ -10,6 +10,7 @@ import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.client.render.BaseChestBlockEntityRenderer;
 import org.betterx.bclib.client.render.BaseSignBlockEntityRenderer;
 import org.betterx.bclib.config.Configs;
+import org.betterx.bclib.interfaces.Fuel;
 import org.betterx.bclib.interfaces.PostInitable;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.interfaces.TagProvider;
@@ -28,6 +29,7 @@ import net.minecraft.world.level.block.Block;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.registry.FuelRegistry;
 
 import com.google.common.collect.Lists;
 
@@ -147,6 +149,10 @@ public class PostInitAPI {
             itemTags.forEach(tag -> TagManager.ITEMS.add(tag, block.asItem()));
             blockTags.clear();
             itemTags.clear();
+        }
+
+        if (block instanceof Fuel fl) {
+            FuelRegistry.INSTANCE.add(block, fl.getFuelTime());
         }
     }
 }

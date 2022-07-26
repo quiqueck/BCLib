@@ -1,5 +1,6 @@
 package org.betterx.bclib.registry;
 
+import org.betterx.bclib.BCLib;
 import org.betterx.bclib.blocks.BaseLeavesBlock;
 import org.betterx.bclib.blocks.BaseOreBlock;
 import org.betterx.bclib.blocks.FeatureSaplingBlock;
@@ -29,20 +30,27 @@ public class BlockRegistry extends BaseRegistry<Block> {
 
     @Override
     public Block register(ResourceLocation id, Block block) {
+        System.out.println("Register Block " + id + ", " + Item.BY_BLOCK.containsKey(block));
         if (!config.getBooleanRoot(id.getNamespace(), true)) {
+            BCLib.LOGGER.warning("Block " + id + " disabled");
             return block;
         }
-
+        System.out.println("   has " + id + ", " + Item.BY_BLOCK.containsKey(block));
         BlockItem item = null;
         if (block instanceof CustomItemProvider) {
+            System.out.println("Get Item for " + id + ": CustomItemProvider");
             item = ((CustomItemProvider) block).getCustomItem(id, makeItemSettings());
         } else {
+            System.out.println("Get Item for " + id + ": BlockItem");
             item = new BlockItem(block, makeItemSettings());
+
         }
+        System.out.println("   has " + id + ", " + Item.BY_BLOCK.containsKey(block));
         registerBlockItem(id, item);
-        if (block.defaultBlockState().getMaterial().isFlammable() && FlammableBlockRegistry.getDefaultInstance()
-                                                                                           .get(block)
-                                                                                           .getBurnChance() == 0) {
+        if (block.defaultBlockState().getMaterial().isFlammable()
+                && FlammableBlockRegistry.getDefaultInstance()
+                                         .get(block)
+                                         .getBurnChance() == 0) {
             FlammableBlockRegistry.getDefaultInstance().add(block, 5, 5);
         }
 
@@ -80,7 +88,7 @@ public class BlockRegistry extends BaseRegistry<Block> {
         return Registry.register(Registry.BLOCK, id, block);
     }
 
-    private Item registerBlockItem(ResourceLocation id, Item item) {
+    private Item registerBlockItem(ResourceLocation id, BlockItem item) {
         registerItem(id, item);
         return item;
     }
