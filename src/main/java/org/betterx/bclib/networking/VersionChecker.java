@@ -130,7 +130,9 @@ public class VersionChecker implements Runnable {
                             registerMod(mod.n);
                     }
                     if (mod.n != null && mod.v != null && KNOWN_MODS.contains(mod.n)) {
-                        boolean isNew = ModUtil.isLargerVersion(mod.v, ModUtil.getModVersion(mod.n));
+                        String installedVersion = ModUtil.getModVersion(mod.n);
+                        boolean isNew = ModUtil.isLargerVersion(mod.v, installedVersion) && !installedVersion.equals(
+                                "0.0.0");
                         BCLib.LOGGER.info(" - " + mod.n + ":" + mod.v + (isNew ? " (update available)" : ""));
                         if (isNew)
                             NEW_VERSIONS.add(mod);
