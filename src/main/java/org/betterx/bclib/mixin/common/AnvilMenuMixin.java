@@ -58,14 +58,11 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu implements AnvilSc
         if (context != ContainerLevelAccess.NULL) {
             int level = context.evaluate((world, blockPos) -> {
                 Block anvilBlock = world.getBlockState(blockPos).getBlock();
-                if (anvilBlock instanceof LeveledAnvilBlock) {
-                    return ((LeveledAnvilBlock) anvilBlock).getCraftingLevel();
-                }
-                return 1;
-            }, 1);
+                return LeveledAnvilBlock.getAnvilCraftingLevel(anvilBlock);
+            }, 0);
             anvilLevel.set(level);
         } else {
-            anvilLevel.set(1);
+            anvilLevel.set(0);
         }
     }
 

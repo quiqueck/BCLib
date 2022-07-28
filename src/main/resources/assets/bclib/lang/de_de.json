@@ -83,6 +83,19 @@
   "title.config.bclib.client.ui.forceBetterXPreset": "BetterX als Standard-Welt-Typ verwenden",
   "description.config.bclib.client.ui.forceBetterXPreset": "Der Welt-Typ bestimmt, wie eine Welt generiert wird. In den meisten Fällen solltet BetterX als Standardeinstellung beibehalten werden (Du kannst den Typ jederzeit im Welt-Erstellen-Bildschirm ändern). Dieser Typ ist für maximale Kompatibilität zwischen DataPacks, unserer Mod und anderen Fabric-Mods optimiert. Außerdem bietet er einige einzigartige Funktionen für BetterNether und BetterEnd. Du solltest diese Option nur deaktivieren, wenn Du einen Grund dazu hast!",
   "warning.config.bclib.client.ui.forceBetterXPreset": "IN DEN MEISTEN FÄLLEN SOLLTE DIESE OPTION AKTIVIERT BLEIBEN.\n",
-  "emi.category.bclib.alloying": "Endsteinschmelzofen",
-  "tag.c.barrel": "Fässer"
+  "emi.category.bclib.alloying": "Legierungen",
+  "tag.c.barrel": "Fässer",
+  "emi.category.bclib.anvil_0": "Amboss (Stufe 0)",
+  "emi.category.bclib.anvil_1": "Amboss (Stufe I)",
+  "emi.category.bclib.anvil_2": "Amboss (Stufe II)",
+  "emi.category.bclib.anvil_3": "Amboss (Stufe III)",
+  "emi.category.bclib.anvil_4": "Amboss (Stufe IV)",
+  "emi.category.bclib.anvil_5": "Amboss (Stufe V)",
+  "tag.c.wooden_barrels": "Hölzerne Fässer Barrels",
+  "tag.c.workbench": "Werkbänke",
+  "tag.c.furnaces": "Brennöfen",
+  "tag.c.saplings": "Setzlinge",
+  "tag.c.hammers": "Hämmer",
+  "tag.c.leaves": "Blätter",
+  "tag.c.soul_ground": "Seelenböden"
 }

@@ -57,7 +57,7 @@ public class EMIAlloyingRecipe implements EmiRecipe {
 
     @Override
     public int getDisplayWidth() {
-        return 76;
+        return 96;
     }
 
     @Override
@@ -77,6 +77,6 @@ public class EMIAlloyingRecipe implements EmiRecipe {
         // Adds an output slot on the right
         // Note that output slots need to call `recipeContext` to inform EMI about their recipe context
         // This includes being able to resolve recipe trees, favorite stacks with recipe context, and more
-        widgets.addSlot(output.get(0), 58, 0).recipeContext(this);
+        widgets.addSlot(output.get(0), 78, 0).recipeContext(this);
     }
 }

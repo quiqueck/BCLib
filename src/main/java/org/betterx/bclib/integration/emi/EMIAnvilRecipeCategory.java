@@ -5,6 +5,7 @@ import org.betterx.bclib.util.RomanNumeral;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.math.Matrix4f;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -60,22 +61,22 @@ public class EMIAnvilRecipeCategory extends EmiRecipeCategory {
         final Font font = Minecraft.getInstance().font;
         final String content = RomanNumeral.toRoman(anvilLevel);
 
-        MultiBufferSource.BufferSource bufferSource = MultiBufferSource
-                .immediate(
-                        Tesselator.getInstance()
-                                  .getBuilder()
-                );
-        font.drawInBatch(
-                content,
-                x + 19 - 2 - font.width(content), y + 6 + 3,
-                0xFFFFFF,
-                true,
-                stack.last().pose(),
-                bufferSource,
-                false,
-                0,
-                0xF000F0
-        );
+        final MultiBufferSource.BufferSource bufferSource = MultiBufferSource
+                .immediate(Tesselator.getInstance().getBuilder());
+        final int xx = x + 19 - 2 - font.width(content);
+        final int yy = y + 6 + 3;
+        final Matrix4f matrix = stack.last().pose();
+
+        font.drawInBatch(content, xx - 1, yy - 1, 0xFF000000, false, matrix, bufferSource, false, 0, 0xF000F0);
+        font.drawInBatch(content, xx, yy - 1, 0xFF000000, false, matrix, bufferSource, false, 0, 0xF000F0);
+        font.drawInBatch(content, xx + 1, yy - 1, 0xFF000000, false, matrix, bufferSource, false, 0, 0xF000F0);
+        font.drawInBatch(content, xx - 1, yy, 0xFF000000, false, matrix, bufferSource, false, 0, 0xF000F0);
+        font.drawInBatch(content, xx + 1, yy, 0xFF000000, false, matrix, bufferSource, false, 0, 0xF000F0);
+        font.drawInBatch(content, xx - 1, yy + 1, 0xFF000000, false, matrix, bufferSource, false, 0, 0xF000F0);
+        font.drawInBatch(content, xx + 1, yy + 1, 0xFF000000, false, matrix, bufferSource, false, 0, 0xF000F0);
+        font.drawInBatch(content, xx, yy + 1, 0xFF000000, false, matrix, bufferSource, false, 0, 0xF000F0);
+
+        font.drawInBatch(content, xx, yy, 0xFFFFFFFF, true, matrix, bufferSource, false, 0, 0xF000F0);
         bufferSource.endBatch();
     }
 

@@ -69,20 +69,24 @@ public class EMIPlugin implements EmiPlugin {
 
             for (int anvilLevel = 0; anvilLevel <= maxAnvilLevel; anvilLevel++) {
                 int finalAnvilLevel = anvilLevel;
-                ANVIL_WORKSTATIONS[anvilLevel] = new AnvilEmiStack(LeveledAnvilBlock
+                ANVIL_WORKSTATIONS[anvilLevel] = EmiStack.of(LeveledAnvilBlock
                         .getAnvils()
                         .stream()
                         .filter(b -> LeveledAnvilBlock.canHandle(b, finalAnvilLevel))
                         .sorted(Comparator.comparingInt(LeveledAnvilBlock::getAnvilCraftingLevel))
                         .findFirst().orElse(Blocks.BARRIER)
                 );
-
                 ANVIL_CATEGORIES[anvilLevel] = new EMIAnvilRecipeCategory(
                         BCLib.makeID("anvil_" + anvilLevel),
                         ANVIL_WORKSTATIONS[anvilLevel],
                         getSprite(0, 0),
                         anvilLevel
                 );
+
+                if (anvilLevel > 0 && ANVIL_WORKSTATIONS[anvilLevel].isEqual(ANVIL_WORKSTATIONS[anvilLevel - 1])) {
+                    ANVIL_WORKSTATIONS[anvilLevel - 1] = ANVIL_WORKSTATIONS[anvilLevel];
+                    ANVIL_CATEGORIES[anvilLevel - 1] = ANVIL_CATEGORIES[anvilLevel];
+                }
             }
         }
     }
