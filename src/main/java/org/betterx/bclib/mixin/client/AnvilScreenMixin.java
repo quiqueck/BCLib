@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.screens.inventory.AnvilScreen;
 import net.minecraft.client.gui.screens.inventory.ItemCombinerScreen;
 import net.minecraft.network.chat.Component;
@@ -16,8 +17,7 @@ import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.item.ItemStack;
 
 import com.google.common.collect.Lists;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -25,6 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.List;
 
 @Mixin(AnvilScreen.class)
+@Implements(@Interface(iface = ContainerEventHandler.class, prefix = "bcl$"))
 public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
 
     @Shadow
@@ -43,6 +44,8 @@ public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
         be_buttons.clear();
         be_buttons.add(new Button(x + 8, y + 45, 15, 20, Component.literal("<"), b -> be_previousRecipe()));
         be_buttons.add(new Button(x + 154, y + 45, 15, 20, Component.literal(">"), b -> be_nextRecipe()));
+
+        be_buttons.forEach(button -> addWidget(button));
     }
 
     @Inject(method = "renderFg", at = @At("TAIL"))
@@ -76,8 +79,10 @@ public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
         ((AnvilScreenHandlerExtended) menu).be_previousRecipe();
     }
 
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+
+    @Intrinsic(displace = true)
+    //@Override
+    public boolean bcl$mouseClicked(double mouseX, double mouseY, int button) {
         if (minecraft != null) {
             for (AbstractWidget elem : be_buttons) {
                 if (elem.visible && elem.mouseClicked(mouseX, mouseY, button)) {
