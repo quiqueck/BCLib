@@ -32,6 +32,9 @@
     ],
     "worlds_together": [
       "org.betterx.bclib.registry.PresetsRegistry"
+    ],
+    "emi": [
+      "org.betterx.bclib.integration.emi.EMIPlugin"
     ]
   },
   "accessWidener": "bclib.accesswidener",

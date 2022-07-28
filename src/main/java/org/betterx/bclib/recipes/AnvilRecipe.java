@@ -6,8 +6,10 @@ import org.betterx.bclib.interfaces.UnknownReceipBookCategory;
 import org.betterx.bclib.util.ItemUtil;
 import org.betterx.bclib.util.RecipeHelper;
 import org.betterx.worlds.together.tag.v3.CommonItemTags;
+import org.betterx.worlds.together.world.event.WorldBootstrap;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
@@ -115,6 +117,12 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
         return this.output.copy();
     }
 
+    public static Iterable<Holder<Item>> getAllHammers() {
+        Registry<Item> registry = WorldBootstrap.getLastRegistryAccessOrElseBuiltin()
+                                                .registryOrThrow(CommonItemTags.HAMMERS.registry());
+        return registry.getTagOrEmpty(CommonItemTags.HAMMERS);
+    }
+
     public static int getHammerSlot(Container c) {
         ItemStack h = c.getItem(0);
         if (!h.isEmpty() && h.is(CommonItemTags.HAMMERS)) return 0;
@@ -182,18 +190,32 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
         return this.inputCount;
     }
 
+    public Ingredient getMainIngredient() {
+        return this.input;
+    }
+
     public int getAnvilLevel() {
         return this.anvilLevel;
+    }
+
+    public boolean canUse(Item tool) {
+        if (tool instanceof TieredItem ti) {
+            return ti.getTier().getLevel() >= toolLevel;
+        }
+        return false;
+    }
+
+    public static boolean isHammer(Item tool) {
+        if (tool == null) return false;
+        return tool.getDefaultInstance().is(CommonItemTags.HAMMERS);
     }
 
     @Override
     public NonNullList<Ingredient> getIngredients() {
         NonNullList<Ingredient> defaultedList = NonNullList.create();
         defaultedList.add(Ingredient.of(Registry.ITEM.stream()
-                                                     .filter(item -> item.builtInRegistryHolder()
-                                                                         .is(CommonItemTags.HAMMERS))
-                                                     .filter(hammer -> ((TieredItem) hammer).getTier()
-                                                                                            .getLevel() >= toolLevel)
+                                                     .filter(AnvilRecipe::isHammer)
+                                                     .filter(this::canUse)
                                                      .map(ItemStack::new))
         );
         defaultedList.add(input);

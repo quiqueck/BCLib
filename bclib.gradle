@@ -21,6 +21,7 @@ repositories {
     maven { url 'https://maven.blamejared.com' }
     maven { url 'https://jitpack.io' }
     maven { url 'https://maven.terraformersmc.com/releases' }
+    maven { url 'https://maven.terraformersmc.com' }
 }
 
 loom {
@@ -34,7 +35,8 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
 
-    //useApi "vazkii.patchouli:Patchouli:1.16.4-${project.patchouli_version}"
+    modCompileOnly "dev.emi:emi:${emi_version}"
+    //modImplementation "dev.emi:emi:${emi_version}"
 }
 
 processResources {
