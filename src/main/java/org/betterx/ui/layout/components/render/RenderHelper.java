@@ -36,7 +36,7 @@ public class RenderHelper {
         Matrix4f transform = poseStack.last().pose();
         innerHLine(transform, x0, x1, y0, color1);
         innerVLine(transform, x0, y0 + 1, y1, color1);
-        innerHLine(transform, x0 + 1, x1, y1, color1);
+        innerHLine(transform, x0 + 1, x1, y1, color2);
         innerVLine(transform, x1, y0 + 1, y1 - 1, color2);
     }
 

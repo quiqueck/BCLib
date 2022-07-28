@@ -70,27 +70,27 @@ public class EMIAnvilRecipe implements EmiRecipe {
 
     @Override
     public int getDisplayWidth() {
-        return 96;
+        return 104;
     }
 
     @Override
     public int getDisplayHeight() {
-        return 18;
+        return 26;
     }
 
     @Override
     public void addWidgets(WidgetHolder widgetHolder) {
         // Add an arrow texture to indicate processing
-        widgetHolder.addTexture(EmiTexture.EMPTY_ARROW, 46, 1);
+        widgetHolder.addTexture(EmiTexture.EMPTY_ARROW, 46, 5);
 
         // Adds an input slot on the left
-        widgetHolder.addSlot(input.get(0), 0, 0);
-        widgetHolder.addSlot(input.get(1), 20, 0);
+        widgetHolder.addSlot(input.get(0), 0, 4);
+        widgetHolder.addSlot(input.get(1), 20, 4).catalyst(true);
 
         // Adds an output slot on the right
         // Note that output slots need to call `recipeContext` to inform EMI about their recipe context
         // This includes being able to resolve recipe trees, favorite stacks with recipe context, and more
-        widgetHolder.addSlot(output.get(0), 78, 0).recipeContext(this);
+        widgetHolder.addSlot(output.get(0), 78, 0).output(true).recipeContext(this);
     }
 
     @Override

@@ -19,7 +19,7 @@ import java.util.Comparator;
 public class EMIPlugin implements EmiPlugin {
     private static boolean didInit = false;
     private static int maxAnvilLevel = 1;
-    public static final ResourceLocation MY_SPRITE_SHEET = BCLib.makeID(
+    public static final ResourceLocation BCL_SIMPLIFIED_SPRITES = BCLib.makeID(
             "textures/gui/widgets.png"
     );
 
@@ -30,7 +30,7 @@ public class EMIPlugin implements EmiPlugin {
     public static EmiStack[] ANVIL_WORKSTATIONS;
 
     public static EmiTexture getSprite(int u, int v) {
-        return new EmiTexture(MY_SPRITE_SHEET, u, v, 16, 16, 16, 16, 32, 32);
+        return new EmiTexture(BCL_SIMPLIFIED_SPRITES, u, v, 16, 16, 16, 16, 32, 32);
     }
 
     public void lazyInit() {
