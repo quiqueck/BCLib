@@ -79,4 +79,9 @@ public class EMIAlloyingRecipe implements EmiRecipe {
         // This includes being able to resolve recipe trees, favorite stacks with recipe context, and more
         widgets.addSlot(output.get(0), 78, 0).recipeContext(this);
     }
+
+    @Override
+    public boolean supportsRecipeTree() {
+        return true;
+    }
 }

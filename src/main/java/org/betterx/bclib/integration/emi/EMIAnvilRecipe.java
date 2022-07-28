@@ -27,8 +27,8 @@ public class EMIAnvilRecipe implements EmiRecipe {
 
     public EMIAnvilRecipe(AnvilRecipe recipe, Item hammer) {
         this.id = new ResourceLocation(
-                recipe.getId().getNamespace(),
-                recipe.getId().getPath() + "_" + hammer.getDescriptionId()
+                "emi",
+                recipe.getId().getNamespace() + "/" + recipe.getId().getPath() + "/" + hammer.getDescriptionId()
         );
         this.input = List.of(
                 EmiIngredient.of(recipe.getMainIngredient(), recipe.getInputCount()),
@@ -91,5 +91,15 @@ public class EMIAnvilRecipe implements EmiRecipe {
         // Note that output slots need to call `recipeContext` to inform EMI about their recipe context
         // This includes being able to resolve recipe trees, favorite stacks with recipe context, and more
         widgetHolder.addSlot(output.get(0), 78, 0).recipeContext(this);
+    }
+
+    @Override
+    public List<EmiIngredient> getCatalysts() {
+        return List.of(input.get(1));
+    }
+
+    @Override
+    public boolean supportsRecipeTree() {
+        return true;
     }
 }
