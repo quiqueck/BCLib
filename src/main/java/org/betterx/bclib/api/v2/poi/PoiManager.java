@@ -45,6 +45,7 @@ public class PoiManager {
     @ApiStatus.Internal
     public static void registerAll() {
         PoiManager.setTag(PoiTypes.FISHERMAN, CommonPoiTags.FISHERMAN_WORKSTATION);
+        PoiManager.setTag(PoiTypes.FARMER, CommonPoiTags.FARMER_WORKSTATION);
     }
 
 

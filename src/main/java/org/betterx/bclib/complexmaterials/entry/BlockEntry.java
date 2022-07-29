@@ -34,12 +34,14 @@ public class BlockEntry extends ComplexMaterialEntry {
         this.hasItem = hasItem;
     }
 
-    public BlockEntry setBlockTags(TagKey<Block>... blockTags) {
+    @SafeVarargs
+    public final BlockEntry setBlockTags(TagKey<Block>... blockTags) {
         this.blockTags = blockTags;
         return this;
     }
 
-    public BlockEntry setItemTags(TagKey<Item>... itemTags) {
+    @SafeVarargs
+    public final BlockEntry setItemTags(TagKey<Item>... itemTags) {
         this.itemTags = itemTags;
         return this;
     }

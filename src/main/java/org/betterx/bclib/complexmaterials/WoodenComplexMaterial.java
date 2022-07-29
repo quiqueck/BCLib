@@ -7,6 +7,7 @@ import org.betterx.bclib.complexmaterials.entry.RecipeEntry;
 import org.betterx.bclib.recipes.GridRecipe;
 import org.betterx.worlds.together.tag.v3.CommonBlockTags;
 import org.betterx.worlds.together.tag.v3.CommonItemTags;
+import org.betterx.worlds.together.tag.v3.CommonPoiTags;
 import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.resources.ResourceLocation;
@@ -216,22 +217,24 @@ public class WoodenComplexMaterial extends ComplexMaterial {
 
     final protected void initDecorations(FabricBlockSettings blockSettings, FabricItemSettings itemSettings) {
         addBlockEntry(new BlockEntry(
-                BLOCK_CRAFTING_TABLE,
-                (complexMaterial, settings) -> new BaseCraftingTableBlock(getBlock(BLOCK_PLANKS))
-        )
-                .setBlockTags(CommonBlockTags.WORKBENCHES)
-                .setItemTags(CommonItemTags.WORKBENCHES));
+                        BLOCK_CRAFTING_TABLE,
+                        (cmx, settings) -> new BaseCraftingTableBlock(getBlock(BLOCK_PLANKS))
+                )
+                        .setBlockTags(CommonBlockTags.WORKBENCHES)
+                        .setItemTags(CommonItemTags.WORKBENCHES)
+        );
 
         addBlockEntry(new BlockEntry(
                 BLOCK_BOOKSHELF,
-                (complexMaterial, settings) -> new BaseBookshelfBlock(getBlock(BLOCK_PLANKS))
+                (cmx, settings) -> new BaseBookshelfBlock(getBlock(BLOCK_PLANKS))
         )
                 .setBlockTags(CommonBlockTags.BOOKSHELVES));
 
         addBlockEntry(new BlockEntry(
                 BLOCK_COMPOSTER,
                 (complexMaterial, settings) -> new BaseComposterBlock(getBlock(BLOCK_PLANKS))
-        ));
+        )
+                .setBlockTags(CommonPoiTags.FARMER_WORKSTATION));
     }
 
     @Override
