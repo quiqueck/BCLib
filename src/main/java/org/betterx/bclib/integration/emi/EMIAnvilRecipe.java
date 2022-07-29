@@ -1,5 +1,6 @@
 package org.betterx.bclib.integration.emi;
 
+import org.betterx.bclib.BCLib;
 import org.betterx.bclib.recipes.AnvilRecipe;
 
 import net.minecraft.core.Holder;
@@ -17,6 +18,7 @@ import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
 
 import java.util.List;
+import java.util.stream.StreamSupport;
 import org.jetbrains.annotations.Nullable;
 
 public class EMIAnvilRecipe implements EmiRecipe {
@@ -28,7 +30,7 @@ public class EMIAnvilRecipe implements EmiRecipe {
     public EMIAnvilRecipe(AnvilRecipe recipe, Item hammer) {
         this.id = new ResourceLocation(
                 "emi",
-                recipe.getId().getNamespace() + "/" + recipe.getId().getPath() + "/" + hammer.getDescriptionId()
+                recipe.getId().getNamespace() + "/" + recipe.getId().getPath() + "/anvil/" + hammer.getDescriptionId()
         );
         this.input = List.of(
                 EmiIngredient.of(recipe.getMainIngredient(), recipe.getInputCount()),
@@ -40,12 +42,15 @@ public class EMIAnvilRecipe implements EmiRecipe {
 
     static void addAllRecipes(EmiRegistry emiRegistry, RecipeManager manager) {
         Iterable<Holder<Item>> hammers = AnvilRecipe.getAllHammers();
-        for (AnvilRecipe recipe : manager.getAllRecipesFor(AnvilRecipe.TYPE)) {
-            for (Holder<Item> hammer : hammers) {
-                if (recipe.canUse(hammer.value()))
-                    emiRegistry.addRecipe(new EMIAnvilRecipe(recipe, hammer.value()));
-            }
-        }
+        EMIPlugin.addAllRecipes(
+                emiRegistry, manager, BCLib.LOGGER,
+                AnvilRecipe.TYPE,
+                recipe -> StreamSupport.stream(hammers.spliterator(), false)
+                                       .map(Holder::value)
+                                       .filter(recipe::canUse)
+                                       .toList(),
+                EMIAnvilRecipe::new
+        );
     }
 
     @Override

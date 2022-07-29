@@ -3,18 +3,26 @@ package org.betterx.bclib.integration.emi;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.blocks.LeveledAnvilBlock;
 import org.betterx.bclib.interfaces.AlloyingRecipeWorkstation;
+import org.betterx.worlds.together.util.Logger;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Blocks;
 
 import dev.emi.emi.api.EmiPlugin;
 import dev.emi.emi.api.EmiRegistry;
+import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.recipe.EmiRecipeCategory;
 import dev.emi.emi.api.render.EmiTexture;
 import dev.emi.emi.api.stack.EmiStack;
 
 import java.util.Comparator;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public class EMIPlugin implements EmiPlugin {
     private static boolean didInit = false;
@@ -112,6 +120,48 @@ public class EMIPlugin implements EmiPlugin {
             EMIAnvilRecipe.addAllRecipes(emiRegistry, manager);
         }
     }
+
+    public static <C extends Container, T extends Recipe<C>, E extends EmiRecipe> void addAllRecipes(
+            EmiRegistry emiRegistry,
+            RecipeManager manager,
+            Logger logger,
+            RecipeType<T> recipeType,
+            Function<T, E> createRecipe
+    ) {
+        addAllRecipes(
+                emiRegistry,
+                manager,
+                logger,
+                recipeType,
+                (_ignored) -> null,
+                (recipe, _ignored) -> createRecipe.apply(recipe)
+        );
+    }
+
+    public static <C extends Container, T extends Recipe<C>, E extends EmiRecipe, V> void addAllRecipes(
+            EmiRegistry emiRegistry,
+            RecipeManager manager,
+            Logger logger,
+            RecipeType<T> recipeType,
+            Function<T, List<V>> variantSupplier,
+            BiFunction<T, V, E> createRecipe
+    ) {
+        for (T recipe : manager.getAllRecipesFor(recipeType)) {
+            List<V> variants = variantSupplier.apply(recipe);
+            if (variants == null) {
+                emiRegistry.addRecipe(createRecipe.apply(recipe, null));
+            } else {
+                for (V variantData : variants) {
+                    try {
+                        emiRegistry.addRecipe(createRecipe.apply(recipe, variantData));
+                    } catch (Exception e) {
+                        logger.error("Exception when parsing vanilla recipe " + recipe.getId(), e);
+                    }
+                }
+            }
+        }
+    }
+
 
     static EmiRecipeCategory getAnvilCategoryForLevel(int anvilLevel) {
         anvilLevel = Math.max(0, Math.min(ANVIL_CATEGORIES.length - 1, anvilLevel));

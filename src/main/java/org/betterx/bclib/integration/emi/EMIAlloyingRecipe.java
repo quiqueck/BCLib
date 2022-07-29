@@ -1,5 +1,6 @@
 package org.betterx.bclib.integration.emi;
 
+import org.betterx.bclib.BCLib;
 import org.betterx.bclib.recipes.AlloyingRecipe;
 
 import net.minecraft.world.Container;
@@ -23,8 +24,9 @@ public class EMIAlloyingRecipe extends EMIAbstractAlloyingRecipe<Container, Allo
     }
 
     static void addAllRecipes(EmiRegistry emiRegistry, RecipeManager manager) {
-        for (AlloyingRecipe recipe : manager.getAllRecipesFor(AlloyingRecipe.TYPE)) {
-            emiRegistry.addRecipe(new EMIAlloyingRecipe(recipe));
-        }
+        EMIPlugin.addAllRecipes(
+                emiRegistry, manager, BCLib.LOGGER,
+                AlloyingRecipe.TYPE, EMIAlloyingRecipe::new
+        );
     }
 }

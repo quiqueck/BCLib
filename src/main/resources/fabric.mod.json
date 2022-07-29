@@ -14,7 +14,7 @@
     "issues": "https://github.com/quiqueck/bclib/issues",
     "sources": "https://github.com/quiqueck/bclib"
   },
-  "license": "MIT",
+  "license": "MIT (CC BY-NC-SA 4.0 for some Assets)",
   "icon": "assets/bclib/icon.png",
   "environment": "*",
   "entrypoints": {

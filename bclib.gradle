@@ -76,6 +76,7 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 jar {
     from "LICENSE"
+    from "LICENSE.ASSETS"
 }
 
 artifacts {
