@@ -14,7 +14,8 @@
     "ModelManagerMixin",
     "PresetEditorMixin",
     "SignEditScreenMixin",
-    "TextureAtlasMixin"
+    "TextureAtlasMixin",
+    "boat.BoatRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
