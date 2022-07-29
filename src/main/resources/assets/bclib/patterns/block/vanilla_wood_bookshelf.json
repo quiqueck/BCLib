@@ -1,0 +1,7 @@
+{
+  "parent": "block/cube_column",
+  "textures": {
+    "end": "minecraft:block/%texture%_planks",
+    "side": "%modid%:block/%texture%_bookshelf"
+  }
+}

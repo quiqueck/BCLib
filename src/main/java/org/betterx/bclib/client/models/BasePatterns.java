@@ -59,4 +59,6 @@ public class BasePatterns {
     public final static ResourceLocation ITEM_HANDHELD = BCLib.makeID("patterns/item/pattern_item_handheld.json");
     public final static ResourceLocation ITEM_SPAWN_EGG = BCLib.makeID("patterns/item/pattern_item_spawn_egg.json");
 
+    public final static ResourceLocation VANILLA_WOOD_BOOKSHELF = BCLib.makeID(
+            "patterns/block/vanilla_wood_bookshelf.json");
 }

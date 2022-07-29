@@ -215,7 +215,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
                 .setItemTags(CommonItemTags.BARREL, CommonItemTags.WOODEN_BARREL));
     }
 
-    final protected void initDecorations(FabricBlockSettings blockSettings, FabricItemSettings itemSettings) {
+    protected void initDecorations(FabricBlockSettings blockSettings, FabricItemSettings itemSettings) {
         addBlockEntry(new BlockEntry(
                         BLOCK_CRAFTING_TABLE,
                         (cmx, settings) -> new BaseCraftingTableBlock(getBlock(BLOCK_PLANKS))

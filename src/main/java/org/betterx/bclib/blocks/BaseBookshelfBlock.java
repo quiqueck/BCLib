@@ -26,6 +26,22 @@ import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
 public class BaseBookshelfBlock extends BaseBlock {
+    public static class WithVanillaWood extends BaseBookshelfBlock {
+        public WithVanillaWood(Block source) {
+            super(source);
+        }
+
+        @Override
+        @Environment(EnvType.CLIENT)
+        public @Nullable BlockModel getBlockModel(ResourceLocation blockId, BlockState blockState) {
+            Optional<String> pattern = PatternsHelper.createJson(
+                    BasePatterns.VANILLA_WOOD_BOOKSHELF,
+                    replacePath(blockId)
+            );
+            return ModelsHelper.fromPattern(pattern);
+        }
+    }
+
     public BaseBookshelfBlock(Block source) {
         this(FabricBlockSettings.copyOf(source));
     }
@@ -53,7 +69,7 @@ public class BaseBookshelfBlock extends BaseBlock {
         return ModelsHelper.fromPattern(pattern);
     }
 
-    private ResourceLocation replacePath(ResourceLocation blockId) {
+    protected ResourceLocation replacePath(ResourceLocation blockId) {
         String newPath = blockId.getPath().replace("_bookshelf", "");
         return new ResourceLocation(blockId.getNamespace(), newPath);
     }
