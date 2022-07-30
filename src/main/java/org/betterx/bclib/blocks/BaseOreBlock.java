@@ -1,19 +1,25 @@
 package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.bclib.interfaces.TagProvider;
 import org.betterx.bclib.util.LootUtil;
 import org.betterx.bclib.util.MHelper;
+import org.betterx.worlds.together.tag.v3.MineableTags;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TieredItem;
+import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DropExperienceBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,7 +34,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvider {
+public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvider, TagProvider {
     private final Supplier<Item> dropItem;
     private final int minCount;
     private final int maxCount;
@@ -127,5 +133,18 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
     @Override
     public BlockModel getItemModel(ResourceLocation resourceLocation) {
         return getBlockModel(resourceLocation, defaultBlockState());
+    }
+
+    @Override
+    public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
+        if (this.miningLevel == Tiers.STONE.getLevel()) {
+            blockTags.add(BlockTags.NEEDS_STONE_TOOL);
+        } else if (this.miningLevel == Tiers.IRON.getLevel()) {
+            blockTags.add(BlockTags.NEEDS_IRON_TOOL);
+        } else if (this.miningLevel == Tiers.DIAMOND.getLevel()) {
+            blockTags.add(BlockTags.NEEDS_DIAMOND_TOOL);
+        } else if (this.miningLevel == Tiers.NETHERITE.getLevel()) {
+            blockTags.add(MineableTags.NEEDS_NETHERITE_TOOL);
+        }
     }
 }

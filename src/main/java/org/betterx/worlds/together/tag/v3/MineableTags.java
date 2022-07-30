@@ -16,6 +16,8 @@ public class MineableTags {
     public static final TagKey<Block> SWORD = FabricMineableTags.SWORD_MINEABLE;
     public static final TagKey<Block> HAMMER = TagManager.BLOCKS.makeCommonTag("mineable/hammer");
 
+    public static final TagKey<Block> NEEDS_NETHERITE_TOOL = TagManager.BLOCKS.makeCommonTag("needs_netherite_tool");
+
     static void prepareTags() {
     }
 }
