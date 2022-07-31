@@ -350,9 +350,10 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
                 BCLib.LOGGER.debug("Can't add Anvil recipe {}! Ingeredient or output not exists.", id);
                 return;
             }
-            BCLRecipeManager.addRecipe(
+            BCLRecipeManager.addRecipeAndCreateAdvancement(
                     TYPE,
-                    new AnvilRecipe(id, input, output, inputCount, toolLevel, anvilLevel, damage)
+                    new AnvilRecipe(id, input, output, inputCount, toolLevel, anvilLevel, damage),
+                    false
             );
         }
     }

@@ -84,7 +84,7 @@ public class FurnaceRecipe {
                 xp,
                 time
         );
-        BCLRecipeManager.addRecipe(RecipeType.SMELTING, recipe);
+        BCLRecipeManager.addRecipeAndCreateAdvancement(RecipeType.SMELTING, recipe, false);
 
         if (blasting) {
             BlastingRecipe recipe2 = new BlastingRecipe(
@@ -95,7 +95,7 @@ public class FurnaceRecipe {
                     xp,
                     time / 2
             );
-            BCLRecipeManager.addRecipe(RecipeType.BLASTING, recipe2);
+            BCLRecipeManager.addRecipeAndCreateAdvancement(RecipeType.BLASTING, recipe2, false);
         }
 
         if (campfire) {
@@ -107,7 +107,7 @@ public class FurnaceRecipe {
                     xp,
                     time * 3
             );
-            BCLRecipeManager.addRecipe(RecipeType.CAMPFIRE_COOKING, recipe2);
+            BCLRecipeManager.addRecipeAndCreateAdvancement(RecipeType.CAMPFIRE_COOKING, recipe2, false);
         }
 
         if (smoker) {
@@ -119,7 +119,7 @@ public class FurnaceRecipe {
                     xp,
                     time / 2
             );
-            BCLRecipeManager.addRecipe(RecipeType.SMOKING, recipe2);
+            BCLRecipeManager.addRecipeAndCreateAdvancement(RecipeType.SMOKING, recipe2, false);
         }
     }
 }

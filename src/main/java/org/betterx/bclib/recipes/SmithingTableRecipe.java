@@ -99,6 +99,6 @@ public class SmithingTableRecipe {
             return;
         }
 
-        BCLRecipeManager.addRecipe(TYPE, new UpgradeRecipe(id, base, addition, result));
+        BCLRecipeManager.addRecipeAndCreateAdvancement(TYPE, new UpgradeRecipe(id, base, addition, result));
     }
 }

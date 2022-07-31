@@ -145,6 +145,6 @@ public class GridRecipe {
                 result
         ) : new ShapelessRecipe(id, group, result, materials);
 
-        BCLRecipeManager.addRecipe(type, recipe);
+        BCLRecipeManager.addRecipeAndCreateAdvancement(type, recipe);
     }
 }

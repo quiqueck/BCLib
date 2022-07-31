@@ -31,6 +31,7 @@
     "RecipeManagerAccessor",
     "RecipeManagerMixin",
     "RegistryAccessMixin",
+    "ServerAdvancementManagerMixin",
     "ServerLevelMixin",
     "ShovelItemAccessor",
     "StructuresAccessor",
