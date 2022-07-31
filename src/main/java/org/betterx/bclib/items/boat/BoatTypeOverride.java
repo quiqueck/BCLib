@@ -36,9 +36,11 @@ public final class BoatTypeOverride {
         this.name = name;
         this.planks = planks;
         int nr = Objects.hash(name);
+        if (nr >= 0 && nr <= 1000) nr += 1000;
         while (byId(nr) != null) {
-            nr++;
             BCLib.LOGGER.warning("Boat Type Ordinal " + nr + " is already used, searching for another one");
+            nr++;
+            if (nr >= 0 && nr <= 1000) nr += 1000;
         }
         this.ordinal = nr;
         if (BCLib.isClient()) {

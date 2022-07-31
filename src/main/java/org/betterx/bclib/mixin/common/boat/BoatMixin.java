@@ -6,8 +6,6 @@ import org.betterx.bclib.items.boat.CustomBoatTypeOverride;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.vehicle.Boat;
@@ -18,7 +16,9 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -26,27 +26,45 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Boat.class)
 public abstract class BoatMixin extends Entity implements CustomBoatTypeOverride {
-    private static final EntityDataAccessor<Integer> DATA_CUSTOM_ID_TYPE = SynchedEntityData.defineId(
-            Boat.class,
-            EntityDataSerializers.INT
-    );
+    private BoatTypeOverride bcl_type = null;
+    @Shadow
+    @Final
+    private static EntityDataAccessor<Integer> DATA_ID_TYPE;
 
     public BoatMixin(EntityType<?> entityType, Level level) {
         super(entityType, level);
     }
 
     public void setCustomType(BoatTypeOverride type) {
-        this.entityData.set(DATA_CUSTOM_ID_TYPE, type != null ? type.ordinal() : -1);
+        bcl_type = type;
+        if (type == null)
+            this.entityData.set(DATA_ID_TYPE, Boat.Type.OAK.ordinal());
+        else
+            this.entityData.set(DATA_ID_TYPE, bcl_type.ordinal());
     }
 
     public BoatTypeOverride bcl_getCustomType() {
-        return BoatTypeOverride.byId(this.entityData.get(DATA_CUSTOM_ID_TYPE));
+        bcl_type = BoatTypeOverride.byId(this.entityData.get(DATA_ID_TYPE));
+        return bcl_type;
     }
 
-    @Inject(method = "defineSynchedData", at = @At("TAIL"))
-    void bcl_adddefineSynchedData(CallbackInfo ci) {
-        this.entityData.define(DATA_CUSTOM_ID_TYPE, -1);
+    @Inject(method = "setType", at = @At("HEAD"), cancellable = true)
+    void bcl_setType(Boat.Type type, CallbackInfo ci) {
+        if (bcl_type != null) {
+            this.entityData.set(DATA_ID_TYPE, bcl_type.ordinal());
+            ci.cancel();
+        }
     }
+
+    @Inject(method = "getBoatType", at = @At("HEAD"), cancellable = true)
+    void bcl_getBoatType(CallbackInfoReturnable<Boat.Type> cir) {
+        BoatTypeOverride type = BoatTypeOverride.byId(this.entityData.get(DATA_ID_TYPE));
+        if (type != null) {
+            bcl_type = type;
+            cir.setReturnValue(Boat.Type.OAK);
+        }
+    }
+
 
     @Inject(method = "addAdditionalSaveData", at = @At("HEAD"))
     void bcl_addAdditionalSaveData(CompoundTag compoundTag, CallbackInfo ci) {
