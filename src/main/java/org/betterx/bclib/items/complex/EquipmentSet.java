@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class EquipmentSet {
     public final Tier material;
-    public final String prefix;
+    public final String baseName;
     public final String modID;
     public final ItemLike stick;
 
@@ -25,14 +25,14 @@ public abstract class EquipmentSet {
     public static final String SHEARS_SLOT = "shears";
     public static final String HELMET_SLOT = "helmet";
     public static final String CHESTPLATE_SLOT = "chestplate";
-    public static final String LEGGINS_SLOT = "leggings";
+    public static final String LEGGINGS_SLOT = "leggings";
     public static final String BOOTS_SLOT = "boots";
 
     private final Map<String, EquipmentDescription<?>> descriptions = new HashMap<>();
 
-    public EquipmentSet(Tier material, String modID, String prefix, ItemLike stick) {
+    public EquipmentSet(Tier material, String modID, String baseName, ItemLike stick) {
         this.material = material;
-        this.prefix = prefix;
+        this.baseName = baseName;
         this.modID = modID;
         this.stick = stick;
     }
@@ -51,7 +51,7 @@ public abstract class EquipmentSet {
 
     @NotNull
     protected ResourceLocation buildID(Map.Entry<String, EquipmentDescription<?>> desc) {
-        return new ResourceLocation(modID, prefix + "_" + desc.getKey());
+        return new ResourceLocation(modID, baseName + "_" + desc.getKey());
     }
 
     public <I extends Item> I getSlot(String slot) {

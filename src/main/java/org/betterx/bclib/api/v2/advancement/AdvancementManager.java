@@ -1,11 +1,19 @@
 package org.betterx.bclib.api.v2.advancement;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.levelgen.structures.BCLStructure;
+import org.betterx.bclib.complexmaterials.WoodenComplexMaterial;
+import org.betterx.bclib.items.complex.EquipmentSet;
+
 import net.minecraft.advancements.*;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
+import net.minecraft.advancements.critereon.LocationPredicate;
+import net.minecraft.advancements.critereon.PlayerTrigger;
 import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.core.Registry;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
@@ -13,8 +21,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.levelgen.structure.Structure;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.ApiStatus;
@@ -110,31 +124,31 @@ public class AdvancementManager {
             return new Builder(id, type);
         }
 
-        public static Builder create(Item item) {
-            return create(item, AdvancementType.REGULAR);
+        public static Builder create(Item icon) {
+            return create(icon, AdvancementType.REGULAR);
         }
 
-        public static Builder create(ItemStack item) {
-            return create(item, AdvancementType.REGULAR);
+        public static Builder create(ItemStack icon) {
+            return create(icon, AdvancementType.REGULAR);
         }
 
-        public static Builder create(ItemLike item, AdvancementType type) {
-            return create(new ItemStack(item), type);
+        public static Builder create(ItemLike icon, AdvancementType type) {
+            return create(new ItemStack(icon), type);
         }
 
-        public static Builder create(ItemStack item, AdvancementType type) {
-            return create(item, type, (displayBuilder) -> {
+        public static Builder create(ItemStack icon, AdvancementType type) {
+            return create(icon, type, (displayBuilder) -> {
             });
         }
 
-        public static Builder create(Item item, AdvancementType type, Consumer<DisplayBuilder> displayAdapter) {
-            return create(new ItemStack(item), type, displayAdapter);
+        public static Builder create(Item icon, AdvancementType type, Consumer<DisplayBuilder> displayAdapter) {
+            return create(new ItemStack(icon), type, displayAdapter);
         }
 
-        public static Builder create(ItemStack item, AdvancementType type, Consumer<DisplayBuilder> displayAdapter) {
-            var id = Registry.ITEM.getKey(item.getItem());
+        public static Builder create(ItemStack icon, AdvancementType type, Consumer<DisplayBuilder> displayAdapter) {
+            var id = Registry.ITEM.getKey(icon.getItem());
             boolean canBuild = true;
-            if (id == null || item.is(Items.AIR)) {
+            if (id == null || icon.is(Items.AIR)) {
                 canBuild = false;
                 id = Registry.ITEM.getDefaultKey();
             }
@@ -142,7 +156,7 @@ public class AdvancementManager {
             String baseName = "advancements." + id.getNamespace() + "." + id.getPath() + ".";
             Builder b = new Builder(id, type);
             var displayBuilder = b.startDisplay(
-                    item,
+                    icon,
                     Component.translatable(baseName + "title"),
                     Component.translatable(baseName + "description")
             );
@@ -172,7 +186,7 @@ public class AdvancementManager {
             return this;
         }
 
-        public DisplayBuilder startDisplay(Item icon) {
+        public DisplayBuilder startDisplay(ItemLike icon) {
             String baseName = "advancements." + id.getNamespace() + "." + id.getPath() + ".";
             return startDisplay(
                     icon,
@@ -230,6 +244,10 @@ public class AdvancementManager {
             return this;
         }
 
+        public Builder rewardXP(int xp) {
+            return rewards(AdvancementRewards.Builder.experience(500).build());
+        }
+
         public Builder addCriterion(String string, CriterionTriggerInstance criterionTriggerInstance) {
             builder.addCriterion(string, new Criterion(criterionTriggerInstance));
             return this;
@@ -238,6 +256,21 @@ public class AdvancementManager {
         public Builder addCriterion(String string, Criterion criterion) {
             builder.addCriterion(string, criterion);
             return this;
+        }
+
+        public Builder addAtStructureCriterion(String name, BCLStructure<?> structure) {
+            return addAtStructureCriterion(name, structure.structureKey);
+        }
+
+        public Builder addAtStructureCriterion(String name, ResourceKey<Structure> structure) {
+            return addCriterion(
+                    name,
+                    PlayerTrigger
+                            .TriggerInstance
+                            .located(
+                                    LocationPredicate.inStructure(structure)
+                            )
+            );
         }
 
         public <C extends Container, T extends Recipe<C>> Builder addRecipeUnlockCriterion(String name, T recipe) {
@@ -258,6 +291,47 @@ public class AdvancementManager {
             );
         }
 
+        public Builder addEquipmentSetSlotCriterion(EquipmentSet set, String slot) {
+            return addInventoryChangedCriterion(
+                    set.baseName + "_" + slot,
+                    set.getSlot(slot)
+            );
+        }
+
+        public Builder addArmorSetCriterion(EquipmentSet set) {
+            return addEquipmentSetSlotCriterion(set, EquipmentSet.HELMET_SLOT)
+                    .addEquipmentSetSlotCriterion(set, EquipmentSet.CHESTPLATE_SLOT)
+                    .addEquipmentSetSlotCriterion(set, EquipmentSet.LEGGINGS_SLOT)
+                    .addEquipmentSetSlotCriterion(set, EquipmentSet.BOOTS_SLOT);
+        }
+
+        public Builder addToolSetCriterion(EquipmentSet set) {
+            return addEquipmentSetSlotCriterion(set, EquipmentSet.PICKAXE_SLOT)
+                    .addEquipmentSetSlotCriterion(set, EquipmentSet.AXE_SLOT)
+                    .addEquipmentSetSlotCriterion(set, EquipmentSet.SHOVEL_SLOT)
+                    .addEquipmentSetSlotCriterion(set, EquipmentSet.SWORD_SLOT)
+                    .addEquipmentSetSlotCriterion(set, EquipmentSet.HOE_SLOT);
+        }
+
+        public Builder addWoodCriterion(WoodenComplexMaterial mat) {
+            return addInventoryChangedCriterion(
+                    mat.getBaseName(),
+                    mat.getBlock(WoodenComplexMaterial.BLOCK_LOG),
+                    mat.getBlock(WoodenComplexMaterial.BLOCK_BARK),
+                    mat.getBlock(WoodenComplexMaterial.BLOCK_PLANKS)
+            );
+        }
+
+        public Builder addVisitBiomesCriterion(List<ResourceKey<Biome>> list) {
+            for (ResourceKey<Biome> resourceKey : list) {
+                addCriterion(
+                        resourceKey.location().toString(),
+                        PlayerTrigger.TriggerInstance.located(LocationPredicate.inBiome(resourceKey))
+                );
+            }
+            return this;
+        }
+
         public Builder requirements(RequirementsStrategy requirementsStrategy) {
             builder.requirements(requirementsStrategy);
             return this;
@@ -265,6 +339,12 @@ public class AdvancementManager {
 
         public Builder requirements(String[][] strings) {
             builder.requirements(strings);
+            return this;
+        }
+
+        public Builder printDebugJson() {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            BCLib.LOGGER.info(gson.toJson(builder.serializeToJson()));
             return this;
         }
 
