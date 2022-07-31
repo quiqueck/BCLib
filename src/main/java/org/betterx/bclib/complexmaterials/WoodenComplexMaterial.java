@@ -18,9 +18,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MaterialColor;
 
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 
@@ -83,13 +83,13 @@ public class WoodenComplexMaterial extends ComplexMaterial {
     }
 
     @Override
-    protected void initDefault(FabricBlockSettings blockSettings, FabricItemSettings itemSettings) {
+    protected void initDefault(BlockBehaviour.Properties blockSettings, Item.Properties itemSettings) {
         initBase(blockSettings, itemSettings);
         initStorage(blockSettings, itemSettings);
         initDecorations(blockSettings, itemSettings);
     }
 
-    final protected void initBase(FabricBlockSettings blockSettings, FabricItemSettings itemSettings) {
+    final protected void initBase(BlockBehaviour.Properties blockSettings, Item.Properties itemSettings) {
         TagKey<Block> tagBlockLog = getBlockTag(TAG_LOGS);
         TagKey<Item> tagItemLog = getItemTag(TAG_LOGS);
 
@@ -199,7 +199,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
                 .setItemTags(ItemTags.SIGNS));
     }
 
-    final protected void initStorage(FabricBlockSettings blockSettings, FabricItemSettings itemSettings) {
+    final protected void initStorage(BlockBehaviour.Properties blockSettings, Item.Properties itemSettings) {
         addBlockEntry(new BlockEntry(
                 BLOCK_CHEST,
                 (complexMaterial, settings) -> new BaseChestBlock(getBlock(BLOCK_PLANKS))
@@ -215,7 +215,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
                 .setItemTags(CommonItemTags.BARREL, CommonItemTags.WOODEN_BARREL));
     }
 
-    protected void initDecorations(FabricBlockSettings blockSettings, FabricItemSettings itemSettings) {
+    protected void initDecorations(BlockBehaviour.Properties blockSettings, Item.Properties itemSettings) {
         addBlockEntry(new BlockEntry(
                         BLOCK_CRAFTING_TABLE,
                         (cmx, settings) -> new BaseCraftingTableBlock(getBlock(BLOCK_PLANKS))
