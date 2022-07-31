@@ -305,7 +305,7 @@ public class AdvancementManager {
         }
 
         public DisplayBuilder description(Component value) {
-            display.title = value;
+            display.description = value;
             return this;
         }
 
