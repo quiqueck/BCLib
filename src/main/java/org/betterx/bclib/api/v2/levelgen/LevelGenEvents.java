@@ -8,7 +8,6 @@ import org.betterx.bclib.api.v2.generator.BCLibEndBiomeSource;
 import org.betterx.bclib.api.v2.generator.config.BCLEndBiomeSourceConfig;
 import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
 import org.betterx.bclib.api.v2.poi.PoiManager;
-import org.betterx.bclib.api.v2.tag.TagAPI;
 import org.betterx.bclib.registry.PresetsRegistry;
 import org.betterx.worlds.together.tag.v3.TagManager;
 import org.betterx.worlds.together.world.WorldConfig;
@@ -57,9 +56,6 @@ public class LevelGenEvents {
             String directory,
             Map<ResourceLocation, List<TagLoader.EntryWithSource>> tagsMap
     ) {
-        //make sure we include Tags registered by the deprecated API
-        TagAPI.apply(directory, tagsMap);
-
         if (directory.equals(TagManager.BIOMES.directory)) {
             InternalBiomeAPI._runBiomeTagAdders();
         }

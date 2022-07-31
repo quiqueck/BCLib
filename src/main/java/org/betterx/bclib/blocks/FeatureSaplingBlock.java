@@ -1,7 +1,6 @@
 package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.api.v3.levelgen.features.BCLConfigureFeature;
-import org.betterx.bclib.api.v3.levelgen.features.BCLFeature;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
@@ -25,7 +24,6 @@ import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.material.Material;
@@ -40,7 +38,6 @@ import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import org.jetbrains.annotations.Nullable;
 
 public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfiguration> extends SaplingBlock implements RenderLayerProvider, BlockModelProvider {
@@ -84,54 +81,8 @@ public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfig
         this.feature = featureSupplier;
     }
 
-    @Deprecated(forRemoval = true)
-    public FeatureSaplingBlock(Function<BlockState, org.betterx.bclib.api.v2.levelgen.features.BCLFeature> featureSupplier) {
-        this(
-                FabricBlockSettings.of(Material.PLANT)
-                                   .collidable(false)
-                                   .instabreak()
-                                   .sound(SoundType.GRASS)
-                                   .randomTicks(),
-                featureSupplier
-        );
-    }
-
-    @Deprecated(forRemoval = true)
-    public FeatureSaplingBlock(
-            int light,
-            Function<BlockState, org.betterx.bclib.api.v2.levelgen.features.BCLFeature> featureSupplier
-    ) {
-        this(
-                FabricBlockSettings.of(Material.PLANT)
-                                   .collidable(false)
-                                   .luminance(light)
-                                   .instabreak()
-                                   .sound(SoundType.GRASS)
-                                   .randomTicks(),
-                featureSupplier
-        );
-    }
-
-    @Deprecated(forRemoval = true)
-    public FeatureSaplingBlock(
-            BlockBehaviour.Properties properties,
-            Function<BlockState, org.betterx.bclib.api.v2.levelgen.features.BCLFeature> featureSupplier
-    ) {
-        super(null, properties);
-        this.feature = (s) -> featureSupplier.apply(s).getConfFeature();
-    }
-
     protected BCLConfigureFeature<F, FC> getConfiguredFeature(BlockState state) {
         return feature != null ? feature.get(state) : null;
-    }
-
-    @Deprecated(forRemoval = true)
-    protected org.betterx.bclib.api.v2.levelgen.features.BCLFeature getFeature(BlockState state) {
-        return new org.betterx.bclib.api.v2.levelgen.features.BCLFeature(new BCLFeature<>(
-                getConfiguredFeature(state),
-                null,
-                GenerationStep.Decoration.TOP_LAYER_MODIFICATION
-        ));
     }
 
     @Override
@@ -159,9 +110,8 @@ public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfig
 
     @Override
     public void advanceTree(ServerLevel world, BlockPos pos, BlockState blockState, RandomSource random) {
-        var conf = getConfiguredFeature(blockState);
-        if (conf == null) getFeature(blockState).place(world, pos, random);
-        else conf.placeInWorld(world, pos, random);
+        BCLConfigureFeature<F, FC> conf = getConfiguredFeature(blockState);
+        conf.placeInWorld(world, pos, random);
     }
 
     @Override

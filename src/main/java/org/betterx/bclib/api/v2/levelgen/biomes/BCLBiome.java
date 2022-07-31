@@ -227,15 +227,6 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
         this(ResourceKey.create(Registry.BIOME_REGISTRY, biomeID), null);
     }
 
-    /**
-     * Create wrapper for existing biome using biome instance from {@link BuiltinRegistries}.
-     *
-     * @param biomeToRegister {@link Biome} to wrap.
-     */
-    @Deprecated(forRemoval = true)
-    protected BCLBiome(Biome biomeToRegister) {
-        this(biomeToRegister, null);
-    }
 
     /**
      * Create wrapper for existing biome using biome instance from {@link BuiltinRegistries}.
@@ -243,21 +234,11 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
      * @param biomeToRegister {@link Biome} to wrap.
      * @param settings        The Settings for this Biome or {@code null} if you want to apply default settings
      */
-    @Deprecated(forRemoval = true)
-    protected BCLBiome(Biome biomeToRegister, VanillaBiomeSettings settings) {
+    @ApiStatus.Internal
+    BCLBiome(Biome biomeToRegister, VanillaBiomeSettings settings) {
         this(BiomeAPI.getBiomeID(biomeToRegister), biomeToRegister, settings);
     }
 
-    /**
-     * Create wrapper for existing biome using biome instance from {@link BuiltinRegistries}.
-     *
-     * @param biomeToRegister {@link Biome} to wrap.
-     * @param biomeID         Teh ResoureLocation for this Biome
-     */
-    @Deprecated(forRemoval = true)
-    public BCLBiome(ResourceLocation biomeID, Biome biomeToRegister) {
-        this(biomeID, biomeToRegister, (BCLBiomeSettings) null);
-    }
 
     /**
      * Create wrapper for existing biome using biome instance from {@link BuiltinRegistries}.
@@ -434,18 +415,6 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
         return biomeID;
     }
 
-
-    /**
-     * Getter for biome from buil-in registry. For datapack biomes will be same as actual biome.
-     *
-     * @return {@link Biome}.
-     */
-    @Deprecated(forRemoval = true)
-    public Biome getBiome() {
-        if (biomeToRegister != null) return biomeToRegister;
-        return BiomeAPI.getFromBuiltinRegistry(biomeKey).value();
-    }
-
     /**
      * Getter for biomeKey
      *
@@ -464,58 +433,6 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
      */
     void afterRegistration() {
 
-    }
-
-
-    /**
-     * Getter for custom data. Will get custom data object or null if object doesn't exists.
-     *
-     * @param name {@link String} name of data object.
-     * @return object value or null.
-     */
-    @Nullable
-    @SuppressWarnings("unchecked")
-    @Deprecated(forRemoval = true)
-    public <T> T getCustomData(String name) {
-        return (T) customData.get(name);
-    }
-
-    /**
-     * Getter for custom data. Will get custom data object or default value if object doesn't exists.
-     *
-     * @param name         {@link String} name of data object.
-     * @param defaultValue object default value.
-     * @return object value or default value.
-     */
-    @SuppressWarnings("unchecked")
-    @Deprecated(forRemoval = true)
-    public <T> T getCustomData(String name, T defaultValue) {
-        return (T) customData.getOrDefault(name, defaultValue);
-    }
-
-    /**
-     * Adds custom data object to this biome instance.
-     *
-     * @param name {@link String} name of data object.
-     * @param obj  any data to add.
-     * @return same {@link BCLBiome}.
-     */
-    @Deprecated(forRemoval = true)
-    public BCLBiome addCustomData(String name, Object obj) {
-        customData.put(name, obj);
-        return this;
-    }
-
-    /**
-     * Adds custom data object to this biome instance.
-     *
-     * @param data a {@link Map} with custom data.
-     * @return same {@link BCLBiome}.
-     */
-    @Deprecated(forRemoval = true)
-    public BCLBiome addCustomData(Map<String, Object> data) {
-        customData.putAll(data);
-        return this;
     }
 
     @Override

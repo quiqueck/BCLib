@@ -11,8 +11,6 @@ import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfigur
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import java.util.function.Function;
-
 public abstract class FeatureHangingSaplingBlock<F extends Feature<FC>, FC extends FeatureConfiguration> extends FeatureSaplingBlock {
 
     private static final VoxelShape SHAPE = Block.box(4, 2, 4, 12, 16, 12);
@@ -31,27 +29,6 @@ public abstract class FeatureHangingSaplingBlock<F extends Feature<FC>, FC exten
     public FeatureHangingSaplingBlock(
             BlockBehaviour.Properties properties,
             FeatureSupplier<F, FC> featureSupplier
-    ) {
-        super(properties, featureSupplier);
-    }
-
-    @Deprecated(forRemoval = true)
-    public FeatureHangingSaplingBlock(Function<BlockState, org.betterx.bclib.api.v2.levelgen.features.BCLFeature> featureSupplier) {
-        super(featureSupplier);
-    }
-
-    @Deprecated(forRemoval = true)
-    public FeatureHangingSaplingBlock(
-            Function<BlockState, org.betterx.bclib.api.v2.levelgen.features.BCLFeature> featureSupplier,
-            int light
-    ) {
-        super(light, featureSupplier);
-    }
-
-    @Deprecated(forRemoval = true)
-    public FeatureHangingSaplingBlock(
-            BlockBehaviour.Properties properties,
-            Function<BlockState, org.betterx.bclib.api.v2.levelgen.features.BCLFeature> featureSupplier
     ) {
         super(properties, featureSupplier);
     }

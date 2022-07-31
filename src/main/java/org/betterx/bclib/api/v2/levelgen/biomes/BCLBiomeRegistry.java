@@ -59,11 +59,6 @@ public class BCLBiomeRegistry {
         return codec.codec();
     }
 
-    @Deprecated(forRemoval = true)
-    public static ResourceKey<BCLBiome> register(BCLBiome biome) {
-        return register(null, biome);
-    }
-
     /**
      * Register new Biome Data
      *

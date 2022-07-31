@@ -21,7 +21,7 @@ public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> 
             new PlaceBlockFeature<>(PlaceFacingBlockConfig.CODEC)
     );
 
-    
+
     public static final Feature<TemplateFeatureConfig> TEMPLATE = register(
             BCLib.makeID("template"),
             new TemplateFeature(
@@ -53,8 +53,7 @@ public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> 
     public final GenerationStep.Decoration decoration;
 
     @ApiStatus.Internal
-    @Deprecated(forRemoval = true)
-    public BCLFeature(
+    BCLFeature(
             BCLConfigureFeature<F, FC> configuredFeature,
             Holder<PlacedFeature> placed,
             GenerationStep.Decoration decoration

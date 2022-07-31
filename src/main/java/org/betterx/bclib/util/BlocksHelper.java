@@ -7,7 +7,6 @@ import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.ClipContext.Fluid;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -324,17 +323,6 @@ public class BlocksHelper {
 
     public static boolean isLava(BlockState state) {
         return state.getFluidState().getType() instanceof LavaFluid;
-    }
-
-    /**
-     * Check if block is {@link Fluid} or not.
-     *
-     * @param state - {@link BlockState} to check.
-     * @return {@code true} if block is fluid and {@code false} if not.
-     */
-    @Deprecated(forRemoval = true)
-    public static boolean isFluidOld(BlockState state) {
-        return !state.getFluidState().isEmpty();
     }
 
     public static boolean isFluid(BlockState state) {

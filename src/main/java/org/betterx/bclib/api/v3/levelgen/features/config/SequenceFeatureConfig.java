@@ -1,6 +1,6 @@
 package org.betterx.bclib.api.v3.levelgen.features.config;
 
-import org.betterx.bclib.api.v2.levelgen.features.BCLFeature;
+import org.betterx.bclib.api.v3.levelgen.features.BCLFeature;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -23,11 +23,7 @@ public class SequenceFeatureConfig implements FeatureConfiguration {
 
     private final List<Holder<PlacedFeature>> features;
 
-    public static SequenceFeatureConfig create(List<BCLFeature<?, ?>> features) {
-        return new SequenceFeatureConfig(features.stream().map(f -> f.getPlacedFeature()).toList());
-    }
-
-    public static SequenceFeatureConfig createSequence(List<org.betterx.bclib.api.v3.levelgen.features.BCLFeature<?, ?>> features) {
+    public static SequenceFeatureConfig createSequence(List<BCLFeature<?, ?>> features) {
         return new SequenceFeatureConfig(features.stream().map(f -> f.getPlacedFeature()).toList());
     }
 

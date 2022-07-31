@@ -1,8 +1,8 @@
 package org.betterx.bclib.api.v2.levelgen.biomes;
 
-import org.betterx.bclib.api.v2.levelgen.features.BCLFeature;
 import org.betterx.bclib.api.v2.levelgen.structures.BCLStructure;
 import org.betterx.bclib.api.v2.levelgen.surface.SurfaceRuleBuilder;
+import org.betterx.bclib.api.v3.levelgen.features.BCLFeature;
 import org.betterx.bclib.entity.BCLEntityWrapper;
 import org.betterx.bclib.mixin.common.BiomeGenerationSettingsAccessor;
 import org.betterx.bclib.util.CollectionsUtil;
@@ -46,7 +46,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 public class BCLBiomeBuilder {
@@ -601,15 +600,6 @@ public class BCLBiomeBuilder {
         return this;
     }
 
-    /**
-     * Adds new feature to the biome.
-     *
-     * @param feature {@link BCLFeature}.
-     * @return same {@link BCLBiomeBuilder} instance.
-     */
-    public BCLBiomeBuilder feature(BCLFeature feature) {
-        return feature(feature.getDecoration(), feature.getPlacedFeature());
-    }
 
     /**
      * Adds new feature to the biome.
@@ -617,7 +607,7 @@ public class BCLBiomeBuilder {
      * @param feature {@link BCLFeature}.
      * @return same {@link BCLBiomeBuilder} instance.
      */
-    public BCLBiomeBuilder feature(org.betterx.bclib.api.v3.levelgen.features.BCLFeature feature) {
+    public BCLBiomeBuilder feature(BCLFeature feature) {
         return feature(feature.decoration, feature.placedFeature);
     }
 
@@ -863,17 +853,6 @@ public class BCLBiomeBuilder {
         return build((BiomeSupplier<BCLBiome>) BCLBiome::new);
     }
 
-    /**
-     * Finalize biome creation.
-     *
-     * @param biomeConstructor {@link BiFunction} biome constructor.
-     * @return created {@link BCLBiome} instance.
-     * @deprecated Replaced with {@link #build(BiomeSupplier)}
-     */
-    @Deprecated(forRemoval = true)
-    public <T extends BCLBiome> T build(BiFunction<ResourceLocation, Biome, T> biomeConstructor) {
-        return build((id, biome, settings) -> biomeConstructor.apply(id, biome));
-    }
 
     /**
      * Finalize biome creation.

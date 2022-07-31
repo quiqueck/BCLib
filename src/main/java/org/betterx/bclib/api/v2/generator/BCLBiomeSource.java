@@ -1,7 +1,6 @@
 package org.betterx.bclib.api.v2.generator;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
 import org.betterx.worlds.together.biomesource.BiomeSourceFromRegistry;
 import org.betterx.worlds.together.biomesource.BiomeSourceHelper;
@@ -35,7 +34,6 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
                                                                              .location()
                                                                              .toString()))
                        .toList();
-        biomes.forEach(biome -> BiomeAPI.sortBiomeFeatures(biome));
         return biomes;
     }
 

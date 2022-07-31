@@ -2,7 +2,6 @@ package org.betterx.bclib.api.v2.poi;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.ai.village.poi.PoiManager;
@@ -96,23 +95,5 @@ public class BCLPoiType {
                 .findFirst();
 
         return record.map(poiRecord -> poiRecord.getPos());
-    }
-
-    /**
-     * @param location
-     * @param matchingStates
-     * @param maxTickets
-     * @param validRanges
-     * @return
-     * @deprecated Please use {@link org.betterx.bclib.api.v2.poi.PoiManager#register(ResourceLocation, Set, int, int)} instead
-     */
-    @Deprecated(forRemoval = true)
-    public static BCLPoiType register(
-            ResourceLocation location,
-            Set<BlockState> matchingStates,
-            int maxTickets,
-            int validRanges
-    ) {
-        return org.betterx.bclib.api.v2.poi.PoiManager.register(location, matchingStates, maxTickets, validRanges);
     }
 }

@@ -1,8 +1,8 @@
 package org.betterx.bclib.client.gui.screens;
 
 import org.betterx.bclib.api.v2.dataexchange.handler.autosync.HelloClient;
-import org.betterx.bclib.client.gui.gridlayout.GridLayout;
 import org.betterx.bclib.util.Triple;
+import org.betterx.ui.ColorUtil;
 import org.betterx.ui.layout.components.HorizontalStack;
 import org.betterx.ui.layout.components.LayoutComponent;
 import org.betterx.ui.layout.components.Text;
@@ -196,29 +196,29 @@ public class ModListScreen extends BCLibLayoutScreen {
                  final int state = t.second;
                  final String stateString = t.third;
 
-                 int color = GridLayout.COLOR_RED;
+                 int color = ColorUtil.RED;
                  final String typeText;
                  if (state == STATE_VERSION || state == STATE_VERSION_NOT_OFFERED || state == STATE_VERSION_CLIENT_ONLY) {
                      typeText = "[VERSION]";
                      if (state == STATE_VERSION_NOT_OFFERED) {
-                         color = GridLayout.COLOR_YELLOW;
+                         color = ColorUtil.YELLOW;
                      } else if (state == STATE_VERSION_CLIENT_ONLY) {
-                         color = GridLayout.COLOR_DARK_GREEN;
+                         color = ColorUtil.DARK_GREEN;
                      }
                  } else if (state == STATE_MISSING || state == STATE_MISSING_NOT_OFFERED) {
                      typeText = "[MISSING]";
                      if (state == STATE_MISSING_NOT_OFFERED) {
-                         color = GridLayout.COLOR_YELLOW;
+                         color = ColorUtil.YELLOW;
                      }
                  } else if (state == STATE_SERVER_MISSING || state == STATE_SERVER_MISSING_CLIENT_MOD) {
                      if (state == STATE_SERVER_MISSING_CLIENT_MOD) {
-                         color = GridLayout.COLOR_CYAN;
+                         color = ColorUtil.AQUA;
                          typeText = "[OK]";
                      } else {
                          typeText = "[NOT ON SERVER]";
                      }
                  } else {
-                     color = GridLayout.COLOR_DARK_GREEN;
+                     color = ColorUtil.DARK_GREEN;
                      typeText = "[OK]";
                  }
                  Component dash = Component.literal("-");
@@ -237,7 +237,7 @@ public class ModListScreen extends BCLibLayoutScreen {
                      row = grid.addRow();
                      row.addSpacer(4 + dashText.getContentWidth());
                      row.addText(fit(), fit(), Component.literal(stateString))
-                        .setColor(GridLayout.COLOR_GRAY);
+                        .setColor(ColorUtil.GRAY);
                  }
 
                  grid.addSpacer(4);

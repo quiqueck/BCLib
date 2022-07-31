@@ -1,7 +1,6 @@
 package org.betterx.bclib.integration;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.levelgen.features.BCLFeature;
 import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.core.Holder;
@@ -14,9 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
 import net.fabricmc.loader.api.FabricLoader;
@@ -64,25 +61,6 @@ public abstract class ModIntegration {
         return FabricLoader.getInstance().isModLoaded(modID);
     }
 
-    @Deprecated(forRemoval = true)
-    public BCLFeature getFeature(String featureID, String placedFeatureID, GenerationStep.Decoration featureStep) {
-        ResourceLocation id = getID(featureID);
-        Feature<?> feature = Registry.FEATURE.get(id);
-        Holder<PlacedFeature> featurePlaced = BuiltinRegistries.PLACED_FEATURE.getHolder(getFeatureKey(placedFeatureID))
-                                                                              .orElse(null);
-        return new BCLFeature(
-                id,
-                feature,
-                featureStep,
-                featurePlaced.value().getFeatures().map(f -> f.config()).findFirst().orElse(null),
-                featurePlaced
-        );
-    }
-
-    @Deprecated(forRemoval = true)
-    public BCLFeature getFeature(String name, GenerationStep.Decoration featureStep) {
-        return getFeature(name, name, featureStep);
-    }
 
     public ConfiguredFeature<?, ?> getConfiguredFeature(String name) {
         return BuiltinRegistries.CONFIGURED_FEATURE.get(getID(name));

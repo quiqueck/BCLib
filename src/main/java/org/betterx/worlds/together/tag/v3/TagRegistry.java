@@ -1,6 +1,5 @@
 package org.betterx.worlds.together.tag.v3;
 
-import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.worlds.together.WorldsTogether;
 
 import net.minecraft.core.DefaultedRegistry;
@@ -94,24 +93,6 @@ public class TagRegistry<T> {
             Set<TagEntry> set = getSetForTag(tagID);
             for (ResourceKey<Biome> element : elements) {
                 ResourceLocation id = element.location();
-                if (id != null) {
-                    set.add(TagEntry.element(id));
-                }
-            }
-        }
-
-        /**
-         * Adds one Tag to multiple Elements.
-         *
-         * @param tagID    {@link TagKey< Biome >} tag ID.
-         * @param elements array of Elements to add into tag.
-         */
-        @Deprecated(forRemoval = true)
-        public void add(TagKey<Biome> tagID, BCLBiome... elements) {
-            if (isFrozen) WorldsTogether.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
-            Set<TagEntry> set = getSetForTag(tagID);
-            for (BCLBiome element : elements) {
-                ResourceLocation id = element.getID();
                 if (id != null) {
                     set.add(TagEntry.element(id));
                 }
@@ -270,25 +251,6 @@ public class TagRegistry<T> {
 
     protected void add(T element, TagKey<T>... tagIDs) {
         for (TagKey<T> tagID : tagIDs) {
-            add(tagID, element);
-        }
-    }
-
-    @Deprecated(forRemoval = true)
-    protected void add(ResourceLocation tagID, T... elements) {
-        if (isFrozen) WorldsTogether.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
-        Set<TagEntry> set = getSetForTag(tagID);
-        for (T element : elements) {
-            ResourceLocation id = locationProvider.apply(element);
-            if (id != null) {
-                set.add(TagEntry.element(id));
-            }
-        }
-    }
-
-    @Deprecated(forRemoval = true)
-    protected void add(T element, ResourceLocation... tagIDs) {
-        for (ResourceLocation tagID : tagIDs) {
             add(tagID, element);
         }
     }
