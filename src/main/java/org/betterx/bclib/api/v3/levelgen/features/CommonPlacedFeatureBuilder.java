@@ -398,16 +398,16 @@ abstract class CommonPlacedFeatureBuilder<F extends Feature<FC>, FC extends Feat
         return (T) this.count(countPerLayer)
                        .squarePlacement()
                        .randomHeight4FromFloorCeil()
-                       .onWalls(16, 0)
-                       .onlyInBiome();
+                       .onlyInBiome()
+                       .onWalls(16, 0);
     }
 
     public T betterNetherInWall(int countPerLayer) {
         return (T) this.count(countPerLayer)
                        .squarePlacement()
                        .randomHeight4FromFloorCeil()
-                       .onWalls(16, 1)
-                       .onlyInBiome();
+                       .onlyInBiome()
+                       .onWalls(16, 1);
     }
 
     /**
