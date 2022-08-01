@@ -25,8 +25,9 @@ public class PillarFeature extends Feature<PillarFeatureConfig> {
         int maxHeight = config.maxHeight.sample(rnd);
         int minHeight = config.minHeight.sample(rnd);
         BlockPos.MutableBlockPos posnow = featurePlaceContext.origin().mutable();
+        posnow.move(config.direction);
 
-        for (height = 0; height < maxHeight; ++height) {
+        for (height = 1; height < maxHeight; ++height) {
             if (!config.allowedPlacement.test(level, posnow)) {
                 maxHeight = height;
                 break;
