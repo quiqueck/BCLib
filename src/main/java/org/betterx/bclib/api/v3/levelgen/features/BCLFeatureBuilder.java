@@ -57,7 +57,7 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
      *
      * @param featureID {@link ResourceLocation} feature identifier.
      * @param feature   {@link Feature} to construct.
-     * @return {@link org.betterx.bclib.api.v2.levelgen.features.BCLFeatureBuilder} instance.
+     * @return {@link BCLFeatureBuilder} instance.
      */
     public static <F extends Feature<FC>, FC extends FeatureConfiguration> WithConfiguration<F, FC> start(
             ResourceLocation featureID,
