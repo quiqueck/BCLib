@@ -63,6 +63,7 @@ public class BCLRecipeManager {
         list.put(recipe.getId(), recipe);
     }
 
+    @Deprecated(forRemoval = true)
     public static <C extends Container, T extends Recipe<C>> void addRecipeAndCreateAdvancement(
             RecipeType<T> type,
             T recipe
@@ -71,6 +72,7 @@ public class BCLRecipeManager {
         registerAndCreateAdvancement(recipe, recipe.getResultItem().getItem() instanceof TieredItem);
     }
 
+    @Deprecated(forRemoval = true)
     public static <C extends Container, T extends Recipe<C>> void addRecipeAndCreateAdvancement(
             RecipeType<T> type,
             T recipe,
@@ -80,6 +82,7 @@ public class BCLRecipeManager {
         registerAndCreateAdvancement(recipe, isTool);
     }
 
+    @Deprecated(forRemoval = true)
     public static <C extends Container, T extends Recipe<C>> ResourceLocation registerAndCreateAdvancement(
             T recipe,
             boolean isTool

@@ -7,7 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.ItemLike;
 
-public class FurnaceRecipe {
+public class FurnaceRecipe extends AbstractAdvancementRecipe {
     private static final FurnaceRecipe INSTANCE = new FurnaceRecipe();
 
     private ResourceLocation id;
@@ -31,6 +31,8 @@ public class FurnaceRecipe {
         INSTANCE.time = 200;
         INSTANCE.xp = 0;
         INSTANCE.exist = BCLRecipeManager.exists(output) && BCLRecipeManager.exists(input);
+        INSTANCE.createAdvancement(INSTANCE.id, false);
+        INSTANCE.unlockedBy(input);
         return INSTANCE;
     }
 
@@ -84,7 +86,8 @@ public class FurnaceRecipe {
                 xp,
                 time
         );
-        BCLRecipeManager.addRecipeAndCreateAdvancement(RecipeType.SMELTING, recipe, false);
+        BCLRecipeManager.addRecipe(RecipeType.SMELTING, recipe);
+        registerAdvancement(recipe);
 
         if (blasting) {
             BlastingRecipe recipe2 = new BlastingRecipe(
@@ -95,7 +98,8 @@ public class FurnaceRecipe {
                     xp,
                     time / 2
             );
-            BCLRecipeManager.addRecipeAndCreateAdvancement(RecipeType.BLASTING, recipe2, false);
+            BCLRecipeManager.addRecipe(RecipeType.BLASTING, recipe2);
+            registerAdvancement(recipe2);
         }
 
         if (campfire) {
@@ -107,7 +111,9 @@ public class FurnaceRecipe {
                     xp,
                     time * 3
             );
-            BCLRecipeManager.addRecipeAndCreateAdvancement(RecipeType.CAMPFIRE_COOKING, recipe2, false);
+
+            BCLRecipeManager.addRecipe(RecipeType.CAMPFIRE_COOKING, recipe2);
+            registerAdvancement(recipe2);
         }
 
         if (smoker) {
@@ -119,7 +125,9 @@ public class FurnaceRecipe {
                     xp,
                     time / 2
             );
-            BCLRecipeManager.addRecipeAndCreateAdvancement(RecipeType.SMOKING, recipe2, false);
+
+            BCLRecipeManager.addRecipe(RecipeType.SMOKING, recipe2);
+            registerAdvancement(recipe2);
         }
     }
 }

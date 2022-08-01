@@ -6,15 +6,13 @@ import org.betterx.bclib.complexmaterials.WoodenComplexMaterial;
 import org.betterx.bclib.items.complex.EquipmentSet;
 
 import net.minecraft.advancements.*;
-import net.minecraft.advancements.critereon.InventoryChangeTrigger;
-import net.minecraft.advancements.critereon.LocationPredicate;
-import net.minecraft.advancements.critereon.PlayerTrigger;
-import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.advancements.critereon.*;
 import net.minecraft.core.Registry;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -116,6 +114,10 @@ public class AdvancementManager {
             this.type = type;
         }
 
+        public static Builder createEmptyCopy(Builder builder) {
+            return new Builder(builder.id, builder.type);
+        }
+
         public static Builder create(ResourceLocation id) {
             return new Builder(id, AdvancementType.REGULAR);
         }
@@ -169,11 +171,12 @@ public class AdvancementManager {
         public static <C extends Container, T extends Recipe<C>> Builder createRecipe(T recipe, AdvancementType type) {
             Item item = recipe.getResultItem().getItem();
             return create(item, type, displayBuilder -> displayBuilder.hideToast().hideFromChat())
-                    .awardRecipe(item)
-                    .addRecipeUnlockCriterion(
-                            "has_the_recipe",
-                            recipe
-                    );
+                    //.awardRecipe(item)
+                    .addRecipeUnlockCriterion("has_the_recipe", recipe)
+                    .startReward()
+                    .addRecipe(recipe.getId())
+                    .endReward()
+                    .requirements(RequirementsStrategy.OR);
         }
 
         public Builder parent(Advancement advancement) {
@@ -277,11 +280,7 @@ public class AdvancementManager {
             return addCriterion(
                     name,
                     RecipeUnlockedTrigger.unlocked(recipe.getId())
-            )
-                    .startReward()
-                    .addRecipe(recipe.getId())
-                    .endReward()
-                    .requirements(RequirementsStrategy.OR);
+            );
         }
 
         public Builder addInventoryChangedCriterion(String name, ItemLike... items) {
@@ -290,6 +289,24 @@ public class AdvancementManager {
                     InventoryChangeTrigger.TriggerInstance.hasItems(items)
             );
         }
+
+        public Builder addInventoryChangedCriterion(String name, TagKey<Item> tag) {
+            return addCriterion(
+                    name,
+                    InventoryChangeTrigger.TriggerInstance.hasItems(new ItemPredicate(
+                            tag,
+                            null,
+                            MinMaxBounds.Ints.ANY,
+                            MinMaxBounds.Ints.ANY,
+                            EnchantmentPredicate.NONE,
+                            EnchantmentPredicate.NONE,
+                            null,
+                            NbtPredicate.ANY
+                    ))
+            );
+        }
+
+        //
 
         public Builder addEquipmentSetSlotCriterion(EquipmentSet set, String slot) {
             return addInventoryChangedCriterion(
@@ -350,6 +367,11 @@ public class AdvancementManager {
 
         public ResourceLocation buildAndRegister() {
             AdvancementManager.register(id, this.builder);
+            return this.id;
+        }
+
+        public ResourceLocation buildAndRegister(Map<ResourceLocation, Advancement.Builder> map) {
+            map.put(id, this.builder);
             return this.id;
         }
     }

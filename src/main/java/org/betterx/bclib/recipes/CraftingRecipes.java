@@ -48,15 +48,15 @@ public class CraftingRecipes {
                   .addMaterial('S', Items.STONE)
                   .checkConfig(Configs.RECIPE_CONFIG)
                   .build();
-        GridRecipe.make(BCLib.MOD_ID, "tag_bucket", Items.BUCKET)
-                  .setShape("I I", " I ")
-                  .addMaterial('I', CommonItemTags.IRON_INGOTS)
-                  .checkConfig(Configs.RECIPE_CONFIG)
-                  .build();
         GridRecipe.make(BCLib.MOD_ID, "tag_compass", Items.COMPASS)
                   .setShape(" I ", "IDI", " I ")
                   .addMaterial('I', CommonItemTags.IRON_INGOTS)
                   .addMaterial('D', Items.REDSTONE)
+                  .checkConfig(Configs.RECIPE_CONFIG)
+                  .build();
+        GridRecipe.make(BCLib.MOD_ID, "tag_bucket", Items.BUCKET)
+                  .setShape("I I", " I ")
+                  .addMaterial('I', CommonItemTags.IRON_INGOTS)
                   .checkConfig(Configs.RECIPE_CONFIG)
                   .build();
         GridRecipe.make(BCLib.MOD_ID, "tag_minecart", Items.MINECART)

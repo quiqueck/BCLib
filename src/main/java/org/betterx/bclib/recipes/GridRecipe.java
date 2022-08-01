@@ -17,7 +17,7 @@ import com.google.common.collect.Maps;
 import java.util.Arrays;
 import java.util.Map;
 
-public class GridRecipe {
+public class GridRecipe extends AbstractAdvancementRecipe {
     private static final GridRecipe INSTANCE = new GridRecipe();
 
     private ResourceLocation id;
@@ -50,7 +50,7 @@ public class GridRecipe {
         INSTANCE.count = 1;
 
         INSTANCE.exist = output != null && BCLRecipeManager.exists(output);
-
+        INSTANCE.createAdvancement(id, output);
         return INSTANCE;
     }
 
@@ -76,17 +76,20 @@ public class GridRecipe {
     }
 
     public GridRecipe addMaterial(char key, TagKey<Item> value) {
+        unlockedBy(value);
         return addMaterial(key, Ingredient.of(value));
     }
 
-    public GridRecipe addMaterial(char key, ItemStack... value) {
-        return addMaterial(key, Ingredient.of(Arrays.stream(value)));
+    public GridRecipe addMaterial(char key, ItemStack... values) {
+        unlockedBy(values);
+        return addMaterial(key, Ingredient.of(Arrays.stream(values)));
     }
 
     public GridRecipe addMaterial(char key, ItemLike... values) {
         for (ItemLike item : values) {
             exist &= BCLRecipeManager.exists(item);
         }
+        unlockedBy(values);
         return addMaterial(key, Ingredient.of(values));
     }
 
@@ -145,6 +148,7 @@ public class GridRecipe {
                 result
         ) : new ShapelessRecipe(id, group, result, materials);
 
-        BCLRecipeManager.addRecipeAndCreateAdvancement(type, recipe);
+        BCLRecipeManager.addRecipe(type, recipe);
+        registerAdvancement(recipe);
     }
 }

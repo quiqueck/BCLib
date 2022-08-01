@@ -249,10 +249,9 @@ public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCateg
                     BCLib.LOGGER.debug("Can't add Alloying recipe {}! Ingeredient or output not exists.", id);
                     return;
                 }
-                BCLRecipeManager.addRecipeAndCreateAdvancement(
+                BCLRecipeManager.addRecipe(
                         TYPE,
-                        new AlloyingRecipe(id, group, primaryInput, secondaryInput, output, experience, smeltTime),
-                        false
+                        new AlloyingRecipe(id, group, primaryInput, secondaryInput, output, experience, smeltTime)
                 );
             }
         }
