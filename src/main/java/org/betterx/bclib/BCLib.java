@@ -23,7 +23,6 @@ import org.betterx.bclib.recipes.CraftingRecipes;
 import org.betterx.bclib.registry.BaseBlockEntities;
 import org.betterx.bclib.registry.BaseRegistry;
 import org.betterx.worlds.together.WorldsTogether;
-import org.betterx.worlds.together.tag.v3.TagManager;
 import org.betterx.worlds.together.util.Logger;
 import org.betterx.worlds.together.world.WorldConfig;
 
@@ -56,7 +55,6 @@ public class BCLib implements ModInitializer {
         BaseBlockEntities.register();
         BCLibEndBiomeSource.register();
         BCLibNetherBiomeSource.register();
-        TagManager.ensureStaticallyLoaded();
         CraftingRecipes.init();
         WorldConfig.registerModCache(MOD_ID);
         DataExchangeAPI.registerMod(MOD_ID);
