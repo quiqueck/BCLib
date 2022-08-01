@@ -6,7 +6,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -57,52 +56,6 @@ public class BCLRecipeManager {
     public static <C extends Container, T extends Recipe<C>> void addRecipe(RecipeType<T> type, T recipe) {
         Map<ResourceLocation, T> list = BCLRecipeManager.<C, T>RECIPES().computeIfAbsent(type, i -> Maps.newHashMap());
         list.put(recipe.getId(), recipe);
-    }
-
-    @Deprecated(forRemoval = true)
-    public static <C extends Container, T extends Recipe<C>> void addRecipeAndCreateAdvancement(
-            RecipeType<T> type,
-            T recipe
-    ) {
-        addRecipe(type, recipe);
-        registerAndCreateAdvancement(recipe, recipe.getResultItem().getItem() instanceof TieredItem);
-    }
-
-    @Deprecated(forRemoval = true)
-    public static <C extends Container, T extends Recipe<C>> void addRecipeAndCreateAdvancement(
-            RecipeType<T> type,
-            T recipe,
-            boolean isTool
-    ) {
-        addRecipe(type, recipe);
-        registerAndCreateAdvancement(recipe, isTool);
-    }
-
-    @Deprecated(forRemoval = true)
-    public static <C extends Container, T extends Recipe<C>> ResourceLocation registerAndCreateAdvancement(
-            T recipe,
-            boolean isTool
-    ) {
-        return recipe.getId();
-//        AdvancementManager.Builder b = AdvancementManager.Builder.createRecipe(
-//                recipe,
-//                isTool
-//                        ? AdvancementManager.AdvancementType.RECIPE_TOOL
-//                        : AdvancementManager.AdvancementType.RECIPE_DECORATIONS
-//        );
-//
-//        int ct = 0;
-//        for (Ingredient ingredient : recipe.getIngredients()) {
-//            for (ItemStack stack : ingredient.getItems()) {
-//                if (stack.is(Items.AIR)) continue;
-//
-//                final String name = "has_" + ct++;
-//                Item item = stack.getItem();
-//                b.addInventoryChangedCriterion(name, item);
-//            }
-//        }
-//
-//        return b.buildAndRegister();
     }
 
     public static <C extends Container, T extends Recipe<C>> T getRecipe(RecipeType<T> type, ResourceLocation id) {
