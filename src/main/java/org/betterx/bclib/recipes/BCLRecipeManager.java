@@ -1,16 +1,12 @@
 package org.betterx.bclib.recipes;
 
-import org.betterx.bclib.api.v2.advancement.AdvancementManager;
 import org.betterx.bclib.util.CollectionsUtil;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TieredItem;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -87,25 +83,26 @@ public class BCLRecipeManager {
             T recipe,
             boolean isTool
     ) {
-        AdvancementManager.Builder b = AdvancementManager.Builder.createRecipe(
-                recipe,
-                isTool
-                        ? AdvancementManager.AdvancementType.RECIPE_TOOL
-                        : AdvancementManager.AdvancementType.RECIPE_DECORATIONS
-        );
-
-        int ct = 0;
-        for (Ingredient ingredient : recipe.getIngredients()) {
-            for (ItemStack stack : ingredient.getItems()) {
-                if (stack.is(Items.AIR)) continue;
-
-                final String name = "has_" + ct++;
-                Item item = stack.getItem();
-                b.addInventoryChangedCriterion(name, item);
-            }
-        }
-
-        return b.buildAndRegister();
+        return recipe.getId();
+//        AdvancementManager.Builder b = AdvancementManager.Builder.createRecipe(
+//                recipe,
+//                isTool
+//                        ? AdvancementManager.AdvancementType.RECIPE_TOOL
+//                        : AdvancementManager.AdvancementType.RECIPE_DECORATIONS
+//        );
+//
+//        int ct = 0;
+//        for (Ingredient ingredient : recipe.getIngredients()) {
+//            for (ItemStack stack : ingredient.getItems()) {
+//                if (stack.is(Items.AIR)) continue;
+//
+//                final String name = "has_" + ct++;
+//                Item item = stack.getItem();
+//                b.addInventoryChangedCriterion(name, item);
+//            }
+//        }
+//
+//        return b.buildAndRegister();
     }
 
     public static <C extends Container, T extends Recipe<C>> T getRecipe(RecipeType<T> type, ResourceLocation id) {
