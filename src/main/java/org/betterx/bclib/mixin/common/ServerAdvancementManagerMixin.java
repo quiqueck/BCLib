@@ -16,7 +16,7 @@ import java.util.Map;
 public class ServerAdvancementManagerMixin {
     @ModifyArg(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/AdvancementList;add(Ljava/util/Map;)V"))
-    public Map<ResourceLocation, Advancement.Builder> wunder_interceptApply(Map<ResourceLocation, Advancement.Builder> map) {
+    public Map<ResourceLocation, Advancement.Builder> bcl_interceptApply(Map<ResourceLocation, Advancement.Builder> map) {
         AdvancementManager.addAdvancements(map);
         return map;
     }

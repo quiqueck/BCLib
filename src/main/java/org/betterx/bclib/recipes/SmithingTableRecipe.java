@@ -12,7 +12,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.UpgradeRecipe;
 import net.minecraft.world.level.ItemLike;
 
-public class SmithingTableRecipe {
+public class SmithingTableRecipe extends AbstractAdvancementRecipe {
 
     private final static SmithingTableRecipe BUILDER = new SmithingTableRecipe();
     private final static RecipeType<UpgradeRecipe> TYPE = RecipeType.SMITHING;
@@ -27,7 +27,7 @@ public class SmithingTableRecipe {
         BUILDER.addition = null;
         BUILDER.result = null;
         BUILDER.exist = true;
-
+        BUILDER.createAdvancement(id, false);
         return BUILDER;
     }
 
@@ -56,23 +56,27 @@ public class SmithingTableRecipe {
     }
 
     public SmithingTableRecipe setBase(ItemLike... items) {
+        unlockedBy(items);
         this.exist &= BCLRecipeManager.exists(items);
         this.base = Ingredient.of(items);
         return this;
     }
 
     public SmithingTableRecipe setBase(TagKey<Item> tag) {
+        unlockedBy(tag);
         this.base = (Ingredient.of(tag));
         return this;
     }
 
     public SmithingTableRecipe setAddition(ItemLike... items) {
+        unlockedBy(items);
         this.exist &= BCLRecipeManager.exists(items);
         this.addition = Ingredient.of(items);
         return this;
     }
 
     public SmithingTableRecipe setAddition(TagKey<Item> tag) {
+        unlockedBy(tag);
         this.addition = (Ingredient.of(tag));
         return this;
     }
@@ -99,6 +103,8 @@ public class SmithingTableRecipe {
             return;
         }
 
-        BCLRecipeManager.addRecipeAndCreateAdvancement(TYPE, new UpgradeRecipe(id, base, addition, result));
+        UpgradeRecipe recipe = new UpgradeRecipe(id, base, addition, result);
+        BCLRecipeManager.addRecipe(TYPE, recipe);
+        registerAdvancement(recipe);
     }
 }
