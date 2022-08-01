@@ -15,7 +15,6 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class AbstractAdvancementRecipe {
@@ -41,12 +40,12 @@ public class AbstractAdvancementRecipe {
     private int nameCounter = 0;
 
     public void unlockedBy(ItemStack... stacks) {
-        List<ItemLike> items = Arrays.stream(stacks)
-                                     .filter(stack -> stack.getCount() > 0)
-                                     .map(stack -> (ItemLike) stack.getItem())
-                                     .toList();
+        ItemLike[] items = Arrays.stream(stacks)
+                                 .filter(stack -> stack.getCount() > 0)
+                                 .map(stack -> (ItemLike) stack.getItem())
+                                 .toArray(ItemLike[]::new);
 
-        unlockedBy((ItemLike[]) items.toArray());
+        unlockedBy(items);
     }
 
     public void unlockedBy(ItemLike... items) {
