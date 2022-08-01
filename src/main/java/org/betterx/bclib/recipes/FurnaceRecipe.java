@@ -99,7 +99,6 @@ public class FurnaceRecipe extends AbstractAdvancementRecipe {
                     time / 2
             );
             BCLRecipeManager.addRecipe(RecipeType.BLASTING, recipe2);
-            registerAdvancement(recipe2);
         }
 
         if (campfire) {
@@ -113,7 +112,6 @@ public class FurnaceRecipe extends AbstractAdvancementRecipe {
             );
 
             BCLRecipeManager.addRecipe(RecipeType.CAMPFIRE_COOKING, recipe2);
-            registerAdvancement(recipe2);
         }
 
         if (smoker) {
@@ -127,7 +125,6 @@ public class FurnaceRecipe extends AbstractAdvancementRecipe {
             );
 
             BCLRecipeManager.addRecipe(RecipeType.SMOKING, recipe2);
-            registerAdvancement(recipe2);
         }
     }
 }
