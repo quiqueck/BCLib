@@ -19,11 +19,14 @@ public class CommonItemTags {
     public static final TagKey<Item> WOODEN_CHEST = TagManager.ITEMS.makeCommonTag("wooden_chests");
     public static final TagKey<Item> WORKBENCHES = TagManager.ITEMS.makeCommonTag("workbench");
 
+    public static final TagKey<Item> WATER_BOTTLES = TagManager.ITEMS.makeCommonTag("`water_bottles`");
+
     static void prepareTags() {
         TagManager.ITEMS.add(SOUL_GROUND, Blocks.SOUL_SAND.asItem(), Blocks.SOUL_SOIL.asItem());
 
         TagManager.ITEMS.add(CommonItemTags.CHEST, Items.CHEST);
         TagManager.ITEMS.add(CommonItemTags.IRON_INGOTS, Items.IRON_INGOT);
         TagManager.ITEMS.add(CommonItemTags.FURNACES, Blocks.FURNACE.asItem());
+        TagManager.ITEMS.add(CommonItemTags.WATER_BOTTLES, Items.WATER_BUCKET);
     }
 }

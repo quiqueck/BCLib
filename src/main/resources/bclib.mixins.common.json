@@ -30,6 +30,7 @@
     "PotionBrewingAccessor",
     "RecipeManagerAccessor",
     "RecipeManagerMixin",
+    "RecipeMixin",
     "RegistryAccessMixin",
     "ServerAdvancementManagerMixin",
     "ServerLevelMixin",
