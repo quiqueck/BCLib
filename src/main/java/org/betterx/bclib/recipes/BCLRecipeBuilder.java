@@ -8,8 +8,8 @@ public class BCLRecipeBuilder {
         return AlloyingRecipe.Builder.create(id, output);
     }
 
-    public static AnvilRecipe.Builder anvil(ResourceLocation id) {
-        return AnvilRecipe.create(id);
+    public static AnvilRecipe.Builder anvil(ResourceLocation id, ItemLike output) {
+        return AnvilRecipe.create(id, output);
     }
 
     public static BlastFurnaceRecipe blasting(ResourceLocation id, ItemLike output) {

@@ -34,14 +34,14 @@ public class SmithingTableRecipe extends AbstractSimpleRecipe<SmithingTableRecip
         return super.setInput(in);
     }
 
-    public SmithingTableRecipe setAddon(ItemLike in) {
+    public SmithingTableRecipe setAddition(ItemLike in) {
         this.exist &= BCLRecipeManager.exists(in);
         this.addon = Ingredient.of(in);
         unlockedBy(in);
         return this;
     }
 
-    public SmithingTableRecipe setAddon(TagKey<Item> in) {
+    public SmithingTableRecipe setAddition(TagKey<Item> in) {
         this.addon = Ingredient.of(in);
         unlockedBy(in);
         return this;

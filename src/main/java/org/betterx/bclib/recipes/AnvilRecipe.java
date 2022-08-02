@@ -79,20 +79,16 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
         this.damage = damage;
     }
 
-    static Builder create(String id) {
-        return create(BCLib.makeID(id));
-    }
-
-    static Builder create(ResourceLocation id) {
+    static Builder create(ResourceLocation id, ItemLike output) {
         Builder.INSTANCE.id = id;
         Builder.INSTANCE.input = null;
-        Builder.INSTANCE.output = null;
+        Builder.INSTANCE.output = output;
         Builder.INSTANCE.inputCount = 1;
         Builder.INSTANCE.toolLevel = 1;
         Builder.INSTANCE.anvilLevel = 1;
         Builder.INSTANCE.damage = 1;
         Builder.INSTANCE.alright = true;
-        Builder.INSTANCE.exist = true;
+        Builder.INSTANCE.exist &= RecipeHelper.exists(output);
 
         return Builder.INSTANCE;
     }
@@ -267,8 +263,9 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
 
         private ResourceLocation id;
         private Ingredient input;
-        private ItemStack output;
+        private ItemLike output;
         private int inputCount = 1;
+        private int outputCount = 1;
         private int toolLevel = 1;
         private int anvilLevel = 1;
         private int damage = 1;
@@ -299,13 +296,8 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
             return this;
         }
 
-        public Builder setOutput(ItemLike output) {
-            return this.setOutput(output, 1);
-        }
-
-        public Builder setOutput(ItemLike output, int amount) {
-            this.alright &= RecipeHelper.exists(output);
-            this.output = new ItemStack(output, amount);
+        public Builder setOutputCount(int count) {
+            this.outputCount = count;
             return this;
         }
 
@@ -352,7 +344,15 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
             }
             BCLRecipeManager.addRecipe(
                     TYPE,
-                    new AnvilRecipe(id, input, output, inputCount, toolLevel, anvilLevel, damage)
+                    new AnvilRecipe(
+                            id,
+                            input,
+                            new ItemStack(output, outputCount),
+                            inputCount,
+                            toolLevel,
+                            anvilLevel,
+                            damage
+                    )
             );
         }
     }
