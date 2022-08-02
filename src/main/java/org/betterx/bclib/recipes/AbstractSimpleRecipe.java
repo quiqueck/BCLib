@@ -40,6 +40,7 @@ public abstract class AbstractSimpleRecipe<T extends AbstractSimpleRecipe, C ext
 
 
     protected T setInput(ItemLike in) {
+        this.exist &= BCLRecipeManager.exists(in);
         this.input = Ingredient.of(in);
         unlockedBy(in);
         return (T) this;
@@ -80,6 +81,15 @@ public abstract class AbstractSimpleRecipe<T extends AbstractSimpleRecipe, C ext
 
         if (input == null || input.isEmpty()) {
             BCLib.LOGGER.warning("Unable to build Recipe " + id + ": No Input Material");
+            return;
+        }
+
+        if (output == null) {
+            BCLib.LOGGER.warning("Result recipe can't be 'null', recipe {} will be ignored!", id);
+            return;
+        }
+        if (BCLRecipeManager.getRecipe(type, id) != null) {
+            BCLib.LOGGER.warning("Can't add Smithing recipe! Id {} already exists!", id);
             return;
         }
 
