@@ -79,11 +79,11 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
         this.damage = damage;
     }
 
-    public static Builder create(String id) {
+    static Builder create(String id) {
         return create(BCLib.makeID(id));
     }
 
-    public static Builder create(ResourceLocation id) {
+    static Builder create(ResourceLocation id) {
         Builder.INSTANCE.id = id;
         Builder.INSTANCE.input = null;
         Builder.INSTANCE.output = null;

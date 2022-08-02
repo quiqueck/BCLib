@@ -19,11 +19,8 @@ public class SmithingTableRecipe extends AbstractSimpleRecipe<SmithingTableRecip
         super(id, RecipeType.SMITHING, output);
     }
 
-    public static SmithingTableRecipe make(String modID, String name, ItemLike output) {
-        return make(new ResourceLocation(modID, name), output);
-    }
 
-    public static SmithingTableRecipe make(ResourceLocation id, ItemLike output) {
+    static SmithingTableRecipe make(ResourceLocation id, ItemLike output) {
         SmithingTableRecipe res = new SmithingTableRecipe(id, output);
         res.createAdvancement(id, false);
         return res;

@@ -12,11 +12,11 @@ public class BlastFurnaceRecipe extends CookingRecipe<BlastFurnaceRecipe, Contai
         super(id, RecipeType.BLASTING, output);
     }
 
-    public static BlastFurnaceRecipe make(String modID, String name, ItemLike output) {
+    static BlastFurnaceRecipe make(String modID, String name, ItemLike output) {
         return make(new ResourceLocation(modID, name), output);
     }
 
-    public static BlastFurnaceRecipe make(ResourceLocation id, ItemLike output) {
+    static BlastFurnaceRecipe make(ResourceLocation id, ItemLike output) {
         BlastFurnaceRecipe res = new BlastFurnaceRecipe(id, output);
         res.createAdvancement(id, false);
         return res;

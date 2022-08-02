@@ -133,27 +133,26 @@ public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCateg
         private final static Builder INSTANCE = new Builder();
         private static boolean exist;
 
-        protected static Builder create(ResourceLocation id, PathConfig config) {
+        static Builder create(ResourceLocation id, ItemLike output) {
             INSTANCE.id = id;
             INSTANCE.group = String.format("%s_%s", GROUP, id);
             INSTANCE.primaryInput = null;
             INSTANCE.secondaryInput = null;
-            INSTANCE.output = null;
+            INSTANCE.output = output;
             INSTANCE.experience = 0.0F;
             INSTANCE.smeltTime = 350;
-            exist = config.getBoolean("alloying", id.getPath(), true);
+            INSTANCE.count = 1;
+            INSTANCE.alright = RecipeHelper.exists(output);
+            exist = true;
 
             return INSTANCE;
         }
 
-        protected static Builder create(String modID, String id, PathConfig config) {
-            return create(new ResourceLocation(modID, id), config);
-        }
-
+        private int count = 1;
         private ResourceLocation id;
         private Ingredient primaryInput;
         private Ingredient secondaryInput;
-        private ItemStack output;
+        private ItemLike output;
         private String group;
         private float experience;
         private int smeltTime;
@@ -162,8 +161,18 @@ public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCateg
         protected Builder() {
         }
 
+        public Builder checkConfig(PathConfig config) {
+            exist &= config.getBoolean("alloying", id.getPath(), true);
+            return this;
+        }
+
         public Builder setGroup(String group) {
             this.group = group;
+            return this;
+        }
+
+        public Builder setOutputCount(int count) {
+            this.count = count;
             return this;
         }
 
@@ -205,13 +214,7 @@ public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCateg
             return this;
         }
 
-        public Builder setOutput(ItemLike output, int amount) {
-            this.alright &= RecipeHelper.exists(output);
-            this.output = new ItemStack(output, amount);
-            return this;
-        }
-
-        public Builder setExpiriense(float amount) {
+        public Builder setExperience(float amount) {
             this.experience = amount;
             return this;
         }
@@ -251,7 +254,15 @@ public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCateg
                 }
                 BCLRecipeManager.addRecipe(
                         TYPE,
-                        new AlloyingRecipe(id, group, primaryInput, secondaryInput, output, experience, smeltTime)
+                        new AlloyingRecipe(
+                                id,
+                                group,
+                                primaryInput,
+                                secondaryInput,
+                                new ItemStack(output, count),
+                                experience,
+                                smeltTime
+                        )
                 );
             }
         }

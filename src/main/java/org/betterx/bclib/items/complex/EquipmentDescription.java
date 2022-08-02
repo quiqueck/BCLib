@@ -1,6 +1,7 @@
 package org.betterx.bclib.items.complex;
 
 import org.betterx.bclib.items.BaseArmorItem;
+import org.betterx.bclib.recipes.BCLRecipeBuilder;
 import org.betterx.bclib.recipes.GridRecipe;
 import org.betterx.bclib.registry.ItemRegistry;
 
@@ -34,9 +35,8 @@ public class EquipmentDescription<I extends Item> {
         if (repairItems == null || repairItems.length == 0) return;
         final ItemLike ingot = repairItems[0].getItem();
 
-        var builder = GridRecipe
-                .make(id, tool)
-                .addMaterial('#', ingot);
+        var builder = BCLRecipeBuilder.crafting(id, tool)
+                                      .addMaterial('#', ingot);
 
         if (buildRecipe(tool, stick, builder)) return;
         builder

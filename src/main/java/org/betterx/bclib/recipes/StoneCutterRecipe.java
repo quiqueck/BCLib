@@ -14,11 +14,7 @@ public class StoneCutterRecipe extends AbstractSimpleRecipe<StoneCutterRecipe, C
         super(id, RecipeType.STONECUTTING, "stonecutting", output);
     }
 
-    public static StoneCutterRecipe make(String modID, String name, ItemLike output) {
-        return make(new ResourceLocation(modID, name), output);
-    }
-
-    public static StoneCutterRecipe make(ResourceLocation id, ItemLike output) {
+    static StoneCutterRecipe make(ResourceLocation id, ItemLike output) {
         StoneCutterRecipe res = new StoneCutterRecipe(id, output);
         res.createAdvancement(id, false);
         return res;

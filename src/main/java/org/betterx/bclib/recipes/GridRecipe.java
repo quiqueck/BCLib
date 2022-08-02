@@ -34,11 +34,14 @@ public class GridRecipe extends AbstractAdvancementRecipe {
     private GridRecipe() {
     }
 
-    public static GridRecipe make(String modID, String name, ItemLike output) {
-        return make(new ResourceLocation(modID, name), output);
-    }
-
-    public static GridRecipe make(ResourceLocation id, ItemLike output) {
+    /**
+     * Please use {@link BCLRecipeBuilder#crafting(ResourceLocation, ItemLike)} instead
+     *
+     * @param id
+     * @param output
+     * @return
+     */
+    static GridRecipe make(ResourceLocation id, ItemLike output) {
         INSTANCE.id = id;
         INSTANCE.output = output;
 

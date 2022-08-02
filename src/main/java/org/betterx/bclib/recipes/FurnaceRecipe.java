@@ -3,6 +3,8 @@ package org.betterx.bclib.recipes;
 import org.betterx.bclib.config.PathConfig;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.ItemLike;
@@ -11,7 +13,7 @@ public class FurnaceRecipe extends AbstractAdvancementRecipe {
     private static final FurnaceRecipe INSTANCE = new FurnaceRecipe();
 
     private ResourceLocation id;
-    private ItemLike input;
+    private Ingredient input;
     private ItemLike output;
     private boolean exist;
     private String group;
@@ -22,18 +24,31 @@ public class FurnaceRecipe extends AbstractAdvancementRecipe {
     private FurnaceRecipe() {
     }
 
-    public static FurnaceRecipe make(String modID, String name, ItemLike input, ItemLike output) {
-        INSTANCE.id = new ResourceLocation(modID, name);
+    static FurnaceRecipe make(ResourceLocation id, ItemLike output) {
+        INSTANCE.id = id;
         INSTANCE.group = "";
-        INSTANCE.input = input;
+        INSTANCE.input = null;
         INSTANCE.output = output;
         INSTANCE.count = 1;
         INSTANCE.time = 200;
         INSTANCE.xp = 0;
-        INSTANCE.exist = BCLRecipeManager.exists(output) && BCLRecipeManager.exists(input);
+        INSTANCE.exist = BCLRecipeManager.exists(output);
         INSTANCE.createAdvancement(INSTANCE.id, false);
-        INSTANCE.unlockedBy(input);
+
         return INSTANCE;
+    }
+
+    public FurnaceRecipe setInput(ItemLike input) {
+        exist &= BCLRecipeManager.exists(input);
+        this.input = Ingredient.of(input);
+        unlockedBy(input);
+        return this;
+    }
+
+    public FurnaceRecipe setInput(TagKey<Item> tag) {
+        this.input = Ingredient.of(tag);
+        unlockedBy(tag);
+        return this;
     }
 
     public FurnaceRecipe checkConfig(PathConfig config) {
@@ -51,12 +66,12 @@ public class FurnaceRecipe extends AbstractAdvancementRecipe {
         return this;
     }
 
-    public FurnaceRecipe setXP(float xp) {
+    public FurnaceRecipe setExperience(float xp) {
         this.xp = xp;
         return this;
     }
 
-    public FurnaceRecipe setCookTime(int time) {
+    public FurnaceRecipe setCookingTime(int time) {
         this.time = time;
         return this;
     }
@@ -81,7 +96,7 @@ public class FurnaceRecipe extends AbstractAdvancementRecipe {
         SmeltingRecipe recipe = new SmeltingRecipe(
                 new ResourceLocation(id + "_smelting"),
                 group,
-                Ingredient.of(input),
+                input,
                 new ItemStack(output, count),
                 xp,
                 time
@@ -93,11 +108,12 @@ public class FurnaceRecipe extends AbstractAdvancementRecipe {
             BlastingRecipe recipe2 = new BlastingRecipe(
                     new ResourceLocation(id + "_blasting"),
                     group,
-                    Ingredient.of(input),
+                    input,
                     new ItemStack(output, count),
                     xp,
                     time / 2
             );
+
             BCLRecipeManager.addRecipe(RecipeType.BLASTING, recipe2);
         }
 
@@ -105,7 +121,7 @@ public class FurnaceRecipe extends AbstractAdvancementRecipe {
             CampfireCookingRecipe recipe2 = new CampfireCookingRecipe(
                     new ResourceLocation(id + "_campfire"),
                     group,
-                    Ingredient.of(input),
+                    input,
                     new ItemStack(output, count),
                     xp,
                     time * 3
@@ -118,7 +134,7 @@ public class FurnaceRecipe extends AbstractAdvancementRecipe {
             SmokingRecipe recipe2 = new SmokingRecipe(
                     new ResourceLocation(id + "_smoker"),
                     group,
-                    Ingredient.of(input),
+                    input,
                     new ItemStack(output, count),
                     xp,
                     time / 2
