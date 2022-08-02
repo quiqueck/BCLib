@@ -17,9 +17,7 @@ public class BCLRecipeBuilder {
     }
 
     public static GridRecipe crafting(ResourceLocation id, ItemLike output) {
-        return BCLRecipeBuilder.crafting(
-
-                id, output);
+        return GridRecipe.make(id, output);
     }
 
     public static FurnaceRecipe smelting(ResourceLocation id, ItemLike output) {
