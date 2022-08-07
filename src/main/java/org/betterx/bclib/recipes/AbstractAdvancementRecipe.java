@@ -35,7 +35,7 @@ public class AbstractAdvancementRecipe {
      * Your implementing class should call this method to prepare a new {@link AdvancementManager.Builder}
      * <p>
      * For Example {@link FurnaceRecipe} will call this in the
-     * {@link FurnaceRecipe#make(String, String, ItemLike, ItemLike)}-Method
+     * {@link FurnaceRecipe#make(ResourceLocation, ItemLike)}-Method
      *
      * @param id     {@link ResourceLocation} for this advancement
      * @param isTool true, if this is registered for a tool
