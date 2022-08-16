@@ -42,7 +42,17 @@ public class Container extends LayoutComponent<Container.ContainerRenderer, Cont
         }
     }
 
-    private final List<LayoutComponent<?, ?>> children = new LinkedList<>();
+    record Positional(int left, int top, LayoutComponent<?, ?> component) {
+        public int getMaxX() {
+            return left + component().getContentWidth();
+        }
+
+        public int getMaxY() {
+            return top + component().getContentHeight();
+        }
+    }
+
+    private final List<Positional> children = new LinkedList<>();
     boolean dragging = false;
     GuiEventListener focused = null;
     boolean visible = true;
@@ -61,7 +71,12 @@ public class Container extends LayoutComponent<Container.ContainerRenderer, Cont
     }
 
     public Container addChild(LayoutComponent<?, ?> child) {
-        children.add(child);
+        children.add(new Positional(0, 0, child));
+        return this;
+    }
+
+    public Container addChild(int left, int top, LayoutComponent<?, ?> child) {
+        children.add(new Positional(left, top, child));
         return this;
     }
 
@@ -107,14 +122,14 @@ public class Container extends LayoutComponent<Container.ContainerRenderer, Cont
     @Override
     public int getContentWidth() {
         return children.stream()
-                       .map(LayoutComponent::getContentWidth)
+                       .map(Positional::getMaxX)
                        .reduce(0, Math::max) + paddingLeft + paddingRight;
     }
 
     @Override
     public int getContentHeight() {
         return children.stream()
-                       .map(LayoutComponent::getContentHeight)
+                       .map(Positional::getMaxY)
                        .reduce(0, Math::max) + paddingTop + paddingBottom;
     }
 
@@ -125,7 +140,7 @@ public class Container extends LayoutComponent<Container.ContainerRenderer, Cont
 
     @Override
     public List<? extends GuiEventListener> children() {
-        return children;
+        return children.stream().map(p -> p.component).toList();
     }
 
     @Override
@@ -153,8 +168,8 @@ public class Container extends LayoutComponent<Container.ContainerRenderer, Cont
     protected int updateContainerWidth(int containerWidth) {
         int myWidth = width.calculateOrFill(containerWidth);
         for (var child : children) {
-            child.width.calculateOrFill(myWidth - (paddingLeft + paddingRight));
-            child.updateContainerWidth(child.width.calculatedSize());
+            child.component.width.calculateOrFill(myWidth - (paddingLeft + paddingRight));
+            child.component.updateContainerWidth(child.component.width.calculatedSize());
         }
         return myWidth;
     }
@@ -163,8 +178,8 @@ public class Container extends LayoutComponent<Container.ContainerRenderer, Cont
     protected int updateContainerHeight(int containerHeight) {
         int myHeight = height.calculateOrFill(containerHeight);
         for (var child : children) {
-            child.height.calculateOrFill(myHeight - (paddingTop + paddingBottom));
-            child.updateContainerHeight(child.height.calculatedSize());
+            child.component.height.calculateOrFill(myHeight - (paddingTop + paddingBottom));
+            child.component.updateContainerHeight(child.component.height.calculatedSize());
         }
         return myHeight;
     }
@@ -183,7 +198,7 @@ public class Container extends LayoutComponent<Container.ContainerRenderer, Cont
 
             setClippingRect(clipRect);
             for (var child : children) {
-                child.render(
+                child.component.render(
                         poseStack, mouseX, mouseY, deltaTicks,
                         renderBounds, clipRect
                 );
@@ -197,23 +212,23 @@ public class Container extends LayoutComponent<Container.ContainerRenderer, Cont
         super.setRelativeBounds(left, top);
 
         for (var child : children) {
-            int childLeft = (relativeBounds.width - (paddingLeft + paddingRight)) - child.width.calculatedSize();
-            if (child.hAlign == Alignment.MIN) childLeft = 0;
-            else if (child.hAlign == Alignment.CENTER) childLeft /= 2;
+            int childLeft = (relativeBounds.width - (paddingLeft + paddingRight)) - child.component.width.calculatedSize();
+            if (child.component.hAlign == Alignment.MIN) childLeft = 0;
+            else if (child.component.hAlign == Alignment.CENTER) childLeft /= 2;
 
-            int childTop = (relativeBounds.height - (paddingTop + paddingBottom)) - child.height.calculatedSize();
-            if (child.vAlign == Alignment.MIN) childTop = 0;
-            else if (child.vAlign == Alignment.CENTER) childTop /= 2;
+            int childTop = (relativeBounds.height - (paddingTop + paddingBottom)) - child.component.height.calculatedSize();
+            if (child.component.vAlign == Alignment.MIN) childTop = 0;
+            else if (child.component.vAlign == Alignment.CENTER) childTop /= 2;
 
-            child.setRelativeBounds(paddingLeft + childLeft, paddingTop + childTop);
+            child.component.setRelativeBounds(child.left + paddingLeft + childLeft, child.top + paddingTop + childTop);
         }
     }
 
     @Override
     public void updateScreenBounds(int worldX, int worldY) {
         super.updateScreenBounds(worldX, worldY);
-        for (LayoutComponent<?, ?> c : children) {
-            c.updateScreenBounds(screenBounds.left, screenBounds.top);
+        for (Positional p : children) {
+            p.component.updateScreenBounds(p.left + screenBounds.left, p.top + screenBounds.top);
         }
     }
 
@@ -256,7 +271,7 @@ public class Container extends LayoutComponent<Container.ContainerRenderer, Cont
         if (visible) {
             boolean res = false;
             for (var child : children) {
-                res |= child.isMouseOver(x, y);
+                res |= child.component.isMouseOver(x, y);
             }
 
             return res || relativeBounds.contains(x, y);
