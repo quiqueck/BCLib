@@ -42,7 +42,12 @@ public class Image extends CustomRenderComponent {
 
 
     public Image setUvRect(int left, int top, int width, int height) {
-        uvRect = new Rectangle(left, top, width, height);
+        setUvRect(new Rectangle(left, top, width, height));
+        return this;
+    }
+
+    public Image setUvRect(Rectangle rect) {
+        uvRect = rect;
         return this;
     }
 
@@ -51,7 +56,11 @@ public class Image extends CustomRenderComponent {
     }
 
     public Image setResourceSize(int width, int height) {
-        resourceSize = new Size(width, height);
+        return setResourceSize(new Size(width, height));
+    }
+
+    public Image setResourceSize(Size sz) {
+        resourceSize = sz;
         return this;
     }
 
@@ -61,12 +70,12 @@ public class Image extends CustomRenderComponent {
 
     @Override
     public int getContentWidth() {
-        return resourceSize.width();
+        return uvRect.width;
     }
 
     @Override
     public int getContentHeight() {
-        return resourceSize.height();
+        return uvRect.height;
     }
 
 
@@ -79,7 +88,7 @@ public class Image extends CustomRenderComponent {
             Rectangle bounds,
             Rectangle clipRect
     ) {
-        RenderHelper.renderImage(stack, bounds.width, bounds.height, location, uvRect, resourceSize, alpha);
+        RenderHelper.renderImage(stack, 0, 0, bounds.width, bounds.height, location, resourceSize, uvRect, alpha);
     }
 
     @Override
