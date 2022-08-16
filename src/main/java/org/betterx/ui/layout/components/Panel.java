@@ -97,7 +97,10 @@ public class Panel implements ComponentWithBounds, RelativeContainerEventHandler
     @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
         if (child != null) {
+            poseStack.pushPose();
+            poseStack.translate(bounds.left, bounds.top, 0);
             child.render(poseStack, mouseX - bounds.left, mouseY - bounds.top, deltaTicks, bounds, bounds);
+            poseStack.popPose();
         }
     }
 
