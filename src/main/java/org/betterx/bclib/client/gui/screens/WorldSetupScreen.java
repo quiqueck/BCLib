@@ -432,10 +432,12 @@ public class WorldSetupScreen extends LayoutScreen {
             );
             int size = IconState.lerp(t, endOn.size, endOff.size);
             RenderHelper.renderImage(
-                    poseStack, size, size,
+                    poseStack, 0, 0,
+                    size,
+                    size,
                     WelcomeScreen.ICON_BETTEREND,
-                    new Rectangle(0, 0, 32, 32),
-                    Size.of(32), 1
+                    Size.of(32), new Rectangle(0, 0, 32, 32),
+                    (float) 1
             );
             poseStack.popPose();
         }
@@ -457,10 +459,12 @@ public class WorldSetupScreen extends LayoutScreen {
             );
             int size = IconState.lerp(t, netherOff.size, netherOn.size);
             RenderHelper.renderImage(
-                    poseStack, size, size,
+                    poseStack, 0, 0,
+                    size,
+                    size,
                     WelcomeScreen.ICON_BETTERNETHER,
-                    new Rectangle(0, 0, 32, 32),
-                    Size.of(32), 1
+                    Size.of(32), new Rectangle(0, 0, 32, 32),
+                    (float) 1
             );
             poseStack.popPose();
         }
