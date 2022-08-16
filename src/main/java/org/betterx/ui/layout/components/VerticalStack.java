@@ -7,6 +7,7 @@ import org.betterx.ui.vanilla.VanillaScrollerRenderer;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -207,5 +208,10 @@ public class VerticalStack extends AbstractVerticalStack<VerticalStack> {
             LayoutComponent<?, ?> content
     ) {
         return super.addScrollable(width, height, content);
+    }
+
+    @Override
+    public Item addItem(ItemStack stack) {
+        return super.addItem(stack);
     }
 }

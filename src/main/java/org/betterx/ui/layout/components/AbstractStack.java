@@ -11,6 +11,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -274,6 +275,13 @@ public abstract class AbstractStack<R extends ComponentRenderer, T extends Abstr
         c.addChild(content);
         add(c);
         return c;
+    }
+
+    protected Item addItem(ItemStack stack) {
+        Item i = new Item(Value.fit(), Value.fit());
+        i.setItem(stack);
+        add(i);
+        return i;
     }
 }
 
