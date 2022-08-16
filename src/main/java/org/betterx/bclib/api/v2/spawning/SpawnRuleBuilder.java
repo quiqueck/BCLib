@@ -8,13 +8,12 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.SpawnPlacements.SpawnPredicate;
 import net.minecraft.world.entity.SpawnPlacements.Type;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.phys.AABB;
-
-import net.fabricmc.fabric.mixin.object.builder.SpawnRestrictionAccessor;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -313,7 +312,7 @@ public class SpawnRuleBuilder<M extends Mob> {
             return true;
         };
 
-        SpawnRestrictionAccessor.callRegister(entityType, spawnType, heightmapType, predicate);
+        SpawnPlacements.register(entityType, spawnType, heightmapType, predicate);
     }
 
     /**
