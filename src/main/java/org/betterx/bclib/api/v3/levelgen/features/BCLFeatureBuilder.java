@@ -665,7 +665,15 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
 
         @Override
         public FC createConfiguration() {
-            if (configuration == null) return (FC) NoneFeatureConfiguration.NONE;
+            if (configuration == null) {
+                //Moonlight Lib seems to trigger a load of our data before
+                //NoneFeatureConfiguration.NONE is initialized. This Code
+                // is meant to prevent that...
+                if (NoneFeatureConfiguration.NONE != null)
+                    return (FC) NoneFeatureConfiguration.NONE;
+                
+                return (FC) NoneFeatureConfiguration.INSTANCE;
+            }
             return configuration;
         }
     }
