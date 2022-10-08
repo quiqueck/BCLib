@@ -1,6 +1,7 @@
 package org.betterx.worlds.together.worldPreset;
 
 import org.betterx.bclib.BCLib;
+import org.betterx.bclib.config.Configs;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.levelgen.WorldGenUtil;
 import org.betterx.worlds.together.mixin.common.WorldPresetAccessor;
@@ -105,7 +106,7 @@ public class TogetherWorldPreset extends WorldPreset {
 
     public static @NotNull Map<ResourceKey<LevelStem>, ChunkGenerator> loadWorldDimensions() {
         final RegistryAccess registryAccess = WorldBootstrap.getLastRegistryAccessOrElseBuiltin();
-        if (registryAccess == BuiltinRegistries.ACCESS) {
+        if (registryAccess == BuiltinRegistries.ACCESS && Configs.MAIN_CONFIG.verboseLogging()) {
             BCLib.LOGGER.info("Loading from builtin Registry");
         }
         final RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, registryAccess);

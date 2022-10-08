@@ -20,6 +20,7 @@ public class Configs {
     public static final BiomesConfig BIOMES_CONFIG = new BiomesConfig();
 
     public static final String MAIN_PATCH_CATEGORY = "patches";
+    public static final String MAIN_LOG_CATEGORY = "logs";
 
     public static void save() {
         MAIN_CONFIG.saveChanges();

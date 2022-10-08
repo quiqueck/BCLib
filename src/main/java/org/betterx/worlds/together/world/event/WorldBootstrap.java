@@ -1,6 +1,7 @@
 package org.betterx.worlds.together.world.event;
 
 import org.betterx.bclib.BCLib;
+import org.betterx.bclib.config.Configs;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.levelgen.WorldGenUtil;
 import org.betterx.worlds.together.mixin.common.RegistryOpsAccessor;
@@ -303,15 +304,17 @@ public class WorldBootstrap {
                     entry.getValue()
             ));
 
-            output += "\n - " + entry.getKey().location().toString() + ": " +
-                    "\n     " + entry.getValue().generator().toString() + " " +
-                    entry.getValue()
-                         .generator()
-                         .getBiomeSource()
-                         .toString()
-                         .replace("\n", "\n     ");
+            if (Configs.MAIN_CONFIG.verboseLogging())
+                output += "\n - " + entry.getKey().location().toString() + ": " +
+                        "\n     " + entry.getValue().generator().toString() + " " +
+                        entry.getValue()
+                             .generator()
+                             .getBiomeSource()
+                             .toString()
+                             .replace("\n", "\n     ");
         }
-        BCLib.LOGGER.info(output);
+        if (Configs.MAIN_CONFIG.verboseLogging())
+            BCLib.LOGGER.info(output);
         SurfaceRuleUtil.injectSurfaceRulesToAllDimensions(worldGenSettings);
 
         WorldEventsImpl.ON_FINALIZED_WORLD_LOAD.emit(e -> e.done(worldGenSettings));

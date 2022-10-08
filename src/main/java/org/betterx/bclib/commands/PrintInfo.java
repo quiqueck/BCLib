@@ -22,7 +22,6 @@ import net.fabricmc.loader.api.ModContainer;
 
 public class PrintInfo {
     static int printDimensions(CommandContext<CommandSourceStack> ctx) {
-
         MutableComponent result = Component.literal("World Dimensions: ")
                                            .setStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.BLUE));
 

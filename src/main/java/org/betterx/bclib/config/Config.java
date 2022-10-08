@@ -45,6 +45,7 @@ public abstract class Config {
                 DataExchangeAPI.addAutoSyncFile(aid.modID, aid.uniqueID, keeper.getConfigFile());
 
             AUTO_SYNC_CONFIGS.put(aid, this);
+
             BCLib.LOGGER.info("Added Config " + configID + " to auto sync (" + (diffContent
                     ? "content diff"
                     : "file hash") + ")");
