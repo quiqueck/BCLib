@@ -107,8 +107,14 @@ public class TogetherWorldPreset extends WorldPreset {
     public static @NotNull Map<ResourceKey<LevelStem>, ChunkGenerator> loadWorldDimensions() {
         try {
             final RegistryAccess registryAccess = WorldBootstrap.getLastRegistryAccessOrElseBuiltin();
-            if (registryAccess == BuiltinRegistries.ACCESS && Configs.MAIN_CONFIG.verboseLogging()) {
-                BCLib.LOGGER.info("Loading from builtin Registry");
+            boolean globalRegistry = false;
+            if (registryAccess == BuiltinRegistries.ACCESS) {
+                if (Configs.MAIN_CONFIG.verboseLogging())
+                    BCLib.LOGGER.info("Loading from builtin Registry");
+                globalRegistry = true;
+            } else {
+                if (Configs.MAIN_CONFIG.verboseLogging())
+                    BCLib.LOGGER.info("Loading from datapack Registry");
             }
             final RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
             if (DEFAULT_DIMENSIONS_WRAPPER == null) {
@@ -116,7 +122,7 @@ public class TogetherWorldPreset extends WorldPreset {
             }
 
             CompoundTag presetNBT = WorldGenUtil.getPresetsNbt();
-            if (!presetNBT.contains("dimensions")) {
+            if (!presetNBT.contains("dimensions") || globalRegistry) {
                 return DEFAULT_DIMENSIONS_WRAPPER.dimensions;
             }
 
