@@ -1,5 +1,7 @@
 package org.betterx.bclib.interfaces;
 
+import org.betterx.bclib.config.Configs;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -37,6 +39,7 @@ public interface SurvivesOnSpecialGround {
 
     @Environment(EnvType.CLIENT)
     static void appendHoverText(List<Component> list, String description) {
+        if (!Configs.MAIN_CONFIG.survivesOnHint()) return;
         final int MAX_LINES = 7;
         List<String> lines = splitLines(description);
         if (lines.size() == 1) {
