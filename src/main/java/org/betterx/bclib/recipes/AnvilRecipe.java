@@ -88,7 +88,7 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
         Builder.INSTANCE.anvilLevel = 1;
         Builder.INSTANCE.damage = 1;
         Builder.INSTANCE.alright = true;
-        Builder.INSTANCE.exist &= RecipeHelper.exists(output);
+        Builder.INSTANCE.exist = RecipeHelper.exists(output);
 
         return Builder.INSTANCE;
     }
