@@ -37,6 +37,9 @@ dependencies {
 
     modCompileOnly "dev.emi:emi:${emi_version}"
     //modImplementation "dev.emi:emi:${emi_version}"
+
+    modImplementation "net.darkhax.tips:Tips-Fabric-${project.tips_version}"
+    modRuntimeOnly "net.darkhax.bookshelf:Bookshelf-Fabric-${project.bookshelf_version}"
 }
 
 processResources {
