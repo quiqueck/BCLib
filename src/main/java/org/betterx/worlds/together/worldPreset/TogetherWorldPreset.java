@@ -105,26 +105,31 @@ public class TogetherWorldPreset extends WorldPreset {
     private static DimensionsWrapper DEFAULT_DIMENSIONS_WRAPPER = null;
 
     public static @NotNull Map<ResourceKey<LevelStem>, ChunkGenerator> loadWorldDimensions() {
-        final RegistryAccess registryAccess = WorldBootstrap.getLastRegistryAccessOrElseBuiltin();
-        if (registryAccess == BuiltinRegistries.ACCESS && Configs.MAIN_CONFIG.verboseLogging()) {
-            BCLib.LOGGER.info("Loading from builtin Registry");
-        }
-        final RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
-        if (DEFAULT_DIMENSIONS_WRAPPER == null) {
-            DEFAULT_DIMENSIONS_WRAPPER = new DimensionsWrapper(TogetherWorldPreset.getDimensionsMap(WorldPresets.getDEFAULT()));
-        }
+        try {
+            final RegistryAccess registryAccess = WorldBootstrap.getLastRegistryAccessOrElseBuiltin();
+            if (registryAccess == BuiltinRegistries.ACCESS && Configs.MAIN_CONFIG.verboseLogging()) {
+                BCLib.LOGGER.info("Loading from builtin Registry");
+            }
+            final RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
+            if (DEFAULT_DIMENSIONS_WRAPPER == null) {
+                DEFAULT_DIMENSIONS_WRAPPER = new DimensionsWrapper(TogetherWorldPreset.getDimensionsMap(WorldPresets.getDEFAULT()));
+            }
 
-        CompoundTag presetNBT = WorldGenUtil.getPresetsNbt();
-        if (!presetNBT.contains("dimensions")) {
+            CompoundTag presetNBT = WorldGenUtil.getPresetsNbt();
+            if (!presetNBT.contains("dimensions")) {
+                return DEFAULT_DIMENSIONS_WRAPPER.dimensions;
+            }
+
+            Optional<DimensionsWrapper> oLevelStem = DimensionsWrapper.CODEC
+                    .parse(new Dynamic<>(registryOps, presetNBT))
+                    .resultOrPartial(WorldsTogether.LOGGER::error);
+
+
+            return oLevelStem.orElse(DEFAULT_DIMENSIONS_WRAPPER).dimensions;
+        } catch (Exception e) {
+            BCLib.LOGGER.error("Failed to load Dimensions", e);
             return DEFAULT_DIMENSIONS_WRAPPER.dimensions;
         }
-
-        Optional<DimensionsWrapper> oLevelStem = DimensionsWrapper.CODEC
-                .parse(new Dynamic<>(registryOps, presetNBT))
-                .resultOrPartial(WorldsTogether.LOGGER::error);
-
-
-        return oLevelStem.orElse(DEFAULT_DIMENSIONS_WRAPPER).dimensions;
     }
 
     public static Registry<LevelStem> getDimensions(ResourceKey<WorldPreset> key) {
