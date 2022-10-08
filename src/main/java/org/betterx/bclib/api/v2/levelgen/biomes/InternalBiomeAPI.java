@@ -317,7 +317,7 @@ public class InternalBiomeAPI {
         try {
             BCLBiomeRegistry.register(registryAccess, biome);
         } catch (IllegalStateException e) {
-            BCLib.LOGGER.warning("Unable to register Dummy Biome Entry for " + biome.getID());
+            BCLib.LOGGER.info("Not managing Biome " + biome.getID());
         }
     }
 
