@@ -120,13 +120,13 @@ public abstract class BaseAnvilBlock extends AnvilBlock implements BlockModelPro
     }
 
     public int getMaxDurability() {
-        return 3;
+        return 5;
     }
 
     public BlockState damageAnvilUse(BlockState state, RandomSource random) {
         IntegerProperty durability = getDurabilityProp();
         int value = state.getValue(durability);
-        if (value < getMaxDurability() && random.nextInt(8) == 0) {
+        if (value < getMaxDurability() && random.nextInt(10) == 0) {
             return state.setValue(durability, value + 1);
         }
         value = state.getValue(DESTRUCTION);
