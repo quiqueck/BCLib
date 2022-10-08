@@ -319,7 +319,8 @@ public class InternalBiomeAPI {
         try {
             BCLBiomeRegistry.register(registryAccess, biome);
         } catch (IllegalStateException e) {
-            BCLib.LOGGER.info("Not managing Biome " + biome.getID());
+            if (Configs.MAIN_CONFIG.verboseLogging())
+                BCLib.LOGGER.info("Not managing Biome " + biome.getID());
         }
     }
 
