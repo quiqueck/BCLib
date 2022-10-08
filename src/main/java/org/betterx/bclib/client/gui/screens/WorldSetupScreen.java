@@ -211,10 +211,10 @@ public class WorldSetupScreen extends LayoutScreen {
                             : BCLEndBiomeSourceConfig.EndBiomeGeneratorType.VANILLA,
                     generateEndVoid.isChecked(),
                     (int) Math.pow(innerRadius.getValue() * 16, 2),
-                    centerBiomeSize.getValue(),
-                    voidBiomeSize.getValue(),
-                    landBiomeSize.getValue(),
-                    barrensBiomeSize.getValue()
+                    centerBiomeSize.getValue() * 16,
+                    voidBiomeSize.getValue() * 16,
+                    landBiomeSize.getValue() * 16,
+                    barrensBiomeSize.getValue() * 16
             );
 
             ChunkGenerator endGenerator = betterxDimensions.get(LevelStem.END);
