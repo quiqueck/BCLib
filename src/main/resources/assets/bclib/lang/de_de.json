@@ -57,7 +57,7 @@
   "title.screen.bclib.worldgen.legacy_square": "Legacy-Verteilung (1.17)",
   "title.screen.bclib.worldgen.custom_end_terrain": "Angepasster End-Terrain-Generator",
   "title.screen.bclib.worldgen.end_void": "Kleine End-Inseln erzeugen",
-  "title.screen.bclib.worldgen.avg_biome_size": "Durchscnittl. Biome Größe (in Chunks)",
+  "title.screen.bclib.worldgen.avg_biome_size": "Durchschnittl. Biome Größe (in Chunks)",
   "title.screen.bclib.worldgen.other": "Sonstiges",
   "title.screen.bclib.worldgen.land_biome_size": "Land-Biome",
   "title.screen.bclib.worldgen.void_biome_size": "Kleine Inseln",
