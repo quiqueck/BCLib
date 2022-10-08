@@ -46,19 +46,19 @@ public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements R
     public BaseDoublePlantBlock() {
         this(
                 Properties.of(Material.PLANT)
-                                   .sound(SoundType.GRASS)
-                                   .noCollission()
-                                   .offsetType(BlockBehaviour.OffsetType.NONE)
+                          .sound(SoundType.GRASS)
+                          .noCollission()
+                          .offsetType(BlockBehaviour.OffsetType.NONE)
         );
     }
 
     public BaseDoublePlantBlock(int light) {
         this(
                 Properties.of(Material.PLANT)
-                                   .sound(SoundType.GRASS)
-                                   .lightLevel((state) -> state.getValue(TOP) ? light : 0)
-                                   .noCollission()
-                                   .offsetType(BlockBehaviour.OffsetType.NONE)
+                          .sound(SoundType.GRASS)
+                          .lightLevel((state) -> state.getValue(TOP) ? light : 0)
+                          .noCollission()
+                          .offsetType(BlockBehaviour.OffsetType.NONE)
         );
     }
 
@@ -114,10 +114,6 @@ public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements R
 
     @Override
     public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
-        if (state.getValue(TOP)) {
-            return Lists.newArrayList();
-        }
-
         ItemStack tool = builder.getParameter(LootContextParams.TOOL);
         if (tool != null && BaseShearsItem.isShear(tool) || EnchantmentHelper.getItemEnchantmentLevel(
                 Enchantments.SILK_TOUCH,
