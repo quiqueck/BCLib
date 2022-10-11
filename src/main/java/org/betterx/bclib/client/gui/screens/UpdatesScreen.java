@@ -26,7 +26,7 @@ import net.fabricmc.loader.api.metadata.CustomValue;
 
 @Environment(EnvType.CLIENT)
 public class UpdatesScreen extends BCLibLayoutScreen {
-    public static final String DONATION_URL = "https://www.paypal.com/donate/?hosted_button_id=7VTXYRXBHZQZJ";
+    public static final String DONATION_URL = "https://www.buymeacoffee.com/quiqueck";
     static final ResourceLocation UPDATE_LOGO_LOCATION = new ResourceLocation(BCLib.MOD_ID, "icon_updater.png");
 
     public UpdatesScreen(Screen parent) {
