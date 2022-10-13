@@ -83,12 +83,13 @@ task changelog() {
 }
 
 modrinth {
+    def slurper = new groovy.json.JsonSlurper()
     token = new File(projectDir, "../MODRINTH_TOKEN").text
-    projectId = "bclib"
-    versionNumber = "$mod_version"
-    versionType = "release" // This is the default -- can also be `beta` or `alpha`
+    projectId = project.archives_base_name
+    versionNumber = project.mod_version
+    versionType = project.release_channel
     uploadFile = remapJar
-    gameVersions = ["1.19", "1.19.1", "1.19.2"]
+    gameVersions = slurper.parseText(project.modrinth_versions)
     loaders = ["fabric"]
     changelog = new File(projectDir, "CHANGES.md").getText('UTF-8')
     dependencies {
