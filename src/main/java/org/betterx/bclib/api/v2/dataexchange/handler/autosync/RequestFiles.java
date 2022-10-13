@@ -73,11 +73,13 @@ public class RequestFiles extends DataHandler.FromClient {
         int size = buf.readInt();
         files = new ArrayList<>(size);
 
-        BCLib.LOGGER.info("Client requested " + size + " Files:");
+        if (Configs.MAIN_CONFIG.verboseLogging())
+            BCLib.LOGGER.info("Client requested " + size + " Files:");
         for (int i = 0; i < size; i++) {
             AutoSyncID asid = AutoSyncID.deserializeData(buf);
             files.add(asid);
-            BCLib.LOGGER.info("	- " + asid);
+            if (Configs.MAIN_CONFIG.verboseLogging())
+                BCLib.LOGGER.info("	- " + asid);
         }
 
 

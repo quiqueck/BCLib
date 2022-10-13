@@ -81,10 +81,12 @@ public class SendFiles extends DataHandler.FromServer {
         writeString(buf, token);
         buf.writeInt(existingFiles.size());
 
-        BCLib.LOGGER.info("Sending " + existingFiles.size() + " Files to Client:");
+        if (Configs.MAIN_CONFIG.verboseLogging())
+            BCLib.LOGGER.info("Sending " + existingFiles.size() + " Files to Client:");
         for (AutoFileSyncEntry entry : existingFiles) {
             int length = entry.serializeContent(buf);
-            BCLib.LOGGER.info("	- " + entry + " (" + PathUtil.humanReadableFileSize(length) + ")");
+            if (Configs.MAIN_CONFIG.verboseLogging())
+                BCLib.LOGGER.info("	- " + entry + " (" + PathUtil.humanReadableFileSize(length) + ")");
         }
     }
 
@@ -105,7 +107,8 @@ public class SendFiles extends DataHandler.FromServer {
 
             int size = buf.readInt();
             receivedFiles = new ArrayList<>(size);
-            BCLib.LOGGER.info("Server sent " + size + " Files:");
+            if (Configs.MAIN_CONFIG.verboseLogging())
+                BCLib.LOGGER.info("Server sent " + size + " Files:");
             for (int i = 0; i < size; i++) {
                 Triple<AutoFileSyncEntry, byte[], AutoSyncID> p = AutoFileSyncEntry.deserializeContent(buf);
                 if (p.first != null) {
@@ -122,9 +125,11 @@ public class SendFiles extends DataHandler.FromServer {
                     } else {
                         type = "Ignoring ";
                     }
-                    BCLib.LOGGER.info("	- " + type + p.first + " (" + PathUtil.humanReadableFileSize(p.second.length) + ")");
+                    if (Configs.MAIN_CONFIG.verboseLogging())
+                        BCLib.LOGGER.info("	- " + type + p.first + " (" + PathUtil.humanReadableFileSize(p.second.length) + ")");
                 } else {
-                    BCLib.LOGGER.error("   - Failed to receive File " + p.third + ", possibly sent from a Mod that is not installed on the client.");
+                    if (Configs.MAIN_CONFIG.verboseLogging())
+                        BCLib.LOGGER.error("   - Failed to receive File " + p.third + ", possibly sent from a Mod that is not installed on the client.");
                 }
             }
         }

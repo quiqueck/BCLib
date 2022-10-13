@@ -131,9 +131,11 @@ public class SyncFolderDescriptor {
         buf.writeBoolean(removeAdditionalFiles);
         buf.writeInt(fileCache.size());
         fileCache.forEach(fl -> {
-            BCLib.LOGGER.info("	  - " + fl.relPath);
-            if (debugHashes) {
-                BCLib.LOGGER.info("		" + fl.hash);
+            if (Configs.MAIN_CONFIG.verboseLogging()) {
+                BCLib.LOGGER.info("	  - " + fl.relPath);
+                if (debugHashes) {
+                    BCLib.LOGGER.info("		" + fl.hash);
+                }
             }
             fl.serialize(buf);
         });

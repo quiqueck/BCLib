@@ -129,8 +129,9 @@ public class HelloClient extends DataHandler.FromServer {
                         modID));
                 buf.writeBoolean(canDownload);
 
-                BCLib.LOGGER.info("	- Listing Mod " + modID + " v" + ver + " (size: " + PathUtil.humanReadableFileSize(
-                        size) + ", download=" + canDownload + ")");
+                if (Configs.MAIN_CONFIG.verboseLogging())
+                    BCLib.LOGGER.info("	- Listing Mod " + modID + " v" + ver + " (size: " + PathUtil.humanReadableFileSize(
+                            size) + ", download=" + canDownload + ")");
             }
         } else {
             BCLib.LOGGER.info("Server will not list Mods.");
@@ -149,7 +150,8 @@ public class HelloClient extends DataHandler.FromServer {
             buf.writeInt(existingAutoSyncFiles.size());
             for (AutoFileSyncEntry entry : existingAutoSyncFiles) {
                 entry.serialize(buf);
-                BCLib.LOGGER.info("	- Offering " + (entry.isConfigFile() ? "Config " : "File ") + entry);
+                if (Configs.MAIN_CONFIG.verboseLogging())
+                    BCLib.LOGGER.info("	- Offering " + (entry.isConfigFile() ? "Config " : "File ") + entry);
             }
         } else {
             BCLib.LOGGER.info("Server will neither offer Files nor Configs.");
@@ -159,7 +161,8 @@ public class HelloClient extends DataHandler.FromServer {
         if (Configs.SERVER_CONFIG.isOfferingFiles()) {
             buf.writeInt(AutoSync.syncFolderDescriptions.size());
             AutoSync.syncFolderDescriptions.forEach(desc -> {
-                BCLib.LOGGER.info("	- Offering Folder " + desc.localFolder + " (allowDelete=" + desc.removeAdditionalFiles + ")");
+                if (Configs.MAIN_CONFIG.verboseLogging())
+                    BCLib.LOGGER.info("	- Offering Folder " + desc.localFolder + " (allowDelete=" + desc.removeAdditionalFiles + ")");
                 desc.serialize(buf);
             });
         } else {
@@ -230,20 +233,23 @@ public class HelloClient extends DataHandler.FromServer {
         }
 
         if (autoSynFolders.size() > 0) {
-            BCLib.LOGGER.info("Folders offered by Server:");
+            if (Configs.MAIN_CONFIG.verboseLogging())
+                BCLib.LOGGER.info("Folders offered by Server:");
         }
 
         autoSynFolders.forEach(desc -> {
             //desc contains the fileCache sent from the server, load the local version to get hold of the actual file cache on the client
             SyncFolderDescriptor localDescriptor = AutoSync.getSyncFolderDescriptor(desc.folderID);
             if (localDescriptor != null) {
-                BCLib.LOGGER.info("	- " + desc.folderID + " (" + desc.localFolder + ", allowRemove=" + desc.removeAdditionalFiles + ")");
+                if (Configs.MAIN_CONFIG.verboseLogging())
+                    BCLib.LOGGER.info("	- " + desc.folderID + " (" + desc.localFolder + ", allowRemove=" + desc.removeAdditionalFiles + ")");
                 localDescriptor.invalidateCache();
 
                 desc.relativeFilesStream()
                     .filter(desc::discardChildElements)
                     .forEach(subFile -> {
-                        BCLib.LOGGER.warning("	   * " + subFile.relPath + " (REJECTED)");
+                        if (Configs.MAIN_CONFIG.verboseLogging())
+                            BCLib.LOGGER.warning("	   * " + subFile.relPath + " (REJECTED)");
                     });
 
 
@@ -259,7 +265,8 @@ public class HelloClient extends DataHandler.FromServer {
                                                                                            ))
                                                                                            .collect(Collectors.toList());
 
-                    additionalFiles.forEach(aid -> BCLib.LOGGER.info("	   * " + desc.localFolder.relativize(aid.relFile.toPath()) + " (missing on server)"));
+                    if (Configs.MAIN_CONFIG.verboseLogging())
+                        additionalFiles.forEach(aid -> BCLib.LOGGER.info("	   * " + desc.localFolder.relativize(aid.relFile.toPath()) + " (missing on server)"));
                     filesToRemove.addAll(additionalFiles);
                 }
 
@@ -270,17 +277,20 @@ public class HelloClient extends DataHandler.FromServer {
                         if (localSubFile != null) {
                             //the file exists locally, check if the hashes match
                             if (!localSubFile.hash.equals(subFile.hash)) {
-                                BCLib.LOGGER.info("	   * " + subFile.relPath + " (changed)");
+                                if (Configs.MAIN_CONFIG.verboseLogging())
+                                    BCLib.LOGGER.info("	   * " + subFile.relPath + " (changed)");
                                 filesToRequest.add(new AutoSyncID.ForDirectFileRequest(
                                         desc.folderID,
                                         new File(subFile.relPath)
                                 ));
                             } else {
-                                BCLib.LOGGER.info("	   * " + subFile.relPath);
+                                if (Configs.MAIN_CONFIG.verboseLogging())
+                                    BCLib.LOGGER.info("	   * " + subFile.relPath);
                             }
                         } else {
                             //the file is missing locally
-                            BCLib.LOGGER.info("	   * " + subFile.relPath + " (missing on client)");
+                            if (Configs.MAIN_CONFIG.verboseLogging())
+                                BCLib.LOGGER.info("	   * " + subFile.relPath + " (missing on client)");
                             filesToRequest.add(new AutoSyncID.ForDirectFileRequest(
                                     desc.folderID,
                                     new File(subFile.relPath)
@@ -291,7 +301,8 @@ public class HelloClient extends DataHandler.FromServer {
                 //free some memory
                 localDescriptor.invalidateCache();
             } else {
-                BCLib.LOGGER.info("	- " + desc.folderID + " (Failed to find)");
+                if (Configs.MAIN_CONFIG.verboseLogging())
+                    BCLib.LOGGER.info("	- " + desc.folderID + " (Failed to find)");
             }
         });
     }
@@ -301,7 +312,8 @@ public class HelloClient extends DataHandler.FromServer {
         final boolean debugHashes = Configs.CLIENT_CONFIG.shouldPrintDebugHashes();
 
         if (autoSyncedFiles.size() > 0) {
-            BCLib.LOGGER.info("Files offered by Server:");
+            if (Configs.MAIN_CONFIG.verboseLogging())
+                BCLib.LOGGER.info("Files offered by Server:");
         }
 
         //Handle single sync files
@@ -328,12 +340,13 @@ public class HelloClient extends DataHandler.FromServer {
                     ));
                 }
             }
-
-            BCLib.LOGGER.info("	- " + e + ": " + actionString);
-            if (debugHashes) {
-                BCLib.LOGGER.info("	  * " + e.serverHash + " (Server)");
-                BCLib.LOGGER.info("	  * " + e.localMatch.getFileHash() + " (Client)");
-                BCLib.LOGGER.info("	  * local Content " + (contentWrapper.getRawContent() == null));
+            if (Configs.MAIN_CONFIG.verboseLogging()) {
+                BCLib.LOGGER.info("	- " + e + ": " + actionString);
+                if (debugHashes) {
+                    BCLib.LOGGER.info("	  * " + e.serverHash + " (Server)");
+                    BCLib.LOGGER.info("	  * " + e.localMatch.getFileHash() + " (Client)");
+                    BCLib.LOGGER.info("	  * local Content " + (contentWrapper.getRawContent() == null));
+                }
             }
         }
     }
@@ -349,10 +362,11 @@ public class HelloClient extends DataHandler.FromServer {
             final boolean clientOnly = nfo != null && nfo.metadata.getEnvironment() == ModEnvironment.CLIENT;
             final boolean requestMod = !clientOnly && !serverInfo.version.equals(localVersion) && serverInfo.size > 0 && serverInfo.canDownload;
 
-            BCLib.LOGGER.info("	- " + e.getKey() + " (client=" + localVersion + ", server=" + serverInfo.version + ", size=" + PathUtil.humanReadableFileSize(
-                    serverInfo.size) + (requestMod ? ", requesting" : "") + (serverInfo.canDownload
-                    ? ""
-                    : ", not offered") + (clientOnly ? ", client only" : "") + ")");
+            if (Configs.MAIN_CONFIG.verboseLogging())
+                BCLib.LOGGER.info("	- " + e.getKey() + " (client=" + localVersion + ", server=" + serverInfo.version + ", size=" + PathUtil.humanReadableFileSize(
+                        serverInfo.size) + (requestMod ? ", requesting" : "") + (serverInfo.canDownload
+                        ? ""
+                        : ", not offered") + (clientOnly ? ", client only" : "") + ")");
             if (requestMod) {
                 filesToRequest.add(new AutoSyncID.ForModFileRequest(e.getKey(), serverInfo.version));
             }
