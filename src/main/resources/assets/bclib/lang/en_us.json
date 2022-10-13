@@ -50,6 +50,8 @@
   "title.bclib.datafixer.error.continue": "Proceed and mark as fixed",
   "title.config.bclib.client.rendering.customFogRendering": "Custom Fog Rendering",
   "title.config.bclib.client.rendering.netherThickFog": "Nether Thick Fog",
+  "title.config.bclib.main.infos.verbose": "Verbose Logging",
+  "title.config.bclib.client.infos.survives_on_hint": "Show 'Survives On' hint as Tooltip",
   "tooltip.bclib.place_on": "Survives on: %s",
   "generator.bclib.normal": "BetterX",
   "title.screen.bclib.worldgen.main": "World Generator Settings",

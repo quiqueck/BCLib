@@ -79,6 +79,8 @@
   "title.config.bclib.client.version.check": "Versionsprüfung erlauben",
   "title.config.bclib.client.ui.showUpdateInfo": "Anzeigen wenn neue Updates verfügabr sind",
   "title.config.bclib.client.rendering.FogDensity": "Nebeldichte",
+  "title.config.bclib.main.infos.verbose": "Ausführliche Logs",
+  "title.config.bclib.client.infos.survives_on_hint": "Zeige 'Überlebt auf' Tooltip",
   "description.config.bclib.client.ui.suppressExperimentalDialogOnLoad": "Der Warnbildschirm wird immer dann angezeigt, wenn Deine Welt nicht die Einstellungen der Vanilla-Version verwendet. Dies kann passieren, wenn Du eine Welt in einer Vorschauversion startest, aber auch wenn Du Mods verwendest, um die Welterzeugung zu verändern. Wenn diese Option aktiviert ist, wird die Warnung übersprungen, wenn Du eine bestehende Welt lädst. Sie wird weiterhin angezeigt (als Erinnerung), wenn eine neue Welt erstellt wird.",
   "title.config.bclib.client.ui.forceBetterXPreset": "BetterX als Standard-Welt-Typ verwenden",
   "description.config.bclib.client.ui.forceBetterXPreset": "Der Welt-Typ bestimmt, wie eine Welt generiert wird. In den meisten Fällen solltet BetterX als Standardeinstellung beibehalten werden (Du kannst den Typ jederzeit im Welt-Erstellen-Bildschirm ändern). Dieser Typ ist für maximale Kompatibilität zwischen DataPacks, unserer Mod und anderen Fabric-Mods optimiert. Außerdem bietet er einige einzigartige Funktionen für BetterNether und BetterEnd. Du solltest diese Option nur deaktivieren, wenn Du einen Grund dazu hast!",
