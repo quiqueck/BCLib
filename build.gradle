@@ -80,14 +80,14 @@ modrinth {
     } else {
         changes = ""
     }
-    def token = new File(projectDir, "../MODRINTH_TOKEN")
-    if (token.exists()) {
-        token = token.text
+    def modrinth_token = new File(projectDir, "../MODRINTH_TOKEN")
+    if (modrinth_token.exists()) {
+        modrinth_token = modrinth_token.text
     } else {
-        token = ""
+        modrinth_token = ""
     }
     def slurper = new groovy.json.JsonSlurper()
-    token = token
+    token = modrinth_token
     projectId = project.archives_base_name
     versionNumber = project.mod_version
     versionType = project.release_channel
