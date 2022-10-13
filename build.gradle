@@ -74,15 +74,27 @@ task changelog() {
 }
 
 modrinth {
+    def changes = new File(projectDir, "CHANGES.md")
+    if (changes.exists()) {
+        changes = changes.getText('UTF-8')
+    } else {
+        changes = ""
+    }
+    def token = new File(projectDir, "../MODRINTH_TOKEN")
+    if (token.exists()) {
+        token = token.text
+    } else {
+        token = ""
+    }
     def slurper = new groovy.json.JsonSlurper()
-    token = new File(projectDir, "../MODRINTH_TOKEN").text
+    token = token
     projectId = project.archives_base_name
     versionNumber = project.mod_version
     versionType = project.release_channel
     uploadFile = remapJar
     gameVersions = slurper.parseText(project.modrinth_versions)
     loaders = ["fabric"]
-    changelog = new File(projectDir, "CHANGES.md").getText('UTF-8')
+    changelog = changes
     dependencies {
         required.project "fabric-api"
     }
