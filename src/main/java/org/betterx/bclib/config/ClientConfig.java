@@ -107,6 +107,11 @@ public class ClientConfig extends NamedPathConfig {
             "rendering",
             (config) -> config.get(CUSTOM_FOG_RENDERING)
     );
+    public static final ConfigToken<Boolean> SURVIES_ON_HINT = ConfigToken.Boolean(
+            true,
+            "survives_on_hint",
+            Configs.MAIN_INFO_CATEGORY
+    );
 
 
     public ClientConfig() {
@@ -188,5 +193,9 @@ public class ClientConfig extends NamedPathConfig {
 
     public void setForceBetterXPreset(boolean v) {
         set(FORCE_BETTERX_PRESET, v);
+    }
+    
+    public boolean survivesOnHint() {
+        return get(ClientConfig.SURVIES_ON_HINT);
     }
 }
