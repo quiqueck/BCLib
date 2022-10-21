@@ -4,6 +4,7 @@ import org.betterx.worlds.together.surfaceRules.AssignedSurfaceRule;
 import org.betterx.worlds.together.surfaceRules.SurfaceRuleRegistry;
 
 import com.mojang.serialization.Codec;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
@@ -24,6 +25,7 @@ public interface RegistryAccessMixin {
     private static Supplier<ImmutableMap<ResourceKey<Registry<?>>, RegistryAccess.RegistryData<?>>> together_addRegistry(
             Supplier<ImmutableMap<ResourceKey<Registry<?>>, RegistryAccess.RegistryData<?>>> supplier
     ) {
+
         return () -> {
             Map<ResourceKey<Registry<?>>, RegistryAccess.RegistryData<?>> res = supplier.get();
             ImmutableMap.Builder<ResourceKey<Registry<?>>, RegistryAccess.RegistryData<?>> builder = ImmutableMap.builder();
