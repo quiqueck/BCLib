@@ -22,6 +22,7 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraft.world.level.levelgen.WorldDimensions;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.storage.LevelResource;
@@ -42,7 +43,8 @@ public class WorldBootstrap {
     }
 
     public static RegistryAccess getLastRegistryAccessOrElseBuiltin() {
-        if (LAST_REGISTRY_ACCESS == null) return BuiltinRegistries.ACCESS;
+        //TODO: 1.19.3 ther no longer is a general builtin ACCESS
+        if (LAST_REGISTRY_ACCESS == null) return BuiltinRegistries.createAccess();
         return LAST_REGISTRY_ACCESS;
     }
 
@@ -92,10 +94,10 @@ public class WorldBootstrap {
             if (currentPreset.isPresent() && LAST_REGISTRY_ACCESS != null) {
                 var presetKey = currentPreset.get().unwrapKey();
                 if (presetKey.isPresent()) {
-                    Optional<Holder<WorldPreset>> newPreset = LAST_REGISTRY_ACCESS
+                    Optional<Holder.Reference<WorldPreset>> newPreset = LAST_REGISTRY_ACCESS
                             .registryOrThrow(Registry.WORLD_PRESET_REGISTRY)
                             .getHolder(presetKey.get());
-                    if (newPreset.isPresent()) currentPreset = newPreset;
+                    if (newPreset.isPresent()) currentPreset = (Optional<Holder<WorldPreset>>) (Optional<?>) newPreset;
                 }
             }
             return currentPreset;
@@ -131,15 +133,15 @@ public class WorldBootstrap {
         }
 
         //Needs to get called after setupWorld
-        public static void applyDatapackChangesOnNewWorld(WorldGenSettings worldGenSettings) {
+        public static void applyDatapackChangesOnNewWorld(WorldDimensions worldDims) {
             Optional<Holder<WorldPreset>> currentPreset = Optional.of(Helpers.defaultServerPreset());
-            currentPreset = WorldEventsImpl.ADAPT_WORLD_PRESET.emit(currentPreset, worldGenSettings);
+            currentPreset = WorldEventsImpl.ADAPT_WORLD_PRESET.emit(currentPreset, worldDims);
 
             if (currentPreset.map(Holder::value).orElse(null) instanceof WorldPresetAccessor acc) {
                 TogetherWorldPreset.writeWorldPresetSettings(acc.bcl_getDimensions());
             } else {
                 WorldsTogether.LOGGER.error("Failed writing together File");
-                TogetherWorldPreset.writeWorldPresetSettings(worldGenSettings.dimensions());
+                TogetherWorldPreset.writeWorldPresetSettings(worldDims.dimensions());
             }
             WorldEventsImpl.ON_WORLD_LOAD.emit(OnWorldLoad::onLoad);
         }
@@ -171,7 +173,8 @@ public class WorldBootstrap {
                     Optional<Holder<WorldPreset>> newPreset = setupNewWorldCommon(
                             levelStorageAccess.get(),
                             currentPreset,
-                            worldGenSettingsComponent.settings().worldGenSettings()
+                            //TODO: 1.19.13 see if this is the correct Dimensions list
+                            worldGenSettingsComponent.settings().selectedDimensions()
                     );
                     if (newPreset != currentPreset) {
                         acc.bcl_setPreset(newPreset);
@@ -188,7 +191,7 @@ public class WorldBootstrap {
         static Optional<Holder<WorldPreset>> setupNewWorldCommon(
                 LevelStorageSource.LevelStorageAccess levelStorageAccess,
                 Optional<Holder<WorldPreset>> currentPreset,
-                WorldGenSettings worldGenSettings
+                WorldDimensions worldDims
         ) {
             Helpers.initializeWorldConfig(levelStorageAccess, true);
 
@@ -208,13 +211,13 @@ public class WorldBootstrap {
                     true
             ));
 
-            currentPreset = WorldEventsImpl.ADAPT_WORLD_PRESET.emit(currentPreset, worldGenSettings);
+            currentPreset = WorldEventsImpl.ADAPT_WORLD_PRESET.emit(currentPreset, worldDims);
 
             if (currentPreset.map(Holder::value).orElse(null) instanceof WorldPresetAccessor acc) {
                 TogetherWorldPreset.writeWorldPresetSettings(acc.bcl_getDimensions());
             } else {
                 WorldsTogether.LOGGER.error("Failed writing together File");
-                TogetherWorldPreset.writeWorldPresetSettings(worldGenSettings.dimensions());
+                TogetherWorldPreset.writeWorldPresetSettings(worldDims.dimensions());
             }
 
             //LifeCycleAPI._runBeforeLevelLoad();
@@ -281,13 +284,13 @@ public class WorldBootstrap {
     public static class InFreshLevel {
         public static void setupNewWorld(
                 String levelID,
-                WorldGenSettings worldGenSettings,
+                WorldDimensions worldDims,
                 LevelStorageSource levelSource,
                 Optional<Holder<WorldPreset>> worldPreset
         ) {
             try {
                 var levelStorageAccess = levelSource.createAccess(levelID);
-                InGUI.setupNewWorldCommon(levelStorageAccess, worldPreset, worldGenSettings);
+                InGUI.setupNewWorldCommon(levelStorageAccess, worldPreset, worldDims);
                 levelStorageAccess.close();
             } catch (Exception e) {
                 WorldsTogether.LOGGER.error("Failed to initialize data in world", e);
@@ -297,7 +300,7 @@ public class WorldBootstrap {
 
     public static void finalizeWorldGenSettings(WorldGenSettings worldGenSettings) {
         String output = "World Dimensions: ";
-        for (var entry : worldGenSettings.dimensions().entrySet()) {
+        for (var entry : worldGenSettings.dimensions().dimensions().entrySet()) {
             WorldEventsImpl.ON_FINALIZE_LEVEL_STEM.emit(e -> e.now(
                     worldGenSettings,
                     entry.getKey(),
@@ -320,13 +323,13 @@ public class WorldBootstrap {
         WorldEventsImpl.ON_FINALIZED_WORLD_LOAD.emit(e -> e.done(worldGenSettings));
     }
 
-    public static WorldGenSettings enforceInNewWorld(WorldGenSettings worldGenSettings) {
+    public static WorldDimensions enforceInNewWorld(WorldDimensions worldGenSettings) {
         return WorldGenUtil.repairBiomeSourceInAllDimensions(LAST_REGISTRY_ACCESS, worldGenSettings);
     }
 
-    public static WorldGenSettings enforceInLoadedWorld(
+    public static WorldDimensions enforceInLoadedWorld(
             Optional<RegistryOps<Tag>> registryOps,
-            WorldGenSettings worldGenSettings
+            WorldDimensions worldGenSettings
     ) {
         if (registryOps.orElse(null) instanceof RegistryOpsAccessor acc) {
             return WorldGenUtil.repairBiomeSourceInAllDimensions(acc.bcl_getRegistryAccess(), worldGenSettings);

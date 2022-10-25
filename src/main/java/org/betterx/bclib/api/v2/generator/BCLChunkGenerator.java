@@ -30,7 +30,7 @@ import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.RandomState;
-import net.minecraft.world.level.levelgen.WorldGenSettings;
+import net.minecraft.world.level.levelgen.WorldDimensions;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
@@ -55,7 +55,7 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
 
                 RecordCodecBuilder<BCLChunkGenerator, Holder<NoiseGeneratorSettings>> settingsCodec = NoiseGeneratorSettings.CODEC
                         .fieldOf("settings")
-                        .forGetter((BCLChunkGenerator generator) -> generator.settings);
+                        .forGetter((BCLChunkGenerator generator) -> generator.generatorSettings());
 
 
                 return NoiseBasedChunkGenerator
@@ -157,12 +157,12 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
     }
 
     @Override
-    public WorldGenSettings enforceGeneratorInWorldGenSettings(
+    public WorldDimensions enforceGeneratorInWorldGenSettings(
             RegistryAccess access,
             ResourceKey<LevelStem> dimensionKey,
             ResourceKey<DimensionType> dimensionTypeKey,
             ChunkGenerator loadedChunkGenerator,
-            WorldGenSettings settings
+            WorldDimensions worldDims
     ) {
         BCLib.LOGGER.info("Enforcing Correct Generator for " + dimensionKey.location().toString() + ".");
 
@@ -195,7 +195,7 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
                 dimensionKey,
                 dimensionTypeKey,
                 access,
-                settings,
+                worldDims,
                 referenceGenerator
         );
 

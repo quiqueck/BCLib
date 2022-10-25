@@ -20,6 +20,7 @@ public class FurnaceRecipe extends AbstractAdvancementRecipe {
     private int count;
     private int time;
     private float xp;
+    protected CookingBookCategory bookCategory;
 
     private FurnaceRecipe() {
     }
@@ -34,6 +35,7 @@ public class FurnaceRecipe extends AbstractAdvancementRecipe {
         INSTANCE.xp = 0;
         INSTANCE.exist = BCLRecipeManager.exists(output);
         INSTANCE.createAdvancement(INSTANCE.id, false);
+        INSTANCE.bookCategory = CookingBookCategory.MISC;
 
         return INSTANCE;
     }
@@ -76,6 +78,11 @@ public class FurnaceRecipe extends AbstractAdvancementRecipe {
         return this;
     }
 
+    public FurnaceRecipe setCookingBookCategory(CookingBookCategory c) {
+        bookCategory = c;
+        return this;
+    }
+
     public void build() {
         build(false, false, false);
     }
@@ -96,6 +103,7 @@ public class FurnaceRecipe extends AbstractAdvancementRecipe {
         SmeltingRecipe recipe = new SmeltingRecipe(
                 new ResourceLocation(id + "_smelting"),
                 group,
+                bookCategory,
                 input,
                 new ItemStack(output, count),
                 xp,
@@ -108,6 +116,7 @@ public class FurnaceRecipe extends AbstractAdvancementRecipe {
             BlastingRecipe recipe2 = new BlastingRecipe(
                     new ResourceLocation(id + "_blasting"),
                     group,
+                    bookCategory,
                     input,
                     new ItemStack(output, count),
                     xp,
@@ -121,6 +130,7 @@ public class FurnaceRecipe extends AbstractAdvancementRecipe {
             CampfireCookingRecipe recipe2 = new CampfireCookingRecipe(
                     new ResourceLocation(id + "_campfire"),
                     group,
+                    bookCategory,
                     input,
                     new ItemStack(output, count),
                     xp,
@@ -134,6 +144,7 @@ public class FurnaceRecipe extends AbstractAdvancementRecipe {
             SmokingRecipe recipe2 = new SmokingRecipe(
                     new ResourceLocation(id + "_smoker"),
                     group,
+                    bookCategory,
                     input,
                     new ItemStack(output, count),
                     xp,

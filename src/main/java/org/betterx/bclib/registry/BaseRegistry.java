@@ -34,7 +34,8 @@ public abstract class BaseRegistry<T> {
 
     public Item.Properties makeItemSettings() {
         Item.Properties properties = new Item.Properties();
-        return properties.tab(creativeTab);
+        //TODO: 1.19.3 Creative mode tabs are handled differently now
+        return properties;//.tab(creativeTab);
     }
 
     private void registerInternal() {

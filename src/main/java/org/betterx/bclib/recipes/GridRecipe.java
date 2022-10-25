@@ -31,6 +31,8 @@ public class GridRecipe extends AbstractAdvancementRecipe {
     private int count;
     private boolean exist;
 
+    protected CraftingBookCategory bookCategory;
+
     private GridRecipe() {
     }
 
@@ -51,6 +53,7 @@ public class GridRecipe extends AbstractAdvancementRecipe {
         INSTANCE.shape = new String[]{"#"};
         INSTANCE.materialKeys.clear();
         INSTANCE.count = 1;
+        INSTANCE.bookCategory = CraftingBookCategory.MISC;
 
         INSTANCE.exist = output != null && BCLRecipeManager.exists(output);
         INSTANCE.createAdvancement(id, output);
@@ -122,6 +125,11 @@ public class GridRecipe extends AbstractAdvancementRecipe {
         return materials;
     }
 
+    public GridRecipe setCraftingBookCategory(CraftingBookCategory c) {
+        bookCategory = c;
+        return this;
+    }
+
 
     public void build() {
         if (!exist) {
@@ -145,11 +153,12 @@ public class GridRecipe extends AbstractAdvancementRecipe {
         CraftingRecipe recipe = shaped ? new ShapedRecipe(
                 id,
                 group,
+                bookCategory,
                 width,
                 height,
                 materials,
                 result
-        ) : new ShapelessRecipe(id, group, result, materials);
+        ) : new ShapelessRecipe(id, group, bookCategory, result, materials);
 
         BCLRecipeManager.addRecipe(type, recipe);
         registerAdvancement(recipe);

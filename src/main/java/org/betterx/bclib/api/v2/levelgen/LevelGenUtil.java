@@ -22,7 +22,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
-import net.minecraft.world.level.levelgen.WorldGenSettings;
+import net.minecraft.world.level.levelgen.WorldDimensions;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.levelgen.presets.WorldPresets;
 
@@ -64,11 +64,11 @@ public class LevelGenUtil {
     }
 
 
-    public static WorldGenSettings replaceGenerator(
+    public static WorldDimensions replaceGenerator(
             ResourceKey<LevelStem> dimensionKey,
             ResourceKey<DimensionType> dimensionTypeKey,
             RegistryAccess registryAccess,
-            WorldGenSettings worldGenSettings,
+            WorldDimensions worldDimensions,
             ChunkGenerator generator
     ) {
         Registry<DimensionType> dimensionTypeRegistry = registryAccess.registryOrThrow(Registry.DIMENSION_TYPE_REGISTRY);
@@ -76,15 +76,10 @@ public class LevelGenUtil {
                 dimensionKey,
                 dimensionTypeKey,
                 dimensionTypeRegistry,
-                worldGenSettings.dimensions(),
+                worldDimensions.dimensions(),
                 generator
         );
-        return new WorldGenSettings(
-                worldGenSettings.seed(),
-                worldGenSettings.generateStructures(),
-                worldGenSettings.generateBonusChest(),
-                newDimensions
-        );
+        return new WorldDimensions(newDimensions);
     }
 
     public static Registry<LevelStem> withDimension(
@@ -98,7 +93,7 @@ public class LevelGenUtil {
         LevelStem levelStem = inputDimensions.get(dimensionKey);
         Holder<DimensionType> dimensionType = levelStem == null
                 ? dimensionTypeRegistry.getOrCreateHolderOrThrow(dimensionTypeKey)
-                : levelStem.typeHolder();
+                : levelStem.type();
         return withDimension(dimensionKey, inputDimensions, new LevelStem(dimensionType, generator));
     }
 
@@ -109,8 +104,7 @@ public class LevelGenUtil {
     ) {
         MappedRegistry<LevelStem> writableRegistry = new MappedRegistry<>(
                 Registry.LEVEL_STEM_REGISTRY,
-                Lifecycle.experimental(),
-                null
+                Lifecycle.experimental()
         );
         writableRegistry.register(
                 dimensionKey,

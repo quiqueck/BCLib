@@ -6,7 +6,7 @@ import net.minecraft.world.level.levelgen.WorldGenSettings;
 
 public class ChunkGeneratorUtils {
     public static void restoreOriginalBiomeSourceInAllDimension(WorldGenSettings settings) {
-        for (var entry : settings.dimensions().entrySet()) {
+        for (var entry : settings.dimensions().dimensions().entrySet()) {
             ResourceKey<LevelStem> key = entry.getKey();
             LevelStem stem = entry.getValue();
 

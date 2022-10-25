@@ -10,6 +10,7 @@ import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ButtonBlock;
@@ -30,7 +31,14 @@ public abstract class BaseButtonBlock extends ButtonBlock implements BlockModelP
     private final Block parent;
 
     protected BaseButtonBlock(Block parent, Properties properties, boolean sensitive) {
-        super(sensitive, properties.noCollission());
+        this(parent, properties, 30, sensitive);
+    }
+
+    protected BaseButtonBlock(Block parent, Properties properties, int ticksToStayPressed, boolean sensitive) {
+        super(
+                properties.noCollission(), ticksToStayPressed, sensitive,
+                SoundEvents.STONE_BUTTON_CLICK_OFF, SoundEvents.STONE_BUTTON_CLICK_ON
+        );
         this.parent = parent;
     }
 

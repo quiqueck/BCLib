@@ -1,16 +1,12 @@
 package org.betterx.bclib.client.models;
 
-import org.betterx.bclib.api.v2.ModIntegrationAPI;
-import org.betterx.bclib.client.render.EmissiveTextureInfo;
 import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.ItemModelProvider;
 import org.betterx.bclib.models.RecordItemModelProvider;
 
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.multipart.MultiPart;
-import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.Registry;
@@ -21,12 +17,8 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class CustomModelBakery {
     private final Map<ResourceLocation, UnbakedModel> models = Maps.newConcurrentMap();
@@ -114,43 +106,44 @@ public class CustomModelBakery {
         BlockModel model = provider.getItemModel(modelLocation);
         models.put(modelLocation, model);
     }
-
-    public static void loadEmissiveModels(Map<ResourceLocation, UnbakedModel> unbakedCache) {
-        if (!ModIntegrationAPI.hasCanvas()) {
-            return;
-        }
-
-        Map<ResourceLocation, UnbakedModel> cacheCopy = new HashMap<>(unbakedCache);
-        Set<Pair<String, String>> strings = Sets.newConcurrentHashSet();
-        Registry.BLOCK.keySet().forEach(blockID -> {
-            Block block = Registry.BLOCK.get(blockID);
-            ImmutableList<BlockState> states = block.getStateDefinition().getPossibleStates();
-            boolean addBlock = false;
-
-            for (BlockState state : states) {
-                ResourceLocation stateID = BlockModelShaper.stateToModelLocation(blockID, state);
-                UnbakedModel model = cacheCopy.get(stateID);
-                if (model == null) {
-                    continue;
-                }
-                Collection<Material> materials = model.getMaterials(cacheCopy::get, strings);
-                if (materials == null) {
-                    continue;
-                }
-                for (Material material : materials) {
-                    if (EmissiveTextureInfo.isEmissiveTexture(material.texture())) {
-                        addBlock = true;
-                        break;
-                    }
-                }
-                if (addBlock) {
-                    break;
-                }
-            }
-
-            if (addBlock) {
-                EmissiveTextureInfo.addBlock(blockID);
-            }
-        });
-    }
+    
+    //TODO: 1.19.3 Handled differently now
+//    public static void loadEmissiveModels(Map<ResourceLocation, UnbakedModel> unbakedCache) {
+//        if (!ModIntegrationAPI.hasCanvas()) {
+//            return;
+//        }
+//
+//        Map<ResourceLocation, UnbakedModel> cacheCopy = new HashMap<>(unbakedCache);
+//        Set<Pair<String, String>> strings = Sets.newConcurrentHashSet();
+//        Registry.BLOCK.keySet().forEach(blockID -> {
+//            Block block = Registry.BLOCK.get(blockID);
+//            ImmutableList<BlockState> states = block.getStateDefinition().getPossibleStates();
+//            boolean addBlock = false;
+//
+//            for (BlockState state : states) {
+//                ResourceLocation stateID = BlockModelShaper.stateToModelLocation(blockID, state);
+//                UnbakedModel model = cacheCopy.get(stateID);
+//                if (model == null) {
+//                    continue;
+//                }
+//                Collection<Material> materials = model.getMaterials(cacheCopy::get, strings);
+//                if (materials == null) {
+//                    continue;
+//                }
+//                for (Material material : materials) {
+//                    if (EmissiveTextureInfo.isEmissiveTexture(material.texture())) {
+//                        addBlock = true;
+//                        break;
+//                    }
+//                }
+//                if (addBlock) {
+//                    break;
+//                }
+//            }
+//
+//            if (addBlock) {
+//                EmissiveTextureInfo.addBlock(blockID);
+//            }
+//        });
+//    }
 }

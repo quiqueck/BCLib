@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
-@Mixin(DedicatedServerProperties.WorldGenProperties.class)
+@Mixin(DedicatedServerProperties.WorldDimensionData.class)
 public class WorldGenPropertiesMixin {
 //    @ModifyArg(method = "create", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/levelgen/presets/WorldPreset;createWorldGenSettings(JZZ)Lnet/minecraft/world/level/levelgen/WorldGenSettings;"))
 //    public long wt_getSeed(long seed) {

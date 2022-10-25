@@ -4,7 +4,6 @@ import org.betterx.bclib.BCLib;
 import org.betterx.bclib.util.BlocksHelper;
 import org.betterx.bclib.util.MHelper;
 
-import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -86,17 +85,13 @@ public class OBJBlockModel implements UnbakedModel, BakedModel {
     }
 
     @Override
-    public Collection<Material> getMaterials(
-            Function<ResourceLocation, UnbakedModel> function,
-            Set<Pair<String, String>> set
-    ) {
-        return materials;
+    public void resolveParents(Function<ResourceLocation, UnbakedModel> function) {
     }
 
     @Nullable
     @Override
     public BakedModel bake(
-            ModelBakery modelBakery,
+            ModelBaker modelBakery,
             Function<Material, TextureAtlasSprite> textureGetter,
             ModelState modelState,
             ResourceLocation resourceLocation

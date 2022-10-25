@@ -8,6 +8,7 @@ import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
 import org.betterx.bclib.config.Configs;
 
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -42,7 +43,7 @@ final class BiomeSourcePatch extends ForcedLevelPatch {
 
         final CompoundTag worldGenSettings = root.getCompound("Data").getCompound("WorldGenSettings");
         final CompoundTag dimensions = worldGenSettings.getCompound("dimensions");
-        final RegistryAccess registryAccess = RegistryAccess.builtinCopy();
+        final RegistryAccess registryAccess = BuiltinRegistries.createAccess();
         final RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
 
 

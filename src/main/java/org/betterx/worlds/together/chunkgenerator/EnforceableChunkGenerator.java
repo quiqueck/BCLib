@@ -10,15 +10,15 @@ import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
-import net.minecraft.world.level.levelgen.WorldGenSettings;
+import net.minecraft.world.level.levelgen.WorldDimensions;
 
 public interface EnforceableChunkGenerator<G extends ChunkGenerator> {
-    WorldGenSettings enforceGeneratorInWorldGenSettings(
+    WorldDimensions enforceGeneratorInWorldGenSettings(
             RegistryAccess access,
             ResourceKey<LevelStem> dimensionKey,
             ResourceKey<DimensionType> dimensionTypeKey,
             ChunkGenerator loadedChunkGenerator,
-            WorldGenSettings settings
+            WorldDimensions worldDims
     );
 
     default boolean togetherShouldRepair(ChunkGenerator chunkGenerator) {

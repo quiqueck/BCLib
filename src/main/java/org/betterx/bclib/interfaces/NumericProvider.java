@@ -16,8 +16,7 @@ public interface NumericProvider {
             BCLib.makeID("worldgen/numeric_provider"));
     Registry<Codec<? extends NumericProvider>> NUMERIC_PROVIDER = new MappedRegistry<>(
             NUMERIC_PROVIDER_REGISTRY,
-            Lifecycle.experimental(),
-            null
+            Lifecycle.experimental()
     );
     Codec<NumericProvider> CODEC = NUMERIC_PROVIDER.byNameCodec()
                                                    .dispatch(NumericProvider::pcodec, Function.identity());

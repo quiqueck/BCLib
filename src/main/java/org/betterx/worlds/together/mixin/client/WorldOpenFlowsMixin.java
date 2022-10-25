@@ -5,10 +5,13 @@ import org.betterx.worlds.together.world.event.WorldBootstrap;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.worldselection.WorldOpenFlows;
+import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.server.RegistryLayer;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.world.level.LevelSettings;
-import net.minecraft.world.level.levelgen.WorldGenSettings;
+import net.minecraft.world.level.levelgen.WorldDimensions;
+import net.minecraft.world.level.levelgen.WorldOptions;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.WorldData;
 
@@ -19,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.Optional;
+import java.util.function.Function;
 
 @Mixin(WorldOpenFlows.class)
 public abstract class WorldOpenFlowsMixin {
@@ -56,18 +59,19 @@ public abstract class WorldOpenFlowsMixin {
     public void wt_createFreshLevel(
             String levelID,
             LevelSettings levelSettings,
-            RegistryAccess registryAccess,
-            WorldGenSettings worldGenSettings,
+            WorldOptions worldOptions,
+            Function<RegistryAccess, WorldDimensions> function,
             CallbackInfo ci
     ) {
-        WorldBootstrap.InFreshLevel.setupNewWorld(levelID, worldGenSettings, this.levelSource, Optional.empty());
+        //TODO: 1.19.3 no mor dimensions at this stage...
+        //WorldBootstrap.InFreshLevel.setupNewWorld(levelID, worldGenSettings, this.levelSource, Optional.empty());
     }
 
     @Inject(method = "createLevelFromExistingSettings", at = @At("HEAD"))
     public void wt_createLevelFromExistingSettings(
             LevelStorageSource.LevelStorageAccess levelStorageAccess,
             ReloadableServerResources reloadableServerResources,
-            RegistryAccess.Frozen frozen,
+            LayeredRegistryAccess<RegistryLayer> layeredRegistryAccess,
             WorldData worldData,
             CallbackInfo ci
     ) {

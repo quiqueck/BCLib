@@ -84,7 +84,7 @@ public class SurfaceRuleUtil {
     }
 
     public static void injectSurfaceRulesToAllDimensions(WorldGenSettings settings) {
-        for (var entry : settings.dimensions().entrySet()) {
+        for (var entry : settings.dimensions().dimensions().entrySet()) {
             ResourceKey<LevelStem> key = entry.getKey();
             LevelStem stem = entry.getValue();
 

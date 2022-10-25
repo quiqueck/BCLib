@@ -1,7 +1,6 @@
 package org.betterx.bclib.mixin.client;
 
 import org.betterx.bclib.api.v2.ModIntegrationAPI;
-import org.betterx.bclib.client.models.CustomModelBakery;
 
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.resources.model.ModelBakery;
@@ -35,7 +34,8 @@ public abstract class ModelBakeryMixin {
     ) {
         //CustomModelBakery.setModelsLoaded(false);
         if (ModIntegrationAPI.hasCanvas()) {
-            CustomModelBakery.loadEmissiveModels(unbakedCache);
+            //TODO:1.19.3 this needs to change
+            //CustomModelBakery.loadEmissiveModels(unbakedCache);
         }
     }
 }

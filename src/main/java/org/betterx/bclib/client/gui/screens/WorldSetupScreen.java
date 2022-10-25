@@ -255,7 +255,7 @@ public class WorldSetupScreen extends LayoutScreen {
                             createWorldScreen
                                     .worldGenSettingsComponent
                                     .settings()
-                                    .worldGenSettings()
+                                    .selectedDimensions()
                                     .dimensions()
                     )
             )));
@@ -269,11 +269,11 @@ public class WorldSetupScreen extends LayoutScreen {
             ChunkGenerator chunkGenerator
     ) {
         createWorldScreen.worldGenSettingsComponent.updateSettings(
-                (registryAccess, worldGenSettings) -> LevelGenUtil.replaceGenerator(
+                (registryAccess, worldDimensions) -> LevelGenUtil.replaceGenerator(
                         dimensionKey,
                         dimensionTypeKey,
                         registryAccess,
-                        worldGenSettings,
+                        worldDimensions,
                         chunkGenerator
                 )
         );

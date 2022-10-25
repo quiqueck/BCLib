@@ -1,7 +1,5 @@
 package org.betterx.worlds.together.mixin.common;
 
-import org.betterx.worlds.together.chunkgenerator.ChunkGeneratorUtils;
-
 import com.mojang.datafixers.DataFixer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.Services;
@@ -31,6 +29,7 @@ public class MinecraftServerMixinLate {
             ChunkProgressListenerFactory chunkProgressListenerFactory,
             CallbackInfo ci
     ) {
-        ChunkGeneratorUtils.restoreOriginalBiomeSourceInAllDimension(worldStem.worldData().worldGenSettings());
+        //TODO: 1.19.3 Dimensions are handled differently now
+        //ChunkGeneratorUtils.restoreOriginalBiomeSourceInAllDimension(worldStem.worldData().worldGenSettings());
     }
 }

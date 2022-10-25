@@ -33,7 +33,7 @@ public class BCLBiomeRegistry {
     );
     public static Registry<BCLBiome> BUILTIN_BCL_BIOMES = new MappedRegistry<>(
             BCL_BIOMES_REGISTRY,
-            Lifecycle.stable(), null
+            Lifecycle.stable()
     );
 
     /**

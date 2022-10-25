@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.TrapDoorBlock;
@@ -31,7 +32,7 @@ public class BaseTrapdoorBlock extends TrapDoorBlock implements RenderLayerProvi
     }
 
     public BaseTrapdoorBlock(BlockBehaviour.Properties properties) {
-        super(properties);
+        super(properties, SoundEvents.WOODEN_TRAPDOOR_CLOSE, SoundEvents.WOODEN_TRAPDOOR_OPEN);
     }
 
     @Override

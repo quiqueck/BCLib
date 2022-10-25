@@ -3,11 +3,11 @@ package org.betterx.bclib.items.boat;
 import org.betterx.bclib.BCLib;
 
 import net.minecraft.client.model.BoatModel;
+import net.minecraft.client.model.ChestBoatModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BoatItem;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
@@ -64,8 +64,8 @@ public final class BoatTypeOverride {
 
     public void createBoatModels(EntityRendererProvider.Context context) {
         if (boatModel == null) {
-            boatModel = new BoatModel(context.bakeLayer(boatModelName), false);
-            chestBoatModel = new BoatModel(context.bakeLayer(chestBoatModelName), true);
+            boatModel = new BoatModel(context.bakeLayer(boatModelName));
+            chestBoatModel = new ChestBoatModel(context.bakeLayer(chestBoatModelName));
         }
     }
 
@@ -115,7 +115,7 @@ public final class BoatTypeOverride {
     }
 
     public BoatItem createItem(boolean hasChest) {
-        return createItem(hasChest, new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_TRANSPORTATION));
+        return createItem(hasChest, new Item.Properties().stacksTo(1));
     }
 
     public BoatItem createItem(boolean hasChest, Item.Properties itemSettings) {

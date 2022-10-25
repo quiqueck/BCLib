@@ -12,17 +12,12 @@ import org.betterx.worlds.together.world.event.WorldBootstrap;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
 
-import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.JsonOps;
-import net.minecraft.Util;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -30,13 +25,10 @@ import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
-import net.minecraft.world.level.levelgen.WorldGenSettings;
+import net.minecraft.world.level.levelgen.WorldDimensions;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.gson.JsonElement;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,18 +38,18 @@ public class WorldGenUtil {
     public static final String TAG_PRESET = "preset";
     public static final String TAG_GENERATOR = "generator";
 
-    public static WorldGenSettings createWorldFromPreset(
+    public static WorldDimensions createWorldFromPreset(
             ResourceKey<WorldPreset> preset,
             RegistryAccess registryAccess,
             long seed,
             boolean generateStructures,
             boolean generateBonusChest
     ) {
-        WorldGenSettings settings = registryAccess
+        WorldDimensions settings = registryAccess
                 .registryOrThrow(Registry.WORLD_PRESET_REGISTRY)
                 .getHolderOrThrow(preset)
                 .value()
-                .createWorldGenSettings(seed, generateStructures, generateBonusChest);
+                .createWorldDimensions();
 
         for (LevelStem stem : settings.dimensions()) {
             if (stem.generator().getBiomeSource() instanceof BiomeSourceWithSeed bcl) {
@@ -73,7 +65,7 @@ public class WorldGenUtil {
         return settings;
     }
 
-    public static WorldGenSettings createDefaultWorldFromPreset(
+    public static WorldDimensions createDefaultWorldFromPreset(
             RegistryAccess registryAccess,
             long seed,
             boolean generateStructures,
@@ -89,28 +81,30 @@ public class WorldGenUtil {
     }
 
     @ApiStatus.Internal
-    public static Pair<WorldGenSettings, RegistryAccess.Frozen> defaultWorldDataSupplier(
-            RegistryOps<JsonElement> loaderOps,
-            RegistryAccess.Frozen frozen
-    ) {
-        WorldGenSettings defaultGen = createDefaultWorldFromPreset(frozen);
-        RegistryOps<JsonElement> registryOps = RegistryOps.create(JsonOps.INSTANCE, frozen);
-        WorldGenSettings worldGenSettings = WorldGenSettings.CODEC
-                .encodeStart(registryOps, defaultGen)
-                .flatMap(json -> WorldGenSettings.CODEC.parse(
-                        loaderOps,
-                        json
-                ))
-                .getOrThrow(
-                        false,
-                        Util.prefix(
-                                "Error parsing worldgen settings after loading data packs: ",
-                                WorldsTogether.LOGGER::error
-                        )
-                );
-//        WorldGenSettings worldGenSettings = createDefaultWorldFromPreset(frozen);
-        return Pair.of(worldGenSettings, frozen);
-    }
+    //TODO: 1.19.3 Disabled for now
+//    public static Pair<WorldDimensions, RegistryAccess.Frozen> defaultWorldDataSupplier(
+//            RegistryOps<JsonElement> loaderOps,
+//            RegistryAccess.Frozen frozen
+//    ) {
+//        WorldDimensions defaultGen = createDefaultWorldFromPreset(frozen);
+//        RegistryOps<JsonElement> registryOps = RegistryOps.create(JsonOps.INSTANCE, frozen);
+//
+//        WorldDimensions worldGenSettings = WorldDimensions.CODEC
+//                .codec().parse(registryOps, defaultGen)
+//                .flatMap(json -> WorldDimensions.CODEC.codec().parse(
+//                        loaderOps,
+//                        json
+//                ))
+//                .getOrThrow(
+//                        false,
+//                        Util.prefix(
+//                                "Error parsing worldgen settings after loading data packs: ",
+//                                WorldsTogether.LOGGER::error
+//                        )
+//                );
+////        WorldGenSettings worldGenSettings = createDefaultWorldFromPreset(frozen);
+//        return Pair.of(worldGenSettings, frozen);
+//    }
 
     private static final Map<ResourceKey<WorldPreset>, Map<ResourceKey<LevelStem>, LevelStem>> WORLD_PRESET_MAP = new HashMap<>();
 
@@ -136,52 +130,52 @@ public class WorldGenUtil {
         WORLD_PRESET_MAP.clear();
     }
 
-    public static void preloadWorldPresets(ResourceManager resourceManager, RegistryAccess.Writable writable) {
-        clearPreloadedWorldPresets();
-        Registry<WorldPreset> registry = writable.registryOrThrow(Registry.WORLD_PRESET_REGISTRY);
-        //for (ResourceKey<WorldPreset> key : registry.registryKeySet())
-        ResourceKey<WorldPreset> key = net.minecraft.world.level.levelgen.presets.WorldPresets.NORMAL;
-        {
-            RegistryOps<JsonElement> loaderOps = RegistryOps.createAndLoad(
-                    JsonOps.INSTANCE, writable, resourceManager
-            );
-            Holder<WorldPreset> in = registry.getHolderOrThrow(key);
-            if (in.unwrapKey().isPresent()) {
-                RegistryOps<JsonElement> registryOps = RegistryOps.create(JsonOps.INSTANCE, writable);
-                WorldGenSettings settings = WorldGenUtil.createWorldFromPreset(
-                        in.unwrapKey().orElseThrow(),
-                        writable,
-                        RandomSource.create().nextLong(),
-                        true,
-                        false
-                );
-                WorldGenSettings worldGenSettings = WorldGenSettings.CODEC
-                        .encodeStart(registryOps, settings)
-                        .flatMap(json -> WorldGenSettings.CODEC.parse(
-                                loaderOps,
-                                json
-                        ))
-                        .getOrThrow(
-                                false,
-                                Util.prefix(
-                                        "Error parsing world preset settings  after loading data packs: ",
-                                        WorldsTogether.LOGGER::error
-                                )
-                        );
-                ImmutableMap.Builder<ResourceKey<LevelStem>, LevelStem> map = ImmutableMap.builder();
-                for (Map.Entry<ResourceKey<LevelStem>, LevelStem> entry : worldGenSettings.dimensions().entrySet()) {
-                    map.put(entry.getKey(), entry.getValue());
-                }
-                WORLD_PRESET_MAP.put(key, map.build());
-            }
-        }
-    }
+//    public static void preloadWorldPresets(ResourceManager resourceManager, RegistryAccess.Writable writable) {
+//        clearPreloadedWorldPresets();
+//        Registry<WorldPreset> registry = writable.registryOrThrow(Registry.WORLD_PRESET_REGISTRY);
+//        //for (ResourceKey<WorldPreset> key : registry.registryKeySet())
+//        ResourceKey<WorldPreset> key = net.minecraft.world.level.levelgen.presets.WorldPresets.NORMAL;
+//        {
+//            RegistryOps<JsonElement> loaderOps = RegistryOps.createAndLoad(
+//                    JsonOps.INSTANCE, writable, resourceManager
+//            );
+//            Holder<WorldPreset> in = registry.getHolderOrThrow(key);
+//            if (in.unwrapKey().isPresent()) {
+//                RegistryOps<JsonElement> registryOps = RegistryOps.create(JsonOps.INSTANCE, writable);
+//                WorldGenSettings settings = WorldGenUtil.createWorldFromPreset(
+//                        in.unwrapKey().orElseThrow(),
+//                        writable,
+//                        RandomSource.create().nextLong(),
+//                        true,
+//                        false
+//                );
+//                WorldGenSettings worldGenSettings = WorldGenSettings.CODEC
+//                        .encodeStart(registryOps, settings)
+//                        .flatMap(json -> WorldGenSettings.CODEC.parse(
+//                                loaderOps,
+//                                json
+//                        ))
+//                        .getOrThrow(
+//                                false,
+//                                Util.prefix(
+//                                        "Error parsing world preset settings  after loading data packs: ",
+//                                        WorldsTogether.LOGGER::error
+//                                )
+//                        );
+//                ImmutableMap.Builder<ResourceKey<LevelStem>, LevelStem> map = ImmutableMap.builder();
+//                for (Map.Entry<ResourceKey<LevelStem>, LevelStem> entry : worldGenSettings.dimensions().entrySet()) {
+//                    map.put(entry.getKey(), entry.getValue());
+//                }
+//                WORLD_PRESET_MAP.put(key, map.build());
+//            }
+//        }
+//    }
 
-    public static WorldGenSettings createDefaultWorldFromPreset(RegistryAccess registryAccess, long seed) {
+    public static WorldDimensions createDefaultWorldFromPreset(RegistryAccess registryAccess, long seed) {
         return createDefaultWorldFromPreset(registryAccess, seed, true, false);
     }
 
-    public static WorldGenSettings createDefaultWorldFromPreset(RegistryAccess registryAccess) {
+    public static WorldDimensions createDefaultWorldFromPreset(RegistryAccess registryAccess) {
         return createDefaultWorldFromPreset(registryAccess, RandomSource.create().nextLong());
     }
 
@@ -233,9 +227,9 @@ public class WorldGenUtil {
 
     @SuppressWarnings("unchecked")
     @ApiStatus.Internal
-    public static WorldGenSettings repairBiomeSourceInAllDimensions(
+    public static WorldDimensions repairBiomeSourceInAllDimensions(
             RegistryAccess registryAccess,
-            WorldGenSettings settings
+            WorldDimensions settings
     ) {
         var dimensions = TogetherWorldPreset.loadWorldDimensions();
         for (var entry : settings.dimensions().entrySet()) {
@@ -271,7 +265,7 @@ public class WorldGenUtil {
                     settings = enforcer.enforceGeneratorInWorldGenSettings(
                             registryAccess,
                             key,
-                            loadedStem.typeHolder().unwrapKey().orElseThrow(),
+                            loadedStem.type().unwrapKey().orElseThrow(),
                             loadedChunkGenerator,
                             settings
                     );

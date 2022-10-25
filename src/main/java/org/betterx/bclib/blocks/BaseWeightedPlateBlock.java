@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.WeightedPressurePlateBlock;
@@ -31,10 +32,11 @@ public class BaseWeightedPlateBlock extends WeightedPressurePlateBlock implement
         super(
                 15,
                 Properties.copy(source)
-                                   .noCollission()
-                                   .noOcclusion()
-                                   .requiresCorrectToolForDrops()
-                                   .strength(0.5F)
+                          .noCollission()
+                          .noOcclusion()
+                          .requiresCorrectToolForDrops()
+                          .strength(0.5F),
+                SoundEvents.METAL_PRESSURE_PLATE_CLICK_OFF, SoundEvents.METAL_PRESSURE_PLATE_CLICK_ON
         );
         this.parent = source;
     }

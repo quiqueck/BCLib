@@ -28,7 +28,10 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
     protected long currentSeed;
     protected int maxHeight;
 
-    private static List<Holder<Biome>> preInit(Registry<Biome> biomeRegistry, List<Holder<Biome>> biomes) {
+    private static List<Holder<Biome>> preInit(
+            Registry<Biome> biomeRegistry,
+            List<Holder<Biome>> biomes
+    ) {
         biomes = biomes.stream().sorted(Comparator.comparing(holder -> holder.unwrapKey()
                                                                              .get()
                                                                              .location()
@@ -108,8 +111,9 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
         return biomeRegistry.stream()
                             .filter(biome -> biomeRegistry.getResourceKey(biome).isPresent())
 
-                            .map(biome -> biomeRegistry.getOrCreateHolderOrThrow(biomeRegistry.getResourceKey(biome)
-                                                                                              .get()))
+                            .map(biome -> (Holder<Biome>) biomeRegistry.getOrCreateHolderOrThrow(
+                                    biomeRegistry.getResourceKey(biome).get())
+                            )
                             .filter(biome -> {
                                 ResourceLocation location = biome.unwrapKey().orElseThrow().location();
                                 final String strLocation = location.toString();

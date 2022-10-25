@@ -1,6 +1,8 @@
 package org.betterx.bclib.api.v2.levelgen.structures;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
@@ -117,7 +119,11 @@ public class StructureWorld {
             ListTag map2 = tag.getList("states", 10);
             BlockState[] states = new BlockState[map2.size()];
             for (int i = 0; i < states.length; i++) {
-                states[i] = NbtUtils.readBlockState((CompoundTag) map2.get(i));
+                states[i] = NbtUtils.readBlockState(
+                        //TODO: 1.19.3 This appears to be used on a level registry, not the global one?
+                        HolderLookup.forRegistry(Registry.BLOCK),
+                        (CompoundTag) map2.get(i)
+                );
             }
 
             map.forEach((element) -> {

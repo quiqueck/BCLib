@@ -24,6 +24,14 @@ public class BlastFurnaceRecipe extends CookingRecipe<BlastFurnaceRecipe, Contai
 
     @Override
     protected BlastingRecipe buildRecipe() {
-        return new BlastingRecipe(id, group, input, new ItemStack(output, count), experience, cookingTime);
+        return new BlastingRecipe(
+                id,
+                group,
+                bookCategory,
+                input,
+                new ItemStack(output, count),
+                experience,
+                cookingTime
+        );
     }
 }

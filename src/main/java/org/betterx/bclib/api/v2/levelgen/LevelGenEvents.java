@@ -21,6 +21,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagLoader;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraft.world.level.levelgen.WorldDimensions;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.storage.LevelStorageSource;
@@ -71,9 +72,9 @@ public class LevelGenEvents {
 
     private static Optional<Holder<WorldPreset>> adaptWorldPresetSettings(
             Optional<Holder<WorldPreset>> currentPreset,
-            WorldGenSettings worldGenSettings
+            WorldDimensions worldDims
     ) {
-        LevelStem endStem = worldGenSettings.dimensions().get(LevelStem.END);
+        LevelStem endStem = worldDims.dimensions().get(LevelStem.END);
 
         //We probably loaded a Datapack for the End
         if (!(endStem.generator().getBiomeSource() instanceof BCLibEndBiomeSource)) {

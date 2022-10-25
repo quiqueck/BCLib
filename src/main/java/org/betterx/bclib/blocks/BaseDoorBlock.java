@@ -13,6 +13,7 @@ import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -42,7 +43,7 @@ public class BaseDoorBlock extends DoorBlock implements RenderLayerProvider, Blo
     }
 
     public BaseDoorBlock(BlockBehaviour.Properties properties) {
-        super(properties);
+        super(properties, SoundEvents.WOODEN_DOOR_CLOSE, SoundEvents.WOODEN_DOOR_OPEN);
     }
 
     @Override

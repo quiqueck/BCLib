@@ -13,7 +13,6 @@ import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -108,11 +107,13 @@ public class TogetherWorldPreset extends WorldPreset {
         try {
             final RegistryAccess registryAccess = WorldBootstrap.getLastRegistryAccessOrElseBuiltin();
             boolean globalRegistry = false;
-            if (registryAccess == BuiltinRegistries.ACCESS) {
+            //TODO: 1.19.3 there is no longer a builtin registry acccess
+            /*if (registryAccess == BuiltinRegistries.ACCESS) {
                 if (Configs.MAIN_CONFIG.verboseLogging())
                     BCLib.LOGGER.info("Loading from builtin Registry");
                 globalRegistry = true;
-            } else {
+            } else */
+            {
                 if (Configs.MAIN_CONFIG.verboseLogging())
                     BCLib.LOGGER.info("Loading from datapack Registry");
             }
@@ -145,11 +146,7 @@ public class TogetherWorldPreset extends WorldPreset {
         return preset
                 .get()
                 .value()
-                .createWorldGenSettings(
-                        0,
-                        true,
-                        true
-                )
+                .createWorldDimensions()
                 .dimensions();
     }
 

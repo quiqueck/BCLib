@@ -1,7 +1,5 @@
 package org.betterx.worlds.together.mixin.common;
 
-import org.betterx.worlds.together.world.event.WorldBootstrap;
-
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.progress.ChunkProgressListener;
@@ -29,7 +27,8 @@ public class MinecraftServerMixin {
 
     @Inject(method = "createLevels", at = @At(value = "HEAD"))
     private void together_addSurfaceRules(ChunkProgressListener worldGenerationProgressListener, CallbackInfo ci) {
-        WorldBootstrap.finalizeWorldGenSettings(this.worldData.worldGenSettings());
+        //TODO: 1.19.3 Dimensions are handled differently now
+        //WorldBootstrap.finalizeWorldGenSettings(this.worldData.worldGenSettings());
 
     }
 }
