@@ -19,6 +19,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.MaterialColor;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -53,6 +54,8 @@ public class WoodenComplexMaterial extends ComplexMaterial {
     public final MaterialColor planksColor;
     public final MaterialColor woodColor;
 
+    public final WoodType woodType;
+
     public WoodenComplexMaterial(
             String modID,
             String baseName,
@@ -63,6 +66,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
         super(modID, baseName, receipGroupPrefix);
         this.planksColor = planksColor;
         this.woodColor = woodColor;
+        this.woodType = WoodType.register(new BCLWoodType(modID, baseName));
     }
 
     @Override
