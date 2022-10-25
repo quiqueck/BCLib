@@ -229,7 +229,6 @@ public class NamedPathConfig extends PathConfig {
 
     @SuppressWarnings("unchecked")
     private <T> T _get(ConfigToken<T> what, boolean raw) {
-        //TODO: Check if we can make config fully Generic to avoid runtime type checks...
         if (ConfigKeeper.BooleanEntry.class.isAssignableFrom(what.type)) {
             return (T) _getBoolean((ConfigToken<Boolean>) what, raw);
         }
