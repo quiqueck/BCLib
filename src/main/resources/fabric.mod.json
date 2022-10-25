@@ -35,6 +35,9 @@
     ],
     "emi": [
       "org.betterx.bclib.integration.emi.EMIPlugin"
+    ],
+    "fabric-datagen": [
+      "org.betterx.worlds.together.WorldsTogetherDatagen"
     ]
   },
   "accessWidener": "bclib.accesswidener",

@@ -8,6 +8,7 @@
     "BuiltinRegistriesMixin",
     "DedicatedServerPropertiesMixin",
     "DiggerItemAccessor",
+    "MainDataMixin",
     "MainMixin",
     "MinecraftServerMixin",
     "MinecraftServerMixinLate",

@@ -31,8 +31,7 @@ public class WorldPresets {
     private static ResourceKey<WorldPreset> DEFAULT = net.minecraft.world.level.levelgen.presets.WorldPresets.NORMAL;
 
     public static Holder<WorldPreset> get(RegistryAccess access, ResourceKey<WorldPreset> key) {
-        //TODO: 1.19.3 there is no longer a builtin registry acccess
-        return ((access != null) ? access : BuiltinRegistries.createAccess())
+        return access
                 .registryOrThrow(Registry.WORLD_PRESET_REGISTRY)
                 .getHolderOrThrow(key);
     }
@@ -90,8 +89,7 @@ public class WorldPresets {
 
         for (Map.Entry<ResourceKey<WorldPreset>, PresetBuilder> e : BUILDERS.entrySet()) {
             TogetherWorldPreset preset = e.getValue().create(overworldStem, netherContext, endContext);
-            //TODO: 1.19.3 already frozen
-            //BuiltinRegistries.register(presets, e.getKey(), preset);
+            BuiltinRegistries.register(presets, e.getKey(), preset);
         }
         BUILDERS = null;
     }

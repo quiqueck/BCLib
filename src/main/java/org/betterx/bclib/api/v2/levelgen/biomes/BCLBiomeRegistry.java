@@ -10,6 +10,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -87,40 +88,37 @@ public class BCLBiomeRegistry {
 
     @ApiStatus.Internal
     public static Holder<BCLBiome> bootstrap(Registry<BCLBiome> registry) {
-        //TODO:1.19.3 Registry is frozen at this point
-//        BuiltinRegistries.register(registry, BiomeAPI.SMALL_END_ISLANDS.getBCLBiomeKey(), BiomeAPI.SMALL_END_ISLANDS);
-//        BuiltinRegistries.register(registry, BiomeAPI.END_BARRENS.getBCLBiomeKey(), BiomeAPI.END_BARRENS);
-//        BuiltinRegistries.register(registry, BiomeAPI.END_HIGHLANDS.getBCLBiomeKey(), BiomeAPI.END_HIGHLANDS);
-//        BuiltinRegistries.register(registry, BiomeAPI.END_MIDLANDS.getBCLBiomeKey(), BiomeAPI.END_MIDLANDS);
-//        BuiltinRegistries.register(registry, BiomeAPI.THE_END.getBCLBiomeKey(), BiomeAPI.THE_END);
-//        BuiltinRegistries.register(
-//                registry,
-//                BiomeAPI.BASALT_DELTAS_BIOME.getBCLBiomeKey(),
-//                BiomeAPI.BASALT_DELTAS_BIOME
-//        );
-//        BuiltinRegistries.register(
-//                registry,
-//                BiomeAPI.SOUL_SAND_VALLEY_BIOME.getBCLBiomeKey(),
-//                BiomeAPI.SOUL_SAND_VALLEY_BIOME
-//        );
-//        BuiltinRegistries.register(
-//                registry,
-//                BiomeAPI.WARPED_FOREST_BIOME.getBCLBiomeKey(),
-//                BiomeAPI.WARPED_FOREST_BIOME
-//        );
-//        BuiltinRegistries.register(
-//                registry,
-//                BiomeAPI.CRIMSON_FOREST_BIOME.getBCLBiomeKey(),
-//                BiomeAPI.CRIMSON_FOREST_BIOME
-//        );
-//        BuiltinRegistries.register(
-//                registry,
-//                BiomeAPI.NETHER_WASTES_BIOME.getBCLBiomeKey(),
-//                BiomeAPI.NETHER_WASTES_BIOME
-//        );
-//        return BuiltinRegistries.register(registry, EMPTY_BIOME.getBCLBiomeKey(), EMPTY_BIOME);
-
-        return Holder.direct(EMPTY_BIOME);
+        BuiltinRegistries.register(registry, BiomeAPI.SMALL_END_ISLANDS.getBCLBiomeKey(), BiomeAPI.SMALL_END_ISLANDS);
+        BuiltinRegistries.register(registry, BiomeAPI.END_BARRENS.getBCLBiomeKey(), BiomeAPI.END_BARRENS);
+        BuiltinRegistries.register(registry, BiomeAPI.END_HIGHLANDS.getBCLBiomeKey(), BiomeAPI.END_HIGHLANDS);
+        BuiltinRegistries.register(registry, BiomeAPI.END_MIDLANDS.getBCLBiomeKey(), BiomeAPI.END_MIDLANDS);
+        BuiltinRegistries.register(registry, BiomeAPI.THE_END.getBCLBiomeKey(), BiomeAPI.THE_END);
+        BuiltinRegistries.register(
+                registry,
+                BiomeAPI.BASALT_DELTAS_BIOME.getBCLBiomeKey(),
+                BiomeAPI.BASALT_DELTAS_BIOME
+        );
+        BuiltinRegistries.register(
+                registry,
+                BiomeAPI.SOUL_SAND_VALLEY_BIOME.getBCLBiomeKey(),
+                BiomeAPI.SOUL_SAND_VALLEY_BIOME
+        );
+        BuiltinRegistries.register(
+                registry,
+                BiomeAPI.WARPED_FOREST_BIOME.getBCLBiomeKey(),
+                BiomeAPI.WARPED_FOREST_BIOME
+        );
+        BuiltinRegistries.register(
+                registry,
+                BiomeAPI.CRIMSON_FOREST_BIOME.getBCLBiomeKey(),
+                BiomeAPI.CRIMSON_FOREST_BIOME
+        );
+        BuiltinRegistries.register(
+                registry,
+                BiomeAPI.NETHER_WASTES_BIOME.getBCLBiomeKey(),
+                BiomeAPI.NETHER_WASTES_BIOME
+        );
+        return BuiltinRegistries.register(registry, EMPTY_BIOME.getBCLBiomeKey(), EMPTY_BIOME);
     }
 
     public static BCLBiome get(ResourceLocation loc) {

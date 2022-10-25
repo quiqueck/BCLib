@@ -56,6 +56,14 @@ public final class Logger {
         LOGGER.error(modPref + message, obj, ex);
     }
 
+    public void error(String message, Object o1, Object o2, Exception ex) {
+        LOGGER.error(modPref + message, o1, o2, ex);
+    }
+
+    public void error(String message, Object o1, Object o2) {
+        LOGGER.error(modPref + message, o1, o2);
+    }
+
     public void error(String message, Exception ex) {
         LOGGER.error(modPref + message, ex);
     }

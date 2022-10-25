@@ -16,7 +16,6 @@ import net.minecraft.client.gui.screens.worldselection.WorldGenSettingsComponent
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
@@ -44,7 +43,8 @@ public class WorldBootstrap {
 
     public static RegistryAccess getLastRegistryAccessOrElseBuiltin() {
         //TODO: 1.19.3 ther no longer is a general builtin ACCESS
-        if (LAST_REGISTRY_ACCESS == null) return BuiltinRegistries.createAccess();
+//        if (LAST_REGISTRY_ACCESS == null)
+//            return BuiltinRegistries.;
         return LAST_REGISTRY_ACCESS;
     }
 
