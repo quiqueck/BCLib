@@ -6,7 +6,6 @@ import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 
 import org.spongepowered.asm.mixin.Final;
@@ -26,11 +25,7 @@ public abstract class ModelBakeryMixin {
 
     @Inject(method = "<init>*", at = @At("TAIL"))
     private void bclib_findEmissiveModels(
-            ResourceManager resourceManager,
-            BlockColors blockColors,
-            ProfilerFiller profiler,
-            int mipmap,
-            CallbackInfo info
+            BlockColors blockColors, ProfilerFiller profilerFiller, Map map, Map map2, CallbackInfo ci
     ) {
         //CustomModelBakery.setModelsLoaded(false);
         if (ModIntegrationAPI.hasCanvas()) {

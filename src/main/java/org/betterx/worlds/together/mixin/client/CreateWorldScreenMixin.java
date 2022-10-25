@@ -8,7 +8,7 @@ import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.client.gui.screens.worldselection.WorldGenSettingsComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.WorldLoader;
-import net.minecraft.world.level.DataPackConfig;
+import net.minecraft.world.level.WorldDataConfiguration;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.storage.LevelStorageSource;
@@ -34,7 +34,7 @@ public class CreateWorldScreenMixin {
     @Inject(method = "<init>", at = @At("TAIL"))
     private void wt_init(
             Screen screen,
-            DataPackConfig dataPackConfig,
+            WorldDataConfiguration worldDataConfiguration,
             WorldGenSettingsComponent worldGenSettingsComponent,
             CallbackInfo ci
     ) {

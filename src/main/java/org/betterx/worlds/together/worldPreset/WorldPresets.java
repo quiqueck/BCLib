@@ -90,7 +90,8 @@ public class WorldPresets {
 
         for (Map.Entry<ResourceKey<WorldPreset>, PresetBuilder> e : BUILDERS.entrySet()) {
             TogetherWorldPreset preset = e.getValue().create(overworldStem, netherContext, endContext);
-            BuiltinRegistries.register(presets, e.getKey(), preset);
+            //TODO: 1.19.3 already frozen
+            //BuiltinRegistries.register(presets, e.getKey(), preset);
         }
         BUILDERS = null;
     }
