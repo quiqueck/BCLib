@@ -36,7 +36,6 @@ public class TextureAtlasMixin {
     private boolean bclib_modifyAtlas;
     private static ResourceManager bclib_resourceManager;
 
-    //TODO: 1.19.3 How were FabricSprites replaced?
     @Inject(method = "<init>*", at = @At("TAIL"))
     private void bclib_onAtlasInit(
             ResourceLocation textureAtlasLocation,

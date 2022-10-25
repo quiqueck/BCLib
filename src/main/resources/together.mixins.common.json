@@ -15,7 +15,7 @@
     "NoiseBasedChunkGeneratorMixin",
     "NoiseGeneratorSettingsMixin",
     "PrimaryLevelDataMixin",
-    "RegistryAccessMixin",
+    "RegistryDataLoaderMixin",
     "RegistryOpsAccessor",
     "TagLoaderMixin",
     "WorldGenPropertiesMixin",

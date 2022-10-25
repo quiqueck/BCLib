@@ -18,7 +18,6 @@ import net.minecraft.world.level.dimension.LevelStem;
 
 public final class BCLibPatch {
     public static void register() {
-        // TODO separate values in config on client side (config screen)
         if (Configs.MAIN_CONFIG.repairBiomes() && (GeneratorOptions.fixEndBiomeSource() || GeneratorOptions.fixNetherBiomeSource())) {
             DataFixerAPI.registerPatch(BiomeSourcePatch::new);
         }

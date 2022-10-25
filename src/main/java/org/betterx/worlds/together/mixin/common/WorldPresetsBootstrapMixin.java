@@ -47,8 +47,7 @@ public abstract class WorldPresetsBootstrapMixin {
     private Holder<NoiseGeneratorSettings> endNoiseSettings;
 
     //see WorldPresets.register
-
-    //TODO: 1.19.3
+    
     @ModifyArg(method = "run", at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/world/level/levelgen/presets/WorldPresets$Bootstrap;registerCustomOverworldPreset(Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/world/level/dimension/LevelStem;)Lnet/minecraft/core/Holder;"))
     private LevelStem bcl_getOverworldStem(LevelStem overworldStem) {
         WorldGenUtil.Context netherContext = new WorldGenUtil.Context(

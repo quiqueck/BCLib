@@ -120,7 +120,6 @@ public class StructureWorld {
             BlockState[] states = new BlockState[map2.size()];
             for (int i = 0; i < states.length; i++) {
                 states[i] = NbtUtils.readBlockState(
-                        //TODO: 1.19.3 This appears to be used on a level registry, not the global one?
                         HolderLookup.forRegistry(Registry.BLOCK),
                         (CompoundTag) map2.get(i)
                 );
