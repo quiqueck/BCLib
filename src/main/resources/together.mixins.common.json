@@ -18,12 +18,12 @@
     "RegistryDataLoaderMixin",
     "RegistryOpsAccessor",
     "TagLoaderMixin",
-    "WorldDimensionsMixin",
     "WorldGenPropertiesMixin",
     "WorldLoaderMixin",
     "WorldPresetAccessor",
     "WorldPresetMixin",
-    "WorldPresetsBootstrapMixin"
+    "WorldPresetsBootstrapMixin",
+    "WorldStem_Mixin"
   ],
   "injectors": {
     "defaultRequire": 1

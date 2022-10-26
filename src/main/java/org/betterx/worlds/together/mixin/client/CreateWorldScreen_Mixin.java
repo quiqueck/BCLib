@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Optional;
 
 @Mixin(CreateWorldScreen.class)
-public class CreateWorldScreenMixin {
+public class CreateWorldScreen_Mixin {
     @Shadow
     @Final
     public WorldGenSettingsComponent worldGenSettingsComponent;

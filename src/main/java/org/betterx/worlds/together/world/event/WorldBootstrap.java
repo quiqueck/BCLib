@@ -14,11 +14,13 @@ import org.betterx.worlds.together.worldPreset.WorldPresets;
 
 import net.minecraft.client.gui.screens.worldselection.WorldGenSettingsComponent;
 import net.minecraft.core.Holder;
+import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.RegistryLayer;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.WorldDimensions;
@@ -27,6 +29,7 @@ import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.level.storage.LevelStorageSource;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -41,10 +44,12 @@ public class WorldBootstrap {
     }
 
     public static RegistryAccess getLastRegistryAccessOrElseBuiltin() {
-        if (LAST_REGISTRY_ACCESS == null)
+        if (LAST_REGISTRY_ACCESS == null) {
             WorldsTogether.LOGGER.error("Tried to read from global registry!");
+        }
         return LAST_REGISTRY_ACCESS;
     }
+
 
     public static class Helpers {
         private static void initializeWorldConfig(
@@ -320,7 +325,20 @@ public class WorldBootstrap {
         WorldEventsImpl.ON_FINALIZED_WORLD_LOAD.emit(e -> e.done(dimensionRegistry));
     }
 
-    public static Registry<LevelStem> enforceInNewWorld(Registry<LevelStem> dimensionRegistry) {
-        return WorldGenUtil.repairBiomeSourceInAllDimensions(LAST_REGISTRY_ACCESS, dimensionRegistry);
+    public static LayeredRegistryAccess<RegistryLayer> enforceInLayeredRegistry(LayeredRegistryAccess<RegistryLayer> registries) {
+        RegistryAccess access = registries.compositeAccess();
+        InGUI.registryReady(access);
+        final Registry<LevelStem> dimensions = access.registryOrThrow(Registry.LEVEL_STEM_REGISTRY);
+        final Registry<LevelStem> changedDimensions = WorldGenUtil.repairBiomeSourceInAllDimensions(access, dimensions);
+        if (dimensions != changedDimensions) {
+            if (Configs.MAIN_CONFIG.verboseLogging()) {
+                WorldsTogether.LOGGER.info("Loading originally configured Dimensions in World.");
+            }
+            return registries.replaceFrom(
+                    RegistryLayer.DIMENSIONS,
+                    new RegistryAccess.ImmutableRegistryAccess(List.of(changedDimensions)).freeze()
+            );
+        }
+        return registries;
     }
 }
