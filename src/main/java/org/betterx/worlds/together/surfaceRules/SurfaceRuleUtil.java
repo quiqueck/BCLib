@@ -11,7 +11,6 @@ import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.SurfaceRules;
-import net.minecraft.world.level.levelgen.WorldGenSettings;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -83,8 +82,8 @@ public class SurfaceRuleUtil {
         }
     }
 
-    public static void injectSurfaceRulesToAllDimensions(WorldGenSettings settings) {
-        for (var entry : settings.dimensions().dimensions().entrySet()) {
+    public static void injectSurfaceRulesToAllDimensions(Registry<LevelStem> dimensionRegistry) {
+        for (var entry : dimensionRegistry.entrySet()) {
             ResourceKey<LevelStem> key = entry.getKey();
             LevelStem stem = entry.getValue();
 

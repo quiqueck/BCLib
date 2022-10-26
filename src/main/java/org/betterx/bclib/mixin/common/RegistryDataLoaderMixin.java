@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(RegistryDataLoader.class)
-public interface RegistryDataLoaderMixin {
+public class RegistryDataLoaderMixin {
     @Accessor("WORLDGEN_REGISTRIES")
     @Mutable
     static void wt_set_WORLDGEN_REGISTRIES(List<RegistryDataLoader.RegistryData<?>> list) {

@@ -18,6 +18,7 @@
     "RegistryDataLoaderMixin",
     "RegistryOpsAccessor",
     "TagLoaderMixin",
+    "WorldDimensionsMixin",
     "WorldGenPropertiesMixin",
     "WorldLoaderMixin",
     "WorldPresetAccessor",

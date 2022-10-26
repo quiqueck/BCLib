@@ -14,7 +14,6 @@ public class WorldLoaderMixin {
     //this is the place a new Registry access gets first istantiated
     //either when a new Datapack was added to a world on the create-screen
     //or because we did start world loading
-    //TODO: 1.19.3 This might get replaced by the data Providers...
     @ModifyArg(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/ReloadableServerResources;loadResources(Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/core/RegistryAccess$Frozen;Lnet/minecraft/world/flag/FeatureFlagSet;Lnet/minecraft/commands/Commands$CommandSelection;ILjava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"))
     private static RegistryAccess.Frozen wt_newRegistry(RegistryAccess.Frozen frozen) {
         WorldBootstrap.InGUI.registryReady(frozen);

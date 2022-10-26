@@ -44,7 +44,7 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
             instance,
             BCLBiome::new
     ));
-    public static final KeyDispatchDataCodec<BCLBiome> KEY_CODEC = KeyDispatchDataCodec.of(CODEC);
+    public static final KeyDispatchDataCodec<? extends BCLBiome> KEY_CODEC = KeyDispatchDataCodec.of(CODEC);
 
     public KeyDispatchDataCodec<? extends BCLBiome> codec() {
         return KEY_CODEC;
@@ -425,7 +425,7 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
     }
 
     public ResourceKey<BCLBiome> getBCLBiomeKey() {
-        return ResourceKey.create(BCLBiomeRegistry.BCL_BIOMES_REGISTRY, biomeID);
+        return (ResourceKey<BCLBiome>) (Object) ResourceKey.create(BCLBiomeRegistry.BCL_BIOMES_REGISTRY, biomeID);
     }
 
     /**

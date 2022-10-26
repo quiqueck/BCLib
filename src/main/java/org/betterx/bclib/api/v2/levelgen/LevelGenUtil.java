@@ -22,7 +22,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
-import net.minecraft.world.level.levelgen.WorldDimensions;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.levelgen.presets.WorldPresets;
 
@@ -64,11 +63,11 @@ public class LevelGenUtil {
     }
 
 
-    public static WorldDimensions replaceGenerator(
+    public static Registry<LevelStem> replaceGenerator(
             ResourceKey<LevelStem> dimensionKey,
             ResourceKey<DimensionType> dimensionTypeKey,
             RegistryAccess registryAccess,
-            WorldDimensions worldDimensions,
+            Registry<LevelStem> dimensionRegistry,
             ChunkGenerator generator
     ) {
         Registry<DimensionType> dimensionTypeRegistry = registryAccess.registryOrThrow(Registry.DIMENSION_TYPE_REGISTRY);
@@ -76,10 +75,10 @@ public class LevelGenUtil {
                 dimensionKey,
                 dimensionTypeKey,
                 dimensionTypeRegistry,
-                worldDimensions.dimensions(),
+                dimensionRegistry,
                 generator
         );
-        return new WorldDimensions(newDimensions);
+        return newDimensions;
     }
 
     public static Registry<LevelStem> withDimension(

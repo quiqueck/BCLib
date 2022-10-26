@@ -4,21 +4,21 @@ import org.betterx.worlds.together.biomesource.BiomeSourceFromRegistry;
 import org.betterx.worlds.together.biomesource.BiomeSourceWithConfig;
 import org.betterx.worlds.together.biomesource.MergeableBiomeSource;
 
+import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
-import net.minecraft.world.level.levelgen.WorldDimensions;
 
 public interface EnforceableChunkGenerator<G extends ChunkGenerator> {
-    WorldDimensions enforceGeneratorInWorldGenSettings(
+    Registry<LevelStem> enforceGeneratorInWorldGenSettings(
             RegistryAccess access,
             ResourceKey<LevelStem> dimensionKey,
             ResourceKey<DimensionType> dimensionTypeKey,
             ChunkGenerator loadedChunkGenerator,
-            WorldDimensions worldDims
+            Registry<LevelStem> dimensionRegistry
     );
 
     default boolean togetherShouldRepair(ChunkGenerator chunkGenerator) {

@@ -16,7 +16,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.biome.Biomes;
 
-import java.util.Optional;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -80,6 +79,7 @@ public class BCLBiomeRegistry {
     private static <T> ResourceKey<Registry<T>> createRegistryKey(ResourceLocation location) {
         return ResourceKey.createRegistryKey(location);
     }
+
 
     private static Codec<? extends BCLBiome> bootstrapCodecs(Registry<Codec<? extends BCLBiome>> registry) {
         return Registry.register(registry, BCLib.makeID("biome"), BCLBiome.KEY_CODEC.codec());
@@ -153,8 +153,8 @@ public class BCLBiomeRegistry {
 
     private static Registry<BCLBiome> getBclBiomesRegistry(RegistryAccess access) {
         if (access != null) {
-            return ((Optional<Registry<BCLBiome>>) access
-                    .registry(BCLBiomeRegistry.BCL_BIOMES_REGISTRY))
+            return access
+                    .registry(BCLBiomeRegistry.BCL_BIOMES_REGISTRY)
                     .orElse(BUILTIN_BCL_BIOMES);
         } else {
             return BUILTIN_BCL_BIOMES;

@@ -81,7 +81,7 @@ public class BCLib implements ModInitializer {
         VersionChecker.registerMod(MOD_ID);
 
 
-        if (false && isDevEnvironment()) {
+        if (true && isDevEnvironment()) {
             BCLBiome theYellow = BCLBiomeBuilder
                     .start(makeID("the_yellow"))
                     .precipitation(Biome.Precipitation.NONE)

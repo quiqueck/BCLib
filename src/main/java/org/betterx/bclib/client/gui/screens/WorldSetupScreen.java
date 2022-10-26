@@ -26,6 +26,7 @@ import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraft.world.level.levelgen.WorldDimensions;
 import net.minecraft.world.level.levelgen.presets.WorldPresets;
 
 import net.fabricmc.api.EnvType;
@@ -269,13 +270,13 @@ public class WorldSetupScreen extends LayoutScreen {
             ChunkGenerator chunkGenerator
     ) {
         createWorldScreen.worldGenSettingsComponent.updateSettings(
-                (registryAccess, worldDimensions) -> LevelGenUtil.replaceGenerator(
+                (registryAccess, worldDimensions) -> new WorldDimensions(LevelGenUtil.replaceGenerator(
                         dimensionKey,
                         dimensionTypeKey,
                         registryAccess,
-                        worldDimensions,
+                        worldDimensions.dimensions(),
                         chunkGenerator
-                )
+                ))
         );
     }
 

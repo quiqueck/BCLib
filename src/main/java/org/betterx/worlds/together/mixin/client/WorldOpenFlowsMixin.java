@@ -5,15 +5,11 @@ import org.betterx.worlds.together.world.event.WorldBootstrap;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.worldselection.WorldOpenFlows;
-import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.server.RegistryLayer;
-import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.world.level.LevelSettings;
 import net.minecraft.world.level.levelgen.WorldDimensions;
 import net.minecraft.world.level.levelgen.WorldOptions;
 import net.minecraft.world.level.storage.LevelStorageSource;
-import net.minecraft.world.level.storage.WorldData;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -38,7 +34,6 @@ public abstract class WorldOpenFlowsMixin {
     private void wt_callFixerOnLoad(Screen screen, String levelID, CallbackInfo ci) {
         WorldBootstrap.InGUI.setupLoadedWorld(levelID, this.levelSource);
 
-        //if (DataFixerAPI.fixData(this.levelSource, levelID, true, (appliedFixes) -> {
         if (WorldBootstrap.InGUI.applyWorldPatches(levelSource, levelID, (appliedFixes) -> {
             WorldBootstrap.InGUI.finishedWorldLoad(levelID, this.levelSource);
             this.doLoadLevel(screen, levelID, false, false);
@@ -63,19 +58,8 @@ public abstract class WorldOpenFlowsMixin {
             Function<RegistryAccess, WorldDimensions> function,
             CallbackInfo ci
     ) {
+        WorldsTogether.LOGGER.info("called createFreshLevel...");
         //TODO: 1.19.3 no mor dimensions at this stage...
         //WorldBootstrap.InFreshLevel.setupNewWorld(levelID, worldGenSettings, this.levelSource, Optional.empty());
-    }
-
-    @Inject(method = "createLevelFromExistingSettings", at = @At("HEAD"))
-    public void wt_createLevelFromExistingSettings(
-            LevelStorageSource.LevelStorageAccess levelStorageAccess,
-            ReloadableServerResources reloadableServerResources,
-            LayeredRegistryAccess<RegistryLayer> layeredRegistryAccess,
-            WorldData worldData,
-            CallbackInfo ci
-    ) {
-        //called from the CreateWorldScreenMixin now
-        //LifeCycleAPI.newWorldSetup(levelStorageAccess, worldData.worldGenSettings());
     }
 }

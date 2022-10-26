@@ -1,7 +1,7 @@
 package org.betterx.worlds.together;
 
-import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
+import org.betterx.bclib.api.v2.levelgen.biomes.BiomeData;
 import org.betterx.worlds.together.surfaceRules.AssignedSurfaceRule;
 import org.betterx.worlds.together.surfaceRules.SurfaceRuleRegistry;
 
@@ -42,7 +42,7 @@ public class WorldsTogetherDatagen implements DataGeneratorEntrypoint {
 
     public static class CustomRegistriesDataProvider implements DataProvider {
         public static final List<RegistryDataLoader.RegistryData<?>> REGISTRIES = List.of(
-                new RegistryDataLoader.RegistryData<>(BCLBiomeRegistry.BCL_BIOMES_REGISTRY, BCLBiome.CODEC),
+                new RegistryDataLoader.RegistryData<>(BCLBiomeRegistry.BCL_BIOMES_REGISTRY, BiomeData.CODEC),
                 new RegistryDataLoader.RegistryData<>(
                         SurfaceRuleRegistry.SURFACE_RULES_REGISTRY,
                         AssignedSurfaceRule.CODEC

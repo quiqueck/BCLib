@@ -15,6 +15,7 @@ import org.betterx.worlds.together.world.event.WorldEvents;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -22,7 +23,6 @@ import net.minecraft.tags.TagLoader;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.WorldDimensions;
-import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.storage.LevelStorageSource;
 
@@ -149,14 +149,14 @@ public class LevelGenEvents {
     }
 
     private static void finalizeStem(
-            WorldGenSettings settings,
+            Registry<LevelStem> dimensionRegistry,
             ResourceKey<LevelStem> dimension,
             LevelStem levelStem
     ) {
         InternalBiomeAPI.applyModifications(levelStem.generator().getBiomeSource(), dimension);
     }
 
-    private static void finalizedWorldLoad(WorldGenSettings worldGenSettings) {
+    private static void finalizedWorldLoad(Registry<LevelStem> dimensionRegistry) {
         PoiManager.updateStates();
     }
 }

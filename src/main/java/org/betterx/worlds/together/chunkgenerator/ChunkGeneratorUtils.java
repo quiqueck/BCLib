@@ -1,12 +1,12 @@
 package org.betterx.worlds.together.chunkgenerator;
 
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.dimension.LevelStem;
-import net.minecraft.world.level.levelgen.WorldGenSettings;
 
 public class ChunkGeneratorUtils {
-    public static void restoreOriginalBiomeSourceInAllDimension(WorldGenSettings settings) {
-        for (var entry : settings.dimensions().dimensions().entrySet()) {
+    public static void restoreOriginalBiomeSourceInAllDimension(Registry<LevelStem> dimensionRegistry) {
+        for (var entry : dimensionRegistry.entrySet()) {
             ResourceKey<LevelStem> key = entry.getKey();
             LevelStem stem = entry.getValue();
 

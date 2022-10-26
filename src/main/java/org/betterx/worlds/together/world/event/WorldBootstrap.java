@@ -22,7 +22,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.WorldDimensions;
-import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.level.storage.LevelStorageSource;
@@ -42,9 +41,8 @@ public class WorldBootstrap {
     }
 
     public static RegistryAccess getLastRegistryAccessOrElseBuiltin() {
-        //TODO: 1.19.3 ther no longer is a general builtin ACCESS
-//        if (LAST_REGISTRY_ACCESS == null)
-//            return BuiltinRegistries.;
+        if (LAST_REGISTRY_ACCESS == null)
+            WorldsTogether.LOGGER.error("Tried to read from global registry!");
         return LAST_REGISTRY_ACCESS;
     }
 
@@ -173,7 +171,6 @@ public class WorldBootstrap {
                     Optional<Holder<WorldPreset>> newPreset = setupNewWorldCommon(
                             levelStorageAccess.get(),
                             currentPreset,
-                            //TODO: 1.19.13 see if this is the correct Dimensions list
                             worldGenSettingsComponent.settings().selectedDimensions()
                     );
                     if (newPreset != currentPreset) {
@@ -298,11 +295,11 @@ public class WorldBootstrap {
         }
     }
 
-    public static void finalizeWorldGenSettings(WorldGenSettings worldGenSettings) {
+    public static void finalizeWorldGenSettings(Registry<LevelStem> dimensionRegistry) {
         String output = "World Dimensions: ";
-        for (var entry : worldGenSettings.dimensions().dimensions().entrySet()) {
+        for (var entry : dimensionRegistry.entrySet()) {
             WorldEventsImpl.ON_FINALIZE_LEVEL_STEM.emit(e -> e.now(
-                    worldGenSettings,
+                    dimensionRegistry,
                     entry.getKey(),
                     entry.getValue()
             ));
@@ -318,26 +315,12 @@ public class WorldBootstrap {
         }
         if (Configs.MAIN_CONFIG.verboseLogging())
             BCLib.LOGGER.info(output);
-        SurfaceRuleUtil.injectSurfaceRulesToAllDimensions(worldGenSettings);
+        SurfaceRuleUtil.injectSurfaceRulesToAllDimensions(dimensionRegistry);
 
-        WorldEventsImpl.ON_FINALIZED_WORLD_LOAD.emit(e -> e.done(worldGenSettings));
+        WorldEventsImpl.ON_FINALIZED_WORLD_LOAD.emit(e -> e.done(dimensionRegistry));
     }
 
-    public static WorldDimensions enforceInNewWorld(WorldDimensions worldGenSettings) {
-        return WorldGenUtil.repairBiomeSourceInAllDimensions(LAST_REGISTRY_ACCESS, worldGenSettings);
+    public static Registry<LevelStem> enforceInNewWorld(Registry<LevelStem> dimensionRegistry) {
+        return WorldGenUtil.repairBiomeSourceInAllDimensions(LAST_REGISTRY_ACCESS, dimensionRegistry);
     }
-
-    public static WorldDimensions enforceInLoadedWorld(
-            Optional<RegistryOps<Tag>> registryOps,
-            WorldDimensions worldGenSettings
-    ) {
-        if (registryOps.orElse(null) instanceof RegistryOpsAccessor acc) {
-            return WorldGenUtil.repairBiomeSourceInAllDimensions(acc.bcl_getRegistryAccess(), worldGenSettings);
-            //.repairSettingsOnLoad(LAST_REGISTRY_ACCESS, worldGenSettings);
-        } else {
-            WorldsTogether.LOGGER.error("Unable to obtain registryAccess when enforcing generators.");
-        }
-        return worldGenSettings;
-    }
-
 }

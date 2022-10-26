@@ -12,11 +12,14 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalLong;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -33,6 +36,25 @@ public abstract class WorldGenSettingsComponentMixin implements WorldGenSettings
     @Shadow
     private WorldCreationContext settings;
 
+    @Shadow
+    public abstract void updateSettings(WorldCreationContext.DimensionsUpdater dimensionsUpdater);
+
+    @Shadow
+    private Optional<Holder<WorldPreset>> preset;
+
+    @Inject(method = "<init>", at = @At("TAIL"))
+    public void wt_init(
+            WorldCreationContext worldCreationContext,
+            Optional worldPreset,
+            OptionalLong seed,
+            CallbackInfo ci
+    ) {
+        if (this.preset.isPresent()) {
+            //make sure the initial dimensions are in sync with the selected World Preset
+            this.updateSettings((frozen, worldDimensions) -> this.preset.get().value().createWorldDimensions());
+        }
+    }
+
     @ModifyArg(method = "init", index = 0, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/CycleButton$Builder;withValues(Ljava/util/List;Ljava/util/List;)Lnet/minecraft/client/gui/components/CycleButton$Builder;"))
     public List<Holder<WorldPreset>> bcl_SortLists(List<Holder<WorldPreset>> list) {
         final Predicate<Holder<WorldPreset>> vanilla = (p -> p.unwrapKey()
@@ -40,7 +62,7 @@ public abstract class WorldGenSettingsComponentMixin implements WorldGenSettings
                                                               .location()
                                                               .getNamespace()
                                                               .equals("minecraft"));
-        
+
 
         List<Holder<WorldPreset>> custom = list
                 .stream()

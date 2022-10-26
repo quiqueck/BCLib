@@ -4,7 +4,6 @@ import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.biomesource.BiomeSourceWithConfig;
 import org.betterx.worlds.together.biomesource.ReloadableBiomeSource;
 import org.betterx.worlds.together.chunkgenerator.EnforceableChunkGenerator;
-import org.betterx.worlds.together.mixin.common.WorldPresetAccessor;
 import org.betterx.worlds.together.world.BiomeSourceWithNoiseRelatedSettings;
 import org.betterx.worlds.together.world.BiomeSourceWithSeed;
 import org.betterx.worlds.together.world.WorldConfig;
@@ -30,8 +29,6 @@ import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.jetbrains.annotations.ApiStatus;
 
 public class WorldGenUtil {
@@ -80,7 +77,7 @@ public class WorldGenUtil {
         );
     }
 
-    @ApiStatus.Internal
+//    @ApiStatus.Internal
     //TODO: 1.19.3 Disabled for now
 //    public static Pair<WorldDimensions, RegistryAccess.Frozen> defaultWorldDataSupplier(
 //            RegistryOps<JsonElement> loaderOps,
@@ -106,28 +103,28 @@ public class WorldGenUtil {
 //        return Pair.of(worldGenSettings, frozen);
 //    }
 
-    private static final Map<ResourceKey<WorldPreset>, Map<ResourceKey<LevelStem>, LevelStem>> WORLD_PRESET_MAP = new HashMap<>();
-
-    @ApiStatus.Internal
-    public static Map<ResourceKey<LevelStem>, LevelStem> getDimensionsWithModData(ResourceKey<WorldPreset> preset) {
-        var data = WORLD_PRESET_MAP.get(preset);
-        if (data == null) return new HashMap<>();
-        return data;
-    }
+//    private static final Map<ResourceKey<WorldPreset>, Map<ResourceKey<LevelStem>, LevelStem>> WORLD_PRESET_MAP = new HashMap<>();
+//
+//    @ApiStatus.Internal
+//    public static Map<ResourceKey<LevelStem>, LevelStem> getDimensionsWithModData(ResourceKey<WorldPreset> preset) {
+//        var data = WORLD_PRESET_MAP.get(preset);
+//        if (data == null) return new HashMap<>();
+//        return data;
+//    }
 
     @ApiStatus.Internal
     public static Holder<WorldPreset> reloadWithModData(Holder<WorldPreset> preset) {
-        if (preset.value() instanceof WorldPresetAccessor acc) {
-            var data = WORLD_PRESET_MAP.get(preset.unwrapKey().orElseThrow());
-            if (data != null) {
-                acc.bcl_setDimensions(data);
-            }
-        }
+//        if (preset.value() instanceof WorldPresetAccessor acc) {
+//            var data = WORLD_PRESET_MAP.get(preset.unwrapKey().orElseThrow());
+//            if (data != null) {
+//                acc.bcl_setDimensions(data);
+//            }
+//        }
         return preset;
     }
 
     public static void clearPreloadedWorldPresets() {
-        WORLD_PRESET_MAP.clear();
+//        WORLD_PRESET_MAP.clear();
     }
 
 //    public static void preloadWorldPresets(ResourceManager resourceManager, RegistryAccess.Writable writable) {
@@ -227,12 +224,12 @@ public class WorldGenUtil {
 
     @SuppressWarnings("unchecked")
     @ApiStatus.Internal
-    public static WorldDimensions repairBiomeSourceInAllDimensions(
+    public static Registry<LevelStem> repairBiomeSourceInAllDimensions(
             RegistryAccess registryAccess,
-            WorldDimensions settings
+            Registry<LevelStem> dimensionRegistry
     ) {
         var dimensions = TogetherWorldPreset.loadWorldDimensions();
-        for (var entry : settings.dimensions().entrySet()) {
+        for (var entry : dimensionRegistry.entrySet()) {
             boolean didRepair = false;
             ResourceKey<LevelStem> key = entry.getKey();
             LevelStem loadedStem = entry.getValue();
@@ -262,12 +259,12 @@ public class WorldGenUtil {
                 final ChunkGenerator loadedChunkGenerator = loadedStem.generator();
 
                 if (enforcer.togetherShouldRepair(loadedChunkGenerator)) {
-                    settings = enforcer.enforceGeneratorInWorldGenSettings(
+                    dimensionRegistry = enforcer.enforceGeneratorInWorldGenSettings(
                             registryAccess,
                             key,
                             loadedStem.type().unwrapKey().orElseThrow(),
                             loadedChunkGenerator,
-                            settings
+                            dimensionRegistry
                     );
                     didRepair = true;
                 } else if (loadedChunkGenerator.getBiomeSource() instanceof BiomeSourceWithConfig bs) {
@@ -287,7 +284,7 @@ public class WorldGenUtil {
             }
 
         }
-        return settings;
+        return dimensionRegistry;
     }
 
     public static ResourceLocation getBiomeID(Biome biome) {

@@ -1,9 +1,17 @@
 package org.betterx.worlds.together.mixin.common;
 
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.progress.ChunkProgressListener;
+import org.betterx.worlds.together.world.event.WorldBootstrap;
 
+import net.minecraft.core.LayeredRegistryAccess;
+import net.minecraft.core.Registry;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.RegistryLayer;
+import net.minecraft.server.level.progress.ChunkProgressListener;
+import net.minecraft.world.level.dimension.LevelStem;
+
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -14,17 +22,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  */
 @Mixin(value = MinecraftServer.class, priority = 2000)
 public class MinecraftServerMixin {
-//    @Shadow
-//    @Final
-//    private RegistryAccess.Frozen registryHolder;
-//    @Shadow
-//    @Final
-//    protected WorldData worldData;
+    @Shadow
+    @Final
+    private LayeredRegistryAccess<RegistryLayer> registries;
 
     @Inject(method = "createLevels", at = @At(value = "HEAD"))
     private void together_addSurfaceRules(ChunkProgressListener worldGenerationProgressListener, CallbackInfo ci) {
-        //TODO: 1.19.3 Dimensions are handled differently now
-        //WorldBootstrap.finalizeWorldGenSettings(this.worldData.worldGenSettings());
-
+        final Registry<LevelStem> dimensionRegistry = this.registries.compositeAccess()
+                                                                     .registryOrThrow(Registry.LEVEL_STEM_REGISTRY);
+        WorldBootstrap.finalizeWorldGenSettings(dimensionRegistry);
     }
 }

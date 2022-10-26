@@ -1,7 +1,6 @@
 package org.betterx.worlds.together.worldPreset;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.config.Configs;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.levelgen.WorldGenUtil;
 import org.betterx.worlds.together.mixin.common.WorldPresetAccessor;
@@ -106,24 +105,13 @@ public class TogetherWorldPreset extends WorldPreset {
     public static @NotNull Map<ResourceKey<LevelStem>, ChunkGenerator> loadWorldDimensions() {
         try {
             final RegistryAccess registryAccess = WorldBootstrap.getLastRegistryAccessOrElseBuiltin();
-            boolean globalRegistry = false;
-            //TODO: 1.19.3 there is no longer a builtin registry acccess
-            /*if (registryAccess == BuiltinRegistries.ACCESS) {
-                if (Configs.MAIN_CONFIG.verboseLogging())
-                    BCLib.LOGGER.info("Loading from builtin Registry");
-                globalRegistry = true;
-            } else */
-            {
-                if (Configs.MAIN_CONFIG.verboseLogging())
-                    BCLib.LOGGER.info("Loading from datapack Registry");
-            }
             final RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
             if (DEFAULT_DIMENSIONS_WRAPPER == null) {
                 DEFAULT_DIMENSIONS_WRAPPER = new DimensionsWrapper(TogetherWorldPreset.getDimensionsMap(WorldPresets.getDEFAULT()));
             }
 
             CompoundTag presetNBT = WorldGenUtil.getPresetsNbt();
-            if (!presetNBT.contains("dimensions") || globalRegistry) {
+            if (!presetNBT.contains("dimensions")) {
                 return DEFAULT_DIMENSIONS_WRAPPER.dimensions;
             }
 

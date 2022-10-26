@@ -21,6 +21,4 @@ public class AssignedSurfaceRule {
         this.ruleSource = ruleSource;
         this.biomeID = biomeID;
     }
-
-
 }
