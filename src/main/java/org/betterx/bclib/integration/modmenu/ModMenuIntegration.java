@@ -2,6 +2,8 @@ package org.betterx.bclib.integration.modmenu;
 
 import org.betterx.bclib.integration.modmenu.ModMenuIntegration.ModMenuScreenFactory;
 
+import net.minecraft.client.gui.screens.Screen;
+
 import com.google.common.collect.ImmutableMap;
 
 import java.lang.reflect.InvocationHandler;
@@ -159,21 +161,23 @@ public abstract class ModMenuIntegration {
      * <p>
      * The Interface matches {@code com.terraformersmc.modmenu.api.ConfigScreenFactory}
      */
-    //@FunctionalInterface
-    public interface ModMenuScreenFactory /*extends ConfigScreenFactory*/ {
+    @FunctionalInterface
+    public interface ModMenuScreenFactory<S extends Screen>/*extends ConfigScreenFactory*/ {
+        S create(Screen parent);
     }
 
     record BCLibModMenuInvocationHandler(ModMenuIntegration target) implements InvocationHandler {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            return null; /*switch (method.getName()) {
-                case "getModConfigScreenFactory" -> target.getModConfigScreenFactory();
-                case "getProvidedConfigScreenFactories" -> target.getProvidedConfigScreenFactories();
-                case "toString" -> target.toString();
-                case "equals" -> target.equals(args[0]);
-                case "hashCode" -> target.hashCode();
-                default -> null;
-            };*/
+//            return switch (method.getName()) {
+//                case "getModConfigScreenFactory" -> target.getModConfigScreenFactory();
+//                case "getProvidedConfigScreenFactories" -> target.getProvidedConfigScreenFactories();
+//                case "toString" -> target.toString();
+//                case "equals" -> target.equals(args[0]);
+//                case "hashCode" -> target.hashCode();
+//                default -> null;
+//            };
+            return null;
         }
     }
 
