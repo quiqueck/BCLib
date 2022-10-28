@@ -1,6 +1,5 @@
 package org.betterx.worlds.together.mixin.client;
 
-import org.betterx.worlds.together.levelgen.WorldGenUtil;
 import org.betterx.worlds.together.worldPreset.WorldGenSettingsComponentAccessor;
 
 import net.minecraft.client.gui.screens.worldselection.WorldCreationContext;
@@ -72,7 +71,6 @@ public abstract class WorldGenSettingsComponentMixin implements WorldGenSettings
         custom.addAll(list
                 .stream()
                 .filter(vanilla)
-                .map(WorldGenUtil::reloadWithModData)
                 .toList());
 
         return custom;

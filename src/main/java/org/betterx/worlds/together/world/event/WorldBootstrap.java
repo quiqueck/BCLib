@@ -219,7 +219,6 @@ public class WorldBootstrap {
                 String levelID,
                 LevelStorageSource levelSource
         ) {
-            WorldGenUtil.clearPreloadedWorldPresets();
             try {
                 var levelStorageAccess = levelSource.createAccess(levelID);
                 WorldBootstrap.setupWorld(
@@ -299,7 +298,6 @@ public class WorldBootstrap {
 
     public static void finishedWorldLoad() {
         WorldEventsImpl.ON_WORLD_LOAD.emit(OnWorldLoad::onLoad);
-        WorldGenUtil.clearPreloadedWorldPresets();
     }
 
     public static void finalizeWorldGenSettings(Registry<LevelStem> dimensionRegistry) {
