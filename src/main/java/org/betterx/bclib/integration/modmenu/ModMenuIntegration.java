@@ -2,11 +2,7 @@ package org.betterx.bclib.integration.modmenu;
 
 import org.betterx.bclib.integration.modmenu.ModMenuIntegration.ModMenuScreenFactory;
 
-import net.minecraft.client.gui.screens.Screen;
-
 import com.google.common.collect.ImmutableMap;
-import com.terraformersmc.modmenu.api.ConfigScreenFactory;
-import com.terraformersmc.modmenu.api.ModMenuApi;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -18,12 +14,13 @@ class ModMenuScreenFactoryImpl {
     record ScreenFactoryInvocationHandler(ModMenuScreenFactory act) implements InvocationHandler {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            return switch (method.getName()) {
-                case "toString" -> "";
-                case "equals" -> false;
-                case "hashCode" -> 0;
-                default -> act.create((Screen) args[0]);
-            };
+//            return switch (method.getName()) {
+//                case "toString" -> "";
+//                case "equals" -> false;
+//                case "hashCode" -> 0;
+//                default -> act.create((Screen) args[0]);
+//            };
+            return null;
         }
     }
 
@@ -78,25 +75,25 @@ public abstract class ModMenuIntegration {
      * @param target The delegate Object that will receive calls from ModMenu
      * @return A Proxy that conforms to the ModMenu spec
      */
-    public static ModMenuApi createEntrypoint(ModMenuIntegration target) {
-        Class<?> iModMenuAPI;
-        //Class<?> iModMenuAPIMarker = null;
-        try {
-            iModMenuAPI = Class.forName("com.terraformersmc.modmenu.api.ModMenuApi");
-            //iModMenuAPIMarker = Class.forName("com.terraformersmc.modmenu.util.ModMenuApiMarker");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        Object o = Proxy.newProxyInstance(
-                ModMenuIntegration.class.getClassLoader(),
-                new Class[]{iModMenuAPI},
-                new BCLibModMenuInvocationHandler(target)
-        );
-
-        return (ModMenuApi) o;
-    }
+//    public static ModMenuApi createEntrypoint(ModMenuIntegration target) {
+//        Class<?> iModMenuAPI;
+//        //Class<?> iModMenuAPIMarker = null;
+//        try {
+//            iModMenuAPI = Class.forName("com.terraformersmc.modmenu.api.ModMenuApi");
+//            //iModMenuAPIMarker = Class.forName("com.terraformersmc.modmenu.util.ModMenuApiMarker");
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//
+//        Object o = Proxy.newProxyInstance(
+//                ModMenuIntegration.class.getClassLoader(),
+//                new Class[]{iModMenuAPI},
+//                new BCLibModMenuInvocationHandler(target)
+//        );
+//
+//        return (ModMenuApi) o;
+//    }
 
     /**
      * The factory passed to {@link #ModMenuIntegration(ModMenuScreenFactory)}
@@ -162,21 +159,21 @@ public abstract class ModMenuIntegration {
      * <p>
      * The Interface matches {@code com.terraformersmc.modmenu.api.ConfigScreenFactory}
      */
-    @FunctionalInterface
-    public interface ModMenuScreenFactory extends ConfigScreenFactory {
+    //@FunctionalInterface
+    public interface ModMenuScreenFactory /*extends ConfigScreenFactory*/ {
     }
 
     record BCLibModMenuInvocationHandler(ModMenuIntegration target) implements InvocationHandler {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            return switch (method.getName()) {
+            return null; /*switch (method.getName()) {
                 case "getModConfigScreenFactory" -> target.getModConfigScreenFactory();
                 case "getProvidedConfigScreenFactories" -> target.getProvidedConfigScreenFactories();
                 case "toString" -> target.toString();
                 case "equals" -> target.equals(args[0]);
                 case "hashCode" -> target.hashCode();
                 default -> null;
-            };
+            };*/
         }
     }
 
