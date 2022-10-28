@@ -31,3 +31,5 @@ run-client/
 run-server/
 output/
 *.log
+/CHANGES.md
+/src/main/generated/.cache/
