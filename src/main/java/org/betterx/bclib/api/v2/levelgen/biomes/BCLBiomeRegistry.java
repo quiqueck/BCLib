@@ -18,6 +18,7 @@ import net.minecraft.world.level.biome.Biomes;
 
 import java.util.stream.Stream;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 public class BCLBiomeRegistry {
     public static final ResourceKey<Registry<BCLBiome>> BCL_BIOMES_REGISTRY =
@@ -122,18 +123,18 @@ public class BCLBiomeRegistry {
     }
 
     public static BCLBiome get(ResourceLocation loc) {
-        return get(WorldBootstrap.getLastRegistryAccessOrElseBuiltin(), loc);
+        return get(WorldBootstrap.getLastRegistryAccess(), loc);
     }
 
-    public static BCLBiome get(RegistryAccess access, ResourceLocation loc) {
+    public static BCLBiome get(@Nullable RegistryAccess access, ResourceLocation loc) {
         return getBclBiomesRegistry(access).get(loc);
     }
 
     public static BCLBiome getOrElseEmpty(ResourceLocation loc) {
-        return getOrElseEmpty(WorldBootstrap.getLastRegistryAccessOrElseBuiltin(), loc);
+        return getOrElseEmpty(WorldBootstrap.getLastRegistryAccess(), loc);
     }
 
-    public static BCLBiome getOrElseEmpty(RegistryAccess access, ResourceLocation loc) {
+    public static BCLBiome getOrElseEmpty(@Nullable RegistryAccess access, ResourceLocation loc) {
         BCLBiome res = get(access, loc);
         if (res == null) return EMPTY_BIOME;
         return res;
@@ -151,7 +152,7 @@ public class BCLBiomeRegistry {
                 .map(e -> e.getKey());
     }
 
-    private static Registry<BCLBiome> getBclBiomesRegistry(RegistryAccess access) {
+    private static Registry<BCLBiome> getBclBiomesRegistry(@Nullable RegistryAccess access) {
         if (access != null) {
             return access
                     .registry(BCLBiomeRegistry.BCL_BIOMES_REGISTRY)
