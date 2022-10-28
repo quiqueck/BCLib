@@ -106,44 +106,4 @@ public class CustomModelBakery {
         BlockModel model = provider.getItemModel(modelLocation);
         models.put(modelLocation, model);
     }
-    
-    //TODO: 1.19.3 Handled differently now
-//    public static void loadEmissiveModels(Map<ResourceLocation, UnbakedModel> unbakedCache) {
-//        if (!ModIntegrationAPI.hasCanvas()) {
-//            return;
-//        }
-//
-//        Map<ResourceLocation, UnbakedModel> cacheCopy = new HashMap<>(unbakedCache);
-//        Set<Pair<String, String>> strings = Sets.newConcurrentHashSet();
-//        Registry.BLOCK.keySet().forEach(blockID -> {
-//            Block block = Registry.BLOCK.get(blockID);
-//            ImmutableList<BlockState> states = block.getStateDefinition().getPossibleStates();
-//            boolean addBlock = false;
-//
-//            for (BlockState state : states) {
-//                ResourceLocation stateID = BlockModelShaper.stateToModelLocation(blockID, state);
-//                UnbakedModel model = cacheCopy.get(stateID);
-//                if (model == null) {
-//                    continue;
-//                }
-//                Collection<Material> materials = model.getMaterials(cacheCopy::get, strings);
-//                if (materials == null) {
-//                    continue;
-//                }
-//                for (Material material : materials) {
-//                    if (EmissiveTextureInfo.isEmissiveTexture(material.texture())) {
-//                        addBlock = true;
-//                        break;
-//                    }
-//                }
-//                if (addBlock) {
-//                    break;
-//                }
-//            }
-//
-//            if (addBlock) {
-//                EmissiveTextureInfo.addBlock(blockID);
-//            }
-//        });
-//    }
 }

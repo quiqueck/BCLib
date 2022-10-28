@@ -10,11 +10,9 @@
     "FogRendererMixin",
     "GameMixin",
     "MinecraftMixin",
-    "ModelBakeryMixin",
     "ModelManagerMixin",
     "PresetEditorMixin",
     "SignEditScreenMixin",
-    "TextureAtlasMixin",
     "boat.BoatRendererMixin"
   ],
   "injectors": {
