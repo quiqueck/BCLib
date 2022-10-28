@@ -9,9 +9,12 @@ import org.betterx.worlds.together.world.event.WorldBootstrap;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Dynamic;
+import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -19,6 +22,7 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraft.world.level.levelgen.WorldDimensions;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 
 import java.util.HashMap;
@@ -30,6 +34,8 @@ public class TogetherWorldPreset extends WorldPreset {
     public final int sortOrder;
 
     private static int NEXT_IN_SORT_ORDER = 1000;
+    private final WorldDimensions worldDimensions;
+
 
     public TogetherWorldPreset(
             Map<ResourceKey<LevelStem>, LevelStem> map,
@@ -44,6 +50,20 @@ public class TogetherWorldPreset extends WorldPreset {
     ) {
         super(map);
         this.sortOrder = sortOrder;
+        this.worldDimensions = buildWorldDimensions(map);
+    }
+
+    public static WorldDimensions buildWorldDimensions(Map<ResourceKey<LevelStem>, LevelStem> map) {
+        Registry<LevelStem> registry = new MappedRegistry<>(Registry.LEVEL_STEM_REGISTRY, Lifecycle.experimental());
+        for (var entry : map.entrySet()) {
+            Registry.register(registry, entry.getKey(), entry.getValue());
+        }
+
+        return new WorldDimensions(registry);
+    }
+
+    public WorldDimensions getWorldDimensions() {
+        return this.worldDimensions;
     }
 
     public TogetherWorldPreset withDimensions(Registry<LevelStem> dimensions) {
@@ -66,6 +86,10 @@ public class TogetherWorldPreset extends WorldPreset {
 
     public LevelStem getDimension(ResourceKey<LevelStem> key) {
         return getDimensions().get(key);
+    }
+
+    public static void writeWorldPresetSettings(WorldDimensions dimensions) {
+        writeWorldPresetSettings(dimensions.dimensions());
     }
 
     public static void writeWorldPresetSettings(Registry<LevelStem> dimensions) {
@@ -129,7 +153,10 @@ public class TogetherWorldPreset extends WorldPreset {
 
     public static Registry<LevelStem> getDimensions(ResourceKey<WorldPreset> key) {
         RegistryAccess access = WorldBootstrap.getLastRegistryAccessOrElseBuiltin();
-        var preset = access.registryOrThrow(Registry.WORLD_PRESET_REGISTRY).getHolder(key);
+        var preset = (access == null
+                ? BuiltinRegistries.WORLD_PRESET
+                : access.registryOrThrow(Registry.WORLD_PRESET_REGISTRY))
+                .getHolder(key);
         if (preset.isEmpty()) return null;
         return preset
                 .get()
@@ -142,6 +169,15 @@ public class TogetherWorldPreset extends WorldPreset {
         Registry<LevelStem> reg = getDimensions(key);
         if (reg == null) return new HashMap<>();
         return DimensionsWrapper.build(reg);
+    }
+
+    public static @NotNull Map<ResourceKey<LevelStem>, ChunkGenerator> getDimensionMap(WorldDimensions worldDims) {
+        return DimensionsWrapper.build(worldDims.dimensions());
+    }
+
+    public static @NotNull WorldDimensions getWorldDimensions(ResourceKey<WorldPreset> key) {
+        Registry<LevelStem> reg = getDimensions(key);
+        return new WorldDimensions(reg);
     }
 
     private static class DimensionsWrapper {

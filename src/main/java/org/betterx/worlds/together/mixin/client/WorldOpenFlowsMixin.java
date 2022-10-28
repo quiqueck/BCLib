@@ -35,13 +35,13 @@ public abstract class WorldOpenFlowsMixin {
         WorldBootstrap.InGUI.setupLoadedWorld(levelID, this.levelSource);
 
         if (WorldBootstrap.InGUI.applyWorldPatches(levelSource, levelID, (appliedFixes) -> {
-            WorldBootstrap.InGUI.finishedWorldLoad(levelID, this.levelSource);
+            WorldBootstrap.finishedWorldLoad();
             this.doLoadLevel(screen, levelID, false, false);
         })) {
             //cancel call when fix-screen is presented
             ci.cancel();
         } else {
-            WorldBootstrap.InGUI.finishedWorldLoad(levelID, this.levelSource);
+            WorldBootstrap.finishedWorldLoad();
             if (WorldsTogether.SURPRESS_EXPERIMENTAL_DIALOG) {
                 this.doLoadLevel(screen, levelID, false, false);
                 //cancel call as we manually start the level load here

@@ -29,6 +29,7 @@ import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
+import java.util.Map;
 import org.jetbrains.annotations.ApiStatus;
 
 public class WorldGenUtil {
@@ -228,7 +229,7 @@ public class WorldGenUtil {
             RegistryAccess registryAccess,
             Registry<LevelStem> dimensionRegistry
     ) {
-        var dimensions = TogetherWorldPreset.loadWorldDimensions();
+        Map<ResourceKey<LevelStem>, ChunkGenerator> dimensions = TogetherWorldPreset.loadWorldDimensions();
         for (var entry : dimensionRegistry.entrySet()) {
             boolean didRepair = false;
             ResourceKey<LevelStem> key = entry.getKey();

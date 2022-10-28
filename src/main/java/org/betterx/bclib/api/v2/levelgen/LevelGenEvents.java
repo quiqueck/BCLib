@@ -38,22 +38,21 @@ public class LevelGenEvents {
     }
 
     public static void register() {
-        WorldEvents.BEFORE_WORLD_LOAD.on(LevelGenEvents::prepareWorld);
-        WorldEvents.BEFORE_SERVER_WORLD_LOAD.on(LevelGenEvents::prepareServerWorld);
+        WorldEvents.BEFORE_WORLD_LOAD.on(LevelGenEvents::beforeWorldLoad);
 
         WorldEvents.ON_WORLD_LOAD.on(LevelGenEvents::onWorldLoad);
-        WorldEvents.WORLD_REGISTRY_READY.on(LevelGenEvents::onRegistryReady);
+        WorldEvents.WORLD_REGISTRY_READY.on(LevelGenEvents::worldRegistryReady);
         WorldEvents.ON_FINALIZE_LEVEL_STEM.on(LevelGenEvents::finalizeStem);
         WorldEvents.ON_FINALIZED_WORLD_LOAD.on(LevelGenEvents::finalizedWorldLoad);
 
         WorldEvents.PATCH_WORLD.on(LevelGenEvents::patchExistingWorld);
-        WorldEvents.ADAPT_WORLD_PRESET.on(LevelGenEvents::adaptWorldPresetSettings);
+        WorldEvents.ADAPT_WORLD_PRESET.on(LevelGenEvents::adaptWorldPreset);
 
-        WorldEvents.BEFORE_ADDING_TAGS.on(LevelGenEvents::appplyTags);
+        WorldEvents.BEFORE_ADDING_TAGS.on(LevelGenEvents::applyBiomeTags);
     }
 
 
-    private static void appplyTags(
+    private static void applyBiomeTags(
             String directory,
             Map<ResourceLocation, List<TagLoader.EntryWithSource>> tagsMap
     ) {
@@ -67,10 +66,10 @@ public class LevelGenEvents {
             LevelStorageSource.LevelStorageAccess storageAccess,
             Consumer<Boolean> allDone
     ) {
-        return DataFixerAPI.fixData(storageAccess, true, allDone);
+        return DataFixerAPI.fixData(storageAccess, allDone != null, allDone);
     }
 
-    private static Optional<Holder<WorldPreset>> adaptWorldPresetSettings(
+    private static Optional<Holder<WorldPreset>> adaptWorldPreset(
             Optional<Holder<WorldPreset>> currentPreset,
             WorldDimensions worldDims
     ) {
@@ -110,14 +109,15 @@ public class LevelGenEvents {
         return currentPreset;
     }
 
-    private static void onRegistryReady(RegistryAccess a) {
+    private static void worldRegistryReady(RegistryAccess a) {
         InternalBiomeAPI.initRegistry(a);
     }
 
-    private static void prepareWorld(
+    private static void beforeWorldLoad(
             LevelStorageSource.LevelStorageAccess storageAccess,
             Map<ResourceKey<LevelStem>, ChunkGenerator> dimensions,
-            boolean isNewWorld
+            boolean isNewWorld,
+            boolean isServer
     ) {
         setupWorld();
         if (isNewWorld) {
@@ -125,22 +125,6 @@ public class LevelGenEvents {
             DataFixerAPI.initializePatchData();
         } else {
             LevelGenUtil.migrateGeneratorSettings();
-        }
-    }
-
-    private static void prepareServerWorld(
-            LevelStorageSource.LevelStorageAccess storageAccess,
-            Map<ResourceKey<LevelStem>, ChunkGenerator> dimensions,
-            boolean isNewWorld
-    ) {
-        setupWorld();
-
-        if (isNewWorld) {
-            WorldConfig.saveFile(BCLib.MOD_ID);
-            DataFixerAPI.initializePatchData();
-        } else {
-            LevelGenUtil.migrateGeneratorSettings();
-            DataFixerAPI.fixData(storageAccess, false, (didFix) -> {/* not called when showUI==false */});
         }
     }
 

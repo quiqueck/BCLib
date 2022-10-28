@@ -15,9 +15,12 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(value = Main.class, priority = 200)
 abstract public class MainMixin {
+    private static LevelStorageSource.LevelStorageAccess bcl_levelStorageAccess = null;
+
     @ModifyVariable(method = "main", ordinal = 0, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess;getSummary()Lnet/minecraft/world/level/storage/LevelSummary;"))
     private static LevelStorageSource.LevelStorageAccess bc_createAccess(LevelStorageSource.LevelStorageAccess levelStorageAccess) {
-        WorldBootstrap.DedicatedServer.setupWorld(levelStorageAccess);
+        bcl_levelStorageAccess = levelStorageAccess;
+        WorldBootstrap.DedicatedServer.applyWorldPatches(levelStorageAccess);
         return levelStorageAccess;
     }
 
@@ -27,13 +30,7 @@ abstract public class MainMixin {
         if (dynamicOps instanceof RegistryOps<Tag> regOps) {
             WorldBootstrap.DedicatedServer.registryReady(regOps);
         }
+        WorldBootstrap.DedicatedServer.setupWorld(bcl_levelStorageAccess);
         return dynamicOps;
     }
-
-    //TODO: 1.19.3 this may be obsolete, as datapacks are handled differently now
-//    @ModifyArg(method = "method_43613", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/PrimaryLevelData;<init>(Lnet/minecraft/world/level/LevelSettings;Lnet/minecraft/world/level/levelgen/WorldOptions;Lnet/minecraft/world/level/storage/PrimaryLevelData$SpecialWorldProperty;Lcom/mojang/serialization/Lifecycle;)V"))
-//    private static WorldGenSettings bcl_onCreateLevelData(WorldGenSettings worldGenSettings) {
-//        WorldBootstrap.DedicatedServer.applyDatapackChangesOnNewWorld(worldGenSettings);
-//        return worldGenSettings;
-//    }
 }

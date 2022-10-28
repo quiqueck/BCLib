@@ -11,6 +11,7 @@ public interface BeforeWorldLoad {
     void prepareWorld(
             LevelStorageSource.LevelStorageAccess storageAccess,
             Map<ResourceKey<LevelStem>, ChunkGenerator> settings,
-            boolean isNewWorld
+            boolean isNewWorld,
+            boolean isServer
     );
 }

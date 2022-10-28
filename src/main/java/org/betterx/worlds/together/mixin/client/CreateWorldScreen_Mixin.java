@@ -36,7 +36,7 @@ public class CreateWorldScreen_Mixin {
             WorldGenSettingsComponent worldGenSettingsComponent,
             CallbackInfo ci
     ) {
-        WorldBootstrap.InGUI.registryReadyOnNewWorld(worldGenSettingsComponent);
+        //WorldBootstrap.InGUI.registryReadyOnNewWorld(worldGenSettingsComponent);
     }
 
     //Change the WorldPreset that is selected by default on the Create World Screen
@@ -50,10 +50,5 @@ public class CreateWorldScreen_Mixin {
     void wt_createNewWorld(CallbackInfoReturnable<Optional<LevelStorageSource.LevelStorageAccess>> cir) {
         WorldBootstrap.InGUI.registryReadyOnNewWorld(this.worldGenSettingsComponent);
         WorldBootstrap.InGUI.setupNewWorld(cir.getReturnValue(), this.worldGenSettingsComponent);
-    }
-
-    @Inject(method = "onCreate", at = @At("HEAD"))
-    void wt_onCreate(CallbackInfo ci) {
-        System.out.println("there");
     }
 }
