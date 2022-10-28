@@ -20,24 +20,24 @@ import net.minecraft.resources.ResourceKey;
 
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBuiltinRegistriesProvider;
 
 import com.google.gson.JsonElement;
 
-import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public class WorldsTogetherDatagen implements DataGeneratorEntrypoint {
-
-
     @Override
-    public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
-        fabricDataGenerator.addProvider(FabricBuiltinRegistriesProvider.forCurrentMod()
-                                                                       .apply(fabricDataGenerator));
-        fabricDataGenerator.addProvider(CustomRegistriesDataProvider::new);
+    public void onInitializeDataGenerator(FabricDataGenerator dataGenerator) {
+        final FabricDataGenerator.Pack pack = dataGenerator.create();
+        pack.addProvider(FabricBuiltinRegistriesProvider.forCurrentMod());
+        pack.addProvider(CustomRegistriesDataProvider::new);
     }
 
     public static class CustomRegistriesDataProvider implements DataProvider {
@@ -52,19 +52,38 @@ public class WorldsTogetherDatagen implements DataGeneratorEntrypoint {
 
         private final PackOutput output;
 
-        public CustomRegistriesDataProvider(FabricDataGenerator generator) {
-            this.output = generator.getVanillaPackOutput();
+        public CustomRegistriesDataProvider(FabricDataOutput generator) {
+            this.output = generator;
         }
 
         @Override
-        public void run(CachedOutput cachedOutput) {
+        public CompletableFuture<?> run(CachedOutput cachedOutput) {
             RegistryAccess.Frozen registryAccess = BuiltinRegistries.createAccess();
             RegistryOps<JsonElement> dynamicOps = RegistryOps.create(JsonOps.INSTANCE, registryAccess);
-            REGISTRIES.forEach(registryData -> this.dumpRegistryCap(
+            final List<CompletableFuture<?>> futures = new ArrayList<>();
+
+            for (RegistryDataLoader.RegistryData<?> registryData : REGISTRIES) {
+                futures.add(this.dumpRegistryCapFuture(
+                        cachedOutput,
+                        registryAccess,
+                        dynamicOps,
+                        (RegistryDataLoader.RegistryData) registryData
+                ));
+            }
+            return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new));
+        }
+
+        private <T> CompletableFuture dumpRegistryCapFuture(
+                CachedOutput cachedOutput,
+                RegistryAccess registryAccess,
+                DynamicOps<JsonElement> dynamicOps,
+                RegistryDataLoader.RegistryData<T> registryData
+        ) {
+            return CompletableFuture.runAsync(() -> dumpRegistryCap(
                     cachedOutput,
                     registryAccess,
                     dynamicOps,
-                    (RegistryDataLoader.RegistryData) registryData
+                    registryData
             ));
         }
 
@@ -98,19 +117,17 @@ public class WorldsTogetherDatagen implements DataGeneratorEntrypoint {
                 Encoder<E> encoder,
                 E object
         ) {
-            try {
-                Optional<JsonElement> optional = encoder.encodeStart(dynamicOps, object)
-                                                        .resultOrPartial(string -> WorldsTogether.LOGGER.error(
-                                                                "Couldn't serialize element {}: {}",
-                                                                path,
-                                                                string
-                                                        ));
-                if (optional.isPresent()) {
-                    DataProvider.saveStable(cachedOutput, optional.get(), path);
-                }
-            } catch (IOException iOException) {
-                WorldsTogether.LOGGER.error("Couldn't save element {}", path, iOException);
+
+            Optional<JsonElement> optional = encoder.encodeStart(dynamicOps, object)
+                                                    .resultOrPartial(string -> WorldsTogether.LOGGER.error(
+                                                            "Couldn't serialize element {}: {}",
+                                                            path,
+                                                            string
+                                                    ));
+            if (optional.isPresent()) {
+                DataProvider.saveStable(cachedOutput, optional.get(), path);
             }
+
         }
 
         @Override
