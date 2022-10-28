@@ -6,7 +6,7 @@ import org.betterx.bclib.blocks.BaseSignBlock;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -68,10 +68,10 @@ public class BaseSignBlockEntityRenderer implements BlockEntityRenderer<BaseSign
 
         BlockState blockState = signBlockEntity.getBlockState();
         if (blockState.getValue(BaseSignBlock.FLOOR)) {
-            matrixStack.mulPose(Vector3f.YP.rotationDegrees(angle));
+            matrixStack.mulPose(Axis.YP.rotationDegrees(angle));
             model.stick.visible = true;
         } else {
-            matrixStack.mulPose(Vector3f.YP.rotationDegrees(angle + 180));
+            matrixStack.mulPose(Axis.YP.rotationDegrees(angle + 180));
             matrixStack.translate(0.0D, -0.3125D, -0.4375D);
             model.stick.visible = false;
         }

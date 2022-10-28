@@ -53,15 +53,12 @@ public class Button extends AbstractVanillaComponent<net.minecraft.client.gui.co
     @Override
     protected net.minecraft.client.gui.components.Button createVanillaComponent() {
         Button self = this;
-        return new net.minecraft.client.gui.components.Button(
-                0,
-                0,
-                relativeBounds.width,
-                relativeBounds.height,
-                component,
-                (bt) -> onPress.onPress(self),
-                (bt, stack, x, y) -> onTooltip.onTooltip(self, stack, x, y)
-        );
+        return net.minecraft.client.gui.components.Button
+                .builder(component, (bt) -> onPress.onPress(self))
+                .bounds(0, 0, relativeBounds.width, relativeBounds.height)
+                .tooltip((bt, stack, x, y) -> onTooltip.onTooltip(self, stack, x, y))
+                .build();
+
     }
 
     public boolean isGlowing() {

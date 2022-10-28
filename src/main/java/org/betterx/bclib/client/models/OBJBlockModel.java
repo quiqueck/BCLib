@@ -4,7 +4,6 @@ import org.betterx.bclib.BCLib;
 import org.betterx.bclib.util.BlocksHelper;
 import org.betterx.bclib.util.MHelper;
 
-import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
@@ -23,6 +22,7 @@ import net.fabricmc.api.Environment;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.joml.Vector3f;
 
 import java.io.BufferedReader;
 import java.io.IOException;

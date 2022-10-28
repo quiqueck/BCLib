@@ -4,7 +4,6 @@ import org.betterx.bclib.sdf.SDF;
 import org.betterx.bclib.sdf.operator.SDFUnion;
 import org.betterx.bclib.sdf.primitive.SDFLine;
 
-import com.mojang.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.util.Mth;
@@ -13,6 +12,7 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
 
 import com.google.common.collect.Lists;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;

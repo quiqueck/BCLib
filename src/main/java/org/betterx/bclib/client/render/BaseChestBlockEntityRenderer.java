@@ -5,7 +5,7 @@ import org.betterx.bclib.client.models.BaseChestBlockModel;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -73,7 +73,7 @@ public class BaseChestBlockEntityRenderer implements BlockEntityRenderer<BaseChe
 
             matrices.pushPose();
             matrices.translate(0.5D, 0.5D, 0.5D);
-            matrices.mulPose(Vector3f.YP.rotationDegrees(-f));
+            matrices.mulPose(Axis.YP.rotationDegrees(-f));
             matrices.translate(-0.5D, -0.5D, -0.5D);
 
             if (worldExists) {

@@ -42,8 +42,12 @@ public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
         be_buttons.clear();
-        be_buttons.add(new Button(x + 8, y + 45, 15, 20, Component.literal("<"), b -> be_previousRecipe()));
-        be_buttons.add(new Button(x + 154, y + 45, 15, 20, Component.literal(">"), b -> be_nextRecipe()));
+        be_buttons.add(Button.builder(Component.literal("<"), b -> be_previousRecipe())
+                             .bounds(x + 8, y + 45, 15, 20)
+                             .build());
+        be_buttons.add(Button.builder(Component.literal(">"), b -> be_nextRecipe())
+                             .bounds(x + 154, y + 45, 15, 20)
+                             .build());
 
         be_buttons.forEach(button -> addWidget(button));
     }
