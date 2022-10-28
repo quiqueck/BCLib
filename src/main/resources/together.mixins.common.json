@@ -14,7 +14,6 @@
     "MinecraftServerMixinLate",
     "NoiseBasedChunkGeneratorMixin",
     "NoiseGeneratorSettingsMixin",
-    "PrimaryLevelDataMixin",
     "RegistryDataLoaderMixin",
     "RegistryOpsAccessor",
     "TagLoaderMixin",

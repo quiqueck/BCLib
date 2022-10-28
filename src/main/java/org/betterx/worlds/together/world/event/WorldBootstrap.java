@@ -158,14 +158,8 @@ public class WorldBootstrap {
             Helpers.onRegistryReady(worldGenSettingsComponent.registryHolder());
         }
 
-        public static void registryReadyOnLoadedWorld(Optional<RegistryOps<Tag>> registryOps) {
-//            if (registryOps.orElse(null) instanceof RegistryOpsAccessor acc) {
-//                Helpers.onRegistryReady(acc.bcl_getRegistryAccess());
-//            }
-        }
-
         public static void registryReady(RegistryAccess access) {
-            //Helpers.onRegistryReady(access);
+            Helpers.onRegistryReady(access);
         }
 
         public static void setupNewWorld(

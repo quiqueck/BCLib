@@ -58,7 +58,7 @@ public abstract class WorldOpenFlowsMixin {
             Function<RegistryAccess, WorldDimensions> function,
             CallbackInfo ci
     ) {
-        WorldsTogether.LOGGER.info("called createFreshLevel...");
+        WorldsTogether.LOGGER.warning("called createFreshLevel...");
         //TODO: 1.19.3 no mor dimensions at this stage...
         //WorldBootstrap.InFreshLevel.setupNewWorld(levelID, worldGenSettings, this.levelSource, Optional.empty());
     }
