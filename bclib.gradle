@@ -48,6 +48,11 @@ sourceSets {
                     'src/main/generated'
             ]
         }
+        java {
+            srcDirs += [
+                    'WunderLib/src/main/java'
+            ]
+        }
     }
 }
 
