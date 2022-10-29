@@ -5,7 +5,6 @@ import org.betterx.bclib.util.ColorExtractor;
 import org.betterx.bclib.util.MHelper;
 
 import com.mojang.blaze3d.platform.NativeImage;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
@@ -18,6 +17,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import com.google.common.collect.Maps;
+import org.wunder.lib.ui.ColorHelper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,23 +25,23 @@ import java.util.List;
 import java.util.Map;
 
 public class ColorUtil {
-    public static final int BLACK = ChatFormatting.BLACK.getColor() | 0xFF000000;
-    public static final int DARK_BLUE = ChatFormatting.DARK_BLUE.getColor() | 0xFF000000;
-    public static final int DARK_GREEN = ChatFormatting.DARK_GREEN.getColor() | 0xFF000000;
-    public static final int DARK_AQUA = ChatFormatting.DARK_AQUA.getColor() | 0xFF000000;
-    public static final int DARK_RED = ChatFormatting.DARK_RED.getColor() | 0xFF000000;
-    public static final int DARK_PURPLE = ChatFormatting.DARK_PURPLE.getColor() | 0xFF000000;
-    public static final int GOLD = ChatFormatting.GOLD.getColor() | 0xFF000000;
-    public static final int GRAY = ChatFormatting.GRAY.getColor() | 0xFF000000;
-    public static final int DARK_GRAY = ChatFormatting.DARK_GRAY.getColor() | 0xFF000000;
-    public static final int BLUE = ChatFormatting.BLUE.getColor() | 0xFF000000;
-    public static final int GREEN = ChatFormatting.GREEN.getColor() | 0xFF000000;
-    public static final int AQUA = ChatFormatting.AQUA.getColor() | 0xFF000000;
-    public static final int RED = ChatFormatting.RED.getColor() | 0xFF000000;
-    public static final int LIGHT_PURPLE = ChatFormatting.LIGHT_PURPLE.getColor() | 0xFF000000;
-    public static final int YELLOW = ChatFormatting.YELLOW.getColor() | 0xFF000000;
-    public static final int WHITE = ChatFormatting.WHITE.getColor() | 0xFF000000;
-    public static final int DEFAULT_TEXT = WHITE;
+    public static final int BLACK = ColorHelper.BLACK;
+    public static final int DARK_BLUE = ColorHelper.DARK_BLUE;
+    public static final int DARK_GREEN = ColorHelper.DARK_GREEN;
+    public static final int DARK_AQUA = ColorHelper.DARK_AQUA;
+    public static final int DARK_RED = ColorHelper.DARK_RED;
+    public static final int DARK_PURPLE = ColorHelper.DARK_PURPLE;
+    public static final int GOLD = ColorHelper.GOLD;
+    public static final int GRAY = ColorHelper.GRAY;
+    public static final int DARK_GRAY = ColorHelper.DARK_GRAY;
+    public static final int BLUE = ColorHelper.BLUE;
+    public static final int GREEN = ColorHelper.GREEN;
+    public static final int AQUA = ColorHelper.AQUA;
+    public static final int RED = ColorHelper.RED;
+    public static final int LIGHT_PURPLE = ColorHelper.LIGHT_PURPLE;
+    public static final int YELLOW = ColorHelper.YELLOW;
+    public static final int WHITE = ColorHelper.WHITE;
+    public static final int DEFAULT_TEXT = ColorHelper.WHITE;
     private static final float[] FLOAT_BUFFER = new float[4];
     private static final int ALPHA = 255 << 24;
 

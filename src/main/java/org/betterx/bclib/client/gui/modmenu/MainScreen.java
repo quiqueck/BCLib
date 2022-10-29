@@ -6,13 +6,14 @@ import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.config.NamedPathConfig;
 import org.betterx.bclib.config.NamedPathConfig.ConfigTokenDescription;
 import org.betterx.bclib.config.NamedPathConfig.DependendConfigToken;
-import org.betterx.ui.layout.components.*;
-import org.betterx.ui.vanilla.LayoutScreenWithIcon;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+
+import org.wunder.lib.ui.layout.components.*;
+import org.wunder.lib.ui.vanilla.LayoutScreenWithIcon;
 
 import java.util.HashMap;
 import java.util.Map;

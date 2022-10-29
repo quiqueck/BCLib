@@ -1,16 +1,17 @@
 package org.betterx.bclib.client.gui.modmenu;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.ui.ColorUtil;
-import org.betterx.ui.layout.components.*;
-import org.betterx.ui.layout.values.Size;
-import org.betterx.ui.vanilla.LayoutScreen;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
+import org.wunder.lib.ui.ColorHelper;
+import org.wunder.lib.ui.layout.components.*;
+import org.wunder.lib.ui.layout.values.Size;
+import org.wunder.lib.ui.vanilla.LayoutScreen;
 
 @Environment(EnvType.CLIENT)
 public class TestScreen extends LayoutScreen {
@@ -77,17 +78,17 @@ public class TestScreen extends LayoutScreen {
                                                         VerticalScroll.create(page2)
                                                 ));
         rows.add(new Input(fitOrFill(), fit(), Component.literal("Input"), "0xff00ff"));
-        rows.add(new ColorSwatch(fit(), fit(), ColorUtil.LIGHT_PURPLE).centerHorizontal());
+        rows.add(new ColorSwatch(fit(), fit(), ColorHelper.LIGHT_PURPLE).centerHorizontal());
         rows.add(new ColorPicker(
                 fill(),
                 fit(),
                 Component.literal("Color"),
-                ColorUtil.GREEN
+                ColorHelper.GREEN
         ).centerHorizontal());
         rows.add(new Text(
                         fitOrFill(), fixed(20),
                         Component.literal("Some blue text")
-                ).centerHorizontal().setColor(ColorUtil.BLUE)
+                ).centerHorizontal().setColor(ColorHelper.BLUE)
         );
         rows.addHLine(fixed(32), fixed(16));
         rows.add(c);
@@ -110,7 +111,7 @@ public class TestScreen extends LayoutScreen {
                         fill(), fit(),
                         Component.literal(
                                 "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.")
-                ).setColor(ColorUtil.LIGHT_PURPLE).centerHorizontal()
+                ).setColor(ColorHelper.LIGHT_PURPLE).centerHorizontal()
         );
 
         rows.addHorizontalLine(16);

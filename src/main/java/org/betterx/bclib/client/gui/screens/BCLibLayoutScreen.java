@@ -1,11 +1,12 @@
 package org.betterx.bclib.client.gui.screens;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.ui.vanilla.LayoutScreenWithIcon;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+
+import org.wunder.lib.ui.vanilla.LayoutScreenWithIcon;
 
 import org.jetbrains.annotations.Nullable;
 

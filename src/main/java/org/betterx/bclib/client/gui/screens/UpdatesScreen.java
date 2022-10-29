@@ -3,12 +3,6 @@ package org.betterx.bclib.client.gui.screens;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.networking.VersionChecker;
-import org.betterx.ui.ColorUtil;
-import org.betterx.ui.layout.components.HorizontalStack;
-import org.betterx.ui.layout.components.LayoutComponent;
-import org.betterx.ui.layout.components.VerticalStack;
-import org.betterx.ui.layout.values.Size;
-import org.betterx.ui.layout.values.Value;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiComponent;
@@ -23,6 +17,13 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.CustomValue;
+
+import org.wunder.lib.ui.ColorHelper;
+import org.wunder.lib.ui.layout.components.HorizontalStack;
+import org.wunder.lib.ui.layout.components.LayoutComponent;
+import org.wunder.lib.ui.layout.components.VerticalStack;
+import org.wunder.lib.ui.layout.values.Size;
+import org.wunder.lib.ui.layout.values.Value;
 
 @Environment(EnvType.CLIENT)
 public class UpdatesScreen extends BCLibLayoutScreen {
@@ -71,14 +72,14 @@ public class UpdatesScreen extends BCLibLayoutScreen {
             }
             if (nfo != null) {
                 row.addText(fit(), fit(), Component.literal(nfo.getMetadata().getName()))
-                   .setColor(ColorUtil.WHITE);
+                   .setColor(ColorHelper.WHITE);
             } else {
-                row.addText(fit(), fit(), Component.literal(mod)).setColor(ColorUtil.WHITE);
+                row.addText(fit(), fit(), Component.literal(mod)).setColor(ColorHelper.WHITE);
             }
             row.addSpacer(4);
             row.addText(fit(), fit(), Component.literal(cur));
             row.addText(fit(), fit(), Component.literal(" -> "));
-            row.addText(fit(), fit(), Component.literal(updated)).setColor(ColorUtil.GREEN);
+            row.addText(fit(), fit(), Component.literal(updated)).setColor(ColorHelper.GREEN);
             row.addFiller();
             if (nfo != null && nfo.getMetadata().getContact().get("homepage").isPresent()) {
                 row.addButton(fit(), fit(), Component.translatable("bclib.updates.curseforge_link"))
@@ -99,7 +100,7 @@ public class UpdatesScreen extends BCLibLayoutScreen {
             footer.addButton(
                           fit(),
                           fit(),
-                          Component.translatable("bclib.updates.donate").setStyle(Style.EMPTY.withColor(ColorUtil.YELLOW))
+                          Component.translatable("bclib.updates.donate").setStyle(Style.EMPTY.withColor(ColorHelper.YELLOW))
                   )
                   .onPress((bt) -> openLink(DONATION_URL));
             footer.addSpacer(2);

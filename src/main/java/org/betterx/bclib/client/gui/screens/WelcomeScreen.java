@@ -4,9 +4,6 @@ import org.betterx.bclib.BCLib;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.networking.VersionChecker;
 import org.betterx.bclib.registry.PresetsRegistry;
-import org.betterx.ui.ColorUtil;
-import org.betterx.ui.layout.components.*;
-import org.betterx.ui.layout.values.Size;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
 
@@ -17,6 +14,10 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+
+import org.wunder.lib.ui.ColorHelper;
+import org.wunder.lib.ui.layout.components.*;
+import org.wunder.lib.ui.layout.values.Size;
 
 public class WelcomeScreen extends BCLibLayoutScreen {
     static final ResourceLocation BETTERX_LOCATION = new ResourceLocation(BCLib.MOD_ID, "betterx.png");
@@ -33,12 +34,12 @@ public class WelcomeScreen extends BCLibLayoutScreen {
         VerticalStack content = new VerticalStack(fill(), fit()).setDebugName("content");
 
         content.addImage(fill(), fit(), BACKGROUND, new Size(427, 100));
-        content.addHorizontalLine(1).setColor(ColorUtil.BLACK);
+        content.addHorizontalLine(1).setColor(ColorHelper.BLACK);
         content.addSpacer(16);
         HorizontalStack headerRow = content.addRow(fit(), fit()).setDebugName("title bar").centerHorizontal();
         headerRow.addIcon(icon, Size.of(512)).setDebugName("icon");
         headerRow.addSpacer(4);
-        headerRow.addText(fit(), fit(), title).centerHorizontal().setColor(ColorUtil.WHITE).setDebugName("title");
+        headerRow.addText(fit(), fit(), title).centerHorizontal().setColor(ColorHelper.WHITE).setDebugName("title");
         headerRow.addImage(fixed(178 / 2), fixed(40 / 2), BETTERX_LOCATION, Size.of(178, 40)).setDebugName("betterx");
         content.addSpacer(16);
 
@@ -61,7 +62,7 @@ public class WelcomeScreen extends BCLibLayoutScreen {
             donationRow.addSpacer(4);
             donationRow.addButton(
                                fit(), fit(),
-                               Component.translatable("bclib.updates.donate").setStyle(Style.EMPTY.withColor(ColorUtil.YELLOW))
+                               Component.translatable("bclib.updates.donate").setStyle(Style.EMPTY.withColor(ColorHelper.YELLOW))
                        )
                        .onPress((bt) -> openLink(UpdatesScreen.DONATION_URL)).centerVertical();
         }
@@ -81,7 +82,7 @@ public class WelcomeScreen extends BCLibLayoutScreen {
         innerContent.addSpacer(2);
         HorizontalStack dscBox = innerContent.indent(24);
         dscBox.addMultilineText(fill(), fit(), translatable("description.config.bclib.client.version.check"))
-              .setColor(ColorUtil.GRAY);
+              .setColor(ColorHelper.GRAY);
         dscBox.addSpacer(8);
 
         // Hide Experimental Dialog
@@ -102,7 +103,7 @@ public class WelcomeScreen extends BCLibLayoutScreen {
                       fit(),
                       translatable("description.config.bclib.client.ui.suppressExperimentalDialogOnLoad")
               )
-              .setColor(ColorUtil.GRAY);
+              .setColor(ColorHelper.GRAY);
         dscBox.addSpacer(8);
 
         // Use BetterX WorldType
@@ -123,16 +124,16 @@ public class WelcomeScreen extends BCLibLayoutScreen {
                       translatable("warning.config.bclib.client.ui.forceBetterXPreset")
                               .setStyle(Style.EMPTY
                                       .withBold(true)
-                                      .withColor(ColorUtil.RED)
+                                      .withColor(ColorHelper.RED)
                               )
                               .append(translatable(
                                       "description.config.bclib.client.ui.forceBetterXPreset").setStyle(
                                       Style.EMPTY
                                               .withBold(false)
-                                              .withColor(ColorUtil.GRAY))
+                                              .withColor(ColorHelper.GRAY))
                               )
               )
-              .setColor(ColorUtil.GRAY);
+              .setColor(ColorHelper.GRAY);
         dscBox.addSpacer(8);
 
         innerContent.addSpacer(16);

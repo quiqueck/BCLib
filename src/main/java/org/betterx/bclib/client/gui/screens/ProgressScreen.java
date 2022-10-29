@@ -1,11 +1,6 @@
 package org.betterx.bclib.client.gui.screens;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.ui.ColorUtil;
-import org.betterx.ui.layout.components.*;
-import org.betterx.ui.layout.values.Rectangle;
-import org.betterx.ui.layout.values.Value;
-import org.betterx.ui.vanilla.LayoutScreen;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -16,6 +11,12 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ProgressListener;
+
+import org.wunder.lib.ui.ColorHelper;
+import org.wunder.lib.ui.layout.components.*;
+import org.wunder.lib.ui.layout.values.Rectangle;
+import org.wunder.lib.ui.layout.values.Value;
+import org.wunder.lib.ui.vanilla.LayoutScreen;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import org.jetbrains.annotations.Nullable;
@@ -217,7 +218,7 @@ public class ProgressScreen extends LayoutScreen implements ProgressListener, At
         VerticalStack textCol = contentRow.addColumn(fit(), fit()).setDebugName("textCol").centerVertical();
         textCol.addText(fit(), fit(), description);
         textCol.addSpacer(4);
-        progress = textCol.addText(fit(), fit(), getProgressComponent()).setColor(ColorUtil.GRAY);
+        progress = textCol.addText(fit(), fit(), getProgressComponent()).setColor(ColorHelper.GRAY);
 
 
         grid.addSpacer(20);

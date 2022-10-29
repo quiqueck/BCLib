@@ -1,14 +1,14 @@
 package org.betterx.bclib.client.gui.screens;
 
-import org.betterx.ui.layout.components.HorizontalStack;
-import org.betterx.ui.layout.components.LayoutComponent;
-import org.betterx.ui.layout.components.VerticalStack;
-
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
+import org.wunder.lib.ui.layout.components.HorizontalStack;
+import org.wunder.lib.ui.layout.components.LayoutComponent;
+import org.wunder.lib.ui.layout.components.VerticalStack;
 
 @Environment(EnvType.CLIENT)
 public class WarnBCLibVersionMismatch extends BCLibLayoutScreen {

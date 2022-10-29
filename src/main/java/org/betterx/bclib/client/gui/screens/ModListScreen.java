@@ -2,11 +2,6 @@ package org.betterx.bclib.client.gui.screens;
 
 import org.betterx.bclib.api.v2.dataexchange.handler.autosync.HelloClient;
 import org.betterx.bclib.util.Triple;
-import org.betterx.ui.ColorUtil;
-import org.betterx.ui.layout.components.HorizontalStack;
-import org.betterx.ui.layout.components.LayoutComponent;
-import org.betterx.ui.layout.components.Text;
-import org.betterx.ui.layout.components.VerticalStack;
 import org.betterx.worlds.together.util.ModUtil;
 import org.betterx.worlds.together.util.PathUtil;
 
@@ -17,6 +12,12 @@ import net.minecraft.network.chat.Component;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.metadata.ModEnvironment;
+
+import org.wunder.lib.ui.ColorHelper;
+import org.wunder.lib.ui.layout.components.HorizontalStack;
+import org.wunder.lib.ui.layout.components.LayoutComponent;
+import org.wunder.lib.ui.layout.components.Text;
+import org.wunder.lib.ui.layout.components.VerticalStack;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -196,29 +197,29 @@ public class ModListScreen extends BCLibLayoutScreen {
                  final int state = t.second;
                  final String stateString = t.third;
 
-                 int color = ColorUtil.RED;
+                 int color = ColorHelper.RED;
                  final String typeText;
                  if (state == STATE_VERSION || state == STATE_VERSION_NOT_OFFERED || state == STATE_VERSION_CLIENT_ONLY) {
                      typeText = "[VERSION]";
                      if (state == STATE_VERSION_NOT_OFFERED) {
-                         color = ColorUtil.YELLOW;
+                         color = ColorHelper.YELLOW;
                      } else if (state == STATE_VERSION_CLIENT_ONLY) {
-                         color = ColorUtil.DARK_GREEN;
+                         color = ColorHelper.DARK_GREEN;
                      }
                  } else if (state == STATE_MISSING || state == STATE_MISSING_NOT_OFFERED) {
                      typeText = "[MISSING]";
                      if (state == STATE_MISSING_NOT_OFFERED) {
-                         color = ColorUtil.YELLOW;
+                         color = ColorHelper.YELLOW;
                      }
                  } else if (state == STATE_SERVER_MISSING || state == STATE_SERVER_MISSING_CLIENT_MOD) {
                      if (state == STATE_SERVER_MISSING_CLIENT_MOD) {
-                         color = ColorUtil.AQUA;
+                         color = ColorHelper.AQUA;
                          typeText = "[OK]";
                      } else {
                          typeText = "[NOT ON SERVER]";
                      }
                  } else {
-                     color = ColorUtil.DARK_GREEN;
+                     color = ColorHelper.DARK_GREEN;
                      typeText = "[OK]";
                  }
                  Component dash = Component.literal("-");
@@ -237,7 +238,7 @@ public class ModListScreen extends BCLibLayoutScreen {
                      row = grid.addRow();
                      row.addSpacer(4 + dashText.getContentWidth());
                      row.addText(fit(), fit(), Component.literal(stateString))
-                        .setColor(ColorUtil.GRAY);
+                        .setColor(ColorHelper.GRAY);
                  }
 
                  grid.addSpacer(4);
