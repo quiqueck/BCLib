@@ -40,9 +40,10 @@ loom {
     }
 }
 
-// Add the datagenned files into the jar.
+
 sourceSets {
     main {
+        // Add the datagenned files into the jar.
         resources {
             srcDirs += [
                     'src/main/generated'
