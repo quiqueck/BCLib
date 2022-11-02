@@ -28,10 +28,6 @@ public class CustomModelBakery {
     }
 
     public UnbakedModel getItemModel(ResourceLocation location) {
-        ResourceLocation storageID = new ResourceLocation(
-                location.getNamespace(),
-                "models/item/" + location.getPath() + ".json"
-        );
         return models.get(location);
     }
 

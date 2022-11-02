@@ -10,12 +10,15 @@ import org.betterx.bclib.registry.PresetsRegistryClient;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.client.WorldsTogetherClient;
 
+import net.minecraft.client.renderer.texture.SpriteLoader;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.model.*;
+import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -36,6 +39,13 @@ public class BCLibClient implements ClientModInitializer, ModelResourceProvider,
         PresetsRegistryClient.onLoad();
         WorldsTogether.SURPRESS_EXPERIMENTAL_DIALOG = Configs.CLIENT_CONFIG.suppressExperimentalDialog();
         //dumpDatapack();
+
+        ClientSpriteRegistryCallback
+                .event(TextureAtlas.LOCATION_BLOCKS)
+                .register((resourceManager, sprites) -> {
+                    SpriteLoader.listSprites(resourceManager, "entity/chest", sprites::put);
+                    SpriteLoader.listSprites(resourceManager, "blocks", sprites::put);
+                });
     }
 
     @Override
