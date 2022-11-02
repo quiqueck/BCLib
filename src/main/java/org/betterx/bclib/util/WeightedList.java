@@ -85,7 +85,7 @@ public class WeightedList<T> {
      * @return {@link T} value.
      */
     public T get(RandomSource random) {
-        if (maxWeight < 1) {
+        if (maxWeight <= 0) {
             return null;
         }
         float weight = random.nextFloat() * maxWeight;

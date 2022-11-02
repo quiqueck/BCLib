@@ -3,6 +3,7 @@ package org.betterx.bclib.api.v2.levelgen.biomes;
 import org.betterx.bclib.api.v2.generator.BiomePicker;
 import org.betterx.bclib.config.Configs;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
 
 public class BCLBiomeSettings {
@@ -87,7 +88,7 @@ public class BCLBiomeSettings {
          * @return same {@link Builder}.
          */
         public R setEdge(BCLBiome edge) {
-            storage.edge = edge;
+            storage.edge = edge == null ? null : edge.getID();
             return (R) this;
         }
 
@@ -116,7 +117,7 @@ public class BCLBiomeSettings {
         this.genChance = genChance;
         this.edgeSize = edgeSize;
         this.vertical = vertical;
-        this.edge = edge;
+        this.edge = edge == null ? null : edge.getID();
     }
 
     protected BCLBiomeSettings() {
@@ -133,7 +134,7 @@ public class BCLBiomeSettings {
     float genChance;
     int edgeSize;
     boolean vertical;
-    BCLBiome edge;
+    ResourceLocation edge;
 
 
     /**
@@ -187,7 +188,7 @@ public class BCLBiomeSettings {
      * @return The assigned edge biome.
      */
     public BCLBiome getEdge() {
-        return edge;
+        return BiomeAPI.getBiome(edge);
     }
 
     /**

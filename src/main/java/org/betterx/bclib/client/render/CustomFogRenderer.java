@@ -117,12 +117,15 @@ public class CustomFogRenderer {
 
     private static boolean shouldIgnore(Level level, int x, int y, int z) {
         Biome biome = level.getBiome(MUT_POS.set(x, y, z)).value();
-        return BiomeAPI.getRenderBiome(biome) == BCLBiomeRegistry.EMPTY_BIOME;
+        return BCLBiomeRegistry.isEmptyBiome(BiomeAPI.getRenderBiome(biome));
     }
 
     private static float getFogDensityI(Level level, int x, int y, int z) {
         Biome biome = level.getBiome(MUT_POS.set(x, y, z)).value();
         BCLBiome renderBiome = BiomeAPI.getRenderBiome(biome);
+        if (renderBiome == null) {
+            return BCLBiomeRegistry.EMPTY_BIOME.getFogDensity();
+        }
         return renderBiome.getFogDensity();
     }
 

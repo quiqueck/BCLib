@@ -145,7 +145,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
             }
 
 
-            if (bclBiome != null || bclBiome != BCLBiomeRegistry.EMPTY_BIOME) {
+            if (!BCLBiomeRegistry.isEmptyBiome(bclBiome)) {
                 if (bclBiome.getParentBiome() == null) {
                     //ignore small islands when void biomes are disabled
                     if (!config.withVoidBiomes) {
@@ -165,7 +165,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
                     }
 
                     if (!didForceAdd) {
-                        if (biomeID.equals(BCLBiomeRegistry.EMPTY_BIOME.getID())
+                        if (BCLBiomeRegistry.isEmptyBiome(biomeID)
                                 || bclBiome.getIntendedType().is(BiomeAPI.BiomeType.END_IGNORE)) {
                             //we should not add this biome anywhere, so just ignore it
                         } else {

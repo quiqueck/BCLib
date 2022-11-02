@@ -112,7 +112,7 @@ public class BiomePicker {
                     subbiomes.add(create(b), w);
             });
 
-            if (bclBiome.getEdge() != null && isAllowed(bclBiome.getEdge())) {
+            if (bclBiome.hasEdge() && isAllowed(bclBiome.getEdge())) {
                 edge = create(bclBiome.getEdge());
             } else {
                 edge = null;

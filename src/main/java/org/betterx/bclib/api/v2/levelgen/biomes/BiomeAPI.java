@@ -554,7 +554,7 @@ public class BiomeAPI {
      * @return {@link BCLBiome} or {@code BiomeAPI.EMPTY_BIOME}.
      */
     public static BCLBiome getBiome(ResourceLocation biomeID) {
-        if (biomeID == null) return BCLBiomeRegistry.EMPTY_BIOME;
+        if (biomeID == null) return null;
         return BCLBiomeRegistry.getOrElseEmpty(biomeID);
     }
 
@@ -618,9 +618,11 @@ public class BiomeAPI {
     }
 
     public static boolean wasRegisteredAs(ResourceLocation biomeID, BiomeType dim) {
-        if (BCLBiomeRegistry.EMPTY_BIOME.getID().equals(biomeID))
+        if (BCLBiomeRegistry.isEmptyBiome(biomeID))
             return false;
-        return BCLBiomeRegistry.getOrElseEmpty(biomeID).getIntendedType().is(dim);
+        final BCLBiome res = BCLBiomeRegistry.getOrElseEmpty(biomeID);
+        if (res == null) return false;
+        return res.getIntendedType().is(dim);
     }
 
     public static boolean wasRegisteredAsNetherBiome(ResourceLocation biomeID) {

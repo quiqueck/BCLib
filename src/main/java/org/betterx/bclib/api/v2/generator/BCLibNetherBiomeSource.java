@@ -103,7 +103,7 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
             } else {
                 BCLBiome bclBiome = BiomeAPI.getBiome(biomeID);
 
-                if (bclBiome != BCLBiomeRegistry.EMPTY_BIOME) {
+                if (!BCLBiomeRegistry.isEmptyBiome(bclBiome)) {
                     if (bclBiome.getParentBiome() == null) {
                         biomePicker.addBiome(bclBiome);
                     }

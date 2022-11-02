@@ -42,6 +42,14 @@ public class BCLBiomeRegistry {
      **/
     public static final BCLBiome EMPTY_BIOME = new BCLBiome(Biomes.THE_VOID.location());
 
+    public static boolean isEmptyBiome(ResourceLocation l) {
+        return l == null || Biomes.THE_VOID.location().equals(l);
+    }
+
+    public static boolean isEmptyBiome(BCLBiome b) {
+        return b == null || b == EMPTY_BIOME;
+    }
+
     /**
      * Register a codec for a custom subclass of {@link BCLBiome}. Each subclass needs to provide
      * a codec, otherwise the instance will get rebuild as a regular BCLib biome loosing the Type
@@ -134,9 +142,9 @@ public class BCLBiomeRegistry {
         return getOrElseEmpty(WorldBootstrap.getLastRegistryAccess(), loc);
     }
 
-    public static BCLBiome getOrElseEmpty(@Nullable RegistryAccess access, ResourceLocation loc) {
+    public static @Nullable BCLBiome getOrElseEmpty(@Nullable RegistryAccess access, ResourceLocation loc) {
         BCLBiome res = access == null ? null : get(access, loc);
-        if (res == null) return EMPTY_BIOME;
+        //if (res == null) return EMPTY_BIOME;
         return res;
     }
 

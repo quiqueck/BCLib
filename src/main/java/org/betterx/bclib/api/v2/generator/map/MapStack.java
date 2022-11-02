@@ -89,6 +89,9 @@ public class MapStack implements BiomeMap {
                 for (int z = 0; z < side; z++) {
                     if (biomeMap[x][z] == null) {
                         BiomePicker.ActualBiome biome = chunks[i].getBiome(x, z);
+                        if (biome == null) {
+                            biome = chunks[i].getBiome(x, z);
+                        }
                         if (biome.bclBiome.isVertical()) {
                             biomeMap[x][z] = biome;
                             isNoEmpty = true;

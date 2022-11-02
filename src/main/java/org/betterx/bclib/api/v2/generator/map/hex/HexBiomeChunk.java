@@ -1,5 +1,6 @@
 package org.betterx.bclib.api.v2.generator.map.hex;
 
+import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.generator.BiomePicker;
 import org.betterx.bclib.interfaces.BiomeChunk;
 
@@ -72,11 +73,21 @@ public class HexBiomeChunk implements BiomeChunk {
             outBuffer[getIndex(SIDE_MASK, index)] = outBuffer[getIndex(preN, index)];
         }
 
+        int lastAction = -1;
+        BiomePicker.ActualBiome lBiome = null;
         for (short index = 0; index < SIZE; index++) {
             if (outBuffer[index] == null) {
+                lastAction = 0;
+                lBiome = null;
                 outBuffer[index] = picker.getBiome(random);
             } else if (random.nextInt(4) == 0) {
+                lastAction = 1;
+                lBiome = outBuffer[index];
                 circle(outBuffer, index, outBuffer[index].getSubBiome(random), outBuffer[index]);
+            }
+
+            if (outBuffer[index] == null) {
+                BCLib.LOGGER.error("Invalid Biome at " + index + ", " + lastAction + ", " + lBiome);
             }
         }
 

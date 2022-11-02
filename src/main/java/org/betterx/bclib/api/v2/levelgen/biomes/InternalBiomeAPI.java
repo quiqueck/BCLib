@@ -264,7 +264,7 @@ public class InternalBiomeAPI {
             BiomeAPI.BiomeType type
     ) {
         BCLBiome bclBiome = BiomeAPI.getBiome(biomeKey.location());
-        if (bclBiome == BCLBiomeRegistry.EMPTY_BIOME) {
+        if (BCLBiomeRegistry.isEmptyBiome(bclBiome)) {
             bclBiome = new BCLBiome(biomeKey, setings);
             bclBiome._setIntendedType(type);
         }
@@ -281,7 +281,7 @@ public class InternalBiomeAPI {
                         .event(oBiomeRegistry.get())
                         .register((rawId, id, biome) -> {
                             BCLBiome b = BiomeAPI.getBiome(id);
-                            if (!"minecraft".equals(id.getNamespace()) && (b == null || b == BCLBiomeRegistry.EMPTY_BIOME)) {
+                            if (!"minecraft".equals(id.getNamespace()) && BCLBiomeRegistry.isEmptyBiome(b)) {
                                 //BCLib.LOGGER.info(" #### " + rawId + ", " + biome + ", " + id);
                                 //BIOMES_TO_SORT.add(id);
 //                            BIOME_ADDITIONS.computeIfAbsent(oBiomeRegistry.get(), reg -> new AtomicInteger(0))
