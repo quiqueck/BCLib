@@ -1,6 +1,7 @@
 package org.betterx.bclib;
 
-import org.betterx.bclib.api.v2.levelgen.biomes.*;
+import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
+import org.betterx.bclib.api.v2.levelgen.biomes.BiomeData;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.surfaceRules.AssignedSurfaceRule;
 import org.betterx.worlds.together.surfaceRules.SurfaceRuleRegistry;
@@ -17,8 +18,6 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.RegistryDataLoader;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.block.Blocks;
 
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
@@ -38,87 +37,9 @@ public class BCLibDatagen implements DataGeneratorEntrypoint {
 
     @Override
     public void onInitializeDataGenerator(FabricDataGenerator dataGenerator) {
-        registerTestBiomes();
-
-        final FabricDataGenerator.Pack pack = dataGenerator.create();
-        pack.addProvider(CustomRegistriesDataProvider::new);
+        final FabricDataGenerator.Pack pack = dataGenerator.createPack();
         pack.addProvider(FabricBuiltinRegistriesProvider.forCurrentMod());
-
-    }
-
-    private void registerTestBiomes() {
-
-        if (true && BCLib.isDevEnvironment()) {
-            BCLBiome theYellow = BCLBiomeBuilder
-                    .start(BCLib.makeID("the_yellow"))
-                    .precipitation(Biome.Precipitation.NONE)
-                    .temperature(1.0f)
-                    .wetness(1.0f)
-                    .fogColor(0xFFFF00)
-                    .waterColor(0x777700)
-                    .waterFogColor(0xFFFF00)
-                    .skyColor(0xAAAA00)
-                    .addNetherClimateParamater(-1, 1)
-                    .surface(Blocks.YELLOW_CONCRETE)
-                    .build();
-            BiomeAPI.registerEndLandBiome(theYellow);
-
-            BCLBiome theBlue = BCLBiomeBuilder
-                    .start(BCLib.makeID("the_blue"))
-                    .precipitation(Biome.Precipitation.NONE)
-                    .temperature(1.0f)
-                    .wetness(1.0f)
-                    .fogColor(0x0000FF)
-                    .waterColor(0x000077)
-                    .waterFogColor(0x0000FF)
-                    .skyColor(0x0000AA)
-                    .addNetherClimateParamater(-1, 1)
-                    .surface(Blocks.LIGHT_BLUE_CONCRETE)
-                    .build();
-            BiomeAPI.registerEndLandBiome(theBlue);
-
-            BCLBiome theGray = BCLBiomeBuilder
-                    .start(BCLib.makeID("the_gray"))
-                    .precipitation(Biome.Precipitation.NONE)
-                    .temperature(1.0f)
-                    .wetness(1.0f)
-                    .fogColor(0xFFFFFF)
-                    .waterColor(0x777777)
-                    .waterFogColor(0xFFFFFF)
-                    .skyColor(0xAAAAAA)
-                    .addNetherClimateParamater(-1, 1)
-                    .surface(Blocks.GRAY_CONCRETE)
-                    .build();
-            BiomeAPI.registerEndVoidBiome(theGray);
-
-            BCLBiome theOrange = BCLBiomeBuilder
-                    .start(BCLib.makeID("the_orange"))
-                    .precipitation(Biome.Precipitation.NONE)
-                    .temperature(1.0f)
-                    .wetness(1.0f)
-                    .fogColor(0xFF7700)
-                    .waterColor(0x773300)
-                    .waterFogColor(0xFF7700)
-                    .skyColor(0xAA7700)
-                    .addNetherClimateParamater(-1, 1.1f)
-                    .surface(Blocks.ORANGE_CONCRETE)
-                    .build();
-            BiomeAPI.registerNetherBiome(theOrange);
-
-            BCLBiome thePurple = BCLBiomeBuilder
-                    .start(BCLib.makeID("the_purple"))
-                    .precipitation(Biome.Precipitation.NONE)
-                    .temperature(1.0f)
-                    .wetness(1.0f)
-                    .fogColor(0xFF00FF)
-                    .waterColor(0x770077)
-                    .waterFogColor(0xFF00FF)
-                    .skyColor(0xAA00AA)
-                    .addNetherClimateParamater(-1.1f, 1)
-                    .surface(Blocks.PURPLE_CONCRETE)
-                    .build();
-            BiomeAPI.registerNetherBiome(thePurple);
-        }
+        pack.addProvider(CustomRegistriesDataProvider::new);
     }
 
     public static class CustomRegistriesDataProvider implements DataProvider {

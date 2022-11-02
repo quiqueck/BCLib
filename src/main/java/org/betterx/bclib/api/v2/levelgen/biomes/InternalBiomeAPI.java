@@ -276,18 +276,23 @@ public class InternalBiomeAPI {
     static {
         DynamicRegistrySetupCallback.EVENT.register(registryManager -> {
             Optional<? extends Registry<Biome>> oBiomeRegistry = registryManager.registry(Registry.BIOME_REGISTRY);
-            RegistryEntryAddedCallback
-                    .event(oBiomeRegistry.get())
-                    .register((rawId, id, biome) -> {
-                        BCLBiome b = BiomeAPI.getBiome(id);
-                        if (!"minecraft".equals(id.getNamespace()) && (b == null || b == BCLBiomeRegistry.EMPTY_BIOME)) {
-                            //BCLib.LOGGER.info(" #### " + rawId + ", " + biome + ", " + id);
-                            //BIOMES_TO_SORT.add(id);
+            if (oBiomeRegistry.isPresent()) {
+                RegistryEntryAddedCallback
+                        .event(oBiomeRegistry.get())
+                        .register((rawId, id, biome) -> {
+                            BCLBiome b = BiomeAPI.getBiome(id);
+                            if (!"minecraft".equals(id.getNamespace()) && (b == null || b == BCLBiomeRegistry.EMPTY_BIOME)) {
+                                //BCLib.LOGGER.info(" #### " + rawId + ", " + biome + ", " + id);
+                                //BIOMES_TO_SORT.add(id);
 //                            BIOME_ADDITIONS.computeIfAbsent(oBiomeRegistry.get(), reg -> new AtomicInteger(0))
 //                                           .incrementAndGet();
-                        }
-                    });
+                            }
+                        });
+            } else {
+                BCLib.LOGGER.warning("No valid Biome Registry available!");
+            }
         });
+
     }
 
     /**

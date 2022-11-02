@@ -5,7 +5,6 @@ import org.betterx.bclib.mixin.common.SurfaceRulesContextAccessor;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.Registry;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.SurfaceRules.Context;
@@ -49,6 +48,6 @@ public record SwitchRuleSource(NumericProvider selector, List<RuleSource> collec
     }
 
     static {
-        Registry.register(Registry.RULE, "bclib_switch_rule", SwitchRuleSource.CODEC);
+
     }
 }

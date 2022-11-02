@@ -206,7 +206,14 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
         if (parameterPoints.isPresent()) this.parameterPoints.addAll(parameterPoints.get());
         this.setIntendedType(intendedType.map(t -> BiomeAPI.BiomeType.create(t)).orElse(BiomeAPI.BiomeType.NONE));
 
+        //make sure we are registered properly
+        if (this.biomeParent != null)
+            this.biomeParent.addSubBiome(this);
 
+        //make sure edges are set up correct
+        if (this.edge != null) {
+            this.setEdge(this.edge);
+        }
     }
 
     /**

@@ -135,7 +135,7 @@ public class BCLBiomeRegistry {
     }
 
     public static BCLBiome getOrElseEmpty(@Nullable RegistryAccess access, ResourceLocation loc) {
-        BCLBiome res = get(access, loc);
+        BCLBiome res = access == null ? null : get(access, loc);
         if (res == null) return EMPTY_BIOME;
         return res;
     }
