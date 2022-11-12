@@ -6,7 +6,7 @@ import com.mojang.serialization.Lifecycle;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.WritableRegistry;
-import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,13 +15,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(BuiltinRegistries.class)
+@Mixin(BuiltInRegistries.class)
 public abstract class BuiltinRegistriesMixin {
     @Shadow
     protected static <T, R extends WritableRegistry<T>> R internalRegister(
             ResourceKey<? extends Registry<T>> resourceKey,
             R writableRegistry,
-            BuiltinRegistries.RegistryBootstrap<T> registryBootstrap,
+            BuiltInRegistries.RegistryBootstrap<T> registryBootstrap,
             Lifecycle lifecycle
     ) {
         throw new RuntimeException("Shadowed Call");

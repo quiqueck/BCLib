@@ -5,7 +5,6 @@ import org.betterx.bclib.mixin.common.StructuresAccessor;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.core.*;
-import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.data.worldgen.StructureSets;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;

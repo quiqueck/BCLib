@@ -8,7 +8,6 @@ import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.main.GameConfig;
-import net.minecraft.core.Registry;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -36,7 +35,7 @@ public abstract class MinecraftMixin {
 
     @Inject(method = "<init>*", at = @At("TAIL"))
     private void bclib_onMCInit(GameConfig args, CallbackInfo info) {
-        Registry.BLOCK.forEach(block -> {
+        BuiltInRegistries.BLOCK.forEach(block -> {
             if (block instanceof CustomColorProvider provider) {
                 blockColors.register(provider.getProvider(), block);
                 itemColors.register(provider.getItemProvider(), block.asItem());

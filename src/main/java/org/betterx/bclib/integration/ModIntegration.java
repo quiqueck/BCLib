@@ -5,7 +5,8 @@ import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
-import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -38,15 +39,15 @@ public abstract class ModIntegration {
     }
 
     public ResourceKey<PlacedFeature> getFeatureKey(String name) {
-        return ResourceKey.create(Registry.PLACED_FEATURE_REGISTRY, getID(name));
+        return ResourceKey.create(Registries.PLACED_FEATURE, getID(name));
     }
 
     public Block getBlock(String name) {
-        return Registry.BLOCK.get(getID(name));
+        return BuiltInRegistries.BLOCK.get(getID(name));
     }
 
     public Item getItem(String name) {
-        return Registry.ITEM.get(getID(name));
+        return BuiltInRegistries.ITEM.get(getID(name));
     }
 
     public BlockState getDefaultState(String name) {
@@ -63,11 +64,11 @@ public abstract class ModIntegration {
 
 
     public ConfiguredFeature<?, ?> getConfiguredFeature(String name) {
-        return BuiltinRegistries.CONFIGURED_FEATURE.get(getID(name));
+        return BuiltInRegistries.CONFIGURED_FEATURE.get(getID(name));
     }
 
     public Holder<Biome> getBiome(String name) {
-        return BuiltinRegistries.BIOME.getHolder(getKey(name)).orElseThrow();
+        return BuiltInRegistries.BIOME.getHolder(getKey(name)).orElseThrow();
     }
 
     public Class<?> getClass(String path) {

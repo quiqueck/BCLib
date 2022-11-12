@@ -1,7 +1,7 @@
 package org.betterx.bclib.blocks;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.Tiers;
@@ -31,7 +31,7 @@ public class LeveledAnvilBlock extends BaseAnvilBlock {
     }
 
     public static List<Block> getAnvils() {
-        return Registry.BLOCK
+        return BuiltInRegistries.BLOCK
                 .stream()
                 .filter(b -> b instanceof LeveledAnvilBlock || b == Blocks.ANVIL)
                 .toList();

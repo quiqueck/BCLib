@@ -21,7 +21,6 @@ import org.betterx.worlds.together.tag.v3.MineableTags;
 import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.core.Registry;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -56,7 +55,7 @@ public class PostInitAPI {
      * @param isClient {@code boolean}, {@code true} for client, {@code false} for server.
      */
     public static void postInit(boolean isClient) {
-        Registry.BLOCK.forEach(block -> {
+        BuiltInRegistries.BLOCK.forEach(block -> {
             processBlockCommon(block);
             if (isClient) {
                 processBlockClient(block);
@@ -64,7 +63,7 @@ public class PostInitAPI {
         });
 
 
-        Registry.ITEM.forEach(item -> {
+        BuiltInRegistries.ITEM.forEach(item -> {
             processItemCommon(item);
         });
 

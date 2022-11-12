@@ -16,7 +16,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
-import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
@@ -63,7 +64,7 @@ public class BiomeAPI {
      * @return {@link BCLBiome}
      */
     public static BCLBiome registerBuiltinBiomeAndOverrideIntendedDimension(BCLBiome bclbiome, BiomeType dim) {
-        return registerBiomeAndOverrideIntendedDimension(bclbiome, dim, BuiltinRegistries.BIOME);
+        return registerBiomeAndOverrideIntendedDimension(bclbiome, dim, Registries.BIOME);
     }
 
     static BCLBiome registerBiomeAndOverrideIntendedDimension(
@@ -472,7 +473,7 @@ public class BiomeAPI {
             Optional<ResourceKey<Biome>> key = InternalBiomeAPI.biomeRegistry.getResourceKey(biome);
             if (key.isPresent()) return key.get();
         }
-        return BuiltinRegistries.BIOME
+        return BuiltInRegistries.BIOME
                 .getResourceKey(biome)
                 .orElseGet(null);
     }

@@ -6,6 +6,7 @@ import org.betterx.worlds.together.world.event.WorldEventsImpl;
 
 import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -24,7 +25,7 @@ import org.jetbrains.annotations.ApiStatus;
 public class TagManager {
     private static final Map<String, TagRegistry<?>> TYPES = Maps.newHashMap();
 
-    public static TagRegistry.RegistryBacked<Block> BLOCKS = registerType(Registry.BLOCK);
+    public static TagRegistry.RegistryBacked<Block> BLOCKS = registerType(BuiltInRegistries.BLOCK);
     public static TagRegistry.Items ITEMS = registerItem();
     public static TagRegistry.Biomes BIOMES = registerBiome();
 

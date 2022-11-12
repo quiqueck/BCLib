@@ -7,7 +7,7 @@ import org.betterx.bclib.interfaces.BlockModelProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.UnbakedModel;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
@@ -50,7 +50,7 @@ public class BaseGateBlock extends FenceGateBlock implements BlockModelProvider 
     public @Nullable BlockModel getBlockModel(ResourceLocation blockId, BlockState blockState) {
         boolean inWall = blockState.getValue(IN_WALL);
         boolean isOpen = blockState.getValue(OPEN);
-        ResourceLocation parentId = Registry.BLOCK.getKey(parent);
+        ResourceLocation parentId = BuiltInRegistries.BLOCK.getKey(parent);
         Optional<String> pattern;
         if (inWall) {
             pattern = isOpen

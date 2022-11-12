@@ -4,7 +4,8 @@ import org.betterx.worlds.together.WorldsTogether;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
-import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
@@ -28,7 +29,7 @@ public class SurfaceRuleRegistry {
 
     @ApiStatus.Internal
     public static Holder<AssignedSurfaceRule> bootstrap(Registry<AssignedSurfaceRule> registry) {
-        return BuiltinRegistries.register(
+        return BuiltInRegistries.register(
                 registry,
                 WorldsTogether.makeID("dummy"),
                 new AssignedSurfaceRule(
@@ -49,7 +50,7 @@ public class SurfaceRuleRegistry {
         );
         Registry.register(SurfaceRuleRegistry.BUILTIN_SURFACE_RULES, key, new AssignedSurfaceRule(
                         SurfaceRules.ifTrue(
-                                SurfaceRules.isBiome(ResourceKey.create(Registry.BIOME_REGISTRY, biomeID)),
+                                SurfaceRules.isBiome(ResourceKey.create(Registries.BIOME, biomeID)),
                                 rules
                         ), biomeID
                 )

@@ -17,6 +17,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
@@ -98,7 +99,7 @@ public class WorldBootstrap {
                 var presetKey = currentPreset.get().unwrapKey();
                 if (presetKey.isPresent()) {
                     Optional<Holder.Reference<WorldPreset>> newPreset = LAST_REGISTRY_ACCESS
-                            .registryOrThrow(Registry.WORLD_PRESET_REGISTRY)
+                            .registryOrThrow(Registries.WORLD_PRESET)
                             .getHolder(presetKey.get());
                     if (newPreset.isPresent()) currentPreset = (Optional<Holder<WorldPreset>>) (Optional<?>) newPreset;
                 }
@@ -322,7 +323,7 @@ public class WorldBootstrap {
     public static LayeredRegistryAccess<RegistryLayer> enforceInLayeredRegistry(LayeredRegistryAccess<RegistryLayer> registries) {
         RegistryAccess access = registries.compositeAccess();
         Helpers.onRegistryReady(access);
-        final Registry<LevelStem> dimensions = access.registryOrThrow(Registry.LEVEL_STEM_REGISTRY);
+        final Registry<LevelStem> dimensions = access.registryOrThrow(Registries.LEVEL_STEM);
         final Registry<LevelStem> changedDimensions = WorldGenUtil.repairBiomeSourceInAllDimensions(access, dimensions);
         if (dimensions != changedDimensions) {
             if (Configs.MAIN_CONFIG.verboseLogging()) {

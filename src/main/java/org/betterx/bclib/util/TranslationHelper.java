@@ -1,7 +1,7 @@
 package org.betterx.bclib.util;
 
 import net.minecraft.core.Registry;
-import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 
 import com.google.common.collect.Sets;
@@ -37,8 +37,8 @@ public class TranslationHelper {
                 ? new JsonObject()
                 : gson.fromJson(new InputStreamReader(inputStream), JsonObject.class);
 
-        Registry.BLOCK.forEach(block -> {
-            if (Registry.BLOCK.getKey(block).getNamespace().equals(modID)) {
+        BuiltInRegistries.BLOCK.forEach(block -> {
+            if (BuiltInRegistries.BLOCK.getKey(block).getNamespace().equals(modID)) {
                 String name = block.getName().getString();
                 if (!translation.has(name)) {
                     missingNames.add(name);
@@ -46,8 +46,8 @@ public class TranslationHelper {
             }
         });
 
-        Registry.ITEM.forEach(item -> {
-            if (Registry.ITEM.getKey(item).getNamespace().equals(modID)) {
+        BuiltInRegistries.ITEM.forEach(item -> {
+            if (BuiltInRegistries.ITEM.getKey(item).getNamespace().equals(modID)) {
                 String name = item.getDescription().getString();
                 if (!translation.has(name)) {
                     missingNames.add(name);

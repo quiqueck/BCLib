@@ -8,7 +8,7 @@ import org.betterx.bclib.registry.BaseBlockEntities;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -55,7 +55,7 @@ public class BaseChestBlock extends ChestBlock implements BlockModelProvider {
     @Override
     @Environment(EnvType.CLIENT)
     public @Nullable BlockModel getBlockModel(ResourceLocation resourceLocation, BlockState blockState) {
-        ResourceLocation parentId = Registry.BLOCK.getKey(parent);
+        ResourceLocation parentId = BuiltInRegistries.BLOCK.getKey(parent);
         return ModelsHelper.createBlockEmpty(parentId);
     }
 }

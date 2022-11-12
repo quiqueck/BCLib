@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -45,7 +45,7 @@ public class BaseMetalBarsBlock extends IronBarsBlock implements BlockModelProvi
     }
 
     public Optional<String> getModelString(String block) {
-        ResourceLocation blockId = Registry.BLOCK.getKey(this);
+        ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(this);
         if (block.contains("item")) {
             return PatternsHelper.createJson(BasePatterns.ITEM_BLOCK, blockId);
         }
@@ -65,7 +65,7 @@ public class BaseMetalBarsBlock extends IronBarsBlock implements BlockModelProvi
     @Override
     @Environment(EnvType.CLIENT)
     public @Nullable BlockModel getBlockModel(ResourceLocation blockId, BlockState blockState) {
-        ResourceLocation thisId = Registry.BLOCK.getKey(this);
+        ResourceLocation thisId = BuiltInRegistries.BLOCK.getKey(this);
         String path = blockId.getPath();
         Optional<String> pattern = Optional.empty();
         if (path.endsWith("_post")) {

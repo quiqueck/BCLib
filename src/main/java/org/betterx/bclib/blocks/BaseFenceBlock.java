@@ -8,7 +8,7 @@ import org.betterx.bclib.interfaces.BlockModelProvider;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.UnbakedModel;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -42,7 +42,7 @@ public class BaseFenceBlock extends FenceBlock implements BlockModelProvider {
     @Override
     @Environment(EnvType.CLIENT)
     public BlockModel getItemModel(ResourceLocation blockId) {
-        ResourceLocation parentId = Registry.BLOCK.getKey(parent);
+        ResourceLocation parentId = BuiltInRegistries.BLOCK.getKey(parent);
         Optional<String> pattern = PatternsHelper.createJson(BasePatterns.ITEM_FENCE, parentId);
         return ModelsHelper.fromPattern(pattern);
     }
@@ -50,7 +50,7 @@ public class BaseFenceBlock extends FenceBlock implements BlockModelProvider {
     @Override
     @Environment(EnvType.CLIENT)
     public @Nullable BlockModel getBlockModel(ResourceLocation blockId, BlockState blockState) {
-        ResourceLocation parentId = Registry.BLOCK.getKey(parent);
+        ResourceLocation parentId = BuiltInRegistries.BLOCK.getKey(parent);
         String path = blockId.getPath();
         Optional<String> pattern = Optional.empty();
         if (path.endsWith("_post")) {

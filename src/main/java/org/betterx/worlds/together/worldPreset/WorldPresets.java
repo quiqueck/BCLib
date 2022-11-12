@@ -11,7 +11,8 @@ import org.betterx.worlds.together.worldPreset.client.WorldPresetsClient;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.WorldPresetTags;
@@ -26,13 +27,13 @@ import org.jetbrains.annotations.ApiStatus;
 public class WorldPresets {
 
     public static final TagRegistry.Simple<WorldPreset> WORLD_PRESETS =
-            TagManager.registerType(BuiltinRegistries.WORLD_PRESET, "tags/worldgen/world_preset");
+            TagManager.registerType(BuiltInRegistries.WORLD_PRESET, "tags/worldgen/world_preset");
     private static Map<ResourceKey<WorldPreset>, PresetBuilder> BUILDERS = Maps.newHashMap();
     private static ResourceKey<WorldPreset> DEFAULT = net.minecraft.world.level.levelgen.presets.WorldPresets.NORMAL;
 
     public static Holder<WorldPreset> get(RegistryAccess access, ResourceKey<WorldPreset> key) {
         return access
-                .registryOrThrow(Registry.WORLD_PRESET_REGISTRY)
+                .registryOrThrow(Registries.WORLD_PRESET)
                 .getHolderOrThrow(key);
     }
 
@@ -47,7 +48,7 @@ public class WorldPresets {
      * @return The key you may use to reference your new Preset
      */
     private static ResourceKey<WorldPreset> register(ResourceLocation loc, boolean visibleInUI) {
-        ResourceKey<WorldPreset> key = ResourceKey.create(Registry.WORLD_PRESET_REGISTRY, loc);
+        ResourceKey<WorldPreset> key = ResourceKey.create(Registries.WORLD_PRESET, loc);
         if (visibleInUI) {
             if (!didExplicitlySetDefault && DEFAULT == net.minecraft.world.level.levelgen.presets.WorldPresets.NORMAL) {
                 DEFAULT = key;
@@ -89,7 +90,7 @@ public class WorldPresets {
 
         for (Map.Entry<ResourceKey<WorldPreset>, PresetBuilder> e : BUILDERS.entrySet()) {
             TogetherWorldPreset preset = e.getValue().create(overworldStem, netherContext, endContext);
-            BuiltinRegistries.register(presets, e.getKey(), preset);
+            BuiltInRegistries.register(presets, e.getKey(), preset);
         }
         BUILDERS = null;
     }

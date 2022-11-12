@@ -2,7 +2,7 @@ package org.betterx.bclib.api.v2.levelgen.structures;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
@@ -120,7 +120,7 @@ public class StructureWorld {
             BlockState[] states = new BlockState[map2.size()];
             for (int i = 0; i < states.length; i++) {
                 states[i] = NbtUtils.readBlockState(
-                        HolderLookup.forRegistry(Registry.BLOCK),
+                        HolderLookup.forRegistry(BuiltInRegistries.BLOCK),
                         (CompoundTag) map2.get(i)
                 );
             }

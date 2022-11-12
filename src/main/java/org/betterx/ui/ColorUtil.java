@@ -6,7 +6,7 @@ import org.betterx.bclib.util.MHelper;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Mth;
@@ -299,8 +299,8 @@ public class ColorUtil {
 
     @Environment(EnvType.CLIENT)
     public static int extractColor(Item item) {
-        ResourceLocation id = Registry.ITEM.getKey(item);
-        if (id.equals(Registry.ITEM.getDefaultKey())) return -1;
+        ResourceLocation id = BuiltInRegistries.ITEM.getKey(item);
+        if (id.equals(BuiltInRegistries.ITEM.getDefaultKey())) return -1;
         if (colorPalette.containsKey(id)) {
             return colorPalette.get(id);
         }

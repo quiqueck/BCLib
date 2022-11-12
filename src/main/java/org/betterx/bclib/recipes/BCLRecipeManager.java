@@ -117,9 +117,9 @@ public class BCLRecipeManager {
 
     public static boolean exists(ItemLike item) {
         if (item instanceof Block) {
-            return Registry.BLOCK.getKey((Block) item) != Registry.BLOCK.getDefaultKey();
+            return BuiltInRegistries.BLOCK.getKey((Block) item) != BuiltInRegistries.BLOCK.getDefaultKey();
         } else {
-            return item != Items.AIR && Registry.ITEM.getKey(item.asItem()) != Registry.ITEM.getDefaultKey();
+            return item != Items.AIR && BuiltInRegistries.ITEM.getKey(item.asItem()) != BuiltInRegistries.ITEM.getDefaultKey();
         }
     }
 

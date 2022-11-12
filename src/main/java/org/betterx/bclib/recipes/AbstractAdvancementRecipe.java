@@ -3,7 +3,6 @@ package org.betterx.bclib.recipes;
 import org.betterx.bclib.api.v2.advancement.AdvancementManager;
 
 import net.minecraft.advancements.RequirementsStrategy;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ArmorItem;
@@ -105,8 +104,8 @@ public class AbstractAdvancementRecipe {
         String name = "has_" + (nameCounter++) + "_" +
                 Arrays.stream(items)
                       .map(block -> (block instanceof Block)
-                              ? Registry.BLOCK.getKey((Block) block)
-                              : Registry.ITEM.getKey((Item) block))
+                              ? BuiltInRegistries.BLOCK.getKey((Block) block)
+                              : BuiltInRegistries.ITEM.getKey((Item) block))
                       .filter(id -> id != null)
                       .map(id -> id.getPath())
                       .collect(Collectors.joining("_"));

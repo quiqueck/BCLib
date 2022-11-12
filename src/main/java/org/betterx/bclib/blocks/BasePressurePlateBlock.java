@@ -7,7 +7,7 @@ import org.betterx.bclib.interfaces.BlockModelProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.UnbakedModel;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
@@ -51,7 +51,7 @@ public class BasePressurePlateBlock extends PressurePlateBlock implements BlockM
     @Override
     @Environment(EnvType.CLIENT)
     public @Nullable BlockModel getBlockModel(ResourceLocation resourceLocation, BlockState blockState) {
-        ResourceLocation parentId = Registry.BLOCK.getKey(parent);
+        ResourceLocation parentId = BuiltInRegistries.BLOCK.getKey(parent);
         Optional<String> pattern;
         if (blockState.getValue(POWERED)) {
             pattern = PatternsHelper.createJson(BasePatterns.BLOCK_PLATE_DOWN, parentId);

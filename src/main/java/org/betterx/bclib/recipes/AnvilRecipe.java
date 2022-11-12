@@ -209,10 +209,10 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
     @Override
     public NonNullList<Ingredient> getIngredients() {
         NonNullList<Ingredient> defaultedList = NonNullList.create();
-        defaultedList.add(Ingredient.of(Registry.ITEM.stream()
-                                                     .filter(AnvilRecipe::isHammer)
-                                                     .filter(this::canUse)
-                                                     .map(ItemStack::new))
+        defaultedList.add(Ingredient.of(BuiltInRegistries.ITEM.stream()
+                                                              .filter(AnvilRecipe::isHammer)
+                                                              .filter(this::canUse)
+                                                              .map(ItemStack::new))
         );
         defaultedList.add(input);
         return defaultedList;

@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -138,7 +138,7 @@ public class BaseTerrainBlock extends BaseBlock {
     @Override
     @Environment(EnvType.CLIENT)
     public @Nullable BlockModel getBlockModel(ResourceLocation blockId, BlockState blockState) {
-        ResourceLocation baseId = Registry.BLOCK.getKey(getBaseBlock());
+        ResourceLocation baseId = BuiltInRegistries.BLOCK.getKey(getBaseBlock());
         String modId = blockId.getNamespace();
         String path = blockId.getPath();
         String bottom = baseId.getNamespace() + ":block/" + baseId.getPath();

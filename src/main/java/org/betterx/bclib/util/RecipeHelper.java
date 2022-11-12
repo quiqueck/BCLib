@@ -1,15 +1,15 @@
 package org.betterx.bclib.util;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 
 public class RecipeHelper {
     public static boolean exists(ItemLike item) {
         if (item instanceof Block) {
-            return Registry.BLOCK.getKey((Block) item) != Registry.BLOCK.getDefaultKey();
+            return BuiltInRegistries.BLOCK.getKey((Block) item) != BuiltInRegistries.BLOCK.getDefaultKey();
         } else {
-            return Registry.ITEM.getKey(item.asItem()) != Registry.ITEM.getDefaultKey();
+            return BuiltInRegistries.ITEM.getKey(item.asItem()) != BuiltInRegistries.ITEM.getDefaultKey();
         }
     }
 

@@ -5,6 +5,7 @@ import org.betterx.worlds.together.chunkgenerator.ChunkGeneratorUtils;
 import com.mojang.datafixers.DataFixer;
 import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.RegistryLayer;
 import net.minecraft.server.Services;
@@ -42,7 +43,7 @@ public class MinecraftServerMixinLate {
             CallbackInfo ci
     ) {
         final Registry<LevelStem> dimensionRegistry = this.registries.compositeAccess()
-                                                                     .registryOrThrow(Registry.LEVEL_STEM_REGISTRY);
+                                                                     .registryOrThrow(Registries.LEVEL_STEM);
         ChunkGeneratorUtils.restoreOriginalBiomeSourceInAllDimension(dimensionRegistry);
     }
 }

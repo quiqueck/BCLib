@@ -17,7 +17,7 @@ import org.betterx.bclib.util.Triple;
 
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.util.valueproviders.ConstantInt;
@@ -211,8 +211,8 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
             ResourceLocation id,
             ConfiguredFeature<FC, F> cFeature
     ) {
-        return (Holder<ConfiguredFeature<FC, F>>) (Object) BuiltinRegistries.register(
-                BuiltinRegistries.CONFIGURED_FEATURE,
+        return (Holder<ConfiguredFeature<FC, F>>) (Object) BuiltInRegistries.register(
+                BuiltInRegistries.CONFIGURED_FEATURE,
                 id,
                 cFeature
         );
@@ -671,7 +671,7 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
                 // is meant to prevent that...
                 if (NoneFeatureConfiguration.NONE != null)
                     return (FC) NoneFeatureConfiguration.NONE;
-                
+
                 return (FC) NoneFeatureConfiguration.INSTANCE;
             }
             return configuration;

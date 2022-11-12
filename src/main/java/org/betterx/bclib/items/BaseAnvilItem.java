@@ -5,7 +5,6 @@ import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.ItemModelProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
@@ -73,7 +72,7 @@ public class BaseAnvilItem extends BlockItem implements ItemModelProvider {
     @Environment(EnvType.CLIENT)
     public BlockModel getItemModel(ResourceLocation resourceLocation) {
         Block anvilBlock = getBlock();
-        ResourceLocation blockId = Registry.BLOCK.getKey(anvilBlock);
+        ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(anvilBlock);
         return ((BlockModelProvider) anvilBlock).getBlockModel(blockId, anvilBlock.defaultBlockState());
     }
 }

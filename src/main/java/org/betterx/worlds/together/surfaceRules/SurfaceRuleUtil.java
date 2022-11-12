@@ -4,6 +4,7 @@ import org.betterx.worlds.together.chunkgenerator.InjectableSurfaceRules;
 import org.betterx.worlds.together.world.event.WorldBootstrap;
 
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
@@ -31,7 +32,7 @@ public class SurfaceRuleUtil {
     }
 
     private static List<SurfaceRules.RuleSource> getRulesForBiomes(List<Biome> biomes) {
-        Registry<Biome> biomeRegistry = WorldBootstrap.getLastRegistryAccess().registryOrThrow(Registry.BIOME_REGISTRY);
+        Registry<Biome> biomeRegistry = WorldBootstrap.getLastRegistryAccess().registryOrThrow(Registries.BIOME);
         List<ResourceLocation> biomeIDs = biomes.stream()
                                                 .map(b -> biomeRegistry.getKey(b))
                                                 .filter(id -> id != null)

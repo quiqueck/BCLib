@@ -1,6 +1,5 @@
 package org.betterx.bclib.interfaces;
 
-import net.minecraft.core.Registry;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -18,7 +17,7 @@ public interface SurvivesOnTags extends SurvivesOnSpecialGround {
     default String getSurvivableBlocksString() {
         return getSurvivableTags()
                 .stream()
-                .map(tag -> Registry.BLOCK.getTag(tag))
+                .map(tag -> BuiltInRegistries.BLOCK.getTag(tag))
                 .filter(named -> named.isPresent())
                 .map(named -> named.get())
                 .flatMap(named -> named.stream())

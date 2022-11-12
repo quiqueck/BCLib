@@ -18,7 +18,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.client.resources.model.Material;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
@@ -181,7 +180,7 @@ public class BaseSignBlockEntityRenderer implements BlockEntityRenderer<BaseSign
     }
 
     public static void registerRenderLayer(Block block) {
-        ResourceLocation blockId = Registry.BLOCK.getKey(block);
+        ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(block);
         RenderType layer = RenderType.entitySolid(new ResourceLocation(
                 blockId.getNamespace(),
                 "textures/entity/sign/" + blockId.getPath() + ".png"

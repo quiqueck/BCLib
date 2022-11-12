@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.multipart.MultiPart;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.level.block.Block;
@@ -32,38 +31,44 @@ public class CustomModelBakery {
     }
 
     public void loadCustomModels(ResourceManager resourceManager) {
-        Registry.BLOCK.stream().parallel().filter(block -> block instanceof BlockModelProvider).forEach(block -> {
-            ResourceLocation blockID = Registry.BLOCK.getKey(block);
-            ResourceLocation storageID = new ResourceLocation(
-                    blockID.getNamespace(),
-                    "blockstates/" + blockID.getPath() + ".json"
-            );
-            if (resourceManager.getResource(storageID).isEmpty()) {
-                addBlockModel(blockID, block);
-            }
-            storageID = new ResourceLocation(blockID.getNamespace(), "models/item/" + blockID.getPath() + ".json");
-            if (resourceManager.getResource(storageID).isEmpty()) {
-                addItemModel(blockID, (ItemModelProvider) block);
-            }
-        });
+        BuiltInRegistries.BLOCK.stream()
+                               .parallel()
+                               .filter(block -> block instanceof BlockModelProvider)
+                               .forEach(block -> {
+                                   ResourceLocation blockID = BuiltInRegistries.BLOCK.getKey(block);
+                                   ResourceLocation storageID = new ResourceLocation(
+                                           blockID.getNamespace(),
+                                           "blockstates/" + blockID.getPath() + ".json"
+                                   );
+                                   if (resourceManager.getResource(storageID).isEmpty()) {
+                                       addBlockModel(blockID, block);
+                                   }
+                                   storageID = new ResourceLocation(
+                                           blockID.getNamespace(),
+                                           "models/item/" + blockID.getPath() + ".json"
+                                   );
+                                   if (resourceManager.getResource(storageID).isEmpty()) {
+                                       addItemModel(blockID, (ItemModelProvider) block);
+                                   }
+                               });
 
-        Registry.ITEM.stream()
-                     .parallel()
-                     .filter(item -> item instanceof ItemModelProvider || RecordItemModelProvider.has(item))
-                     .forEach(item -> {
-                         ResourceLocation registryID = Registry.ITEM.getKey(item);
-                         ResourceLocation storageID = new ResourceLocation(
-                                 registryID.getNamespace(),
-                                 "models/item/" + registryID.getPath() + ".json"
-                         );
-                         final ItemModelProvider provider = (item instanceof ItemModelProvider)
-                                 ? (ItemModelProvider) item
-                                 : RecordItemModelProvider.get(item);
+        BuiltInRegistries.ITEM.stream()
+                              .parallel()
+                              .filter(item -> item instanceof ItemModelProvider || RecordItemModelProvider.has(item))
+                              .forEach(item -> {
+                                  ResourceLocation registryID = BuiltInRegistries.ITEM.getKey(item);
+                                  ResourceLocation storageID = new ResourceLocation(
+                                          registryID.getNamespace(),
+                                          "models/item/" + registryID.getPath() + ".json"
+                                  );
+                                  final ItemModelProvider provider = (item instanceof ItemModelProvider)
+                                          ? (ItemModelProvider) item
+                                          : RecordItemModelProvider.get(item);
 
-                         if (resourceManager.getResource(storageID).isEmpty()) {
-                             addItemModel(registryID, provider);
-                         }
-                     });
+                                  if (resourceManager.getResource(storageID).isEmpty()) {
+                                      addItemModel(registryID, provider);
+                                  }
+                              });
     }
 
     private void addBlockModel(ResourceLocation blockID, Block block) {

@@ -5,7 +5,7 @@ import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
 import com.mojang.datafixers.kinds.App;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
@@ -29,7 +29,7 @@ public class WorldPresetMixin {
         final Function<RecordCodecBuilder.Instance<WorldPreset>, App<RecordCodecBuilder.Mu<WorldPreset>, WorldPreset>> CODEC_FUNCTION = builderInstance -> {
             RecordCodecBuilder<WorldPreset, Map<ResourceKey<LevelStem>, LevelStem>> dimensionsBuilder = Codec
                     .unboundedMap(
-                            ResourceKey.codec(Registry.LEVEL_STEM_REGISTRY),
+                            ResourceKey.codec(Registries.LEVEL_STEM),
                             LevelStem.CODEC
                     )
                     .fieldOf("dimensions")

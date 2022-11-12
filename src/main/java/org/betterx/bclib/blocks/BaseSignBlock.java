@@ -9,7 +9,7 @@ import org.betterx.bclib.util.BlocksHelper;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.protocol.game.ClientboundOpenSignEditorPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -163,7 +163,7 @@ public class BaseSignBlock extends SignBlock implements BlockModelProvider, Cust
     @Override
     @Environment(EnvType.CLIENT)
     public @Nullable BlockModel getBlockModel(ResourceLocation resourceLocation, BlockState blockState) {
-        ResourceLocation parentId = Registry.BLOCK.getKey(parent);
+        ResourceLocation parentId = BuiltInRegistries.BLOCK.getKey(parent);
         return ModelsHelper.createBlockEmpty(parentId);
     }
 

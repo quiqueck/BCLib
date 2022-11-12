@@ -7,7 +7,6 @@ import org.betterx.bclib.items.complex.EquipmentSet;
 
 import net.minecraft.advancements.*;
 import net.minecraft.advancements.critereon.*;
-import net.minecraft.core.Registry;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -148,11 +147,11 @@ public class AdvancementManager {
         }
 
         public static Builder create(ItemStack icon, AdvancementType type, Consumer<DisplayBuilder> displayAdapter) {
-            var id = Registry.ITEM.getKey(icon.getItem());
+            var id = BuiltInRegistries.ITEM.getKey(icon.getItem());
             boolean canBuild = true;
             if (id == null || icon.is(Items.AIR)) {
                 canBuild = false;
-                id = Registry.ITEM.getDefaultKey();
+                id = BuiltInRegistries.ITEM.getDefaultKey();
             }
 
             String baseName = "advancements." + id.getNamespace() + "." + id.getPath() + ".";
@@ -214,7 +213,7 @@ public class AdvancementManager {
             if (icon == null) {
                 canBuild = false;
             } else {
-                var id = Registry.ITEM.getKey(icon.getItem());
+                var id = BuiltInRegistries.ITEM.getKey(icon.getItem());
                 if (id == null) {
                     canBuild = false;
                 }
@@ -231,7 +230,7 @@ public class AdvancementManager {
         public Builder awardRecipe(ItemLike... items) {
             var rewardBuilder = startReward();
             for (ItemLike item : items) {
-                var id = Registry.ITEM.getKey(item.asItem());
+                var id = BuiltInRegistries.ITEM.getKey(item.asItem());
                 if (id == null) continue;
                 rewardBuilder.addRecipe(id);
             }

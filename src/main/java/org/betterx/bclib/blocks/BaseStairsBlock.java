@@ -9,7 +9,7 @@ import org.betterx.bclib.interfaces.CustomItemProvider;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.UnbakedModel;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -59,7 +59,7 @@ public class BaseStairsBlock extends StairBlock implements BlockModelProvider, C
     @Override
     @Environment(EnvType.CLIENT)
     public @Nullable BlockModel getBlockModel(ResourceLocation blockId, BlockState blockState) {
-        ResourceLocation parentId = Registry.BLOCK.getKey(parent);
+        ResourceLocation parentId = BuiltInRegistries.BLOCK.getKey(parent);
         Optional<String> pattern = PatternsHelper.createJson(switch (blockState.getValue(SHAPE)) {
             case STRAIGHT -> BasePatterns.BLOCK_STAIR;
             case INNER_LEFT, INNER_RIGHT -> BasePatterns.BLOCK_STAIR_INNER;

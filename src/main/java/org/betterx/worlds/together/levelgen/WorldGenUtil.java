@@ -14,6 +14,7 @@ import org.betterx.worlds.together.worldPreset.WorldPresets;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -44,7 +45,7 @@ public class WorldGenUtil {
             boolean generateBonusChest
     ) {
         WorldDimensions settings = registryAccess
-                .registryOrThrow(Registry.WORLD_PRESET_REGISTRY)
+                .registryOrThrow(Registries.WORLD_PRESET)
                 .getHolderOrThrow(preset)
                 .value()
                 .createWorldDimensions();
@@ -201,7 +202,7 @@ public class WorldGenUtil {
         ResourceLocation id = null;
         RegistryAccess access = WorldBootstrap.getLastRegistryAccessOrElseBuiltin();
 
-        id = access.registryOrThrow(Registry.BIOME_REGISTRY).getKey(biome);
+        id = access.registryOrThrow(Registries.BIOME).getKey(biome);
 
         if (id == null) {
             WorldsTogether.LOGGER.error("Unable to get ID for " + biome + ".");

@@ -4,6 +4,8 @@ import org.betterx.worlds.together.WorldsTogether;
 
 import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagEntry;
@@ -79,7 +81,7 @@ public class TagRegistry<T> {
 
     public static class Biomes extends Simple<Biome> {
         Biomes(String directory, Function<Biome, ResourceLocation> locationProvider) {
-            super(Registry.BIOME_REGISTRY, directory, locationProvider);
+            super(Registries.BIOME, directory, locationProvider);
         }
 
         /**
@@ -111,7 +113,7 @@ public class TagRegistry<T> {
     public static class Items extends RegistryBacked<Item> {
 
         Items() {
-            super(Registry.ITEM);
+            super(BuiltInRegistries.ITEM);
         }
 
         @SafeVarargs

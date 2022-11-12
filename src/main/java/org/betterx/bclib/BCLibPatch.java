@@ -8,7 +8,6 @@ import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
 import org.betterx.bclib.config.Configs;
 
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;

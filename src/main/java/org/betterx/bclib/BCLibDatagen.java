@@ -11,7 +11,7 @@ import com.mojang.serialization.Encoder;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
@@ -60,7 +60,7 @@ public class BCLibDatagen implements DataGeneratorEntrypoint {
 
         @Override
         public CompletableFuture<?> run(CachedOutput cachedOutput) {
-            RegistryAccess.Frozen registryAccess = BuiltinRegistries.createAccess();
+            RegistryAccess.Frozen registryAccess = BuiltInRegistries.createAccess();
             RegistryOps<JsonElement> dynamicOps = RegistryOps.create(JsonOps.INSTANCE, registryAccess);
             final List<CompletableFuture<?>> futures = new ArrayList<>();
 

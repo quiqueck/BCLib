@@ -2,7 +2,7 @@ package org.betterx.bclib.util;
 
 import org.betterx.bclib.BCLib;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
@@ -21,7 +21,7 @@ public class ItemUtil {
                 throw new IllegalStateException("Stack can't be null!");
             }
             Item item = stack.getItem();
-            return Registry.ITEM.getKey(item) + ":" + stack.getCount();
+            return BuiltInRegistries.ITEM.getKey(item) + ":" + stack.getCount();
         } catch (Exception ex) {
             BCLib.LOGGER.error("ItemStack serialization error!", ex);
         }
@@ -38,13 +38,13 @@ public class ItemUtil {
             if (parts.length < 2) return null;
             if (parts.length == 2) {
                 ResourceLocation itemId = new ResourceLocation(stackString);
-                Item item = Registry.ITEM.getOptional(itemId).orElseThrow(() -> {
+                Item item = BuiltInRegistries.ITEM.getOptional(itemId).orElseThrow(() -> {
                     return new IllegalStateException("Output item " + itemId + " does not exists!");
                 });
                 return new ItemStack(item);
             }
             ResourceLocation itemId = new ResourceLocation(parts[0], parts[1]);
-            Item item = Registry.ITEM.getOptional(itemId).orElseThrow(() -> {
+            Item item = BuiltInRegistries.ITEM.getOptional(itemId).orElseThrow(() -> {
                 return new IllegalStateException("Output item " + itemId + " does not exists!");
             });
             return new ItemStack(item, Integer.valueOf(parts[2]));
@@ -61,7 +61,7 @@ public class ItemUtil {
                 throw new IllegalStateException("Invalid JsonObject. Entry 'item' does not exists!");
             }
             ResourceLocation itemId = new ResourceLocation(GsonHelper.getAsString(recipe, "item"));
-            Item item = Registry.ITEM.getOptional(itemId).orElseThrow(() -> {
+            Item item = BuiltInRegistries.ITEM.getOptional(itemId).orElseThrow(() -> {
                 return new IllegalStateException("Output item " + itemId + " does not exists!");
             });
             int count = GsonHelper.getAsInt(recipe, "count", 1);

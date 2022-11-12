@@ -7,7 +7,7 @@ import org.betterx.bclib.client.models.PatternsHelper;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -78,7 +78,7 @@ public class BasePathBlock extends BaseBlockNotFull {
     @Environment(EnvType.CLIENT)
     public @Nullable BlockModel getBlockModel(ResourceLocation blockId, BlockState blockState) {
         String name = blockId.getPath();
-        ResourceLocation bottomId = Registry.BLOCK.getKey(baseBlock);
+        ResourceLocation bottomId = BuiltInRegistries.BLOCK.getKey(baseBlock);
         String bottom = bottomId.getNamespace() + ":block/" + bottomId.getPath();
         Map<String, String> textures = Maps.newHashMap();
         textures.put("%modid%", blockId.getNamespace());

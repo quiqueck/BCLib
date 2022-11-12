@@ -4,6 +4,7 @@ import org.betterx.worlds.together.world.event.WorldBootstrap;
 
 import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.RegistryLayer;
 import net.minecraft.server.level.progress.ChunkProgressListener;
@@ -29,7 +30,7 @@ public class MinecraftServerMixin {
     @Inject(method = "createLevels", at = @At(value = "HEAD"))
     private void together_addSurfaceRules(ChunkProgressListener worldGenerationProgressListener, CallbackInfo ci) {
         final Registry<LevelStem> dimensionRegistry = this.registries.compositeAccess()
-                                                                     .registryOrThrow(Registry.LEVEL_STEM_REGISTRY);
+                                                                     .registryOrThrow(Registries.LEVEL_STEM);
         WorldBootstrap.finalizeWorldGenSettings(dimensionRegistry);
     }
 }

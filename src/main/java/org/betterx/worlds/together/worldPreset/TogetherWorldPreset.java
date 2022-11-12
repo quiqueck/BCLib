@@ -14,7 +14,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -54,7 +55,7 @@ public class TogetherWorldPreset extends WorldPreset {
     }
 
     public static WorldDimensions buildWorldDimensions(Map<ResourceKey<LevelStem>, LevelStem> map) {
-        Registry<LevelStem> registry = new MappedRegistry<>(Registry.LEVEL_STEM_REGISTRY, Lifecycle.experimental());
+        Registry<LevelStem> registry = new MappedRegistry<>(Registries.LEVEL_STEM, Lifecycle.experimental());
         for (var entry : map.entrySet()) {
             Registry.register(registry, entry.getKey(), entry.getValue());
         }
@@ -154,8 +155,8 @@ public class TogetherWorldPreset extends WorldPreset {
     public static Registry<LevelStem> getDimensions(ResourceKey<WorldPreset> key) {
         RegistryAccess access = WorldBootstrap.getLastRegistryAccessOrElseBuiltin();
         var preset = (access == null
-                ? BuiltinRegistries.WORLD_PRESET
-                : access.registryOrThrow(Registry.WORLD_PRESET_REGISTRY))
+                ? BuiltInRegistries.WORLD_PRESET
+                : access.registryOrThrow(Registries.WORLD_PRESET))
                 .getHolder(key);
         if (preset.isEmpty()) return null;
         return preset
@@ -183,7 +184,7 @@ public class TogetherWorldPreset extends WorldPreset {
     private static class DimensionsWrapper {
         public static final Codec<DimensionsWrapper> CODEC = RecordCodecBuilder.create(instance -> instance
                 .group(Codec.unboundedMap(
-                                    ResourceKey.codec(Registry.LEVEL_STEM_REGISTRY),
+                                    ResourceKey.codec(Registries.LEVEL_STEM),
                                     ChunkGenerator.CODEC
                             )
                             .fieldOf("dimensions")

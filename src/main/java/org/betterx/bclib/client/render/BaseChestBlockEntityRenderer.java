@@ -13,7 +13,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.BrightnessCombiner;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
@@ -165,7 +164,7 @@ public class BaseChestBlockEntityRenderer implements BlockEntityRenderer<BaseChe
     }
 
     public static void registerRenderLayer(Block block) {
-        ResourceLocation blockId = Registry.BLOCK.getKey(block);
+        ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(block);
         String modId = blockId.getNamespace();
         String path = blockId.getPath();
         LAYERS.put(
