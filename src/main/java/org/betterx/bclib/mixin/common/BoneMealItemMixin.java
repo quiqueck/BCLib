@@ -2,14 +2,19 @@ package org.betterx.bclib.mixin.common;
 
 import org.betterx.bclib.api.v2.BonemealAPI;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
+import org.betterx.bclib.api.v3.bonemeal.BonemealSpreader;
+import org.betterx.bclib.api.v3.bonemeal.EndStoneSpreader;
+import org.betterx.bclib.api.v3.bonemeal.NetherrackSpreader;
 import org.betterx.bclib.util.BlocksHelper;
 import org.betterx.bclib.util.MHelper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Vec3i;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.BoneMealItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -33,7 +38,7 @@ public class BoneMealItemMixin {
     @Inject(method = "useOn", at = @At("HEAD"), cancellable = true)
     private void bclib_onUse(UseOnContext context, CallbackInfoReturnable<InteractionResult> info) {
         Level world = context.getLevel();
-        BlockPos blockPos = context.getClickedPos();
+        final BlockPos blockPos = context.getClickedPos();
         if (!world.isClientSide()) {
             if (BonemealAPI.isTerrain(world.getBlockState(blockPos).getBlock())) {
                 boolean consume = false;
@@ -60,6 +65,36 @@ public class BoneMealItemMixin {
                     world.levelEvent(2005, blockPos, 0);
                     info.setReturnValue(InteractionResult.SUCCESS);
                     info.cancel();
+                }
+            }
+        }
+    }
+
+    @Inject(method = "growCrop", at = @At("HEAD"), cancellable = true)
+    private static void growCrop(
+            ItemStack itemStack,
+            Level level,
+            BlockPos blockPos,
+            CallbackInfoReturnable<Boolean> cir
+    ) {
+        BlockState blockState = level.getBlockState(blockPos);
+        BonemealSpreader spreader = null;
+
+        if (blockState.is(Blocks.NETHERRACK)) {
+            spreader = NetherrackSpreader.INSTANCE;
+        } else if (blockState.is(Blocks.END_STONE)) {
+            spreader = EndStoneSpreader.INSTANCE;
+        } else if (blockState.getBlock() instanceof BonemealSpreader s) {
+            spreader = s;
+        }
+
+        if (spreader != null) {
+            if (spreader.isValidBonemealSpreadTarget(level, blockPos, blockState, level.isClientSide)) {
+                if (level instanceof ServerLevel) {
+                    if (spreader.performBonemealSpread((ServerLevel) level, level.random, blockPos, blockState)) {
+                        itemStack.shrink(1);
+                        cir.setReturnValue(true);
+                    }
                 }
             }
         }
