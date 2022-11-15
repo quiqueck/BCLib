@@ -109,8 +109,37 @@ public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfig
 
     @Override
     public void advanceTree(ServerLevel world, BlockPos pos, BlockState blockState, RandomSource random) {
-        BCLConfigureFeature<F, FC> conf = getConfiguredFeature(blockState);
-        conf.placeInWorld(world, pos, random);
+        if (blockState.getValue(STAGE) == 0) {
+            world.setBlock(pos, blockState.cycle(STAGE), 4);
+        } else {
+            BCLConfigureFeature<F, FC> conf = getConfiguredFeature(blockState);
+            growFeature(conf, world, pos, blockState, random);
+        }
+    }
+
+    protected boolean growFeature(
+            BCLConfigureFeature<F, FC> feature,
+            ServerLevel serverLevel,
+            BlockPos blockPos,
+            BlockState originalBlockState,
+            RandomSource randomSource
+    ) {
+        if (feature == null) {
+            return false;
+        } else {
+            BlockState emptyState = serverLevel.getFluidState(blockPos).createLegacyBlock();
+            serverLevel.setBlock(blockPos, emptyState, 4);
+            if (feature.placeInWorld(serverLevel, blockPos, randomSource)) {
+                if (serverLevel.getBlockState(blockPos) == emptyState) {
+                    serverLevel.sendBlockUpdated(blockPos, originalBlockState, emptyState, 2);
+                }
+
+                return true;
+            } else {
+                serverLevel.setBlock(blockPos, originalBlockState, 4);
+                return false;
+            }
+        }
     }
 
     @Override
