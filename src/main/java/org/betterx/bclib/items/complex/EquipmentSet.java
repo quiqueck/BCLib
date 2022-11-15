@@ -128,8 +128,20 @@ public abstract class EquipmentSet {
             return new SetValues();
         }
 
+        public static SetValues copy(SetValues source, float offset) {
+            SetValues v = create();
+            for (var e : source.values.entrySet())
+                v.add(e.getKey(), e.getValue() + offset);
+            return v;
+        }
+
         public SetValues add(String slot, float value) {
             values.put(slot, value);
+            return this;
+        }
+
+        public SetValues offset(String slot, float offset) {
+            values.put(slot, get(slot) + offset);
             return this;
         }
 
