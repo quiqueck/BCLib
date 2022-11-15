@@ -205,6 +205,10 @@ public class TagRegistry<T> {
         return creatTagKey(new ResourceLocation("c", name));
     }
 
+    public TagKey<T> makeTogetherTag(String name) {
+        return creatTagKey(WorldsTogether.makeID(name));
+    }
+
     public void addUntyped(TagKey<T> tagID, ResourceLocation... elements) {
         if (isFrozen) WorldsTogether.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
         Set<TagEntry> set = getSetForTag(tagID);

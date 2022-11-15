@@ -1,7 +1,8 @@
 package org.betterx.bclib.api.v3.bonemeal;
 
+import org.betterx.bclib.api.v3.levelgen.features.BCLConfigureFeature;
+
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
@@ -9,12 +10,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+import net.minecraft.world.level.levelgen.feature.Feature;
 
+//adapted from NyliumBlock
 public interface BonemealNyliumLike extends BonemealableBlock {
-    Block hostBlock(); //this
-    Holder<PlacedFeature> coverFeature();
+    Block getHostBlock(); //this
+    BCLConfigureFeature<? extends Feature<?>, ?> getCoverFeature();
 
     default boolean isValidBonemealTarget(
             BlockGetter blockGetter,
@@ -41,12 +42,11 @@ public interface BonemealNyliumLike extends BonemealableBlock {
             BlockState blockState
     ) {
         final BlockState currentState = serverLevel.getBlockState(blockPos);
-        final BlockPos above = blockPos.above();
-        final ChunkGenerator generator = serverLevel.getChunkSource().getGenerator();
-        if (currentState.is(hostBlock())) {
-            coverFeature()
-                    .value()
-                    .place(serverLevel, generator, randomSource, above);
+        if (currentState.is(getHostBlock())) {
+            BCLConfigureFeature<? extends Feature<?>, ?> feature = getCoverFeature();
+            if (feature != null) {
+                feature.placeInWorld(serverLevel, blockPos.above(), randomSource, true);
+            }
         }
     }
 }

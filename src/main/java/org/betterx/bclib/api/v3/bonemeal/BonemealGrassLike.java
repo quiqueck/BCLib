@@ -16,11 +16,11 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import java.util.List;
 
 public interface BonemealGrassLike extends BonemealableBlock {
-    BlockState growableCoverState(); //Blocks.GRASS.defaultBlockState();
-    Block hostBlock(); //this
+    BlockState getGrowableCoverState(); //Blocks.GRASS.defaultBlockState();
+    Block getHostBlock(); //this
 
-    Holder<PlacedFeature> coverFeature(); //VegetationPlacements.GRASS_BONEMEAL
-    List<ConfiguredFeature<?, ?>> flowerFeatures();  /*serverLevel.getBiome(currentPos)
+    Holder<PlacedFeature> getCoverFeature(); //VegetationPlacements.GRASS_BONEMEAL
+    List<ConfiguredFeature<?, ?>> getFlowerFeatures();  /*serverLevel.getBiome(currentPos)
                                                                     .value()
                                                                     .getGenerationSettings()
                                                                     .getFlowerFeatures();*/
@@ -52,7 +52,7 @@ public interface BonemealGrassLike extends BonemealableBlock {
 
     default void performBonemeal(ServerLevel serverLevel, RandomSource random, BlockPos pos, BlockState state) {
         final BlockPos above = pos.above();
-        final BlockState growableState = growableCoverState();
+        final BlockState growableState = getGrowableCoverState();
 
         outerLoop:
         for (int bonemealAttempt = 0; bonemealAttempt < 128; ++bonemealAttempt) {
@@ -64,7 +64,7 @@ public interface BonemealGrassLike extends BonemealableBlock {
                         (random.nextInt(3) - 1) * random.nextInt(3) / 2,
                         random.nextInt(3) - 1
                 );
-                if (!serverLevel.getBlockState(currentPos.below()).is(hostBlock())
+                if (!serverLevel.getBlockState(currentPos.below()).is(getHostBlock())
                         || serverLevel.getBlockState(currentPos)
                                       .isCollisionShapeFullBlock(serverLevel, currentPos)) {
                     continue outerLoop;
@@ -84,14 +84,14 @@ public interface BonemealGrassLike extends BonemealableBlock {
             if (currentState.isAir()) {
                 Holder<PlacedFeature> boneFeature;
                 if (canGrowFlower(random)) {
-                    List<ConfiguredFeature<?, ?>> list = flowerFeatures();
+                    List<ConfiguredFeature<?, ?>> list = getFlowerFeatures();
                     if (list.isEmpty()) {
                         continue;
                     }
 
                     boneFeature = ((RandomPatchConfiguration) list.get(0).config()).feature();
                 } else {
-                    boneFeature = coverFeature();
+                    boneFeature = getCoverFeature();
                 }
 
                 boneFeature.value()

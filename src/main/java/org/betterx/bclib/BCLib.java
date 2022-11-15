@@ -15,6 +15,7 @@ import org.betterx.bclib.api.v2.levelgen.surface.rules.Conditions;
 import org.betterx.bclib.api.v2.poi.PoiManager;
 import org.betterx.bclib.api.v3.levelgen.features.blockpredicates.BlockPredicates;
 import org.betterx.bclib.api.v3.levelgen.features.placement.PlacementModifiers;
+import org.betterx.bclib.api.v3.tag.BCLBlockTags;
 import org.betterx.bclib.commands.CommandRegistry;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.networking.VersionChecker;
@@ -61,6 +62,7 @@ public class BCLib implements ModInitializer {
         AnvilRecipe.register();
         Conditions.registerAll();
         CommandRegistry.register();
+        BCLBlockTags.ensureStaticallyLoaded();
         PoiManager.registerAll();
 
         DataExchangeAPI.registerDescriptors(List.of(

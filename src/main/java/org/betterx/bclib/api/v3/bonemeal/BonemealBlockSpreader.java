@@ -6,7 +6,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
 
-public interface BonemealSpreader {
+public interface BonemealBlockSpreader {
     boolean isValidBonemealSpreadTarget(BlockGetter blockGetter, BlockPos blockPos, BlockState blockState, boolean bl);
 
 

@@ -25,6 +25,7 @@ public class BonemealAPI {
     private static final Set<Block> TERRAIN_TO_SPREAD = Sets.newHashSet();
     private static final Set<Block> TERRAIN = Sets.newHashSet();
 
+    @Deprecated(forRemoval = true)
     public static void addSpreadableBlock(Block spreadableBlock, Block surfaceForSpread) {
         SPREADABLE_BLOCKS.put(spreadableBlock, surfaceForSpread);
         TERRAIN_TO_SPREAD.add(surfaceForSpread);
@@ -35,38 +36,53 @@ public class BonemealAPI {
         return TERRAIN.contains(block);
     }
 
+    @Deprecated(forRemoval = true)
     public static boolean isSpreadableTerrain(Block block) {
         return TERRAIN_TO_SPREAD.contains(block);
     }
 
+    @Deprecated(forRemoval = true)
     public static Block getSpreadable(Block block) {
         return SPREADABLE_BLOCKS.get(block);
     }
 
+    @Deprecated(forRemoval = true)
     public static void addLandGrass(Block plant, Block... terrain) {
         addLandGrass(makeConsumer(plant), terrain);
     }
 
+    @Deprecated(forRemoval = true)
     public static void addLandGrass(BiConsumer<Level, BlockPos> plant, Block... terrain) {
         for (Block block : terrain) {
             addLandGrass(plant, block, 1F);
         }
     }
 
+    /**
+     * This API is deprecated, please use the new {@link org.betterx.bclib.api.v3.bonemeal.BonemealAPI}.
+     *
+     * @param biome
+     * @param plant
+     * @param terrain
+     */
+    @Deprecated(forRemoval = true)
     public static void addLandGrass(ResourceLocation biome, Block plant, Block... terrain) {
         addLandGrass(biome, makeConsumer(plant), terrain);
     }
 
+    @Deprecated(forRemoval = true)
     public static void addLandGrass(ResourceLocation biome, BiConsumer<Level, BlockPos> plant, Block... terrain) {
         for (Block block : terrain) {
             addLandGrass(biome, plant, block, 1F);
         }
     }
 
+    @Deprecated(forRemoval = true)
     public static void addLandGrass(Block plant, Block terrain, float chance) {
         addLandGrass(makeConsumer(plant), terrain, chance);
     }
 
+    @Deprecated(forRemoval = true)
     public static void addLandGrass(BiConsumer<Level, BlockPos> plant, Block terrain, float chance) {
         WeightedList<BiConsumer<Level, BlockPos>> list = LAND_GRASS_TYPES.get(terrain);
         if (list == null) {
@@ -77,10 +93,12 @@ public class BonemealAPI {
         list.add(plant, chance);
     }
 
+    @Deprecated(forRemoval = true)
     public static void addLandGrass(ResourceLocation biome, Block plant, Block terrain, float chance) {
         addLandGrass(biome, makeConsumer(plant), terrain, chance);
     }
 
+    @Deprecated(forRemoval = true)
     public static void addLandGrass(
             ResourceLocation biome,
             BiConsumer<Level, BlockPos> plant,
@@ -159,6 +177,7 @@ public class BonemealAPI {
         list.add(plant, chance);
     }
 
+    @Deprecated(forRemoval = true)
     public static BiConsumer<Level, BlockPos> getLandGrass(
             ResourceLocation biomeID,
             Block terrain,

@@ -140,6 +140,15 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         );
     }
 
+    public static NetherForrestVegetation startBonemealNetherVegetation(
+            ResourceLocation featureID
+    ) {
+        return new NetherForrestVegetation(
+                featureID,
+                (NetherForestVegetationFeature) Feature.NETHER_FOREST_VEGETATION
+        ).spreadHeight(1).spreadWidth(3);
+    }
+
 
     public static WithTemplates startWithTemplates(
             ResourceLocation featureID
@@ -671,7 +680,7 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
                 // is meant to prevent that...
                 if (NoneFeatureConfiguration.NONE != null)
                     return (FC) NoneFeatureConfiguration.NONE;
-                
+
                 return (FC) NoneFeatureConfiguration.INSTANCE;
             }
             return configuration;

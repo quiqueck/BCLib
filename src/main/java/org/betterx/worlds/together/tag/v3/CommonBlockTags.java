@@ -35,12 +35,7 @@ public class CommonBlockTags {
     public static final TagKey<Block> TERRAIN = TagManager.BLOCKS.makeCommonTag("terrain");
     public static final TagKey<Block> NETHER_TERRAIN = TagManager.BLOCKS.makeCommonTag("nether_terrain");
 
-    public static final TagKey<Block> NETHERRACK_SPREADABLE = TagManager.BLOCKS.makeCommonTag(
-            "netherrack_spreadable");
-
     static void prepareTags() {
-        TagManager.BLOCKS.add(NETHERRACK_SPREADABLE, Blocks.WARPED_NYLIUM, Blocks.CRIMSON_NYLIUM);
-
         TagManager.BLOCKS.add(SCULK_LIKE, Blocks.SCULK);
         TagManager.BLOCKS.addOtherTags(DRAGON_IMMUNE, BlockTags.DRAGON_IMMUNE);
 

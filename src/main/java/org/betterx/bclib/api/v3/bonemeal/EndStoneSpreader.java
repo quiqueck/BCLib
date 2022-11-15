@@ -1,31 +1,12 @@
 package org.betterx.bclib.api.v3.bonemeal;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.state.BlockState;
+import org.betterx.bclib.api.v3.tag.BCLBlockTags;
 
-public class EndStoneSpreader implements BonemealSpreader {
-    public static final EndStoneSpreader INSTANCE = new EndStoneSpreader();
+public class EndStoneSpreader extends TaggedBonemealBlockSpreader {
+    static final EndStoneSpreader INSTANCE = new EndStoneSpreader();
 
-    @Override
-    public boolean isValidBonemealSpreadTarget(
-            BlockGetter blockGetter,
-            BlockPos blockPos,
-            BlockState blockState,
-            boolean bl
-    ) {
-        return false;
+    protected EndStoneSpreader() {
+        super(BCLBlockTags.BONEMEAL_SOURCE_END_STONE);
     }
 
-    @Override
-    public boolean performBonemealSpread(
-            ServerLevel serverLevel,
-            RandomSource randomSource,
-            BlockPos blockPos,
-            BlockState blockState
-    ) {
-        return false;
-    }
 }
