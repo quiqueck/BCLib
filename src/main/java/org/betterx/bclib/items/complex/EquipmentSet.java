@@ -14,39 +14,95 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class EquipmentSet {
     public static class AttackDamage {
+        public static SetValues WOOD_LEVEL = EquipmentSet.SetValues
+                .create()
+                .add(EquipmentSet.SWORD_SLOT, 3)
+                .add(EquipmentSet.SHOVEL_SLOT, 1.5f)
+                .add(EquipmentSet.PICKAXE_SLOT, 1)
+                .add(EquipmentSet.AXE_SLOT, 6)
+                .add(EquipmentSet.HOE_SLOT, 0);
+
+        public static SetValues STONE_LEVEL = EquipmentSet.SetValues
+                .create()
+                .add(EquipmentSet.SWORD_SLOT, 3)
+                .add(EquipmentSet.SHOVEL_SLOT, 1.5f)
+                .add(EquipmentSet.PICKAXE_SLOT, 1)
+                .add(EquipmentSet.AXE_SLOT, 7)
+                .add(EquipmentSet.HOE_SLOT, -1);
+
+        public static SetValues GOLDEN_LEVEL = EquipmentSet.SetValues
+                .create()
+                .add(EquipmentSet.SWORD_SLOT, 3)
+                .add(EquipmentSet.SHOVEL_SLOT, 1.5f)
+                .add(EquipmentSet.PICKAXE_SLOT, 1)
+                .add(EquipmentSet.AXE_SLOT, 6)
+                .add(EquipmentSet.HOE_SLOT, 0);
         public static SetValues IRON_LEVEL = EquipmentSet.SetValues
                 .create()
                 .add(EquipmentSet.SWORD_SLOT, 3)
-                .add(EquipmentSet.AXE_SLOT, 6)
                 .add(EquipmentSet.SHOVEL_SLOT, 1.5f)
                 .add(EquipmentSet.PICKAXE_SLOT, 1)
+                .add(EquipmentSet.AXE_SLOT, 6)
                 .add(EquipmentSet.HOE_SLOT, -2);
 
         public static SetValues DIAMOND_LEVEL = EquipmentSet.SetValues
                 .create()
                 .add(EquipmentSet.SWORD_SLOT, 3)
-                .add(EquipmentSet.AXE_SLOT, 5)
                 .add(EquipmentSet.SHOVEL_SLOT, 1.5f)
                 .add(EquipmentSet.PICKAXE_SLOT, 1)
+                .add(EquipmentSet.AXE_SLOT, 5)
                 .add(EquipmentSet.HOE_SLOT, -3);
+
+        public static SetValues NETHERITE_LEVEL = EquipmentSet.SetValues
+                .create()
+                .add(EquipmentSet.SWORD_SLOT, 3)
+                .add(EquipmentSet.SHOVEL_SLOT, 1.5f)
+                .add(EquipmentSet.PICKAXE_SLOT, 1)
+                .add(EquipmentSet.AXE_SLOT, 5)
+                .add(EquipmentSet.HOE_SLOT, -4);
     }
 
     public static class AttackSpeed {
+        public static SetValues WOOD_LEVEL = EquipmentSet.SetValues
+                .create()
+                .add(EquipmentSet.SWORD_SLOT, -2.4f)
+                .add(EquipmentSet.SHOVEL_SLOT, -3.0f)
+                .add(EquipmentSet.PICKAXE_SLOT, -2.8f)
+                .add(EquipmentSet.AXE_SLOT, -3.2f)
+                .add(EquipmentSet.HOE_SLOT, -3.0f);
+
+        public static SetValues STONE_LEVEL = EquipmentSet.SetValues
+                .create()
+                .add(EquipmentSet.SWORD_SLOT, -2.4f)
+                .add(EquipmentSet.SHOVEL_SLOT, -3.0f)
+                .add(EquipmentSet.PICKAXE_SLOT, -2.8f)
+                .add(EquipmentSet.AXE_SLOT, -3.2f)
+                .add(EquipmentSet.HOE_SLOT, -2.0f);
+
+        public static SetValues GOLDEN_LEVEL = EquipmentSet.SetValues
+                .create()
+                .add(EquipmentSet.SWORD_SLOT, -2.4f)
+                .add(EquipmentSet.SHOVEL_SLOT, -3.0f)
+                .add(EquipmentSet.PICKAXE_SLOT, -2.8f)
+                .add(EquipmentSet.AXE_SLOT, -3.0f)
+                .add(EquipmentSet.HOE_SLOT, -3.0f);
         public static SetValues IRON_LEVEL = EquipmentSet.SetValues
                 .create()
                 .add(EquipmentSet.SWORD_SLOT, -2.4f)
-                .add(EquipmentSet.AXE_SLOT, -3.1f)
                 .add(EquipmentSet.SHOVEL_SLOT, -3.0f)
                 .add(EquipmentSet.PICKAXE_SLOT, -2.8f)
+                .add(EquipmentSet.AXE_SLOT, -3.1f)
                 .add(EquipmentSet.HOE_SLOT, -1.0f);
 
         public static SetValues DIAMOND_LEVEL = EquipmentSet.SetValues
                 .create()
                 .add(EquipmentSet.SWORD_SLOT, -2.4f)
-                .add(EquipmentSet.AXE_SLOT, -3.0f)
                 .add(EquipmentSet.SHOVEL_SLOT, -3.0f)
                 .add(EquipmentSet.PICKAXE_SLOT, -2.8f)
+                .add(EquipmentSet.AXE_SLOT, -3.0f)
                 .add(EquipmentSet.HOE_SLOT, 0.0f);
+
+        public static SetValues NETHERITE_LEVEL = DIAMOND_LEVEL;
     }
 
     public interface ItemDescriptorCreator<I extends Item> {
