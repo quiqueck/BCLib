@@ -171,6 +171,16 @@ public abstract class EquipmentSet {
 
     private final Map<String, EquipmentDescription<?>> descriptions = new HashMap<>();
 
+    @Deprecated(forRemoval = true)
+    public EquipmentSet(
+            Tier material,
+            String modID,
+            String baseName,
+            ItemLike stick
+    ) {
+        this(material, modID, baseName, stick, AttackDamage.IRON_LEVEL, AttackSpeed.IRON_LEVEL);
+    }
+
     public EquipmentSet(
             Tier material,
             String modID,
