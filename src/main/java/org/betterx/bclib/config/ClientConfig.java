@@ -11,7 +11,6 @@ public class ClientConfig extends NamedPathConfig {
             "didShowWelcome",
             "version"
     );
-    @ConfigUI(topPadding = 12)
     public static final ConfigToken<Boolean> CHECK_VERSIONS = ConfigToken.Boolean(
             true,
             "check",
@@ -24,12 +23,20 @@ public class ClientConfig extends NamedPathConfig {
             "ui"
     );
 
+    @ConfigUI(leftPadding = 8)
+    public static final ConfigToken<Boolean> PREFER_MODRINTH_FOR_UPDATES = ConfigToken.Boolean(
+            true,
+            "preferModrinthForUpdates",
+            "ui"
+    );
+
     @ConfigUI(hide = true)
     public static final ConfigToken<Boolean> FORCE_BETTERX_PRESET = ConfigToken.Boolean(
             true,
             "forceBetterXPreset",
             "ui"
     );
+    @ConfigUI(topPadding = 12)
     public static final ConfigToken<Boolean> SUPPRESS_EXPERIMENTAL_DIALOG = ConfigToken.Boolean(
             false,
             "suppressExperimentalDialogOnLoad",
@@ -107,6 +114,8 @@ public class ClientConfig extends NamedPathConfig {
             "rendering",
             (config) -> config.get(CUSTOM_FOG_RENDERING)
     );
+    
+    @ConfigUI(topPadding = 12)
     public static final ConfigToken<Boolean> SURVIES_ON_HINT = ConfigToken.Boolean(
             true,
             "survives_on_hint",
@@ -194,8 +203,12 @@ public class ClientConfig extends NamedPathConfig {
     public void setForceBetterXPreset(boolean v) {
         set(FORCE_BETTERX_PRESET, v);
     }
-    
+
     public boolean survivesOnHint() {
         return get(ClientConfig.SURVIES_ON_HINT);
+    }
+
+    public boolean preferModrinthForUpdates() {
+        return get(ClientConfig.PREFER_MODRINTH_FOR_UPDATES);
     }
 }
