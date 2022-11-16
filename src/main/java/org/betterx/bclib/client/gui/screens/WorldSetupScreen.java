@@ -61,6 +61,7 @@ public class WorldSetupScreen extends LayoutScreen {
     Checkbox generateEndVoid;
     Checkbox netherLegacy;
     Checkbox netherVertical;
+    Checkbox netherAmplified;
 
     public LayoutComponent<?, ?> netherPage(BCLNetherBiomeSourceConfig netherConfig) {
         VerticalStack content = new VerticalStack(fill(), fit()).centerHorizontal();
@@ -76,6 +77,12 @@ public class WorldSetupScreen extends LayoutScreen {
                 fit(), fit(),
                 Component.translatable("title.screen.bclib.worldgen.legacy_square"),
                 netherConfig.mapVersion == BCLNetherBiomeSourceConfig.NetherBiomeMapType.SQUARE
+        );
+
+        netherAmplified = content.indent(20).addCheckbox(
+                fit(), fit(),
+                Component.translatable("title.screen.bclib.worldgen.nether_amplified"),
+                netherConfig.amplified
         );
 
         netherVertical = content.indent(20).addCheckbox(
@@ -109,6 +116,7 @@ public class WorldSetupScreen extends LayoutScreen {
 
         bclibNether.onChange((cb, state) -> {
             netherLegacy.setEnabled(state);
+            netherAmplified.setEnabled(state);
             netherVertical.setEnabled(state);
             netherBiomeSize.setEnabled(state);
             netherVerticalBiomeSize.setEnabled(state && netherVertical.isChecked());
@@ -234,6 +242,8 @@ public class WorldSetupScreen extends LayoutScreen {
     private void updateSettings() {
         Map<ResourceKey<LevelStem>, ChunkGenerator> betterxDimensions = TogetherWorldPreset.getDimensionsMap(
                 PresetsRegistry.BCL_WORLD);
+        Map<ResourceKey<LevelStem>, ChunkGenerator> betterxAmplifiedDimensions = TogetherWorldPreset.getDimensionsMap(
+                PresetsRegistry.BCL_WORLD_AMPLIFIED);
         Map<ResourceKey<LevelStem>, ChunkGenerator> vanillaDimensions = TogetherWorldPreset.getDimensionsMap(
                 WorldPresets.NORMAL);
         BCLEndBiomeSourceConfig.EndBiomeMapType endVersion = BCLEndBiomeSourceConfig.DEFAULT.mapVersion;
@@ -271,10 +281,15 @@ public class WorldSetupScreen extends LayoutScreen {
                             : BCLNetherBiomeSourceConfig.NetherBiomeMapType.HEX,
                     netherBiomeSize.getValue() * 16,
                     netherVerticalBiomeSize.getValue() * 16,
-                    netherVertical.isChecked()
+                    netherVertical.isChecked(),
+                    netherAmplified.isChecked()
             );
 
-            ChunkGenerator netherGenerator = betterxDimensions.get(LevelStem.NETHER);
+            ChunkGenerator netherGenerator = (
+                    netherAmplified.isChecked()
+                            ? betterxAmplifiedDimensions
+                            : betterxDimensions
+            ).get(LevelStem.NETHER);
             ((BCLibNetherBiomeSource) netherGenerator.getBiomeSource()).setTogetherConfig(netherConfig);
 
             updateConfiguration(LevelStem.NETHER, BuiltinDimensionTypes.NETHER, netherGenerator);

@@ -18,33 +18,38 @@ public class BCLNetherBiomeSourceConfig implements BiomeSourceConfig<BCLibNether
             NetherBiomeMapType.VANILLA,
             256,
             86,
+            false,
             false
     );
     public static final BCLNetherBiomeSourceConfig MINECRAFT_17 = new BCLNetherBiomeSourceConfig(
             NetherBiomeMapType.SQUARE,
             256,
             86,
-            true
+            true,
+            false
     );
     public static final BCLNetherBiomeSourceConfig MINECRAFT_18 = new BCLNetherBiomeSourceConfig(
             NetherBiomeMapType.HEX,
             MINECRAFT_17.biomeSize,
             MINECRAFT_17.biomeSizeVertical,
-            MINECRAFT_17.useVerticalBiomes
+            MINECRAFT_17.useVerticalBiomes,
+            MINECRAFT_17.amplified
     );
 
     public static final BCLNetherBiomeSourceConfig MINECRAFT_18_LARGE = new BCLNetherBiomeSourceConfig(
             NetherBiomeMapType.HEX,
             MINECRAFT_18.biomeSize * 4,
             MINECRAFT_18.biomeSizeVertical * 2,
-            MINECRAFT_18.useVerticalBiomes
+            MINECRAFT_18.useVerticalBiomes,
+            MINECRAFT_17.amplified
     );
 
     public static final BCLNetherBiomeSourceConfig MINECRAFT_18_AMPLIFIED = new BCLNetherBiomeSourceConfig(
             NetherBiomeMapType.HEX,
             MINECRAFT_18.biomeSize,
-            MINECRAFT_18.biomeSizeVertical * 2,
-            false
+            128,
+            true,
+            true
     );
 
     public static final BCLNetherBiomeSourceConfig DEFAULT = MINECRAFT_18;
@@ -61,7 +66,10 @@ public class BCLNetherBiomeSourceConfig implements BiomeSourceConfig<BCLibNether
                              .forGetter(o -> o.biomeSizeVertical),
                     Codec.BOOL.fieldOf("use_vertical_biomes")
                               .orElse(DEFAULT.useVerticalBiomes)
-                              .forGetter(o -> o.useVerticalBiomes)
+                              .forGetter(o -> o.useVerticalBiomes),
+                    Codec.BOOL.fieldOf("amplified")
+                              .orElse(DEFAULT.amplified)
+                              .forGetter(o -> o.amplified)
             )
             .apply(instance, BCLNetherBiomeSourceConfig::new));
     public final @NotNull NetherBiomeMapType mapVersion;
@@ -69,17 +77,20 @@ public class BCLNetherBiomeSourceConfig implements BiomeSourceConfig<BCLibNether
     public final int biomeSizeVertical;
 
     public final boolean useVerticalBiomes;
+    public final boolean amplified;
 
     public BCLNetherBiomeSourceConfig(
             @NotNull NetherBiomeMapType mapVersion,
             int biomeSize,
             int biomeSizeVertical,
-            boolean useVerticalBiomes
+            boolean useVerticalBiomes,
+            boolean amplified
     ) {
         this.mapVersion = mapVersion;
         this.biomeSize = Mth.clamp(biomeSize, 1, 8192);
         this.biomeSizeVertical = Mth.clamp(biomeSizeVertical, 1, 8192);
         this.useVerticalBiomes = useVerticalBiomes;
+        this.amplified = amplified;
     }
 
     @Override

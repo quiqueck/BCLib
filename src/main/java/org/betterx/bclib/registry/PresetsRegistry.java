@@ -1,6 +1,7 @@
 package org.betterx.bclib.registry;
 
 import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.generator.BCLChunkGenerator;
 import org.betterx.bclib.api.v2.generator.config.BCLEndBiomeSourceConfig;
 import org.betterx.bclib.api.v2.generator.config.BCLNetherBiomeSourceConfig;
 import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
@@ -19,6 +20,7 @@ import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import java.util.Map;
 
 public class PresetsRegistry implements WorldPresetBootstrap {
+
     public static ResourceKey<WorldPreset> BCL_WORLD;
     public static ResourceKey<WorldPreset> BCL_WORLD_LARGE;
     public static ResourceKey<WorldPreset> BCL_WORLD_AMPLIFIED;
@@ -31,9 +33,8 @@ public class PresetsRegistry implements WorldPresetBootstrap {
                         (overworldStem, netherContext, endContext, noiseSettings, noiseBasedOverworld) ->
                                 buildPreset(
                                         overworldStem,
-                                        netherContext,
-                                        BCLNetherBiomeSourceConfig.DEFAULT, endContext,
-                                        BCLEndBiomeSourceConfig.DEFAULT
+                                        netherContext, BCLNetherBiomeSourceConfig.DEFAULT,
+                                        endContext, BCLEndBiomeSourceConfig.DEFAULT
                                 ),
                         true
                 );
@@ -56,23 +57,31 @@ public class PresetsRegistry implements WorldPresetBootstrap {
                         true
                 );
 
-        BCL_WORLD_AMPLIFIED =
-                WorldPresets.register(
-                        BCLib.makeID("amplified"),
-                        (overworldStem, netherContext, endContext, noiseSettings, noiseBasedOverworld) -> {
-                            Holder<NoiseGeneratorSettings> largeBiomeGenerator = noiseSettings
-                                    .getOrCreateHolderOrThrow(NoiseGeneratorSettings.AMPLIFIED);
-                            return buildPreset(
-                                    noiseBasedOverworld.make(
-                                            overworldStem.generator().getBiomeSource(),
-                                            largeBiomeGenerator
-                                    ),
-                                    netherContext, BCLNetherBiomeSourceConfig.MINECRAFT_18_AMPLIFIED,
-                                    endContext, BCLEndBiomeSourceConfig.MINECRAFT_18_AMPLIFIED
-                            );
-                        },
-                        true
-                );
+        BCL_WORLD_AMPLIFIED = WorldPresets.register(
+                BCLib.makeID("amplified"),
+                (overworldStem, netherContext, endContext, noiseSettings, noiseBasedOverworld) -> {
+                    Holder<NoiseGeneratorSettings> amplifiedBiomeGenerator = noiseSettings
+                            .getOrCreateHolderOrThrow(NoiseGeneratorSettings.AMPLIFIED);
+
+                    WorldGenUtil.Context amplifiedNetherContext = new WorldGenUtil.Context(
+                            netherContext.biomes,
+                            netherContext.dimension,
+                            netherContext.structureSets,
+                            netherContext.noiseParameters,
+                            Holder.direct(BCLChunkGenerator.amplifiedNether())
+                    );
+
+                    return buildPreset(
+                            noiseBasedOverworld.make(
+                                    overworldStem.generator().getBiomeSource(),
+                                    amplifiedBiomeGenerator
+                            ),
+                            amplifiedNetherContext, BCLNetherBiomeSourceConfig.MINECRAFT_18_AMPLIFIED,
+                            endContext, BCLEndBiomeSourceConfig.MINECRAFT_18_AMPLIFIED
+                    );
+                },
+                true
+        );
 
         BCL_WORLD_17 = WorldPresets.register(
                 BCLib.makeID("legacy_17"),
