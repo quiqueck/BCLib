@@ -68,7 +68,7 @@
   "title.screen.bclib.worldgen.nether_biome_size": "Biome Size",
   "title.screen.bclib.worldgen.nether_vertical_biome_size": "Biome Height",
   "title.screen.bclib.worldgen.nether_vertical": "Generate vertical Biomes",
-  "title.screen.bclib.worldgen.nether_amplified": "Double Height",
+  "title.screen.bclib.worldgen.nether_amplified": "Double the Nether Height (Amplified)",
   "title.screen.bclib.worldgen.land_biome_size": "Land Biomes",
   "title.screen.bclib.worldgen.void_biome_size": "Small Island Biomes",
   "title.screen.bclib.worldgen.center_biome_size": "Central Biomes",
