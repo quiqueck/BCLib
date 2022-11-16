@@ -4,6 +4,7 @@ plugins {
     id 'fabric-loom' version "${loom_version}"
     id 'maven-publish'
     id "com.modrinth.minotaur" version "2.+"
+    id "com.matthewprenger.cursegradle" version "1.4.0"
 }
 
 apply from: "bclib.gradle"
@@ -99,4 +100,41 @@ modrinth {
         required.project "fabric-api"
     }
     debugMode = false
+}
+
+curseforge {
+    def slurper = new groovy.json.JsonSlurper()
+    apiKey = new File(projectDir, "../CURSEFORGE_TOKEN")
+    if (apiKey.exists()) {
+        apiKey = apiKey.text
+    } else {
+        apiKey = ""
+    }
+
+    def changes = new File(projectDir, "CHANGES.md")
+    if (changes.exists()) {
+        changes = changes.getText('UTF-8')
+    } else {
+        changes = ""
+    }
+
+    project {
+        id = '495191'
+        changelogType = 'markdown'
+        changelog = changes
+        releaseType = project.release_channel
+        for (item in slurper.parseText(project.modrinth_versions)) {
+            addGameVersion item
+        }
+        mainArtifact(jar) {
+            displayName = "$project.archives_base_name-$project.version [1.19.2]"
+            relations {
+                requiredDependency 'fabric-api'
+            }
+        }
+    }
+
+    options {
+        debug = false
+    }
 }
