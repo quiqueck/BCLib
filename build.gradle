@@ -123,14 +123,19 @@ curseforge {
         changelogType = 'markdown'
         changelog = changes
         releaseType = project.release_channel
-        for (item in slurper.parseText(project.modrinth_versions)) {
-            addGameVersion item
+        def versions = slurper.parseText(project.modrinth_versions);
+        def latestVersion = ''
+        for (v in versions) {
+            addGameVersion v
+            latestVersion = "[$v]"
         }
+        addGameVersion 'Fabric'
+        addGameVersion 'Java 17'
         relations {
             requiredDependency 'fabric-api'
         }
         mainArtifact(remapJar) {
-            displayName = "$project.archives_base_name-$project.version [1.19.2]"
+            displayName = "$project.archives_base_name-$project.version $latestVersion"
         }
         afterEvaluate {
             mainArtifact(remapJar.outputs)
