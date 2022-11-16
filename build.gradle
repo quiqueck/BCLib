@@ -126,15 +126,19 @@ curseforge {
         for (item in slurper.parseText(project.modrinth_versions)) {
             addGameVersion item
         }
-        mainArtifact(jar) {
+        relations {
+            requiredDependency 'fabric-api'
+        }
+        mainArtifact(remapJar) {
             displayName = "$project.archives_base_name-$project.version [1.19.2]"
-            relations {
-                requiredDependency 'fabric-api'
-            }
+        }
+        afterEvaluate {
+            mainArtifact(remapJar.outputs)
         }
     }
 
     options {
         debug = false
+        forgeGradleIntegration = false
     }
 }
