@@ -10,21 +10,25 @@ import org.betterx.worlds.together.levelgen.WorldGenUtil;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
 
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 
 import java.util.Map;
 
 public class PresetsRegistry implements WorldPresetBootstrap {
     public static ResourceKey<WorldPreset> BCL_WORLD;
+    public static ResourceKey<WorldPreset> BCL_WORLD_LARGE;
+    public static ResourceKey<WorldPreset> BCL_WORLD_AMPLIFIED;
     public static ResourceKey<WorldPreset> BCL_WORLD_17;
 
     public void bootstrapWorldPresets() {
         BCL_WORLD =
                 WorldPresets.register(
                         BCLib.makeID("normal"),
-                        (overworldStem, netherContext, endContext) ->
+                        (overworldStem, netherContext, endContext, noiseSettings, noiseBasedOverworld) ->
                                 buildPreset(
                                         overworldStem,
                                         netherContext,
@@ -34,9 +38,45 @@ public class PresetsRegistry implements WorldPresetBootstrap {
                         true
                 );
 
+        BCL_WORLD_LARGE =
+                WorldPresets.register(
+                        BCLib.makeID("large"),
+                        (overworldStem, netherContext, endContext, noiseSettings, noiseBasedOverworld) -> {
+                            Holder<NoiseGeneratorSettings> largeBiomeGenerator = noiseSettings
+                                    .getOrCreateHolderOrThrow(NoiseGeneratorSettings.LARGE_BIOMES);
+                            return buildPreset(
+                                    noiseBasedOverworld.make(
+                                            overworldStem.generator().getBiomeSource(),
+                                            largeBiomeGenerator
+                                    ),
+                                    netherContext, BCLNetherBiomeSourceConfig.MINECRAFT_18_LARGE,
+                                    endContext, BCLEndBiomeSourceConfig.MINECRAFT_18_LARGE
+                            );
+                        },
+                        true
+                );
+
+        BCL_WORLD_AMPLIFIED =
+                WorldPresets.register(
+                        BCLib.makeID("amplified"),
+                        (overworldStem, netherContext, endContext, noiseSettings, noiseBasedOverworld) -> {
+                            Holder<NoiseGeneratorSettings> largeBiomeGenerator = noiseSettings
+                                    .getOrCreateHolderOrThrow(NoiseGeneratorSettings.AMPLIFIED);
+                            return buildPreset(
+                                    noiseBasedOverworld.make(
+                                            overworldStem.generator().getBiomeSource(),
+                                            largeBiomeGenerator
+                                    ),
+                                    netherContext, BCLNetherBiomeSourceConfig.MINECRAFT_18_AMPLIFIED,
+                                    endContext, BCLEndBiomeSourceConfig.MINECRAFT_18_AMPLIFIED
+                            );
+                        },
+                        true
+                );
+
         BCL_WORLD_17 = WorldPresets.register(
                 BCLib.makeID("legacy_17"),
-                (overworldStem, netherContext, endContext) ->
+                (overworldStem, netherContext, endContext, noiseSettings, noiseBasedOverworld) ->
                         buildPreset(
                                 overworldStem,
                                 netherContext,

@@ -32,6 +32,21 @@ public class BCLNetherBiomeSourceConfig implements BiomeSourceConfig<BCLibNether
             MINECRAFT_17.biomeSizeVertical,
             MINECRAFT_17.useVerticalBiomes
     );
+
+    public static final BCLNetherBiomeSourceConfig MINECRAFT_18_LARGE = new BCLNetherBiomeSourceConfig(
+            NetherBiomeMapType.HEX,
+            MINECRAFT_18.biomeSize * 4,
+            MINECRAFT_18.biomeSizeVertical * 2,
+            MINECRAFT_18.useVerticalBiomes
+    );
+
+    public static final BCLNetherBiomeSourceConfig MINECRAFT_18_AMPLIFIED = new BCLNetherBiomeSourceConfig(
+            NetherBiomeMapType.HEX,
+            MINECRAFT_18.biomeSize,
+            MINECRAFT_18.biomeSizeVertical * 2,
+            false
+    );
+
     public static final BCLNetherBiomeSourceConfig DEFAULT = MINECRAFT_18;
 
     public static final Codec<BCLNetherBiomeSourceConfig> CODEC = RecordCodecBuilder.create(instance -> instance

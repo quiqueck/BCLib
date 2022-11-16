@@ -6,6 +6,7 @@ import org.betterx.worlds.together.worldPreset.WorldPresets;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
@@ -48,6 +49,16 @@ public abstract class WorldPresetsBootstrapMixin {
 
     //see WorldPresets.register
 
+    @Shadow
+    protected abstract LevelStem makeNoiseBasedOverworld(
+            BiomeSource biomeSource,
+            Holder<NoiseGeneratorSettings> holder
+    );
+
+    @Shadow
+    @Final
+    private Registry<NoiseGeneratorSettings> noiseSettings;
+
     @ModifyArg(method = "run", at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/world/level/levelgen/presets/WorldPresets$Bootstrap;registerCustomOverworldPreset(Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/world/level/dimension/LevelStem;)Lnet/minecraft/core/Holder;"))
     private LevelStem bcl_getOverworldStem(LevelStem overworldStem) {
         WorldGenUtil.Context netherContext = new WorldGenUtil.Context(
@@ -65,7 +76,14 @@ public abstract class WorldPresetsBootstrapMixin {
                 this.endNoiseSettings
         );
 
-        WorldPresets.bootstrapPresets(presets, overworldStem, netherContext, endContext);
+        WorldPresets.bootstrapPresets(
+                presets,
+                overworldStem,
+                netherContext,
+                endContext,
+                noiseSettings,
+                this::makeNoiseBasedOverworld
+        );
 
         return overworldStem;
     }

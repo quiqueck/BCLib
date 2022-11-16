@@ -54,6 +54,8 @@
   "title.config.bclib.client.infos.survives_on_hint": "Show 'Survives On' hint as Tooltip",
   "tooltip.bclib.place_on": "Survives on: %s",
   "generator.bclib.normal": "BetterX",
+  "generator.bclib.large": "Large & BetterX",
+  "generator.bclib.amplified": "Ampl. & BetterX",
   "title.screen.bclib.worldgen.main": "World Generator Settings",
   "title.bclib.the_nether": "The Nether",
   "title.bclib.the_end": "The End",

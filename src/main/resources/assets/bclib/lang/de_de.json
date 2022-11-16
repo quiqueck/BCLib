@@ -50,6 +50,8 @@
   "title.bclib.datafixer.error.continue": "Continue and Mark as Fixed",
   "tooltip.bclib.place_on": "Lebt auf: %s",
   "generator.bclib.normal": "BetterX",
+  "generator.bclib.large": "Groß & BetterX",
+  "generator.bclib.amplified": "Ampl. & BetterX",
   "title.screen.bclib.worldgen.main": "Welt-Generator Eigenschaften",
   "title.bclib.the_nether": "Nether",
   "title.bclib.the_end": "Das Ende",
