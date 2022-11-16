@@ -134,7 +134,7 @@ public class VersionChecker implements Runnable {
                         boolean isNew = ModUtil.isLargerVersion(mod.v, installedVersion)
                                 && !installedVersion.equals("0.0.0");
                         BCLib.LOGGER.info(" - " + mod.n + ":" + mod.v + (isNew ? " (update available)" : ""));
-                        if (true || isNew)
+                        if (isNew)
                             NEW_VERSIONS.add(mod);
                     }
                 }
