@@ -354,6 +354,15 @@ abstract class CommonPlacedFeatureBuilder<F extends Feature<FC>, FC extends Feat
         return modifier(Is.below(predicate));
     }
 
+
+    public T inBiomes(ResourceLocation... biomeID) {
+        return modifier(InBiome.matchingID(biomeID));
+    }
+
+    public T notInBiomes(ResourceLocation... biomeID) {
+        return modifier(InBiome.notMatchingID(biomeID));
+    }
+
     public T isEmptyAndOn(BlockPredicate predicate) {
         return (T) this.isEmpty().isOn(predicate);
     }

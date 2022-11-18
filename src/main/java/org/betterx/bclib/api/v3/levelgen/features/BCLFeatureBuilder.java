@@ -44,7 +44,7 @@ import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends FeatureConfiguration> {
-    private final ResourceLocation featureID;
+    protected final ResourceLocation featureID;
     private final F feature;
 
     private BCLFeatureBuilder(ResourceLocation featureID, F feature) {
@@ -99,6 +99,22 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
                 (SimpleBlockFeature) Feature.SIMPLE_BLOCK
         );
     }
+
+    public static WeightedBlockPatch startWeightedRandomPatch(
+            ResourceLocation featureID
+    ) {
+        return new WeightedBlockPatch(
+                featureID,
+                (RandomPatchFeature) Feature.RANDOM_PATCH
+        );
+    }
+
+    public static WeightedBlockPatch startBonemealPatch(
+            ResourceLocation featureID
+    ) {
+        return startWeightedRandomPatch(featureID).likeDefaultBonemeal();
+    }
+
 
     public static RandomPatch startRandomPatch(
             ResourceLocation featureID,
@@ -782,9 +798,86 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         }
     }
 
-    public static class WeightedBlock extends BCLFeatureBuilder<SimpleBlockFeature, SimpleBlockConfiguration> {
-        SimpleWeightedRandomList.Builder<BlockState> stateBuilder = SimpleWeightedRandomList.builder();
+    public static class WeightedBlockPatch extends WeightedBaseBlock<RandomPatchFeature, RandomPatchConfiguration, WeightedBlockPatch> {
 
+        private BlockPredicate groundType = null;
+        private boolean isEmpty = true;
+        private int tries = 96;
+        private int xzSpread = 7;
+        private int ySpread = 3;
+
+        protected WeightedBlockPatch(@NotNull ResourceLocation featureID, @NotNull RandomPatchFeature feature) {
+            super(featureID, feature);
+        }
+
+        public WeightedBlockPatch isEmpty() {
+            return this.isEmpty(true);
+        }
+
+        public WeightedBlockPatch isEmpty(boolean value) {
+            this.isEmpty = value;
+            return this;
+        }
+
+        public WeightedBlockPatch isOn(BlockPredicate predicate) {
+            this.groundType = predicate;
+            return this;
+        }
+
+        public WeightedBlockPatch isEmptyAndOn(BlockPredicate predicate) {
+            return this.isEmpty().isOn(predicate);
+        }
+
+        public WeightedBlockPatch likeDefaultNetherVegetation() {
+            return likeDefaultNetherVegetation(8, 4);
+        }
+
+        public WeightedBlockPatch likeDefaultNetherVegetation(int xzSpread, int ySpread) {
+            this.xzSpread = xzSpread;
+            this.ySpread = ySpread;
+            tries = xzSpread * xzSpread;
+            return this;
+        }
+
+        public WeightedBlockPatch likeDefaultBonemeal() {
+            return this.tries(9)
+                       .spreadXZ(3)
+                       .spreadY(1);
+        }
+
+        public WeightedBlockPatch tries(int v) {
+            tries = v;
+            return this;
+        }
+
+        public WeightedBlockPatch spreadXZ(int v) {
+            xzSpread = v;
+            return this;
+        }
+
+        public WeightedBlockPatch spreadY(int v) {
+            ySpread = v;
+            return this;
+        }
+
+        @Override
+        public RandomPatchConfiguration createConfiguration() {
+            BCLInlinePlacedBuilder<Feature<SimpleBlockConfiguration>, SimpleBlockConfiguration> blockFeature = BCLFeatureBuilder
+                    .start(
+                            new ResourceLocation(featureID.getNamespace(), "tmp_" + featureID.getPath()),
+                            Feature.SIMPLE_BLOCK
+                    )
+                    .configuration(new SimpleBlockConfiguration(new WeightedStateProvider(stateBuilder.build())))
+                    .inlinePlace();
+
+            if (isEmpty) blockFeature.isEmpty();
+            if (groundType != null) blockFeature.isOn(groundType);
+
+            return new RandomPatchConfiguration(tries, xzSpread, ySpread, blockFeature.build());
+        }
+    }
+
+    public static class WeightedBlock extends WeightedBaseBlock<SimpleBlockFeature, SimpleBlockConfiguration, WeightedBlock> {
         private WeightedBlock(
                 @NotNull ResourceLocation featureID,
                 @NotNull SimpleBlockFeature feature
@@ -792,30 +885,42 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
             super(featureID, feature);
         }
 
-        public WeightedBlock add(Block block, int weight) {
-            return add(block.defaultBlockState(), weight);
-        }
-
-        public WeightedBlock add(BlockState state, int weight) {
-            stateBuilder.add(state, weight);
-            return this;
-        }
-
-        public WeightedBlock addAllStates(Block block, int weight) {
-            Set<BlockState> states = BCLPoiType.getBlockStates(block);
-            states.forEach(s -> add(block.defaultBlockState(), Math.max(1, weight / states.size())));
-            return this;
-        }
-
-        public WeightedBlock addAllStatesFor(IntegerProperty prop, Block block, int weight) {
-            Collection<Integer> values = prop.getPossibleValues();
-            values.forEach(s -> add(block.defaultBlockState().setValue(prop, s), Math.max(1, weight / values.size())));
-            return this;
-        }
-
         @Override
         public SimpleBlockConfiguration createConfiguration() {
             return new SimpleBlockConfiguration(new WeightedStateProvider(stateBuilder.build()));
+        }
+    }
+
+
+    private abstract static class WeightedBaseBlock<F extends Feature<FC>, FC extends FeatureConfiguration, W extends WeightedBaseBlock> extends BCLFeatureBuilder<F, FC> {
+        SimpleWeightedRandomList.Builder<BlockState> stateBuilder = SimpleWeightedRandomList.builder();
+
+        protected WeightedBaseBlock(
+                @NotNull ResourceLocation featureID,
+                @NotNull F feature
+        ) {
+            super(featureID, feature);
+        }
+
+        public W add(Block block, int weight) {
+            return add(block.defaultBlockState(), weight);
+        }
+
+        public W add(BlockState state, int weight) {
+            stateBuilder.add(state, weight);
+            return (W) this;
+        }
+
+        public W addAllStates(Block block, int weight) {
+            Set<BlockState> states = BCLPoiType.getBlockStates(block);
+            states.forEach(s -> add(block.defaultBlockState(), Math.max(1, weight / states.size())));
+            return (W) this;
+        }
+
+        public W addAllStatesFor(IntegerProperty prop, Block block, int weight) {
+            Collection<Integer> values = prop.getPossibleValues();
+            values.forEach(s -> add(block.defaultBlockState().setValue(prop, s), Math.max(1, weight / values.size())));
+            return (W) this;
         }
     }
 
