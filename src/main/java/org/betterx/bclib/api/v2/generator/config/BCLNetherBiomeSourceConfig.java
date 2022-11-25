@@ -98,6 +98,7 @@ public class BCLNetherBiomeSourceConfig implements BiomeSourceConfig<BCLibNether
         return "BCLibNetherBiomeSourceConfig{" +
                 "mapVersion=" + mapVersion +
                 ", useVerticalBiomes=" + useVerticalBiomes +
+                ", amplified=" + amplified +
                 ", biomeSize=" + biomeSize +
                 ", biomeSizeVertical=" + biomeSizeVertical +
                 '}';
