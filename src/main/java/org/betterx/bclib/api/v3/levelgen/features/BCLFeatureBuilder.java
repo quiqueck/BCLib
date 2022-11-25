@@ -889,6 +889,33 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         public SimpleBlockConfiguration createConfiguration() {
             return new SimpleBlockConfiguration(new WeightedStateProvider(stateBuilder.build()));
         }
+
+        //TODO: Remove in the next Minor Update. This method is just for backward compatibility.
+
+        @Override
+        public WeightedBlock add(Block block, int weight) {
+            return super.add(block, weight);
+        }
+
+        //TODO: Remove in the next Minor Update. This method is just for backward compatibility.
+        @Override
+        public WeightedBlock add(BlockState state, int weight) {
+            return super.add(state, weight);
+        }
+
+        //TODO: Remove in the next Minor Update. This method is just for backward compatibility.
+
+        @Override
+        public WeightedBlock addAllStates(Block block, int weight) {
+            return super.addAllStates(block, weight);
+        }
+
+        //TODO: Remove in the next Minor Update. This method is just for backward compatibility.
+
+        @Override
+        public WeightedBlock addAllStatesFor(IntegerProperty prop, Block block, int weight) {
+            return super.addAllStatesFor(prop, block, weight);
+        }
     }
 
 
