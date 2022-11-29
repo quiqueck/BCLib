@@ -17,6 +17,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.data.worldgen.SurfaceRuleData;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -24,12 +26,11 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.FeatureSorter;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
-import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
-import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
-import net.minecraft.world.level.levelgen.RandomState;
+import net.minecraft.world.level.levelgen.*;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
@@ -62,6 +63,12 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
                         .and(builderInstance.group(noiseGetter, biomeSourceCodec, settingsCodec))
                         .apply(builderInstance, builderInstance.stable(BCLChunkGenerator::new));
             });
+    protected static final NoiseSettings NETHER_NOISE_SETTINGS_AMPLIFIED = NoiseSettings.create(0, 256, 1, 4);
+    public static final ResourceKey<NoiseGeneratorSettings> AMPLIFIED_NETHER = ResourceKey.create(
+            Registry.NOISE_GENERATOR_SETTINGS_REGISTRY,
+            BCLib.makeID("amplified_nether")
+    );
+
     public final BiomeSource initialBiomeSource;
 
     public BCLChunkGenerator(
@@ -224,5 +231,25 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
 //
 //
 //        return Holder.direct(noise);
+    }
+
+
+    public static NoiseGeneratorSettings amplifiedNether() {
+        return new NoiseGeneratorSettings(
+                NETHER_NOISE_SETTINGS_AMPLIFIED,
+                Blocks.NETHERRACK.defaultBlockState(),
+                Blocks.LAVA.defaultBlockState(),
+                NoiseRouterData.noNewCaves(
+                        BuiltinRegistries.DENSITY_FUNCTION,
+                        NoiseRouterData.slideNetherLike(BuiltinRegistries.DENSITY_FUNCTION, 0, 256)
+                ),
+                SurfaceRuleData.nether(),
+                List.of(),
+                32,
+                false,
+                false,
+                false,
+                true
+        );
     }
 }

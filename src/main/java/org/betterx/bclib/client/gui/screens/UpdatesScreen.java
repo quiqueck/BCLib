@@ -81,8 +81,47 @@ public class UpdatesScreen extends BCLibLayoutScreen {
             row.addText(fit(), fit(), Component.literal(" -> "));
             row.addText(fit(), fit(), Component.literal(updated)).setColor(ColorHelper.GREEN);
             row.addFiller();
-            if (nfo != null && nfo.getMetadata().getContact().get("homepage").isPresent()) {
-                row.addButton(fit(), fit(), Component.translatable("bclib.updates.curseforge_link"))
+            boolean createdDownloadLink = false;
+            if (nfo != null
+                    && nfo.getMetadata().getCustomValue("bclib") != null
+                    && nfo.getMetadata().getCustomValue("bclib").getAsObject().get("downloads") != null) {
+                CustomValue.CvObject downloadLinks = nfo.getMetadata()
+                                                        .getCustomValue("bclib")
+                                                        .getAsObject()
+                                                        .get("downloads")
+                                                        .getAsObject();
+                String link = null;
+                Component name = null;
+                if (Configs.CLIENT_CONFIG.preferModrinthForUpdates() && downloadLinks.get("modrinth") != null) {
+                    link = downloadLinks.get("modrinth").getAsString();
+                    name = Component.translatable("bclib.updates.modrinth_link");
+//                    row.addButton(fit(), fit(), Component.translatable("bclib.updates.modrinth_link"))
+//                       .onPress((bt) -> {
+//                           this.openLink(downloadLinks.get("modrinth").getAsString());
+//                       }).centerVertical();
+//                    createdDownloadLink = true;
+                } else if (downloadLinks.get("curseforge") != null) {
+                    link = downloadLinks.get("curseforge").getAsString();
+                    name = Component.translatable("bclib.updates.curseforge_link");
+//                    row.addButton(fit(), fit(), Component.translatable("bclib.updates.curseforge_link"))
+//                       .onPress((bt) -> {
+//                           this.openLink(downloadLinks.get("curseforge").getAsString());
+//                       }).centerVertical();
+//                    createdDownloadLink = true;
+                }
+
+                if (link != null) {
+                    createdDownloadLink = true;
+                    final String finalLink = link;
+                    row.addButton(fit(), fit(), name)
+                       .onPress((bt) -> {
+                           this.openLink(finalLink);
+                       }).centerVertical();
+                }
+            }
+
+            if (!createdDownloadLink && nfo != null && nfo.getMetadata().getContact().get("homepage").isPresent()) {
+                row.addButton(fit(), fit(), Component.translatable("bclib.updates.download_link"))
                    .onPress((bt) -> {
                        this.openLink(nfo.getMetadata().getContact().get("homepage").get());
                    }).centerVertical();

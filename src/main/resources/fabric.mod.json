@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "bclib",
-  "version": "2.1.3",
+  "version": "2.1.5",
   "name": "BCLib",
   "description": "A library for BetterX team mods",
   "authors": [
@@ -10,7 +10,7 @@
     "Bulldog83"
   ],
   "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/bclib",
+    "homepage": "https://modrinth.com/mod/bclib",
     "issues": "https://github.com/quiqueck/bclib/issues",
     "sources": "https://github.com/quiqueck/bclib"
   },
@@ -56,6 +56,12 @@
     ]
   },
   "custom": {
+    "bclib": {
+      "downloads": {
+        "modrinth": "https://modrinth.com/mod/bclib",
+        "curseforge": "https://www.curseforge.com/minecraft/mc-mods/bclib"
+      }
+    },
     "modmenu": {
       "links": {
         "title.link.bclib.discord": "https://discord.gg/kYuATbYbKW"

@@ -119,7 +119,7 @@ public class TagManager {
 
     public static boolean isToolWithMineableTag(ItemStack stack, TagKey<Block> tag) {
         if (stack.getItem() instanceof DiggerItemAccessor dig) {
-            return dig.bclib_getBlockTag().equals(tag);
+            return dig.bclib_getBlockTag() == tag;
         }
         return false;
     }

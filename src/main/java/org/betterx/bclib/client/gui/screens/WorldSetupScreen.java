@@ -41,6 +41,8 @@ import org.jetbrains.annotations.Nullable;
 public class WorldSetupScreen extends LayoutScreen {
     private final WorldCreationContext context;
     private final CreateWorldScreen createWorldScreen;
+    private Range<Integer> netherBiomeSize;
+    private Range<Integer> netherVerticalBiomeSize;
     private Range<Integer> landBiomeSize;
     private Range<Integer> voidBiomeSize;
     private Range<Integer> centerBiomeSize;
@@ -60,6 +62,8 @@ public class WorldSetupScreen extends LayoutScreen {
     Checkbox endCustomTerrain;
     Checkbox generateEndVoid;
     Checkbox netherLegacy;
+    Checkbox netherVertical;
+    Checkbox netherAmplified;
 
     public LayoutComponent<?, ?> netherPage(BCLNetherBiomeSourceConfig netherConfig) {
         VerticalStack content = new VerticalStack(fill(), fit()).centerHorizontal();
@@ -77,9 +81,51 @@ public class WorldSetupScreen extends LayoutScreen {
                 netherConfig.mapVersion == BCLNetherBiomeSourceConfig.NetherBiomeMapType.SQUARE
         );
 
+        netherAmplified = content.indent(20).addCheckbox(
+                fit(), fit(),
+                Component.translatable("title.screen.bclib.worldgen.nether_amplified"),
+                netherConfig.amplified
+        );
+
+        netherVertical = content.indent(20).addCheckbox(
+                fit(), fit(),
+                Component.translatable("title.screen.bclib.worldgen.nether_vertical"),
+                netherConfig.useVerticalBiomes
+        );
+
+        content.addSpacer(12);
+        content.addText(fit(), fit(), Component.translatable("title.screen.bclib.worldgen.avg_biome_size"))
+               .centerHorizontal();
+        content.addHorizontalSeparator(8).alignTop();
+
+        netherBiomeSize = content.addRange(
+                fixed(200),
+                fit(),
+                Component.translatable("title.screen.bclib.worldgen.nether_biome_size"),
+                1,
+                512,
+                netherConfig.biomeSize / 16
+        );
+
+        netherVerticalBiomeSize = content.addRange(
+                fixed(200),
+                fit(),
+                Component.translatable("title.screen.bclib.worldgen.nether_vertical_biome_size"),
+                1,
+                32,
+                netherConfig.biomeSizeVertical / 16
+        );
 
         bclibNether.onChange((cb, state) -> {
             netherLegacy.setEnabled(state);
+            netherAmplified.setEnabled(state);
+            netherVertical.setEnabled(state);
+            netherBiomeSize.setEnabled(state);
+            netherVerticalBiomeSize.setEnabled(state && netherVertical.isChecked());
+        });
+
+        netherVertical.onChange((cb, state) -> {
+            netherVerticalBiomeSize.setEnabled(state && bclibNether.isChecked());
         });
 
         content.addSpacer(8);
@@ -198,6 +244,8 @@ public class WorldSetupScreen extends LayoutScreen {
     private void updateSettings() {
         Map<ResourceKey<LevelStem>, ChunkGenerator> betterxDimensions = TogetherWorldPreset.getDimensionsMap(
                 PresetsRegistry.BCL_WORLD);
+        Map<ResourceKey<LevelStem>, ChunkGenerator> betterxAmplifiedDimensions = TogetherWorldPreset.getDimensionsMap(
+                PresetsRegistry.BCL_WORLD_AMPLIFIED);
         Map<ResourceKey<LevelStem>, ChunkGenerator> vanillaDimensions = TogetherWorldPreset.getDimensionsMap(
                 WorldPresets.NORMAL);
         BCLEndBiomeSourceConfig.EndBiomeMapType endVersion = BCLEndBiomeSourceConfig.DEFAULT.mapVersion;
@@ -233,12 +281,17 @@ public class WorldSetupScreen extends LayoutScreen {
                     netherLegacy.isChecked()
                             ? BCLNetherBiomeSourceConfig.NetherBiomeMapType.SQUARE
                             : BCLNetherBiomeSourceConfig.NetherBiomeMapType.HEX,
-                    BCLNetherBiomeSourceConfig.DEFAULT.biomeSize,
-                    BCLNetherBiomeSourceConfig.DEFAULT.biomeSizeVertical,
-                    BCLNetherBiomeSourceConfig.DEFAULT.useVerticalBiomes
+                    netherBiomeSize.getValue() * 16,
+                    netherVerticalBiomeSize.getValue() * 16,
+                    netherVertical.isChecked(),
+                    netherAmplified.isChecked()
             );
 
-            ChunkGenerator netherGenerator = betterxDimensions.get(LevelStem.NETHER);
+            ChunkGenerator netherGenerator = (
+                    netherAmplified.isChecked()
+                            ? betterxAmplifiedDimensions
+                            : betterxDimensions
+            ).get(LevelStem.NETHER);
             ((BCLibNetherBiomeSource) netherGenerator.getBiomeSource()).setTogetherConfig(netherConfig);
 
             updateConfiguration(LevelStem.NETHER, BuiltinDimensionTypes.NETHER, netherGenerator);

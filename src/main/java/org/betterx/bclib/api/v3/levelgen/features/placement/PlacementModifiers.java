@@ -71,6 +71,11 @@ public class PlacementModifiers {
             UnderEveryLayer.CODEC
     );
 
+    public static final PlacementModifierType<InBiome> IN_BIOME = register(
+            "in_biome",
+            InBiome.CODEC
+    );
+
 
     private static <P extends PlacementModifier> PlacementModifierType<P> register(String path, Codec<P> codec) {
         return register(BCLib.makeID(path), codec);

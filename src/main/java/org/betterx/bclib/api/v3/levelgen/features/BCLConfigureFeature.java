@@ -55,7 +55,11 @@ public class BCLConfigureFeature<F extends Feature<FC>, FC extends FeatureConfig
     }
 
     public boolean placeInWorld(ServerLevel level, BlockPos pos, RandomSource random) {
-        return placeInWorld(getFeature(), getConfiguration(), level, pos, random);
+        return placeInWorld(level, pos, random, false);
+    }
+
+    public boolean placeInWorld(ServerLevel level, BlockPos pos, RandomSource random, boolean unchanged) {
+        return placeUnboundInWorld(getFeature(), getConfiguration(), level, pos, random, unchanged);
     }
 
     private static boolean placeUnboundInWorld(
@@ -63,16 +67,19 @@ public class BCLConfigureFeature<F extends Feature<FC>, FC extends FeatureConfig
             FeatureConfiguration config,
             ServerLevel level,
             BlockPos pos,
-            RandomSource random
+            RandomSource random,
+            boolean asIs
     ) {
-        if (config instanceof RandomPatchConfiguration rnd) {
-            var configured = rnd.feature().value().feature().value();
-            feature = configured.feature();
-            config = configured.config();
-        }
+        if (!asIs) {
+            if (config instanceof RandomPatchConfiguration rnd) {
+                var configured = rnd.feature().value().feature().value();
+                feature = configured.feature();
+                config = configured.config();
+            }
 
-        if (feature instanceof UserGrowableFeature growable) {
-            return growable.grow(level, pos, random, config);
+            if (feature instanceof UserGrowableFeature growable) {
+                return growable.grow(level, pos, random, config);
+            }
         }
 
         FeaturePlaceContext context = new FeaturePlaceContext(
@@ -92,7 +99,7 @@ public class BCLConfigureFeature<F extends Feature<FC>, FC extends FeatureConfig
             BlockPos pos,
             RandomSource random
     ) {
-        return placeUnboundInWorld(feature, FeatureConfiguration.NONE, level, pos, random);
+        return placeUnboundInWorld(feature, FeatureConfiguration.NONE, level, pos, random, true);
     }
 
     public static <FC extends FeatureConfiguration> boolean placeInWorld(
@@ -102,6 +109,6 @@ public class BCLConfigureFeature<F extends Feature<FC>, FC extends FeatureConfig
             BlockPos pos,
             RandomSource random
     ) {
-        return placeUnboundInWorld(feature, config, level, pos, random);
+        return placeUnboundInWorld(feature, config, level, pos, random, true);
     }
 }

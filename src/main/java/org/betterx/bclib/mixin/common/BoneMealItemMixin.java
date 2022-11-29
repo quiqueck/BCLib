@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.BoneMealItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -33,7 +34,7 @@ public class BoneMealItemMixin {
     @Inject(method = "useOn", at = @At("HEAD"), cancellable = true)
     private void bclib_onUse(UseOnContext context, CallbackInfoReturnable<InteractionResult> info) {
         Level world = context.getLevel();
-        BlockPos blockPos = context.getClickedPos();
+        final BlockPos blockPos = context.getClickedPos();
         if (!world.isClientSide()) {
             if (BonemealAPI.isTerrain(world.getBlockState(blockPos).getBlock())) {
                 boolean consume = false;
@@ -62,6 +63,21 @@ public class BoneMealItemMixin {
                     info.cancel();
                 }
             }
+        }
+    }
+
+    @Inject(method = "growCrop", at = @At("HEAD"), cancellable = true)
+    private static void bcl_growCrop(
+            ItemStack itemStack,
+            Level level,
+            BlockPos blockPos,
+            CallbackInfoReturnable<Boolean> cir
+    ) {
+        if (org.betterx.bclib.api.v3.bonemeal.BonemealAPI
+                .INSTANCE
+                .runSpreaders(itemStack, level, blockPos)
+        ) {
+            cir.setReturnValue(true);
         }
     }
 
