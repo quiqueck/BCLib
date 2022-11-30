@@ -18,14 +18,12 @@ public class TestPlacedFeatures {
 
         if (BCLibDatagen.ADD_TESTS && BCLib.isDevEnvironment()) {
             final BCLPlacedFeatureBuilder.Context buildContext = new BCLPlacedFeatureBuilder.Context(bootstrapContext);
-            YELLOW_PLACED = BCLPlacedFeatureBuilder.<RandomPatchFeature, RandomPatchConfiguration>place(
-                                                           buildContext,
-                                                           BCLib.makeID("yellow_feature")
-                                                   )
-                                                   .decoration(GenerationStep.Decoration.VEGETAL_DECORATION)
-                                                   .vanillaNetherGround(8)
-                                                   .isEmptyAndOnNetherGround()
-                                                   .buildAndRegister();
+            YELLOW_PLACED = TestConfiguredFeatures.YELLOW_FEATURE
+                    .place(buildContext)
+                    .decoration(GenerationStep.Decoration.VEGETAL_DECORATION)
+                    .vanillaNetherGround(8)
+                    .isEmptyAndOnNetherGround()
+                    .buildAndRegister();
         }
     }
 }

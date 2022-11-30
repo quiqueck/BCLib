@@ -81,7 +81,7 @@ public class BCLPlacedFeatureBuilder<F extends Feature<FC>, FC extends FeatureCo
         );
         Holder<ConfiguredFeature<FC, F>> holder = (Holder<ConfiguredFeature<FC, F>>) (Object) ctx.bootstrapContext
                 .lookup(Registries.CONFIGURED_FEATURE)
-                .getOrThrow(key);
+                .get(key);
         var cFeature = new BCLConfigureFeature<F, FC>(configuredFeature, holder, false);
         return new BCLPlacedFeatureBuilder<F, FC>(ctx, configuredFeature, cFeature);
     }

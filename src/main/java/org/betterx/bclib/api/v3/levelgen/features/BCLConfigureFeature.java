@@ -2,6 +2,7 @@ package org.betterx.bclib.api.v3.levelgen.features;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -17,6 +18,22 @@ import java.util.Map;
 import java.util.Optional;
 
 public class BCLConfigureFeature<F extends Feature<FC>, FC extends FeatureConfiguration> {
+    public static class Unregistered<F extends Feature<FC>, FC extends FeatureConfiguration> extends BCLConfigureFeature<F, FC> {
+        Unregistered(ResourceLocation id, Holder<ConfiguredFeature<FC, F>> configuredFeature) {
+            super(id, configuredFeature, false);
+        }
+
+        @Override
+        public BCLConfigureFeature<F, FC> register(BootstapContext<ConfiguredFeature<?, ?>> bootstrapContext) {
+            Holder<ConfiguredFeature<FC, F>> holder = BCLFeatureBuilder.register(
+                    bootstrapContext,
+                    id,
+                    configuredFeature.value()
+            );
+            return new BCLConfigureFeature<>(id, holder, true);
+        }
+    }
+
     private static final Map<Holder<ConfiguredFeature<?, ?>>, BCLConfigureFeature<?, ?>> KNOWN = new HashMap<>();
 
     public final ResourceLocation id;
@@ -110,5 +127,9 @@ public class BCLConfigureFeature<F extends Feature<FC>, FC extends FeatureConfig
             RandomSource random
     ) {
         return placeUnboundInWorld(feature, config, level, pos, random, true);
+    }
+
+    public BCLConfigureFeature<F, FC> register(BootstapContext<ConfiguredFeature<?, ?>> bootstrapContext) {
+        return this;
     }
 }

@@ -13,6 +13,7 @@ import org.betterx.bclib.api.v3.levelgen.features.features.PlaceBlockFeature;
 import org.betterx.bclib.api.v3.levelgen.features.features.SequenceFeature;
 import org.betterx.bclib.api.v3.levelgen.features.features.TemplateFeature;
 import org.betterx.bclib.blocks.BlockProperties;
+import org.betterx.bclib.util.FullReferenceHolder;
 import org.betterx.bclib.util.Triple;
 
 import net.minecraft.core.Direction;
@@ -48,195 +49,181 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
     @FunctionalInterface
     public interface HolderBuilder<F extends Feature<FC>, FC extends FeatureConfiguration> {
         Holder<ConfiguredFeature<FC, F>> apply(
-                Context ctx,
                 ResourceLocation id,
                 ConfiguredFeature<FC, F> feature
         );
     }
 
-    public record Context(BootstapContext<ConfiguredFeature<?, ?>> bootstrapContext) {
-        /**
-         * Starts a new {@link BCLFeature} builder.
-         *
-         * @param featureID {@link ResourceLocation} feature identifier.
-         * @param feature   {@link Feature} to construct.
-         * @return {@link BCLFeatureBuilder} instance.
-         */
-        public <F extends Feature<FC>, FC extends FeatureConfiguration> WithConfiguration<F, FC> start(
-                ResourceLocation featureID,
-                F feature
-        ) {
-            return new WithConfiguration<>(this, featureID, feature);
-        }
-
-        public ForSimpleBlock start(
-                ResourceLocation featureID,
-                Block block
-        ) {
-            return start(featureID, BlockStateProvider.simple(block));
-        }
-
-        public ForSimpleBlock start(
-                ResourceLocation featureID,
-                BlockState state
-        ) {
-            return start(featureID, BlockStateProvider.simple(state));
-        }
-
-        public ForSimpleBlock start(
-                ResourceLocation featureID,
-                BlockStateProvider provider
-        ) {
-            return new ForSimpleBlock(
-                    this,
-                    featureID,
-                    (SimpleBlockFeature) Feature.SIMPLE_BLOCK,
-                    provider
-            );
-        }
-
-        public WeightedBlock startWeighted(ResourceLocation featureID) {
-            return new WeightedBlock(
-                    this,
-                    featureID,
-                    (SimpleBlockFeature) Feature.SIMPLE_BLOCK
-            );
-        }
-
-        public WeightedBlockPatch startWeightedRandomPatch(ResourceLocation featureID) {
-            return new WeightedBlockPatch(
-                    this,
-                    featureID,
-                    (RandomPatchFeature) Feature.RANDOM_PATCH
-            );
-        }
-
-        public WeightedBlockPatch startBonemealPatch(
-                ResourceLocation featureID
-        ) {
-            return startWeightedRandomPatch(featureID).likeDefaultBonemeal();
-        }
-
-        public RandomPatch startRandomPatch(
-                ResourceLocation featureID,
-                Holder<PlacedFeature> featureToPlace
-        ) {
-            return new RandomPatch(
-                    this,
-                    featureID,
-                    (RandomPatchFeature) Feature.RANDOM_PATCH,
-                    featureToPlace
-            );
-        }
-
-        public AsRandomSelect startRandomSelect(
-                ResourceLocation featureID
-        ) {
-            return new AsRandomSelect(
-                    this,
-                    featureID,
-                    (RandomSelectorFeature) Feature.RANDOM_SELECTOR
-            );
-        }
-
-        public AsMultiPlaceRandomSelect startRandomSelect(
-                ResourceLocation featureID,
-                AsMultiPlaceRandomSelect.Placer placementModFunction
-        ) {
-            return new AsMultiPlaceRandomSelect(
-                    this,
-                    featureID,
-                    (RandomSelectorFeature) Feature.RANDOM_SELECTOR,
-                    placementModFunction
-            );
-        }
-
-        public NetherForrestVegetation startNetherVegetation(
-                ResourceLocation featureID
-        ) {
-            return new NetherForrestVegetation(
-                    this,
-                    featureID,
-                    (NetherForestVegetationFeature) Feature.NETHER_FOREST_VEGETATION
-            );
-        }
-
-        public NetherForrestVegetation startBonemealNetherVegetation(ResourceLocation featureID) {
-            return new NetherForrestVegetation(
-                    this,
-                    featureID,
-                    (NetherForestVegetationFeature) Feature.NETHER_FOREST_VEGETATION
-            ).spreadHeight(1).spreadWidth(3);
-        }
-
-        public WithTemplates startWithTemplates(ResourceLocation featureID) {
-            return new WithTemplates(
-                    this,
-                    featureID,
-                    (TemplateFeature<TemplateFeatureConfig>) BCLFeature.TEMPLATE
-            );
-        }
-
-        public AsBlockColumn<BlockColumnFeature> startColumn(ResourceLocation featureID) {
-            return new AsBlockColumn<>(
-                    this,
-                    featureID,
-                    (BlockColumnFeature) Feature.BLOCK_COLUMN
-            );
-        }
-
-        public AsPillar startPillar(
-                ResourceLocation featureID,
-                PillarFeatureConfig.KnownTransformers transformer
-        ) {
-            return new AsPillar(
-                    this,
-                    featureID,
-                    (PillarFeature) BCLFeature.PILLAR,
-                    transformer
-            );
-        }
-
-        public AsSequence startSequence(ResourceLocation featureID) {
-            return new AsSequence(
-                    this,
-                    featureID,
-                    (SequenceFeature) BCLFeature.SEQUENCE
-            );
-        }
-
-        public AsOre startOre(ResourceLocation featureID) {
-            return new AsOre(
-                    this,
-                    featureID,
-                    (OreFeature) Feature.ORE
-            );
-        }
-
-        public FacingBlock startFacing(ResourceLocation featureID) {
-            return new FacingBlock(
-                    this,
-                    featureID,
-                    (PlaceBlockFeature<PlaceFacingBlockConfig>) BCLFeature.PLACE_BLOCK
-            );
-        }
+    @FunctionalInterface
+    public interface FeatureBuilder<F extends Feature<FC>, FC extends FeatureConfiguration, B extends BCLConfigureFeature<F, FC>> {
+        B create(ResourceLocation id, Holder<ConfiguredFeature<FC, F>> configuredFeature);
     }
+
+    /**
+     * Starts a new {@link BCLFeature} builder.
+     *
+     * @param featureID {@link ResourceLocation} feature identifier.
+     * @param feature   {@link Feature} to construct.
+     * @return {@link BCLFeatureBuilder} instance.
+     */
+    public static <F extends Feature<FC>, FC extends FeatureConfiguration> WithConfiguration<F, FC> start(
+            ResourceLocation featureID,
+            F feature
+    ) {
+        return new WithConfiguration<>(featureID, feature);
+    }
+
+    public static ForSimpleBlock start(
+            ResourceLocation featureID,
+            Block block
+    ) {
+        return start(featureID, BlockStateProvider.simple(block));
+    }
+
+    public static ForSimpleBlock start(
+            ResourceLocation featureID,
+            BlockState state
+    ) {
+        return start(featureID, BlockStateProvider.simple(state));
+    }
+
+    public static ForSimpleBlock start(
+            ResourceLocation featureID,
+            BlockStateProvider provider
+    ) {
+        return new ForSimpleBlock(
+                featureID,
+                (SimpleBlockFeature) Feature.SIMPLE_BLOCK,
+                provider
+        );
+    }
+
+    public static WeightedBlock startWeighted(ResourceLocation featureID) {
+        return new WeightedBlock(
+                featureID,
+                (SimpleBlockFeature) Feature.SIMPLE_BLOCK
+        );
+    }
+
+    public static WeightedBlockPatch startWeightedRandomPatch(ResourceLocation featureID) {
+        return new WeightedBlockPatch(
+                featureID,
+                (RandomPatchFeature) Feature.RANDOM_PATCH
+        );
+    }
+
+    public static WeightedBlockPatch startBonemealPatch(
+            ResourceLocation featureID
+    ) {
+        return startWeightedRandomPatch(featureID).likeDefaultBonemeal();
+    }
+
+    public static RandomPatch startRandomPatch(
+            ResourceLocation featureID,
+            Holder<PlacedFeature> featureToPlace
+    ) {
+        return new RandomPatch(
+                featureID,
+                (RandomPatchFeature) Feature.RANDOM_PATCH,
+                featureToPlace
+        );
+    }
+
+    public static AsRandomSelect startRandomSelect(
+            ResourceLocation featureID
+    ) {
+        return new AsRandomSelect(
+                featureID,
+                (RandomSelectorFeature) Feature.RANDOM_SELECTOR
+        );
+    }
+
+    public static AsMultiPlaceRandomSelect startRandomSelect(
+            ResourceLocation featureID,
+            AsMultiPlaceRandomSelect.Placer placementModFunction
+    ) {
+        return new AsMultiPlaceRandomSelect(
+                featureID,
+                (RandomSelectorFeature) Feature.RANDOM_SELECTOR,
+                placementModFunction
+        );
+    }
+
+    public static NetherForrestVegetation startNetherVegetation(
+            ResourceLocation featureID
+    ) {
+        return new NetherForrestVegetation(
+                featureID,
+                (NetherForestVegetationFeature) Feature.NETHER_FOREST_VEGETATION
+        );
+    }
+
+    public static NetherForrestVegetation startBonemealNetherVegetation(ResourceLocation featureID) {
+        return new NetherForrestVegetation(
+                featureID,
+                (NetherForestVegetationFeature) Feature.NETHER_FOREST_VEGETATION
+        ).spreadHeight(1).spreadWidth(3);
+    }
+
+    public static WithTemplates startWithTemplates(ResourceLocation featureID) {
+        return new WithTemplates(
+                featureID,
+                (TemplateFeature<TemplateFeatureConfig>) BCLFeature.TEMPLATE
+        );
+    }
+
+    public static AsBlockColumn<BlockColumnFeature> startColumn(ResourceLocation featureID) {
+        return new AsBlockColumn<>(
+                featureID,
+                (BlockColumnFeature) Feature.BLOCK_COLUMN
+        );
+    }
+
+    public static AsPillar startPillar(
+            ResourceLocation featureID,
+            PillarFeatureConfig.KnownTransformers transformer
+    ) {
+        return new AsPillar(
+                featureID,
+                (PillarFeature) BCLFeature.PILLAR,
+                transformer
+        );
+    }
+
+    public static AsSequence startSequence(ResourceLocation featureID) {
+        return new AsSequence(
+                featureID,
+                (SequenceFeature) BCLFeature.SEQUENCE
+        );
+    }
+
+    public static AsOre startOre(ResourceLocation featureID) {
+        return new AsOre(
+                featureID,
+                (OreFeature) Feature.ORE
+        );
+    }
+
+    public static FacingBlock startFacing(ResourceLocation featureID) {
+        return new FacingBlock(
+                featureID,
+                (PlaceBlockFeature<PlaceFacingBlockConfig>) BCLFeature.PLACE_BLOCK
+        );
+    }
+
 
     protected final ResourceLocation featureID;
     private final F feature;
 
-    protected final Context ctx;
-
-    private BCLFeatureBuilder(Context ctx, ResourceLocation featureID, F feature) {
+    private BCLFeatureBuilder(ResourceLocation featureID, F feature) {
         this.featureID = featureID;
         this.feature = feature;
-        this.ctx = ctx;
     }
 
 
     /**
      * Internally used by the builder. Normally you should not have to call this method directly as it is
-     * handled by {@link #buildAndRegister()}
+     * handled by {@link #buildAndRegister(BootstapContext)}
      *
      * @param id       The ID to register this feature with
      * @param cFeature The configured Feature
@@ -245,41 +232,64 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
      * @return The Holder for the new Feature
      */
     public static <F extends Feature<FC>, FC extends FeatureConfiguration> Holder<ConfiguredFeature<FC, F>> register(
-            Context ctx,
+            BootstapContext<ConfiguredFeature<?, ?>> ctx,
             ResourceLocation id,
             ConfiguredFeature<FC, F> cFeature
     ) {
         ResourceKey<ConfiguredFeature<?, ?>> key = ResourceKey.create(Registries.CONFIGURED_FEATURE, id);
-        return (Holder<ConfiguredFeature<FC, F>>) (Object) ctx.bootstrapContext.register(key, cFeature);
+        return (Holder<ConfiguredFeature<FC, F>>) (Object) ctx.register(key, cFeature);
     }
 
     public abstract FC createConfiguration();
 
-    protected BCLConfigureFeature<F, FC> buildAndRegister(HolderBuilder<F, FC> holderBuilder) {
+    protected BCLConfigureFeature<F, FC> buildAndCreateHolder(HolderBuilder<F, FC> holderBuilder) {
+        return buildAndCreateHolder(
+                (featureID, holder) -> new BCLConfigureFeature<>(featureID, holder, true),
+                holderBuilder
+        );
+    }
+
+    protected <B extends BCLConfigureFeature<F, FC>> B buildAndCreateHolder(
+            FeatureBuilder<F, FC, B> featureBuilder,
+            HolderBuilder<F, FC> holderBuilder
+    ) {
         FC config = createConfiguration();
         if (config == null) {
             throw new IllegalStateException("Feature configuration for " + featureID + " can not be null!");
         }
         ConfiguredFeature<FC, F> cFeature = new ConfiguredFeature<>(feature, config);
-        Holder<ConfiguredFeature<FC, F>> holder = holderBuilder.apply(this.ctx, featureID, cFeature);
-        return new BCLConfigureFeature<>(featureID, holder, true);
+        Holder<ConfiguredFeature<FC, F>> holder = holderBuilder.apply(featureID, cFeature);
+        return featureBuilder.create(featureID, holder);
     }
 
-    public BCLConfigureFeature<F, FC> buildAndRegister() {
-        return buildAndRegister(BCLFeatureBuilder::register);
+    public BCLConfigureFeature<F, FC> buildAndRegister(BootstapContext<ConfiguredFeature<?, ?>> bootstrapCtx) {
+        return buildAndCreateHolder((featureID, cFeature) -> register(bootstrapCtx, featureID, cFeature));
     }
 
-    public BCLConfigureFeature<F, FC> build() {
-        return buildAndRegister((ctx, id, cFeature) -> Holder.direct(cFeature));
+    public BCLConfigureFeature<F, FC> buildInline() {
+        return buildAndCreateHolder(
+                (featureID, cFeature) -> Holder.direct(cFeature)
+        );
+    }
+
+    public BCLConfigureFeature.Unregistered<F, FC> build() {
+        return buildAndCreateHolder(
+                (featureID, holder) -> new BCLConfigureFeature.Unregistered<>(featureID, holder),
+                (featureID, cFeature) -> (FullReferenceHolder<ConfiguredFeature<FC, F>>) (Object) FullReferenceHolder.create(
+                        Registries.CONFIGURED_FEATURE,
+                        featureID,
+                        cFeature
+                )
+        );
     }
 
     public BCLInlinePlacedBuilder<F, FC> inlinePlace() {
-        BCLConfigureFeature<F, FC> f = build();
-        return BCLInlinePlacedBuilder.place(ctx, f);
+        BCLConfigureFeature<F, FC> f = buildInline();
+        return BCLInlinePlacedBuilder.place(f);
     }
 
     public Holder<PlacedFeature> inlinePlace(BCLInlinePlacedBuilder<F, FC> placer) {
-        BCLConfigureFeature<F, FC> f = build();
+        BCLConfigureFeature<F, FC> f = buildInline();
         return placer.build(f);
     }
 
@@ -288,8 +298,8 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         private int size = 6;
         private float discardChanceOnAirExposure = 0;
 
-        private AsOre(Context ctx, ResourceLocation featureID, OreFeature feature) {
-            super(ctx, featureID, feature);
+        private AsOre(ResourceLocation featureID, OreFeature feature) {
+            super(featureID, feature);
         }
 
         public AsOre add(Block containedIn, Block ore) {
@@ -338,12 +348,11 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         private BlockPredicate allowedPlacement = BlockPredicate.ONLY_IN_AIR_PREDICATE;
 
         private AsPillar(
-                @NotNull Context ctx,
                 @NotNull ResourceLocation featureID,
                 @NotNull PillarFeature feature,
                 @NotNull PillarFeatureConfig.KnownTransformers transformer
         ) {
-            super(ctx, featureID, feature);
+            super(featureID, feature);
             this.transformer = transformer;
         }
 
@@ -415,11 +424,10 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         private final List<Holder<PlacedFeature>> features = new LinkedList<>();
 
         private AsSequence(
-                @NotNull Context ctx,
                 @NotNull ResourceLocation featureID,
                 @NotNull SequenceFeature feature
         ) {
-            super(ctx, featureID, feature);
+            super(featureID, feature);
         }
 
 
@@ -445,11 +453,10 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         private boolean prioritizeTip = false;
 
         private AsBlockColumn(
-                @NotNull Context ctx,
                 @NotNull ResourceLocation featureID,
                 @NotNull FF feature
         ) {
-            super(ctx, featureID, feature);
+            super(featureID, feature);
         }
 
         public AsBlockColumn<FF> add(int height, Block block) {
@@ -561,11 +568,10 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         private final List<StructureWorldNBT> templates = new LinkedList<>();
 
         private WithTemplates(
-                @NotNull Context ctx,
                 @NotNull ResourceLocation featureID,
                 @NotNull TemplateFeature<TemplateFeatureConfig> feature
         ) {
-            super(ctx, featureID, feature);
+            super(featureID, feature);
         }
 
         public WithTemplates add(
@@ -591,11 +597,10 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         private int spreadHeight = 4;
 
         private NetherForrestVegetation(
-                @NotNull Context ctx,
                 @NotNull ResourceLocation featureID,
                 @NotNull NetherForestVegetationFeature feature
         ) {
-            super(ctx, featureID, feature);
+            super(featureID, feature);
         }
 
         public NetherForrestVegetation spreadWidth(int v) {
@@ -661,12 +666,11 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         private int ySpread = 3;
 
         private RandomPatch(
-                @NotNull Context ctx,
                 @NotNull ResourceLocation featureID,
                 @NotNull RandomPatchFeature feature,
                 @NotNull Holder<PlacedFeature> featureToPlace
         ) {
-            super(ctx, featureID, feature);
+            super(featureID, feature);
             this.featureToPlace = featureToPlace;
         }
 
@@ -707,11 +711,10 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         private FC configuration;
 
         private WithConfiguration(
-                @NotNull Context ctx,
                 @NotNull ResourceLocation featureID,
                 @NotNull F feature
         ) {
-            super(ctx, featureID, feature);
+            super(featureID, feature);
         }
 
         public WithConfiguration<F, FC> configuration(FC config) {
@@ -742,11 +745,10 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         private List<Direction> directions = PlaceFacingBlockConfig.HORIZONTAL;
 
         private FacingBlock(
-                @NotNull Context ctx,
                 @NotNull ResourceLocation featureID,
                 @NotNull PlaceBlockFeature<PlaceFacingBlockConfig> feature
         ) {
-            super(ctx, featureID, feature);
+            super(featureID, feature);
         }
 
 
@@ -820,12 +822,11 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         private final BlockStateProvider provider;
 
         private ForSimpleBlock(
-                @NotNull Context ctx,
                 @NotNull ResourceLocation featureID,
                 @NotNull SimpleBlockFeature feature,
                 @NotNull BlockStateProvider provider
         ) {
-            super(ctx, featureID, feature);
+            super(featureID, feature);
             this.provider = provider;
         }
 
@@ -844,11 +845,10 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         private int ySpread = 3;
 
         protected WeightedBlockPatch(
-                @NotNull Context ctx,
                 @NotNull ResourceLocation featureID,
                 @NotNull RandomPatchFeature feature
         ) {
-            super(ctx, featureID, feature);
+            super(featureID, feature);
         }
 
         public WeightedBlockPatch isEmpty() {
@@ -903,7 +903,7 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
 
         @Override
         public RandomPatchConfiguration createConfiguration() {
-            BCLInlinePlacedBuilder<Feature<SimpleBlockConfiguration>, SimpleBlockConfiguration> blockFeature = ctx
+            BCLInlinePlacedBuilder<Feature<SimpleBlockConfiguration>, SimpleBlockConfiguration> blockFeature = BCLFeatureBuilder
                     .start(
                             new ResourceLocation(featureID.getNamespace(), "tmp_" + featureID.getPath()),
                             Feature.SIMPLE_BLOCK
@@ -920,11 +920,10 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
 
     public static class WeightedBlock extends WeightedBaseBlock<SimpleBlockFeature, SimpleBlockConfiguration, WeightedBlock> {
         private WeightedBlock(
-                @NotNull Context ctx,
                 @NotNull ResourceLocation featureID,
                 @NotNull SimpleBlockFeature feature
         ) {
-            super(ctx, featureID, feature);
+            super(featureID, feature);
         }
 
         @Override
@@ -965,11 +964,10 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         SimpleWeightedRandomList.Builder<BlockState> stateBuilder = SimpleWeightedRandomList.builder();
 
         protected WeightedBaseBlock(
-                @NotNull Context ctx,
                 @NotNull ResourceLocation featureID,
                 @NotNull F feature
         ) {
-            super(ctx, featureID, feature);
+            super(featureID, feature);
         }
 
         public W add(Block block, int weight) {
@@ -999,11 +997,10 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         private Holder<PlacedFeature> defaultFeature;
 
         private AsRandomSelect(
-                @NotNull Context ctx,
                 @NotNull ResourceLocation featureID,
                 @NotNull RandomSelectorFeature feature
         ) {
-            super(ctx, featureID, feature);
+            super(featureID, feature);
         }
 
 
@@ -1036,12 +1033,11 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         private final Placer modFunction;
 
         private AsMultiPlaceRandomSelect(
-                @NotNull Context ctx,
                 @NotNull ResourceLocation featureID,
                 @NotNull RandomSelectorFeature feature,
                 @NotNull Placer mod
         ) {
-            super(ctx, featureID, feature);
+            super(featureID, feature);
             this.modFunction = mod;
         }
 
@@ -1115,7 +1111,7 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         }
 
         private Holder<PlacedFeature> place(BlockStateProvider p, int id) {
-            var builder = ctx
+            var builder = BCLFeatureBuilder
                     .start(BCLib.makeID("temp_select_feature" + (featureCounter++)), p)
                     .inlinePlace();
             return modFunction.place(builder, id);
