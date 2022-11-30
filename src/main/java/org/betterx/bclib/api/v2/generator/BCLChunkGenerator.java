@@ -68,7 +68,7 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
     ) {
         super(biomeSource, holder);
         initialBiomeSource = biomeSource;
-        if (biomeSource instanceof BiomeSourceWithNoiseRelatedSettings bcl) {
+        if (biomeSource instanceof BiomeSourceWithNoiseRelatedSettings bcl && holder.isBound()) {
             bcl.onLoadGeneratorSettings(holder.value());
         }
 

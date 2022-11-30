@@ -21,44 +21,42 @@ import java.util.Map;
 
 public class PresetsRegistry implements WorldPresetBootstrap {
 
-    public static ResourceKey<WorldPreset> BCL_WORLD;
-    public static ResourceKey<WorldPreset> BCL_WORLD_LARGE;
-    public static ResourceKey<WorldPreset> BCL_WORLD_AMPLIFIED;
-    public static ResourceKey<WorldPreset> BCL_WORLD_17;
+    public static ResourceKey<WorldPreset> BCL_WORLD = WorldPresets.createKey(BCLib.makeID("normal"));
+    public static ResourceKey<WorldPreset> BCL_WORLD_LARGE = WorldPresets.createKey(BCLib.makeID("large"));
+    public static ResourceKey<WorldPreset> BCL_WORLD_AMPLIFIED = WorldPresets.createKey(BCLib.makeID("amplified"));
+    public static ResourceKey<WorldPreset> BCL_WORLD_17 = WorldPresets.createKey(BCLib.makeID("legacy_17"));
 
     public void bootstrapWorldPresets() {
-        BCL_WORLD =
-                WorldPresets.register(
-                        BCLib.makeID("normal"),
-                        (overworldStem, netherContext, endContext, noiseSettings, noiseBasedOverworld) ->
-                                buildPreset(
-                                        overworldStem,
-                                        netherContext, BCLNetherBiomeSourceConfig.DEFAULT,
-                                        endContext, BCLEndBiomeSourceConfig.DEFAULT
-                                ),
-                        true
-                );
+        WorldPresets.register(
+                BCL_WORLD,
+                (overworldStem, netherContext, endContext, noiseSettings, noiseBasedOverworld) ->
+                        buildPreset(
+                                overworldStem,
+                                netherContext, BCLNetherBiomeSourceConfig.DEFAULT,
+                                endContext, BCLEndBiomeSourceConfig.DEFAULT
+                        ),
+                true
+        );
 
-        BCL_WORLD_LARGE =
-                WorldPresets.register(
-                        BCLib.makeID("large"),
-                        (overworldStem, netherContext, endContext, noiseSettings, noiseBasedOverworld) -> {
-                            Holder<NoiseGeneratorSettings> largeBiomeGenerator = noiseSettings
-                                    .getOrThrow(NoiseGeneratorSettings.LARGE_BIOMES);
-                            return buildPreset(
-                                    noiseBasedOverworld.make(
-                                            overworldStem.generator().getBiomeSource(),
-                                            largeBiomeGenerator
-                                    ),
-                                    netherContext, BCLNetherBiomeSourceConfig.MINECRAFT_18_LARGE,
-                                    endContext, BCLEndBiomeSourceConfig.MINECRAFT_18_LARGE
-                            );
-                        },
-                        true
-                );
+        WorldPresets.register(
+                BCL_WORLD_LARGE,
+                (overworldStem, netherContext, endContext, noiseSettings, noiseBasedOverworld) -> {
+                    Holder<NoiseGeneratorSettings> largeBiomeGenerator = noiseSettings
+                            .getOrThrow(NoiseGeneratorSettings.LARGE_BIOMES);
+                    return buildPreset(
+                            noiseBasedOverworld.make(
+                                    overworldStem.generator().getBiomeSource(),
+                                    largeBiomeGenerator
+                            ),
+                            netherContext, BCLNetherBiomeSourceConfig.MINECRAFT_18_LARGE,
+                            endContext, BCLEndBiomeSourceConfig.MINECRAFT_18_LARGE
+                    );
+                },
+                true
+        );
 
-        BCL_WORLD_AMPLIFIED = WorldPresets.register(
-                BCLib.makeID("amplified"),
+        WorldPresets.register(
+                BCL_WORLD_AMPLIFIED,
                 (overworldStem, netherContext, endContext, noiseSettings, noiseBasedOverworld) -> {
                     Holder<NoiseGeneratorSettings> amplifiedBiomeGenerator = noiseSettings
                             .getOrThrow(NoiseGeneratorSettings.AMPLIFIED);
@@ -82,8 +80,8 @@ public class PresetsRegistry implements WorldPresetBootstrap {
                 true
         );
 
-        BCL_WORLD_17 = WorldPresets.register(
-                BCLib.makeID("legacy_17"),
+        WorldPresets.register(
+                BCL_WORLD_17,
                 (overworldStem, netherContext, endContext, noiseSettings, noiseBasedOverworld) ->
                         buildPreset(
                                 overworldStem,

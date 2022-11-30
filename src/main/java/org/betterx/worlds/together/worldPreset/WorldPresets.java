@@ -53,8 +53,8 @@ public class WorldPresets {
      * @param visibleInUI if true, the preset will show up in the UI on world creataion
      * @return The key you may use to reference your new Preset
      */
-    private static ResourceKey<WorldPreset> register(ResourceLocation loc, boolean visibleInUI) {
-        ResourceKey<WorldPreset> key = ResourceKey.create(Registries.WORLD_PRESET, loc);
+    private static ResourceKey<WorldPreset> register(ResourceKey<WorldPreset> key, boolean visibleInUI) {
+        //ResourceKey<WorldPreset> key = ResourceKey.create(Registries.WORLD_PRESET, loc);
         if (visibleInUI) {
             if (!didExplicitlySetDefault && DEFAULT == net.minecraft.world.level.levelgen.presets.WorldPresets.NORMAL) {
                 DEFAULT = key;
@@ -69,8 +69,12 @@ public class WorldPresets {
 
     }
 
+    public static ResourceKey<WorldPreset> createKey(ResourceLocation loc) {
+        return ResourceKey.create(Registries.WORLD_PRESET, loc);
+    }
+
     public static ResourceKey<WorldPreset> register(
-            ResourceLocation loc,
+            ResourceKey<WorldPreset> loc,
             PresetBuilder builder,
             boolean visibleInUI
     ) {
@@ -98,13 +102,12 @@ public class WorldPresets {
                       .forEach(e -> e.bootstrapWorldPresets());
 
         for (Map.Entry<ResourceKey<WorldPreset>, PresetBuilder> e : BUILDERS.entrySet()) {
-            //TODO:1.19.3 called out of sync
-//            TogetherWorldPreset preset = e.getValue()
-//                                          .create(
-//                                                  overworldStem, netherContext, endContext,
-//                                                  noiseSettings, noiseBasedOverworld
-//                                          );
-//            bootstrapContext.register(e.getKey(), preset);
+            TogetherWorldPreset preset = e.getValue()
+                                          .create(
+                                                  overworldStem, netherContext, endContext,
+                                                  noiseSettings, noiseBasedOverworld
+                                          );
+            bootstrapContext.register(e.getKey(), preset);
         }
         BUILDERS = null;
     }

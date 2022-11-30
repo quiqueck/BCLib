@@ -16,18 +16,23 @@ public class BCLibDatagen implements DataGeneratorEntrypoint {
         BCLib.LOGGER.info("Bootstrap onInitializeDataGenerator");
         final FabricDataGenerator.Pack pack = dataGenerator.createPack();
 
+        if (ADD_TESTS) {
+            pack.addProvider(TestWorldgenProvider::new);
+        }
         pack.addProvider(WorldgenProvider::new);
         //pack.addProvider(BiomeProvider::new);
         //pack.addProvider(new BiomeProvider());
-        // pack.addProvider(CustomRegistriesDataProvider::new);
+        //pack.addProvider(CustomRegistriesDataProvider::new);
     }
 
     @Override
     public void buildRegistry(RegistrySetBuilder registryBuilder) {
         BCLib.LOGGER.info("Datagen buildRegistry");
-        registryBuilder.add(Registries.CONFIGURED_FEATURE, TestConfiguredFeatures::bootstrap);
-        registryBuilder.add(Registries.PLACED_FEATURE, TestPlacedFeatures::bootstrap);
-        registryBuilder.add(Registries.BIOME, TestBiomes::bootstrap);
+        if (ADD_TESTS) {
+            registryBuilder.add(Registries.CONFIGURED_FEATURE, TestConfiguredFeatures::bootstrap);
+            registryBuilder.add(Registries.PLACED_FEATURE, TestPlacedFeatures::bootstrap);
+            registryBuilder.add(Registries.BIOME, TestBiomes::bootstrap);
+        }
         registryBuilder.add(Registries.NOISE_SETTINGS, NoiseDatagen::bootstrap);
     }
 }

@@ -1,8 +1,5 @@
 package org.betterx.bclib.datagen;
 
-import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
-import org.betterx.worlds.together.surfaceRules.SurfaceRuleRegistry;
-
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 
@@ -11,8 +8,8 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider
 
 import java.util.concurrent.CompletableFuture;
 
-public class WorldgenProvider extends FabricDynamicRegistryProvider {
-    public WorldgenProvider(
+public class TestWorldgenProvider extends FabricDynamicRegistryProvider {
+    public TestWorldgenProvider(
             FabricDataOutput output,
             CompletableFuture<HolderLookup.Provider> registriesFuture
     ) {
@@ -21,14 +18,15 @@ public class WorldgenProvider extends FabricDynamicRegistryProvider {
 
     @Override
     protected void configure(HolderLookup.Provider registries, Entries entries) {
-        entries.addAll(registries.lookupOrThrow(Registries.NOISE_SETTINGS));
-        entries.addAll(registries.lookupOrThrow(Registries.WORLD_PRESET));
-        entries.addAll(registries.lookupOrThrow(BCLBiomeRegistry.BCL_BIOMES_REGISTRY));
-        entries.addAll(registries.lookupOrThrow(SurfaceRuleRegistry.SURFACE_RULES_REGISTRY));
+        if (BCLibDatagen.ADD_TESTS) {
+            entries.addAll(registries.lookupOrThrow(Registries.CONFIGURED_FEATURE));
+            entries.addAll(registries.lookupOrThrow(Registries.PLACED_FEATURE));
+            entries.addAll(registries.lookupOrThrow(Registries.BIOME));
+        }
     }
 
     @Override
     public String getName() {
-        return "WorldGen Provider";
+        return "Test WorldGen Provider";
     }
 }
