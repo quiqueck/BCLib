@@ -15,13 +15,13 @@ import org.betterx.worlds.together.world.BiomeSourceWithNoiseRelatedSettings;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.data.worldgen.SurfaceRuleData;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.BiomeSource;
@@ -31,8 +31,6 @@ import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.*;
-import net.minecraft.world.level.levelgen.structure.StructureSet;
-import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
 import com.google.common.base.Suppliers;
 
@@ -43,11 +41,6 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
 
     public static final Codec<BCLChunkGenerator> CODEC = RecordCodecBuilder
             .create((RecordCodecBuilder.Instance<BCLChunkGenerator> builderInstance) -> {
-                final RecordCodecBuilder<BCLChunkGenerator, Registry<NormalNoise.NoiseParameters>> noiseGetter = RegistryOps
-                        .retrieveRegistry(
-                                Registry.NOISE_REGISTRY)
-                        .forGetter(
-                                BCLChunkGenerator::getNoises);
 
                 RecordCodecBuilder<BCLChunkGenerator, BiomeSource> biomeSourceCodec = BiomeSource.CODEC
                         .fieldOf("biome_source")
@@ -58,26 +51,22 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
                         .forGetter((BCLChunkGenerator generator) -> generator.generatorSettings());
 
 
-                return NoiseBasedChunkGenerator
-                        .commonCodec(builderInstance)
-                        .and(builderInstance.group(noiseGetter, biomeSourceCodec, settingsCodec))
-                        .apply(builderInstance, builderInstance.stable(BCLChunkGenerator::new));
+                return builderInstance.group(biomeSourceCodec, settingsCodec)
+                                      .apply(builderInstance, builderInstance.stable(BCLChunkGenerator::new));
             });
     protected static final NoiseSettings NETHER_NOISE_SETTINGS_AMPLIFIED = NoiseSettings.create(0, 256, 1, 4);
     public static final ResourceKey<NoiseGeneratorSettings> AMPLIFIED_NETHER = ResourceKey.create(
-            Registry.NOISE_GENERATOR_SETTINGS_REGISTRY,
+            Registries.NOISE_SETTINGS,
             BCLib.makeID("amplified_nether")
     );
 
     public final BiomeSource initialBiomeSource;
 
     public BCLChunkGenerator(
-            Registry<StructureSet> registry,
-            Registry<NormalNoise.NoiseParameters> registry2,
             BiomeSource biomeSource,
             Holder<NoiseGeneratorSettings> holder
     ) {
-        super(registry, registry2, biomeSource, holder);
+        super(biomeSource, holder);
         initialBiomeSource = biomeSource;
         if (biomeSource instanceof BiomeSourceWithNoiseRelatedSettings bcl) {
             bcl.onLoadGeneratorSettings(holder.value());
@@ -131,14 +120,6 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
         return CODEC;
     }
 
-
-    private Registry<NormalNoise.NoiseParameters> getNoises() {
-        if (this instanceof NoiseGeneratorSettingsProvider p) {
-            return p.bclib_getNoises();
-        }
-        return null;
-    }
-
     @Override
     public String toString() {
         return "BCLib - Chunk Generator (" + Integer.toHexString(hashCode()) + ")";
@@ -148,18 +129,6 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
     // We make sure terrablender does not rewrite the feature-set for our ChunkGenerator by overwriting the
     // Mixin-Method with an empty implementation
     public void appendFeaturesPerStep() {
-    }
-
-    public static RandomState createRandomState(ServerLevel level, ChunkGenerator generator) {
-        if (generator instanceof NoiseBasedChunkGenerator noiseBasedChunkGenerator) {
-            return RandomState.create(
-                    noiseBasedChunkGenerator.generatorSettings().value(),
-                    level.registryAccess().registryOrThrow(Registry.NOISE_REGISTRY),
-                    level.getSeed()
-            );
-        } else {
-            return RandomState.create(level.registryAccess(), NoiseGeneratorSettings.OVERWORLD, level.getSeed());
-        }
     }
 
     @Override
@@ -184,8 +153,6 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
                     }
 
                     referenceGenerator = new BCLChunkGenerator(
-                            generator.bclib_getStructureSetsRegistry(),
-                            noiseProvider.bclib_getNoises(),
                             bs,
                             buildGeneratorSettings(
                                     referenceProvider.bclib_getNoiseGeneratorSettingHolders(),
@@ -234,14 +201,16 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
     }
 
 
-    public static NoiseGeneratorSettings amplifiedNether() {
+    public static NoiseGeneratorSettings amplifiedNether(BootstapContext<NoiseGeneratorSettings> bootstapContext) {
+        HolderGetter<DensityFunction> densityGetter = bootstapContext.lookup(Registries.DENSITY_FUNCTION);
         return new NoiseGeneratorSettings(
                 NETHER_NOISE_SETTINGS_AMPLIFIED,
                 Blocks.NETHERRACK.defaultBlockState(),
                 Blocks.LAVA.defaultBlockState(),
                 NoiseRouterData.noNewCaves(
-                        BuiltinRegistries.DENSITY_FUNCTION,
-                        NoiseRouterData.slideNetherLike(BuiltinRegistries.DENSITY_FUNCTION, 0, 256)
+                        densityGetter,
+                        bootstapContext.lookup(Registries.NOISE),
+                        NoiseRouterData.slideNetherLike(densityGetter, 0, 256)
                 ),
                 SurfaceRuleData.nether(),
                 List.of(),

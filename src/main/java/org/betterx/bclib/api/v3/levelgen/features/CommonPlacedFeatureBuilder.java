@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Optional;
 
 abstract class CommonPlacedFeatureBuilder<F extends Feature<FC>, FC extends FeatureConfiguration, T extends CommonPlacedFeatureBuilder<F, FC, T>> {
-    protected final List<PlacementModifier> modifications = new LinkedList<>();
 
+    protected final List<PlacementModifier> modifications = new LinkedList<>();
 
     /**
      * Add feature placement modifier. Used as a condition for feature how to generate.
@@ -425,15 +425,4 @@ abstract class CommonPlacedFeatureBuilder<F extends Feature<FC>, FC extends Feat
      * @return created {@link PlacedFeature} instance.
      */
     abstract Holder<PlacedFeature> build();
-
-    public BCLFeatureBuilder.RandomPatch inRandomPatch(ResourceLocation id) {
-        return BCLFeatureBuilder.startRandomPatch(id, build());
-    }
-
-    public BCLFeatureBuilder.RandomPatch randomBonemealDistribution(ResourceLocation id) {
-        return inRandomPatch(id)
-                .tries(9)
-                .spreadXZ(3)
-                .spreadY(1);
-    }
 }

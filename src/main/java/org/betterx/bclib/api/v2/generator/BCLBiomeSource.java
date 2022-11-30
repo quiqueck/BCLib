@@ -9,7 +9,7 @@ import org.betterx.worlds.together.world.BiomeSourceWithNoiseRelatedSettings;
 import org.betterx.worlds.together.world.BiomeSourceWithSeed;
 
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
@@ -23,13 +23,13 @@ import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceWithSeed, MergeableBiomeSource<BCLBiomeSource>, BiomeSourceWithNoiseRelatedSettings, BiomeSourceFromRegistry<BCLBiomeSource> {
-    protected final Registry<Biome> biomeRegistry;
+    protected final HolderGetter<Biome> biomeRegistry;
     private int registryModificationCounter;
     protected long currentSeed;
     protected int maxHeight;
 
     private static List<Holder<Biome>> preInit(
-            Registry<Biome> biomeRegistry,
+            HolderGetter<Biome> biomeRegistry,
             List<Holder<Biome>> biomes
     ) {
         biomes = biomes.stream().sorted(Comparator.comparing(holder -> holder.unwrapKey()
@@ -41,7 +41,7 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
     }
 
     protected BCLBiomeSource(
-            Registry<Biome> biomeRegistry,
+            HolderGetter<Biome> biomeRegistry,
             List<Holder<Biome>> list,
             long seed
     ) {
@@ -103,15 +103,16 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
     }
 
     protected static List<Holder<Biome>> getBiomes(
-            Registry<Biome> biomeRegistry,
+            HolderGetter<Biome> biomeRegistry,
             List<String> exclude,
             List<String> include,
             BCLibNetherBiomeSource.ValidBiomePredicate test
     ) {
-        return biomeRegistry.stream()
+        //TODO: 1.19.3 restore this code
+        return List.of();/*biomeRegistry.stream()
                             .filter(biome -> biomeRegistry.getResourceKey(biome).isPresent())
 
-                            .map(biome -> (Holder<Biome>) biomeRegistry.getOrCreateHolderOrThrow(
+                            .map(biome -> (Holder<Biome>) biomeRegistry.getHolderOrThrow(
                                     biomeRegistry.getResourceKey(biome).get())
                             )
                             .filter(biome -> {
@@ -122,7 +123,7 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
 
                                 return test.isValid(biome, location);
                             })
-                            .toList();
+                            .toList();*/
     }
 
     @Override
@@ -135,7 +136,8 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
         this.setMaxHeight(generator.noiseSettings().height());
     }
 
-    public Registry<Biome> getBiomeRegistry() {
+    @Override
+    public HolderGetter<Biome> getBiomeRegistry() {
         return biomeRegistry;
     }
 }

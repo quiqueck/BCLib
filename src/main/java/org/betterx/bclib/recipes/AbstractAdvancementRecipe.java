@@ -3,6 +3,7 @@ package org.betterx.bclib.recipes;
 import org.betterx.bclib.api.v2.advancement.AdvancementManager;
 
 import net.minecraft.advancements.RequirementsStrategy;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ArmorItem;

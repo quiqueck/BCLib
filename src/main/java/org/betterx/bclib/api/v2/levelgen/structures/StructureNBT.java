@@ -4,9 +4,8 @@ import org.betterx.bclib.BCLib;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.Registry;
 import net.minecraft.core.Vec3i;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.resources.ResourceLocation;
@@ -104,7 +103,8 @@ public class StructureNBT {
         CompoundTag nbttagcompound = NbtIo.readCompressed(stream);
 
         StructureTemplate template = new StructureTemplate();
-        template.load(HolderLookup.forRegistry(Registry.BLOCK), nbttagcompound);
+
+        template.load(BuiltInRegistries.BLOCK.asLookup(), nbttagcompound);
 
         return template;
     }

@@ -5,6 +5,7 @@ import org.betterx.bclib.interfaces.NumericProvider;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.valueproviders.UniformFloat;
 import net.minecraft.world.level.levelgen.SurfaceRules;
@@ -71,7 +72,7 @@ public class Conditions {
     public static final NumericProvider NETHER_NOISE = new NetherNoiseCondition();
 
     public static void register(ResourceLocation location, Codec<? extends SurfaceRules.ConditionSource> codec) {
-        Registry.register(Registry.CONDITION, location, codec);
+        Registry.register(BuiltInRegistries.MATERIAL_CONDITION, location, codec);
     }
 
     public static void registerNumeric(ResourceLocation location, Codec<? extends NumericProvider> codec) {
@@ -85,6 +86,6 @@ public class Conditions {
         register(BCLib.makeID("volume_threshold_condition"), VolumeThresholdCondition.CODEC);
         register(BCLib.makeID("rough_noise_condition"), RoughNoiseCondition.CODEC);
 
-        Registry.register(Registry.RULE, "bclib_switch_rule", SwitchRuleSource.CODEC);
+        Registry.register(BuiltInRegistries.MATERIAL_RULE, "bclib_switch_rule", SwitchRuleSource.CODEC);
     }
 }

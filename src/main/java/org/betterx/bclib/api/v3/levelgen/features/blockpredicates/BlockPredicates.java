@@ -5,6 +5,7 @@ import org.betterx.worlds.together.tag.v3.CommonBlockTags;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Blocks;
@@ -39,7 +40,7 @@ public class BlockPredicates {
     );
 
     public static <P extends BlockPredicate> BlockPredicateType<P> register(ResourceLocation location, Codec<P> codec) {
-        return Registry.register(Registry.BLOCK_PREDICATE_TYPES, location, () -> codec);
+        return Registry.register(BuiltInRegistries.BLOCK_PREDICATE_TYPE, location, () -> codec);
     }
 
     public static void ensureStaticInitialization() {

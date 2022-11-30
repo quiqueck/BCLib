@@ -1,7 +1,6 @@
 package org.betterx.bclib.util;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -69,7 +68,7 @@ public class StructureHelper {
         CompoundTag nbttagcompound = NbtIo.readCompressed(stream);
 
         StructureTemplate template = new StructureTemplate();
-        template.load(HolderLookup.forRegistry(BuiltInRegistries.BLOCK), nbttagcompound);
+        template.load(BuiltInRegistries.BLOCK.asLookup(), nbttagcompound);
 
         return template;
     }

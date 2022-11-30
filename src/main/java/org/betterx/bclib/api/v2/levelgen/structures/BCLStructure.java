@@ -1,11 +1,14 @@
 package org.betterx.bclib.api.v2.levelgen.structures;
 
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeBuilder;
-import org.betterx.bclib.mixin.common.StructuresAccessor;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.core.*;
-import net.minecraft.data.worldgen.StructureSets;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.QuartPos;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -39,7 +42,8 @@ public class BCLStructure<S extends Structure> {
 
 
     private static HolderSet<Biome> biomes(TagKey<Biome> tagKey) {
-        return BuiltinRegistries.BIOME.getOrCreateTag(tagKey);
+        //TODO:1.19.3 Refactor
+        return null; //BuiltInRegistries.BIOME.getOrCreateTag(tagKey);
     }
 
     private static Structure.StructureSettings structure(
@@ -60,10 +64,12 @@ public class BCLStructure<S extends Structure> {
     }
 
     private static <S extends Structure> StructureType<S> registerStructureType(
+            BootstapContext<StructureType<?>> bootstrapContext,
             ResourceLocation id,
             Codec<S> codec
     ) {
-        return Registry.register(Registry.STRUCTURE_TYPES, id, () -> codec);
+        final ResourceKey<StructureType<?>> key = ResourceKey.create(Registries.STRUCTURE_TYPE, id);
+        return (StructureType<S>) bootstrapContext.register(key, () -> (Codec<Structure>) codec).value();
     }
 
     protected BCLStructure(
@@ -79,15 +85,18 @@ public class BCLStructure<S extends Structure> {
         this.featureStep = step;
         this.STRUCTURE_CODEC = codec;
         this.spreadConfig = placement;
-        this.structureKey = ResourceKey.create(Registry.STRUCTURE_REGISTRY, id);
-        this.structureSetKey = ResourceKey.create(Registry.STRUCTURE_SET_REGISTRY, id);
+        this.structureKey = ResourceKey.create(Registries.STRUCTURE, id);
+        this.structureSetKey = ResourceKey.create(Registries.STRUCTURE_SET, id);
 
-        this.structureType = registerStructureType(id, STRUCTURE_CODEC);
+        //TODO:1.19.3 Refactor
+        this.structureType = null; //registerStructureType(id, STRUCTURE_CODEC);
 
         this.biomeTag = biomeTag;
         this.baseStructure = structureBuilder.apply(structure(this.biomeTag, featureStep, terrainAdjustment));
-        this.structure = StructuresAccessor.callRegister(structureKey, this.baseStructure);
-        StructureSets.register(structureSetKey, this.structure, spreadConfig);
+        //TODO:1.19.3 Refactor
+        this.structure = null; //StructuresAccessor.callRegister(structureKey, this.baseStructure);
+//TODO:1.19.3 Refactor
+        //StructureSets.register(structureSetKey, this.structure, spreadConfig);
     }
 
     /**

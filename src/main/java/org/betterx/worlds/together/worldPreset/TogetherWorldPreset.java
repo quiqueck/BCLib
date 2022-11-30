@@ -14,7 +14,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -30,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class TogetherWorldPreset extends WorldPreset {
     public final int sortOrder;
@@ -152,12 +152,13 @@ public class TogetherWorldPreset extends WorldPreset {
         }
     }
 
-    public static Registry<LevelStem> getDimensions(ResourceKey<WorldPreset> key) {
+    public static @Nullable Registry<LevelStem> getDimensions(ResourceKey<WorldPreset> key) {
         RegistryAccess access = WorldBootstrap.getLastRegistryAccessOrElseBuiltin();
-        var preset = (access == null
-                ? BuiltInRegistries.WORLD_PRESET
-                : access.registryOrThrow(Registries.WORLD_PRESET))
-                .getHolder(key);
+        if (access == null) {
+            WorldsTogether.LOGGER.error("No valid registry found!");
+            return null;
+        }
+        var preset = access.registryOrThrow(Registries.WORLD_PRESET).getHolder(key);
         if (preset.isEmpty()) return null;
         return preset
                 .get()

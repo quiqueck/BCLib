@@ -4,7 +4,7 @@ import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 import org.betterx.bclib.interfaces.BiomeMap;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
@@ -84,7 +84,7 @@ public abstract class BiomeDecider {
      * @param predicate     A predicate that decides if a given Biome can be provided by this decider
      */
     protected BiomeDecider(
-            Registry<Biome> biomeRegistry, BiomePredicate predicate
+            HolderGetter<Biome> biomeRegistry, BiomePredicate predicate
     ) {
         this.predicate = predicate;
         this.map = null;

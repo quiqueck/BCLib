@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.core.Vec3i;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
@@ -40,7 +41,7 @@ public class TemplatePiece extends TemplateStructurePiece {
 
 
     private static StructurePieceType setFullContextPieceId(StructurePieceType structurePieceType, String id) {
-        return Registry.register(Registry.STRUCTURE_PIECE, BCLib.makeID(id), structurePieceType);
+        return Registry.register(BuiltInRegistries.STRUCTURE_PIECE, BCLib.makeID(id), structurePieceType);
     }
 
     private static StructurePieceType setTemplatePieceId(

@@ -6,7 +6,8 @@ import org.betterx.bclib.util.WeighTree;
 import org.betterx.bclib.util.WeightedList;
 
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
@@ -20,17 +21,17 @@ import java.util.Objects;
 
 public class BiomePicker {
     private final Map<BCLBiome, ActualBiome> all = new HashMap<>();
-    public final Registry<Biome> biomeRegistry;
+    public final HolderGetter<Biome> biomeRegistry;
     private final List<ActualBiome> biomes = Lists.newArrayList();
     private final List<String> allowedBiomes;
     public final ActualBiome fallbackBiome;
     private WeighTree<ActualBiome> tree;
 
-    public BiomePicker(Registry<Biome> biomeRegistry) {
+    public BiomePicker(HolderGetter<Biome> biomeRegistry) {
         this(biomeRegistry, null);
     }
 
-    public BiomePicker(Registry<Biome> biomeRegistry, List<Holder<Biome>> allowedBiomes) {
+    public BiomePicker(HolderGetter<Biome> biomeRegistry, List<Holder<Biome>> allowedBiomes) {
         this.biomeRegistry = biomeRegistry;
         this.allowedBiomes = allowedBiomes != null ? allowedBiomes
                 .stream()
@@ -104,9 +105,13 @@ public class BiomePicker {
             all.put(bclBiome, this);
             this.bclBiome = bclBiome;
 
-            this.key = biomeRegistry.getResourceKey(biomeRegistry.get(bclBiome.getID())).orElse(null);
-            this.biome = key != null ? biomeRegistry.getOrCreateHolderOrThrow(key) : null;
-            this.isValid = key != null && biome != null && biome.isBound();
+            //TODO: 1.19.3 is it ok to build the key?
+            this.key = ResourceKey.create(
+                    Registries.BIOME,
+                    bclBiome.getID()
+            );//biomeRegistry.getResourceKey(biomeRegistry.get(bclBiome.getID())).orElse(null);
+            this.biome = key != null ? biomeRegistry.getOrThrow(key) : null;
+            this.isValid = key != null && biome != null && biome.isBound() && biomeRegistry.get(key).isPresent();
             bclBiome.forEachSubBiome((b, w) -> {
                 if (isAllowed(b))
                     subbiomes.add(create(b), w);

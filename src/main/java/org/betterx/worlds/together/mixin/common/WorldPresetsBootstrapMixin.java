@@ -4,15 +4,16 @@ import org.betterx.worlds.together.levelgen.WorldGenUtil;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
 
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
-import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
+import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
-import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,29 +25,23 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 public abstract class WorldPresetsBootstrapMixin {
     @Shadow
     @Final
-    private Registry<WorldPreset> presets;
+    private HolderGetter<Biome> biomes;
     @Shadow
     @Final
-    private Registry<Biome> biomes;
-    @Shadow
-    @Final
-    private Registry<StructureSet> structureSets;
-    @Shadow
-    @Final
-    private Registry<NormalNoise.NoiseParameters> noises;
-    @Shadow
-    @Final
-    private Holder<DimensionType> netherDimensionType;
-    @Shadow
-    @Final
-    private Holder<NoiseGeneratorSettings> netherNoiseSettings;
-    @Shadow
-    @Final
-    private Holder<DimensionType> endDimensionType;
-    @Shadow
-    @Final
-    private Holder<NoiseGeneratorSettings> endNoiseSettings;
+    private HolderGetter<StructureSet> structureSets;
 
+    @Shadow
+    @Final
+    private BootstapContext<WorldPreset> context;
+    @Shadow
+    @Final
+    private HolderGetter<PlacedFeature> placedFeatures;
+    @Shadow
+    @Final
+    private LevelStem netherStem;
+    @Shadow
+    @Final
+    private LevelStem endStem;
     //see WorldPresets.register
 
     @Shadow
@@ -57,27 +52,38 @@ public abstract class WorldPresetsBootstrapMixin {
 
     @Shadow
     @Final
-    private Registry<NoiseGeneratorSettings> noiseSettings;
+    private HolderGetter<NoiseGeneratorSettings> noiseSettings;
 
-    @ModifyArg(method = "run", at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/world/level/levelgen/presets/WorldPresets$Bootstrap;registerCustomOverworldPreset(Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/world/level/dimension/LevelStem;)Lnet/minecraft/core/Holder;"))
+    @ModifyArg(method = "run", at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/world/level/levelgen/presets/WorldPresets$Bootstrap;registerCustomOverworldPreset(Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/world/level/dimension/LevelStem;)V"))
     private LevelStem bcl_getOverworldStem(LevelStem overworldStem) {
+        Holder<NoiseGeneratorSettings> netherSettings, endSettings;
+        if (this.netherStem.generator() instanceof NoiseBasedChunkGenerator nether) {
+            netherSettings = nether.generatorSettings();
+        } else {
+            netherSettings = this.noiseSettings.getOrThrow(NoiseGeneratorSettings.NETHER);
+        }
+
+        if (this.endStem.generator() instanceof NoiseBasedChunkGenerator nether) {
+            endSettings = nether.generatorSettings();
+        } else {
+            endSettings = this.noiseSettings.getOrThrow(NoiseGeneratorSettings.END);
+        }
+
         WorldGenUtil.Context netherContext = new WorldGenUtil.Context(
                 this.biomes,
-                this.netherDimensionType,
+                this.netherStem.type(),
                 this.structureSets,
-                this.noises,
-                this.netherNoiseSettings
+                netherSettings
         );
         WorldGenUtil.Context endContext = new WorldGenUtil.Context(
                 this.biomes,
-                this.endDimensionType,
+                this.endStem.type(),
                 this.structureSets,
-                this.noises,
-                this.endNoiseSettings
+                endSettings
         );
 
         WorldPresets.bootstrapPresets(
-                presets,
+                context,
                 overworldStem,
                 netherContext,
                 endContext,

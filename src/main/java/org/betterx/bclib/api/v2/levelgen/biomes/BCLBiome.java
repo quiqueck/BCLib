@@ -8,6 +8,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -175,7 +176,7 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
         super(terrainHeight, fogDensity, genChance, edgeSize, vertical, edge.map(BiomeAPI::getBiome).orElse(null));
         biomeToRegister = null;
         this.biomeID = biomeID;
-        this.biomeKey = ResourceKey.create(Registry.BIOME_REGISTRY, biomeID);
+        this.biomeKey = ResourceKey.create(Registries.BIOME, biomeID);
         this.biomeParent = biomeParent.orElse(null);
         if (parameterPoints.isPresent()) this.parameterPoints.addAll(parameterPoints.get());
         this.setIntendedType(intendedType.map(t -> BiomeAPI.BiomeType.create(t)).orElse(BiomeAPI.BiomeType.NONE));
@@ -196,7 +197,7 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
      * @param biomeID {@link ResourceLocation} biome ID.
      */
     protected BCLBiome(ResourceLocation biomeID) {
-        this(ResourceKey.create(Registry.BIOME_REGISTRY, biomeID), null);
+        this(ResourceKey.create(Registries.BIOME, biomeID), null);
     }
 
 
@@ -232,7 +233,7 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
      * @param defaults        The Settings for this Biome or null if you want to apply the defaults
      */
     protected BCLBiome(ResourceLocation biomeID, Biome biomeToRegister, BCLBiomeSettings defaults) {
-        this(ResourceKey.create(Registry.BIOME_REGISTRY, biomeID), biomeToRegister, defaults);
+        this(ResourceKey.create(Registries.BIOME, biomeID), biomeToRegister, defaults);
     }
 
     /**

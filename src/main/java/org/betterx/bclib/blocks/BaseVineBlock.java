@@ -135,7 +135,7 @@ public class BaseVineBlock extends BaseBlockNotFull implements RenderLayerProvid
     }
 
     @Override
-    public boolean isValidBonemealTarget(BlockGetter world, BlockPos pos, BlockState state, boolean isClient) {
+    public boolean isValidBonemealTarget(LevelReader world, BlockPos pos, BlockState state, boolean isClient) {
         while (world.getBlockState(pos).getBlock() == this) {
             pos = pos.below();
         }

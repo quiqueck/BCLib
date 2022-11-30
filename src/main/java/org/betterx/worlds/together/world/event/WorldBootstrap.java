@@ -111,7 +111,7 @@ public class WorldBootstrap {
     public static class DedicatedServer {
         public static void registryReady(RegistryOps<Tag> regOps) {
             if (regOps instanceof RegistryOpsAccessor acc) {
-                Helpers.onRegistryReady(acc.bcl_getRegistryAccess());
+                //Helpers.onRegistryReady(acc.bcl_getLookupProvider().);
             }
         }
 

@@ -48,7 +48,7 @@ public abstract class BoatMixin extends Entity implements CustomBoatTypeOverride
         return bcl_type;
     }
 
-    @Inject(method = "setType", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "setVariant", at = @At("HEAD"), cancellable = true)
     void bcl_setType(Boat.Type type, CallbackInfo ci) {
         if (bcl_type != null) {
             this.entityData.set(DATA_ID_TYPE, bcl_type.ordinal());
@@ -56,7 +56,7 @@ public abstract class BoatMixin extends Entity implements CustomBoatTypeOverride
         }
     }
 
-    @Inject(method = "getBoatType", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "getVariant", at = @At("HEAD"), cancellable = true)
     void bcl_getBoatType(CallbackInfoReturnable<Boat.Type> cir) {
         BoatTypeOverride type = BoatTypeOverride.byId(this.entityData.get(DATA_ID_TYPE));
         if (type != null) {

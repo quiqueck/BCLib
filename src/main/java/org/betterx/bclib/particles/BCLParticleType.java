@@ -5,6 +5,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
@@ -45,7 +46,11 @@ public class BCLParticleType {
             ParticleOptions.Deserializer<T> factory,
             Codec<T> codec
     ) {
-        return Registry.register(Registry.PARTICLE_TYPE, location, deserializer(overrideLimiter, factory, codec));
+        return Registry.register(
+                BuiltInRegistries.PARTICLE_TYPE,
+                location,
+                deserializer(overrideLimiter, factory, codec)
+        );
     }
 
     public static SimpleParticleType simple(boolean overrideLimiter) {
@@ -62,7 +67,7 @@ public class BCLParticleType {
     }
 
     public static SimpleParticleType register(ResourceLocation location, boolean overrideLimiter) {
-        return Registry.register(Registry.PARTICLE_TYPE, location, simple(overrideLimiter));
+        return Registry.register(BuiltInRegistries.PARTICLE_TYPE, location, simple(overrideLimiter));
     }
 
     public static SimpleParticleType register(
@@ -77,7 +82,7 @@ public class BCLParticleType {
             boolean overrideLimiter,
             ParticleFactoryRegistry.PendingParticleFactory<SimpleParticleType> provider
     ) {
-        SimpleParticleType type = Registry.register(Registry.PARTICLE_TYPE, location, simple(overrideLimiter));
+        SimpleParticleType type = Registry.register(BuiltInRegistries.PARTICLE_TYPE, location, simple(overrideLimiter));
         ParticleFactoryRegistry.getInstance().register(type, provider);
         return type;
     }

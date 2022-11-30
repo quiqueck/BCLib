@@ -9,9 +9,7 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
@@ -19,9 +17,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ChunkGenerator.class)
 public class ChunkGeneratorMixin implements ChunkGeneratorAccessor {
-    @Shadow
-    @Final
-    protected Registry<StructureSet> structureSets;
     private int bclib_featureIteratorSeed;
 
 
@@ -41,6 +36,6 @@ public class ChunkGeneratorMixin implements ChunkGeneratorAccessor {
     }
 
     public Registry<StructureSet> bclib_getStructureSetsRegistry() {
-        return structureSets;
+        return null;
     }
 }

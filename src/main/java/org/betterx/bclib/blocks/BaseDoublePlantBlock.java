@@ -131,7 +131,12 @@ public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements R
     }
 
     @Override
-    public boolean isValidBonemealTarget(BlockGetter world, BlockPos pos, BlockState state, boolean isClient) {
+    public boolean isValidBonemealTarget(
+            LevelReader levelReader,
+            BlockPos blockPos,
+            BlockState blockState,
+            boolean isClient
+    ) {
         return true;
     }
 

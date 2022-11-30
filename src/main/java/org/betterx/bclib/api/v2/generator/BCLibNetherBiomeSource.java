@@ -16,7 +16,10 @@ import org.betterx.worlds.together.biomesource.ReloadableBiomeSource;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
@@ -33,9 +36,7 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
     public static final Codec<BCLibNetherBiomeSource> CODEC = RecordCodecBuilder
             .create(instance -> instance
                     .group(
-                            RegistryOps
-                                    .retrieveRegistry(Registry.BIOME_REGISTRY)
-                                    .forGetter(source -> source.biomeRegistry),
+                            RegistryOps.retrieveElement(Registries.BIOME),
                             Codec
                                     .LONG
                                     .fieldOf("seed")
@@ -55,16 +56,26 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
     private BiomePicker biomePicker;
     private BCLNetherBiomeSourceConfig config;
 
-    public BCLibNetherBiomeSource(Registry<Biome> biomeRegistry, BCLNetherBiomeSourceConfig config) {
+
+    private BCLibNetherBiomeSource(
+            Holder.Reference<Registry<Biome>> registryReference,
+            long seed,
+            BCLNetherBiomeSourceConfig bclNetherBiomeSourceConfig
+    ) {
+        this(registryReference.value().asLookup(), seed, bclNetherBiomeSourceConfig);
+    }
+
+
+    public BCLibNetherBiomeSource(HolderGetter<Biome> biomeRegistry, BCLNetherBiomeSourceConfig config) {
         this(biomeRegistry, 0, config, false);
     }
 
-    public BCLibNetherBiomeSource(Registry<Biome> biomeRegistry, long seed, BCLNetherBiomeSourceConfig config) {
+    private BCLibNetherBiomeSource(HolderGetter<Biome> biomeRegistry, long seed, BCLNetherBiomeSourceConfig config) {
         this(biomeRegistry, seed, config, true);
     }
 
     private BCLibNetherBiomeSource(
-            Registry<Biome> biomeRegistry,
+            HolderGetter<Biome> biomeRegistry,
             long seed,
             BCLNetherBiomeSourceConfig config,
             boolean initMaps
@@ -73,7 +84,7 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
     }
 
     private BCLibNetherBiomeSource(
-            Registry<Biome> biomeRegistry,
+            HolderGetter<Biome> biomeRegistry,
             List<Holder<Biome>> list,
             long seed,
             BCLNetherBiomeSourceConfig config,
@@ -126,8 +137,8 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
         return new BCLibNetherBiomeSource(
                 this.biomeRegistry,
                 datapackBiomes.stream()
-                              .filter(b -> b.isValidInRegistry(biomeRegistry) && b.unwrapKey()
-                                                                                  .orElse(null) != BCLBiomeRegistry.EMPTY_BIOME.getBiomeKey())
+                              .filter(b -> b.unwrapKey()
+                                            .orElse(null) != BCLBiomeRegistry.EMPTY_BIOME.getBiomeKey())
                               .toList(),
                 this.currentSeed,
                 config,
@@ -135,7 +146,7 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
         );
     }
 
-    private static List<Holder<Biome>> getNonVanillaBiomes(Registry<Biome> biomeRegistry) {
+    private static List<Holder<Biome>> getNonVanillaBiomes(HolderGetter<Biome> biomeRegistry) {
         List<String> include = Configs.BIOMES_CONFIG.getIncludeMatching(BiomeAPI.BiomeType.NETHER);
         List<String> exclude = Configs.BIOMES_CONFIG.getExcludeMatching(BiomeAPI.BiomeType.NETHER);
 
@@ -143,7 +154,7 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
     }
 
 
-    private static List<Holder<Biome>> getBiomes(Registry<Biome> biomeRegistry) {
+    private static List<Holder<Biome>> getBiomes(HolderGetter<Biome> biomeRegistry) {
         List<String> include = Configs.BIOMES_CONFIG.getIncludeMatching(BiomeAPI.BiomeType.NETHER);
         List<String> exclude = Configs.BIOMES_CONFIG.getExcludeMatching(BiomeAPI.BiomeType.NETHER);
 
@@ -170,7 +181,7 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
     }
 
     public static void register() {
-        Registry.register(Registry.BIOME_SOURCE, BCLib.makeID("nether_biome_source"), CODEC);
+        Registry.register(BuiltInRegistries.BIOME_SOURCE, BCLib.makeID("nether_biome_source"), CODEC);
     }
 
 

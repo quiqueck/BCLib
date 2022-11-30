@@ -12,6 +12,7 @@ import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
@@ -28,7 +29,6 @@ import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.WorldDimensions;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
-import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
 import java.util.Map;
 import org.jetbrains.annotations.ApiStatus;
@@ -99,35 +99,31 @@ public class WorldGenUtil {
     }
 
     public static class Context extends StemContext {
-        public final Registry<Biome> biomes;
+        public final HolderGetter<Biome> biomes;
 
         public Context(
-                Registry<Biome> biomes,
+                HolderGetter<Biome> biomes,
                 Holder<DimensionType> dimension,
-                Registry<StructureSet> structureSets,
-                Registry<NormalNoise.NoiseParameters> noiseParameters,
+                HolderGetter<StructureSet> structureSets,
                 Holder<NoiseGeneratorSettings> generatorSettings
         ) {
-            super(dimension, structureSets, noiseParameters, generatorSettings);
+            super(dimension, structureSets, generatorSettings);
             this.biomes = biomes;
         }
     }
 
     public static class StemContext {
         public final Holder<DimensionType> dimension;
-        public final Registry<StructureSet> structureSets;
-        public final Registry<NormalNoise.NoiseParameters> noiseParameters;
+        public final HolderGetter<StructureSet> structureSets;
         public final Holder<NoiseGeneratorSettings> generatorSettings;
 
         public StemContext(
                 Holder<DimensionType> dimension,
-                Registry<StructureSet> structureSets,
-                Registry<NormalNoise.NoiseParameters> noiseParameters,
+                HolderGetter<StructureSet> structureSets,
                 Holder<NoiseGeneratorSettings> generatorSettings
         ) {
             this.dimension = dimension;
             this.structureSets = structureSets;
-            this.noiseParameters = noiseParameters;
             this.generatorSettings = generatorSettings;
         }
     }

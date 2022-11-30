@@ -5,7 +5,6 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "BiomeSourceMixin",
-    "BuiltinRegistriesMixin",
     "DedicatedServerPropertiesMixin",
     "DiggerItemAccessor",
     "MainDataMixin",
@@ -17,6 +16,7 @@
     "RegistryDataLoaderMixin",
     "RegistryOpsAccessor",
     "TagLoaderMixin",
+    "VanillaRegistriesMixin",
     "WorldGenPropertiesMixin",
     "WorldLoaderMixin",
     "WorldPresetAccessor",

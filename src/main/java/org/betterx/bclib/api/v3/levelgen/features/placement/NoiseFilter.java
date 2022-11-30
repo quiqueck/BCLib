@@ -5,7 +5,7 @@ import org.betterx.bclib.noise.Noises;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.placement.PlacementContext;
@@ -16,7 +16,7 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
 public class NoiseFilter extends PlacementFilter {
     public static final Codec<NoiseFilter> CODEC = RecordCodecBuilder.create(instance -> instance
             .group(
-                    ResourceKey.codec(Registry.NOISE_REGISTRY).fieldOf("noise").forGetter(o -> o.noise),
+                    ResourceKey.codec(Registries.NOISE).fieldOf("noise").forGetter(o -> o.noise),
                     Codec.DOUBLE.fieldOf("min_noise_level").forGetter(o -> o.minNoiseLevel),
                     Codec.DOUBLE.fieldOf("max_noise_level").orElse(Double.MAX_VALUE).forGetter(o -> o.maxNoiseLevel),
                     Codec.FLOAT.fieldOf("scale_xz").orElse(1f).forGetter(o -> o.scaleXZ),

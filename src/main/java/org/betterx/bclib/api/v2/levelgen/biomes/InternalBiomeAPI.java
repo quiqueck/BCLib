@@ -2,11 +2,12 @@ package org.betterx.bclib.api.v2.levelgen.biomes;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.config.Configs;
-import org.betterx.bclib.mixin.common.BiomeGenerationSettingsAccessor;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
@@ -56,33 +57,12 @@ public class InternalBiomeAPI {
     static final Map<Biome, BCLBiome> CLIENT = Maps.newHashMap();
     static final Map<Holder<PlacedFeature>, Integer> FEATURE_ORDER = Maps.newHashMap();
 
-    static final Map<Registry<Biome>, AtomicInteger> BIOME_ADDITIONS = Maps.newHashMap();
+    static final Map<HolderGetter<Biome>, AtomicInteger> BIOME_ADDITIONS = Maps.newHashMap();
     static final MutableInt FEATURE_ORDER_ID = new MutableInt(0);
     static final Map<ResourceKey<LevelStem>, List<BiConsumer<ResourceLocation, Holder<Biome>>>> MODIFICATIONS = Maps.newHashMap();
     static final Map<ResourceKey, List<BiConsumer<ResourceLocation, Holder<Biome>>>> TAG_ADDERS = Maps.newHashMap();
     static Registry<Biome> biomeRegistry;
     static RegistryAccess registryAccess;
-
-    static void initFeatureOrder() {
-        if (!FEATURE_ORDER.isEmpty()) {
-            return;
-        }
-
-        BuiltinRegistries.BIOME
-                .entrySet()
-                .stream()
-                .filter(entry -> entry
-                        .getKey()
-                        .location()
-                        .getNamespace()
-                        .equals("minecraft"))
-                .map(Map.Entry::getValue)
-                .map(biome -> (BiomeGenerationSettingsAccessor) biome.getGenerationSettings())
-                .map(BiomeGenerationSettingsAccessor::bclib_getFeatures)
-                .forEach(stepFeatureSuppliers -> stepFeatureSuppliers.forEach(step -> step.forEach(feature -> {
-                    FEATURE_ORDER.computeIfAbsent(feature, f -> FEATURE_ORDER_ID.getAndIncrement());
-                })));
-    }
 
     public static RegistryAccess worldRegistryAccess() {
         return registryAccess;
@@ -96,7 +76,7 @@ public class InternalBiomeAPI {
     public static void initRegistry(RegistryAccess access) {
         if (access != registryAccess) {
             registryAccess = access;
-            Registry<Biome> biomeRegistry = access.registry(Registry.BIOME_REGISTRY).orElse(null);
+            Registry<Biome> biomeRegistry = access.registry(Registries.BIOME).orElse(null);
 
             if (biomeRegistry != InternalBiomeAPI.biomeRegistry) {
                 InternalBiomeAPI.biomeRegistry = biomeRegistry;
@@ -274,7 +254,8 @@ public class InternalBiomeAPI {
 
     static {
         DynamicRegistrySetupCallback.EVENT.register(registryManager -> {
-            Optional<? extends Registry<Biome>> oBiomeRegistry = registryManager.registry(Registry.BIOME_REGISTRY);
+            Optional<? extends Registry<Biome>> oBiomeRegistry = registryManager.asDynamicRegistryManager()
+                                                                                .registry(Registries.BIOME);
             if (oBiomeRegistry.isPresent()) {
                 RegistryEntryAddedCallback
                         .event(oBiomeRegistry.get())
@@ -304,19 +285,9 @@ public class InternalBiomeAPI {
      * @param registry The registry you want to check
      * @return The current number of additions since the world creation was started
      */
-    public static int getBiomeRegistryModificationCount(Registry<Biome> registry) {
+    public static int getBiomeRegistryModificationCount(HolderGetter<Biome> registry) {
         if (registry == null) return 0;
         return BIOME_ADDITIONS.computeIfAbsent(registry, reg -> new AtomicInteger(0)).get();
-    }
-
-    public static boolean registryContainsBound(ResourceKey<Biome> key) {
-        Registry<Biome> reg = biomeRegistry;
-        if (reg == null) reg = BuiltinRegistries.BIOME;
-
-        if (reg.containsKey(key)) {
-            return reg.getOrCreateHolderOrThrow(key).isBound();
-        }
-        return false;
     }
 
     public static void registerBCLBiomeData(BCLBiome biome) {
@@ -336,7 +307,7 @@ public class InternalBiomeAPI {
      */
 
     public static BCLBiome registerBuiltinBiome(BCLBiome bclbiome) {
-        return BiomeAPI.registerBiome(bclbiome, BuiltinRegistries.BIOME);
+        return BiomeAPI.finishBiomeRegistration(bclbiome);
     }
 
 }

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "bclib",
-  "version": "2.1.5",
+  "version": "2.2.0",
   "name": "BCLib",
   "description": "A library for BetterX team mods",
   "authors": [
@@ -37,7 +37,7 @@
       "org.betterx.bclib.integration.emi.EMIPlugin"
     ],
     "fabric-datagen": [
-      "org.betterx.bclib.BCLibDatagen"
+      "org.betterx.bclib.datagen.BCLibDatagen"
     ]
   },
   "accessWidener": "bclib.accesswidener",
@@ -52,7 +52,7 @@
     "fabricloader": ">=0.14.10",
     "fabric": ">=0.65.0",
     "minecraft": [
-      "1.19.3-alpha.22.43.a"
+      "1.19.3-beta.3"
     ]
   },
   "custom": {

@@ -12,6 +12,7 @@ import org.betterx.worlds.together.tag.v3.MineableTags;
 import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
@@ -49,7 +50,7 @@ public class BlockRegistry extends BaseRegistry<Block> {
             FlammableBlockRegistry.getDefaultInstance().add(block, 5, 5);
         }
 
-        block = Registry.register(Registry.BLOCK, id, block);
+        block = Registry.register(BuiltInRegistries.BLOCK, id, block);
         getModBlocks(id.getNamespace()).add(block);
 
         if (block instanceof BaseLeavesBlock) {
@@ -80,7 +81,7 @@ public class BlockRegistry extends BaseRegistry<Block> {
             return block;
         }
         getModBlocks(id.getNamespace()).add(block);
-        return Registry.register(Registry.BLOCK, id, block);
+        return Registry.register(BuiltInRegistries.BLOCK, id, block);
     }
 
     private Item registerBlockItem(ResourceLocation id, BlockItem item) {
@@ -91,7 +92,7 @@ public class BlockRegistry extends BaseRegistry<Block> {
     @Override
     public void registerItem(ResourceLocation id, Item item) {
         if (item != null && item != Items.AIR) {
-            Registry.register(Registry.ITEM, id, item);
+            Registry.register(BuiltInRegistries.ITEM, id, item);
             getModBlockItems(id.getNamespace()).add(item);
         }
     }

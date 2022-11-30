@@ -3,6 +3,7 @@ package org.betterx.bclib.api.v2.levelgen.structures;
 import org.betterx.worlds.together.tag.v3.TagManager;
 
 import com.mojang.serialization.Codec;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
@@ -16,6 +17,10 @@ import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement
 import java.util.function.Function;
 
 public class BCLStructureBuilder<S extends Structure> {
+    public record Context(BootstapContext<Structure> bootstrapContext) {
+
+    }
+
     private static final BCLStructureBuilder INSTANCE = new BCLStructureBuilder();
 
     private ResourceLocation structureID;

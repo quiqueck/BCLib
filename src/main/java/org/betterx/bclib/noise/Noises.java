@@ -5,6 +5,7 @@ import org.betterx.bclib.BCLib;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
@@ -19,7 +20,7 @@ public class Noises {
             "roughness_noise"));
 
     public static ResourceKey<NormalNoise.NoiseParameters> createKey(ResourceLocation loc) {
-        return ResourceKey.create(Registry.NOISE_REGISTRY, loc);
+        return ResourceKey.create(Registries.NOISE, loc);
     }
 
     public static NormalNoise createNoise(
@@ -36,7 +37,7 @@ public class Noises {
             RandomSource randomSource,
             ResourceKey<NormalNoise.NoiseParameters> noise
     ) {
-        final Registry<NormalNoise.NoiseParameters> registry = registryAccess.registryOrThrow(Registry.NOISE_REGISTRY);
+        final Registry<NormalNoise.NoiseParameters> registry = registryAccess.registryOrThrow(Registries.NOISE);
         return noiseIntances.computeIfAbsent(noise, (key) -> createNoise(registry, randomSource, noise));
     }
 }

@@ -19,6 +19,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.dispenser.ShearsDispenseItemBehavior;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -138,7 +139,7 @@ public class ItemRegistry extends BaseRegistry<Item> {
     @Override
     public void registerItem(ResourceLocation id, Item item) {
         if (item != null && item != Items.AIR) {
-            Registry.register(Registry.ITEM, id, item);
+            Registry.register(BuiltInRegistries.ITEM, id, item);
             getModItems(id.getNamespace()).add(item);
         }
     }

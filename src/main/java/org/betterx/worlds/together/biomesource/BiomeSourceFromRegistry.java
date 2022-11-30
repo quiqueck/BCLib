@@ -1,11 +1,11 @@
 package org.betterx.worlds.together.biomesource;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
 
 public interface BiomeSourceFromRegistry<T extends BiomeSource> {
-    Registry<Biome> getBiomeRegistry();
+    HolderGetter<Biome> getBiomeRegistry();
     boolean didBiomeRegistryChange();
 
     default <R extends BiomeSource> boolean togetherBiomeSourceContentChanged(BiomeSourceFromRegistry<R> other) {

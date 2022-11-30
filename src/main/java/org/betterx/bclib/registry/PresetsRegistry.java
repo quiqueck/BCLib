@@ -44,7 +44,7 @@ public class PresetsRegistry implements WorldPresetBootstrap {
                         BCLib.makeID("large"),
                         (overworldStem, netherContext, endContext, noiseSettings, noiseBasedOverworld) -> {
                             Holder<NoiseGeneratorSettings> largeBiomeGenerator = noiseSettings
-                                    .getOrCreateHolderOrThrow(NoiseGeneratorSettings.LARGE_BIOMES);
+                                    .getOrThrow(NoiseGeneratorSettings.LARGE_BIOMES);
                             return buildPreset(
                                     noiseBasedOverworld.make(
                                             overworldStem.generator().getBiomeSource(),
@@ -61,14 +61,13 @@ public class PresetsRegistry implements WorldPresetBootstrap {
                 BCLib.makeID("amplified"),
                 (overworldStem, netherContext, endContext, noiseSettings, noiseBasedOverworld) -> {
                     Holder<NoiseGeneratorSettings> amplifiedBiomeGenerator = noiseSettings
-                            .getOrCreateHolderOrThrow(NoiseGeneratorSettings.AMPLIFIED);
+                            .getOrThrow(NoiseGeneratorSettings.AMPLIFIED);
 
                     WorldGenUtil.Context amplifiedNetherContext = new WorldGenUtil.Context(
                             netherContext.biomes,
                             netherContext.dimension,
                             netherContext.structureSets,
-                            netherContext.noiseParameters,
-                            Holder.direct(BCLChunkGenerator.amplifiedNether())
+                            noiseSettings.getOrThrow(BCLChunkGenerator.AMPLIFIED_NETHER)
                     );
 
                     return buildPreset(

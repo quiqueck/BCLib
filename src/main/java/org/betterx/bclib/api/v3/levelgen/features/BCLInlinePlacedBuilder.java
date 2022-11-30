@@ -11,8 +11,10 @@ import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 
 public class BCLInlinePlacedBuilder<F extends Feature<FC>, FC extends FeatureConfiguration> extends CommonPlacedFeatureBuilder<F, FC, BCLInlinePlacedBuilder<F, FC>> {
     private final BCLConfigureFeature<F, FC> cFeature;
+    protected final BCLFeatureBuilder.Context ctx;
 
-    private BCLInlinePlacedBuilder(BCLConfigureFeature<F, FC> cFeature) {
+    private BCLInlinePlacedBuilder(BCLFeatureBuilder.Context ctx, BCLConfigureFeature<F, FC> cFeature) {
+        this.ctx = ctx;
         this.cFeature = cFeature;
     }
 
@@ -23,10 +25,11 @@ public class BCLInlinePlacedBuilder<F extends Feature<FC>, FC extends FeatureCon
      * @return {@link CommonPlacedFeatureBuilder} instance.
      */
     public static <F extends Feature<FC>, FC extends FeatureConfiguration> BCLInlinePlacedBuilder<F, FC> place(
+            BCLFeatureBuilder.Context ctx,
             ResourceLocation featureID,
             Holder<ConfiguredFeature<FC, F>> holder
     ) {
-        return place(BCLConfigureFeature.create(holder));
+        return place(ctx, BCLConfigureFeature.create(holder));
     }
 
 
@@ -37,9 +40,10 @@ public class BCLInlinePlacedBuilder<F extends Feature<FC>, FC extends FeatureCon
      * @return {@link CommonPlacedFeatureBuilder} instance.
      */
     static <F extends Feature<FC>, FC extends FeatureConfiguration> BCLInlinePlacedBuilder<F, FC> place(
+            BCLFeatureBuilder.Context ctx,
             BCLConfigureFeature<F, FC> cFeature
     ) {
-        return new BCLInlinePlacedBuilder(cFeature);
+        return new BCLInlinePlacedBuilder(ctx, cFeature);
     }
 
     /**
@@ -68,7 +72,7 @@ public class BCLInlinePlacedBuilder<F extends Feature<FC>, FC extends FeatureCon
      */
     public Holder<PlacedFeature> build(Holder<ConfiguredFeature<FC, F>> feature) {
         PlacementModifier[] modifiers = modifications.toArray(new PlacementModifier[modifications.size()]);
-        return PlacementUtils.inlinePlaced(feature, modifiers);
+        return PlacementUtils.inlinePlaced((Holder<ConfiguredFeature<?, ?>>) (Object) feature, modifiers);
     }
 
     /**
@@ -82,4 +86,14 @@ public class BCLInlinePlacedBuilder<F extends Feature<FC>, FC extends FeatureCon
     }
 
 
+    public BCLFeatureBuilder.RandomPatch inRandomPatch(ResourceLocation id) {
+        return ctx.startRandomPatch(id, build());
+    }
+
+    public BCLFeatureBuilder.RandomPatch randomBonemealDistribution(ResourceLocation id) {
+        return inRandomPatch(id)
+                .tries(9)
+                .spreadXZ(3)
+                .spreadY(1);
+    }
 }

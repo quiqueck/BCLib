@@ -19,10 +19,13 @@ import java.util.stream.Collectors;
 
 public class SurfaceRuleUtil {
     private static List<SurfaceRules.RuleSource> getRulesForBiome(ResourceLocation biomeID) {
-        Registry<AssignedSurfaceRule> registry = SurfaceRuleRegistry.BUILTIN_SURFACE_RULES;
+        Registry<AssignedSurfaceRule> registry = null;
         if (WorldBootstrap.getLastRegistryAccess() != null)
             registry = WorldBootstrap.getLastRegistryAccess()
                                      .registryOrThrow(SurfaceRuleRegistry.SURFACE_RULES_REGISTRY);
+
+        if (registry == null) return List.of();
+
         return registry.stream()
                        .filter(a -> a != null && a.biomeID != null && a.biomeID.equals(
                                biomeID))

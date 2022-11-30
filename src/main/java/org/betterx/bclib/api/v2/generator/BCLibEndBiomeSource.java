@@ -13,10 +13,9 @@ import org.betterx.worlds.together.biomesource.ReloadableBiomeSource;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.Holder;
-import net.minecraft.core.QuartPos;
-import net.minecraft.core.Registry;
-import net.minecraft.core.SectionPos;
+import net.minecraft.core.*;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -38,8 +37,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
     public static Codec<BCLibEndBiomeSource> CODEC
             = RecordCodecBuilder.create((instance) -> instance.group(
                                                                       RegistryOps
-                                                                              .retrieveRegistry(Registry.BIOME_REGISTRY)
-                                                                              .forGetter((theEndBiomeSource) -> theEndBiomeSource.biomeRegistry),
+                                                                              .retrieveElement(Registries.BIOME),
                                                                       Codec
                                                                               .LONG
                                                                               .fieldOf("seed")
@@ -70,16 +68,24 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
 
     private BCLEndBiomeSourceConfig config;
 
-    public BCLibEndBiomeSource(Registry<Biome> biomeRegistry, long seed, BCLEndBiomeSourceConfig config) {
+    private BCLibEndBiomeSource(
+            Holder.Reference<Registry<Biome>> registryReference,
+            long seed,
+            BCLEndBiomeSourceConfig bclEndBiomeSourceConfig
+    ) {
+        this(registryReference.value().asLookup(), seed, bclEndBiomeSourceConfig);
+    }
+
+    private BCLibEndBiomeSource(HolderGetter<Biome> biomeRegistry, long seed, BCLEndBiomeSourceConfig config) {
         this(biomeRegistry, seed, config, true);
     }
 
-    public BCLibEndBiomeSource(Registry<Biome> biomeRegistry, BCLEndBiomeSourceConfig config) {
+    public BCLibEndBiomeSource(HolderGetter<Biome> biomeRegistry, BCLEndBiomeSourceConfig config) {
         this(biomeRegistry, 0, config, false);
     }
 
     private BCLibEndBiomeSource(
-            Registry<Biome> biomeRegistry,
+            HolderGetter<Biome> biomeRegistry,
             long seed,
             BCLEndBiomeSourceConfig config,
             boolean initMaps
@@ -88,7 +94,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
     }
 
     private BCLibEndBiomeSource(
-            Registry<Biome> biomeRegistry,
+            HolderGetter<Biome> biomeRegistry,
             List<Holder<Biome>> list,
             long seed,
             BCLEndBiomeSourceConfig config,
@@ -104,6 +110,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
             initMap(seed);
         }
     }
+
 
     @NotNull
     private void rebuildBiomePickers() {
@@ -243,8 +250,8 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
         return new BCLibEndBiomeSource(
                 this.biomeRegistry,
                 datapackBiomes.stream()
-                              .filter(b -> b.isValidInRegistry(biomeRegistry) && b.unwrapKey()
-                                                                                  .orElse(null) != BCLBiomeRegistry.EMPTY_BIOME.getBiomeKey())
+                              .filter(b -> b.unwrapKey()
+                                            .orElse(null) != BCLBiomeRegistry.EMPTY_BIOME.getBiomeKey())
                               .toList(),
                 this.currentSeed,
                 this.config,
@@ -252,7 +259,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
         );
     }
 
-    private static List<Holder<Biome>> getNonVanillaBiomes(Registry<Biome> biomeRegistry) {
+    private static List<Holder<Biome>> getNonVanillaBiomes(HolderGetter<Biome> biomeRegistry) {
         return getBiomes(
                 biomeRegistry,
                 Configs.BIOMES_CONFIG.getExcludeMatching(BiomeAPI.BiomeType.END),
@@ -261,7 +268,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
         );
     }
 
-    private static List<Holder<Biome>> getBiomes(Registry<Biome> biomeRegistry) {
+    private static List<Holder<Biome>> getBiomes(HolderGetter<Biome> biomeRegistry) {
         return getBiomes(
                 biomeRegistry,
                 Configs.BIOMES_CONFIG.getExcludeMatching(BiomeAPI.BiomeType.END),
@@ -293,7 +300,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
     }
 
     public static void register() {
-        Registry.register(Registry.BIOME_SOURCE, BCLib.makeID("end_biome_source"), CODEC);
+        Registry.register(BuiltInRegistries.BIOME_SOURCE, BCLib.makeID("end_biome_source"), CODEC);
     }
 
     @Override

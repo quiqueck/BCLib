@@ -7,7 +7,8 @@ import org.betterx.bclib.api.v2.generator.GeneratorOptions;
 import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
 import org.betterx.bclib.config.Configs;
 
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -41,7 +42,7 @@ final class BiomeSourcePatch extends ForcedLevelPatch {
 
         final CompoundTag worldGenSettings = root.getCompound("Data").getCompound("WorldGenSettings");
         final CompoundTag dimensions = worldGenSettings.getCompound("dimensions");
-        final RegistryAccess registryAccess = BuiltinRegistries.createAccess();
+        final HolderLookup.Provider registryAccess = VanillaRegistries.createLookup();
         final RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
 
 
@@ -82,7 +83,7 @@ final class BiomeSourcePatch extends ForcedLevelPatch {
     private boolean checkDimension(
             CompoundTag worldGenSettings,
             CompoundTag dimensions,
-            RegistryAccess registryAccess,
+            HolderLookup.Provider registryAccess,
             RegistryOps<Tag> registryOps,
             ResourceKey<LevelStem> dimensionKey
     ) {

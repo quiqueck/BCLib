@@ -4,6 +4,7 @@ import org.betterx.bclib.BCLib;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
@@ -85,7 +86,7 @@ public class PlacementModifiers {
             ResourceLocation location,
             Codec<P> codec
     ) {
-        return Registry.register(Registry.PLACEMENT_MODIFIERS, location, () -> codec);
+        return Registry.register(BuiltInRegistries.PLACEMENT_MODIFIER_TYPE, location, () -> codec);
     }
 
     public static void ensureStaticInitialization() {

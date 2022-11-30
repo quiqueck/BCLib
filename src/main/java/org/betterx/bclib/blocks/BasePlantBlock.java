@@ -104,7 +104,7 @@ public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderL
         this(
                 propMod.amend(Properties
                         .of(replaceable ? Material.REPLACEABLE_PLANT : Material.PLANT)
-                        .lightLevel((state)->light)
+                        .lightLevel((state) -> light)
                         .sound(SoundType.GRASS)
                         .noCollission()
                         .offsetType(BlockBehaviour.OffsetType.XZ)
@@ -169,7 +169,7 @@ public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderL
     }
 
     @Override
-    public boolean isValidBonemealTarget(BlockGetter world, BlockPos pos, BlockState state, boolean isClient) {
+    public boolean isValidBonemealTarget(LevelReader world, BlockPos pos, BlockState state, boolean isClient) {
         return true;
     }
 

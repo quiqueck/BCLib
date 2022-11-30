@@ -6,6 +6,7 @@ import org.betterx.bclib.api.v3.levelgen.features.features.*;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -99,6 +100,6 @@ public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> 
             ResourceLocation location,
             F feature
     ) {
-        return Registry.register(Registry.FEATURE, location, feature);
+        return Registry.register(BuiltInRegistries.FEATURE, location, feature);
     }
 }

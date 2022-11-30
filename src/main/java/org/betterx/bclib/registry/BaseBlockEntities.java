@@ -9,6 +9,7 @@ import org.betterx.bclib.blocks.BaseFurnaceBlock;
 import org.betterx.bclib.blocks.BaseSignBlock;
 
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -29,35 +30,35 @@ public class BaseBlockEntities {
             ResourceLocation typeId,
             BlockEntitySupplier<? extends T> supplier
     ) {
-        return Registry.register(Registry.BLOCK_ENTITY_TYPE, typeId, new DynamicBlockEntityType<>(supplier));
+        return Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, typeId, new DynamicBlockEntityType<>(supplier));
     }
 
     public static void register() {
     }
 
     public static Block[] getChests() {
-        return Registry.BLOCK
+        return BuiltInRegistries.BLOCK
                 .stream()
                 .filter(block -> block instanceof BaseChestBlock)
                 .toArray(Block[]::new);
     }
 
     public static Block[] getBarrels() {
-        return Registry.BLOCK
+        return BuiltInRegistries.BLOCK
                 .stream()
                 .filter(block -> block instanceof BaseBarrelBlock)
                 .toArray(Block[]::new);
     }
 
     public static Block[] getSigns() {
-        return Registry.BLOCK
+        return BuiltInRegistries.BLOCK
                 .stream()
                 .filter(block -> block instanceof BaseSignBlock)
                 .toArray(Block[]::new);
     }
 
     public static Block[] getFurnaces() {
-        return Registry.BLOCK
+        return BuiltInRegistries.BLOCK
                 .stream()
                 .filter(block -> block instanceof BaseFurnaceBlock)
                 .toArray(Block[]::new);

@@ -1,6 +1,6 @@
 package org.betterx.bclib.interfaces;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface AlloyingRecipeWorkstation {
     static List<Block> getWorkstations() {
-        return Registry.BLOCK
+        return BuiltInRegistries.BLOCK
                 .stream()
                 .filter(b -> b instanceof AlloyingRecipeWorkstation)
                 .toList();

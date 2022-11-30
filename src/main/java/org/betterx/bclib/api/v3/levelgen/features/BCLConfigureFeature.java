@@ -38,12 +38,12 @@ public class BCLConfigureFeature<F extends Feature<FC>, FC extends FeatureConfig
     }
 
 
-    public BCLPlacedFeatureBuilder<F, FC> place() {
-        return place(this.id);
+    public BCLPlacedFeatureBuilder<F, FC> place(BCLPlacedFeatureBuilder.Context ctx) {
+        return place(ctx, this.id);
     }
 
-    public BCLPlacedFeatureBuilder<F, FC> place(ResourceLocation id) {
-        return BCLPlacedFeatureBuilder.place(id, this);
+    public BCLPlacedFeatureBuilder<F, FC> place(BCLPlacedFeatureBuilder.Context ctx, ResourceLocation id) {
+        return BCLPlacedFeatureBuilder.place(ctx, id, this);
     }
 
     static <F extends Feature<FC>, FC extends FeatureConfiguration> BCLConfigureFeature<F, FC> create(Holder<ConfiguredFeature<FC, F>> registeredFeature) {

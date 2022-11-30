@@ -9,10 +9,10 @@ import org.betterx.worlds.together.tag.v3.TagRegistry;
 import org.betterx.worlds.together.worldPreset.client.WorldPresetsClient;
 
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.WorldPresetTags;
@@ -32,8 +32,8 @@ public class WorldPresets {
         LevelStem make(BiomeSource biomeSource, Holder<NoiseGeneratorSettings> noiseGeneratorSettings);
     }
 
-    public static final TagRegistry.Simple<WorldPreset> WORLD_PRESETS =
-            TagManager.registerType(BuiltInRegistries.WORLD_PRESET, "tags/worldgen/world_preset");
+    public static final TagRegistry.UnTyped<WorldPreset> WORLD_PRESETS =
+            TagManager.registerType(Registries.WORLD_PRESET, "tags/worldgen/world_preset");
     private static Map<ResourceKey<WorldPreset>, PresetBuilder> BUILDERS = Maps.newHashMap();
     private static ResourceKey<WorldPreset> DEFAULT = net.minecraft.world.level.levelgen.presets.WorldPresets.NORMAL;
 
@@ -87,23 +87,24 @@ public class WorldPresets {
 
     @ApiStatus.Internal
     public static void bootstrapPresets(
-            Registry<WorldPreset> presets,
+            BootstapContext<WorldPreset> bootstrapContext,
             LevelStem overworldStem,
             WorldGenUtil.Context netherContext,
             WorldGenUtil.Context endContext,
-            Registry<NoiseGeneratorSettings> noiseSettings,
+            HolderGetter<NoiseGeneratorSettings> noiseSettings,
             OverworldBuilder noiseBasedOverworld
     ) {
         EntrypointUtil.getCommon(WorldPresetBootstrap.class)
                       .forEach(e -> e.bootstrapWorldPresets());
 
         for (Map.Entry<ResourceKey<WorldPreset>, PresetBuilder> e : BUILDERS.entrySet()) {
-            TogetherWorldPreset preset = e.getValue()
-                                          .create(
-                                                  overworldStem, netherContext, endContext,
-                                                  noiseSettings, noiseBasedOverworld
-                                          );
-            BuiltInRegistries.register(presets, e.getKey(), preset);
+            //TODO:1.19.3 called out of sync
+//            TogetherWorldPreset preset = e.getValue()
+//                                          .create(
+//                                                  overworldStem, netherContext, endContext,
+//                                                  noiseSettings, noiseBasedOverworld
+//                                          );
+//            bootstrapContext.register(e.getKey(), preset);
         }
         BUILDERS = null;
     }
@@ -127,7 +128,7 @@ public class WorldPresets {
                 LevelStem overworldStem,
                 WorldGenUtil.Context netherContext,
                 WorldGenUtil.Context endContext,
-                Registry<NoiseGeneratorSettings> noiseSettings,
+                HolderGetter<NoiseGeneratorSettings> noiseSettings,
                 OverworldBuilder noiseBasedOverworld
         );
     }

@@ -17,6 +17,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -41,8 +42,6 @@ public class LevelGenUtil {
         return new LevelStem(
                 context.dimension,
                 new BCLChunkGenerator(
-                        context.structureSets,
-                        context.noiseParameters,
                         netherSource,
                         context.generatorSettings
                 )
@@ -54,8 +53,6 @@ public class LevelGenUtil {
         return new LevelStem(
                 context.dimension,
                 new BCLChunkGenerator(
-                        context.structureSets,
-                        context.noiseParameters,
                         endSource,
                         context.generatorSettings
                 )
@@ -70,7 +67,7 @@ public class LevelGenUtil {
             Registry<LevelStem> dimensionRegistry,
             ChunkGenerator generator
     ) {
-        Registry<DimensionType> dimensionTypeRegistry = registryAccess.registryOrThrow(Registry.DIMENSION_TYPE_REGISTRY);
+        Registry<DimensionType> dimensionTypeRegistry = registryAccess.registryOrThrow(Registries.DIMENSION_TYPE);
         Registry<LevelStem> newDimensions = withDimension(
                 dimensionKey,
                 dimensionTypeKey,
@@ -91,7 +88,7 @@ public class LevelGenUtil {
 
         LevelStem levelStem = inputDimensions.get(dimensionKey);
         Holder<DimensionType> dimensionType = levelStem == null
-                ? dimensionTypeRegistry.getOrCreateHolderOrThrow(dimensionTypeKey)
+                ? dimensionTypeRegistry.getHolderOrThrow(dimensionTypeKey)
                 : levelStem.type();
         return withDimension(dimensionKey, inputDimensions, new LevelStem(dimensionType, generator));
     }
@@ -102,7 +99,7 @@ public class LevelGenUtil {
             LevelStem levelStem
     ) {
         MappedRegistry<LevelStem> writableRegistry = new MappedRegistry<>(
-                Registry.LEVEL_STEM_REGISTRY,
+                Registries.LEVEL_STEM,
                 Lifecycle.experimental()
         );
         writableRegistry.register(

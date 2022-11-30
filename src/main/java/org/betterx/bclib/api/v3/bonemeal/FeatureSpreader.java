@@ -3,7 +3,7 @@ package org.betterx.bclib.api.v3.bonemeal;
 import org.betterx.bclib.api.v3.levelgen.features.BCLConfigureFeature;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -19,7 +19,7 @@ public class FeatureSpreader implements BonemealNyliumLike {
 
     @Override
     public boolean isValidBonemealTarget(
-            BlockGetter blockGetter,
+            LevelReader blockGetter,
             BlockPos blockPos,
             BlockState blockState,
             boolean bl

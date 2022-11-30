@@ -15,14 +15,13 @@ import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.KeyDispatchCodec;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagEntry;
 import net.minecraft.tags.TagFile;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -141,22 +140,22 @@ public class DumpDatapack {
     ) {
         BCLib.LOGGER.info("- Serializing: " + registry.key().toString());
         DUMPERS.clear();
-        DUMPERS.put(Registry.BIOME_REGISTRY.location(), new Dumper<>((Biome v) -> Biome.DIRECT_CODEC));
+        DUMPERS.put(Registries.BIOME.location(), new Dumper<>((Biome v) -> Biome.DIRECT_CODEC));
         DUMPERS.put(
-                Registry.CONFIGURED_FEATURE_REGISTRY.location(),
+                Registries.CONFIGURED_FEATURE.location(),
                 new Dumper<>((ConfiguredFeature v) -> ConfiguredFeature.DIRECT_CODEC)
         );
         DUMPERS.put(
-                Registry.WORLD_PRESET_REGISTRY.location(),
+                Registries.WORLD_PRESET.location(),
                 new Dumper<>((WorldPreset v) -> WorldPreset.DIRECT_CODEC)
         );
         DUMPERS.put(
-                Registry.NOISE_GENERATOR_SETTINGS_REGISTRY.location(),
+                Registries.NOISE_SETTINGS.location(),
                 new Dumper<>((NoiseGeneratorSettings v) -> NoiseGeneratorSettings.DIRECT_CODEC)
         );
-        DUMPERS.put(Registry.STRUCTURE_REGISTRY.location(), new Dumper<>((Structure v) -> Structure.DIRECT_CODEC));
+        DUMPERS.put(Registries.STRUCTURE.location(), new Dumper<>((Structure v) -> Structure.DIRECT_CODEC));
         DUMPERS.put(
-                Registry.DIMENSION_TYPE_REGISTRY.location(),
+                Registries.DIMENSION_TYPE.location(),
                 new Dumper<>((DimensionType v) -> DimensionType.DIRECT_CODEC)
         );
         DUMPERS.put(BCLBiomeRegistry.BCL_BIOMES_REGISTRY.location(), new Dumper<>((BCLBiome v) -> v.codec().codec()));
@@ -164,43 +163,37 @@ public class DumpDatapack {
                 SurfaceRuleRegistry.SURFACE_RULES_REGISTRY.location(),
                 new Dumper<>((AssignedSurfaceRule v) -> AssignedSurfaceRule.CODEC)
         );
-        DUMPERS.put(Registry.SOUND_EVENT_REGISTRY.location(), new Dumper<>((SoundEvent v) -> SoundEvent.CODEC));
         DUMPERS.put(
-                Registry.CONFIGURED_CARVER_REGISTRY.location(),
+                Registries.CONFIGURED_CARVER.location(),
                 new Dumper<>((ConfiguredWorldCarver v) -> ConfiguredWorldCarver.DIRECT_CODEC)
         );
         DUMPERS.put(
-                Registry.PROCESSOR_LIST_REGISTRY.location(),
+                Registries.PROCESSOR_LIST.location(),
                 new Dumper<>((StructureProcessorList v) -> StructureProcessorType.DIRECT_CODEC)
         );
         DUMPERS.put(
-                Registry.FLAT_LEVEL_GENERATOR_PRESET_REGISTRY.location(),
+                Registries.FLAT_LEVEL_GENERATOR_PRESET.location(),
                 new Dumper<>((FlatLevelGeneratorPreset v) -> FlatLevelGeneratorPreset.DIRECT_CODEC)
         );
         DUMPERS.put(
-                Registry.DENSITY_FUNCTION_REGISTRY.location(),
+                Registries.DENSITY_FUNCTION.location(),
                 new Dumper<>((DensityFunction v) -> DensityFunction.DIRECT_CODEC)
         );
         DUMPERS.put(
-                Registry.PLACED_FEATURE_REGISTRY.location(),
+                Registries.PLACED_FEATURE.location(),
                 new Dumper<>((PlacedFeature v) -> PlacedFeature.DIRECT_CODEC)
         );
         DUMPERS.put(
-                Registry.NOISE_REGISTRY.location(),
-                new Dumper<>((NormalNoise.NoiseParameters v) -> NormalNoise.NoiseParameters.DIRECT_CODEC)
-        );
-        DUMPERS.put(
-                Registry.NOISE_REGISTRY.location(),
+                Registries.NOISE.location(),
                 new Dumper<>((NormalNoise.NoiseParameters v) -> NormalNoise.NoiseParameters.DIRECT_CODEC)
         );
 
-
         DUMPERS.put(
-                Registry.TEMPLATE_POOL_REGISTRY.location(),
+                Registries.TEMPLATE_POOL.location(),
                 new Dumper<>((StructureTemplatePool v) -> StructureTemplatePool.DIRECT_CODEC)
         );
         DUMPERS.put(
-                Registry.STRUCTURE_SET_REGISTRY.location(),
+                Registries.STRUCTURE_SET.location(),
                 new Dumper<>((StructureSet v) -> StructureSet.DIRECT_CODEC)
         );
 

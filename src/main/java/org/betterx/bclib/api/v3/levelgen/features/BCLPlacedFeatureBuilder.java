@@ -1,7 +1,10 @@
 package org.betterx.bclib.api.v3.levelgen.features;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
@@ -13,8 +16,14 @@ public class BCLPlacedFeatureBuilder<F extends Feature<FC>, FC extends FeatureCo
     private final ResourceLocation featureID;
     private GenerationStep.Decoration decoration = GenerationStep.Decoration.VEGETAL_DECORATION;
     private final BCLConfigureFeature<F, FC> cFeature;
+    protected final BCLPlacedFeatureBuilder.Context ctx;
 
-    private BCLPlacedFeatureBuilder(ResourceLocation featureID, BCLConfigureFeature<F, FC> cFeature) {
+    private BCLPlacedFeatureBuilder(
+            Context ctx,
+            ResourceLocation featureID,
+            BCLConfigureFeature<F, FC> cFeature
+    ) {
+        this.ctx = ctx;
         this.featureID = featureID;
         this.cFeature = cFeature;
     }
@@ -39,10 +48,11 @@ public class BCLPlacedFeatureBuilder<F extends Feature<FC>, FC extends FeatureCo
      * @return {@link CommonPlacedFeatureBuilder} instance.
      */
     public static <F extends Feature<FC>, FC extends FeatureConfiguration> BCLPlacedFeatureBuilder<F, FC> place(
+            Context ctx,
             ResourceLocation featureID,
             Holder<ConfiguredFeature<FC, F>> holder
     ) {
-        return place(featureID, BCLConfigureFeature.create(holder));
+        return place(ctx, featureID, BCLConfigureFeature.create(holder));
     }
 
 
@@ -54,11 +64,28 @@ public class BCLPlacedFeatureBuilder<F extends Feature<FC>, FC extends FeatureCo
      * @return {@link CommonPlacedFeatureBuilder} instance.
      */
     static <F extends Feature<FC>, FC extends FeatureConfiguration> BCLPlacedFeatureBuilder<F, FC> place(
+            Context ctx,
             ResourceLocation featureID,
             BCLConfigureFeature<F, FC> cFeature
     ) {
-        return new BCLPlacedFeatureBuilder(featureID, cFeature);
+        return new BCLPlacedFeatureBuilder(ctx, featureID, cFeature);
     }
+
+    public static <F extends Feature<FC>, FC extends FeatureConfiguration> BCLPlacedFeatureBuilder<F, FC> place(
+            BCLPlacedFeatureBuilder.Context ctx,
+            ResourceLocation configuredFeature
+    ) {
+        ResourceKey<ConfiguredFeature<?, ?>> key = ResourceKey.create(
+                Registries.CONFIGURED_FEATURE,
+                configuredFeature
+        );
+        Holder<ConfiguredFeature<FC, F>> holder = (Holder<ConfiguredFeature<FC, F>>) (Object) ctx.bootstrapContext
+                .lookup(Registries.CONFIGURED_FEATURE)
+                .getOrThrow(key);
+        var cFeature = new BCLConfigureFeature<F, FC>(configuredFeature, holder, false);
+        return new BCLPlacedFeatureBuilder<F, FC>(ctx, configuredFeature, cFeature);
+    }
+
 
     /**
      * Builds a new {@link BCLFeature} instance.
@@ -66,12 +93,14 @@ public class BCLPlacedFeatureBuilder<F extends Feature<FC>, FC extends FeatureCo
      * @return created {@link BCLFeature} instance.
      */
     public Holder<PlacedFeature> build() {
-        Holder<PlacedFeature> p = PlacementUtils.register(
-                featureID.toString(),
-                cFeature.configuredFeature,
+        final ResourceKey<PlacedFeature> key = ResourceKey.create(Registries.PLACED_FEATURE, featureID);
+        PlacementUtils.register(
+                ctx.bootstrapContext,
+                key,
+                (Holder<ConfiguredFeature<?, ?>>) (Object) cFeature.configuredFeature,
                 modifications
         );
-        return p;
+        return ctx.bootstrapContext.lookup(Registries.PLACED_FEATURE).get(key).orElseThrow();
     }
 
 
@@ -84,5 +113,8 @@ public class BCLPlacedFeatureBuilder<F extends Feature<FC>, FC extends FeatureCo
     public BCLFeature<F, FC> buildAndRegister() {
         Holder<PlacedFeature> p = build();
         return new BCLFeature(cFeature, p, decoration);
+    }
+
+    public record Context(BootstapContext<PlacedFeature> bootstrapContext) {
     }
 }

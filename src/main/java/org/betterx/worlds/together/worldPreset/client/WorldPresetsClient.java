@@ -7,13 +7,12 @@ import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import java.util.Optional;
-
 @Environment(EnvType.CLIENT)
 public class WorldPresetsClient {
     public static void registerCustomizeUI(ResourceKey<WorldPreset> key, PresetEditor setupScreen) {
         if (setupScreen != null) {
-            PresetEditor.EDITORS.put(Optional.of(key), setupScreen);
+            //TODO: 1.19.3 this is called out of order
+            //PresetEditor.EDITORS.put(Optional.of(key), setupScreen);
         }
     }
 

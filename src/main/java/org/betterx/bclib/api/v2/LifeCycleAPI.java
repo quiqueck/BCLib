@@ -3,6 +3,7 @@ package org.betterx.bclib.api.v2;
 import org.betterx.bclib.api.v2.datafixer.DataFixerAPI;
 
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -106,7 +107,7 @@ public class LifeCycleAPI {
         ));
 
         final long seed = world.getSeed();
-        final Registry<Biome> biomeRegistry = world.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY);
+        final Registry<Biome> biomeRegistry = world.registryAccess().registryOrThrow(Registries.BIOME);
         onLoadLevelBiomes.forEach(c -> c.onLoad(world, seed, biomeRegistry));
     }
 

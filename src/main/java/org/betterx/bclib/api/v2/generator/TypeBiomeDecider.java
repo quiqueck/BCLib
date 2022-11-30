@@ -2,7 +2,7 @@ package org.betterx.bclib.api.v2.generator;
 
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.world.level.biome.Biome;
 
 public abstract class TypeBiomeDecider extends BiomeDecider {
@@ -12,7 +12,7 @@ public abstract class TypeBiomeDecider extends BiomeDecider {
         this(null, assignedType);
     }
 
-    protected TypeBiomeDecider(Registry<Biome> biomeRegistry, BiomeAPI.BiomeType assignedType) {
+    protected TypeBiomeDecider(HolderGetter<Biome> biomeRegistry, BiomeAPI.BiomeType assignedType) {
         super(biomeRegistry, (biome) -> biome.getIntendedType().is(assignedType));
         this.assignedType = assignedType;
     }

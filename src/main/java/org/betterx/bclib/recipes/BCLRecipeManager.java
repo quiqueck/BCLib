@@ -3,6 +3,7 @@ package org.betterx.bclib.recipes;
 import org.betterx.bclib.util.CollectionsUtil;
 
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.Items;
@@ -103,12 +104,12 @@ public class BCLRecipeManager {
             String id,
             S serializer
     ) {
-        return Registry.register(Registry.RECIPE_SERIALIZER, modID + ":" + id, serializer);
+        return Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, modID + ":" + id, serializer);
     }
 
     public static <C extends Container, T extends Recipe<C>> RecipeType<T> registerType(String modID, String type) {
         ResourceLocation recipeTypeId = new ResourceLocation(modID, type);
-        return Registry.register(Registry.RECIPE_TYPE, recipeTypeId, new RecipeType<T>() {
+        return Registry.register(BuiltInRegistries.RECIPE_TYPE, recipeTypeId, new RecipeType<T>() {
             public String toString() {
                 return type;
             }

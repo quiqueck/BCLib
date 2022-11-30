@@ -14,10 +14,10 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
@@ -56,6 +56,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class BiomeAPI {
+
     /**
      * Register {@link BCLBiome} instance and its {@link Biome} if necessary.
      *
@@ -63,17 +64,14 @@ public class BiomeAPI {
      * @param dim      The Dimension fo rthis Biome
      * @return {@link BCLBiome}
      */
-    public static BCLBiome registerBuiltinBiomeAndOverrideIntendedDimension(BCLBiome bclbiome, BiomeType dim) {
-        return registerBiomeAndOverrideIntendedDimension(bclbiome, dim, Registries.BIOME);
-    }
-
-    static BCLBiome registerBiomeAndOverrideIntendedDimension(
+    static BCLBiome registerBuiltinBiomeAndOverrideIntendedDimension(
+            BootstapContext<Biome> bootstrapContext,
             BCLBiome bclbiome,
-            BiomeType dim,
-            Registry<Biome> registryOrNull
+            BiomeType dim
     ) {
+
         bclbiome._setIntendedType(dim);
-        return registerBiome(bclbiome, registryOrNull);
+        return registerBiome(bootstrapContext, bclbiome);
     }
 
     public static class BiomeType {
@@ -290,16 +288,22 @@ public class BiomeAPI {
      * @param bclbiome {@link BCLBiome}
      * @return {@link BCLBiome}
      */
-    static BCLBiome registerBiome(BCLBiome bclbiome, Registry<Biome> registryOrNull) {
-        BiomeType dim = bclbiome.getIntendedType();
+    static BCLBiome registerBiome(BootstapContext<Biome> bootstrapContext, BCLBiome bclbiome) {
+        HolderGetter<Biome> registryOrNull = bootstrapContext.lookup(Registries.BIOME);
         if (registryOrNull != null
                 && bclbiome.biomeToRegister != null
-                && registryOrNull.get(bclbiome.getID()) == null) {
-            Registry.register(registryOrNull, bclbiome.getBiomeKey(), bclbiome.biomeToRegister);
+                //TODO: 1.19.3 this was a ResourceLocation lookup, is this a valid test?
+                && registryOrNull.get(bclbiome.getBiomeKey()).map(v -> v.isBound()).orElse(false) == false) {
+            bootstrapContext.register(bclbiome.getBiomeKey(), bclbiome.biomeToRegister);
 
             BCLBiomeRegistry.register(null, bclbiome);
         }
 
+        return finishBiomeRegistration(bclbiome);
+    }
+
+    static BCLBiome finishBiomeRegistration(BCLBiome bclbiome) {
+        BiomeType dim = bclbiome.getIntendedType();
         if (dim != null && dim.is(BiomeType.NETHER)) {
             TagManager.BIOMES.add(BiomeTags.IS_NETHER, bclbiome.getBiomeKey());
             TagManager.BIOMES.add(CommonBiomeTags.IN_NETHER, bclbiome.getBiomeKey());
@@ -313,16 +317,27 @@ public class BiomeAPI {
         return bclbiome;
     }
 
-    public static BCLBiome registerSubBiome(BCLBiome parent, BCLBiome subBiome) {
+    static BCLBiome registerSubBiome(
+            BootstapContext<Biome> bootstrapContext,
+            BCLBiome parent,
+            BCLBiome subBiome
+    ) {
         return registerSubBiome(
+                bootstrapContext,
                 parent,
                 subBiome,
                 parent.getIntendedType()
         );
     }
 
-    public static BCLBiome registerSubBiome(BCLBiome parent, Biome subBiome, float genChance) {
+    static BCLBiome registerSubBiome(
+            BootstapContext<Biome> bootstrapContext,
+            BCLBiome parent,
+            Biome subBiome,
+            float genChance
+    ) {
         return registerSubBiome(
+                bootstrapContext,
                 parent,
                 subBiome,
                 genChance,
@@ -330,16 +345,27 @@ public class BiomeAPI {
         );
     }
 
-    public static BCLBiome registerSubBiome(BCLBiome parent, BCLBiome subBiome, BiomeType dim) {
-        registerBuiltinBiomeAndOverrideIntendedDimension(subBiome, dim);
+    static BCLBiome registerSubBiome(
+            BootstapContext<Biome> bootstrapContext,
+            BCLBiome parent,
+            BCLBiome subBiome,
+            BiomeType dim
+    ) {
+        registerBuiltinBiomeAndOverrideIntendedDimension(bootstrapContext, subBiome, dim);
         parent.addSubBiome(subBiome);
 
         return subBiome;
     }
 
-    public static BCLBiome registerSubBiome(BCLBiome parent, Biome biome, float genChance, BiomeType dim) {
+    static BCLBiome registerSubBiome(
+            BootstapContext<Biome> bootstrapContext,
+            BCLBiome parent,
+            Biome biome,
+            float genChance,
+            BiomeType dim
+    ) {
         BCLBiome subBiome = new BCLBiome(biome, VanillaBiomeSettings.createVanilla().setGenChance(genChance).build());
-        return registerSubBiome(parent, subBiome, dim);
+        return registerSubBiome(bootstrapContext, parent, subBiome, dim);
     }
 
     /**
@@ -349,8 +375,8 @@ public class BiomeAPI {
      * @param biome {@link BCLBiome}
      * @return {@link BCLBiome}
      */
-    public static BCLBiome registerEndLandBiome(BCLBiome biome) {
-        registerBuiltinBiomeAndOverrideIntendedDimension(biome, BiomeType.BCL_END_LAND);
+    static BCLBiome registerEndLandBiome(BootstapContext<Biome> bootstrapContext, BCLBiome biome) {
+        registerBuiltinBiomeAndOverrideIntendedDimension(bootstrapContext, biome, BiomeType.BCL_END_LAND);
 
         float weight = biome.getGenChance();
         ResourceKey<Biome> key = biome.getBiomeKey();
@@ -373,8 +399,8 @@ public class BiomeAPI {
      * @param biome {@link BCLBiome}
      * @return {@link BCLBiome}
      */
-    public static BCLBiome registerEndVoidBiome(BCLBiome biome) {
-        registerBuiltinBiomeAndOverrideIntendedDimension(biome, BiomeType.BCL_END_VOID);
+    static BCLBiome registerEndVoidBiome(BootstapContext<Biome> bootstrapContext, BCLBiome biome) {
+        registerBuiltinBiomeAndOverrideIntendedDimension(bootstrapContext, biome, BiomeType.BCL_END_VOID);
 
         float weight = biome.getGenChance();
         ResourceKey<Biome> key = biome.getBiomeKey();
@@ -392,8 +418,8 @@ public class BiomeAPI {
      * @param biome {@link BCLBiome}
      * @return {@link BCLBiome}
      */
-    public static BCLBiome registerEndCenterBiome(BCLBiome biome) {
-        registerBuiltinBiomeAndOverrideIntendedDimension(biome, BiomeType.BCL_END_CENTER);
+    static BCLBiome registerEndCenterBiome(BootstapContext<Biome> bootstrapContext, BCLBiome biome) {
+        registerBuiltinBiomeAndOverrideIntendedDimension(bootstrapContext, biome, BiomeType.BCL_END_CENTER);
 
         float weight = biome.getGenChance();
         ResourceKey<Biome> key = biome.getBiomeKey();
@@ -411,8 +437,12 @@ public class BiomeAPI {
      * @param biome {@link BCLBiome}
      * @return {@link BCLBiome}
      */
-    public static BCLBiome registerEndBarrensBiome(BCLBiome highlandBiome, BCLBiome biome) {
-        registerBuiltinBiomeAndOverrideIntendedDimension(biome, BiomeType.BCL_END_BARRENS);
+    static BCLBiome registerEndBarrensBiome(
+            BootstapContext<Biome> bootstrapContext,
+            BCLBiome highlandBiome,
+            BCLBiome biome
+    ) {
+        registerBuiltinBiomeAndOverrideIntendedDimension(bootstrapContext, biome, BiomeType.BCL_END_BARRENS);
 
         float weight = biome.getGenChance();
         ResourceKey<Biome> key = biome.getBiomeKey();
@@ -431,8 +461,8 @@ public class BiomeAPI {
      * @param bclBiome {@link BCLBiome}
      * @return {@link BCLBiome}
      */
-    public static BCLBiome registerNetherBiome(BCLBiome bclBiome) {
-        registerBuiltinBiomeAndOverrideIntendedDimension(bclBiome, BiomeType.BCL_NETHER);
+    static BCLBiome registerNetherBiome(BootstapContext<Biome> bootstrapContext, BCLBiome bclBiome) {
+        registerBuiltinBiomeAndOverrideIntendedDimension(bootstrapContext, bclBiome, BiomeType.BCL_NETHER);
 
         ResourceKey<Biome> key = bclBiome.getBiomeKey();
         if (!bclBiome.isEdgeBiome()) {
@@ -451,7 +481,7 @@ public class BiomeAPI {
         BCLBiome endBiome = InternalBiomeAPI.CLIENT.get(biome);
         if (endBiome == null) {
             ResourceLocation id = WorldBootstrap.getLastRegistryAccessOrElseBuiltin()
-                                                .registryOrThrow(Registry.BIOME_REGISTRY)
+                                                .registryOrThrow(Registries.BIOME)
                                                 .getKey(biome);
             endBiome = id == null
                     ? BCLBiomeRegistry.EMPTY_BIOME
@@ -473,9 +503,8 @@ public class BiomeAPI {
             Optional<ResourceKey<Biome>> key = InternalBiomeAPI.biomeRegistry.getResourceKey(biome);
             if (key.isPresent()) return key.get();
         }
-        return BuiltInRegistries.BIOME
-                .getResourceKey(biome)
-                .orElseGet(null);
+
+        return null;
     }
 
     /**
@@ -490,7 +519,9 @@ public class BiomeAPI {
             id = InternalBiomeAPI.biomeRegistry.getKey(biome);
         }
         if (id == null) {
-            id = BuiltinRegistries.BIOME.getKey(biome);
+            final ResourceKey key = getBiomeKey(biome);
+            if (key != null)
+                id = key.location();
         }
 
         if (id == null) {
@@ -531,7 +562,8 @@ public class BiomeAPI {
         if (InternalBiomeAPI.biomeRegistry != null) {
             key = InternalBiomeAPI.biomeRegistry.getResourceKey(biome);
         } else {
-            key = BuiltinRegistries.BIOME.getResourceKey(biome);
+            ResourceKey<Biome> kkey = getBiomeKey(biome);
+            key = kkey == null ? Optional.empty() : Optional.of(kkey);
         }
 
         return getBiomeHolder(key.orElseThrow());
@@ -539,13 +571,13 @@ public class BiomeAPI {
 
     public static Holder<Biome> getBiomeHolder(ResourceKey<Biome> biomeKey) {
         if (InternalBiomeAPI.biomeRegistry != null) {
-            return InternalBiomeAPI.biomeRegistry.getOrCreateHolderOrThrow(biomeKey);
+            return InternalBiomeAPI.biomeRegistry.getHolderOrThrow(biomeKey);
         }
-        return BuiltinRegistries.BIOME.getOrCreateHolderOrThrow(biomeKey);
+        return null;//InternalBiomeAPI.BUILTIN_BIOMES.get(biomeKey).orElse(null);
     }
 
     public static Holder<Biome> getBiomeHolder(ResourceLocation biome) {
-        return getBiomeHolder(ResourceKey.create(Registry.BIOME_REGISTRY, biome));
+        return getBiomeHolder(ResourceKey.create(Registries.BIOME, biome));
     }
 
     /**
@@ -591,7 +623,7 @@ public class BiomeAPI {
 
     public static Holder<Biome> getFromRegistry(ResourceLocation biomeID) {
         if (InternalBiomeAPI.biomeRegistry != null)
-            return InternalBiomeAPI.biomeRegistry.getHolder(ResourceKey.create(Registry.BIOME_REGISTRY, biomeID))
+            return InternalBiomeAPI.biomeRegistry.getHolder(ResourceKey.create(Registries.BIOME, biomeID))
                                                  .orElseThrow();
         return getFromBuiltinRegistry(biomeID);
     }
@@ -605,12 +637,12 @@ public class BiomeAPI {
 
     @Nullable
     public static Holder<Biome> getFromBuiltinRegistry(ResourceLocation biomeID) {
-        return BuiltinRegistries.BIOME.getHolder(ResourceKey.create(Registry.BIOME_REGISTRY, biomeID)).orElse(null);
+        return null;
     }
 
     @Nullable
     public static Holder<Biome> getFromBuiltinRegistry(ResourceKey<Biome> key) {
-        return BuiltinRegistries.BIOME.getHolder(key).orElse(null);
+        return null;
     }
 
 

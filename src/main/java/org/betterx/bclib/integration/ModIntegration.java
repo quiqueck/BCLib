@@ -4,7 +4,6 @@ import org.betterx.bclib.BCLib;
 import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -55,7 +54,7 @@ public abstract class ModIntegration {
     }
 
     public ResourceKey<Biome> getKey(String name) {
-        return ResourceKey.create(Registry.BIOME_REGISTRY, getID(name));
+        return ResourceKey.create(Registries.BIOME, getID(name));
     }
 
     public boolean modIsInstalled() {
@@ -64,11 +63,13 @@ public abstract class ModIntegration {
 
 
     public ConfiguredFeature<?, ?> getConfiguredFeature(String name) {
-        return BuiltInRegistries.CONFIGURED_FEATURE.get(getID(name));
+        //TODO: 1.19.3 find how to change this without having features before a world gets loaded
+        return null; //BuiltInRegistries.CONFIGURED_FEATURE.get(getID(name));
     }
 
     public Holder<Biome> getBiome(String name) {
-        return BuiltInRegistries.BIOME.getHolder(getKey(name)).orElseThrow();
+        //TODO: 1.19.3 find how to change this without having features before a world gets loaded
+        return null; //BuiltInRegistries.BIOME.getHolder(getKey(name)).orElseThrow();
     }
 
     public Class<?> getClass(String path) {
