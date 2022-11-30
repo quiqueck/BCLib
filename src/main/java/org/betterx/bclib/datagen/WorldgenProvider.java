@@ -1,8 +1,5 @@
 package org.betterx.bclib.datagen;
 
-import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
-import org.betterx.worlds.together.surfaceRules.SurfaceRuleRegistry;
-
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 
@@ -23,8 +20,8 @@ public class WorldgenProvider extends FabricDynamicRegistryProvider {
     protected void configure(HolderLookup.Provider registries, Entries entries) {
         entries.addAll(registries.lookupOrThrow(Registries.NOISE_SETTINGS));
         entries.addAll(registries.lookupOrThrow(Registries.WORLD_PRESET));
-        entries.addAll(registries.lookupOrThrow(BCLBiomeRegistry.BCL_BIOMES_REGISTRY));
-        entries.addAll(registries.lookupOrThrow(SurfaceRuleRegistry.SURFACE_RULES_REGISTRY));
+        //entries.addAll(registries.lookupOrThrow(BCLBiomeRegistry.BCL_BIOMES_REGISTRY));
+        //entries.addAll(registries.lookupOrThrow(SurfaceRuleRegistry.SURFACE_RULES_REGISTRY));
     }
 
     @Override

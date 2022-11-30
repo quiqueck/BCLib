@@ -22,7 +22,7 @@ public class BCLibDatagen implements DataGeneratorEntrypoint {
         pack.addProvider(WorldgenProvider::new);
         //pack.addProvider(BiomeProvider::new);
         //pack.addProvider(new BiomeProvider());
-        //pack.addProvider(CustomRegistriesDataProvider::new);
+        pack.addProvider(CustomRegistriesDataProvider::new);
     }
 
     @Override
@@ -31,8 +31,8 @@ public class BCLibDatagen implements DataGeneratorEntrypoint {
         if (ADD_TESTS) {
             registryBuilder.add(Registries.CONFIGURED_FEATURE, TestConfiguredFeatures::bootstrap);
             registryBuilder.add(Registries.PLACED_FEATURE, TestPlacedFeatures::bootstrap);
-            registryBuilder.add(Registries.BIOME, TestBiomes::bootstrap);
         }
+        registryBuilder.add(Registries.BIOME, TestBiomes::bootstrap);
         registryBuilder.add(Registries.NOISE_SETTINGS, NoiseDatagen::bootstrap);
     }
 }

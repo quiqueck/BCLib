@@ -32,9 +32,11 @@ public class WorldPresets {
         LevelStem make(BiomeSource biomeSource, Holder<NoiseGeneratorSettings> noiseGeneratorSettings);
     }
 
+    private static Map<ResourceKey<WorldPreset>, PresetBuilder> BUILDERS = Maps.newHashMap();
+
     public static final TagRegistry.UnTyped<WorldPreset> WORLD_PRESETS =
             TagManager.registerType(Registries.WORLD_PRESET, "tags/worldgen/world_preset");
-    private static Map<ResourceKey<WorldPreset>, PresetBuilder> BUILDERS = Maps.newHashMap();
+
     private static ResourceKey<WorldPreset> DEFAULT = net.minecraft.world.level.levelgen.presets.WorldPresets.NORMAL;
 
     public static Holder<WorldPreset> get(RegistryAccess access, ResourceKey<WorldPreset> key) {
@@ -98,6 +100,8 @@ public class WorldPresets {
             HolderGetter<NoiseGeneratorSettings> noiseSettings,
             OverworldBuilder noiseBasedOverworld
     ) {
+        if (BUILDERS == null)
+            return;
         EntrypointUtil.getCommon(WorldPresetBootstrap.class)
                       .forEach(e -> e.bootstrapWorldPresets());
 
