@@ -7,7 +7,6 @@ import org.betterx.bclib.entity.BCLEntityWrapper;
 import org.betterx.bclib.mixin.common.BiomeGenerationSettingsAccessor;
 import org.betterx.bclib.util.CollectionsUtil;
 import org.betterx.bclib.util.Pair;
-import org.betterx.bclib.util.TriFunction;
 import org.betterx.ui.ColorUtil;
 import org.betterx.worlds.together.surfaceRules.SurfaceRuleRegistry;
 import org.betterx.worlds.together.tag.v3.TagManager;
@@ -45,97 +44,89 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class BCLBiomeBuilder {
-    public record Context(BootstapContext<Biome> bootstrapContext) {
-        public BCLBiomeBuilder start(ResourceLocation biomeID) {
-            return BCLBiomeBuilder.start(this, biomeID);
-        }
-    }
 
-    public static final class PreparedBiome<T extends BCLBiome> {
-        private final T biome;
-        private final Context context;
+    public static class UnregisteredBCLBiome<T extends BCLBiome> extends BCLBiomeContainer<T> {
+        private final BCLBiome parentBiome;
+        private final BuildCompletion supplier;
 
-        private PreparedBiome(T biome, Context context) {
-            this.biome = biome;
-            this.context = context;
+        private UnregisteredBCLBiome(T biome, BCLBiome parentBiome, BuildCompletion supplier) {
+            super(biome);
+            this.parentBiome = parentBiome;
+            this.supplier = supplier;
         }
 
-        public T registerEndLandBiome() {
-            BiomeAPI.registerEndLandBiome(context.bootstrapContext, biome);
-            return this.biome;
+
+        @Override
+        public BCLBiomeContainer<T> register(BootstapContext<Biome> bootstrapContext, BiomeAPI.BiomeType dim) {
+            if (dim == null) dim = BiomeAPI.BiomeType.NONE;
+
+            biome._setBiomeToRegister(this.supplier.apply(bootstrapContext));
+
+            if (dim.is(BiomeAPI.BiomeType.END_LAND)) {
+                BiomeAPI.registerEndLandBiome(bootstrapContext, biome);
+            } else if (dim.is(BiomeAPI.BiomeType.END_VOID)) {
+                BiomeAPI.registerEndVoidBiome(bootstrapContext, biome);
+            } else if (dim.is(BiomeAPI.BiomeType.END_BARRENS)) {
+                BiomeAPI.registerEndBarrensBiome(bootstrapContext, parentBiome, biome);
+            } else if (dim.is(BiomeAPI.BiomeType.END_CENTER)) {
+                BiomeAPI.registerEndCenterBiome(bootstrapContext, biome);
+            } else if (dim.is(BiomeAPI.BiomeType.NETHER)) {
+                BiomeAPI.registerNetherBiome(bootstrapContext, biome);
+            } else if (hasParent()) {
+                BiomeAPI.registerSubBiome(bootstrapContext, parentBiome, biome, dim);
+            } else {
+                BiomeAPI.registerBuiltinBiomeAndOverrideIntendedDimension(bootstrapContext, biome, dim);
+            }
+
+            return new BCLBiomeContainer<>(this.biome);
         }
 
-        public T registerEndVoidBiome() {
-            BiomeAPI.registerEndVoidBiome(context.bootstrapContext, biome);
-            return this.biome;
-        }
-
-        public T registerEndBarrensBiome(BCLBiome highlandBiome) {
-            BiomeAPI.registerEndBarrensBiome(context.bootstrapContext, highlandBiome, biome);
-            return this.biome;
-        }
-
-        public T registerEndCenterBiome() {
-            BiomeAPI.registerEndCenterBiome(context.bootstrapContext, biome);
-            return this.biome;
-        }
-
-        public T registerNetherBiome() {
-            BiomeAPI.registerNetherBiome(context.bootstrapContext, biome);
-            return this.biome;
-        }
-
-        public T registerSubBiome(BCLBiome parent) {
-            BiomeAPI.registerSubBiome(context.bootstrapContext, parent, biome);
-            return this.biome;
-        }
-
-        public T registerSubBiome(BCLBiome parent, BiomeAPI.BiomeType dim) {
-            BiomeAPI.registerSubBiome(context.bootstrapContext, parent, biome, dim);
-            return this.biome;
-        }
-
-        public T register(BiomeAPI.BiomeType dim) {
-            BiomeAPI.registerBuiltinBiomeAndOverrideIntendedDimension(context.bootstrapContext, biome, dim);
-            return this.biome;
-        }
-
-        public BCLBiome biome() {
+        public T biome() {
             return biome;
         }
 
-        public Context context() {
-            return context;
+        public boolean hasParent() {
+            return parentBiome != null;
+        }
+
+        public BCLBiome parentBiome() {
+            return parentBiome;
         }
 
         @Override
         public boolean equals(Object obj) {
             if (obj == this) return true;
             if (obj == null || obj.getClass() != this.getClass()) return false;
-            PreparedBiome that = (PreparedBiome) obj;
-            return Objects.equals(this.biome, that.biome) &&
-                    Objects.equals(this.context, that.context);
+            UnregisteredBCLBiome<?> that = (UnregisteredBCLBiome<?>) obj;
+            return Objects.equals(this.biome, that.biome);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(biome, context);
+            return Objects.hash(biome);
         }
 
         @Override
         public String toString() {
-            return "Registry[" +
-                    "biome=" + biome + ", " +
-                    "context=" + context + ']';
+            return "UnregisteredBiome[" + "biome=" + biome + ']';
         }
-
     }
 
     @FunctionalInterface
-    public interface BiomeSupplier<T> extends TriFunction<ResourceLocation, Biome, BCLBiomeSettings, T> {
+    public interface BiomeSupplier<T> extends BiFunction<ResourceKey<Biome>, BCLBiomeSettings, T> {
+    }
+
+    @FunctionalInterface
+    private interface FeatureSupplier extends Consumer<BiomeGenerationSettings.Builder> {
+    }
+
+    @FunctionalInterface
+    private interface BuildCompletion extends Function<BootstapContext<Biome>, Biome> {
     }
 
 
@@ -145,6 +136,7 @@ public class BCLBiomeBuilder {
             -0.012
     );
 
+    private final List<FeatureSupplier> featureSupliers = new LinkedList<>();
     private final List<Pair<GenerationStep.Carving, Holder<? extends ConfiguredWorldCarver<?>>>> carvers = new ArrayList<>(
             1);
     private BiomeGenerationSettings.Builder generationSettings;
@@ -153,7 +145,7 @@ public class BCLBiomeBuilder {
     private SurfaceRules.RuleSource surfaceRule;
     private Precipitation precipitation;
     private ResourceLocation biomeID;
-    private Context builderContext;
+
 
     private final Set<TagKey<Biome>> tags = Sets.newHashSet();
 
@@ -166,6 +158,7 @@ public class BCLBiomeBuilder {
     private float height;
     private int edgeSize;
     private BCLBiome edge;
+    private BCLBiome parent;
     private boolean vertical;
 
     private BiomeAPI.BiomeType biomeType;
@@ -177,8 +170,7 @@ public class BCLBiomeBuilder {
      * @param biomeID {@link ResourceLocation} biome identifier.
      * @return prepared {@link BCLBiomeBuilder} instance.
      */
-    private static BCLBiomeBuilder start(
-            Context ctx,
+    public static BCLBiomeBuilder start(
             ResourceLocation biomeID
     ) {
         INSTANCE.biomeID = biomeID;
@@ -194,16 +186,22 @@ public class BCLBiomeBuilder {
         INSTANCE.height = 0.1F;
         INSTANCE.vertical = false;
         INSTANCE.edge = null;
+        INSTANCE.parent = null;
         INSTANCE.carvers.clear();
         INSTANCE.parameters.clear();
         INSTANCE.tags.clear();
         INSTANCE.biomeType = null;
-        INSTANCE.builderContext = ctx;
+        INSTANCE.featureSupliers.clear();
         return INSTANCE;
     }
 
     public BCLBiomeBuilder addNetherClimateParamater(float temperature, float humidity) {
         parameters.add(Climate.parameters(temperature, humidity, 0, 0, 0, 0, 0));
+        return this;
+    }
+
+    public BCLBiomeBuilder setParent(BCLBiome parent) {
+        this.parent = parent;
         return this;
     }
 
@@ -612,7 +610,12 @@ public class BCLBiomeBuilder {
      * @param soundPositionOffset offset in sound.
      * @return same {@link BCLBiomeBuilder} instance.
      */
-    public BCLBiomeBuilder mood(Holder<SoundEvent> mood, int tickDelay, int blockSearchExtent, float soundPositionOffset) {
+    public BCLBiomeBuilder mood(
+            Holder<SoundEvent> mood,
+            int tickDelay,
+            int blockSearchExtent,
+            float soundPositionOffset
+    ) {
         getEffects().ambientMoodSound(new AmbientMoodSettings(mood, tickDelay, blockSearchExtent, soundPositionOffset));
         return this;
     }
@@ -657,7 +660,7 @@ public class BCLBiomeBuilder {
      * @return same {@link BCLBiomeBuilder} instance.
      */
     public BCLBiomeBuilder feature(Decoration decoration, Holder<PlacedFeature> feature) {
-        getGeneration().addFeature(decoration, feature);
+        featureSupliers.add(gen -> gen.addFeature(decoration, feature));
         return this;
     }
 
@@ -686,7 +689,7 @@ public class BCLBiomeBuilder {
      * @return same {@link BCLBiomeBuilder} instance.
      */
     public BCLBiomeBuilder feature(Consumer<BiomeGenerationSettings.Builder> featureAdd) {
-        featureAdd.accept(getGeneration());
+        featureSupliers.add(gen -> featureAdd.accept(gen));
         return this;
     }
 
@@ -927,12 +930,12 @@ public class BCLBiomeBuilder {
      *
      * @return new or same {@link BiomeGenerationSettings.Builder} instance.
      */
-    private BiomeGenerationSettings.Builder getGeneration() {
+    private BiomeGenerationSettings.Builder getGeneration(BootstapContext<Biome> bootstrapContext) {
 
         if (generationSettings == null) {
             generationSettings = new BiomeGenerationSettings.Builder(
-                    builderContext.bootstrapContext.lookup(Registries.PLACED_FEATURE),
-                    builderContext.bootstrapContext.lookup(Registries.CONFIGURED_CARVER)
+                    bootstrapContext.lookup(Registries.PLACED_FEATURE),
+                    bootstrapContext.lookup(Registries.CONFIGURED_CARVER)
             );
         }
         return generationSettings;
@@ -943,7 +946,7 @@ public class BCLBiomeBuilder {
      *
      * @return created {@link BCLBiome} instance.
      */
-    public PreparedBiome<BCLBiome> build() {
+    public UnregisteredBCLBiome<BCLBiome> build() {
         return build(BCLBiome::new);
     }
 
@@ -954,17 +957,7 @@ public class BCLBiomeBuilder {
      * @param biomeConstructor {@link BiomeSupplier} biome constructor.
      * @return created {@link BCLBiome} instance.
      */
-    public <T extends BCLBiome> PreparedBiome<T> build(BiomeSupplier<T> biomeConstructor) {
-        BiomeBuilder builder = new BiomeBuilder()
-                .precipitation(precipitation)
-                .temperature(temperature)
-                .downfall(downfall);
-
-        builder.mobSpawnSettings(getSpawns().build());
-        builder.specialEffects(getEffects().build());
-
-        builder.generationSettings(fixGenerationSettings(getGeneration().build()));
-
+    public <T extends BCLBiome> UnregisteredBCLBiome<T> build(BiomeSupplier<T> biomeConstructor) {
         BCLBiomeSettings settings = BCLBiomeSettings.createBCL()
                                                     .setTerrainHeight(height)
                                                     .setFogDensity(fogDensity)
@@ -973,20 +966,30 @@ public class BCLBiomeBuilder {
                                                     .setEdge(edge)
                                                     .setVertical(vertical)
                                                     .build();
-
-        final Biome biome = builder.build();
-        final T res = biomeConstructor.apply(biomeID, biome, settings);
+        final T res = biomeConstructor.apply(ResourceKey.create(Registries.BIOME, biomeID), settings);
         tags.forEach(tagKey -> TagManager.BIOMES.add(tagKey, res.getBiomeKey()));
 
-        //res.addBiomeTags(tags);
-        //res.setSurface(surfaceRule);
         SurfaceRuleRegistry.registerRule(biomeID, surfaceRule, biomeID);
         res.addClimateParameters(parameters);
         if (biomeType != null)
             res._setIntendedType(biomeType);
 
+        BiomeBuilder builder = new BiomeBuilder()
+                .precipitation(precipitation)
+                .temperature(temperature)
+                .downfall(downfall);
+
+        builder.mobSpawnSettings(getSpawns().build());
+        builder.specialEffects(getEffects().build());
+
+        //res.addBiomeTags(tags);
+        //res.setSurface(surfaceRule);
 
         //carvers.forEach(cfg -> BiomeAPI.addBiomeCarver(biome, cfg.second, cfg.first));
-        return new PreparedBiome<>(res, builderContext);
+        return new UnregisteredBCLBiome<>(
+                res,
+                parent,
+                ctx -> builder.generationSettings(fixGenerationSettings(getGeneration(ctx).build())).build()
+        );
     }
 }

@@ -27,7 +27,7 @@ public class BCLibDatagen implements DataGeneratorEntrypoint {
         BCLib.LOGGER.info("Datagen buildRegistry");
         registryBuilder.add(Registries.CONFIGURED_FEATURE, TestConfiguredFeatures::bootstrap);
         registryBuilder.add(Registries.PLACED_FEATURE, TestPlacedFeatures::bootstrap);
-        //registryBuilder.add(Registries.BIOME, TestBiomes::bootstrap);
+        registryBuilder.add(Registries.BIOME, TestBiomes::bootstrap);
         registryBuilder.add(Registries.NOISE_SETTINGS, NoiseDatagen::bootstrap);
     }
 }

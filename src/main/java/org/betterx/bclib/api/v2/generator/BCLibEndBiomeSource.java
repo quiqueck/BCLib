@@ -145,7 +145,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
             }
             final BCLBiome bclBiome;
             if (!BiomeAPI.hasBiome(biomeID)) {
-                bclBiome = new BCLBiome(biomeID, biome.value(), BiomeAPI.BiomeType.END_LAND);
+                bclBiome = new BCLBiome(biomeID, BiomeAPI.BiomeType.END_LAND);
                 InternalBiomeAPI.registerBCLBiomeData(bclBiome);
             } else {
                 bclBiome = BiomeAPI.getBiome(biomeID);

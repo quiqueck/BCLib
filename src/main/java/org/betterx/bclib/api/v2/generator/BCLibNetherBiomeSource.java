@@ -108,7 +108,7 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
                 return;
             }
             if (!BiomeAPI.hasBiome(biomeID)) {
-                BCLBiome bclBiome = new BCLBiome(biomeID, biome.value(), BiomeAPI.BiomeType.NETHER);
+                BCLBiome bclBiome = new BCLBiome(biomeID, BiomeAPI.BiomeType.NETHER);
                 InternalBiomeAPI.registerBCLBiomeData(bclBiome);
                 biomePicker.addBiome(bclBiome);
             } else {

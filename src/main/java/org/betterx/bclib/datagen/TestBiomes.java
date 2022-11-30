@@ -3,46 +3,35 @@ package org.betterx.bclib.datagen;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeBuilder;
+import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeContainer;
 
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderGetter;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.levelgen.GenerationStep;
-import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
 public class TestBiomes {
+    static BCLBiomeContainer<BCLBiome> THE_YELLOW = BCLBiomeBuilder
+            .start(BCLib.makeID("the_yellow"))
+            .precipitation(Biome.Precipitation.NONE)
+            .temperature(1.0f)
+            .wetness(1.0f)
+            .fogColor(0xFFFF00)
+            .waterColor(0x777700)
+            .waterFogColor(0xFFFF00)
+            .skyColor(0xAAAA00)
+            .feature(TestPlacedFeatures.YELLOW_PLACED)
+            .addNetherClimateParamater(-1, 1)
+            .surface(Blocks.YELLOW_CONCRETE)
+            .endLandBiome()
+            .build();
 
     public static void bootstrap(BootstapContext<Biome> bootstrapContext) {
         BCLib.LOGGER.info("Bootstrap Biomes");
         if (BCLibDatagen.ADD_TESTS && BCLib.isDevEnvironment()) {
-            HolderGetter<PlacedFeature> holderGetter = bootstrapContext.lookup(Registries.PLACED_FEATURE);
-            Holder.Reference<PlacedFeature> reference = holderGetter.getOrThrow(ResourceKey.create(
-                    Registries.PLACED_FEATURE,
-                    BCLib.makeID("yellow_feature")
-            ));
-            BCLib.LOGGER.info("REF Biome:" + reference);
+            BCLBiomeContainer<BCLBiome> theYellow = THE_YELLOW
+                    .register(bootstrapContext);
 
-            BCLBiomeBuilder.Context biomeBuilder = new BCLBiomeBuilder.Context(bootstrapContext);
-            BCLBiome theYellow = biomeBuilder
-                    .start(BCLib.makeID("the_yellow"))
-                    .precipitation(Biome.Precipitation.NONE)
-                    .temperature(1.0f)
-                    .wetness(1.0f)
-                    .fogColor(0xFFFF00)
-                    .waterColor(0x777700)
-                    .waterFogColor(0xFFFF00)
-                    .skyColor(0xAAAA00)
-                    .feature(GenerationStep.Decoration.VEGETAL_DECORATION, reference)
-                    .addNetherClimateParamater(-1, 1)
-                    .surface(Blocks.YELLOW_CONCRETE)
-                    .build()
-                    .registerEndLandBiome();
-
-            BCLBiome theBlue = biomeBuilder
+            BCLBiome theBlue = BCLBiomeBuilder
                     .start(BCLib.makeID("the_blue"))
                     .precipitation(Biome.Precipitation.NONE)
                     .temperature(1.0f)
@@ -53,10 +42,11 @@ public class TestBiomes {
                     .skyColor(0x0000AA)
                     .addNetherClimateParamater(-1, 1)
                     .surface(Blocks.LIGHT_BLUE_CONCRETE)
+                    .endLandBiome()
                     .build()
-                    .registerEndLandBiome();
+                    .register(bootstrapContext).biome();
 
-            BCLBiome theGray = biomeBuilder
+            BCLBiome theGray = BCLBiomeBuilder
                     .start(BCLib.makeID("the_gray"))
                     .precipitation(Biome.Precipitation.NONE)
                     .temperature(1.0f)
@@ -67,10 +57,11 @@ public class TestBiomes {
                     .skyColor(0xAAAAAA)
                     .addNetherClimateParamater(-1, 1)
                     .surface(Blocks.GRAY_CONCRETE)
+                    .endVoidBiome()
                     .build()
-                    .registerEndVoidBiome();
+                    .register(bootstrapContext).biome();
 
-            BCLBiome theOrange = biomeBuilder
+            BCLBiome theOrange = BCLBiomeBuilder
                     .start(BCLib.makeID("the_orange"))
                     .precipitation(Biome.Precipitation.NONE)
                     .temperature(1.0f)
@@ -81,10 +72,11 @@ public class TestBiomes {
                     .skyColor(0xAA7700)
                     .addNetherClimateParamater(-1, 1.1f)
                     .surface(Blocks.ORANGE_CONCRETE)
+                    .netherBiome()
                     .build()
-                    .registerNetherBiome();
+                    .register(bootstrapContext).biome();
 
-            BCLBiome thePurple = biomeBuilder
+            BCLBiome thePurple = BCLBiomeBuilder
                     .start(BCLib.makeID("the_purple"))
                     .precipitation(Biome.Precipitation.NONE)
                     .temperature(1.0f)
@@ -95,8 +87,9 @@ public class TestBiomes {
                     .skyColor(0xAA00AA)
                     .addNetherClimateParamater(-1.1f, 1)
                     .surface(Blocks.PURPLE_CONCRETE)
+                    .netherBiome()
                     .build()
-                    .registerNetherBiome();
+                    .register(bootstrapContext).biome();
         }
     }
 }

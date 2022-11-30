@@ -153,7 +153,6 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
     private final Map<String, Object> customData = Maps.newHashMap();
     private final ResourceLocation biomeID;
     private final ResourceKey<Biome> biomeKey;
-    final Biome biomeToRegister;
 
     protected final List<Climate.ParameterPoint> parameterPoints = Lists.newArrayList();
 
@@ -174,7 +173,6 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
             Optional<String> intendedType
     ) {
         super(terrainHeight, fogDensity, genChance, edgeSize, vertical, edge.map(BiomeAPI::getBiome).orElse(null));
-        biomeToRegister = null;
         this.biomeID = biomeID;
         this.biomeKey = ResourceKey.create(Registries.BIOME, biomeID);
         this.biomeParent = biomeParent.orElse(null);
@@ -200,40 +198,15 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
         this(ResourceKey.create(Registries.BIOME, biomeID), null);
     }
 
-
     /**
-     * Create wrapper for existing biome using biome instance from {@link BuiltinRegistries}.
+     * Create wrapper for existing biome.
      *
-     * @param biomeToRegister {@link Biome} to wrap.
-     * @param settings        The Settings for this Biome or {@code null} if you want to apply default settings
+     * @param biomeID Teh ResoureLocation for this Biome
      */
     @ApiStatus.Internal
-    BCLBiome(Biome biomeToRegister, VanillaBiomeSettings settings) {
-        this(BiomeAPI.getBiomeID(biomeToRegister), biomeToRegister, settings);
-    }
-
-
-    /**
-     * Create wrapper for existing biome using biome instance from {@link BuiltinRegistries}.
-     *
-     * @param biomeToRegister {@link Biome} to wrap.
-     * @param biomeID         Teh ResoureLocation for this Biome
-     */
-    @ApiStatus.Internal
-    public BCLBiome(ResourceLocation biomeID, Biome biomeToRegister, BiomeAPI.BiomeType type) {
-        this(biomeID, biomeToRegister, (BCLBiomeSettings) null);
+    public BCLBiome(ResourceLocation biomeID, BiomeAPI.BiomeType type) {
+        this(ResourceKey.create(Registries.BIOME, biomeID), (BCLBiomeSettings) null);
         setIntendedType(type);
-    }
-
-    /**
-     * Create a new Biome
-     *
-     * @param biomeID         {@link ResourceLocation} biome ID.
-     * @param biomeToRegister {@link Biome} to wrap.
-     * @param defaults        The Settings for this Biome or null if you want to apply the defaults
-     */
-    protected BCLBiome(ResourceLocation biomeID, Biome biomeToRegister, BCLBiomeSettings defaults) {
-        this(ResourceKey.create(Registries.BIOME, biomeID), biomeToRegister, defaults);
     }
 
     /**
@@ -243,18 +216,6 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
      * @param defaults The Settings for this Biome or null if you want to apply the defaults
      */
     protected BCLBiome(ResourceKey<Biome> biomeKey, BCLBiomeSettings defaults) {
-        this(biomeKey, null, defaults);
-    }
-
-    /**
-     * Create a new Biome
-     *
-     * @param biomeKey        {@link ResourceKey<Biome>} of the wrapped Biome
-     * @param biomeToRegister The biome you want to use when this instance gets registered through the {@link BiomeAPI}
-     * @param defaults        The Settings for this Biome or null if you want to apply the defaults
-     */
-    protected BCLBiome(ResourceKey<Biome> biomeKey, Biome biomeToRegister, BCLBiomeSettings defaults) {
-        this.biomeToRegister = biomeToRegister;
         this.biomeID = biomeKey.location();
         this.biomeKey = biomeKey;
 
@@ -354,15 +315,6 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
         return subbiomes;
     }
 
-    /**
-     * Getter for a random sub-biome from all existing sub-biomes. Will return biome itself if there are no sub-biomes.
-     *
-     * @param random {@link Random}.
-     * @return {@link BCLBiome}.
-     */
-//    public BCLBiome getSubBiome(WorldgenRandom random) {
-//        return getSubBiomes().get(random);
-//    }
     public void forEachSubBiome(BiConsumer<BCLBiome, Float> consumer) {
         final WeightedList<BCLBiome> subbiomes = getSubBiomes();
         for (int i = 0; i < subbiomes.size(); i++)
@@ -476,5 +428,23 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
 
     boolean allowFabricRegistration() {
         return !isEdgeBiome();
+    }
+
+    @ApiStatus.Internal
+    private Biome biomeToRegister;
+
+    @ApiStatus.Internal
+    void _setBiomeToRegister(Biome b) {
+        this.biomeToRegister = b;
+    }
+
+    @ApiStatus.Internal
+    Biome _getBiomeToRegister() {
+        return this.biomeToRegister;
+    }
+
+    @ApiStatus.Internal
+    boolean _hasBiomeToRegister() {
+        return this.biomeToRegister != null;
     }
 }

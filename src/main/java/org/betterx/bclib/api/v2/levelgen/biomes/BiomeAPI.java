@@ -291,10 +291,10 @@ public class BiomeAPI {
     static BCLBiome registerBiome(BootstapContext<Biome> bootstrapContext, BCLBiome bclbiome) {
         HolderGetter<Biome> registryOrNull = bootstrapContext.lookup(Registries.BIOME);
         if (registryOrNull != null
-                && bclbiome.biomeToRegister != null
+                && bclbiome._hasBiomeToRegister()
                 //TODO: 1.19.3 this was a ResourceLocation lookup, is this a valid test?
                 && registryOrNull.get(bclbiome.getBiomeKey()).map(v -> v.isBound()).orElse(false) == false) {
-            bootstrapContext.register(bclbiome.getBiomeKey(), bclbiome.biomeToRegister);
+            bootstrapContext.register(bclbiome.getBiomeKey(), bclbiome._getBiomeToRegister());
 
             BCLBiomeRegistry.register(null, bclbiome);
         }
@@ -333,21 +333,6 @@ public class BiomeAPI {
     static BCLBiome registerSubBiome(
             BootstapContext<Biome> bootstrapContext,
             BCLBiome parent,
-            Biome subBiome,
-            float genChance
-    ) {
-        return registerSubBiome(
-                bootstrapContext,
-                parent,
-                subBiome,
-                genChance,
-                parent.getIntendedType()
-        );
-    }
-
-    static BCLBiome registerSubBiome(
-            BootstapContext<Biome> bootstrapContext,
-            BCLBiome parent,
             BCLBiome subBiome,
             BiomeType dim
     ) {
@@ -355,17 +340,6 @@ public class BiomeAPI {
         parent.addSubBiome(subBiome);
 
         return subBiome;
-    }
-
-    static BCLBiome registerSubBiome(
-            BootstapContext<Biome> bootstrapContext,
-            BCLBiome parent,
-            Biome biome,
-            float genChance,
-            BiomeType dim
-    ) {
-        BCLBiome subBiome = new BCLBiome(biome, VanillaBiomeSettings.createVanilla().setGenChance(genChance).build());
-        return registerSubBiome(bootstrapContext, parent, subBiome, dim);
     }
 
     /**
