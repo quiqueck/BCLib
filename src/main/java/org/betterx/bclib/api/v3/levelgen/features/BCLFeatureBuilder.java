@@ -59,6 +59,8 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         B create(ResourceLocation id, Holder<ConfiguredFeature<FC, F>> configuredFeature);
     }
 
+    private static List<BCLConfigureFeature.Unregistered<?, ?>> ALL_UNREGISTERED = new LinkedList<>();
+
     /**
      * Starts a new {@link BCLFeature} builder.
      *
@@ -273,7 +275,7 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
     }
 
     public BCLConfigureFeature.Unregistered<F, FC> build() {
-        return buildAndCreateHolder(
+        final var res = buildAndCreateHolder(
                 (featureID, holder) -> new BCLConfigureFeature.Unregistered<>(featureID, holder),
                 (featureID, cFeature) -> (FullReferenceHolder<ConfiguredFeature<FC, F>>) (Object) FullReferenceHolder.create(
                         Registries.CONFIGURED_FEATURE,
@@ -281,6 +283,12 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
                         cFeature
                 )
         );
+        ALL_UNREGISTERED.add(res);
+        return res;
+    }
+
+    public static void registerAll(BootstapContext<ConfiguredFeature<?, ?>> bootstapContext) {
+        ALL_UNREGISTERED.forEach(u -> u.register(bootstapContext));
     }
 
     public BCLInlinePlacedBuilder<F, FC> inlinePlace() {
@@ -290,7 +298,7 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
 
     public Holder<PlacedFeature> inlinePlace(BCLInlinePlacedBuilder<F, FC> placer) {
         BCLConfigureFeature<F, FC> f = buildInline();
-        return placer.build(f);
+        return placer.build(f).getPlacedFeature();
     }
 
     public static class AsOre extends BCLFeatureBuilder<OreFeature, OreConfiguration> {
@@ -914,7 +922,7 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
             if (isEmpty) blockFeature.isEmpty();
             if (groundType != null) blockFeature.isOn(groundType);
 
-            return new RandomPatchConfiguration(tries, xzSpread, ySpread, blockFeature.build());
+            return new RandomPatchConfiguration(tries, xzSpread, ySpread, blockFeature.build().getPlacedFeature());
         }
     }
 

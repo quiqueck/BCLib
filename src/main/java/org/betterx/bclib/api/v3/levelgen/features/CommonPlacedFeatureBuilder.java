@@ -6,7 +6,6 @@ import org.betterx.bclib.api.v3.levelgen.features.placement.*;
 import org.betterx.worlds.together.tag.v3.CommonBlockTags;
 
 import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
 import net.minecraft.core.Vec3i;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceLocation;
@@ -424,5 +423,5 @@ abstract class CommonPlacedFeatureBuilder<F extends Feature<FC>, FC extends Feat
      *
      * @return created {@link PlacedFeature} instance.
      */
-    abstract Holder<PlacedFeature> build();
+    abstract BCLFeature.Unregistered<F, FC> build();
 }

@@ -7,6 +7,7 @@ import org.betterx.bclib.api.v3.levelgen.features.features.*;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -17,6 +18,25 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import org.jetbrains.annotations.ApiStatus;
 
 public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> {
+    public static class Unregistered<F extends Feature<FC>, FC extends FeatureConfiguration> extends BCLFeature<F, FC> {
+        Unregistered(
+                BCLConfigureFeature<F, FC> configuredFeature,
+                Holder<PlacedFeature> placed,
+                GenerationStep.Decoration decoration
+        ) {
+            super(configuredFeature, placed, decoration);
+        }
+
+        @Override
+        public BCLFeature<F, FC> register(BootstapContext<PlacedFeature> bootstrapContext) {
+            Holder<PlacedFeature> holder = BCLPlacedFeatureBuilder.register(
+                    bootstrapContext,
+                    getPlacedFeature()
+            );
+            return new BCLFeature<>(configuredFeature, holder, decoration);
+        }
+    }
+
     public static final Feature<PlaceFacingBlockConfig> PLACE_BLOCK = register(
             BCLib.makeID("place_block"),
             new PlaceBlockFeature<>(PlaceFacingBlockConfig.CODEC)
@@ -101,5 +121,9 @@ public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> 
             F feature
     ) {
         return Registry.register(BuiltInRegistries.FEATURE, location, feature);
+    }
+
+    public BCLFeature<F, FC> register(BootstapContext<PlacedFeature> bootstrapContext) {
+        return this;
     }
 }

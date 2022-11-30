@@ -3,6 +3,7 @@ package org.betterx.bclib.api.v3.levelgen.features;
 import net.minecraft.core.Holder;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
@@ -48,7 +49,7 @@ public class BCLInlinePlacedBuilder<F extends Feature<FC>, FC extends FeatureCon
      * @return created {@link PlacedFeature} instance.
      */
     @Override
-    public Holder<PlacedFeature> build() {
+    public BCLFeature.Unregistered<F, FC> build() {
         return build(cFeature);
     }
 
@@ -57,18 +58,13 @@ public class BCLInlinePlacedBuilder<F extends Feature<FC>, FC extends FeatureCon
      *
      * @return created {@link PlacedFeature} instance.
      */
-    public Holder<PlacedFeature> build(BCLConfigureFeature feature) {
-        return build(feature.configuredFeature);
-    }
-
-    /**
-     * Builds a new inline (not registered) {@link PlacedFeature}.
-     *
-     * @return created {@link PlacedFeature} instance.
-     */
-    public Holder<PlacedFeature> build(Holder<ConfiguredFeature<FC, F>> feature) {
+    public BCLFeature.Unregistered<F, FC> build(BCLConfigureFeature feature) {
         PlacementModifier[] modifiers = modifications.toArray(new PlacementModifier[modifications.size()]);
-        return PlacementUtils.inlinePlaced((Holder<ConfiguredFeature<?, ?>>) (Object) feature, modifiers);
+        Holder<PlacedFeature> holder = PlacementUtils.inlinePlaced(
+                feature.configuredFeature,
+                modifiers
+        );
+        return new BCLFeature.Unregistered<>(feature, holder, GenerationStep.Decoration.VEGETAL_DECORATION);
     }
 
     /**
@@ -83,7 +79,7 @@ public class BCLInlinePlacedBuilder<F extends Feature<FC>, FC extends FeatureCon
 
 
     public BCLFeatureBuilder.RandomPatch inRandomPatch(ResourceLocation id) {
-        return BCLFeatureBuilder.startRandomPatch(id, build());
+        return BCLFeatureBuilder.startRandomPatch(id, build().getPlacedFeature());
     }
 
     public BCLFeatureBuilder.RandomPatch randomBonemealDistribution(ResourceLocation id) {
