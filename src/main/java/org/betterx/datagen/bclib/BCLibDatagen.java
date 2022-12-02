@@ -8,6 +8,7 @@ import org.betterx.datagen.bclib.tests.TestPlacedFeatures;
 import org.betterx.datagen.bclib.tests.TestWorldgenProvider;
 import org.betterx.datagen.bclib.worldgen.BCLibRegistriesDataProvider;
 import org.betterx.datagen.bclib.worldgen.NoiseTypesDataProvider;
+import org.betterx.datagen.bclib.worldgen.VanillaBCLBiomesDataProvider;
 import org.betterx.datagen.bclib.worldgen.WorldgenRegistriesDataProvider;
 
 import net.minecraft.core.RegistrySetBuilder;
@@ -22,6 +23,8 @@ public class BCLibDatagen implements DataGeneratorEntrypoint {
     @Override
     public void onInitializeDataGenerator(FabricDataGenerator dataGenerator) {
         BCLib.LOGGER.info("Bootstrap onInitializeDataGenerator");
+        VanillaBCLBiomesDataProvider.create();
+
         final FabricDataGenerator.Pack pack = dataGenerator.createPack();
 
         if (ADD_TESTS) {

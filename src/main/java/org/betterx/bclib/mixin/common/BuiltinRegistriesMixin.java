@@ -32,15 +32,12 @@ public abstract class BuiltinRegistriesMixin {
     private static void bcl_registerBuiltin(CallbackInfo ci) {
         BCLBiomeRegistry.ensureStaticallyLoaded();
         if (BCLib.isDatagen()) {
-//        BCLBiomeRegistry.BUILTIN_BCL_BIOMES = internalRegister(
-//                BCLBiomeRegistry.BCL_BIOMES_REGISTRY,
-//                new MappedRegistry<>(
-//                        BCLBiomeRegistry.BCL_BIOMES_REGISTRY,
-//                        Lifecycle.stable()
-//                ),
-//                BCLBiomeRegistry::bootstrap,
-//                Lifecycle.stable()
-//        );
+//            BCLBiomeRegistry.BUILTIN_BCL_BIOMES = internalRegister(
+//                    BCLBiomeRegistry.BCL_BIOMES_REGISTRY,
+//                    BCLBiomeRegistry.BUILTIN_BCL_BIOMES,
+//                    BCLBiomeRegistry::bootstrap,
+//                    Lifecycle.stable()
+//            );
         }
     }
 }

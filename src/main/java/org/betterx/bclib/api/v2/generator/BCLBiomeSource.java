@@ -2,62 +2,68 @@ package org.betterx.bclib.api.v2.generator;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
-import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
+import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
+import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
+import org.betterx.bclib.config.Configs;
 import org.betterx.worlds.together.biomesource.BiomeSourceFromRegistry;
 import org.betterx.worlds.together.biomesource.BiomeSourceHelper;
 import org.betterx.worlds.together.biomesource.MergeableBiomeSource;
+import org.betterx.worlds.together.biomesource.ReloadableBiomeSource;
 import org.betterx.worlds.together.world.BiomeSourceWithNoiseRelatedSettings;
 import org.betterx.worlds.together.world.BiomeSourceWithSeed;
+import org.betterx.worlds.together.world.event.WorldBootstrap;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 
 import com.google.common.collect.Sets;
 
-import java.lang.reflect.Field;
 import java.util.*;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceWithSeed, MergeableBiomeSource<BCLBiomeSource>, BiomeSourceWithNoiseRelatedSettings, BiomeSourceFromRegistry<BCLBiomeSource> {
-    protected final HolderGetter<Biome> biomeRegistry;
-    protected final HolderGetter<BCLBiome> bclBiomeRegistry;
-    private int registryModificationCounter;
-    protected long currentSeed;
-    protected int maxHeight;
-
-    private static List<Holder<Biome>> preInit(
-            HolderGetter<Biome> biomeRegistry,
-            List<Holder<Biome>> biomes
-    ) {
-        biomes = biomes.stream().sorted(Comparator.comparing(holder -> holder.unwrapKey()
-                                                                             .get()
-                                                                             .location()
-                                                                             .toString()))
-                       .toList();
-        return biomes;
+public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceWithSeed, MergeableBiomeSource<BCLBiomeSource>, BiomeSourceWithNoiseRelatedSettings, ReloadableBiomeSource, BiomeSourceFromRegistry<BCLBiomeSource> {
+    @FunctionalInterface
+    public interface PickerAdder {
+        boolean add(BCLBiome bclBiome, BiomeAPI.BiomeType type, BiomePicker picker);
     }
 
-    protected BCLBiomeSource(
-            HolderGetter<Biome> biomeRegistry,
-            HolderGetter<BCLBiome> bclBiomeRegistry,
-            List<Holder<Biome>> list,
-            long seed
-    ) {
-        super(preInit(biomeRegistry, list));
-        this.registryModificationCounter = InternalBiomeAPI.getBiomeRegistryModificationCount(biomeRegistry);
-        this.biomeRegistry = biomeRegistry;
-        this.bclBiomeRegistry = bclBiomeRegistry;
+    @FunctionalInterface
+    public interface CustomTypeFinder {
+        BiomeAPI.BiomeType find(ResourceKey<Biome> biomeKey, BiomeAPI.BiomeType defaultType);
+    }
+
+    protected long currentSeed;
+    protected int maxHeight;
+    private boolean didCreatePickers;
+    Set<Holder<Biome>> dynamicPossibleBiomes;
+
+    protected BCLBiomeSource(long seed) {
+        super(List.of());
+        this.dynamicPossibleBiomes = Set.of();
         this.currentSeed = seed;
+        this.didCreatePickers = false;
+    }
+
+    @Override
+    public Set<Holder<Biome>> possibleBiomes() {
+        return dynamicPossibleBiomes;
     }
 
     @Override
     public boolean didBiomeRegistryChange() {
-        return this.registryModificationCounter != InternalBiomeAPI.getBiomeRegistryModificationCount(biomeRegistry);
+        return false;
+        //return this.registryModificationCounter != InternalBiomeAPI.getBiomeRegistryModificationCount(biomeRegistry);
+    }
+
+    protected boolean wasBound() {
+        return didCreatePickers;
     }
 
     final public void setSeed(long seed) {
@@ -102,52 +108,168 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
         return BiomeSourceHelper.getNamespaces(possibleBiomes());
     }
 
-    public interface ValidBiomePredicate {
-        boolean isValid(Holder<Biome> biome, ResourceLocation location);
+//    public interface ValidBiomePredicate {
+//        boolean isValid(Holder<Biome> biome, ResourceLocation location);
+//    }
+
+    protected boolean addToPicker(BCLBiome bclBiome, BiomeAPI.BiomeType type, BiomePicker picker) {
+        picker.addBiome(bclBiome);
+        return true;
     }
 
-    protected static List<Holder<Biome>> getBiomes(
-            HolderGetter<Biome> getter,
-            HolderGetter<BCLBiome> bclBiomeRegistry,
-            List<String> exclude,
-            List<String> include,
-            BCLibNetherBiomeSource.ValidBiomePredicate test
+    protected BiomeAPI.BiomeType typeForUnknownBiome(ResourceKey<Biome> biomeKey, BiomeAPI.BiomeType defaultType) {
+        return defaultType;
+    }
+
+
+    protected static Set<Holder<Biome>> populateBiomePickers(
+            Map<BiomeAPI.BiomeType, BiomePicker> acceptedBiomeTypes,
+            BiomeAPI.BiomeType exclusionListType,
+            PickerAdder pickerAdder,
+            CustomTypeFinder typeFinder
     ) {
-        Optional<Field> res = Arrays.stream(getter.getClass().getFields())
-                                    .filter(f -> Registry.class.isAssignableFrom(f.getType()))
-                                    .findFirst();
-        if (res.isPresent()) {
-            try {
-                Registry<Biome> biomeRegistry = (Registry<Biome>) res.get().get(getter);
-
-                return biomeRegistry.stream()
-                                    .filter(biome -> biomeRegistry.getResourceKey(biome).isPresent())
-                                    .map(biome -> (Holder<Biome>) biomeRegistry.getHolderOrThrow(
-                                            biomeRegistry.getResourceKey(biome).get())
-                                    )
-                                    .filter(biome -> {
-                                        ResourceLocation location = biome.unwrapKey().orElseThrow().location();
-                                        final String strLocation = location.toString();
-                                        if (exclude.contains(strLocation)) return false;
-                                        if (include.contains(strLocation)) return true;
-
-                                        return test.isValid(biome, location);
-                                    })
-                                    .toList();
-            } catch (IllegalAccessException e) {
-                BCLib.LOGGER.error("Unable to load field", e);
-                return List.of();
-            }
-        } else {
-            BCLib.LOGGER.error("Unable to access Biome Registry..");
-            return List.of();
+        final RegistryAccess access = WorldBootstrap.getLastRegistryAccess();
+        if (access == null) {
+            BCLib.LOGGER.info("Unable to build Biome List yet");
+            return null;
         }
+
+        final Set<Holder<Biome>> allBiomes = new HashSet<>();
+        final Map<BiomeAPI.BiomeType, List<String>> includeMap = Configs.BIOMES_CONFIG.getBiomeIncludeMap();
+        final List<String> excludeList = Configs.BIOMES_CONFIG.getExcludeMatching(exclusionListType);
+        final Registry<Biome> biomes = access.registryOrThrow(Registries.BIOME);
+        final Registry<BCLBiome> bclBiomes = access.registryOrThrow(BCLBiomeRegistry.BCL_BIOMES_REGISTRY);
+
+        final List<Map.Entry<ResourceKey<Biome>, Biome>> sortedList = biomes
+                .entrySet()
+                .stream()
+                .sorted(Comparator.comparing(a -> a.getKey().location().toString()))
+                .toList();
+
+        for (Map.Entry<ResourceKey<Biome>, Biome> biomeEntry : sortedList) {
+            if (excludeList.contains(biomeEntry.getKey().location())) continue;
+
+            BiomeAPI.BiomeType type = BiomeAPI.BiomeType.NONE;
+            boolean foundBCLBiome = false;
+            if (BCLBiomeRegistry.hasBiome(biomeEntry.getKey(), bclBiomes)) {
+                foundBCLBiome = true;
+                type = BCLBiomeRegistry.getBiome(biomeEntry.getKey(), bclBiomes).getIntendedType();
+            } else {
+                type = typeFinder.find(biomeEntry.getKey(), type);
+            }
+
+            type = getBiomeType(includeMap, biomeEntry.getKey(), type);
+
+            for (Map.Entry<BiomeAPI.BiomeType, BiomePicker> pickerEntry : acceptedBiomeTypes.entrySet()) {
+                if (type.is(pickerEntry.getKey())) {
+                    BCLBiome bclBiome;
+                    if (foundBCLBiome) {
+                        bclBiome = BCLBiomeRegistry.getBiome(biomeEntry.getKey(), bclBiomes);
+                    } else {
+                        //create and register a biome wrapper
+                        bclBiome = new BCLBiome(biomeEntry.getKey().location(), type);
+                        BCLBiomeRegistry.register(bclBiome);
+                        foundBCLBiome = true;
+                    }
+
+                    boolean didAdd = false;
+                    if (!bclBiome.hasParentBiome()) {
+                        didAdd = pickerAdder.add(bclBiome, pickerEntry.getKey(), pickerEntry.getValue());
+                    }
+
+                    if (didAdd) {
+                        allBiomes.add(biomes.getHolderOrThrow(biomeEntry.getKey()));
+                    }
+                }
+            }
+        }
+
+
+        return allBiomes;
+    }
+
+    protected abstract BiomeAPI.BiomeType defaultBiomeType();
+    protected abstract Map<BiomeAPI.BiomeType, BiomePicker> createFreshPickerMap();
+
+    public abstract String toShortString();
+
+    protected void onFinishBiomeRebuild(Map<BiomeAPI.BiomeType, BiomePicker> pickerMap) {
+        for (var picker : pickerMap.values()) {
+            picker.rebuild();
+        }
+    }
+
+    protected final void rebuildBiomes(boolean force) {
+        if (!force && didCreatePickers) return;
+
+        if (Configs.MAIN_CONFIG.verboseLogging()) {
+            BCLib.LOGGER.info("Updating Pickers for " + this.toShortString());
+        }
+
+        Map<BiomeAPI.BiomeType, BiomePicker> pickerMap = createFreshPickerMap();
+        this.dynamicPossibleBiomes = populateBiomePickers(
+                pickerMap,
+                defaultBiomeType(),
+                this::addToPicker,
+                this::typeForUnknownBiome
+        );
+        if (this.dynamicPossibleBiomes == null) {
+            this.dynamicPossibleBiomes = Set.of();
+        } else {
+            this.didCreatePickers = true;
+        }
+
+        onFinishBiomeRebuild(pickerMap);
     }
 
     @Override
     public BCLBiomeSource mergeWithBiomeSource(BiomeSource inputBiomeSource) {
-        final Set<Holder<Biome>> datapackBiomes = inputBiomeSource.possibleBiomes();
-        return this.createCopyForDatapack(datapackBiomes);
+        final RegistryAccess access = WorldBootstrap.getLastRegistryAccess();
+        if (access == null) {
+            BCLib.LOGGER.error("Unable to merge Biomesources!");
+            return this;
+        }
+
+        final Map<BiomeAPI.BiomeType, List<String>> includeMap = Configs.BIOMES_CONFIG.getBiomeIncludeMap();
+        final List<String> excludeList = Configs.BIOMES_CONFIG.getExcludeMatching(defaultBiomeType());
+        final Registry<BCLBiome> bclBiomes = access.registryOrThrow(BCLBiomeRegistry.BCL_BIOMES_REGISTRY);
+
+        for (Holder<Biome> possibleBiome : inputBiomeSource.possibleBiomes()) {
+            ResourceKey<Biome> key = possibleBiome.unwrapKey().orElse(null);
+            if (key != null) {
+                //skip over all biomes that were excluded in the config
+                if (excludeList.contains(key.location())) continue;
+
+                //this is a biome that has no type entry => create a new one for the default type of this registry
+                if (!BCLBiomeRegistry.hasBiome(key, bclBiomes)) {
+                    BiomeAPI.BiomeType type = typeForUnknownBiome(key, defaultBiomeType());
+
+                    //check if there was an override defined in the configs
+                    type = getBiomeType(includeMap, key, type);
+
+                    //create and register a biome wrapper
+                    BCLBiome bclBiome = new BCLBiome(key.location(), type);
+                    BCLBiomeRegistry.register(bclBiome);
+                }
+            }
+        }
+
+        this.reloadBiomes();
+        return this;
+    }
+
+    private static BiomeAPI.BiomeType getBiomeType(
+            Map<BiomeAPI.BiomeType, List<String>> includeMap,
+            ResourceKey<Biome> biomeKey,
+            BiomeAPI.BiomeType defaultType
+    ) {
+        for (Map.Entry<BiomeAPI.BiomeType, List<String>> includeList : includeMap.entrySet()) {
+            if (includeList.getValue().contains(biomeKey.location().toString())) {
+                return includeList.getKey();
+            }
+        }
+
+        return defaultType;
     }
 
     public void onLoadGeneratorSettings(NoiseGeneratorSettings generator) {
@@ -156,6 +278,17 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
 
     @Override
     public HolderGetter<Biome> getBiomeRegistry() {
-        return biomeRegistry;
+        //return biomeRegistry;
+        return null;
+    }
+
+    protected void reloadBiomes(boolean force) {
+        rebuildBiomes(force);
+        this.initMap(currentSeed);
+    }
+
+    @Override
+    public void reloadBiomes() {
+        reloadBiomes(true);
     }
 }

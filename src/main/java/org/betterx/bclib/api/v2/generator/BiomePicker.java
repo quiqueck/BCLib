@@ -4,9 +4,11 @@ import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
 import org.betterx.bclib.util.WeighTree;
 import org.betterx.bclib.util.WeightedList;
+import org.betterx.worlds.together.world.event.WorldBootstrap;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
@@ -26,6 +28,16 @@ public class BiomePicker {
     private final List<String> allowedBiomes;
     public final ActualBiome fallbackBiome;
     private WeighTree<ActualBiome> tree;
+
+    BiomePicker() {
+        this(WorldBootstrap.getLastRegistryAccess() == null
+                ? null
+                : WorldBootstrap.getLastRegistryAccess().registry(Registries.BIOME).orElse(null));
+    }
+
+    public BiomePicker(Registry<Biome> biomeRegistry) {
+        this(biomeRegistry != null ? biomeRegistry.asLookup() : null, null);
+    }
 
     public BiomePicker(HolderGetter<Biome> biomeRegistry) {
         this(biomeRegistry, null);

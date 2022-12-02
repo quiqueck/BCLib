@@ -5,6 +5,7 @@ import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.world.event.WorldBootstrap;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.Lifecycle;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
@@ -12,6 +13,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.KeyDispatchDataCodec;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 
 import java.util.stream.Stream;
@@ -29,13 +31,23 @@ public class BCLBiomeRegistry {
             BCL_BIOME_CODEC_REGISTRY,
             BCLBiomeRegistry::bootstrapCodecs
     );
-    public static MappedRegistry<BCLBiome> BUILTIN_BCL_BIOMES = null;
+    public static Registry<BCLBiome> BUILTIN_BCL_BIOMES = new MappedRegistry<>(
+            BCL_BIOMES_REGISTRY,
+            Lifecycle.stable()
+    );
 
     /**
      * Empty biome used as default value if requested biome doesn't exist or linked. Shouldn't be registered anywhere to prevent bugs.
      * Have {@code Biomes.THE_VOID} as the reference biome.
      **/
     public static final BCLBiome EMPTY_BIOME = new BCLBiome(Biomes.THE_VOID.location());
+
+    public static final BCLBiome THE_END = new BCLBiome(Biomes.THE_END.location(), InternalBiomeAPI.OTHER_END_CENTER);
+//            InternalBiomeAPI.wrapNativeBiome(
+//            Biomes.THE_END,
+//            0.5F,
+//            InternalBiomeAPI.OTHER_END_CENTER
+//    );
 
     public static boolean isEmptyBiome(ResourceLocation l) {
         return l == null || Biomes.THE_VOID.location().equals(l);
@@ -65,20 +77,40 @@ public class BCLBiomeRegistry {
     /**
      * Register new Biome Data
      *
-     * @param access The {@link RegistryAccess} to use. If null, we will use the
-     *               built inregistry ({@link BCLBiomeRegistry#BUILTIN_BCL_BIOMES})
-     * @param biome  The Biome Data to register
+     * @param biome The Biome Data to register
      * @return The resource-key for the registry
      */
     @ApiStatus.Internal
-    public static ResourceKey<BCLBiome> register(RegistryAccess access, BCLBiome biome) {
-        if (access != null && BUILTIN_BCL_BIOMES == null) return biome.getBCLBiomeKey();
+    public static ResourceKey<BCLBiome> registerForDatagen(BCLBiome biome) {
+        if (BUILTIN_BCL_BIOMES == null) return biome.getBCLBiomeKey();
+
         Registry.register(
-                access == null ? BUILTIN_BCL_BIOMES : access.registryOrThrow(BCL_BIOMES_REGISTRY),
+                BUILTIN_BCL_BIOMES,
                 biome.getBCLBiomeKey(),
                 biome
         );
+
         return biome.getBCLBiomeKey();
+    }
+
+    public static void register(BCLBiome biome) {
+        registerForDatagen(biome);
+    }
+
+    public static boolean hasBiome(ResourceKey<Biome> key, Registry<BCLBiome> bclBiomes) {
+        if (bclBiomes != null && bclBiomes.containsKey(key.location())) {
+            return true;
+        }
+
+        return BUILTIN_BCL_BIOMES.containsKey(key.location());
+    }
+
+    public static BCLBiome getBiome(ResourceKey<Biome> key, Registry<BCLBiome> bclBiomes) {
+        if (bclBiomes != null && bclBiomes.containsKey(key.location())) {
+            return bclBiomes.get(key.location());
+        }
+
+        return BUILTIN_BCL_BIOMES.get(key.location());
     }
 
     private static <T> ResourceKey<Registry<T>> createRegistryKey(ResourceLocation location) {
@@ -88,42 +120,6 @@ public class BCLBiomeRegistry {
 
     private static Codec<? extends BCLBiome> bootstrapCodecs(Registry<Codec<? extends BCLBiome>> registry) {
         return Registry.register(registry, BCLib.makeID("biome"), BCLBiome.KEY_CODEC.codec());
-    }
-
-
-    @ApiStatus.Internal
-    public static BCLBiome bootstrap(Registry<BCLBiome> registry) {
-        Registry.register(registry, BiomeAPI.SMALL_END_ISLANDS.getBCLBiomeKey(), BiomeAPI.SMALL_END_ISLANDS);
-        Registry.register(registry, BiomeAPI.END_BARRENS.getBCLBiomeKey(), BiomeAPI.END_BARRENS);
-        Registry.register(registry, BiomeAPI.END_HIGHLANDS.getBCLBiomeKey(), BiomeAPI.END_HIGHLANDS);
-        Registry.register(registry, BiomeAPI.END_MIDLANDS.getBCLBiomeKey(), BiomeAPI.END_MIDLANDS);
-        Registry.register(registry, BiomeAPI.THE_END.getBCLBiomeKey(), BiomeAPI.THE_END);
-        Registry.register(
-                registry,
-                BiomeAPI.BASALT_DELTAS_BIOME.getBCLBiomeKey(),
-                BiomeAPI.BASALT_DELTAS_BIOME
-        );
-        Registry.register(
-                registry,
-                BiomeAPI.SOUL_SAND_VALLEY_BIOME.getBCLBiomeKey(),
-                BiomeAPI.SOUL_SAND_VALLEY_BIOME
-        );
-        Registry.register(
-                registry,
-                BiomeAPI.WARPED_FOREST_BIOME.getBCLBiomeKey(),
-                BiomeAPI.WARPED_FOREST_BIOME
-        );
-        Registry.register(
-                registry,
-                BiomeAPI.CRIMSON_FOREST_BIOME.getBCLBiomeKey(),
-                BiomeAPI.CRIMSON_FOREST_BIOME
-        );
-        Registry.register(
-                registry,
-                BiomeAPI.NETHER_WASTES_BIOME.getBCLBiomeKey(),
-                BiomeAPI.NETHER_WASTES_BIOME
-        );
-        return Registry.register(registry, EMPTY_BIOME.getBCLBiomeKey(), EMPTY_BIOME);
     }
 
     public static BCLBiome get(ResourceLocation loc) {

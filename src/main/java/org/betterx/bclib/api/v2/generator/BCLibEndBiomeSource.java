@@ -5,12 +5,8 @@ import org.betterx.bclib.api.v2.generator.config.BCLEndBiomeSourceConfig;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
-import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
-import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.interfaces.BiomeMap;
 import org.betterx.worlds.together.biomesource.BiomeSourceWithConfig;
-import org.betterx.worlds.together.biomesource.ReloadableBiomeSource;
-import org.betterx.worlds.together.world.event.WorldBootstrap;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -28,13 +24,12 @@ import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
 import java.awt.*;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
-public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWithConfig<BCLibEndBiomeSource, BCLEndBiomeSourceConfig>, ReloadableBiomeSource {
+public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWithConfig<BCLibEndBiomeSource, BCLEndBiomeSourceConfig> {
     public static Codec<BCLibEndBiomeSource> CODEC
             = RecordCodecBuilder.create((instance) -> instance
             .group(
@@ -94,7 +89,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
             BCLEndBiomeSourceConfig config,
             boolean initMaps
     ) {
-        this(biomeRegistry, bclBiomeRegistry, getBiomes(biomeRegistry, bclBiomeRegistry), seed, config, initMaps);
+        this(biomeRegistry, bclBiomeRegistry, null, seed, config, initMaps);
     }
 
     private BCLibEndBiomeSource(
@@ -105,9 +100,9 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
             BCLEndBiomeSourceConfig config,
             boolean initMaps
     ) {
-        super(biomeRegistry, bclBiomeRegistry, list, seed);
+        super(seed);
         this.config = config;
-        rebuildBiomePickers();
+        rebuildBiomes(false);
 
         this.pos = new Point();
 
@@ -116,122 +111,68 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
         }
     }
 
+    @Override
+    protected BiomeAPI.BiomeType defaultBiomeType() {
+        return BiomeAPI.BiomeType.END;
+    }
 
-    @NotNull
-    private void rebuildBiomePickers() {
-        if (WorldBootstrap.getLastRegistryAccess() == null) {
-            this.endLandBiomePicker = null;
-            this.endVoidBiomePicker = null;
-            this.endCenterBiomePicker = null;
-            this.endBarrensBiomePicker = null;
-            this.deciders = List.of();
-            return;
-        }
-
-        HolderLookup.RegistryLookup<Biome> biomeRegistry = WorldBootstrap.getLastRegistryAccess()
-                                                                         .lookupOrThrow(Registries.BIOME);
-        Registry<BCLBiome> bclBiomeRegistry = WorldBootstrap.getLastRegistryAccess()
-                                                            .registryOrThrow(BCLBiomeRegistry.BCL_BIOMES_REGISTRY);
-
-
-        var includeMap = Configs.BIOMES_CONFIG.getBiomeIncludeMap();
-        var excludeList = Configs.BIOMES_CONFIG.getExcludeMatching(BiomeAPI.BiomeType.END);
-
+    @Override
+    protected Map<BiomeAPI.BiomeType, BiomePicker> createFreshPickerMap() {
         this.deciders = BiomeDecider.DECIDERS.stream()
                                              .filter(d -> d.canProvideFor(this))
                                              .map(d -> d.createInstance(this))
                                              .toList();
 
-        this.endLandBiomePicker = new BiomePicker(biomeRegistry);
-        this.endVoidBiomePicker = new BiomePicker(biomeRegistry);
-        this.endCenterBiomePicker = new BiomePicker(biomeRegistry);
-        this.endBarrensBiomePicker = new BiomePicker(biomeRegistry);
-        Map<BiomeAPI.BiomeType, BiomePicker> pickerMap = new HashMap<>();
-        pickerMap.put(BiomeAPI.BiomeType.END_LAND, endLandBiomePicker);
-        pickerMap.put(BiomeAPI.BiomeType.END_VOID, endVoidBiomePicker);
-        pickerMap.put(BiomeAPI.BiomeType.END_CENTER, endCenterBiomePicker);
-        pickerMap.put(BiomeAPI.BiomeType.END_BARRENS, endBarrensBiomePicker);
+        this.endLandBiomePicker = new BiomePicker();
+        this.endVoidBiomePicker = new BiomePicker();
+        this.endCenterBiomePicker = new BiomePicker();
+        this.endBarrensBiomePicker = new BiomePicker();
 
+        return Map.of(
+                BiomeAPI.BiomeType.END_LAND, endLandBiomePicker,
+                BiomeAPI.BiomeType.END_VOID, endVoidBiomePicker,
+                BiomeAPI.BiomeType.END_CENTER, endCenterBiomePicker,
+                BiomeAPI.BiomeType.END_BARRENS, endBarrensBiomePicker
+        );
+    }
 
-        this.possibleBiomes().forEach(biome -> {
-            ResourceKey<Biome> key = biome.unwrapKey().orElseThrow();
-            ResourceLocation biomeID = key.location();
-            String biomeStr = biomeID.toString();
-            //exclude everything that was listed
-            if (excludeList != null && excludeList.contains(biomeStr)) return;
-            if (!biome.isBound()) {
-                BCLib.LOGGER.warning("Biome " + biomeStr + " is requested but not yet bound.");
-                return;
+    protected boolean addToPicker(BCLBiome bclBiome, BiomeAPI.BiomeType type, BiomePicker picker) {
+        if (!config.withVoidBiomes) {
+            if (bclBiome.getID().equals(Biomes.SMALL_END_ISLANDS.location())) {
+                return false;
             }
-            final BCLBiome bclBiome;
-            if (!bclBiomeRegistry.containsKey(biomeID)) {
-                bclBiome = new BCLBiome(biomeID, BiomeAPI.BiomeType.END_LAND);
-                InternalBiomeAPI.registerBCLBiomeData(bclBiome);
-            } else {
-                bclBiome = bclBiomeRegistry.get(biomeID);
+        }
+
+        for (BiomeDecider decider : deciders) {
+            if (decider.addToPicker(bclBiome)) {
+                return true;
             }
+        }
 
+        return super.addToPicker(bclBiome, type, picker);
+    }
 
-            if (!BCLBiomeRegistry.isEmptyBiome(bclBiome)) {
-                if (bclBiome.getParentBiome() == null) {
-                    //ignore small islands when void biomes are disabled
-                    if (!config.withVoidBiomes) {
-                        if (biomeID.equals(Biomes.SMALL_END_ISLANDS.location())) {
-                            return;
-                        }
-                    }
+    @Override
+    protected BiomeAPI.BiomeType typeForUnknownBiome(ResourceKey<Biome> biomeKey, BiomeAPI.BiomeType defaultType) {
+        if (TheEndBiomesHelper.canGenerateAsMainIslandBiome(biomeKey)) {
+            return BiomeAPI.BiomeType.END_CENTER;
+        } else if (TheEndBiomesHelper.canGenerateAsHighlandsBiome(biomeKey)) {
+            if (!config.withVoidBiomes) return BiomeAPI.BiomeType.END_VOID;
+            return BiomeAPI.BiomeType.END_LAND;
+        } else if (TheEndBiomesHelper.canGenerateAsEndBarrens(biomeKey)) {
+            return BiomeAPI.BiomeType.END_BARRENS;
+        } else if (TheEndBiomesHelper.canGenerateAsSmallIslandsBiome(biomeKey)) {
+            return BiomeAPI.BiomeType.END_VOID;
+        } else if (TheEndBiomesHelper.canGenerateAsEndMidlands(biomeKey)) {
+            return BiomeAPI.BiomeType.END_LAND;
+        }
 
-                    //force include biomes
-                    boolean didForceAdd = false;
-                    for (var entry : pickerMap.entrySet()) {
-                        var includeList = includeMap == null ? null : includeMap.get(entry.getKey());
-                        if (includeList != null && includeList.contains(biomeStr)) {
-                            entry.getValue().addBiome(bclBiome);
-                            didForceAdd = true;
-                        }
-                    }
+        return super.typeForUnknownBiome(biomeKey, defaultType);
+    }
 
-                    if (!didForceAdd) {
-                        if (BCLBiomeRegistry.isEmptyBiome(biomeID)
-                                || bclBiome.getIntendedType().is(BiomeAPI.BiomeType.END_IGNORE)) {
-                            //we should not add this biome anywhere, so just ignore it
-                        } else {
-                            didForceAdd = false;
-                            for (BiomeDecider decider : deciders) {
-                                if (decider.addToPicker(bclBiome)) {
-                                    didForceAdd = true;
-                                    break;
-                                }
-                            }
-                            if (!didForceAdd) {
-                                if (bclBiome.getIntendedType().is(BiomeAPI.BiomeType.END_CENTER)
-                                        || TheEndBiomesHelper.canGenerateAsMainIslandBiome(key)) {
-                                    endCenterBiomePicker.addBiome(bclBiome);
-                                } else if (bclBiome.getIntendedType().is(BiomeAPI.BiomeType.END_LAND)
-                                        || TheEndBiomesHelper.canGenerateAsHighlandsBiome(key)) {
-                                    if (!config.withVoidBiomes) endVoidBiomePicker.addBiome(bclBiome);
-                                    endLandBiomePicker.addBiome(bclBiome);
-                                } else if (bclBiome.getIntendedType().is(BiomeAPI.BiomeType.END_BARRENS)
-                                        || TheEndBiomesHelper.canGenerateAsEndBarrens(key)) {
-                                    endBarrensBiomePicker.addBiome(bclBiome);
-                                } else if (bclBiome.getIntendedType().is(BiomeAPI.BiomeType.END_VOID)
-                                        || TheEndBiomesHelper.canGenerateAsSmallIslandsBiome(key)) {
-                                    endVoidBiomePicker.addBiome(bclBiome);
-                                } else {
-                                    BCLib.LOGGER.info("Found End Biome " + biomeStr + " that was not registers with fabric or bclib. Assuming end-land Biome...");
-                                    endLandBiomePicker.addBiome(bclBiome);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-        endLandBiomePicker.rebuild();
-        endVoidBiomePicker.rebuild();
-        endBarrensBiomePicker.rebuild();
-        endCenterBiomePicker.rebuild();
+    @Override
+    protected void onFinishBiomeRebuild(Map<BiomeAPI.BiomeType, BiomePicker> pickerMap) {
+        super.onFinishBiomeRebuild(pickerMap);
 
         for (BiomeDecider decider : deciders) {
             decider.rebuild();
@@ -248,63 +189,206 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
         }
         if (endCenterBiomePicker.isEmpty()) {
             BCLib.LOGGER.warning("No Center Island Biomes found. Forcing use of vanilla center.");
-            endCenterBiomePicker.addBiome(BiomeAPI.THE_END);
+            endCenterBiomePicker.addBiome(BCLBiomeRegistry.THE_END);
             endCenterBiomePicker.rebuild();
             if (endCenterBiomePicker.isEmpty()) {
                 BCLib.LOGGER.error("Unable to force vanilla central Island. Falling back to land Biomes...");
                 endCenterBiomePicker = endLandBiomePicker;
             }
         }
+
+
     }
+
+//    @NotNull
+//    private void rebuildBiomePickers() {
+//        if (WorldBootstrap.getLastRegistryAccess() == null) {
+//            this.endLandBiomePicker = null;
+//            this.endVoidBiomePicker = null;
+//            this.endCenterBiomePicker = null;
+//            this.endBarrensBiomePicker = null;
+//            this.deciders = List.of();
+//            return;
+//        }
+//
+//        HolderLookup.RegistryLookup<Biome> biomeRegistry = WorldBootstrap.getLastRegistryAccess()
+//                                                                         .lookupOrThrow(Registries.BIOME);
+//        Registry<BCLBiome> bclBiomeRegistry = WorldBootstrap.getLastRegistryAccess()
+//                                                            .registryOrThrow(BCLBiomeRegistry.BCL_BIOMES_REGISTRY);
+//
+//
+//        var includeMap = Configs.BIOMES_CONFIG.getBiomeIncludeMap();
+//        var excludeList = Configs.BIOMES_CONFIG.getExcludeMatching(BiomeAPI.BiomeType.END);
+//
+//        this.deciders = BiomeDecider.DECIDERS.stream()
+//                                             .filter(d -> d.canProvideFor(this))
+//                                             .map(d -> d.createInstance(this))
+//                                             .toList();
+//
+//        this.endLandBiomePicker = new BiomePicker(biomeRegistry);
+//        this.endVoidBiomePicker = new BiomePicker(biomeRegistry);
+//        this.endCenterBiomePicker = new BiomePicker(biomeRegistry);
+//        this.endBarrensBiomePicker = new BiomePicker(biomeRegistry);
+//        Map<BiomeAPI.BiomeType, BiomePicker> pickerMap = new HashMap<>();
+//        pickerMap.put(BiomeAPI.BiomeType.END_LAND, endLandBiomePicker);
+//        pickerMap.put(BiomeAPI.BiomeType.END_VOID, endVoidBiomePicker);
+//        pickerMap.put(BiomeAPI.BiomeType.END_CENTER, endCenterBiomePicker);
+//        pickerMap.put(BiomeAPI.BiomeType.END_BARRENS, endBarrensBiomePicker);
+//
+//
+//        this.possibleBiomes().forEach(biome -> {
+//            ResourceKey<Biome> key = biome.unwrapKey().orElseThrow();
+//            ResourceLocation biomeID = key.location();
+//            String biomeStr = biomeID.toString();
+//            //exclude everything that was listed
+//            if (excludeList != null && excludeList.contains(biomeStr)) return;
+//            if (!biome.isBound()) {
+//                BCLib.LOGGER.warning("Biome " + biomeStr + " is requested but not yet bound.");
+//                return;
+//            }
+//            final BCLBiome bclBiome;
+//            if (!bclBiomeRegistry.containsKey(biomeID)) {
+//                bclBiome = new BCLBiome(biomeID, BiomeAPI.BiomeType.END_LAND);
+//                InternalBiomeAPI.registerBCLBiomeData(bclBiome);
+//            } else {
+//                bclBiome = bclBiomeRegistry.get(biomeID);
+//            }
+//
+//
+//            if (!BCLBiomeRegistry.isEmptyBiome(bclBiome)) {
+//                if (bclBiome.getParentBiome() == null) {
+//                    //ignore small islands when void biomes are disabled
+//                    if (!config.withVoidBiomes) {
+//                        if (biomeID.equals(Biomes.SMALL_END_ISLANDS.location())) {
+//                            return;
+//                        }
+//                    }
+//
+//                    //force include biomes
+//                    boolean didForceAdd = false;
+//                    for (var entry : pickerMap.entrySet()) {
+//                        var includeList = includeMap == null ? null : includeMap.get(entry.getKey());
+//                        if (includeList != null && includeList.contains(biomeStr)) {
+//                            entry.getValue().addBiome(bclBiome);
+//                            didForceAdd = true;
+//                        }
+//                    }
+//
+//                    if (!didForceAdd) {
+//                        if (BCLBiomeRegistry.isEmptyBiome(biomeID)
+//                                || bclBiome.getIntendedType().is(BiomeAPI.BiomeType.END_IGNORE)) {
+//                            //we should not add this biome anywhere, so just ignore it
+//                        } else {
+//                            didForceAdd = false;
+//                            for (BiomeDecider decider : deciders) {
+//                                if (decider.addToPicker(bclBiome)) {
+//                                    didForceAdd = true;
+//                                    break;
+//                                }
+//                            }
+//                            if (!didForceAdd) {
+//                                if (bclBiome.getIntendedType().is(BiomeAPI.BiomeType.END_CENTER)
+//                                        || TheEndBiomesHelper.canGenerateAsMainIslandBiome(key)) {
+//                                    endCenterBiomePicker.addBiome(bclBiome);
+//                                } else if (bclBiome.getIntendedType().is(BiomeAPI.BiomeType.END_LAND)
+//                                        || TheEndBiomesHelper.canGenerateAsHighlandsBiome(key)) {
+//                                    if (!config.withVoidBiomes) endVoidBiomePicker.addBiome(bclBiome);
+//                                    endLandBiomePicker.addBiome(bclBiome);
+//                                } else if (bclBiome.getIntendedType().is(BiomeAPI.BiomeType.END_BARRENS)
+//                                        || TheEndBiomesHelper.canGenerateAsEndBarrens(key)) {
+//                                    endBarrensBiomePicker.addBiome(bclBiome);
+//                                } else if (bclBiome.getIntendedType().is(BiomeAPI.BiomeType.END_VOID)
+//                                        || TheEndBiomesHelper.canGenerateAsSmallIslandsBiome(key)) {
+//                                    endVoidBiomePicker.addBiome(bclBiome);
+//                                } else {
+//                                    BCLib.LOGGER.info("Found End Biome " + biomeStr + " that was not registers with fabric or bclib. Assuming end-land Biome...");
+//                                    endLandBiomePicker.addBiome(bclBiome);
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        });
+//
+//        endLandBiomePicker.rebuild();
+//        endVoidBiomePicker.rebuild();
+//        endBarrensBiomePicker.rebuild();
+//        endCenterBiomePicker.rebuild();
+//
+//        for (BiomeDecider decider : deciders) {
+//            decider.rebuild();
+//        }
+//
+//        if (endVoidBiomePicker.isEmpty()) {
+//            BCLib.LOGGER.info("No Void Biomes found. Disabling by using barrens");
+//            endVoidBiomePicker = endBarrensBiomePicker;
+//        }
+//        if (endBarrensBiomePicker.isEmpty()) {
+//            BCLib.LOGGER.info("No Barrens Biomes found. Disabling by using land Biomes");
+//            endBarrensBiomePicker = endLandBiomePicker;
+//            endVoidBiomePicker = endLandBiomePicker;
+//        }
+//        if (endCenterBiomePicker.isEmpty()) {
+//            BCLib.LOGGER.warning("No Center Island Biomes found. Forcing use of vanilla center.");
+//            endCenterBiomePicker.addBiome(BiomeAPI.THE_END);
+//            endCenterBiomePicker.rebuild();
+//            if (endCenterBiomePicker.isEmpty()) {
+//                BCLib.LOGGER.error("Unable to force vanilla central Island. Falling back to land Biomes...");
+//                endCenterBiomePicker = endLandBiomePicker;
+//            }
+//        }
+//    }
 
     protected BCLBiomeSource cloneForDatapack(Set<Holder<Biome>> datapackBiomes) {
-        datapackBiomes.addAll(getNonVanillaBiomes(this.biomeRegistry, this.bclBiomeRegistry));
-        datapackBiomes.addAll(possibleBiomes().stream()
-                                              .filter(h -> !h.unwrapKey()
-                                                             .orElseThrow()
-                                                             .location()
-                                                             .getNamespace()
-                                                             .equals("minecraft"))
-                                              .toList());
-
-        return new BCLibEndBiomeSource(
-                this.biomeRegistry,
-                this.bclBiomeRegistry,
-                datapackBiomes.stream()
-                              .filter(b -> b.unwrapKey()
-                                            .orElse(null) != BCLBiomeRegistry.EMPTY_BIOME.getBiomeKey())
-                              .toList(),
-                this.currentSeed,
-                this.config,
-                true
-        );
+//        datapackBiomes.addAll(getNonVanillaBiomes(this.biomeRegistry, this.bclBiomeRegistry));
+//        datapackBiomes.addAll(possibleBiomes().stream()
+//                                              .filter(h -> !h.unwrapKey()
+//                                                             .orElseThrow()
+//                                                             .location()
+//                                                             .getNamespace()
+//                                                             .equals("minecraft"))
+//                                              .toList());
+//
+//        return new BCLibEndBiomeSource(
+//                this.biomeRegistry,
+//                this.bclBiomeRegistry,
+//                datapackBiomes.stream()
+//                              .filter(b -> b.unwrapKey()
+//                                            .orElse(null) != BCLBiomeRegistry.EMPTY_BIOME.getBiomeKey())
+//                              .toList(),
+//                this.currentSeed,
+//                this.config,
+//                true
+//        );
+        return null;
     }
 
-    private static List<Holder<Biome>> getNonVanillaBiomes(
-            HolderGetter<Biome> biomeRegistry,
-            HolderGetter<BCLBiome> bclBiomeRegistry
-    ) {
-        return getBiomes(
-                biomeRegistry,
-                bclBiomeRegistry,
-                Configs.BIOMES_CONFIG.getExcludeMatching(BiomeAPI.BiomeType.END),
-                Configs.BIOMES_CONFIG.getIncludeMatching(BiomeAPI.BiomeType.END),
-                BCLibEndBiomeSource::isValidNonVanillaEndBiome
-        );
-    }
+//    private static List<Holder<Biome>> getNonVanillaBiomes(
+//            HolderGetter<Biome> biomeRegistry,
+//            HolderGetter<BCLBiome> bclBiomeRegistry
+//    ) {
+//        return getBiomes(
+//                biomeRegistry,
+//                bclBiomeRegistry,
+//                Configs.BIOMES_CONFIG.getExcludeMatching(BiomeAPI.BiomeType.END),
+//                Configs.BIOMES_CONFIG.getIncludeMatching(BiomeAPI.BiomeType.END),
+//                BCLibEndBiomeSource::isValidNonVanillaEndBiome
+//        );
+//    }
 
-    private static List<Holder<Biome>> getBiomes(
-            HolderGetter<Biome> biomeRegistry,
-            HolderGetter<BCLBiome> bclBiomeRegistry
-    ) {
-        return getBiomes(
-                biomeRegistry,
-                bclBiomeRegistry,
-                Configs.BIOMES_CONFIG.getExcludeMatching(BiomeAPI.BiomeType.END),
-                Configs.BIOMES_CONFIG.getIncludeMatching(BiomeAPI.BiomeType.END),
-                BCLibEndBiomeSource::isValidEndBiome
-        );
-    }
+//    private static List<Holder<Biome>> getBiomes(
+//            HolderGetter<Biome> biomeRegistry,
+//            HolderGetter<BCLBiome> bclBiomeRegistry
+//    ) {
+//        return getBiomes(
+//                biomeRegistry,
+//                bclBiomeRegistry,
+//                Configs.BIOMES_CONFIG.getExcludeMatching(BiomeAPI.BiomeType.END),
+//                Configs.BIOMES_CONFIG.getIncludeMatching(BiomeAPI.BiomeType.END),
+//                BCLibEndBiomeSource::isValidEndBiome
+//        );
+//    }
 
 
     private static boolean isValidEndBiome(Holder<Biome> biome, ResourceLocation location) {
@@ -373,6 +457,8 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
 
     @Override
     public Holder<Biome> getNoiseBiome(int biomeX, int biomeY, int biomeZ, Climate.@NotNull Sampler sampler) {
+        if (!wasBound()) reloadBiomes(false);
+
         if (mapLand == null || mapVoid == null || mapCenter == null || mapBarrens == null)
             return this.possibleBiomes().stream().findFirst().orElseThrow();
 
@@ -445,8 +531,13 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
     }
 
     @Override
+    public String toShortString() {
+        return "BCLib - The End  BiomeSource (" + Integer.toHexString(hashCode()) + ")";
+    }
+
+    @Override
     public String toString() {
-        return "\nBCLib - The End BiomeSource (" + Integer.toHexString(hashCode()) + ")" +
+        return "\n" + toShortString() +
                 "\n    biomes     = " + possibleBiomes().size() +
                 "\n    namespaces = " + getNamespaces() +
                 "\n    seed       = " + currentSeed +
@@ -463,12 +554,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
     @Override
     public void setTogetherConfig(BCLEndBiomeSourceConfig newConfig) {
         this.config = newConfig;
-        this.initMap(currentSeed);
-    }
-
-    @Override
-    public void reloadBiomes() {
-        rebuildBiomePickers();
+        rebuildBiomes(true);
         this.initMap(currentSeed);
     }
 }

@@ -29,7 +29,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -228,60 +227,6 @@ public class BiomeAPI {
         }
     }
 
-    public static final BCLBiome NETHER_WASTES_BIOME = InternalBiomeAPI.wrapNativeBiome(
-            Biomes.NETHER_WASTES,
-            InternalBiomeAPI.OTHER_NETHER
-    );
-    public static final BCLBiome CRIMSON_FOREST_BIOME = InternalBiomeAPI.wrapNativeBiome(
-            Biomes.CRIMSON_FOREST,
-            InternalBiomeAPI.OTHER_NETHER
-    );
-    public static final BCLBiome WARPED_FOREST_BIOME = InternalBiomeAPI.wrapNativeBiome(
-            Biomes.WARPED_FOREST,
-            InternalBiomeAPI.OTHER_NETHER
-    );
-    public static final BCLBiome SOUL_SAND_VALLEY_BIOME = InternalBiomeAPI.wrapNativeBiome(
-            Biomes.SOUL_SAND_VALLEY,
-            InternalBiomeAPI.OTHER_NETHER
-    );
-    public static final BCLBiome BASALT_DELTAS_BIOME = InternalBiomeAPI.wrapNativeBiome(
-            Biomes.BASALT_DELTAS,
-            InternalBiomeAPI.OTHER_NETHER
-    );
-
-
-    public static final BCLBiome THE_END = InternalBiomeAPI.wrapNativeBiome(
-            Biomes.THE_END,
-            0.5F,
-            InternalBiomeAPI.OTHER_END_CENTER
-    );
-
-    public static final BCLBiome END_MIDLANDS = InternalBiomeAPI.wrapNativeBiome(
-            Biomes.END_MIDLANDS,
-            0.5F,
-            InternalBiomeAPI.OTHER_END_LAND
-    );
-
-    public static final BCLBiome END_HIGHLANDS = InternalBiomeAPI.wrapNativeBiome(
-            Biomes.END_HIGHLANDS,
-            END_MIDLANDS,
-            8,
-            0.5F,
-            InternalBiomeAPI.OTHER_END_LAND
-    );
-
-
-    public static final BCLBiome END_BARRENS = InternalBiomeAPI.wrapNativeBiome(
-            Biomes.END_BARRENS,
-            InternalBiomeAPI.OTHER_END_BARRENS
-    );
-
-    public static final BCLBiome SMALL_END_ISLANDS = InternalBiomeAPI.wrapNativeBiome(
-            Biomes.SMALL_END_ISLANDS,
-            InternalBiomeAPI.OTHER_END_VOID
-    );
-
-
     /**
      * Register {@link BCLBiome} instance and its {@link Biome} if necessary.
      *
@@ -296,7 +241,7 @@ public class BiomeAPI {
                 && registryOrNull.get(bclbiome.getBiomeKey()).map(v -> v.isBound()).orElse(false) == false) {
             bootstrapContext.register(bclbiome.getBiomeKey(), bclbiome._getBiomeToRegister());
 
-            BCLBiomeRegistry.register(null, bclbiome);
+            BCLBiomeRegistry.registerForDatagen(bclbiome);
         }
 
         return finishBiomeRegistration(bclbiome);

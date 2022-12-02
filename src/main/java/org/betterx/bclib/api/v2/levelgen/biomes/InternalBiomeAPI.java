@@ -290,15 +290,6 @@ public class InternalBiomeAPI {
         return BIOME_ADDITIONS.computeIfAbsent(registry, reg -> new AtomicInteger(0)).get();
     }
 
-    public static void registerBCLBiomeData(BCLBiome biome) {
-        try {
-            BCLBiomeRegistry.register(registryAccess, biome);
-        } catch (IllegalStateException e) {
-            if (Configs.MAIN_CONFIG.verboseLogging())
-                BCLib.LOGGER.info("Not managing Biome " + biome.getID());
-        }
-    }
-
     /**
      * Register {@link BCLBiome} instance and its {@link Biome} if necessary.
      *
