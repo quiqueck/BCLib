@@ -237,7 +237,6 @@ public class BiomeAPI {
         HolderGetter<Biome> registryOrNull = bootstrapContext.lookup(Registries.BIOME);
         if (registryOrNull != null
                 && bclbiome._hasBiomeToRegister()
-                //TODO: 1.19.3 this was a ResourceLocation lookup, is this a valid test?
                 && registryOrNull.get(bclbiome.getBiomeKey()).map(v -> v.isBound()).orElse(false) == false) {
             bootstrapContext.register(bclbiome.getBiomeKey(), bclbiome._getBiomeToRegister());
 

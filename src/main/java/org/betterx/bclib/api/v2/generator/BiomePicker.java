@@ -117,11 +117,10 @@ public class BiomePicker {
             all.put(bclBiome, this);
             this.bclBiome = bclBiome;
 
-            //TODO: 1.19.3 is it ok to build the key?
             this.key = ResourceKey.create(
                     Registries.BIOME,
                     bclBiome.getID()
-            );//biomeRegistry.getResourceKey(biomeRegistry.get(bclBiome.getID())).orElse(null);
+            );
             this.biome = (key != null && biomeRegistry != null) ? biomeRegistry.getOrThrow(key) : null;
             this.isValid = key != null && biome != null && biome.isBound() && biomeRegistry.get(key).isPresent();
             bclBiome.forEachSubBiome((b, w) -> {
