@@ -5,7 +5,6 @@ import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.world.event.WorldBootstrap;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.Lifecycle;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
@@ -30,10 +29,7 @@ public class BCLBiomeRegistry {
             BCL_BIOME_CODEC_REGISTRY,
             BCLBiomeRegistry::bootstrapCodecs
     );
-    public static MappedRegistry<BCLBiome> BUILTIN_BCL_BIOMES = new MappedRegistry<>(
-            BCL_BIOMES_REGISTRY,
-            Lifecycle.stable()
-    );
+    public static MappedRegistry<BCLBiome> BUILTIN_BCL_BIOMES = null;
 
     /**
      * Empty biome used as default value if requested biome doesn't exist or linked. Shouldn't be registered anywhere to prevent bugs.
@@ -76,6 +72,7 @@ public class BCLBiomeRegistry {
      */
     @ApiStatus.Internal
     public static ResourceKey<BCLBiome> register(RegistryAccess access, BCLBiome biome) {
+        if (access != null && BUILTIN_BCL_BIOMES == null) return biome.getBCLBiomeKey();
         Registry.register(
                 access == null ? BUILTIN_BCL_BIOMES : access.registryOrThrow(BCL_BIOMES_REGISTRY),
                 biome.getBCLBiomeKey(),
@@ -134,7 +131,9 @@ public class BCLBiomeRegistry {
     }
 
     public static BCLBiome get(@Nullable RegistryAccess access, ResourceLocation loc) {
-        return getBclBiomesRegistry(access).get(loc);
+        var reg = getBclBiomesRegistry(access);
+        if (reg == null) return null;
+        return reg.get(loc);
     }
 
     public static BCLBiome getOrElseEmpty(ResourceLocation loc) {

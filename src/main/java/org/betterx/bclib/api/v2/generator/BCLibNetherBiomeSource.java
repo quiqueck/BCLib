@@ -12,6 +12,7 @@ import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.interfaces.BiomeMap;
 import org.betterx.worlds.together.biomesource.BiomeSourceWithConfig;
 import org.betterx.worlds.together.biomesource.ReloadableBiomeSource;
+import org.betterx.worlds.together.world.event.WorldBootstrap;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -36,7 +37,8 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
     public static final Codec<BCLibNetherBiomeSource> CODEC = RecordCodecBuilder
             .create(instance -> instance
                     .group(
-                            RegistryOps.retrieveElement(Registries.BIOME),
+                            RegistryOps.retrieveGetter(Registries.BIOME),
+                            RegistryOps.retrieveGetter(BCLBiomeRegistry.BCL_BIOMES_REGISTRY),
                             Codec
                                     .LONG
                                     .fieldOf("seed")
@@ -56,41 +58,42 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
     private BiomePicker biomePicker;
     private BCLNetherBiomeSourceConfig config;
 
-
-    private BCLibNetherBiomeSource(
-            Holder.Reference<Registry<Biome>> registryReference,
-            long seed,
-            BCLNetherBiomeSourceConfig bclNetherBiomeSourceConfig
+    public BCLibNetherBiomeSource(
+            HolderGetter<Biome> biomeRegistry,
+            HolderGetter<BCLBiome> bclBiomeRegistry,
+            BCLNetherBiomeSourceConfig config
     ) {
-        this(registryReference.value().asLookup(), seed, bclNetherBiomeSourceConfig);
-    }
-
-
-    public BCLibNetherBiomeSource(HolderGetter<Biome> biomeRegistry, BCLNetherBiomeSourceConfig config) {
-        this(biomeRegistry, 0, config, false);
-    }
-
-    private BCLibNetherBiomeSource(HolderGetter<Biome> biomeRegistry, long seed, BCLNetherBiomeSourceConfig config) {
-        this(biomeRegistry, seed, config, true);
+        this(biomeRegistry, bclBiomeRegistry, 0, config, false);
     }
 
     private BCLibNetherBiomeSource(
             HolderGetter<Biome> biomeRegistry,
+            HolderGetter<BCLBiome> bclBiomeRegistry,
+            long seed,
+            BCLNetherBiomeSourceConfig config
+    ) {
+        this(biomeRegistry, bclBiomeRegistry, seed, config, true);
+    }
+
+    private BCLibNetherBiomeSource(
+            HolderGetter<Biome> biomeRegistry,
+            HolderGetter<BCLBiome> bclBiomeRegistry,
             long seed,
             BCLNetherBiomeSourceConfig config,
             boolean initMaps
     ) {
-        this(biomeRegistry, getBiomes(biomeRegistry), seed, config, initMaps);
+        this(biomeRegistry, bclBiomeRegistry, getBiomes(biomeRegistry, bclBiomeRegistry), seed, config, initMaps);
     }
 
     private BCLibNetherBiomeSource(
             HolderGetter<Biome> biomeRegistry,
+            HolderGetter<BCLBiome> bclBiomeRegistry,
             List<Holder<Biome>> list,
             long seed,
             BCLNetherBiomeSourceConfig config,
             boolean initMaps
     ) {
-        super(biomeRegistry, list, seed);
+        super(biomeRegistry, bclBiomeRegistry, list, seed);
         this.config = config;
         rebuildBiomePicker();
         if (initMaps) {
@@ -99,20 +102,27 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
     }
 
     private void rebuildBiomePicker() {
-        biomePicker = new BiomePicker(biomeRegistry);
-
+        if (WorldBootstrap.getLastRegistryAccess() == null) {
+            biomePicker = new BiomePicker(null);
+            return;
+        }
+        biomePicker = new BiomePicker(WorldBootstrap.getLastRegistryAccess().lookupOrThrow(Registries.BIOME));
+        Registry<BCLBiome> bclBiomeRegistry = WorldBootstrap.getLastRegistryAccess()
+                                                            .registryOrThrow(BCLBiomeRegistry.BCL_BIOMES_REGISTRY);
         this.possibleBiomes().forEach(biome -> {
             ResourceLocation biomeID = biome.unwrapKey().orElseThrow().location();
             if (!biome.isBound()) {
                 BCLib.LOGGER.warning("Biome " + biomeID.toString() + " is requested but not yet bound.");
                 return;
             }
-            if (!BiomeAPI.hasBiome(biomeID)) {
+
+
+            if (!bclBiomeRegistry.containsKey(biomeID)) {
                 BCLBiome bclBiome = new BCLBiome(biomeID, BiomeAPI.BiomeType.NETHER);
                 InternalBiomeAPI.registerBCLBiomeData(bclBiome);
                 biomePicker.addBiome(bclBiome);
             } else {
-                BCLBiome bclBiome = BiomeAPI.getBiome(biomeID);
+                BCLBiome bclBiome = bclBiomeRegistry.get(biomeID);
 
                 if (!BCLBiomeRegistry.isEmptyBiome(bclBiome)) {
                     if (bclBiome.getParentBiome() == null) {
@@ -126,7 +136,7 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
     }
 
     protected BCLBiomeSource cloneForDatapack(Set<Holder<Biome>> datapackBiomes) {
-        datapackBiomes.addAll(getNonVanillaBiomes(this.biomeRegistry));
+        datapackBiomes.addAll(getNonVanillaBiomes(this.biomeRegistry, this.bclBiomeRegistry));
         datapackBiomes.addAll(possibleBiomes().stream()
                                               .filter(h -> !h.unwrapKey()
                                                              .orElseThrow()
@@ -136,6 +146,7 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
                                               .toList());
         return new BCLibNetherBiomeSource(
                 this.biomeRegistry,
+                this.bclBiomeRegistry,
                 datapackBiomes.stream()
                               .filter(b -> b.unwrapKey()
                                             .orElse(null) != BCLBiomeRegistry.EMPTY_BIOME.getBiomeKey())
@@ -146,19 +157,31 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
         );
     }
 
-    private static List<Holder<Biome>> getNonVanillaBiomes(HolderGetter<Biome> biomeRegistry) {
+    private static List<Holder<Biome>> getNonVanillaBiomes(
+            HolderGetter<Biome> biomeRegistry,
+            HolderGetter<BCLBiome> bclBiomeRegistry
+    ) {
         List<String> include = Configs.BIOMES_CONFIG.getIncludeMatching(BiomeAPI.BiomeType.NETHER);
         List<String> exclude = Configs.BIOMES_CONFIG.getExcludeMatching(BiomeAPI.BiomeType.NETHER);
 
-        return getBiomes(biomeRegistry, exclude, include, BCLibNetherBiomeSource::isValidNonVanillaNetherBiome);
+        return getBiomes(
+                biomeRegistry,
+                bclBiomeRegistry,
+                exclude,
+                include,
+                BCLibNetherBiomeSource::isValidNonVanillaNetherBiome
+        );
     }
 
 
-    private static List<Holder<Biome>> getBiomes(HolderGetter<Biome> biomeRegistry) {
+    private static List<Holder<Biome>> getBiomes(
+            HolderGetter<Biome> biomeRegistry,
+            HolderGetter<BCLBiome> bclBiomeRegistry
+    ) {
         List<String> include = Configs.BIOMES_CONFIG.getIncludeMatching(BiomeAPI.BiomeType.NETHER);
         List<String> exclude = Configs.BIOMES_CONFIG.getExcludeMatching(BiomeAPI.BiomeType.NETHER);
 
-        return getBiomes(biomeRegistry, exclude, include, BCLibNetherBiomeSource::isValidNetherBiome);
+        return getBiomes(biomeRegistry, bclBiomeRegistry, exclude, include, BCLibNetherBiomeSource::isValidNetherBiome);
     }
 
 

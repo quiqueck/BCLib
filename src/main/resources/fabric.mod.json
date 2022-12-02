@@ -30,14 +30,11 @@
     "modmenu": [
       "org.betterx.bclib.integration.modmenu.ModMenuEntryPoint"
     ],
-    "worlds_together": [
-      "org.betterx.bclib.registry.PresetsRegistry"
-    ],
     "emi": [
       "org.betterx.bclib.integration.emi.EMIPlugin"
     ],
     "fabric-datagen": [
-      "org.betterx.bclib.datagen.BCLibDatagen"
+      "org.betterx.datagen.bclib.BCLibDatagen"
     ]
   },
   "accessWidener": "bclib.accesswidener",

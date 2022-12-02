@@ -1,9 +1,10 @@
-package org.betterx.bclib.datagen;
+package org.betterx.datagen.bclib.tests;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeBuilder;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeContainer;
+import org.betterx.datagen.bclib.BCLibDatagen;
 
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.world.level.biome.Biome;

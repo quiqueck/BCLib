@@ -37,7 +37,7 @@ public class LevelGenUtil {
 
     @NotNull
     public static LevelStem getBCLNetherLevelStem(WorldGenUtil.Context context, BCLNetherBiomeSourceConfig config) {
-        BCLibNetherBiomeSource netherSource = new BCLibNetherBiomeSource(context.biomes, config);
+        BCLibNetherBiomeSource netherSource = new BCLibNetherBiomeSource(context.biomes, context.bclBiomes, config);
 
         return new LevelStem(
                 context.dimension,
@@ -49,7 +49,7 @@ public class LevelGenUtil {
     }
 
     public static LevelStem getBCLEndLevelStem(WorldGenUtil.Context context, BCLEndBiomeSourceConfig config) {
-        BCLibEndBiomeSource endSource = new BCLibEndBiomeSource(context.biomes, config);
+        BCLibEndBiomeSource endSource = new BCLibEndBiomeSource(context.biomes, context.bclBiomes, config);
         return new LevelStem(
                 context.dimension,
                 new BCLChunkGenerator(

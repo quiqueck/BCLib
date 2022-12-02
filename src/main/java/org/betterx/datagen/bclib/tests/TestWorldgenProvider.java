@@ -1,4 +1,6 @@
-package org.betterx.bclib.datagen;
+package org.betterx.datagen.bclib.tests;
+
+import org.betterx.datagen.bclib.BCLibDatagen;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;

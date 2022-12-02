@@ -20,6 +20,7 @@ import org.betterx.bclib.recipes.AnvilRecipe;
 import org.betterx.bclib.recipes.CraftingRecipes;
 import org.betterx.bclib.registry.BaseBlockEntities;
 import org.betterx.bclib.registry.BaseRegistry;
+import org.betterx.bclib.registry.PresetsRegistry;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.util.Logger;
 import org.betterx.worlds.together.world.WorldConfig;
@@ -41,13 +42,14 @@ public class BCLib implements ModInitializer {
                                                              .isPresent();
 
     private void onDatagen() {
-        
+
     }
 
 
     @Override
     public void onInitialize() {
         WorldsTogether.onInitialize();
+        PresetsRegistry.register();
         LevelGenEvents.register();
         BlockPredicates.ensureStaticInitialization();
         BCLBiomeRegistry.ensureStaticallyLoaded();

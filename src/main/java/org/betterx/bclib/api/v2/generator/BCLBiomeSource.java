@@ -1,6 +1,7 @@
 package org.betterx.bclib.api.v2.generator;
 
 import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
 import org.betterx.worlds.together.biomesource.BiomeSourceFromRegistry;
 import org.betterx.worlds.together.biomesource.BiomeSourceHelper;
@@ -10,6 +11,7 @@ import org.betterx.worlds.together.world.BiomeSourceWithSeed;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
@@ -17,13 +19,13 @@ import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 
 import com.google.common.collect.Sets;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.lang.reflect.Field;
+import java.util.*;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceWithSeed, MergeableBiomeSource<BCLBiomeSource>, BiomeSourceWithNoiseRelatedSettings, BiomeSourceFromRegistry<BCLBiomeSource> {
     protected final HolderGetter<Biome> biomeRegistry;
+    protected final HolderGetter<BCLBiome> bclBiomeRegistry;
     private int registryModificationCounter;
     protected long currentSeed;
     protected int maxHeight;
@@ -42,12 +44,14 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
 
     protected BCLBiomeSource(
             HolderGetter<Biome> biomeRegistry,
+            HolderGetter<BCLBiome> bclBiomeRegistry,
             List<Holder<Biome>> list,
             long seed
     ) {
         super(preInit(biomeRegistry, list));
         this.registryModificationCounter = InternalBiomeAPI.getBiomeRegistryModificationCount(biomeRegistry);
         this.biomeRegistry = biomeRegistry;
+        this.bclBiomeRegistry = bclBiomeRegistry;
         this.currentSeed = seed;
     }
 
@@ -103,27 +107,41 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
     }
 
     protected static List<Holder<Biome>> getBiomes(
-            HolderGetter<Biome> biomeRegistry,
+            HolderGetter<Biome> getter,
+            HolderGetter<BCLBiome> bclBiomeRegistry,
             List<String> exclude,
             List<String> include,
             BCLibNetherBiomeSource.ValidBiomePredicate test
     ) {
-        //TODO: 1.19.3 restore this code
-        return List.of();/*biomeRegistry.stream()
-                            .filter(biome -> biomeRegistry.getResourceKey(biome).isPresent())
+        Optional<Field> res = Arrays.stream(getter.getClass().getFields())
+                                    .filter(f -> Registry.class.isAssignableFrom(f.getType()))
+                                    .findFirst();
+        if (res.isPresent()) {
+            try {
+                Registry<Biome> biomeRegistry = (Registry<Biome>) res.get().get(getter);
 
-                            .map(biome -> (Holder<Biome>) biomeRegistry.getHolderOrThrow(
-                                    biomeRegistry.getResourceKey(biome).get())
-                            )
-                            .filter(biome -> {
-                                ResourceLocation location = biome.unwrapKey().orElseThrow().location();
-                                final String strLocation = location.toString();
-                                if (exclude.contains(strLocation)) return false;
-                                if (include.contains(strLocation)) return true;
+                return biomeRegistry.stream()
+                                    .filter(biome -> biomeRegistry.getResourceKey(biome).isPresent())
+                                    .map(biome -> (Holder<Biome>) biomeRegistry.getHolderOrThrow(
+                                            biomeRegistry.getResourceKey(biome).get())
+                                    )
+                                    .filter(biome -> {
+                                        ResourceLocation location = biome.unwrapKey().orElseThrow().location();
+                                        final String strLocation = location.toString();
+                                        if (exclude.contains(strLocation)) return false;
+                                        if (include.contains(strLocation)) return true;
 
-                                return test.isValid(biome, location);
-                            })
-                            .toList();*/
+                                        return test.isValid(biome, location);
+                                    })
+                                    .toList();
+            } catch (IllegalAccessException e) {
+                BCLib.LOGGER.error("Unable to load field", e);
+                return List.of();
+            }
+        } else {
+            BCLib.LOGGER.error("Unable to access Biome Registry..");
+            return List.of();
+        }
     }
 
     @Override

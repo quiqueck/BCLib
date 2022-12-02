@@ -21,7 +21,6 @@
     "WorldLoaderMixin",
     "WorldPresetAccessor",
     "WorldPresetMixin",
-    "WorldPresetsBootstrapMixin",
     "WorldStem_Mixin"
   ],
   "injectors": {

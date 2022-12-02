@@ -13,7 +13,6 @@ import java.util.Optional;
 public class WorldPresetsClient {
     public static void registerCustomizeUI(ResourceKey<WorldPreset> key, PresetEditor setupScreen) {
         if (setupScreen != null) {
-            //TODO: 1.19.3 this is called out of order
             PresetEditor.EDITORS.put(Optional.of(key), setupScreen);
         }
     }

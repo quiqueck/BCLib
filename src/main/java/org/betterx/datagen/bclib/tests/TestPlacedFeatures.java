@@ -1,7 +1,8 @@
-package org.betterx.bclib.datagen;
+package org.betterx.datagen.bclib.tests;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v3.levelgen.features.BCLFeature;
+import org.betterx.datagen.bclib.BCLibDatagen;
 
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.world.level.levelgen.GenerationStep;

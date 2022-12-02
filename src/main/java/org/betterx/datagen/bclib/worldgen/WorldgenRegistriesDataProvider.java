@@ -1,4 +1,4 @@
-package org.betterx.bclib.datagen;
+package org.betterx.datagen.bclib.worldgen;
 
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
 import org.betterx.worlds.together.surfaceRules.SurfaceRuleRegistry;
@@ -11,8 +11,8 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider
 
 import java.util.concurrent.CompletableFuture;
 
-public class WorldgenProvider extends FabricDynamicRegistryProvider {
-    public WorldgenProvider(
+public class WorldgenRegistriesDataProvider extends FabricDynamicRegistryProvider {
+    public WorldgenRegistriesDataProvider(
             FabricDataOutput output,
             CompletableFuture<HolderLookup.Provider> registriesFuture
     ) {

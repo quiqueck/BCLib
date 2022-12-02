@@ -1,4 +1,4 @@
-package org.betterx.bclib.datagen;
+package org.betterx.datagen.bclib.worldgen;
 
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeData;
@@ -29,13 +29,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-public class CustomRegistriesDataProvider implements DataProvider {
+public class BCLibRegistriesDataProvider implements DataProvider {
     public static final List<RegistryDataLoader.RegistryData<?>> REGISTRIES = List.of(
             new RegistryDataLoader.RegistryData<>(BCLBiomeRegistry.BCL_BIOMES_REGISTRY, BiomeData.CODEC),
             new RegistryDataLoader.RegistryData<>(
                     SurfaceRuleRegistry.SURFACE_RULES_REGISTRY,
                     AssignedSurfaceRule.CODEC
             )
+            //new RegistryDataLoader.RegistryData<>(Registries.WORLD_PRESET, WorldPreset.DIRECT_CODEC)
 //            new RegistryDataLoader.RegistryData<>(Registries.BIOME, Biome.DIRECT_CODEC),
 //            new RegistryDataLoader.RegistryData<>(Registries.CONFIGURED_FEATURE, ConfiguredFeature.DIRECT_CODEC),
 //            new RegistryDataLoader.RegistryData<>(Registries.PLACED_FEATURE, PlacedFeature.DIRECT_CODEC),
@@ -45,7 +46,7 @@ public class CustomRegistriesDataProvider implements DataProvider {
 
     private final PackOutput output;
 
-    public CustomRegistriesDataProvider(FabricDataOutput generator) {
+    public BCLibRegistriesDataProvider(FabricDataOutput generator) {
         this.output = generator;
     }
 
