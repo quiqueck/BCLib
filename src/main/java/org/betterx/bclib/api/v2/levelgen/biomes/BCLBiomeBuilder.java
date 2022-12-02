@@ -989,7 +989,11 @@ public class BCLBiomeBuilder {
         return new UnregisteredBCLBiome<>(
                 res,
                 parent,
-                ctx -> builder.generationSettings(fixGenerationSettings(getGeneration(ctx).build())).build()
+                ctx -> {
+                    BiomeGenerationSettings.Builder genBuilder = getGeneration(ctx);
+                    featureSupliers.forEach(s -> s.accept(genBuilder));
+                    return builder.generationSettings(fixGenerationSettings(genBuilder.build())).build();
+                }
         );
     }
 }

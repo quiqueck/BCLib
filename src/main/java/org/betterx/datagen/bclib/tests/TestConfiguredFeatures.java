@@ -16,10 +16,13 @@ import net.minecraft.world.level.levelgen.feature.configurations.RandomPatchConf
 
 public class TestConfiguredFeatures {
     static BCLConfigureFeature<RandomPatchFeature, RandomPatchConfiguration> YELLOW_FEATURE = BCLFeatureBuilder
-            .startBonemealPatch(BCLib.makeID("yellow_feature"))
+            .startWeighted(BCLib.makeID("temp_yellow_feature"))
             .add(Blocks.YELLOW_STAINED_GLASS, 30)
             .add(Blocks.YELLOW_CONCRETE_POWDER, 30)
             .add(Blocks.YELLOW_GLAZED_TERRACOTTA, 5)
+            .inlinePlace()
+            .isEmpty()
+            .inRandomPatch(BCLib.makeID("yellow_feature"))
             .build();
 
     public static void bootstrap(BootstapContext<ConfiguredFeature<?, ?>> bootstrapContext) {

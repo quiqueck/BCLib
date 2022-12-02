@@ -11,6 +11,7 @@ import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.util.valueproviders.UniformInt;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.Noises;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -169,6 +170,10 @@ abstract class CommonPlacedFeatureBuilder<F extends Feature<FC>, FC extends Feat
      */
     public T squarePlacement() {
         return modifier(InSquarePlacement.spread());
+    }
+
+    public T onHeightmap(Heightmap.Types types) {
+        return modifier(HeightmapPlacement.onHeightmap(types));
     }
 
 
