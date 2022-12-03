@@ -93,7 +93,7 @@ public class BCLPlacedFeatureBuilder<F extends Feature<FC>, FC extends FeatureCo
         return res;
     }
 
-    public static void registerunbound(BootstapContext<PlacedFeature> bootstrapContext) {
+    public static void registerUnbound(BootstapContext<PlacedFeature> bootstrapContext) {
         UNBOUND_FEATURES.forEach(u -> u.register(bootstrapContext));
         UNBOUND_FEATURES.clear();
     }
