@@ -29,6 +29,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -55,6 +56,51 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class BiomeAPI {
+
+    public static final BCLBiome THE_END = InternalBiomeAPI.wrapBiome(
+            Biomes.THE_END,
+            InternalBiomeAPI.OTHER_END_CENTER
+    );
+    public static final BCLBiome NETHER_WASTES_BIOME = InternalBiomeAPI.wrapBiome(
+            Biomes.NETHER_WASTES,
+            InternalBiomeAPI.OTHER_NETHER
+    );
+    public static final BCLBiome CRIMSON_FOREST_BIOME = InternalBiomeAPI.wrapBiome(
+            Biomes.CRIMSON_FOREST,
+            InternalBiomeAPI.OTHER_NETHER
+    );
+    public static final BCLBiome WARPED_FOREST_BIOME = InternalBiomeAPI.wrapBiome(
+            Biomes.WARPED_FOREST,
+            InternalBiomeAPI.OTHER_NETHER
+    );
+    public static final BCLBiome SOUL_SAND_VALLEY_BIOME = InternalBiomeAPI.wrapBiome(
+            Biomes.SOUL_SAND_VALLEY,
+            InternalBiomeAPI.OTHER_NETHER
+    );
+    public static final BCLBiome BASALT_DELTAS_BIOME = InternalBiomeAPI.wrapBiome(
+            Biomes.BASALT_DELTAS,
+            InternalBiomeAPI.OTHER_NETHER
+    );
+    public static final BCLBiome END_MIDLANDS = InternalBiomeAPI.wrapBiome(
+            Biomes.END_MIDLANDS,
+            0.5F,
+            InternalBiomeAPI.OTHER_END_LAND
+    );
+    public static final BCLBiome END_HIGHLANDS = InternalBiomeAPI.wrapBiome(
+            Biomes.END_HIGHLANDS,
+            END_MIDLANDS,
+            8,
+            0.5F,
+            InternalBiomeAPI.OTHER_END_LAND
+    );
+    public static final BCLBiome END_BARRENS = InternalBiomeAPI.wrapBiome(
+            Biomes.END_BARRENS,
+            InternalBiomeAPI.OTHER_END_BARRENS
+    );
+    public static final BCLBiome SMALL_END_ISLANDS = InternalBiomeAPI.wrapBiome(
+            Biomes.SMALL_END_ISLANDS,
+            InternalBiomeAPI.OTHER_END_VOID
+    );
 
     /**
      * Register {@link BCLBiome} instance and its {@link Biome} if necessary.

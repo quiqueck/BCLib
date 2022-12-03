@@ -19,21 +19,27 @@ import org.jetbrains.annotations.ApiStatus;
 
 public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> {
     public static class Unregistered<F extends Feature<FC>, FC extends FeatureConfiguration> extends BCLFeature<F, FC> {
+        private BCLFeature<F, FC> registered;
+
         Unregistered(
                 BCLConfigureFeature<F, FC> configuredFeature,
                 Holder<PlacedFeature> placed,
                 GenerationStep.Decoration decoration
         ) {
             super(configuredFeature, placed, decoration);
+            registered = null;
         }
 
         @Override
         public BCLFeature<F, FC> register(BootstapContext<PlacedFeature> bootstrapContext) {
+            if (registered != null) return registered;
             Holder<PlacedFeature> holder = BCLPlacedFeatureBuilder.register(
                     bootstrapContext,
                     getPlacedFeature()
             );
-            return new BCLFeature<>(configuredFeature, holder, decoration);
+            BCLPlacedFeatureBuilder.UNBOUND_FEATURES.remove(this);
+            registered = new BCLFeature<>(configuredFeature, holder, decoration);
+            return registered;
         }
     }
 

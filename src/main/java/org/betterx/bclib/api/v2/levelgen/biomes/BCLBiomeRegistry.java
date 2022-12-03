@@ -1,6 +1,7 @@
 package org.betterx.bclib.api.v2.levelgen.biomes;
 
 import org.betterx.bclib.BCLib;
+import org.betterx.datagen.bclib.worldgen.VanillaBCLBiomesDataProvider;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.world.event.WorldBootstrap;
 
@@ -43,59 +44,7 @@ public class BCLBiomeRegistry {
      * Have {@code Biomes.THE_VOID} as the reference biome.
      **/
     public static final BCLBiome EMPTY_BIOME = new BCLBiome(Biomes.THE_VOID.location());
-
-    public static final BCLBiome THE_END = InternalBiomeAPI.wrapBiome(
-            Biomes.THE_END,
-            InternalBiomeAPI.OTHER_END_CENTER
-    );
-
-    public static final BCLBiome NETHER_WASTES_BIOME = InternalBiomeAPI.wrapBiome(
-            Biomes.NETHER_WASTES,
-            InternalBiomeAPI.OTHER_NETHER
-    );
-
-    public static final BCLBiome CRIMSON_FOREST_BIOME = InternalBiomeAPI.wrapBiome(
-            Biomes.CRIMSON_FOREST,
-            InternalBiomeAPI.OTHER_NETHER
-    );
-
-    public static final BCLBiome WARPED_FOREST_BIOME = InternalBiomeAPI.wrapBiome(
-            Biomes.WARPED_FOREST,
-            InternalBiomeAPI.OTHER_NETHER
-    );
-
-    public static final BCLBiome SOUL_SAND_VALLEY_BIOME = InternalBiomeAPI.wrapBiome(
-            Biomes.SOUL_SAND_VALLEY,
-            InternalBiomeAPI.OTHER_NETHER
-    );
-    public static final BCLBiome BASALT_DELTAS_BIOME = InternalBiomeAPI.wrapBiome(
-            Biomes.BASALT_DELTAS,
-            InternalBiomeAPI.OTHER_NETHER
-    );
-
-    public static final BCLBiome END_MIDLANDS = InternalBiomeAPI.wrapBiome(
-            Biomes.END_MIDLANDS,
-            0.5F,
-            InternalBiomeAPI.OTHER_END_LAND
-    );
-
-    public static final BCLBiome END_HIGHLANDS = InternalBiomeAPI.wrapBiome(
-            Biomes.END_HIGHLANDS,
-            END_MIDLANDS,
-            8,
-            0.5F,
-            InternalBiomeAPI.OTHER_END_LAND
-    );
-
-    public static final BCLBiome END_BARRENS = InternalBiomeAPI.wrapBiome(
-            Biomes.END_BARRENS,
-            InternalBiomeAPI.OTHER_END_BARRENS
-    );
-
-    public static final BCLBiome SMALL_END_ISLANDS = InternalBiomeAPI.wrapBiome(
-            Biomes.SMALL_END_ISLANDS,
-            InternalBiomeAPI.OTHER_END_VOID
-    );
+    private static boolean didCreate = false;
 
     public static boolean isEmptyBiome(ResourceLocation l) {
         return l == null || Biomes.THE_VOID.location().equals(l);
@@ -201,7 +150,7 @@ public class BCLBiomeRegistry {
         if (WorldBootstrap.getLastRegistryAccess() == null) return null;
         return WorldBootstrap.getLastRegistryAccess().registry(BCL_BIOMES_REGISTRY).orElse(null);
     }
-    
+
 
     public static Stream<ResourceKey<BCLBiome>> getAll(BiomeAPI.BiomeType dim) {
         Set<ResourceKey<BCLBiome>> result = new HashSet<>();
@@ -238,5 +187,15 @@ public class BCLBiomeRegistry {
 
     public static void ensureStaticallyLoaded() {
 
+    }
+
+    public static void prepareForDatagen() {
+        if (didCreate) return;
+        didCreate = true;
+
+        BUILTIN_BCL_BIOMES = BuiltInRegistries.registerSimple(
+                BCL_BIOMES_REGISTRY,
+                VanillaBCLBiomesDataProvider::bootstrap
+        );
     }
 }

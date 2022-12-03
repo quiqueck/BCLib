@@ -45,12 +45,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class BCLBiomeBuilder {
-    private static final List<UnboundBCLBiome<?>> undoundBiomes = new LinkedList<>();
+    static final ConcurrentLinkedQueue<UnboundBCLBiome<?>> UNBOUND_BIOMES = new ConcurrentLinkedQueue<>();
 
     public static int calculateSkyColor(float temperature) {
         return OverworldBiomes.calculateSkyColor(temperature);
@@ -957,12 +958,12 @@ public class BCLBiomeBuilder {
                     return builder.generationSettings(fixGenerationSettings(genBuilder.build())).build();
                 }
         );
-        undoundBiomes.add(unbound);
+        UNBOUND_BIOMES.add(unbound);
         return unbound;
     }
 
     public static void registerUnbound(BootstapContext<Biome> context) {
-        undoundBiomes.forEach(u -> u.register(context));
-        undoundBiomes.clear();
+        UNBOUND_BIOMES.forEach(u -> u.register(context));
+        UNBOUND_BIOMES.clear();
     }
 }

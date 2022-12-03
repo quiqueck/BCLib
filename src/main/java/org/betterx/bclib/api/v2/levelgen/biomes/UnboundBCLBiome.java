@@ -40,6 +40,7 @@ class UnboundBCLBiome<T extends BCLBiome> extends BCLBiomeContainer<T> {
             BiomeAPI.registerBuiltinBiomeAndOverrideIntendedDimension(bootstrapContext, biome, dim);
         }
 
+        BCLBiomeBuilder.UNBOUND_BIOMES.remove(this);
         registered = new BCLBiomeContainer<>(this.biome);
         return registered;
     }

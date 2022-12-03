@@ -19,18 +19,25 @@ import java.util.Optional;
 
 public class BCLConfigureFeature<F extends Feature<FC>, FC extends FeatureConfiguration> {
     public static class Unregistered<F extends Feature<FC>, FC extends FeatureConfiguration> extends BCLConfigureFeature<F, FC> {
+        private BCLConfigureFeature<F, FC> registered;
+
         Unregistered(ResourceLocation id, Holder<ConfiguredFeature<FC, F>> configuredFeature) {
             super(id, configuredFeature, false);
+            registered = null;
         }
 
         @Override
         public BCLConfigureFeature<F, FC> register(BootstapContext<ConfiguredFeature<?, ?>> bootstrapContext) {
+            if (registered != null) return registered;
+
             Holder<ConfiguredFeature<FC, F>> holder = BCLFeatureBuilder.register(
                     bootstrapContext,
                     id,
                     configuredFeature.value()
             );
-            return new BCLConfigureFeature<>(id, holder, true);
+            BCLFeatureBuilder.UNBOUND_FEATURES.remove(this);
+            registered = new BCLConfigureFeature<>(id, holder, true);
+            return registered;
         }
     }
 

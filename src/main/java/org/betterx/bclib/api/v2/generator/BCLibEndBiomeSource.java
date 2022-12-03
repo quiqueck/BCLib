@@ -189,7 +189,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
         }
         if (endCenterBiomePicker.isEmpty()) {
             BCLib.LOGGER.warning("No Center Island Biomes found. Forcing use of vanilla center.");
-            endCenterBiomePicker.addBiome(BCLBiomeRegistry.THE_END);
+            endCenterBiomePicker.addBiome(BiomeAPI.THE_END);
             endCenterBiomePicker.rebuild();
             if (endCenterBiomePicker.isEmpty()) {
                 BCLib.LOGGER.error("Unable to force vanilla central Island. Falling back to land Biomes...");

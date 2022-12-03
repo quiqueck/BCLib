@@ -42,6 +42,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
@@ -59,7 +60,7 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         B create(ResourceLocation id, Holder<ConfiguredFeature<FC, F>> configuredFeature);
     }
 
-    private static List<BCLConfigureFeature.Unregistered<?, ?>> UNBOUND_FEATURES = new LinkedList<>();
+    static ConcurrentLinkedQueue<BCLConfigureFeature.Unregistered<?, ?>> UNBOUND_FEATURES = new ConcurrentLinkedQueue<>();
 
     /**
      * Starts a new {@link BCLFeature} builder.

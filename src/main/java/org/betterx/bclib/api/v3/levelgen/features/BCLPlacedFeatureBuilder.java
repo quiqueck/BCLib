@@ -13,15 +13,15 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
-import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class BCLPlacedFeatureBuilder<F extends Feature<FC>, FC extends FeatureConfiguration> extends CommonPlacedFeatureBuilder<F, FC, BCLPlacedFeatureBuilder<F, FC>> {
     private final ResourceLocation featureID;
     private GenerationStep.Decoration decoration = GenerationStep.Decoration.VEGETAL_DECORATION;
     private final BCLConfigureFeature<F, FC> cFeature;
 
-    private static final List<BCLFeature.Unregistered> UNBOUND_FEATURES = new LinkedList<>();
+    static final ConcurrentLinkedQueue<BCLFeature.Unregistered> UNBOUND_FEATURES = new ConcurrentLinkedQueue<>();
 
     private BCLPlacedFeatureBuilder(
             ResourceLocation featureID,
