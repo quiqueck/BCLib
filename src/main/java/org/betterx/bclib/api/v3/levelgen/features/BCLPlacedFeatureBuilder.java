@@ -13,12 +13,15 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class BCLPlacedFeatureBuilder<F extends Feature<FC>, FC extends FeatureConfiguration> extends CommonPlacedFeatureBuilder<F, FC, BCLPlacedFeatureBuilder<F, FC>> {
     private final ResourceLocation featureID;
     private GenerationStep.Decoration decoration = GenerationStep.Decoration.VEGETAL_DECORATION;
     private final BCLConfigureFeature<F, FC> cFeature;
+
+    private static final List<BCLFeature.Unregistered> UNBOUND_FEATURES = new LinkedList<>();
 
     private BCLPlacedFeatureBuilder(
             ResourceLocation featureID,
@@ -85,7 +88,14 @@ public class BCLPlacedFeatureBuilder<F extends Feature<FC>, FC extends FeatureCo
                 featureID,
                 pFeature
         );
-        return new BCLFeature.Unregistered<>(cFeature, holder, decoration);
+        final BCLFeature.Unregistered<F, FC> res = new BCLFeature.Unregistered<>(cFeature, holder, decoration);
+        UNBOUND_FEATURES.add(res);
+        return res;
+    }
+
+    public static void registerunbound(BootstapContext<PlacedFeature> bootstrapContext) {
+        UNBOUND_FEATURES.forEach(u -> u.register(bootstrapContext));
+        UNBOUND_FEATURES.clear();
     }
 
     public static Holder<PlacedFeature> register(

@@ -59,7 +59,7 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         B create(ResourceLocation id, Holder<ConfiguredFeature<FC, F>> configuredFeature);
     }
 
-    private static List<BCLConfigureFeature.Unregistered<?, ?>> ALL_UNREGISTERED = new LinkedList<>();
+    private static List<BCLConfigureFeature.Unregistered<?, ?>> UNBOUND_FEATURES = new LinkedList<>();
 
     /**
      * Starts a new {@link BCLFeature} builder.
@@ -283,12 +283,13 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
                         cFeature
                 )
         );
-        ALL_UNREGISTERED.add(res);
+        UNBOUND_FEATURES.add(res);
         return res;
     }
 
     public static void registerUnbound(BootstapContext<ConfiguredFeature<?, ?>> bootstapContext) {
-        ALL_UNREGISTERED.forEach(u -> u.register(bootstapContext));
+        UNBOUND_FEATURES.forEach(u -> u.register(bootstapContext));
+        UNBOUND_FEATURES.clear();
     }
 
     public BCLInlinePlacedBuilder<F, FC> inlinePlace() {
