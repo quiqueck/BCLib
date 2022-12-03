@@ -143,7 +143,7 @@ public class BCLBiomeBuilder {
         return this;
     }
 
-    public BCLBiomeBuilder setParent(BCLBiome parent) {
+    public BCLBiomeBuilder parentBiome(BCLBiome parent) {
         this.parent = parent;
         return this;
     }

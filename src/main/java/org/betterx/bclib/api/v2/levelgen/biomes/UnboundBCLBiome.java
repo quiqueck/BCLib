@@ -24,7 +24,9 @@ class UnboundBCLBiome<T extends BCLBiome> extends BCLBiomeContainer<T> {
 
         biome._setBiomeToRegister(this.supplier.apply(bootstrapContext));
 
-        if (dim.is(BiomeAPI.BiomeType.END_LAND)) {
+        if (hasParent()) {
+            BiomeAPI.registerSubBiome(bootstrapContext, parentBiome, biome, dim);
+        } else if (dim.is(BiomeAPI.BiomeType.END_LAND)) {
             BiomeAPI.registerEndLandBiome(bootstrapContext, biome);
         } else if (dim.is(BiomeAPI.BiomeType.END_VOID)) {
             BiomeAPI.registerEndVoidBiome(bootstrapContext, biome);
@@ -34,8 +36,6 @@ class UnboundBCLBiome<T extends BCLBiome> extends BCLBiomeContainer<T> {
             BiomeAPI.registerEndCenterBiome(bootstrapContext, biome);
         } else if (dim.is(BiomeAPI.BiomeType.NETHER)) {
             BiomeAPI.registerNetherBiome(bootstrapContext, biome);
-        } else if (hasParent()) {
-            BiomeAPI.registerSubBiome(bootstrapContext, parentBiome, biome, dim);
         } else {
             BiomeAPI.registerBuiltinBiomeAndOverrideIntendedDimension(bootstrapContext, biome, dim);
         }
