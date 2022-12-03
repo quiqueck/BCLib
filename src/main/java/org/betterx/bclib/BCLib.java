@@ -21,6 +21,7 @@ import org.betterx.bclib.recipes.CraftingRecipes;
 import org.betterx.bclib.registry.BaseBlockEntities;
 import org.betterx.bclib.registry.BaseRegistry;
 import org.betterx.bclib.registry.PresetsRegistry;
+import org.betterx.datagen.bclib.tests.TestStructure;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.util.Logger;
 import org.betterx.worlds.together.world.WorldConfig;
@@ -66,6 +67,9 @@ public class BCLib implements ModInitializer {
         CommandRegistry.register();
         BCLBlockTags.ensureStaticallyLoaded();
         PoiManager.registerAll();
+        if (isDevEnvironment()) {
+            TestStructure.registerBase();
+        }
 
         DataExchangeAPI.registerDescriptors(List.of(
                         HelloClient.DESCRIPTOR,

@@ -129,8 +129,6 @@ public class BCLBiomeBuilder {
     private interface BuildCompletion extends Function<BootstapContext<Biome>, Biome> {
     }
 
-
-    private static final BCLBiomeBuilder INSTANCE = new BCLBiomeBuilder();
     private static final SurfaceRules.ConditionSource SURFACE_NOISE = SurfaceRules.noiseCondition(
             Noises.SOUL_SAND_LAYER,
             -0.012
@@ -144,7 +142,7 @@ public class BCLBiomeBuilder {
     private MobSpawnSettings.Builder spawnSettings;
     private SurfaceRules.RuleSource surfaceRule;
     private Precipitation precipitation;
-    private ResourceLocation biomeID;
+    final private ResourceLocation biomeID;
 
 
     private final Set<TagKey<Biome>> tags = Sets.newHashSet();
@@ -164,6 +162,24 @@ public class BCLBiomeBuilder {
     private BiomeAPI.BiomeType biomeType;
 
 
+    BCLBiomeBuilder(ResourceLocation biomeID) {
+        this.biomeID = biomeID;
+        this.precipitation = Precipitation.NONE;
+        this.generationSettings = null;
+        this.effectsBuilder = null;
+        this.spawnSettings = null;
+        this.temperature = 1.0F;
+        this.fogDensity = 1.0F;
+        this.edgeSize = 0;
+        this.downfall = 1.0F;
+        this.genChance = 1.0F;
+        this.height = 0.1F;
+        this.vertical = false;
+        this.edge = null;
+        this.parent = null;
+        this.biomeType = null;
+    }
+
     /**
      * Starts new biome building process.
      *
@@ -173,26 +189,7 @@ public class BCLBiomeBuilder {
     public static BCLBiomeBuilder start(
             ResourceLocation biomeID
     ) {
-        INSTANCE.biomeID = biomeID;
-        INSTANCE.precipitation = Precipitation.NONE;
-        INSTANCE.generationSettings = null;
-        INSTANCE.effectsBuilder = null;
-        INSTANCE.spawnSettings = null;
-        INSTANCE.temperature = 1.0F;
-        INSTANCE.fogDensity = 1.0F;
-        INSTANCE.edgeSize = 0;
-        INSTANCE.downfall = 1.0F;
-        INSTANCE.genChance = 1.0F;
-        INSTANCE.height = 0.1F;
-        INSTANCE.vertical = false;
-        INSTANCE.edge = null;
-        INSTANCE.parent = null;
-        INSTANCE.carvers.clear();
-        INSTANCE.parameters.clear();
-        INSTANCE.tags.clear();
-        INSTANCE.biomeType = null;
-        INSTANCE.featureSupliers.clear();
-        return INSTANCE;
+        return new BCLBiomeBuilder(biomeID);
     }
 
     public BCLBiomeBuilder addNetherClimateParamater(float temperature, float humidity) {

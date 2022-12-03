@@ -1,6 +1,7 @@
 package org.betterx.datagen.bclib.tests;
 
 import org.betterx.bclib.BCLib;
+import org.betterx.bclib.util.BlocksHelper;
 import org.betterx.bclib.util.MHelper;
 import org.betterx.worlds.together.tag.v3.TagManager;
 
@@ -19,6 +20,7 @@ import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -71,7 +73,17 @@ class TestStructurePiece extends StructurePiece {
             ChunkPos chunkPos,
             BlockPos blockPos
     ) {
-
+        for (int x = boundingBox.minX(); x < boundingBox.maxX(); x++) {
+            for (int y = boundingBox.minY(); y < boundingBox.maxY(); y++) {
+                for (int z = boundingBox.minZ(); z < boundingBox.maxZ(); z++) {
+                    BlocksHelper.setWithoutUpdate(
+                            worldGenLevel,
+                            new BlockPos(x, y, z),
+                            Blocks.AMETHYST_BLOCK.defaultBlockState()
+                    );
+                }
+            }
+        }
     }
 }
 
@@ -145,8 +157,7 @@ public class TestStructure extends Structure {
 
     public static void bootstrap(BootstapContext<Structure> bootstrapContext) {
         BCLib.LOGGER.info("Bootstrap Structure");
-        Registry.register(BuiltInRegistries.STRUCTURE_PIECE, TestStructurePiece.KEY, TestStructurePiece.INSTANCE);
-        Registry.register(BuiltInRegistries.STRUCTURE_TYPE, TYPE_KEY, TYPE);
+        //registerBase();
         HolderSet<Biome> biomes = bootstrapContext.lookup(Registries.BIOME).getOrThrow(TEST_STRUCTURE_TAG);
 
         bootstrapContext.register(KEY, new TestStructure(new Structure.StructureSettings(
@@ -155,5 +166,10 @@ public class TestStructure extends Structure {
                 GenerationStep.Decoration.SURFACE_STRUCTURES,
                 TerrainAdjustment.BEARD_THIN
         )));
+    }
+
+    public static void registerBase() {
+        Registry.register(BuiltInRegistries.STRUCTURE_PIECE, TestStructurePiece.KEY, TestStructurePiece.INSTANCE);
+        Registry.register(BuiltInRegistries.STRUCTURE_TYPE, TYPE_KEY, TYPE);
     }
 }
