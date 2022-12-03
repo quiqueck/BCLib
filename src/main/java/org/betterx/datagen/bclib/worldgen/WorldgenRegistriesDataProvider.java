@@ -26,6 +26,7 @@ public class WorldgenRegistriesDataProvider extends FabricDynamicRegistryProvide
         entries.addAll(registries.lookupOrThrow(BCLBiomeRegistry.BCL_BIOMES_REGISTRY));
         entries.addAll(registries.lookupOrThrow(SurfaceRuleRegistry.SURFACE_RULES_REGISTRY));
         entries.addAll(registries.lookupOrThrow(Registries.STRUCTURE));
+        entries.addAll(registries.lookupOrThrow(Registries.STRUCTURE_SET));
     }
 
     @Override

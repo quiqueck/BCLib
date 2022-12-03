@@ -43,6 +43,7 @@ public class BCLibDatagen implements DataGeneratorEntrypoint {
             //registryBuilder.add(Registries.STRUCTURE_PIECE, TestStructure::bootstrapPiece);
             //registryBuilder.add(Registries.STRUCTURE_TYPE, TestStructure::bootstrapType);
             registryBuilder.add(Registries.STRUCTURE, TestStructure::bootstrap);
+            registryBuilder.add(Registries.STRUCTURE_SET, TestStructure::bootstrapSet);
         }
         registryBuilder.add(Registries.BIOME, TestBiomes::bootstrap);
         registryBuilder.add(Registries.NOISE_SETTINGS, NoiseTypesDataProvider::bootstrap);

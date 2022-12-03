@@ -29,6 +29,8 @@ import net.minecraft.world.level.levelgen.structure.*;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePiecesBuilder;
+import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
+import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadType;
 
 import java.util.Map;
 import java.util.Optional;
@@ -73,9 +75,9 @@ class TestStructurePiece extends StructurePiece {
             ChunkPos chunkPos,
             BlockPos blockPos
     ) {
-        for (int x = boundingBox.minX(); x < boundingBox.maxX(); x++) {
-            for (int y = boundingBox.minY(); y < boundingBox.maxY(); y++) {
-                for (int z = boundingBox.minZ(); z < boundingBox.maxZ(); z++) {
+        for (int x = this.boundingBox.minX(); x < this.boundingBox.maxX(); x++) {
+            for (int y = this.boundingBox.minY(); y < this.boundingBox.maxY(); y++) {
+                for (int z = this.boundingBox.minZ(); z < this.boundingBox.maxZ(); z++) {
                     BlocksHelper.setWithoutUpdate(
                             worldGenLevel,
                             new BlockPos(x, y, z),
@@ -96,6 +98,7 @@ public class TestStructure extends Structure {
     static final StructureType<TestStructure> TYPE = () -> Structure.simpleCodec(TestStructure::new);
 
     static final ResourceKey<Structure> KEY = ResourceKey.create(Registries.STRUCTURE, BCLib.makeID("test_structure"));
+    static final ResourceKey<StructureSet> SET_KEY = ResourceKey.create(Registries.STRUCTURE_SET, KEY.location());
 
     protected TestStructure(StructureSettings structureSettings) {
         super(structureSettings);
@@ -165,6 +168,17 @@ public class TestStructure extends Structure {
                 Map.of(),
                 GenerationStep.Decoration.SURFACE_STRUCTURES,
                 TerrainAdjustment.BEARD_THIN
+        )));
+    }
+
+    public static void bootstrapSet(BootstapContext<StructureSet> bootstrapContext) {
+        BCLib.LOGGER.info("Bootstrap StructureSet");
+        var structure = bootstrapContext.lookup(Registries.STRUCTURE).getOrThrow(KEY);
+        bootstrapContext.register(SET_KEY, new StructureSet(structure, new RandomSpreadStructurePlacement(
+                10,
+                8,
+                RandomSpreadType.LINEAR,
+                13323129 + 10 + 8 + KEY.location().toString().hashCode() % 10000
         )));
     }
 
