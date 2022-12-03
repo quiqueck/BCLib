@@ -1,25 +1,23 @@
 package org.betterx.datagen.bclib.tests;
 
 import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.levelgen.structures.BCLStructure;
+import org.betterx.bclib.api.v2.levelgen.structures.BCLStructureBuilder;
 import org.betterx.bclib.util.BlocksHelper;
 import org.betterx.bclib.util.MHelper;
-import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.GenerationStep;
@@ -29,10 +27,7 @@ import net.minecraft.world.level.levelgen.structure.*;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePiecesBuilder;
-import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
-import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadType;
 
-import java.util.Map;
 import java.util.Optional;
 
 class TestStructurePiece extends StructurePiece {
@@ -90,15 +85,12 @@ class TestStructurePiece extends StructurePiece {
 }
 
 public class TestStructure extends Structure {
-    static final TagKey<Biome> TEST_STRUCTURE_TAG = TagManager.BIOMES.makeTag(BCLib.makeID("test_structure"));
-    static final ResourceKey<StructureType<?>> TYPE_KEY = ResourceKey.create(
-            Registries.STRUCTURE_TYPE,
-            BCLib.makeID("test_type")
-    );
-    static final StructureType<TestStructure> TYPE = () -> Structure.simpleCodec(TestStructure::new);
-
-    static final ResourceKey<Structure> KEY = ResourceKey.create(Registries.STRUCTURE, BCLib.makeID("test_structure"));
-    static final ResourceKey<StructureSet> SET_KEY = ResourceKey.create(Registries.STRUCTURE_SET, KEY.location());
+    public static final BCLStructure<TestStructure> TEST = BCLStructureBuilder
+            .start(BCLib.makeID("test_structure"), TestStructure::new)
+            .adjustment(TerrainAdjustment.BEARD_THIN)
+            .randomPlacement(16, 8)
+            .step(GenerationStep.Decoration.SURFACE_STRUCTURES)
+            .build();
 
     protected TestStructure(StructureSettings structureSettings) {
         super(structureSettings);
@@ -155,35 +147,20 @@ public class TestStructure extends Structure {
 
     @Override
     public StructureType<?> type() {
-        return TYPE;
+        return TEST.structureType;
     }
 
     public static void bootstrap(BootstapContext<Structure> bootstrapContext) {
         BCLib.LOGGER.info("Bootstrap Structure");
-        //registerBase();
-        HolderSet<Biome> biomes = bootstrapContext.lookup(Registries.BIOME).getOrThrow(TEST_STRUCTURE_TAG);
-
-        bootstrapContext.register(KEY, new TestStructure(new Structure.StructureSettings(
-                biomes,
-                Map.of(),
-                GenerationStep.Decoration.SURFACE_STRUCTURES,
-                TerrainAdjustment.BEARD_THIN
-        )));
+        TEST.register(bootstrapContext);
     }
 
     public static void bootstrapSet(BootstapContext<StructureSet> bootstrapContext) {
         BCLib.LOGGER.info("Bootstrap StructureSet");
-        var structure = bootstrapContext.lookup(Registries.STRUCTURE).getOrThrow(KEY);
-        bootstrapContext.register(SET_KEY, new StructureSet(structure, new RandomSpreadStructurePlacement(
-                10,
-                8,
-                RandomSpreadType.LINEAR,
-                13323129 + 10 + 8 + KEY.location().toString().hashCode() % 10000
-        )));
+        TEST.registerSet(bootstrapContext);
     }
 
     public static void registerBase() {
         Registry.register(BuiltInRegistries.STRUCTURE_PIECE, TestStructurePiece.KEY, TestStructurePiece.INSTANCE);
-        Registry.register(BuiltInRegistries.STRUCTURE_TYPE, TYPE_KEY, TYPE);
     }
 }

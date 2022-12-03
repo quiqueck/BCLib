@@ -45,7 +45,7 @@ public class TestBiomes extends FabricTagProvider<Biome> {
             .skyColor(0x0000AA)
             .addNetherClimateParamater(-1, 1)
             .surface(Blocks.LIGHT_BLUE_CONCRETE)
-            .structure(TestStructure.TEST_STRUCTURE_TAG)
+            .structure(TestStructure.TEST.biomeTag)
             .endLandBiome()
             .build();
 

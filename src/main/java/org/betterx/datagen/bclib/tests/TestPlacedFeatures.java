@@ -22,6 +22,7 @@ public class TestPlacedFeatures {
             .onHeightmap(Heightmap.Types.WORLD_SURFACE)
             .decoration(GenerationStep.Decoration.VEGETAL_DECORATION)
             .isEmptyAndOn(BlockPredicate.matchesBlocks(Blocks.YELLOW_CONCRETE))
+            .onlyInBiome()
             .build();
 
     public static void bootstrap(BootstapContext<PlacedFeature> bootstrapContext) {

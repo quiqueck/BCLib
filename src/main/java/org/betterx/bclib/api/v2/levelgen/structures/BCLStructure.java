@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.function.Function;
 import org.jetbrains.annotations.NotNull;
 
-public class BCLStructure<S extends Structure> {
+public abstract class BCLStructure<S extends Structure> {
     public static class Unbound<S extends Structure> extends BCLStructure<S> {
         private final Function<Structure.StructureSettings, S> structureBuilder;
         private final TerrainAdjustment terrainAdjustment;
@@ -101,6 +101,10 @@ public class BCLStructure<S extends Structure> {
         public Holder<Structure> getStructure() {
             return structure;
         }
+
+        public Bound<S> register(BootstapContext<Structure> bootstrapContext) {
+            return this;
+        }
     }
 
 
@@ -118,8 +122,7 @@ public class BCLStructure<S extends Structure> {
     public final Codec<S> STRUCTURE_CODEC;
 
     private static HolderSet<Biome> biomes(BootstapContext<Structure> bootstrapContext, TagKey<Biome> tagKey) {
-        //TODO:1.19.3 Refactor
-        return null; //BuiltInRegistries.BIOME.getOrCreateTag(tagKey);
+        return bootstrapContext.lookup(Registries.BIOME).getOrThrow(tagKey);
     }
 
     private static Structure.StructureSettings structure(
@@ -246,4 +249,6 @@ public class BCLStructure<S extends Structure> {
                 spreadConfig
         ));
     }
+
+    public abstract Bound<S> register(BootstapContext<Structure> bootstrapContext);
 }
