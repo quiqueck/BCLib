@@ -50,73 +50,6 @@ import java.util.function.Function;
 
 public class BCLBiomeBuilder {
 
-    public static class UnregisteredBCLBiome<T extends BCLBiome> extends BCLBiomeContainer<T> {
-        private final BCLBiome parentBiome;
-        private final BuildCompletion supplier;
-
-        private UnregisteredBCLBiome(T biome, BCLBiome parentBiome, BuildCompletion supplier) {
-            super(biome);
-            this.parentBiome = parentBiome;
-            this.supplier = supplier;
-        }
-
-
-        @Override
-        public BCLBiomeContainer<T> register(BootstapContext<Biome> bootstrapContext, BiomeAPI.BiomeType dim) {
-            if (dim == null) dim = BiomeAPI.BiomeType.NONE;
-
-            biome._setBiomeToRegister(this.supplier.apply(bootstrapContext));
-
-            if (dim.is(BiomeAPI.BiomeType.END_LAND)) {
-                BiomeAPI.registerEndLandBiome(bootstrapContext, biome);
-            } else if (dim.is(BiomeAPI.BiomeType.END_VOID)) {
-                BiomeAPI.registerEndVoidBiome(bootstrapContext, biome);
-            } else if (dim.is(BiomeAPI.BiomeType.END_BARRENS)) {
-                BiomeAPI.registerEndBarrensBiome(bootstrapContext, parentBiome, biome);
-            } else if (dim.is(BiomeAPI.BiomeType.END_CENTER)) {
-                BiomeAPI.registerEndCenterBiome(bootstrapContext, biome);
-            } else if (dim.is(BiomeAPI.BiomeType.NETHER)) {
-                BiomeAPI.registerNetherBiome(bootstrapContext, biome);
-            } else if (hasParent()) {
-                BiomeAPI.registerSubBiome(bootstrapContext, parentBiome, biome, dim);
-            } else {
-                BiomeAPI.registerBuiltinBiomeAndOverrideIntendedDimension(bootstrapContext, biome, dim);
-            }
-
-            return new BCLBiomeContainer<>(this.biome);
-        }
-
-        public T biome() {
-            return biome;
-        }
-
-        public boolean hasParent() {
-            return parentBiome != null;
-        }
-
-        public BCLBiome parentBiome() {
-            return parentBiome;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == this) return true;
-            if (obj == null || obj.getClass() != this.getClass()) return false;
-            UnregisteredBCLBiome<?> that = (UnregisteredBCLBiome<?>) obj;
-            return Objects.equals(this.biome, that.biome);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(biome);
-        }
-
-        @Override
-        public String toString() {
-            return "UnregisteredBiome[" + "biome=" + biome + ']';
-        }
-    }
-
     @FunctionalInterface
     public interface BiomeSupplier<T> extends BiFunction<ResourceKey<Biome>, BCLBiomeSettings, T> {
     }
@@ -126,7 +59,7 @@ public class BCLBiomeBuilder {
     }
 
     @FunctionalInterface
-    private interface BuildCompletion extends Function<BootstapContext<Biome>, Biome> {
+    interface BuildCompletion extends Function<BootstapContext<Biome>, Biome> {
     }
 
     private static final SurfaceRules.ConditionSource SURFACE_NOISE = SurfaceRules.noiseCondition(
@@ -943,7 +876,7 @@ public class BCLBiomeBuilder {
      *
      * @return created {@link BCLBiome} instance.
      */
-    public UnregisteredBCLBiome<BCLBiome> build() {
+    public BCLBiomeContainer<BCLBiome> build() {
         return build(BCLBiome::new);
     }
 
@@ -954,7 +887,7 @@ public class BCLBiomeBuilder {
      * @param biomeConstructor {@link BiomeSupplier} biome constructor.
      * @return created {@link BCLBiome} instance.
      */
-    public <T extends BCLBiome> UnregisteredBCLBiome<T> build(BiomeSupplier<T> biomeConstructor) {
+    public <T extends BCLBiome> BCLBiomeContainer<T> build(BiomeSupplier<T> biomeConstructor) {
         BCLBiomeSettings settings = BCLBiomeSettings.createBCL()
                                                     .setTerrainHeight(height)
                                                     .setFogDensity(fogDensity)
@@ -983,7 +916,7 @@ public class BCLBiomeBuilder {
         //res.setSurface(surfaceRule);
 
         //carvers.forEach(cfg -> BiomeAPI.addBiomeCarver(biome, cfg.second, cfg.first));
-        return new UnregisteredBCLBiome<>(
+        return new UnboundBCLBiome<>(
                 res,
                 parent,
                 ctx -> {
