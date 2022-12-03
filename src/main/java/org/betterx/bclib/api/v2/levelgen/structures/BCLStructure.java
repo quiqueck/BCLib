@@ -28,6 +28,8 @@ public abstract class BCLStructure<S extends Structure> {
         private final Function<Structure.StructureSettings, S> structureBuilder;
         private final TerrainAdjustment terrainAdjustment;
 
+        private Bound<S> registered;
+
         protected Unbound(
                 @NotNull ResourceLocation id,
                 @NotNull GenerationStep.Decoration step,
@@ -48,12 +50,14 @@ public abstract class BCLStructure<S extends Structure> {
                     BCLStructure.registerStructureType(id, codec)
             );
 
+            registered = null;
             this.structureBuilder = structureBuilder;
             this.terrainAdjustment = terrainAdjustment;
         }
 
 
         public Bound<S> register(BootstapContext<Structure> bootstrapContext) {
+            if (registered != null) return registered;
             S baseStructure = structureBuilder.apply(structure(
                     bootstrapContext,
                     this.biomeTag,
@@ -61,7 +65,8 @@ public abstract class BCLStructure<S extends Structure> {
                     terrainAdjustment
             ));
             Holder.Reference<Structure> structure = bootstrapContext.register(structureKey, baseStructure);
-            return new Bound<>(
+            BCLStructureBuilder.UNBOUND_STRUCTURES.remove(this);
+            registered = new Bound<>(
                     this.id,
                     this.structureKey,
                     this.structureSetKey,
@@ -73,6 +78,7 @@ public abstract class BCLStructure<S extends Structure> {
                     baseStructure,
                     structure
             );
+            return registered;
         }
     }
 
@@ -243,11 +249,16 @@ public abstract class BCLStructure<S extends Structure> {
         return biomes;
     }
 
+    private boolean registeredSet = false;
+
     public void registerSet(BootstapContext<StructureSet> bootstrapContext) {
+        if (registeredSet) return;
+        registeredSet = true;
         bootstrapContext.register(structureSetKey, new StructureSet(
                 bootstrapContext.lookup(Registries.STRUCTURE).getOrThrow(structureKey),
                 spreadConfig
         ));
+        BCLStructureBuilder.UNBOUND_STRUCTURE_SETS.remove(this);
     }
 
     public abstract Bound<S> register(BootstapContext<Structure> bootstrapContext);

@@ -3,19 +3,24 @@ package org.betterx.bclib.api.v2.levelgen.structures;
 import org.betterx.worlds.together.tag.v3.TagManager;
 
 import com.mojang.serialization.Codec;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.structure.TerrainAdjustment;
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadType;
 import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
 
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Function;
 
 public class BCLStructureBuilder<S extends Structure> {
+    static final ConcurrentLinkedQueue<BCLStructure.Unbound<?>> UNBOUND_STRUCTURES = new ConcurrentLinkedQueue<>();
+    static final ConcurrentLinkedQueue<BCLStructure.Unbound<?>> UNBOUND_STRUCTURE_SETS = new ConcurrentLinkedQueue<>();
 
     private final ResourceLocation structureID;
     private final Function<Structure.StructureSettings, S> structureBuilder;
@@ -98,7 +103,7 @@ public class BCLStructureBuilder<S extends Structure> {
         if (codec == null) codec(Structure.simpleCodec(structureBuilder));
         if (biomeTag == null) biomeTag(structureID.getNamespace(), structureID.getPath());
 
-        return new BCLStructure.Unbound<>(
+        var res = new BCLStructure.Unbound<>(
                 structureID,
                 step,
                 placement,
@@ -107,5 +112,18 @@ public class BCLStructureBuilder<S extends Structure> {
                 structureBuilder,
                 terrainAdjustment
         );
+        UNBOUND_STRUCTURES.add(res);
+        UNBOUND_STRUCTURE_SETS.add(res);
+        return res;
+    }
+
+    public static void registerUnbound(BootstapContext<Structure> context) {
+        UNBOUND_STRUCTURES.forEach(s -> s.register(context));
+        UNBOUND_STRUCTURES.clear();
+    }
+
+    public static void registerUnboundSets(BootstapContext<StructureSet> context) {
+        UNBOUND_STRUCTURE_SETS.forEach(s -> s.registerSet(context));
+        UNBOUND_STRUCTURE_SETS.clear();
     }
 }
