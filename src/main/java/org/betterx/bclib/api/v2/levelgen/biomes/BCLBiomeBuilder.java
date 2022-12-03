@@ -607,6 +607,19 @@ public class BCLBiomeBuilder {
     }
 
     /**
+     * Adds new feature to the biome.
+     *
+     * @param decoration {@link Decoration} feature step.
+     * @param feature    {@link PlacedFeature}.
+     * @return same {@link BCLBiomeBuilder} instance.
+     */
+    public BCLBiomeBuilder feature(Decoration decoration, ResourceKey<PlacedFeature> feature) {
+        featureSupliers.add(gen -> gen.addFeature(decoration, feature));
+        return this;
+    }
+
+
+    /**
      * Adds vanilla Mushrooms.
      *
      * @return same {@link BCLBiomeBuilder} instance.
@@ -674,17 +687,24 @@ public class BCLBiomeBuilder {
      * @param carver {@link ConfiguredWorldCarver} to add.
      * @return same {@link BCLBiomeBuilder} instance.
      */
-    public BCLBiomeBuilder carver(GenerationStep.Carving step, Holder<? extends ConfiguredWorldCarver<?>> carver) {
-        final ResourceLocation immutableID = biomeID;
-        var oKey = carver.unwrapKey();
+    public BCLBiomeBuilder carver(GenerationStep.Carving step, Holder<ConfiguredWorldCarver<?>> carver) {
+        final Optional<ResourceKey<ConfiguredWorldCarver<?>>> oKey = carver.unwrapKey();
         if (oKey.isPresent()) {
-            BiomeModifications.addCarver(
-                    ctx -> ctx.getBiomeKey().location().equals(immutableID),
-                    step,
-                    (ResourceKey<ConfiguredWorldCarver<?>>) oKey.get()
-            );
+            return carver(step, oKey.get());
         }
-        //carvers.add(new Pair<>(step, carver));
+
+        return this;
+    }
+
+    public BCLBiomeBuilder carver(
+            GenerationStep.Carving step,
+            ResourceKey<ConfiguredWorldCarver<?>> carverKey
+    ) {
+        BiomeModifications.addCarver(
+                ctx -> ctx.getBiomeKey().location().equals(biomeID),
+                step,
+                carverKey
+        );
         return this;
     }
 

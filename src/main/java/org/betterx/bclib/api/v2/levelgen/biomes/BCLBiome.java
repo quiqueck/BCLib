@@ -225,6 +225,21 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
     }
 
     /**
+     * Create a new Biome
+     *
+     * @param biomeID  {@link ResourceLocation} of the wrapped Biome
+     * @param defaults The Settings for this Biome or null if you want to apply the defaults
+     */
+    protected BCLBiome(ResourceLocation biomeID, BCLBiomeSettings defaults) {
+        this.biomeID = biomeID;
+        this.biomeKey = ResourceKey.create(Registries.BIOME, biomeID);
+
+        if (defaults != null) {
+            defaults.applyWithDefaults(this);
+        }
+    }
+
+    /**
      * Changes the intended Type for this Biome
      *
      * @param type the new type
