@@ -5,12 +5,20 @@ import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeBuilder;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeContainer;
 import org.betterx.datagen.bclib.BCLibDatagen;
+import org.betterx.worlds.together.tag.v3.TagManager;
 
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 
-public class TestBiomes {
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
+
+import java.util.concurrent.CompletableFuture;
+
+public class TestBiomes extends FabricTagProvider<Biome> {
     static BCLBiomeContainer<BCLBiome> THE_YELLOW = BCLBiomeBuilder
             .start(BCLib.makeID("the_yellow"))
             .precipitation(Biome.Precipitation.NONE)
@@ -26,26 +34,41 @@ public class TestBiomes {
             .endLandBiome()
             .build();
 
+    static BCLBiomeContainer<BCLBiome> THE_BLUE = BCLBiomeBuilder
+            .start(BCLib.makeID("the_blue"))
+            .precipitation(Biome.Precipitation.NONE)
+            .temperature(1.0f)
+            .wetness(1.0f)
+            .fogColor(0x0000FF)
+            .waterColor(0x000077)
+            .waterFogColor(0x0000FF)
+            .skyColor(0x0000AA)
+            .addNetherClimateParamater(-1, 1)
+            .surface(Blocks.LIGHT_BLUE_CONCRETE)
+            .structure(TestStructure.TEST_STRUCTURE_TAG)
+            .endLandBiome()
+            .build();
+
+    /**
+     * Constructs a new {@link FabricTagProvider} with the default computed path.
+     *
+     * <p>Common implementations of this class are provided.
+     *
+     * @param output           the {@link FabricDataOutput} instance
+     * @param registriesFuture the backing registry for the tag type
+     */
+    public TestBiomes(
+            FabricDataOutput output,
+            CompletableFuture<HolderLookup.Provider> registriesFuture
+    ) {
+        super(output, Registries.BIOME, registriesFuture);
+    }
+
     public static void bootstrap(BootstapContext<Biome> bootstrapContext) {
         BCLib.LOGGER.info("Bootstrap Biomes");
         if (BCLibDatagen.ADD_TESTS && BCLib.isDevEnvironment()) {
-            BCLBiomeContainer<BCLBiome> theYellow = THE_YELLOW
-                    .register(bootstrapContext);
-
-            BCLBiome theBlue = BCLBiomeBuilder
-                    .start(BCLib.makeID("the_blue"))
-                    .precipitation(Biome.Precipitation.NONE)
-                    .temperature(1.0f)
-                    .wetness(1.0f)
-                    .fogColor(0x0000FF)
-                    .waterColor(0x000077)
-                    .waterFogColor(0x0000FF)
-                    .skyColor(0x0000AA)
-                    .addNetherClimateParamater(-1, 1)
-                    .surface(Blocks.LIGHT_BLUE_CONCRETE)
-                    .endLandBiome()
-                    .build()
-                    .register(bootstrapContext).biome();
+            THE_YELLOW = THE_YELLOW.register(bootstrapContext);
+            THE_BLUE = THE_BLUE.register(bootstrapContext);
 
             BCLBiome theGray = BCLBiomeBuilder
                     .start(BCLib.makeID("the_gray"))
@@ -92,5 +115,15 @@ public class TestBiomes {
                     .build()
                     .register(bootstrapContext).biome();
         }
+    }
+
+    @Override
+    protected void addTags(HolderLookup.Provider arg) {
+        TagManager.BIOMES.forEachTag((tag, locs, tags) -> {
+            final FabricTagProvider<Biome>.FabricTagBuilder builder = getOrCreateTagBuilder(tag);
+
+            locs.forEach(builder::add);
+            tags.forEach(builder::addTag);
+        });
     }
 }

@@ -1,5 +1,6 @@
 package org.betterx.worlds.together.tag.v3;
 
+import org.betterx.bclib.interfaces.TriConsumer;
 import org.betterx.worlds.together.WorldsTogether;
 
 import net.minecraft.core.DefaultedRegistry;
@@ -12,6 +13,7 @@ import net.minecraft.tags.TagEntry;
 import net.minecraft.tags.TagKey;
 import net.minecraft.tags.TagLoader;
 import net.minecraft.tags.TagManager;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.biome.Biome;
@@ -20,10 +22,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -50,12 +49,13 @@ public class TagRegistry<T> {
 
         @Override
         public TagKey<T> makeTag(ResourceLocation id) {
-            initializeTag(id);
-            return registry
+            final TagKey<T> tag = registry
                     .getTagNames()
                     .filter(tagKey -> tagKey.location().equals(id))
                     .findAny()
                     .orElse(TagKey.create(registry.key(), id));
+            initializeTag(tag);
+            return tag;
         }
     }
 
@@ -87,7 +87,7 @@ public class TagRegistry<T> {
         /**
          * Adds one Tag to multiple Elements.
          *
-         * @param tagID    {@link TagKey< Biome >} tag ID.
+         * @param tagID    {@link TagKey<Biome>} tag ID.
          * @param elements array of Elements to add into tag.
          */
         public void add(TagKey<Biome> tagID, ResourceKey<Biome>... elements) {
@@ -141,7 +141,7 @@ public class TagRegistry<T> {
     }
 
     public final String directory;
-    private final Map<ResourceLocation, Set<TagEntry>> tags = Maps.newConcurrentMap();
+    private final Map<TagKey<T>, Set<TagEntry>> tags = Maps.newConcurrentMap();
     public final ResourceKey<? extends Registry<T>> registryKey;
     private final Function<T, ResourceLocation> locationProvider;
 
@@ -155,19 +155,16 @@ public class TagRegistry<T> {
         this.locationProvider = locationProvider;
     }
 
-    protected void initializeTag(ResourceLocation tagID) {
-        getSetForTag(tagID);
+    protected void initializeTag(TagKey<T> tag) {
+        getSetForTag(tag);
     }
 
-    public Set<TagEntry> getSetForTag(ResourceLocation tagID) {
-        return tags.computeIfAbsent(tagID, k -> Sets.newHashSet());
-    }
 
     public Set<TagEntry> getSetForTag(TagKey<T> tag) {
         if (tag == null) {
             return new HashSet<>();
         }
-        return getSetForTag(tag.location());
+        return tags.computeIfAbsent(tag, k -> Sets.newHashSet());
     }
 
     /**
@@ -192,8 +189,9 @@ public class TagRegistry<T> {
     }
 
     protected TagKey<T> creatTagKey(ResourceLocation id) {
-        initializeTag(id);
-        return TagKey.create(registryKey, id);
+        final TagKey<T> tag = TagKey.create(registryKey, id);
+        initializeTag(tag);
+        return tag;
     }
 
     /**
@@ -262,7 +260,25 @@ public class TagRegistry<T> {
     }
 
     public void forEach(BiConsumer<ResourceLocation, Set<TagEntry>> consumer) {
-        tags.forEach(consumer);
+        tags.forEach((a, b) -> consumer.accept(a.location(), b));
+    }
+
+    public void forEachTag(TriConsumer<TagKey<T>, List<ResourceLocation>, List<TagKey<T>>> consumer) {
+        tags.forEach((tag, set) -> {
+            List<ResourceLocation> locations = new LinkedList<>();
+            List<TagKey<T>> tags = new LinkedList<>();
+
+            set.forEach(e -> {
+                ExtraCodecs.TagOrElementLocation t = e.elementOrTag();
+                if (t.tag()) {
+                    tags.add(TagKey.create(registryKey, t.id()));
+                } else {
+                    locations.add(t.id());
+                }
+            });
+
+            consumer.accept(tag, locations, tags);
+        });
     }
 
     public void apply(Map<ResourceLocation, List<TagLoader.EntryWithSource>> tagsMap) {

@@ -11,6 +11,7 @@ import com.mojang.serialization.Encoder;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
@@ -18,6 +19,7 @@ import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.resources.RegistryDataLoader;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.levelgen.structure.Structure;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 
@@ -35,7 +37,8 @@ public class BCLibRegistriesDataProvider implements DataProvider {
             new RegistryDataLoader.RegistryData<>(
                     SurfaceRuleRegistry.SURFACE_RULES_REGISTRY,
                     AssignedSurfaceRule.CODEC
-            )
+            ),
+            new RegistryDataLoader.RegistryData<>(Registries.STRUCTURE, Structure.DIRECT_CODEC)
             //new RegistryDataLoader.RegistryData<>(Registries.WORLD_PRESET, WorldPreset.DIRECT_CODEC)
 //            new RegistryDataLoader.RegistryData<>(Registries.BIOME, Biome.DIRECT_CODEC),
 //            new RegistryDataLoader.RegistryData<>(Registries.CONFIGURED_FEATURE, ConfiguredFeature.DIRECT_CODEC),
