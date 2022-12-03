@@ -5,6 +5,7 @@ import org.betterx.bclib.api.v2.levelgen.structures.BCLStructure;
 import org.betterx.bclib.api.v2.levelgen.structures.BCLStructureBuilder;
 import org.betterx.bclib.util.BlocksHelper;
 import org.betterx.bclib.util.MHelper;
+import org.betterx.datagen.bclib.BCLibDatagen;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -161,6 +162,8 @@ public class TestStructure extends Structure {
     }
 
     public static void registerBase() {
-        Registry.register(BuiltInRegistries.STRUCTURE_PIECE, TestStructurePiece.KEY, TestStructurePiece.INSTANCE);
+        if (BCLibDatagen.ADD_TESTS && BCLib.isDevEnvironment()) {
+            Registry.register(BuiltInRegistries.STRUCTURE_PIECE, TestStructurePiece.KEY, TestStructurePiece.INSTANCE);
+        }
     }
 }
