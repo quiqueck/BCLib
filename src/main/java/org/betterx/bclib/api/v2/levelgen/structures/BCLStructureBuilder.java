@@ -3,7 +3,6 @@ package org.betterx.bclib.api.v2.levelgen.structures;
 import org.betterx.worlds.together.tag.v3.TagManager;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
@@ -17,14 +16,9 @@ import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement
 import java.util.function.Function;
 
 public class BCLStructureBuilder<S extends Structure> {
-    public record Context(BootstapContext<Structure> bootstrapContext) {
 
-    }
-
-    private static final BCLStructureBuilder INSTANCE = new BCLStructureBuilder();
-
-    private ResourceLocation structureID;
-    private Function<Structure.StructureSettings, S> structureBuilder;
+    private final ResourceLocation structureID;
+    private final Function<Structure.StructureSettings, S> structureBuilder;
 
     private GenerationStep.Decoration step;
 
@@ -36,23 +30,25 @@ public class BCLStructureBuilder<S extends Structure> {
 
     private TerrainAdjustment terrainAdjustment;
 
-    private BCLStructureBuilder() {
+    private BCLStructureBuilder(
+            ResourceLocation structureID,
+            Function<Structure.StructureSettings, S> structureBuilder
+    ) {
+        this.structureID = structureID;
+        this.structureBuilder = structureBuilder;
+
+        this.step = GenerationStep.Decoration.SURFACE_STRUCTURES;
+        this.terrainAdjustment = TerrainAdjustment.NONE;
+        this.codec = null;
+        this.placement = null;
+        this.biomeTag = null;
     }
 
     public static <S extends Structure> BCLStructureBuilder<S> start(
             ResourceLocation structureID,
             Function<Structure.StructureSettings, S> structureBuilder
     ) {
-        INSTANCE.structureID = structureID;
-        INSTANCE.structureBuilder = structureBuilder;
-
-        INSTANCE.step = GenerationStep.Decoration.SURFACE_STRUCTURES;
-        INSTANCE.terrainAdjustment = TerrainAdjustment.NONE;
-        INSTANCE.codec = null;
-        INSTANCE.placement = null;
-        INSTANCE.biomeTag = null;
-
-        return INSTANCE;
+        return new BCLStructureBuilder<>(structureID, structureBuilder);
     }
 
     public BCLStructureBuilder<S> adjustment(TerrainAdjustment value) {
@@ -102,13 +98,13 @@ public class BCLStructureBuilder<S extends Structure> {
         if (codec == null) codec(Structure.simpleCodec(structureBuilder));
         if (biomeTag == null) biomeTag(structureID.getNamespace(), structureID.getPath());
 
-        return new BCLStructure<>(
+        return new BCLStructure.Unbound<>(
                 structureID,
-                structureBuilder,
                 step,
                 placement,
                 codec,
                 biomeTag,
+                structureBuilder,
                 terrainAdjustment
         );
     }
