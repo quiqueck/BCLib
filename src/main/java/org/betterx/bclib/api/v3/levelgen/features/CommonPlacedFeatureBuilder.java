@@ -429,4 +429,15 @@ abstract class CommonPlacedFeatureBuilder<F extends Feature<FC>, FC extends Feat
      * @return created {@link PlacedFeature} instance.
      */
     abstract BCLFeature.Unregistered<F, FC> build();
+
+    public BCLFeatureBuilder.RandomPatch inRandomPatch(ResourceLocation id) {
+        return BCLFeatureBuilder.startRandomPatch(id, build().getPlacedFeature());
+    }
+
+    public BCLFeatureBuilder.RandomPatch randomBonemealDistribution(ResourceLocation id) {
+        return inRandomPatch(id)
+                .tries(9)
+                .spreadXZ(3)
+                .spreadY(1);
+    }
 }

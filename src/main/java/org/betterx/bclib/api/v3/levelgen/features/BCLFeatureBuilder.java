@@ -287,7 +287,7 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         return res;
     }
 
-    public static void registerAll(BootstapContext<ConfiguredFeature<?, ?>> bootstapContext) {
+    public static void registerUnbound(BootstapContext<ConfiguredFeature<?, ?>> bootstapContext) {
         ALL_UNREGISTERED.forEach(u -> u.register(bootstapContext));
     }
 

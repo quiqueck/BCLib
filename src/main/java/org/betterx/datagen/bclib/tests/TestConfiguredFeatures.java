@@ -35,7 +35,7 @@ public class TestConfiguredFeatures {
         BCLib.LOGGER.info("Bootstrap CONFIGUREDFeatures" + holder);
         if (BCLibDatagen.ADD_TESTS && BCLib.isDevEnvironment()) {
             //YELLOW_FEATURE = YELLOW_FEATURE.register(bootstrapContext);
-            BCLFeatureBuilder.registerAll(bootstrapContext);
+            BCLFeatureBuilder.registerUnbound(bootstrapContext);
         }
     }
 }

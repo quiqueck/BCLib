@@ -78,14 +78,4 @@ public class BCLInlinePlacedBuilder<F extends Feature<FC>, FC extends FeatureCon
     }
 
 
-    public BCLFeatureBuilder.RandomPatch inRandomPatch(ResourceLocation id) {
-        return BCLFeatureBuilder.startRandomPatch(id, build().getPlacedFeature());
-    }
-
-    public BCLFeatureBuilder.RandomPatch randomBonemealDistribution(ResourceLocation id) {
-        return inRandomPatch(id)
-                .tries(9)
-                .spreadXZ(3)
-                .spreadY(1);
-    }
 }
