@@ -187,7 +187,6 @@ public class InternalBiomeAPI {
 
     private static final Set<ResourceLocation> BIOMES_TO_SORT = Sets.newHashSet();
 
-
     /**
      * Register {@link BCLBiome} wrapper for {@link Biome}.
      * After that biome will be added to BCLib End Biome Generator and into Fabric Biome API as a land biome (will generate only on islands).
@@ -195,8 +194,8 @@ public class InternalBiomeAPI {
      * @param biomeKey The source biome to wrap
      * @return {@link BCLBiome}
      */
-    public static BCLBiome wrapNativeBiome(ResourceKey<Biome> biomeKey, BiomeAPI.BiomeType type) {
-        return wrapNativeBiome(biomeKey, -1, type);
+    public static BCLBiome wrapBiome(ResourceKey<Biome> biomeKey, BiomeAPI.BiomeType type) {
+        return wrapBiome(biomeKey, -1, type);
     }
 
     /**
@@ -207,15 +206,15 @@ public class InternalBiomeAPI {
      * @param genChance generation chance. If &lt;0 the default genChance is used
      * @return {@link BCLBiome}
      */
-    public static BCLBiome wrapNativeBiome(ResourceKey<Biome> biomeKey, float genChance, BiomeAPI.BiomeType type) {
-        return wrapNativeBiome(
+    public static BCLBiome wrapBiome(ResourceKey<Biome> biomeKey, float genChance, BiomeAPI.BiomeType type) {
+        return wrapBiome(
                 biomeKey,
                 genChance < 0 ? null : VanillaBiomeSettings.createVanilla().setGenChance(genChance).build(),
                 type
         );
     }
 
-    public static BCLBiome wrapNativeBiome(
+    public static BCLBiome wrapBiome(
             ResourceKey<Biome> biomeKey,
             BCLBiome edgeBiome,
             int edgeBiomeSize,
@@ -226,30 +225,53 @@ public class InternalBiomeAPI {
         if (genChance >= 0) settings.setGenChance(genChance);
         settings.setEdge(edgeBiome);
         settings.setEdgeSize(edgeBiomeSize);
-        return wrapNativeBiome(biomeKey, settings.build(), type);
+        return wrapBiome(biomeKey, settings.build(), type);
     }
+
+    /**
+     * Create a wrapper for a vanilla {@link Biome}.
+     *
+     * @param biomeKey The source biome to wrap
+     * @param setings  the {@link VanillaBiomeSettings} to use
+     * @return {@link BCLBiome}
+     */
+    private static BCLBiome wrapBiome(
+            ResourceKey<Biome> biomeKey,
+            VanillaBiomeSettings setings,
+            BiomeAPI.BiomeType type
+    ) {
+        final Registry<BCLBiome> reg = BCLBiomeRegistry.registryOrNull();
+        if (BCLBiomeRegistry.hasBiome(biomeKey, reg)) {
+            return BCLBiomeRegistry.getBiome(biomeKey, reg);
+        }
+
+        BCLBiome bclBiome = new BCLBiome(biomeKey, setings);
+        bclBiome._setIntendedType(type);
+
+        registerBuiltinBiome(bclBiome);
+        return bclBiome;
+    }
+
 
     /**
      * Register {@link BCLBiome} wrapper for {@link Biome}.
      * After that biome will be added to BCLib End Biome Generator and into Fabric Biome API as a land biome (will generate only on islands).
      *
      * @param biomeKey The source biome to wrap
-     * @param setings  the {@link VanillaBiomeSettings} to use
      * @return {@link BCLBiome}
      */
-    private static BCLBiome wrapNativeBiome(
-            ResourceKey<Biome> biomeKey,
-            VanillaBiomeSettings setings,
-            BiomeAPI.BiomeType type
-    ) {
-        BCLBiome bclBiome = BiomeAPI.getBiome(biomeKey.location());
-        if (BCLBiomeRegistry.isEmptyBiome(bclBiome)) {
-            bclBiome = new BCLBiome(biomeKey, setings);
-            bclBiome._setIntendedType(type);
+    public static BCLBiome wrapNativeBiome(ResourceKey<Biome> biomeKey, BiomeAPI.BiomeType type) {
+        final Registry<BCLBiome> reg = BCLBiomeRegistry.registryOrNull();
+        if (!BCLBiomeRegistry.hasBiome(biomeKey, reg)) {
+            BCLBiome bclBiome = wrapBiome(biomeKey, type);
+            BCLBiomeRegistry.register(bclBiome);
+            registerBuiltinBiome(bclBiome);
+            return bclBiome;
+        } else {
+            return BCLBiomeRegistry.getBiome(biomeKey, reg);
         }
 
-        registerBuiltinBiome(bclBiome);
-        return bclBiome;
+
     }
 
     static {

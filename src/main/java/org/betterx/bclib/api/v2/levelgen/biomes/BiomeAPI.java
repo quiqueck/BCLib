@@ -398,12 +398,11 @@ public class BiomeAPI {
     public static BCLBiome getRenderBiome(Biome biome) {
         BCLBiome endBiome = InternalBiomeAPI.CLIENT.get(biome);
         if (endBiome == null) {
+            var reg = BCLBiomeRegistry.registryOrNull();
             ResourceLocation id = WorldBootstrap.getLastRegistryAccessOrElseBuiltin()
                                                 .registryOrThrow(Registries.BIOME)
                                                 .getKey(biome);
-            endBiome = id == null
-                    ? BCLBiomeRegistry.EMPTY_BIOME
-                    : BCLBiomeRegistry.getOrElseEmpty(id);
+            endBiome = BCLBiomeRegistry.getBiomeOrEmpty(id, reg);
             InternalBiomeAPI.CLIENT.put(biome, endBiome);
         }
         return endBiome;
@@ -463,40 +462,6 @@ public class BiomeAPI {
                 .orElse(null);
     }
 
-    public static ResourceKey getBiomeKey(Holder<Biome> biome) {
-        return biome.unwrapKey().orElse(null);
-    }
-
-    public static ResourceKey getBiomeKeyOrThrow(Holder<Biome> biome) {
-        return biome.unwrapKey().orElseThrow();
-    }
-
-    public static Holder<Biome> getBiomeHolder(BCLBiome biome) {
-        return getBiomeHolder(biome.getBiomeKey());
-    }
-
-    public static Holder<Biome> getBiomeHolder(Biome biome) {
-        Optional<ResourceKey<Biome>> key = Optional.empty();
-        if (InternalBiomeAPI.biomeRegistry != null) {
-            key = InternalBiomeAPI.biomeRegistry.getResourceKey(biome);
-        } else {
-            ResourceKey<Biome> kkey = getBiomeKey(biome);
-            key = kkey == null ? Optional.empty() : Optional.of(kkey);
-        }
-
-        return getBiomeHolder(key.orElseThrow());
-    }
-
-    public static Holder<Biome> getBiomeHolder(ResourceKey<Biome> biomeKey) {
-        if (InternalBiomeAPI.biomeRegistry != null) {
-            return InternalBiomeAPI.biomeRegistry.getHolderOrThrow(biomeKey);
-        }
-        return null;//InternalBiomeAPI.BUILTIN_BIOMES.get(biomeKey).orElse(null);
-    }
-
-    public static Holder<Biome> getBiomeHolder(ResourceLocation biome) {
-        return getBiomeHolder(ResourceKey.create(Registries.BIOME, biome));
-    }
 
     /**
      * Get {@link BCLBiome} from given {@link ResourceLocation}.
@@ -505,8 +470,7 @@ public class BiomeAPI {
      * @return {@link BCLBiome} or {@code BiomeAPI.EMPTY_BIOME}.
      */
     public static BCLBiome getBiome(ResourceLocation biomeID) {
-        if (biomeID == null) return null;
-        return BCLBiomeRegistry.getOrElseEmpty(biomeID);
+        return BCLBiomeRegistry.getBiomeOrEmpty(biomeID, BCLBiomeRegistry.registryOrNull());
     }
 
     /**
@@ -529,49 +493,23 @@ public class BiomeAPI {
         return getBiome(BiomeAPI.getBiomeID(biome));
     }
 
-    /**
-     * Check if biome with {@link ResourceLocation} exists in API registry.
-     *
-     * @param biomeID - biome {@link ResourceLocation}.
-     * @return {@code true} if biome exists in API registry and {@code false} if not.
-     */
-    public static boolean hasBiome(ResourceLocation biomeID) {
-        return BCLBiomeRegistry.get(biomeID) != null;
-    }
-
     public static Holder<Biome> getFromRegistry(ResourceLocation biomeID) {
         if (InternalBiomeAPI.biomeRegistry != null)
             return InternalBiomeAPI.biomeRegistry.getHolder(ResourceKey.create(Registries.BIOME, biomeID))
                                                  .orElseThrow();
-        return getFromBuiltinRegistry(biomeID);
-    }
 
-    @Nullable
-    public static Holder<Biome> getFromRegistry(ResourceKey<Biome> key) {
-        if (InternalBiomeAPI.biomeRegistry != null)
-            return InternalBiomeAPI.biomeRegistry.getHolder(key).orElseThrow();
-        return getFromBuiltinRegistry(key);
-    }
-
-    @Nullable
-    public static Holder<Biome> getFromBuiltinRegistry(ResourceLocation biomeID) {
+        if (WorldBootstrap.getLastRegistryAccess() != null) {
+            var reg = WorldBootstrap.getLastRegistryAccess().registryOrThrow(Registries.BIOME);
+            if (reg.containsKey(biomeID)) {
+                return reg.getHolderOrThrow(ResourceKey.create(Registries.BIOME, biomeID));
+            }
+        }
         return null;
-    }
-
-    @Nullable
-    public static Holder<Biome> getFromBuiltinRegistry(ResourceKey<Biome> key) {
-        return null;
-    }
-
-
-    public static boolean isDatapackBiome(ResourceLocation biomeID) {
-        return getFromBuiltinRegistry(biomeID) == null;
     }
 
     public static boolean wasRegisteredAs(ResourceLocation biomeID, BiomeType dim) {
-        if (BCLBiomeRegistry.isEmptyBiome(biomeID))
-            return false;
-        final BCLBiome res = BCLBiomeRegistry.getOrElseEmpty(biomeID);
+        if (BCLBiomeRegistry.isEmptyBiome(biomeID)) return false;
+        final BCLBiome res = BCLBiomeRegistry.getBiomeOrEmpty(biomeID, BCLBiomeRegistry.registryOrNull());
         if (res == null) return false;
         return res.getIntendedType().is(dim);
     }

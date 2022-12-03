@@ -8,6 +8,7 @@ import java.util.Objects;
 class UnboundBCLBiome<T extends BCLBiome> extends BCLBiomeContainer<T> {
     private final BCLBiome parentBiome;
     private final BCLBiomeBuilder.BuildCompletion supplier;
+    private BCLBiomeContainer<T> registered;
 
     UnboundBCLBiome(T biome, BCLBiome parentBiome, BCLBiomeBuilder.BuildCompletion supplier) {
         super(biome);
@@ -18,6 +19,7 @@ class UnboundBCLBiome<T extends BCLBiome> extends BCLBiomeContainer<T> {
 
     @Override
     public BCLBiomeContainer<T> register(BootstapContext<Biome> bootstrapContext, BiomeAPI.BiomeType dim) {
+        if (registered != null) return registered;
         if (dim == null) dim = BiomeAPI.BiomeType.NONE;
 
         biome._setBiomeToRegister(this.supplier.apply(bootstrapContext));
@@ -38,7 +40,8 @@ class UnboundBCLBiome<T extends BCLBiome> extends BCLBiomeContainer<T> {
             BiomeAPI.registerBuiltinBiomeAndOverrideIntendedDimension(bootstrapContext, biome, dim);
         }
 
-        return new BCLBiomeContainer<>(this.biome);
+        registered = new BCLBiomeContainer<>(this.biome);
+        return registered;
     }
 
     @Override

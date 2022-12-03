@@ -26,6 +26,7 @@ accessible method net/minecraft/world/level/levelgen/NoiseRouterData nether (Lne
 accessible method net/minecraft/world/level/levelgen/NoiseRouterData noNewCaves (Lnet/minecraft/core/HolderGetter;Lnet/minecraft/core/HolderGetter;Lnet/minecraft/world/level/levelgen/DensityFunction;)Lnet/minecraft/world/level/levelgen/NoiseRouter;
 accessible method net/minecraft/world/level/levelgen/NoiseRouterData slideNetherLike (Lnet/minecraft/core/HolderGetter;II)Lnet/minecraft/world/level/levelgen/DensityFunction;
 accessible method net/minecraft/tags/TagEntry elementOrTag ()Lnet/minecraft/util/ExtraCodecs$TagOrElementLocation;
+accessible method net/minecraft/data/worldgen/biome/OverworldBiomes calculateSkyColor (F)I
 
 #Fields
 accessible field net/minecraft/world/entity/ai/village/poi/PoiTypes TYPE_BY_STATE Ljava/util/Map;

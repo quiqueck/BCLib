@@ -17,6 +17,7 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BiomeDefaultFeatures;
 import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.biome.OverworldBiomes;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.Music;
@@ -49,6 +50,17 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class BCLBiomeBuilder {
+    private static final List<UnboundBCLBiome<?>> undoundBiomes = new LinkedList<>();
+
+    public static int calculateSkyColor(float temperature) {
+        return OverworldBiomes.calculateSkyColor(temperature);
+    }
+
+    public static int DEFAULT_NETHER_WATER_COLOR = 0x3F76E4;
+    public static int DEFAULT_NETHER_WATER_FOG_COLOR = 0x050533;
+    public static float DEFAULT_NETHER_TEMPERATURE = 2.0f;
+    public static float DEFAULT_NETHER_WETNESS = 0.0f;
+
 
     @FunctionalInterface
     public interface BiomeSupplier<T> extends BiFunction<ResourceKey<Biome>, BCLBiomeSettings, T> {
@@ -916,7 +928,7 @@ public class BCLBiomeBuilder {
         //res.setSurface(surfaceRule);
 
         //carvers.forEach(cfg -> BiomeAPI.addBiomeCarver(biome, cfg.second, cfg.first));
-        return new UnboundBCLBiome<>(
+        final UnboundBCLBiome<T> unbound = new UnboundBCLBiome<>(
                 res,
                 parent,
                 ctx -> {
@@ -925,5 +937,12 @@ public class BCLBiomeBuilder {
                     return builder.generationSettings(fixGenerationSettings(genBuilder.build())).build();
                 }
         );
+        undoundBiomes.add(unbound);
+        return unbound;
+    }
+
+    public static void registerUnbound(BootstapContext<Biome> context) {
+        undoundBiomes.forEach(u -> u.register(context));
+        undoundBiomes.clear();
     }
 }
