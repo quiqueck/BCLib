@@ -4,11 +4,12 @@ import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeBuilder;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeContainer;
+import org.betterx.bclib.api.v3.datagen.TagDataProvider;
 import org.betterx.datagen.bclib.BCLibDatagen;
+import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
@@ -16,9 +17,10 @@ import net.minecraft.world.level.block.Blocks;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class TestBiomes extends FabricTagProvider<Biome> {
+public class TestBiomes extends TagDataProvider<Biome> {
     static BCLBiomeContainer<BCLBiome> THE_YELLOW = BCLBiomeBuilder
             .start(BCLib.makeID("the_yellow"))
             .precipitation(Biome.Precipitation.NONE)
@@ -49,6 +51,46 @@ public class TestBiomes extends FabricTagProvider<Biome> {
             .endLandBiome()
             .build();
 
+    static BCLBiomeContainer<BCLBiome> THE_GRAY = BCLBiomeBuilder
+            .start(BCLib.makeID("the_gray"))
+            .precipitation(Biome.Precipitation.NONE)
+            .temperature(1.0f)
+            .wetness(1.0f)
+            .fogColor(0xFFFFFF)
+            .waterColor(0x777777)
+            .waterFogColor(0xFFFFFF)
+            .skyColor(0xAAAAAA)
+            .addNetherClimateParamater(-1, 1)
+            .surface(Blocks.GRAY_CONCRETE)
+            .endVoidBiome()
+            .build();
+    static BCLBiomeContainer<BCLBiome> THE_ORANGE = BCLBiomeBuilder
+            .start(BCLib.makeID("the_orange"))
+            .precipitation(Biome.Precipitation.NONE)
+            .temperature(1.0f)
+            .wetness(1.0f)
+            .fogColor(0xFF7700)
+            .waterColor(0x773300)
+            .waterFogColor(0xFF7700)
+            .skyColor(0xAA7700)
+            .addNetherClimateParamater(-1, 1.1f)
+            .surface(Blocks.ORANGE_CONCRETE)
+            .netherBiome()
+            .build();
+    static BCLBiomeContainer<BCLBiome> THE_PURPLE = BCLBiomeBuilder
+            .start(BCLib.makeID("the_purple"))
+            .precipitation(Biome.Precipitation.NONE)
+            .temperature(1.0f)
+            .wetness(1.0f)
+            .fogColor(0xFF00FF)
+            .waterColor(0x770077)
+            .waterFogColor(0xFF00FF)
+            .skyColor(0xAA00AA)
+            .addNetherClimateParamater(-1.1f, 1)
+            .surface(Blocks.PURPLE_CONCRETE)
+            .netherBiome()
+            .build();
+
     /**
      * Constructs a new {@link FabricTagProvider} with the default computed path.
      *
@@ -61,71 +103,18 @@ public class TestBiomes extends FabricTagProvider<Biome> {
             FabricDataOutput output,
             CompletableFuture<HolderLookup.Provider> registriesFuture
     ) {
-        super(output, Registries.BIOME, registriesFuture);
+        super(TagManager.BIOMES, List.of(BCLib.MOD_ID, WorldsTogether.MOD_ID), output, registriesFuture);
     }
 
     public static void bootstrap(BootstapContext<Biome> bootstrapContext) {
-        BCLib.LOGGER.info("Bootstrap Biomes");
         if (BCLibDatagen.ADD_TESTS && BCLib.isDevEnvironment()) {
+            BCLib.LOGGER.info("Bootstrap Biomes");
+
             THE_YELLOW = THE_YELLOW.register(bootstrapContext);
             THE_BLUE = THE_BLUE.register(bootstrapContext);
-
-            BCLBiome theGray = BCLBiomeBuilder
-                    .start(BCLib.makeID("the_gray"))
-                    .precipitation(Biome.Precipitation.NONE)
-                    .temperature(1.0f)
-                    .wetness(1.0f)
-                    .fogColor(0xFFFFFF)
-                    .waterColor(0x777777)
-                    .waterFogColor(0xFFFFFF)
-                    .skyColor(0xAAAAAA)
-                    .addNetherClimateParamater(-1, 1)
-                    .surface(Blocks.GRAY_CONCRETE)
-                    .endVoidBiome()
-                    .build()
-                    .register(bootstrapContext).biome();
-
-            BCLBiome theOrange = BCLBiomeBuilder
-                    .start(BCLib.makeID("the_orange"))
-                    .precipitation(Biome.Precipitation.NONE)
-                    .temperature(1.0f)
-                    .wetness(1.0f)
-                    .fogColor(0xFF7700)
-                    .waterColor(0x773300)
-                    .waterFogColor(0xFF7700)
-                    .skyColor(0xAA7700)
-                    .addNetherClimateParamater(-1, 1.1f)
-                    .surface(Blocks.ORANGE_CONCRETE)
-                    .netherBiome()
-                    .build()
-                    .register(bootstrapContext).biome();
-
-            BCLBiome thePurple = BCLBiomeBuilder
-                    .start(BCLib.makeID("the_purple"))
-                    .precipitation(Biome.Precipitation.NONE)
-                    .temperature(1.0f)
-                    .wetness(1.0f)
-                    .fogColor(0xFF00FF)
-                    .waterColor(0x770077)
-                    .waterFogColor(0xFF00FF)
-                    .skyColor(0xAA00AA)
-                    .addNetherClimateParamater(-1.1f, 1)
-                    .surface(Blocks.PURPLE_CONCRETE)
-                    .netherBiome()
-                    .build()
-                    .register(bootstrapContext).biome();
+            THE_GRAY = THE_GRAY.register(bootstrapContext);
+            THE_ORANGE = THE_ORANGE.register(bootstrapContext);
+            THE_PURPLE = THE_PURPLE.register(bootstrapContext);
         }
-    }
-
-    @Override
-    protected void addTags(HolderLookup.Provider arg) {
-        TagManager.BIOMES.forEachTag((tag, locs, tags) -> {
-            final FabricTagProvider<Biome>.FabricTagBuilder builder = getOrCreateTagBuilder(tag);
-            boolean modTag = tag.location().getNamespace().equals(BCLib.MOD_ID);
-            locs.stream().filter(l -> modTag || l.getNamespace().equals(BCLib.MOD_ID)).forEach(builder::add);
-            tags.stream()
-                .filter(t -> modTag || t.location().getNamespace().equals(BCLib.MOD_ID))
-                .forEach(builder::addTag);
-        });
     }
 }
