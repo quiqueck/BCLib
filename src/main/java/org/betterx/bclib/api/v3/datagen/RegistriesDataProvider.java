@@ -18,7 +18,6 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import com.google.gson.JsonElement;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -49,26 +48,20 @@ public abstract class RegistriesDataProvider implements DataProvider {
 
         return registriesFuture.thenCompose(registriesProvider -> CompletableFuture
                 .supplyAsync(() -> registries)
-                .thenCompose(entries -> {
-                    final List<CompletableFuture<?>> futures = new ArrayList<>();
+                .thenCompose(entries -> CompletableFuture.runAsync(() -> {
+                    registries.acquireLock();
+                    final RegistryOps<JsonElement> dynamicOps = RegistryOps.create(
+                            JsonOps.INSTANCE,
+                            registriesProvider
+                    );
 
-                    futures.add(CompletableFuture.runAsync(() -> {
-                        registries.acquireLock();
-                        final RegistryOps<JsonElement> dynamicOps = RegistryOps.create(
-                                JsonOps.INSTANCE,
-                                registriesProvider
+                    for (RegistrySupplier.RegistryInfo<?> registryData : entries.allRegistries) {
+                        serializeRegistry(
+                                cachedOutput, registriesProvider, dynamicOps, registryData
                         );
-
-                        for (RegistrySupplier.RegistryInfo<?> registryData : entries.allRegistries) {
-                            serializeRegistry(
-                                    cachedOutput, registriesProvider, dynamicOps, registryData
-                            );
-                        }
-                        registries.releaseLock();
-                    }));
-
-                    return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new));
-                }));
+                    }
+                    registries.releaseLock();
+                })));
     }
 
     private <T> void serializeRegistry(
@@ -120,6 +113,9 @@ public abstract class RegistriesDataProvider implements DataProvider {
                                                 ));
         if (optional.isPresent()) {
             DataProvider.saveStable(cachedOutput, optional.get(), path);
+            LOGGER.info(path + " written");
+        } else {
+            LOGGER.warning(path + " is empty");
         }
     }
 
