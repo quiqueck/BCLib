@@ -48,23 +48,32 @@ public abstract class RegistriesDataProvider implements DataProvider {
 
         return registriesFuture.thenCompose(registriesProvider -> CompletableFuture
                 .supplyAsync(() -> registries)
-                .thenCompose(entries -> CompletableFuture.runAsync(() -> {
-                    registries.acquireLock();
-                    final RegistryOps<JsonElement> dynamicOps = RegistryOps.create(
-                            JsonOps.INSTANCE,
-                            registriesProvider
-                    );
+                .thenCompose(entries -> {
+                            registries.acquireLock();
+                            final RegistryOps<JsonElement> dynamicOps = RegistryOps.create(
+                                    JsonOps.INSTANCE,
+                                    registriesProvider
+                            );
 
-                    for (RegistrySupplier.RegistryInfo<?> registryData : entries.allRegistries) {
-                        serializeRegistry(
-                                cachedOutput, registriesProvider, dynamicOps, registryData
-                        );
-                    }
-                    registries.releaseLock();
-                })));
+                            CompletableFuture<?>[] futures = entries
+                                    .allRegistries
+                                    .stream()
+                                    .map(registryData -> serializeRegistry(
+                                            cachedOutput,
+                                            registriesProvider,
+                                            dynamicOps,
+                                            registryData
+                                    ))
+                                    .toArray(CompletableFuture<?>[]::new);
+
+                            registries.releaseLock();
+                            return CompletableFuture.allOf(futures);
+                        }
+                )
+        );
     }
 
-    private <T> void serializeRegistry(
+    private <T> CompletableFuture<?> serializeRegistry(
             CachedOutput cachedOutput,
             HolderLookup.Provider registryAccess,
             DynamicOps<JsonElement> dynamicOps,
@@ -86,19 +95,18 @@ public abstract class RegistriesDataProvider implements DataProvider {
                     registryData.key().location().getPath()
             );
 
-            elements.forEach(entry ->
-                    serializeElements(
-                            pathProvider.json(entry.unwrapKey().orElseThrow().location()),
-                            cachedOutput,
-                            dynamicOps,
-                            registryData.elementCodec(),
-                            entry.value()
-                    )
-            );
+            return CompletableFuture.allOf(elements.stream().map(entry -> serializeElements(
+                    pathProvider.json(entry.unwrapKey().orElseThrow().location()),
+                    cachedOutput,
+                    dynamicOps,
+                    registryData.elementCodec(),
+                    entry.value()
+            )).toArray(CompletableFuture[]::new));
         }
+        return CompletableFuture.completedFuture(null);
     }
 
-    private <E> void serializeElements(
+    private <E> CompletableFuture<?> serializeElements(
             Path path,
             CachedOutput cachedOutput,
             DynamicOps<JsonElement> dynamicOps,
@@ -112,11 +120,9 @@ public abstract class RegistriesDataProvider implements DataProvider {
                                                         string
                                                 ));
         if (optional.isPresent()) {
-            DataProvider.saveStable(cachedOutput, optional.get(), path);
-            LOGGER.info(path + " written");
-        } else {
-            LOGGER.warning(path + " is empty");
+            return DataProvider.saveStable(cachedOutput, optional.get(), path);
         }
+        return CompletableFuture.completedFuture(null);
     }
 
     public void buildRegistry(RegistrySetBuilder registryBuilder) {
