@@ -174,12 +174,14 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
                         foundBCLBiome = true;
                     }
 
-                    boolean didAdd = false;
+                    boolean isPossible;
                     if (!bclBiome.hasParentBiome()) {
-                        didAdd = pickerAdder.add(bclBiome, pickerEntry.getKey(), pickerEntry.getValue());
+                        isPossible = pickerAdder.add(bclBiome, pickerEntry.getKey(), pickerEntry.getValue());
+                    } else {
+                        isPossible = true;
                     }
 
-                    if (didAdd) {
+                    if (isPossible) {
                         allBiomes.add(biomes.getHolderOrThrow(biomeEntry.getKey()));
                     }
                 }
@@ -270,6 +272,7 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
                 return includeList.getKey();
             }
         }
+
 
         return defaultType;
     }
