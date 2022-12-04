@@ -6,7 +6,6 @@ import org.betterx.bclib.interfaces.SurfaceMaterialProvider;
 import org.betterx.bclib.mixin.common.BiomeGenerationSettingsAccessor;
 import org.betterx.bclib.mixin.common.MobSpawnSettingsAccessor;
 import org.betterx.bclib.util.CollectionsUtil;
-import org.betterx.worlds.together.tag.v3.CommonBiomeTags;
 import org.betterx.worlds.together.tag.v3.TagManager;
 import org.betterx.worlds.together.world.event.WorldBootstrap;
 
@@ -296,10 +295,8 @@ public class BiomeAPI {
         BiomeType dim = bclbiome.getIntendedType();
         if (dim != null && dim.is(BiomeType.NETHER)) {
             TagManager.BIOMES.add(BiomeTags.IS_NETHER, bclbiome.getBiomeKey());
-            TagManager.BIOMES.add(CommonBiomeTags.IN_NETHER, bclbiome.getBiomeKey());
         } else if (dim != null && dim.is(BiomeType.END)) {
             TagManager.BIOMES.add(BiomeTags.IS_END, bclbiome.getBiomeKey());
-            TagManager.BIOMES.add(CommonBiomeTags.IN_END, bclbiome.getBiomeKey());
         }
 
         bclbiome.afterRegistration();
