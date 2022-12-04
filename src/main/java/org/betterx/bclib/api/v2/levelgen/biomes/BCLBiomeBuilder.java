@@ -138,9 +138,13 @@ public class BCLBiomeBuilder {
         return new BCLBiomeBuilder(biomeID);
     }
 
-    public BCLBiomeBuilder addNetherClimateParamater(float temperature, float humidity) {
-        parameters.add(Climate.parameters(temperature, humidity, 0, 0, 0, 0, 0));
+    public BCLBiomeBuilder addNetherClimateParamater(float temperature, float humidity, float offset) {
+        parameters.add(Climate.parameters(temperature, humidity, 0, 0, 0, 0, offset));
         return this;
+    }
+
+    public BCLBiomeBuilder addNetherClimateParamater(float temperature, float humidity) {
+        return addNetherClimateParamater(temperature, humidity, 0);
     }
 
     public BCLBiomeBuilder parentBiome(BCLBiome parent) {
