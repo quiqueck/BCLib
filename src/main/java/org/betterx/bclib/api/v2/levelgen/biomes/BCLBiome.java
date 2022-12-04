@@ -278,13 +278,14 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
      * @param edge {@link BCLBiome} as the edge biome.
      * @return same {@link BCLBiome}.
      */
-    BCLBiome setEdge(ResourceLocation edge) {
+    BCLBiome setEdgeID(ResourceLocation edge) {
         this.edge = edge;
         return this;
     }
 
-    BCLBiome setParent(ResourceLocation parent) {
-        this.biomeParent = parent;
+    BCLBiome setEdge(BCLBiome edge) {
+        this.edge = edge.biomeID;
+        edge.biomeParent = this.biomeID;
         return this;
     }
 
@@ -292,15 +293,14 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
      * Set biome edge for this biome instance. If there is already an edge, the
      * biome is added as subBiome to the current edge-biome
      *
-     * @param edge The new edge
+     * @param newEdge The new edge
      * @return same {@link BCLBiome}.
      */
-    public BCLBiome addEdge(BCLBiome edge) {
+    public BCLBiome addEdge(BCLBiome newEdge) {
         if (this.edge != null) {
-            this.setEdge(edge.biomeID);
-            edge.biomeParent = edge.biomeID;
+            newEdge.biomeParent = this.edge;
         } else {
-            this.setEdge((ResourceLocation) null);
+            this.setEdge(newEdge);
         }
         return this;
     }
@@ -327,7 +327,10 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
 
         for (Map.Entry<ResourceKey<BCLBiome>, BCLBiome> entry : reg.entrySet()) {
             BCLBiome b = entry.getValue();
-            if (this.biomeID.equals(entry.getValue().biomeParent)) {
+            if (
+                    this.biomeID.equals(entry.getValue().biomeParent)
+                            && !entry.getValue().getID().equals(edge)
+            ) {
                 subbiomes.add(b, b.genChance);
             }
         }

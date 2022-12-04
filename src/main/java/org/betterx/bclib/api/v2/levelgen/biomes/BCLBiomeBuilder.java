@@ -951,7 +951,7 @@ public class BCLBiomeBuilder {
         builder.specialEffects(getEffects().build());
 
         if (edge != null) {
-            edge.setParent(bclBiome.getID());
+            bclBiome.setEdge(edge);
         }
 
         //res.addBiomeTags(tags);

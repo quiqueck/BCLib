@@ -204,7 +204,7 @@ public class BCLBiomeSettings {
         if (edge != null) {
             biome.edgeSize = Configs.BIOMES_CONFIG.getInt(group, "edge_size", this.edgeSize);
             if (edgeSize > 0) {
-                biome.setEdge(edge);
+                biome.setEdgeID(edge);
             }
         }
 
