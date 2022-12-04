@@ -78,7 +78,14 @@ public abstract class RegistriesDataProvider implements DataProvider {
             RegistrySupplier.RegistryInfo<T> registryData
     ) {
         final List<Holder<T>> elements = registryData.allElements(registryAccess);
-        LOGGER.info("Serializing " + elements.size() + " elements from " + registryData.data.key());
+        final HolderLookup.RegistryLookup<T> registry = registryAccess.lookupOrThrow(registryData.key());
+        LOGGER.info("Serializing "
+                + elements.size()
+                + "/"
+                + registry.listElements().count()
+                + " elements from "
+                + registryData.data.key()
+        );
 
         if (!elements.isEmpty()) {
             PackOutput.PathProvider pathProvider = this.output.createPathProvider(
