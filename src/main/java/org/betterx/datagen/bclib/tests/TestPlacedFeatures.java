@@ -26,9 +26,8 @@ public class TestPlacedFeatures {
             .build();
 
     public static void bootstrap(BootstapContext<PlacedFeature> bootstrapContext) {
-        BCLib.LOGGER.info("Bootstrap PLACEDFeatures");
-
         if (BCLibDatagen.ADD_TESTS && BCLib.isDevEnvironment()) {
+            BCLib.LOGGER.info("Bootstrap PLACEDFeatures");
             YELLOW_PLACED = YELLOW_PLACED.register(bootstrapContext);
         }
     }

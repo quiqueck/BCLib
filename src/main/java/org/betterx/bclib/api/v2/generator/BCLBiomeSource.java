@@ -130,7 +130,9 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
     ) {
         final RegistryAccess access = WorldBootstrap.getLastRegistryAccess();
         if (access == null) {
-            BCLib.LOGGER.info("Unable to build Biome List yet");
+            if (Configs.MAIN_CONFIG.verboseLogging() && !BCLib.isDatagen()) {
+                BCLib.LOGGER.info("Unable to build Biome List yet");
+            }
             return null;
         }
 

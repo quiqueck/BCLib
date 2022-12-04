@@ -5,6 +5,7 @@ import org.betterx.bclib.api.v2.generator.config.BCLEndBiomeSourceConfig;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
+import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.interfaces.BiomeMap;
 import org.betterx.worlds.together.biomesource.BiomeSourceWithConfig;
 
@@ -179,20 +180,24 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
         }
 
         if (endVoidBiomePicker.isEmpty()) {
-            BCLib.LOGGER.info("No Void Biomes found. Disabling by using barrens");
+            if (Configs.MAIN_CONFIG.verboseLogging() && !BCLib.isDatagen())
+                BCLib.LOGGER.info("No Void Biomes found. Disabling by using barrens");
             endVoidBiomePicker = endBarrensBiomePicker;
         }
         if (endBarrensBiomePicker.isEmpty()) {
-            BCLib.LOGGER.info("No Barrens Biomes found. Disabling by using land Biomes");
+            if (Configs.MAIN_CONFIG.verboseLogging() && !BCLib.isDatagen())
+                BCLib.LOGGER.info("No Barrens Biomes found. Disabling by using land Biomes");
             endBarrensBiomePicker = endLandBiomePicker;
             endVoidBiomePicker = endLandBiomePicker;
         }
         if (endCenterBiomePicker.isEmpty()) {
-            BCLib.LOGGER.warning("No Center Island Biomes found. Forcing use of vanilla center.");
+            if (Configs.MAIN_CONFIG.verboseLogging() && !BCLib.isDatagen())
+                BCLib.LOGGER.warning("No Center Island Biomes found. Forcing use of vanilla center.");
             endCenterBiomePicker.addBiome(BiomeAPI.THE_END);
             endCenterBiomePicker.rebuild();
             if (endCenterBiomePicker.isEmpty()) {
-                BCLib.LOGGER.error("Unable to force vanilla central Island. Falling back to land Biomes...");
+                if (Configs.MAIN_CONFIG.verboseLogging() && !BCLib.isDatagen())
+                    BCLib.LOGGER.error("Unable to force vanilla central Island. Falling back to land Biomes...");
                 endCenterBiomePicker = endLandBiomePicker;
             }
         }

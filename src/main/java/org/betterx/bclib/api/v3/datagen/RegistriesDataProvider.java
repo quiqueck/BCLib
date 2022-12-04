@@ -2,162 +2,69 @@ package org.betterx.bclib.api.v3.datagen;
 
 import org.betterx.worlds.together.util.Logger;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Encoder;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.Registry;
+import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.RegistryDataLoader;
 import net.minecraft.resources.RegistryOps;
-import net.minecraft.resources.ResourceKey;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 
 import com.google.gson.JsonElement;
 
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class RegistriesDataProvider implements DataProvider {
-    public class InfoList extends LinkedList<RegistryInfo<?>> {
-        public <T> void add(ResourceKey<? extends Registry<T>> key, Codec<T> elementCodec) {
-            this.add(new RegistryInfo<T>(key, elementCodec));
-        }
-
-        public <T> void add(ResourceKey<? extends Registry<T>> key, Codec<T> elementCodec, String... modIDs) {
-            this.add(new RegistryInfo<T>(key, elementCodec, modIDs));
-        }
-
-        public <T> void add(ResourceKey<? extends Registry<T>> key, Codec<T> elementCodec, List<String> modIDs) {
-            this.add(new RegistryInfo<T>(key, elementCodec, modIDs));
-        }
-
-        public <T> void addUnfiltered(ResourceKey<? extends Registry<T>> key, Codec<T> elementCodec) {
-            this.add(new RegistryInfo<T>(key, elementCodec, RegistryInfo.UNFILTERED));
-        }
-    }
-
-    public final class RegistryInfo<T> {
-        public static final List<String> UNFILTERED = null;
-        public final RegistryDataLoader.RegistryData<T> data;
-        public final List<String> modIDs;
-
-        public RegistryInfo(RegistryDataLoader.RegistryData<T> data, List<String> modIDs) {
-            this.data = data;
-            this.modIDs = modIDs;
-        }
-
-        public RegistryInfo(ResourceKey<? extends Registry<T>> key, Codec<T> elementCodec) {
-            this(new RegistryDataLoader.RegistryData<>(key, elementCodec), RegistriesDataProvider.this.defaultModIDs);
-        }
-
-        public RegistryInfo(ResourceKey<? extends Registry<T>> key, Codec<T> elementCodec, String... modIDs) {
-            this(new RegistryDataLoader.RegistryData<>(key, elementCodec), List.of(modIDs));
-        }
-
-        public RegistryInfo(ResourceKey<? extends Registry<T>> key, Codec<T> elementCodec, List<String> modIDs) {
-            this(new RegistryDataLoader.RegistryData<>(key, elementCodec), modIDs);
-        }
-
-        public ResourceKey<? extends Registry<T>> key() {
-            return data.key();
-        }
-
-        public Codec<T> elementCodec() {
-            return data.elementCodec();
-        }
 
 
-        List<Holder<T>> allElements(HolderLookup.Provider registryAccess) {
-            final HolderLookup.RegistryLookup<T> registry = registryAccess.lookupOrThrow(key());
-            return registry
-                    .listElementIds()
-                    .filter(k -> modIDs == null || modIDs.isEmpty() || modIDs.contains(k.location().getNamespace()))
-                    .map(k -> (Holder<T>) registry.get(k).orElseThrow())
-                    .toList();
-        }
-
-        public RegistryDataLoader.RegistryData<T> data() {
-            return data;
-        }
-
-        public List<String> modIDs() {
-            return modIDs;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == this) return true;
-            if (obj == null || obj.getClass() != this.getClass()) return false;
-            var that = (RegistryInfo) obj;
-            return Objects.equals(this.data, that.data) &&
-                    Objects.equals(this.modIDs, that.modIDs);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(data, modIDs);
-        }
-
-        @Override
-        public String toString() {
-            return "RegistryInfo[" +
-                    "data=" + data + ", " +
-                    "modIDs=" + modIDs + ']';
-        }
-
-    }
-
-    protected final List<RegistryInfo<?>> registries;
-
+    protected final RegistrySupplier registries;
     protected final PackOutput output;
     protected final Logger LOGGER;
     protected final CompletableFuture<HolderLookup.Provider> registriesFuture;
-    private @Nullable List<String> defaultModIDs;
 
     protected RegistriesDataProvider(
             Logger logger,
-            @Nullable List<String> defaultModIDs,
+            RegistrySupplier registries,
             FabricDataOutput generator,
             CompletableFuture<HolderLookup.Provider> registriesFuture
     ) {
-        this.defaultModIDs = defaultModIDs;
         this.LOGGER = logger;
         this.output = generator;
         this.registriesFuture = registriesFuture;
-        this.registries = initializeRegistryList(defaultModIDs);
+        this.registries = registries;
     }
-
-    protected abstract List<RegistryInfo<?>> initializeRegistryList(@Nullable List<String> modIDs);
 
     @Override
     public CompletableFuture<?> run(CachedOutput cachedOutput) {
-        LOGGER.info("Serialize Registries " + defaultModIDs);
+        LOGGER.info("Serialize Registries " + registries.defaultModIDs);
 
         return registriesFuture.thenCompose(registriesProvider -> CompletableFuture
                 .supplyAsync(() -> registries)
                 .thenCompose(entries -> {
                     final List<CompletableFuture<?>> futures = new ArrayList<>();
-                    final RegistryOps<JsonElement> dynamicOps = RegistryOps.create(
-                            JsonOps.INSTANCE,
-                            registriesProvider
-                    );
 
                     futures.add(CompletableFuture.runAsync(() -> {
-                        for (RegistryInfo<?> registryData : entries) {
-//                        futures.add(CompletableFuture.runAsync(() ->
+                        registries.acquireLock();
+                        final RegistryOps<JsonElement> dynamicOps = RegistryOps.create(
+                                JsonOps.INSTANCE,
+                                registriesProvider
+                        );
+
+                        for (RegistrySupplier.RegistryInfo<?> registryData : entries.allRegistries) {
                             serializeRegistry(
                                     cachedOutput, registriesProvider, dynamicOps, registryData
                             );
-//                        ));
                         }
+                        registries.releaseLock();
                     }));
 
                     return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new));
@@ -168,9 +75,10 @@ public abstract class RegistriesDataProvider implements DataProvider {
             CachedOutput cachedOutput,
             HolderLookup.Provider registryAccess,
             DynamicOps<JsonElement> dynamicOps,
-            RegistryInfo<T> registryData
+            RegistrySupplier.RegistryInfo<T> registryData
     ) {
         final List<Holder<T>> elements = registryData.allElements(registryAccess);
+        LOGGER.info("Serializing " + elements.size() + " elements from " + registryData.data.key());
 
         if (!elements.isEmpty()) {
             PackOutput.PathProvider pathProvider = this.output.createPathProvider(
@@ -188,7 +96,6 @@ public abstract class RegistriesDataProvider implements DataProvider {
                     )
             );
         }
-
     }
 
     private <E> void serializeElements(
@@ -207,7 +114,15 @@ public abstract class RegistriesDataProvider implements DataProvider {
         if (optional.isPresent()) {
             DataProvider.saveStable(cachedOutput, optional.get(), path);
         }
+    }
 
+    public void buildRegistry(RegistrySetBuilder registryBuilder) {
+        registries.allRegistries
+                .stream()
+                .filter(nfo -> nfo.registryBootstrap != null)
+                .forEach(nfo -> {
+
+                });
     }
 
     @Override
