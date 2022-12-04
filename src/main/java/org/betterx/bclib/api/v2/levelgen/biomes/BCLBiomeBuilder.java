@@ -933,13 +933,14 @@ public class BCLBiomeBuilder {
                                                     .setEdge(edge)
                                                     .setVertical(vertical)
                                                     .build();
-        final T res = biomeConstructor.apply(ResourceKey.create(Registries.BIOME, biomeID), settings);
-        tags.forEach(tagKey -> TagManager.BIOMES.add(tagKey, res.getBiomeKey()));
+        final T bclBiome = biomeConstructor.apply(ResourceKey.create(Registries.BIOME, biomeID), settings);
+        tags.forEach(tagKey -> TagManager.BIOMES.add(tagKey, bclBiome.getBiomeKey()));
 
         SurfaceRuleRegistry.registerRule(biomeID, surfaceRule, biomeID);
-        res.addClimateParameters(parameters);
+        bclBiome.addClimateParameters(parameters);
         if (biomeType != null)
-            res._setIntendedType(biomeType);
+            bclBiome._setIntendedType(biomeType);
+
 
         BiomeBuilder builder = new BiomeBuilder()
                 .precipitation(precipitation)
@@ -949,12 +950,16 @@ public class BCLBiomeBuilder {
         builder.mobSpawnSettings(getSpawns().build());
         builder.specialEffects(getEffects().build());
 
+        if (edge != null) {
+            edge.setParent(bclBiome.getID());
+        }
+
         //res.addBiomeTags(tags);
         //res.setSurface(surfaceRule);
 
         //carvers.forEach(cfg -> BiomeAPI.addBiomeCarver(biome, cfg.second, cfg.first));
         final UnboundBCLBiome<T> unbound = new UnboundBCLBiome<>(
-                res,
+                bclBiome,
                 parent,
                 ctx -> {
                     BiomeGenerationSettings.Builder genBuilder = getGeneration(ctx);
@@ -962,6 +967,7 @@ public class BCLBiomeBuilder {
                     return builder.generationSettings(fixGenerationSettings(genBuilder.build())).build();
                 }
         );
+
         UNBOUND_BIOMES.add(unbound);
         return unbound;
     }

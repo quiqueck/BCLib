@@ -172,7 +172,7 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
             Optional<ResourceLocation> biomeParent,
             Optional<String> intendedType
     ) {
-        super(terrainHeight, fogDensity, genChance, edgeSize, vertical, edge.map(BiomeAPI::getBiome).orElse(null));
+        super(terrainHeight, fogDensity, genChance, edgeSize, vertical, edge.orElse(null));
         this.biomeID = biomeID;
         this.biomeKey = ResourceKey.create(Registries.BIOME, biomeID);
         this.biomeParent = biomeParent.orElse(null);
@@ -280,6 +280,11 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
      */
     BCLBiome setEdge(ResourceLocation edge) {
         this.edge = edge;
+        return this;
+    }
+
+    BCLBiome setParent(ResourceLocation parent) {
+        this.biomeParent = parent;
         return this;
     }
 

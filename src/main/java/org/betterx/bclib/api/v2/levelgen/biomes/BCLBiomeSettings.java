@@ -110,14 +110,14 @@ public class BCLBiomeSettings {
             float genChance,
             int edgeSize,
             boolean vertical,
-            BCLBiome edge
+            ResourceLocation edge
     ) {
         this.terrainHeight = terrainHeight;
         this.fogDensity = fogDensity;
         this.genChance = genChance;
         this.edgeSize = edgeSize;
         this.vertical = vertical;
-        this.edge = edge == null ? null : edge.getID();
+        this.edge = edge;
     }
 
     protected BCLBiomeSettings() {
