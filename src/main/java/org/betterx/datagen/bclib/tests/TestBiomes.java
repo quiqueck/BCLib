@@ -121,9 +121,11 @@ public class TestBiomes extends FabricTagProvider<Biome> {
     protected void addTags(HolderLookup.Provider arg) {
         TagManager.BIOMES.forEachTag((tag, locs, tags) -> {
             final FabricTagProvider<Biome>.FabricTagBuilder builder = getOrCreateTagBuilder(tag);
-
-            locs.forEach(builder::add);
-            tags.forEach(builder::addTag);
+            boolean modTag = tag.location().getNamespace().equals(BCLib.MOD_ID);
+            locs.stream().filter(l -> modTag || l.getNamespace().equals(BCLib.MOD_ID)).forEach(builder::add);
+            tags.stream()
+                .filter(t -> modTag || t.location().getNamespace().equals(BCLib.MOD_ID))
+                .forEach(builder::addTag);
         });
     }
 }

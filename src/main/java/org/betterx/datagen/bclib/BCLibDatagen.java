@@ -6,7 +6,6 @@ import org.betterx.datagen.bclib.tests.*;
 import org.betterx.datagen.bclib.worldgen.BCLibRegistriesDataProvider;
 import org.betterx.datagen.bclib.worldgen.NoiseTypesDataProvider;
 import org.betterx.datagen.bclib.worldgen.VanillaBCLBiomesDataProvider;
-import org.betterx.datagen.bclib.worldgen.WorldgenRegistriesDataProvider;
 
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
@@ -29,7 +28,6 @@ public class BCLibDatagen implements DataGeneratorEntrypoint {
             pack.addProvider(TestBiomes::new);
         }
 
-        pack.addProvider(WorldgenRegistriesDataProvider::new);
         pack.addProvider(WorldPresetDataProvider::new);
         pack.addProvider(BCLibRegistriesDataProvider::new);
     }
@@ -48,6 +46,5 @@ public class BCLibDatagen implements DataGeneratorEntrypoint {
         registryBuilder.add(Registries.BIOME, TestBiomes::bootstrap);
         registryBuilder.add(Registries.NOISE_SETTINGS, NoiseTypesDataProvider::bootstrap);
         registryBuilder.add(Registries.WORLD_PRESET, WorldPresetDataProvider::bootstrap);
-
     }
 }

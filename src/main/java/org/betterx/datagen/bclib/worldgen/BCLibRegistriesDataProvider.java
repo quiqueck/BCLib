@@ -1,136 +1,57 @@
 package org.betterx.datagen.bclib.worldgen;
 
+import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeData;
+import org.betterx.bclib.api.v3.datagen.RegistriesDataProvider;
+import org.betterx.datagen.bclib.BCLibDatagen;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.surfaceRules.AssignedSurfaceRule;
 import org.betterx.worlds.together.surfaceRules.SurfaceRuleRegistry;
 
-import com.mojang.serialization.DynamicOps;
-import com.mojang.serialization.Encoder;
-import com.mojang.serialization.JsonOps;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.CachedOutput;
-import net.minecraft.data.DataProvider;
-import net.minecraft.data.PackOutput;
-import net.minecraft.data.registries.VanillaRegistries;
-import net.minecraft.resources.RegistryDataLoader;
-import net.minecraft.resources.RegistryOps;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.StructureSet;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 
-import com.google.gson.JsonElement;
-
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import org.jetbrains.annotations.Nullable;
 
-public class BCLibRegistriesDataProvider implements DataProvider {
-    public static final List<RegistryDataLoader.RegistryData<?>> REGISTRIES = List.of(
-            new RegistryDataLoader.RegistryData<>(BCLBiomeRegistry.BCL_BIOMES_REGISTRY, BiomeData.CODEC),
-            new RegistryDataLoader.RegistryData<>(
-                    SurfaceRuleRegistry.SURFACE_RULES_REGISTRY,
-                    AssignedSurfaceRule.CODEC
-            ),
-            new RegistryDataLoader.RegistryData<>(Registries.STRUCTURE, Structure.DIRECT_CODEC)
-            //new RegistryDataLoader.RegistryData<>(Registries.WORLD_PRESET, WorldPreset.DIRECT_CODEC)
-//            new RegistryDataLoader.RegistryData<>(Registries.BIOME, Biome.DIRECT_CODEC),
-//            new RegistryDataLoader.RegistryData<>(Registries.CONFIGURED_FEATURE, ConfiguredFeature.DIRECT_CODEC),
-//            new RegistryDataLoader.RegistryData<>(Registries.PLACED_FEATURE, PlacedFeature.DIRECT_CODEC),
-//            new RegistryDataLoader.RegistryData<>(Registries.STRUCTURE, Structure.DIRECT_CODEC)
-    );
-
-
-    private final PackOutput output;
-
-    public BCLibRegistriesDataProvider(FabricDataOutput generator) {
-        this.output = generator;
+public class BCLibRegistriesDataProvider extends RegistriesDataProvider {
+    public BCLibRegistriesDataProvider(
+            FabricDataOutput generator,
+            CompletableFuture<HolderLookup.Provider> registriesFuture
+    ) {
+        super(BCLib.LOGGER, List.of(BCLib.MOD_ID, WorldsTogether.MOD_ID), generator, registriesFuture);
     }
+
 
     @Override
-    public CompletableFuture<?> run(CachedOutput cachedOutput) {
-        HolderLookup.Provider registryAccess = VanillaRegistries.createLookup();
-        RegistryOps<JsonElement> dynamicOps = RegistryOps.create(JsonOps.INSTANCE, registryAccess);
-        final List<CompletableFuture<?>> futures = new ArrayList<>();
+    protected List<RegistryInfo<?>> initializeRegistryList(@Nullable List<String> modIDs) {
+        InfoList registries = new InfoList();
 
-        for (RegistryDataLoader.RegistryData<?> registryData : REGISTRIES) {
-            futures.add(this.dumpRegistryCapFuture(
-                    cachedOutput,
-                    registryAccess,
-                    dynamicOps,
-                    (RegistryDataLoader.RegistryData) registryData
-            ));
-        }
-        return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new));
-    }
+        registries.addUnfiltered(BCLBiomeRegistry.BCL_BIOMES_REGISTRY, BiomeData.CODEC);
+        registries.addUnfiltered(SurfaceRuleRegistry.SURFACE_RULES_REGISTRY, AssignedSurfaceRule.CODEC);
 
-    private <T> CompletableFuture dumpRegistryCapFuture(
-            CachedOutput cachedOutput,
-            HolderLookup.Provider registryAccess,
-            DynamicOps<JsonElement> dynamicOps,
-            RegistryDataLoader.RegistryData<T> registryData
-    ) {
-        return CompletableFuture.runAsync(() -> dumpRegistryCap(
-                cachedOutput,
-                registryAccess,
-                dynamicOps,
-                registryData
-        ));
-    }
-
-    private <T> void dumpRegistryCap(
-            CachedOutput cachedOutput,
-            HolderLookup.Provider registryAccess,
-            DynamicOps<JsonElement> dynamicOps,
-            RegistryDataLoader.RegistryData<T> registryData
-    ) {
-        ResourceKey<? extends Registry<T>> resourceKey = registryData.key();
-
-        HolderLookup.RegistryLookup<T> registry = registryAccess.lookupOrThrow(resourceKey);
-        PackOutput.PathProvider pathProvider = this.output.createPathProvider(
-                PackOutput.Target.DATA_PACK,
-                resourceKey.location().getPath()
-        );
-        registry.listElementIds().forEach(entry ->
-                dumpValue(
-                        pathProvider.json(entry.location()),
-                        cachedOutput,
-                        dynamicOps,
-                        registryData.elementCodec(),
-                        registry.get(entry).orElseThrow().value()
-                )
-        );
-
-    }
-
-    private static <E> void dumpValue(
-            Path path,
-            CachedOutput cachedOutput,
-            DynamicOps<JsonElement> dynamicOps,
-            Encoder<E> encoder,
-            E object
-    ) {
-
-        Optional<JsonElement> optional = encoder.encodeStart(dynamicOps, object)
-                                                .resultOrPartial(string -> WorldsTogether.LOGGER.error(
-                                                        "Couldn't serialize element {}: {}",
-                                                        path,
-                                                        string
-                                                ));
-        if (optional.isPresent()) {
-            DataProvider.saveStable(cachedOutput, optional.get(), path);
+        if (BCLibDatagen.ADD_TESTS) {
+            registries.add(Registries.STRUCTURE, Structure.DIRECT_CODEC);
+            registries.add(Registries.STRUCTURE_SET, StructureSet.DIRECT_CODEC);
+            registries.add(Registries.CONFIGURED_FEATURE, ConfiguredFeature.DIRECT_CODEC);
+            registries.add(Registries.PLACED_FEATURE, PlacedFeature.DIRECT_CODEC);
+            registries.add(Registries.BIOME, Biome.DIRECT_CODEC);
         }
 
-    }
+        registries.add(Registries.NOISE_SETTINGS, NoiseGeneratorSettings.DIRECT_CODEC);
+        registries.add(Registries.WORLD_PRESET, WorldPreset.DIRECT_CODEC);
 
-    @Override
-    public String getName() {
-        return "BCL Registries";
+        return registries;
     }
 }
