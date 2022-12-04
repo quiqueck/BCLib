@@ -24,6 +24,7 @@ import com.google.common.collect.Sets;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 public class TagRegistry<T> {
@@ -264,16 +265,25 @@ public class TagRegistry<T> {
     }
 
     public void forEachTag(TriConsumer<TagKey<T>, List<ResourceLocation>, List<TagKey<T>>> consumer) {
+        forEachTag(consumer, null);
+    }
+
+    public void forEachTag(
+            TriConsumer<TagKey<T>, List<ResourceLocation>, List<TagKey<T>>> consumer,
+            BiPredicate<TagKey<T>, ResourceLocation> allow
+    ) {
         tags.forEach((tag, set) -> {
             List<ResourceLocation> locations = new LinkedList<>();
             List<TagKey<T>> tags = new LinkedList<>();
 
             set.forEach(e -> {
                 ExtraCodecs.TagOrElementLocation t = e.elementOrTag();
-                if (t.tag()) {
-                    tags.add(TagKey.create(registryKey, t.id()));
-                } else {
-                    locations.add(t.id());
+                if (allow == null || allow.test(tag, t.id())) {
+                    if (t.tag()) {
+                        tags.add(TagKey.create(registryKey, t.id()));
+                    } else {
+                        locations.add(t.id());
+                    }
                 }
             });
 

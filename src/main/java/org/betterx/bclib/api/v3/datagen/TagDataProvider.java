@@ -48,16 +48,11 @@ public class TagDataProvider<T> extends FabricTagProvider<T> {
     @Override
     protected void addTags(HolderLookup.Provider arg) {
         tagRegistry.forEachTag((tag, locs, tags) -> {
+            if (locs.isEmpty() && tags.isEmpty()) return;
+            
             final FabricTagProvider<T>.FabricTagBuilder builder = getOrCreateTagBuilder(tag);
-
-            boolean modTag = shouldAdd(tag.location());
-            locs.stream()
-                .filter(loc -> modTag || this.shouldAdd(loc))
-                .forEach(builder::add);
-
-            tags.stream()
-                .filter(tagKey -> modTag || this.shouldAdd(tagKey.location()))
-                .forEach(builder::addTag);
-        });
+            locs.forEach(builder::add);
+            tags.forEach(builder::addTag);
+        }, (tag, loc) -> shouldAdd(tag.location()) || this.shouldAdd(loc));
     }
 }

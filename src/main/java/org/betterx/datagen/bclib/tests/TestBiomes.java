@@ -103,7 +103,7 @@ public class TestBiomes extends TagDataProvider<Biome> {
             FabricDataOutput output,
             CompletableFuture<HolderLookup.Provider> registriesFuture
     ) {
-        super(TagManager.BIOMES, List.of(BCLib.MOD_ID, WorldsTogether.MOD_ID), output, registriesFuture);
+        super(TagManager.BIOMES, List.of(BCLib.MOD_ID, WorldsTogether.MOD_ID, "c"), output, registriesFuture);
     }
 
     public static void bootstrap(BootstapContext<Biome> bootstrapContext) {
