@@ -1,10 +1,6 @@
 package org.betterx.bclib.api.v2.levelgen.biomes;
 
 import org.betterx.bclib.api.v2.generator.BiomePicker;
-import org.betterx.bclib.config.Configs;
-
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.biome.Biome;
 
 public class BCLBiomeSettings {
     public static Builder createBCL() {
@@ -82,17 +78,6 @@ public class BCLBiomeSettings {
         }
 
         /**
-         * Set edges:biome for this biome.
-         *
-         * @param edge The {@link Biome}.
-         * @return same {@link Builder}.
-         */
-        public R setEdge(BCLBiome edge) {
-            storage.edge = edge == null ? null : edge.getID();
-            return (R) this;
-        }
-
-        /**
          * Sets fog density for this biome.
          *
          * @param fogDensity
@@ -109,15 +94,13 @@ public class BCLBiomeSettings {
             float fogDensity,
             float genChance,
             int edgeSize,
-            boolean vertical,
-            ResourceLocation edge
+            boolean vertical
     ) {
         this.terrainHeight = terrainHeight;
         this.fogDensity = fogDensity;
         this.genChance = genChance;
         this.edgeSize = edgeSize;
         this.vertical = vertical;
-        this.edge = edge;
     }
 
     protected BCLBiomeSettings() {
@@ -126,7 +109,6 @@ public class BCLBiomeSettings {
         this.genChance = 1.0F;
         this.edgeSize = 0;
         this.vertical = false;
-        this.edge = null;
     }
 
     float terrainHeight;
@@ -134,7 +116,6 @@ public class BCLBiomeSettings {
     float genChance;
     int edgeSize;
     boolean vertical;
-    ResourceLocation edge;
 
 
     /**
@@ -180,40 +161,5 @@ public class BCLBiomeSettings {
      */
     public int getEdgeSize() {
         return edgeSize;
-    }
-
-    /**
-     * Getter for edge-biome.
-     *
-     * @return The assigned edge biome.
-     */
-    public BCLBiome getEdge() {
-        return BiomeAPI.getBiome(edge);
-    }
-
-    /**
-     * Load values from Config and apply to the passed Biome. The Default values for the loaded settings
-     * are derifed from the values store in this object
-     *
-     * @param biome {@link BCLBiome} to assign values to
-     */
-    public void applyWithDefaults(BCLBiome biome) {
-        final String group = biome.configGroup();
-        biome.genChance = Configs.BIOMES_CONFIG.getFloat(group, "generation_chance", this.genChance);
-
-        if (edge != null) {
-            biome.edgeSize = Configs.BIOMES_CONFIG.getInt(group, "edge_size", this.edgeSize);
-            if (edgeSize > 0) {
-                biome.setEdgeID(edge);
-            }
-        }
-
-        if (!(this instanceof VanillaBiomeSettings)) {
-            biome.fogDensity = Configs.BIOMES_CONFIG.getFloat(group, "fog_density", this.fogDensity);
-            biome.vertical = Configs.BIOMES_CONFIG.getBoolean(group, "vertical", this.vertical);
-            biome.terrainHeight = Configs.BIOMES_CONFIG.getFloat(group, "terrain_height", this.terrainHeight);
-        }
-
-        Configs.BIOMES_CONFIG.saveChanges();
     }
 }

@@ -92,7 +92,7 @@ public class MapStack implements BiomeMap {
                         if (biome == null) {
                             biome = chunks[i].getBiome(x, z);
                         }
-                        if (biome.bclBiome.isVertical()) {
+                        if (biome.bclBiome.settings.isVertical()) {
                             biomeMap[x][z] = biome;
                             isNoEmpty = true;
                         }

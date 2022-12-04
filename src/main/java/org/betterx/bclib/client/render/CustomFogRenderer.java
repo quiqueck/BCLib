@@ -124,9 +124,9 @@ public class CustomFogRenderer {
         Biome biome = level.getBiome(MUT_POS.set(x, y, z)).value();
         BCLBiome renderBiome = BiomeAPI.getRenderBiome(biome);
         if (renderBiome == null) {
-            return BCLBiomeRegistry.EMPTY_BIOME.getFogDensity();
+            return BCLBiomeRegistry.EMPTY_BIOME.settings.getFogDensity();
         }
-        return renderBiome.getFogDensity();
+        return renderBiome.settings.getFogDensity();
     }
 
     private static float getFogDensity(Level level, double x, double y, double z) {

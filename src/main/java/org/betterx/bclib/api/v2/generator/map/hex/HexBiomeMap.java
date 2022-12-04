@@ -56,11 +56,11 @@ public class HexBiomeMap implements BiomeMap {
     public BiomePicker.ActualBiome getBiome(double x, double y, double z) {
         BiomePicker.ActualBiome biome = getRawBiome(x, z);
         BiomePicker.ActualBiome edge = biome.getEdge();
-        int size = biome.bclBiome.getEdgeSize();
+        int size = biome.bclBiome.settings.getEdgeSize();
 
         if (edge == null && biome.getParentBiome() != null) {
             edge = biome.getParentBiome().getEdge();
-            size = biome.getParentBiome().bclBiome.getEdgeSize();
+            size = biome.getParentBiome().bclBiome.settings.getEdgeSize();
         }
 
         if (edge == null) {

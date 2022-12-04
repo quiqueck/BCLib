@@ -55,7 +55,7 @@ public class SquareBiomeMap implements BiomeMap {
                 search = biome.getParentBiome();
             }
 
-            int size = search.bclBiome.getEdgeSize();
+            int size = search.bclBiome.settings.getEdgeSize();
             boolean edge = !search.isSame(getRawBiome(x + size, z));
             edge = edge || !search.isSame(getRawBiome(x - size, z));
             edge = edge || !search.isSame(getRawBiome(x, z + size));

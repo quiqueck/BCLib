@@ -81,7 +81,7 @@ public class BiomePicker {
 
         biomes.forEach(biome -> {
             if (biome.isValid)
-                list.add(biome, biome.bclBiome.getGenChance());
+                list.add(biome, biome.bclBiome.settings.getGenChance());
         });
         //only a single biome, we need to add the edges as well
         if (list.size() == 1) {
@@ -89,7 +89,7 @@ public class BiomePicker {
 
             if (biome.getEdge() != null) {
                 float defaultBiomeSize = 128;
-                float edgeSize = (biome.bclBiome.getEdgeSize() * list.getWeight(0)) / defaultBiomeSize;
+                float edgeSize = (biome.bclBiome.settings.getEdgeSize() * list.getWeight(0)) / defaultBiomeSize;
                 list.add(biome.getEdge(), edgeSize);
             }
         }

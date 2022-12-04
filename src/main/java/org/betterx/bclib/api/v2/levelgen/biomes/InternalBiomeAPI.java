@@ -223,9 +223,11 @@ public class InternalBiomeAPI {
     ) {
         VanillaBiomeSettings.Builder settings = VanillaBiomeSettings.createVanilla();
         if (genChance >= 0) settings.setGenChance(genChance);
-        settings.setEdge(edgeBiome);
         settings.setEdgeSize(edgeBiomeSize);
-        return wrapBiome(biomeKey, settings.build(), type);
+
+        final BCLBiome b = wrapBiome(biomeKey, settings.build(), type);
+        b._setEdge(edgeBiome);
+        return b;
     }
 
     /**

@@ -930,7 +930,6 @@ public class BCLBiomeBuilder {
                                                     .setFogDensity(fogDensity)
                                                     .setGenChance(genChance)
                                                     .setEdgeSize(edgeSize)
-                                                    .setEdge(edge)
                                                     .setVertical(vertical)
                                                     .build();
         final T bclBiome = biomeConstructor.apply(ResourceKey.create(Registries.BIOME, biomeID), settings);
@@ -951,7 +950,7 @@ public class BCLBiomeBuilder {
         builder.specialEffects(getEffects().build());
 
         if (edge != null) {
-            bclBiome.setEdge(edge);
+            bclBiome._setEdge(edge);
         }
 
         //res.addBiomeTags(tags);

@@ -155,7 +155,7 @@ public class BiomeAPI {
         public static final BiomeType END_CENTER = new BiomeType("END_CENTER", END);
         public static final BiomeType END_BARRENS = new BiomeType("END_BARRENS", END);
         public static final BiomeType BCL_END_LAND = new BiomeType("BCL_END_LAND", END_LAND, (biome, ignored) -> {
-            float weight = biome.getGenChance();
+            float weight = biome.settings.getGenChance();
             ResourceKey<Biome> key = biome.getBiomeKey();
 
             if (biome.isEdgeBiome()) {
@@ -166,14 +166,14 @@ public class BiomeAPI {
             }
         });
         public static final BiomeType BCL_END_VOID = new BiomeType("BCL_END_VOID", END_VOID, (biome, ignored) -> {
-            float weight = biome.getGenChance();
+            float weight = biome.settings.getGenChance();
             ResourceKey<Biome> key = biome.getBiomeKey();
             if (!biome.isEdgeBiome()) {
                 TheEndBiomes.addSmallIslandsBiome(key, weight);
             }
         });
         public static final BiomeType BCL_END_CENTER = new BiomeType("BCL_END_CENTER", END_CENTER, (biome, ignored) -> {
-            float weight = biome.getGenChance();
+            float weight = biome.settings.getGenChance();
             ResourceKey<Biome> key = biome.getBiomeKey();
             if (!biome.isEdgeBiome()) {
                 TheEndBiomes.addMainIslandBiome(key, weight);
@@ -184,7 +184,7 @@ public class BiomeAPI {
                 "BCL_END_BARRENS",
                 END_BARRENS,
                 (biome, highlandBiome) -> {
-                    float weight = biome.getGenChance();
+                    float weight = biome.settings.getGenChance();
                     ResourceKey<Biome> key = biome.getBiomeKey();
                     if (!biome.isEdgeBiome()) {
                         ResourceKey<Biome> parentKey = highlandBiome.getBiomeKey();
@@ -339,7 +339,7 @@ public class BiomeAPI {
     static BCLBiome registerEndLandBiome(BootstapContext<Biome> bootstrapContext, BCLBiome biome) {
         registerBuiltinBiomeAndOverrideIntendedDimension(bootstrapContext, biome, BiomeType.BCL_END_LAND);
 
-        float weight = biome.getGenChance();
+        float weight = biome.settings.getGenChance();
         ResourceKey<Biome> key = biome.getBiomeKey();
 
         if (biome.isEdgeBiome()) {
@@ -363,7 +363,7 @@ public class BiomeAPI {
     static BCLBiome registerEndVoidBiome(BootstapContext<Biome> bootstrapContext, BCLBiome biome) {
         registerBuiltinBiomeAndOverrideIntendedDimension(bootstrapContext, biome, BiomeType.BCL_END_VOID);
 
-        float weight = biome.getGenChance();
+        float weight = biome.settings.getGenChance();
         ResourceKey<Biome> key = biome.getBiomeKey();
         if (!biome.isEdgeBiome()) {
             TheEndBiomes.addSmallIslandsBiome(key, weight);
@@ -382,7 +382,7 @@ public class BiomeAPI {
     static BCLBiome registerEndCenterBiome(BootstapContext<Biome> bootstrapContext, BCLBiome biome) {
         registerBuiltinBiomeAndOverrideIntendedDimension(bootstrapContext, biome, BiomeType.BCL_END_CENTER);
 
-        float weight = biome.getGenChance();
+        float weight = biome.settings.getGenChance();
         ResourceKey<Biome> key = biome.getBiomeKey();
         if (!biome.isEdgeBiome()) {
             TheEndBiomes.addMainIslandBiome(key, weight);
@@ -405,7 +405,7 @@ public class BiomeAPI {
     ) {
         registerBuiltinBiomeAndOverrideIntendedDimension(bootstrapContext, biome, BiomeType.BCL_END_BARRENS);
 
-        float weight = biome.getGenChance();
+        float weight = biome.settings.getGenChance();
         ResourceKey<Biome> key = biome.getBiomeKey();
         if (!biome.isEdgeBiome()) {
             ResourceKey<Biome> parentKey = highlandBiome.getBiomeKey();

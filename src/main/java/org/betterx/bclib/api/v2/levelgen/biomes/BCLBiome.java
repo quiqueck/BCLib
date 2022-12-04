@@ -40,7 +40,7 @@ import org.jetbrains.annotations.Nullable;
  * You may use {@link BCLBiome#codecWithSettings(RecordCodecBuilder.Instance)} to create a Codec that includes
  * all default settings for {@link BCLBiome} as well as additional Data for your specific subclass.
  */
-public class BCLBiome extends BCLBiomeSettings implements BiomeData {
+public class BCLBiome implements BiomeData {
     public static final Codec<BCLBiome> CODEC = RecordCodecBuilder.create(instance -> codecWithSettings(instance).apply(
             instance,
             BCLBiome::new
@@ -54,27 +54,27 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
     private static class CodecAttributes<T extends BCLBiome> {
         public RecordCodecBuilder<T, Float> t0 = Codec.FLOAT.fieldOf("terrainHeight")
                                                             .orElse(0.1f)
-                                                            .forGetter((T o1) -> o1.terrainHeight);
+                                                            .forGetter((T o1) -> o1.settings.terrainHeight);
 
         public RecordCodecBuilder<T, Float> t1 = Codec.FLOAT.fieldOf("fogDensity")
                                                             .orElse(1.0f)
-                                                            .forGetter((T o1) -> o1.fogDensity);
+                                                            .forGetter((T o1) -> o1.settings.fogDensity);
         public RecordCodecBuilder<T, Float> t2 = Codec.FLOAT.fieldOf("genChance")
                                                             .orElse(1.0f)
-                                                            .forGetter((T o1) -> o1.genChance);
+                                                            .forGetter((T o1) -> o1.settings.genChance);
         public RecordCodecBuilder<T, Integer> t3 = Codec.INT.fieldOf("edgeSize")
                                                             .orElse(0)
-                                                            .forGetter((T o1) -> o1.edgeSize);
+                                                            .forGetter((T o1) -> o1.settings.edgeSize);
         public RecordCodecBuilder<T, Boolean> t4 = Codec.BOOL.fieldOf("vertical")
                                                              .orElse(false)
-                                                             .forGetter((T o1) -> o1.vertical);
+                                                             .forGetter((T o1) -> o1.settings.vertical);
         public RecordCodecBuilder<T, Optional<ResourceLocation>> t5 =
                 ResourceLocation.CODEC
                         .optionalFieldOf("edge")
                         .orElse(Optional.empty())
-                        .forGetter((T o1) -> o1.edge == null
+                        .forGetter((T o1) -> ((BCLBiome) o1).edge == null
                                 ? Optional.empty()
-                                : Optional.of(o1.edge));
+                                : Optional.of(((BCLBiome) o1).edge));
         public RecordCodecBuilder<T, ResourceLocation> t6 =
                 ResourceLocation.CODEC.fieldOf("biome")
                                       .forGetter((T o) -> ((BCLBiome) o).biomeID);
@@ -150,6 +150,7 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
         return instance.group(a.t0, a.t1, a.t2, a.t3, a.t4, a.t5, a.t6, a.t7, a.t8, a.t10);
     }
 
+    public final BCLBiomeSettings settings;
     private final Map<String, Object> customData = Maps.newHashMap();
     private final ResourceLocation biomeID;
     private final ResourceKey<Biome> biomeKey;
@@ -157,6 +158,7 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
     protected final List<Climate.ParameterPoint> parameterPoints = Lists.newArrayList();
 
     private ResourceLocation biomeParent;
+    private ResourceLocation edge;
 
     private BiomeAPI.BiomeType intendedType = BiomeAPI.BiomeType.NONE;
 
@@ -172,7 +174,14 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
             Optional<ResourceLocation> biomeParent,
             Optional<String> intendedType
     ) {
-        super(terrainHeight, fogDensity, genChance, edgeSize, vertical, edge.orElse(null));
+        this.settings = new BCLBiomeSettings(
+                terrainHeight,
+                fogDensity,
+                genChance,
+                edgeSize,
+                vertical
+        );
+        this.edge = edge.orElse(null);
         this.biomeID = biomeID;
         this.biomeKey = ResourceKey.create(Registries.BIOME, biomeID);
         this.biomeParent = biomeParent.orElse(null);
@@ -216,12 +225,9 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
      * @param defaults The Settings for this Biome or null if you want to apply the defaults
      */
     protected BCLBiome(ResourceKey<Biome> biomeKey, BCLBiomeSettings defaults) {
+        this.settings = defaults;
         this.biomeID = biomeKey.location();
         this.biomeKey = biomeKey;
-
-        if (defaults != null) {
-            defaults.applyWithDefaults(this);
-        }
     }
 
     /**
@@ -231,12 +237,9 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
      * @param defaults The Settings for this Biome or null if you want to apply the defaults
      */
     protected BCLBiome(ResourceLocation biomeID, BCLBiomeSettings defaults) {
+        this.settings = defaults;
         this.biomeID = biomeID;
         this.biomeKey = ResourceKey.create(Registries.BIOME, biomeID);
-
-        if (defaults != null) {
-            defaults.applyWithDefaults(this);
-        }
     }
 
     /**
@@ -272,20 +275,14 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
         return !BCLBiomeRegistry.isEmptyBiome(edge);
     }
 
-    /**
-     * Set biome edge for this biome instance.
-     *
-     * @param edge {@link BCLBiome} as the edge biome.
-     * @return same {@link BCLBiome}.
-     */
-    BCLBiome setEdgeID(ResourceLocation edge) {
-        this.edge = edge;
-        return this;
-    }
 
-    BCLBiome setEdge(BCLBiome edge) {
-        this.edge = edge.biomeID;
-        edge.biomeParent = this.biomeID;
+    BCLBiome _setEdge(BCLBiome edge) {
+        if (edge != null) {
+            this.edge = edge.biomeID;
+            edge.biomeParent = this.biomeID;
+        } else {
+            this.edge = null;
+        }
         return this;
     }
 
@@ -300,7 +297,7 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
         if (this.edge != null) {
             newEdge.biomeParent = this.edge;
         } else {
-            this.setEdge(newEdge);
+            this._setEdge(newEdge);
         }
         return this;
     }
@@ -329,9 +326,9 @@ public class BCLBiome extends BCLBiomeSettings implements BiomeData {
             BCLBiome b = entry.getValue();
             if (
                     this.biomeID.equals(entry.getValue().biomeParent)
-                            && !entry.getValue().getID().equals(edge)
+                            && !entry.getValue().isEdgeBiome()
             ) {
-                subbiomes.add(b, b.genChance);
+                subbiomes.add(b, b.settings.genChance);
             }
         }
 
