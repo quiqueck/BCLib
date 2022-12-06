@@ -225,7 +225,7 @@ public class BCLBiome implements BiomeData {
      * @param defaults The Settings for this Biome or null if you want to apply the defaults
      */
     protected BCLBiome(ResourceKey<Biome> biomeKey, BCLBiomeSettings defaults) {
-        this.settings = defaults;
+        this.settings = defaults == null ? new BCLBiomeSettings() : defaults;
         this.biomeID = biomeKey.location();
         this.biomeKey = biomeKey;
     }
@@ -237,7 +237,7 @@ public class BCLBiome implements BiomeData {
      * @param defaults The Settings for this Biome or null if you want to apply the defaults
      */
     protected BCLBiome(ResourceLocation biomeID, BCLBiomeSettings defaults) {
-        this.settings = defaults;
+        this.settings = defaults == null ? new BCLBiomeSettings() : defaults;
         this.biomeID = biomeID;
         this.biomeKey = ResourceKey.create(Registries.BIOME, biomeID);
     }
