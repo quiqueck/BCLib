@@ -4,6 +4,8 @@ import org.betterx.bclib.api.v2.ModIntegrationAPI;
 import org.betterx.bclib.api.v2.PostInitAPI;
 import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
 import org.betterx.bclib.client.models.CustomModelBakery;
+import org.betterx.bclib.client.textures.AtlasSetManager;
+import org.betterx.bclib.client.textures.SpriteLister;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.registry.BaseBlockEntityRenders;
 import org.betterx.bclib.registry.PresetsRegistryClient;
@@ -35,14 +37,9 @@ public class BCLibClient implements ClientModInitializer, ModelResourceProvider,
 
         PresetsRegistryClient.onLoad();
         WorldsTogether.SURPRESS_EXPERIMENTAL_DIALOG = Configs.CLIENT_CONFIG.suppressExperimentalDialog();
-        //dumpDatapack();
-        //TODO: 1.19.3 Find out how to load sprites from custom folders
-//        ClientSpriteRegistryCallback
-//                .event(TextureAtlas.LOCATION_BLOCKS)
-//                .register((resourceManager, sprites) -> {
-//                    SpriteLoader.listSprites(resourceManager, "entity/chest", sprites::put);
-//                    SpriteLoader.listSprites(resourceManager, "blocks", sprites::put);
-//                });
+
+        AtlasSetManager.addSource(AtlasSetManager.VANILLA_BLOCKS, new SpriteLister("entity/chest"));
+        AtlasSetManager.addSource(AtlasSetManager.VANILLA_BLOCKS, new SpriteLister("blocks"));
     }
 
     @Override
