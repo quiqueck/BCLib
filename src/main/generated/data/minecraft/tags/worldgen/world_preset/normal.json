@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "bclib:normal",
+    "bclib:amplified",
+    "bclib:large"
+  ]
+}
