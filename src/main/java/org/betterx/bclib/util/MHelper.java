@@ -5,11 +5,14 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.PositionalRandomFactory;
 
 import org.joml.Vector3f;
+import org.wunder.lib.math.Float3;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class MHelper {
+    public static final Vector3f YP = Float3.Y_AXIS.toVector3();
+
     static class ThreadLocalRandomSource implements RandomSource {
         ThreadLocalRandomSource(long seed) {
 

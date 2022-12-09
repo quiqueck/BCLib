@@ -58,9 +58,15 @@ public class BCLBiomeBuilder {
     }
 
     public static int DEFAULT_NETHER_WATER_COLOR = 0x3F76E4;
+    public static int DEFAULT_END_WATER_COLOR = DEFAULT_NETHER_WATER_COLOR;
     public static int DEFAULT_NETHER_WATER_FOG_COLOR = 0x050533;
+    public static int DEFAULT_END_WATER_FOG_COLOR = DEFAULT_NETHER_WATER_FOG_COLOR;
+    public static int DEFAULT_END_FOG_COLOR = 0xA080A0;
+    public static int DEFAULT_END_SKY_COLOR = 0x000000;
     public static float DEFAULT_NETHER_TEMPERATURE = 2.0f;
+    public static float DEFAULT_END_TEMPERATURE = 0.5f;
     public static float DEFAULT_NETHER_WETNESS = 0.0f;
+    public static float DEFAULT_END_WETNESS = 0.5f;
 
 
     @FunctionalInterface
