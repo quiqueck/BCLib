@@ -395,13 +395,34 @@ public class BCLBiome implements BiomeData {
 
     }
 
+    public boolean is(ResourceKey<Biome> key) {
+        return biomeID.equals(key.location());
+    }
+
+    public boolean is(ResourceLocation loc) {
+        return biomeID.equals(loc);
+    }
+
+    public boolean is(BCLBiome biome) {
+        if (biome == null) return false;
+        return biomeID.equals(biome.biomeID);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
         }
-        BCLBiome biome = (BCLBiome) obj;
-        return biome != null && biomeID.equals(biome.biomeID);
+        if (obj instanceof BCLBiome biome) {
+            return is(biome);
+        }
+        if (obj instanceof ResourceKey key) {
+            return is(key);
+        }
+        if (obj instanceof ResourceLocation loc) {
+            return is(loc);
+        }
+        return super.equals(obj);
     }
 
     @Override
