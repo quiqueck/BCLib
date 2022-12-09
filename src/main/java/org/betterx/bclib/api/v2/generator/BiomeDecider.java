@@ -158,7 +158,9 @@ public abstract class BiomeDecider {
      * Called whenever the picker needs to rebuild it's contents
      */
     public void rebuild() {
-        picker.rebuild();
+        //TODO: 1.19.3 test if this rebuilds once we have biomes
+        if (picker != null)
+            picker.rebuild();
     }
 
     /**
