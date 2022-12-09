@@ -11,10 +11,7 @@ import org.betterx.worlds.together.world.event.WorldBootstrap;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderGetter;
-import net.minecraft.core.HolderSet;
+import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
@@ -821,31 +818,6 @@ public class BiomeAPI {
         setBiome(chunk, pos, biome);
     }
 
-    private static void sortFeatures(List<Holder<PlacedFeature>> features) {
-//        InternalBiomeAPI.initFeatureOrder();
-//
-//        Set<Holder<PlacedFeature>> featuresWithoutDuplicates = Sets.newHashSet();
-//        features.forEach(holder -> featuresWithoutDuplicates.add(holder));
-//
-//        if (featuresWithoutDuplicates.size() != features.size()) {
-//            features.clear();
-//            featuresWithoutDuplicates.forEach(feature -> features.add(feature));
-//        }
-//
-//        features.forEach(feature -> {
-//            InternalBiomeAPI.FEATURE_ORDER.computeIfAbsent(
-//                    feature,
-//                    f -> InternalBiomeAPI.FEATURE_ORDER_ID.getAndIncrement()
-//            );
-//        });
-//
-//        features.sort((f1, f2) -> {
-//            int v1 = InternalBiomeAPI.FEATURE_ORDER.getOrDefault(f1, 70000);
-//            int v2 = InternalBiomeAPI.FEATURE_ORDER.getOrDefault(f2, 70000);
-//            return Integer.compare(v1, v2);
-//        });
-    }
-
 
     private static List<Holder<PlacedFeature>> getFeaturesListCopy(
             List<HolderSet<PlacedFeature>> features,
@@ -859,6 +831,22 @@ public class BiomeAPI {
             features.add(HolderSet.direct(Lists.newArrayList()));
         }
         return features.get(index).stream().collect(Collectors.toList());
+    }
+
+    public static List<BCLBiome> getAllBiomes(BiomeType type) {
+        List<BCLBiome> res = new ArrayList<>();
+        var access = WorldBootstrap.getLastRegistryAccess();
+        Registry<BCLBiome> reg;
+        if (access == null) reg = BCLBiomeRegistry.BUILTIN_BCL_BIOMES;
+        else reg = access.registryOrThrow(BCLBiomeRegistry.BCL_BIOMES_REGISTRY);
+
+        for (var e : reg.entrySet()) {
+            if (e.getValue().getIntendedType().is(type)) {
+                res.add(e.getValue());
+            }
+        }
+
+        return res;
     }
 
 }
