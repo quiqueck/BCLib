@@ -25,11 +25,9 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class AdvancementManager {
     static class OrderedBuilder extends Advancement.Builder {
@@ -322,6 +320,21 @@ public class AdvancementManager {
             );
         }
 
+        public Builder addInventoryChangedAnyCriterion(String name, ItemLike... items) {
+            InventoryChangeTrigger.TriggerInstance trigger =
+                    InventoryChangeTrigger.TriggerInstance.hasItems(new ItemPredicate(
+                            null,
+                            Arrays.stream(items).map(i -> i.asItem()).collect(Collectors.toSet()),
+                            MinMaxBounds.Ints.ANY,
+                            MinMaxBounds.Ints.ANY,
+                            EnchantmentPredicate.NONE,
+                            EnchantmentPredicate.NONE,
+                            null,
+                            NbtPredicate.ANY
+                    ));
+            return addCriterion(name, trigger);
+        }
+
         public Builder addInventoryChangedCriterion(String name, TagKey<Item> tag) {
             return addCriterion(
                     name,
@@ -363,8 +376,8 @@ public class AdvancementManager {
         }
 
         public Builder addWoodCriterion(WoodenComplexMaterial mat) {
-            return addInventoryChangedCriterion(
-                    mat.getBaseName(),
+            return addInventoryChangedAnyCriterion(
+                    "got_" + mat.getBaseName(),
                     mat.getBlock(WoodenComplexMaterial.BLOCK_LOG),
                     mat.getBlock(WoodenComplexMaterial.BLOCK_BARK),
                     mat.getBlock(WoodenComplexMaterial.BLOCK_PLANKS)
