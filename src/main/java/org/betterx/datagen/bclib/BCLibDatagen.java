@@ -1,6 +1,7 @@
 package org.betterx.datagen.bclib;
 
 import org.betterx.bclib.BCLib;
+import org.betterx.datagen.bclib.advancement.BCLAdvancementDataProvider;
 import org.betterx.datagen.bclib.preset.WorldPresetDataProvider;
 import org.betterx.datagen.bclib.tests.TestBiomes;
 import org.betterx.datagen.bclib.tests.TestWorldgenProvider;
@@ -29,6 +30,7 @@ public class BCLibDatagen implements DataGeneratorEntrypoint {
 
         pack.addProvider(WorldPresetDataProvider::new);
         pack.addProvider(BCLibRegistriesDataProvider::new);
+        pack.addProvider(BCLAdvancementDataProvider::new);
     }
 
 
