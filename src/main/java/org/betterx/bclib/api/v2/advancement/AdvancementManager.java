@@ -32,6 +32,12 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class AdvancementManager {
+    static class OrderedBuilder extends Advancement.Builder {
+        OrderedBuilder() {
+            super(null, null, AdvancementRewards.EMPTY, new LinkedHashMap<>(), null);
+        }
+    }
+
     private static final Map<ResourceLocation, Advancement.Builder> ADVANCEMENTS = new LinkedHashMap<>();
 
     public static void register(ResourceLocation id, Advancement.Builder builder) {
@@ -113,7 +119,7 @@ public class AdvancementManager {
         private static final ThreadLocal<DisplayBuilder> DISPLAY_BUILDER = ThreadLocal.withInitial(DisplayBuilder::new);
         private static final ResourceLocation RECIPES_ROOT = RecipeBuilder.ROOT_RECIPE_ADVANCEMENT;
 
-        private final Advancement.Builder builder = Advancement.Builder.advancement();
+        private final Advancement.Builder builder = new OrderedBuilder();
         private final ResourceLocation id;
         private final AdvancementType type;
         private boolean canBuild = true;
