@@ -19,6 +19,7 @@ public class CommonBlockTags {
     public static final TagKey<Block> NETHER_PORTAL_FRAME = TagManager.BLOCKS.makeCommonTag("nether_pframe");
     public static final TagKey<Block> NETHER_STONES = TagManager.BLOCKS.makeCommonTag("nether_stones");
     public static final TagKey<Block> NETHER_ORES = TagManager.BLOCKS.makeCommonTag("nether_ores");
+    public static final TagKey<Block> ORES = TagManager.BLOCKS.makeCommonTag("ores");
     public static final TagKey<Block> END_ORES = TagManager.BLOCKS.makeCommonTag("end_ores");
     public static final TagKey<Block> SAPLINGS = TagManager.BLOCKS.makeCommonTag("saplings");
     public static final TagKey<Block> SOUL_GROUND = TagManager.BLOCKS.makeCommonTag("soul_ground");

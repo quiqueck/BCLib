@@ -4,6 +4,7 @@ import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.TagProvider;
 import org.betterx.bclib.util.LootUtil;
 import org.betterx.bclib.util.MHelper;
+import org.betterx.worlds.together.tag.v3.CommonBlockTags;
 import org.betterx.worlds.together.tag.v3.MineableTags;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -135,6 +136,8 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
 
     @Override
     public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
+        blockTags.add(CommonBlockTags.ORES);
+        
         if (this.miningLevel == Tiers.STONE.getLevel()) {
             blockTags.add(BlockTags.NEEDS_STONE_TOOL);
         } else if (this.miningLevel == Tiers.IRON.getLevel()) {
