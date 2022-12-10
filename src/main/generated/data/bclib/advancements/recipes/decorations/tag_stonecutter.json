@@ -1,0 +1,60 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_3_stone": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:stone"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_tag_iron_ingots": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "c:iron_ingots"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bclib:tag_stonecutter"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bclib.recipes/decorations/tag_stonecutter.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "minecraft:stonecutter"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.bclib.recipes/decorations/tag_stonecutter.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_tag_iron_ingots",
+      "has_3_stone",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bclib:tag_stonecutter"
+    ]
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_2_stick": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:stick"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_tag_iron_ingots": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "c:iron_ingots"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bclib:tag_rail"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bclib.recipes/decorations/tag_rail.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "minecraft:rail"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.bclib.recipes/decorations/tag_rail.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_tag_iron_ingots",
+      "has_2_stick",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bclib:tag_rail"
+    ]
+  }
+}
