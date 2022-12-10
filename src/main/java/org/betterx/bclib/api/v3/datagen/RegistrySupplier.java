@@ -27,6 +27,11 @@ public abstract class RegistrySupplier {
     ) {
         this.defaultModIDs = defaultModIDs;
         this.allRegistries = initializeRegistryList(defaultModIDs);
+        try {
+            BOOTSTRAP_LOCK.acquire();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     protected abstract List<RegistrySupplier.RegistryInfo<?>> initializeRegistryList(@Nullable List<String> modIDs);
@@ -37,6 +42,7 @@ public abstract class RegistrySupplier {
                 nfo.add(registryBuilder, BOOTSTRAP_LOCK);
             }
         }
+        BOOTSTRAP_LOCK.release();
     }
 
     void acquireLock() {
