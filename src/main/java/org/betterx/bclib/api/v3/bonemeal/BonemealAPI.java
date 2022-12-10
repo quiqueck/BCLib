@@ -28,6 +28,7 @@ public class BonemealAPI {
 
         addSpreadableBlocks(BCLBlockTags.BONEMEAL_TARGET_NETHERRACK, NetherrackSpreader.INSTANCE);
         addSpreadableBlocks(BCLBlockTags.BONEMEAL_TARGET_END_STONE, EndStoneSpreader.INSTANCE);
+        addSpreadableBlocks(BCLBlockTags.BONEMEAL_TARGET_OBSIDIAN, BCLBlockTags.BONEMEAL_SOURCE_OBSIDIAN);
     }
 
     /**
