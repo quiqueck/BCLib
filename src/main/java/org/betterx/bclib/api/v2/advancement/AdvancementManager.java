@@ -26,26 +26,45 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import org.jetbrains.annotations.ApiStatus;
 
 public class AdvancementManager {
-    private static final Map<ResourceLocation, Advancement.Builder> ADVANCEMENTS = new HashMap<>();
+    private static final Map<ResourceLocation, Advancement.Builder> ADVANCEMENTS = new LinkedHashMap<>();
 
     public static void register(ResourceLocation id, Advancement.Builder builder) {
         ADVANCEMENTS.put(id, builder);
     }
 
-    @ApiStatus.Internal
-    public static void addAdvancements(Map<ResourceLocation, Advancement.Builder> map) {
+    public static void registerAllDataGen(List<String> namespaces, Consumer<Advancement> consumer) {
+        final Advancement ROOT_RECIPE = Advancement.Builder.advancement()
+                                                           .addCriterion(
+                                                                   "impossible",
+                                                                   new ImpossibleTrigger.TriggerInstance()
+                                                           )
+                                                           .build(RecipeBuilder.ROOT_RECIPE_ADVANCEMENT);
+        final Map<ResourceLocation, Advancement> BUILT = new HashMap<>();
+
         for (var entry : ADVANCEMENTS.entrySet()) {
-            if (!map.containsKey(entry.getKey())) {
-                map.put(entry.getKey(), entry.getValue());
+            final ResourceLocation loc = entry.getKey();
+            if (namespaces == null || namespaces.contains(loc.getNamespace())) {
+                final Advancement.Builder builder = entry.getValue();
+                if (builder.canBuild(locToAdd -> {
+                    if (locToAdd.equals(RecipeBuilder.ROOT_RECIPE_ADVANCEMENT)) return ROOT_RECIPE;
+                    return BUILT.get(locToAdd);
+                })) {
+                    final Advancement adv = builder.build(loc);
+                    BUILT.put(loc, adv);
+                    consumer.accept(adv);
+                } else {
+                    BCLib.LOGGER.error("Unable to build Advancement " + loc);
+                }
             }
         }
     }
+
 
     public static class RewardsBuilder {
         private final Builder calle;
@@ -147,7 +166,11 @@ public class AdvancementManager {
             return create(new ItemStack(icon), type, displayAdapter);
         }
 
-        public static Builder create(ItemStack icon, AdvancementType type, Consumer<DisplayBuilder> displayAdapter) {
+        public static Builder create(
+                ItemStack icon,
+                AdvancementType type,
+                Consumer<DisplayBuilder> displayAdapter
+        ) {
             var id = BuiltInRegistries.ITEM.getKey(icon.getItem());
             boolean canBuild = true;
             if (id == null || icon.is(Items.AIR)) {
@@ -168,7 +191,10 @@ public class AdvancementManager {
             return b;
         }
 
-        public static <C extends Container, T extends Recipe<C>> Builder createRecipe(T recipe, AdvancementType type) {
+        public static <C extends Container, T extends Recipe<C>> Builder createRecipe(
+                T recipe,
+                AdvancementType type
+        ) {
             Item item = recipe.getResultItem().getItem();
             return create(item, type, displayBuilder -> displayBuilder.hideToast().hideFromChat())
                     //.awardRecipe(item)
@@ -365,13 +391,8 @@ public class AdvancementManager {
             return this;
         }
 
-        public ResourceLocation buildAndRegister() {
+        public ResourceLocation build() {
             AdvancementManager.register(id, this.builder);
-            return this.id;
-        }
-
-        public ResourceLocation buildAndRegister(Map<ResourceLocation, Advancement.Builder> map) {
-            map.put(id, this.builder);
             return this.id;
         }
     }

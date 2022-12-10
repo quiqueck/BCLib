@@ -32,7 +32,6 @@
     "RecipeManagerMixin",
     "RecipeMixin",
     "RegistryDataLoaderMixin",
-    "ServerAdvancementManagerMixin",
     "ServerLevelMixin",
     "ShovelItemAccessor",
     "SurfaceRulesContextAccessor",

@@ -214,7 +214,7 @@ public class AbstractAdvancementRecipe {
                     .endReward()
                     .requirements(RequirementsStrategy.OR);
 
-            advancement.buildAndRegister();
+            advancement.build();
         }
     }
 }
