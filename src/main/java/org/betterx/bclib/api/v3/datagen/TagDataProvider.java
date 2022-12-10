@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import org.jetbrains.annotations.Nullable;
@@ -49,8 +50,12 @@ public class TagDataProvider<T> extends FabricTagProvider<T> {
     protected void addTags(HolderLookup.Provider arg) {
         tagRegistry.forEachTag((tag, locs, tags) -> {
             if (locs.isEmpty() && tags.isEmpty()) return;
-            
+
             final FabricTagProvider<T>.FabricTagBuilder builder = getOrCreateTagBuilder(tag);
+
+            locs.sort(Comparator.comparing(ResourceLocation::toString));
+            tags.sort(Comparator.comparing(a -> a.location().toString()));
+
             locs.forEach(builder::add);
             tags.forEach(builder::addTag);
         }, (tag, loc) -> shouldAdd(tag.location()) || this.shouldAdd(loc));
