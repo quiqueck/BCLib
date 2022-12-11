@@ -1,5 +1,7 @@
 package org.betterx.bclib.api.v3.datagen;
 
+import org.betterx.bclib.BCLib;
+
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -38,9 +40,7 @@ public abstract class RegistrySupplier {
 
     public void bootstrapRegistries(RegistrySetBuilder registryBuilder) {
         for (RegistrySupplier.RegistryInfo<?> nfo : allRegistries) {
-            if (nfo.registryBootstrap != null) {
-                nfo.add(registryBuilder, BOOTSTRAP_LOCK);
-            }
+            nfo.add(registryBuilder, BOOTSTRAP_LOCK);
         }
         BOOTSTRAP_LOCK.release();
     }
@@ -213,8 +213,11 @@ public abstract class RegistrySupplier {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+            BCLib.LOGGER.info("Adding:" + key());
             registryBuilder.add(key(), (BootstapContext<T> ctx) -> {
-                registryBootstrap.run(ctx);
+                if (registryBootstrap != null) {
+                    registryBootstrap.run(ctx);
+                }
                 LOCK_BOOSTRAP.release();
             });
         }

@@ -6,7 +6,6 @@ import org.betterx.datagen.bclib.preset.WorldPresetDataProvider;
 import org.betterx.datagen.bclib.tests.TestBiomes;
 import org.betterx.datagen.bclib.tests.TestWorldgenProvider;
 import org.betterx.datagen.bclib.worldgen.BCLibRegistriesDataProvider;
-import org.betterx.datagen.bclib.worldgen.VanillaBCLBiomesDataProvider;
 
 import net.minecraft.core.RegistrySetBuilder;
 
@@ -19,8 +18,6 @@ public class BCLibDatagen implements DataGeneratorEntrypoint {
     @Override
     public void onInitializeDataGenerator(FabricDataGenerator dataGenerator) {
         BCLib.LOGGER.info("Bootstrap onInitializeDataGenerator");
-        VanillaBCLBiomesDataProvider.create();
-
         final FabricDataGenerator.Pack pack = dataGenerator.createPack();
 
         if (ADD_TESTS) {

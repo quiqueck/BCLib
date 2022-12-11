@@ -25,6 +25,7 @@ public class RegistryDataLoaderMixin {
 
     @Inject(method = "<clinit>", at = @At("TAIL"))
     private static void wt_init(CallbackInfo ci) {
+        //we need this to ensure, that the BCL-Biome Registry is loaded at the correct time
         List<RegistryDataLoader.RegistryData<?>> enhanced = new ArrayList(RegistryDataLoader.WORLDGEN_REGISTRIES.size() + 1);
         enhanced.addAll(RegistryDataLoader.WORLDGEN_REGISTRIES);
         enhanced.add(new RegistryDataLoader.RegistryData<>(

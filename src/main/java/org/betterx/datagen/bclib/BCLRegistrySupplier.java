@@ -10,6 +10,7 @@ import org.betterx.datagen.bclib.tests.TestConfiguredFeatures;
 import org.betterx.datagen.bclib.tests.TestPlacedFeatures;
 import org.betterx.datagen.bclib.tests.TestStructure;
 import org.betterx.datagen.bclib.worldgen.NoiseTypesDataProvider;
+import org.betterx.datagen.bclib.worldgen.VanillaBCLBiomesDataProvider;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.surfaceRules.AssignedSurfaceRule;
 import org.betterx.worlds.together.surfaceRules.SurfaceRuleRegistry;
@@ -40,7 +41,11 @@ public class BCLRegistrySupplier extends RegistrySupplier {
     protected List<RegistryInfo<?>> initializeRegistryList(@Nullable List<String> modIDs) {
         InfoList registries = new InfoList();
 
-        registries.addUnfiltered(BCLBiomeRegistry.BCL_BIOMES_REGISTRY, BiomeData.CODEC);
+        registries.addUnfiltered(
+                BCLBiomeRegistry.BCL_BIOMES_REGISTRY,
+                BiomeData.CODEC,
+                VanillaBCLBiomesDataProvider::bootstrap
+        );
         registries.addUnfiltered(SurfaceRuleRegistry.SURFACE_RULES_REGISTRY, AssignedSurfaceRule.CODEC);
 
         if (BCLibDatagen.ADD_TESTS) {

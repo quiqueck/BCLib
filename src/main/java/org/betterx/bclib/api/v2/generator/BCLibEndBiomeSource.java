@@ -3,7 +3,6 @@ package org.betterx.bclib.api.v2.generator;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.generator.config.BCLEndBiomeSourceConfig;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
-import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.interfaces.BiomeMap;
@@ -11,10 +10,11 @@ import org.betterx.worlds.together.biomesource.BiomeSourceWithConfig;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.*;
+import net.minecraft.core.Holder;
+import net.minecraft.core.QuartPos;
+import net.minecraft.core.Registry;
+import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
@@ -34,8 +34,6 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
     public static Codec<BCLibEndBiomeSource> CODEC
             = RecordCodecBuilder.create((instance) -> instance
             .group(
-                    RegistryOps.retrieveGetter(Registries.BIOME),
-                    RegistryOps.retrieveGetter(BCLBiomeRegistry.BCL_BIOMES_REGISTRY),
                     Codec
                             .LONG
                             .fieldOf("seed")
@@ -67,36 +65,20 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
     private BCLEndBiomeSourceConfig config;
 
     private BCLibEndBiomeSource(
-            HolderGetter<Biome> biomeRegistry,
-            HolderGetter<BCLBiome> bclBiomeRegistry,
             long seed,
             BCLEndBiomeSourceConfig config
     ) {
-        this(biomeRegistry, bclBiomeRegistry, seed, config, true);
+        this(seed, config, true);
     }
 
     public BCLibEndBiomeSource(
-            HolderGetter<Biome> biomeRegistry,
-            HolderGetter<BCLBiome> bclBiomeRegistry,
             BCLEndBiomeSourceConfig config
     ) {
-        this(biomeRegistry, bclBiomeRegistry, 0, config, false);
+        this(0, config, false);
     }
 
-    private BCLibEndBiomeSource(
-            HolderGetter<Biome> biomeRegistry,
-            HolderGetter<BCLBiome> bclBiomeRegistry,
-            long seed,
-            BCLEndBiomeSourceConfig config,
-            boolean initMaps
-    ) {
-        this(biomeRegistry, bclBiomeRegistry, null, seed, config, initMaps);
-    }
 
     private BCLibEndBiomeSource(
-            HolderGetter<Biome> biomeRegistry,
-            HolderGetter<BCLBiome> bclBiomeRegistry,
-            List<Holder<Biome>> list,
             long seed,
             BCLEndBiomeSourceConfig config,
             boolean initMaps

@@ -320,7 +320,8 @@ public class BCLBiome implements BiomeData {
         subbiomes.add(this, 1.0f);
         if (acc == null) return subbiomes;
 
-        Registry<BCLBiome> reg = acc.registryOrThrow(BCLBiomeRegistry.BCL_BIOMES_REGISTRY);
+        Registry<BCLBiome> reg = acc.registry(BCLBiomeRegistry.BCL_BIOMES_REGISTRY).orElse(null);
+        if (reg == null) reg = BCLBiomeRegistry.BUILTIN_BCL_BIOMES;
 
         for (Map.Entry<ResourceKey<BCLBiome>, BCLBiome> entry : reg.entrySet()) {
             BCLBiome b = entry.getValue();

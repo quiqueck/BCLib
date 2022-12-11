@@ -115,16 +115,12 @@ public class WorldPresets {
 
             HolderGetter<BCLBiome> bclBiomes = bootstapContext.lookup(BCLBiomeRegistry.BCL_BIOMES_REGISTRY);
             this.netherContext = new WorldGenUtil.Context(
-                    this.biomes,
-                    bclBiomes,
                     this.netherStem.type(),
                     this.structureSets,
                     netherSettings
             );
 
             this.endContext = new WorldGenUtil.Context(
-                    this.biomes,
-                    bclBiomes,
                     this.endStem.type(),
                     this.structureSets,
                     endSettings

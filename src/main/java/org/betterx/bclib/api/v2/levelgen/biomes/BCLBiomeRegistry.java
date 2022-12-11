@@ -1,7 +1,6 @@
 package org.betterx.bclib.api.v2.levelgen.biomes;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.datagen.bclib.worldgen.VanillaBCLBiomesDataProvider;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.world.event.WorldBootstrap;
 
@@ -10,14 +9,18 @@ import com.mojang.serialization.Lifecycle;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 
+import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
+import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
+
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.ApiStatus;
@@ -30,11 +33,11 @@ public class BCLBiomeRegistry {
     public static final ResourceKey<Registry<Codec<? extends BCLBiome>>> BCL_BIOME_CODEC_REGISTRY =
             createRegistryKey(WorldsTogether.makeID("worldgen/betterx/biome_codec"));
 
-    public static Registry<Codec<? extends BCLBiome>> BIOME_CODECS = BuiltInRegistries.registerSimple(
-            BCL_BIOME_CODEC_REGISTRY,
-            BCLBiomeRegistry::bootstrapCodecs
-    );
-    public static Registry<BCLBiome> BUILTIN_BCL_BIOMES = new MappedRegistry<>(
+    public static Registry<Codec<? extends BCLBiome>> BIOME_CODECS = FabricRegistryBuilder
+            .from(new MappedRegistry<>(BCL_BIOME_CODEC_REGISTRY, Lifecycle.stable()))
+            .attribute(RegistryAttribute.MODDED)
+            .buildAndRegister();
+    public static MappedRegistry<BCLBiome> BUILTIN_BCL_BIOMES = new MappedRegistry<>(
             BCL_BIOMES_REGISTRY,
             Lifecycle.stable()
     );
@@ -185,17 +188,16 @@ public class BCLBiomeRegistry {
         }
     }
 
-    public static void ensureStaticallyLoaded() {
-
+    @ApiStatus.Internal
+    public static void register() {
+        bootstrapCodecs(BIOME_CODECS);
     }
 
-    public static void prepareForDatagen() {
-        if (didCreate) return;
-        didCreate = true;
-
-        BUILTIN_BCL_BIOMES = BuiltInRegistries.registerSimple(
-                BCL_BIOMES_REGISTRY,
-                VanillaBCLBiomesDataProvider::bootstrap
-        );
+    @ApiStatus.Internal
+    public static void bootstrap(BootstapContext<BCLBiome> ctx) {
+        //copy from builtin
+        for (Map.Entry<ResourceKey<BCLBiome>, BCLBiome> e : BUILTIN_BCL_BIOMES.entrySet()) {
+            ctx.register(e.getKey(), e.getValue());
+        }
     }
 }

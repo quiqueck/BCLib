@@ -1,5 +1,6 @@
 package org.betterx.worlds.together.mixin.common;
 
+import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
 import org.betterx.worlds.together.surfaceRules.SurfaceRuleRegistry;
 
 import net.minecraft.core.RegistrySetBuilder;
@@ -20,6 +21,11 @@ public class VanillaRegistriesMixin {
 
     @Inject(method = "<clinit>", at = @At(value = "TAIL"))
     private static void together_registerSurface(CallbackInfo ci) {
+        BUILDER.add(
+                BCLBiomeRegistry.BCL_BIOMES_REGISTRY,
+                BCLBiomeRegistry::bootstrap
+        );
+
         BUILDER.add(
                 SurfaceRuleRegistry.SURFACE_RULES_REGISTRY,
                 SurfaceRuleRegistry::bootstrap

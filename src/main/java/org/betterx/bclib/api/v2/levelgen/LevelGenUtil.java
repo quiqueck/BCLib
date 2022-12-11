@@ -49,7 +49,7 @@ public class LevelGenUtil {
     }
 
     public static LevelStem getBCLEndLevelStem(WorldGenUtil.Context context, BCLEndBiomeSourceConfig config) {
-        BCLibEndBiomeSource endSource = new BCLibEndBiomeSource(context.biomes, context.bclBiomes, config);
+        BCLibEndBiomeSource endSource = new BCLibEndBiomeSource(config);
         return new LevelStem(
                 context.dimension,
                 new BCLChunkGenerator(

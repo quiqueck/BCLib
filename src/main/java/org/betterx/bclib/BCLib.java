@@ -53,7 +53,7 @@ public class BCLib implements ModInitializer {
         PresetsRegistry.register();
         LevelGenEvents.register();
         BlockPredicates.ensureStaticInitialization();
-        BCLBiomeRegistry.ensureStaticallyLoaded();
+        BCLBiomeRegistry.register();
         BaseRegistry.register();
         GeneratorOptions.init();
         BaseBlockEntities.register();

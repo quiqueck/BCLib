@@ -66,8 +66,6 @@ public class WorldPresetDataProvider extends FabricTagProvider<WorldPreset> {
                 .getOrThrow(NoiseGeneratorSettings.AMPLIFIED);
 
         WorldGenUtil.Context amplifiedNetherContext = new WorldGenUtil.Context(
-                ctx.netherContext.biomes,
-                ctx.netherContext.bclBiomes,
                 ctx.netherContext.dimension,
                 ctx.netherContext.structureSets,
                 ctx.noiseSettings.getOrThrow(BCLChunkGenerator.AMPLIFIED_NETHER)

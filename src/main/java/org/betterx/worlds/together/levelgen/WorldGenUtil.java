@@ -1,6 +1,5 @@
 package org.betterx.worlds.together.levelgen;
 
-import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.biomesource.BiomeSourceWithConfig;
 import org.betterx.worlds.together.biomesource.ReloadableBiomeSource;
@@ -100,19 +99,14 @@ public class WorldGenUtil {
     }
 
     public static class Context extends StemContext {
-        public final HolderGetter<Biome> biomes;
-        public final HolderGetter<BCLBiome> bclBiomes;
+
 
         public Context(
-                HolderGetter<Biome> biomes,
-                HolderGetter<BCLBiome> bclBiomes,
                 Holder<DimensionType> dimension,
                 HolderGetter<StructureSet> structureSets,
                 Holder<NoiseGeneratorSettings> generatorSettings
         ) {
             super(dimension, structureSets, generatorSettings);
-            this.biomes = biomes;
-            this.bclBiomes = bclBiomes;
         }
     }
 

@@ -10,7 +10,6 @@
     "BiomeMixin",
     "BiomeSourceMixin",
     "BoneMealItemMixin",
-    "BuiltinRegistriesMixin",
     "ChunkGeneratorAccessor",
     "ChunkGeneratorMixin",
     "ChunkGeneratorsMixin",
