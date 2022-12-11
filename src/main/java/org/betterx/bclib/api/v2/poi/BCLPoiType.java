@@ -56,6 +56,20 @@ public class BCLPoiType {
         return findPoiAround(key, level, center, wideSearch, worldBorder);
     }
 
+    public Optional<BlockPos> findClosest(
+            ServerLevel level,
+            BlockPos center,
+            int radius
+    ) {
+        return level.getPoiManager().findClosest(
+                holder -> holder.is(this.key),
+                (pos) -> true,
+                center,
+                radius,
+                PoiManager.Occupancy.ANY
+        );
+    }
+
     public Optional<BlockPos> findPoiAround(
             ServerLevel level,
             BlockPos center,
