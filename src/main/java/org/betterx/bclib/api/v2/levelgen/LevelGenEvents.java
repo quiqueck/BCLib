@@ -24,8 +24,10 @@ import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.WorldDimensions;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
+import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.level.storage.LevelStorageSource;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -66,7 +68,9 @@ public class LevelGenEvents {
             LevelStorageSource.LevelStorageAccess storageAccess,
             Consumer<Boolean> allDone
     ) {
-        return DataFixerAPI.fixData(storageAccess, allDone != null, allDone);
+        final Path dataPath = storageAccess.getLevelPath(LevelResource.ROOT).resolve("data");
+        WorldConfig.setDataDir(dataPath.toFile());
+        return DataFixerAPI.fixData(storageAccess, allDone != null && BCLib.isClient(), allDone);
     }
 
     private static Optional<Holder<WorldPreset>> adaptWorldPreset(

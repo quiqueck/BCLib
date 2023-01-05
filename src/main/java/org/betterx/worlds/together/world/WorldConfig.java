@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Mod-specifix data-storage for a world.
@@ -35,8 +36,13 @@ public class WorldConfig {
     private static final String TAG_MODIFIED = "modify_version";
     private static File dataDir;
 
-    public static void load(File dataDir) {
+    @ApiStatus.Internal
+    public static void setDataDir(File dataDir) {
         WorldConfig.dataDir = dataDir;
+    }
+
+    public static void load(File dataDir) {
+        WorldConfig.setDataDir(dataDir);
         MODS.stream()
             .parallel()
             .forEach(modID -> {
@@ -125,9 +131,8 @@ public class WorldConfig {
      * @param modID {@link String} mod ID.
      */
     public static void saveFile(String modID) {
-
         try {
-            if (!dataDir.exists()) {
+            if (dataDir != null && !dataDir.exists()) {
                 dataDir.mkdirs();
             }
             CompoundTag tag = getRootTag(modID);
