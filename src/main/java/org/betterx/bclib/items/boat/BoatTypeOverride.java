@@ -11,6 +11,9 @@ import net.minecraft.world.item.BoatItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -28,6 +31,7 @@ public final class BoatTypeOverride {
     public final ResourceLocation chestBoatTexture;
     public final ModelLayerLocation boatModelName;
     public final ModelLayerLocation chestBoatModelName;
+    @Environment(value = EnvType.CLIENT)
     private BoatModel boatModel, chestBoatModel;
     private BoatItem boat, chestBoat;
 
@@ -58,12 +62,14 @@ public final class BoatTypeOverride {
         values.add(this);
     }
 
+    @Environment(value = EnvType.CLIENT)
     public BoatModel getBoatModel(boolean chest) {
         return chest ? chestBoatModel : boatModel;
     }
 
+    @Environment(value = EnvType.CLIENT)
     public void createBoatModels(EntityRendererProvider.Context context) {
-        if (boatModel == null) {
+        if (BCLib.isClient() && boatModel == null) {
             boatModel = new BoatModel(context.bakeLayer(boatModelName));
             chestBoatModel = new ChestBoatModel(context.bakeLayer(chestBoatModelName));
         }
