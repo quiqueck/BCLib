@@ -3,8 +3,11 @@ package org.betterx.bclib.client;
 import org.betterx.bclib.api.v2.ModIntegrationAPI;
 import org.betterx.bclib.api.v2.PostInitAPI;
 import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
+import org.betterx.bclib.client.gui.screens.ProgressScreen;
 import org.betterx.bclib.client.models.CustomModelBakery;
 import org.betterx.bclib.config.Configs;
+import org.betterx.bclib.integration.tips.Tips;
+import org.betterx.bclib.integration.tips.TipsIntegration;
 import org.betterx.bclib.registry.BaseBlockEntityRenders;
 import org.betterx.bclib.registry.PresetsRegistryClient;
 import org.betterx.worlds.together.WorldsTogether;
@@ -24,6 +27,9 @@ public class BCLibClient implements ClientModInitializer, ModelResourceProvider,
 
     @Override
     public void onInitializeClient() {
+        Tips.addTipsScreen(ProgressScreen.class);
+        ModIntegrationAPI.register(new TipsIntegration());
+
         WorldsTogetherClient.onInitializeClient();
         ModIntegrationAPI.registerAll();
         BaseBlockEntityRenders.register();
