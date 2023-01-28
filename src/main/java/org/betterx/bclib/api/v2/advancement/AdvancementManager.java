@@ -259,9 +259,9 @@ public class AdvancementManager {
         }
 
         public Builder awardRecipe(ItemLike... items) {
-            var rewardBuilder = startReward();
+            RewardsBuilder rewardBuilder = startReward();
             for (ItemLike item : items) {
-                var id = BuiltInRegistries.ITEM.getKey(item.asItem());
+                ResourceLocation id = BuiltInRegistries.ITEM.getKey(item.asItem());
                 if (id == null) continue;
                 rewardBuilder.addRecipe(id);
             }
