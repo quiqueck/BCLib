@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "bclib",
-  "version": "2.2.4",
+  "version": "2.2.5",
   "name": "BCLib",
   "description": "A library for BetterX team mods",
   "authors": [
