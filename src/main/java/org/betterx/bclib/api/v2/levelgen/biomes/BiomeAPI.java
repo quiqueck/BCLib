@@ -438,12 +438,15 @@ public class BiomeAPI {
     public static BCLBiome getRenderBiome(Biome biome) {
         BCLBiome endBiome = InternalBiomeAPI.CLIENT.get(biome);
         if (endBiome == null) {
-            var reg = BCLBiomeRegistry.registryOrNull();
-            ResourceLocation id = WorldBootstrap.getLastRegistryAccessOrElseBuiltin()
-                                                .registryOrThrow(Registries.BIOME)
-                                                .getKey(biome);
-            endBiome = BCLBiomeRegistry.getBiomeOrEmpty(id, reg);
-            InternalBiomeAPI.CLIENT.put(biome, endBiome);
+            var acc = WorldBootstrap.getLastRegistryAccessOrElseBuiltin();
+            if (acc != null) {
+                final Registry<BCLBiome> reg = BCLBiomeRegistry.registryOrNull();
+                ResourceLocation id = acc
+                        .registryOrThrow(Registries.BIOME)
+                        .getKey(biome);
+                endBiome = BCLBiomeRegistry.getBiomeOrEmpty(id, reg);
+                InternalBiomeAPI.CLIENT.put(biome, endBiome);
+            }
         }
         return endBiome;
     }
