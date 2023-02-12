@@ -2,6 +2,7 @@ package org.betterx.bclib.api.v2.generator;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
+import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.interfaces.NoiseGeneratorSettingsProvider;
 import org.betterx.bclib.mixin.common.ChunkGeneratorAccessor;
 import org.betterx.worlds.together.WorldsTogether;
@@ -84,7 +85,9 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
         }
 
         if (WorldsTogether.RUNS_TERRABLENDER) {
-            BCLib.LOGGER.info("Make sure features are loaded from terrablender" + biomeSource);
+            if ( Configs.MAIN_CONFIG.verboseLogging()) {
+                BCLib.LOGGER.info("Make sure features are loaded from terrablender" + biomeSource);
+            }
 
             //terrablender is invalidating the feature initialization
             //we redo it at this point, otherwise we will get blank biomes
