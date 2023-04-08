@@ -28,7 +28,6 @@ import java.awt.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 
 public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWithConfig<BCLibEndBiomeSource, BCLEndBiomeSourceConfig> {
@@ -93,11 +92,6 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
         if (initMaps) {
             initMap(seed);
         }
-    }
-
-    @Override
-    protected Stream<Holder<Biome>> collectPossibleBiomes() {
-        return null;
     }
 
     @Override

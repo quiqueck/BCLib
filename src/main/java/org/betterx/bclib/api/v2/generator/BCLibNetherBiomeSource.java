@@ -27,7 +27,6 @@ import net.fabricmc.fabric.api.biome.v1.NetherBiomes;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Stream;
 
 public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourceWithConfig<BCLibNetherBiomeSource, BCLNetherBiomeSourceConfig> {
     public static final Codec<BCLibNetherBiomeSource> CODEC = RecordCodecBuilder
@@ -77,11 +76,6 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
         if (initMaps) {
             initMap(seed);
         }
-    }
-
-    @Override
-    protected Stream<Holder<Biome>> collectPossibleBiomes() {
-        return null;
     }
 
     @Override

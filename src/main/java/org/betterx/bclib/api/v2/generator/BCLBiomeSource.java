@@ -26,6 +26,7 @@ import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import com.google.common.collect.Sets;
 
 import java.util.*;
+import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceWithSeed, MergeableBiomeSource<BCLBiomeSource>, BiomeSourceWithNoiseRelatedSettings, ReloadableBiomeSource, BiomeSourceFromRegistry<BCLBiomeSource> {
@@ -49,6 +50,12 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
         this.dynamicPossibleBiomes = Set.of();
         this.currentSeed = seed;
         this.didCreatePickers = false;
+    }
+
+    @Override
+    protected Stream<Holder<Biome>> collectPossibleBiomes() {
+        reloadBiomes();
+        return dynamicPossibleBiomes.stream();
     }
 
     @Override
