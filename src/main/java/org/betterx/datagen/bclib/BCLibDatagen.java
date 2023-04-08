@@ -4,6 +4,7 @@ import org.betterx.bclib.BCLib;
 import org.betterx.datagen.bclib.advancement.BCLAdvancementDataProvider;
 import org.betterx.datagen.bclib.preset.WorldPresetDataProvider;
 import org.betterx.datagen.bclib.tests.TestBiomes;
+import org.betterx.datagen.bclib.tests.TestRecipes;
 import org.betterx.datagen.bclib.tests.TestWorldgenProvider;
 import org.betterx.datagen.bclib.worldgen.BCLibRegistriesDataProvider;
 
@@ -13,7 +14,7 @@ import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 
 public class BCLibDatagen implements DataGeneratorEntrypoint {
-    public static final boolean ADD_TESTS = false;
+    public static final boolean ADD_TESTS = true;
 
     @Override
     public void onInitializeDataGenerator(FabricDataGenerator dataGenerator) {
@@ -23,6 +24,7 @@ public class BCLibDatagen implements DataGeneratorEntrypoint {
         if (ADD_TESTS) {
             pack.addProvider(TestWorldgenProvider::new);
             pack.addProvider(TestBiomes::new);
+            pack.addProvider(TestRecipes::new);
         }
 
         pack.addProvider(WorldPresetDataProvider::new);
