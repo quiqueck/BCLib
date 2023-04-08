@@ -38,13 +38,13 @@ public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
     }
 
     @Override
-    protected void renderErrorIcon(PoseStack poseStack, int i, int j) {
-        if (this.hasRecipeError()) {
+    public void renderErrorIcon(PoseStack poseStack, int i, int j) {
+        if (this.bcl_hasRecipeError()) {
             blit(poseStack, i + 65, j + 46, this.imageWidth, 0, 28, 21);
         }
     }
 
-    private boolean hasRecipeError() {
+    private boolean bcl_hasRecipeError() {
         //TODO: 1.19.4 check error conditions
         return false;
     }
