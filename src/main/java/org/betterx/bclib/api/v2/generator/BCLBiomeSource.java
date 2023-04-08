@@ -5,7 +5,6 @@ import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 import org.betterx.bclib.config.Configs;
-import org.betterx.worlds.together.biomesource.BiomeSourceFromRegistry;
 import org.betterx.worlds.together.biomesource.BiomeSourceHelper;
 import org.betterx.worlds.together.biomesource.MergeableBiomeSource;
 import org.betterx.worlds.together.biomesource.ReloadableBiomeSource;
@@ -14,7 +13,6 @@ import org.betterx.worlds.together.world.BiomeSourceWithSeed;
 import org.betterx.worlds.together.world.event.WorldBootstrap;
 
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderGetter;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
@@ -29,7 +27,7 @@ import java.util.*;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceWithSeed, MergeableBiomeSource<BCLBiomeSource>, BiomeSourceWithNoiseRelatedSettings, ReloadableBiomeSource, BiomeSourceFromRegistry<BCLBiomeSource> {
+public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceWithSeed, MergeableBiomeSource<BCLBiomeSource>, BiomeSourceWithNoiseRelatedSettings, ReloadableBiomeSource {
     @FunctionalInterface
     public interface PickerAdder {
         boolean add(BCLBiome bclBiome, BiomeAPI.BiomeType type, BiomePicker picker);
@@ -63,11 +61,6 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
         return dynamicPossibleBiomes;
     }
 
-    @Override
-    public boolean didBiomeRegistryChange() {
-        return false;
-        //return this.registryModificationCounter != InternalBiomeAPI.getBiomeRegistryModificationCount(biomeRegistry);
-    }
 
     protected boolean wasBound() {
         return didCreatePickers;
@@ -286,12 +279,6 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
 
     public void onLoadGeneratorSettings(NoiseGeneratorSettings generator) {
         this.setMaxHeight(generator.noiseSettings().height());
-    }
-
-    @Override
-    public HolderGetter<Biome> getBiomeRegistry() {
-        //return biomeRegistry;
-        return null;
     }
 
     protected void reloadBiomes(boolean force) {

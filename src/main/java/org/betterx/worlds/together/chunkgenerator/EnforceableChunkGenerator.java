@@ -1,6 +1,5 @@
 package org.betterx.worlds.together.chunkgenerator;
 
-import org.betterx.worlds.together.biomesource.BiomeSourceFromRegistry;
 import org.betterx.worlds.together.biomesource.BiomeSourceWithConfig;
 import org.betterx.worlds.together.biomesource.MergeableBiomeSource;
 
@@ -31,10 +30,6 @@ public interface EnforceableChunkGenerator<G extends ChunkGenerator> {
 
         if (one instanceof BiomeSourceWithConfig<?, ?> ba && two instanceof BiomeSourceWithConfig<?, ?> bb) {
             if (!ba.getTogetherConfig().couldSetWithoutRepair(bb.getTogetherConfig()))
-                return true;
-        }
-        if (one instanceof BiomeSourceFromRegistry ba && two instanceof BiomeSourceFromRegistry bb) {
-            if (ba.togetherBiomeSourceContentChanged(bb))
                 return true;
         }
         if (one instanceof MergeableBiomeSource ba) {
