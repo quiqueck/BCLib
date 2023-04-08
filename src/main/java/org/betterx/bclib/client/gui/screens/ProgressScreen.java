@@ -112,6 +112,18 @@ class ProgressLogoRender extends CustomRenderComponent<ProgressLogoRender> {
             );
         }
     }
+
+    private boolean focused;
+
+    @Override
+    public boolean isFocused() {
+        return focused;
+    }
+
+    @Override
+    public void setFocused(boolean bl) {
+        focused = bl;
+    }
 }
 
 public class ProgressScreen extends LayoutScreen implements ProgressListener, AtomicProgressListener {

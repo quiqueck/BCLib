@@ -11,12 +11,12 @@ import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.storage.loot.LootContext;
 
@@ -27,12 +27,12 @@ import java.util.*;
 import org.jetbrains.annotations.Nullable;
 
 public class BaseTrapdoorBlock extends TrapDoorBlock implements RenderLayerProvider, BlockModelProvider {
-    public BaseTrapdoorBlock(Block source) {
-        this(Properties.copy(source).strength(3.0F, 3.0F).noOcclusion());
+    public BaseTrapdoorBlock(Block source, BlockSetType type) {
+        this(Properties.copy(source).strength(3.0F, 3.0F).noOcclusion(), type);
     }
 
-    public BaseTrapdoorBlock(BlockBehaviour.Properties properties) {
-        super(properties, SoundEvents.WOODEN_TRAPDOOR_CLOSE, SoundEvents.WOODEN_TRAPDOOR_OPEN);
+    public BaseTrapdoorBlock(BlockBehaviour.Properties properties, BlockSetType type) {
+        super(properties, type);
     }
 
     @Override

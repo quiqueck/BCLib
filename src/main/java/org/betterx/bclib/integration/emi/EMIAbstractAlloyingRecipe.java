@@ -1,5 +1,6 @@
 package org.betterx.bclib.integration.emi;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
@@ -35,7 +36,7 @@ public abstract class EMIAbstractAlloyingRecipe<C extends Container, T extends R
                         : EmiIngredient.of(Ingredient.EMPTY)
         );
 
-        this.output = List.of(EmiStack.of(recipe.getResultItem()));
+        this.output = List.of(EmiStack.of(recipe.getResultItem(Minecraft.getInstance().level.registryAccess())));
         this.fuelMultiplier = fuelMultiplier;
         this.infiniBurn = infiniBurn;
     }

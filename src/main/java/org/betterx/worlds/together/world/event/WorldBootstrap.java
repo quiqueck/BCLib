@@ -9,10 +9,10 @@ import org.betterx.worlds.together.mixin.common.WorldPresetAccessor;
 import org.betterx.worlds.together.surfaceRules.SurfaceRuleUtil;
 import org.betterx.worlds.together.world.WorldConfig;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
-import org.betterx.worlds.together.worldPreset.WorldGenSettingsComponentAccessor;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
 
-import net.minecraft.client.gui.screens.worldselection.WorldGenSettingsComponent;
+import net.minecraft.client.gui.screens.worldselection.WorldCreationContext;
+import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
 import net.minecraft.core.Holder;
 import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.core.Registry;
@@ -94,14 +94,14 @@ public class WorldBootstrap {
             return dimensions;
         }
 
-        private static Optional<Holder<WorldPreset>> presetFromDatapack(Optional<Holder<WorldPreset>> currentPreset) {
-            if (currentPreset.isPresent() && LAST_REGISTRY_ACCESS != null) {
-                var presetKey = currentPreset.get().unwrapKey();
+        private static Holder<WorldPreset> presetFromDatapack(Holder<WorldPreset> currentPreset) {
+            if (currentPreset != null && LAST_REGISTRY_ACCESS != null) {
+                Optional<ResourceKey<WorldPreset>> presetKey = currentPreset.unwrapKey();
                 if (presetKey.isPresent()) {
                     Optional<Holder.Reference<WorldPreset>> newPreset = LAST_REGISTRY_ACCESS
                             .registryOrThrow(Registries.WORLD_PRESET)
                             .getHolder(presetKey.get());
-                    if (newPreset.isPresent()) currentPreset = (Optional<Holder<WorldPreset>>) (Optional<?>) newPreset;
+                    currentPreset = newPreset.orElse(null);
                 }
             }
             return currentPreset;
@@ -126,7 +126,7 @@ public class WorldBootstrap {
                         true, true
                 );
 
-                Optional<Holder<WorldPreset>> currentPreset = Optional.of(Helpers.defaultServerPreset());
+                Holder<WorldPreset> currentPreset = Helpers.defaultServerPreset();
                 writeWorldPresets(dimensions, currentPreset);
                 finishedWorldLoad();
             } else {
@@ -155,8 +155,8 @@ public class WorldBootstrap {
     }
 
     public static class InGUI {
-        public static void registryReadyOnNewWorld(WorldGenSettingsComponent worldGenSettingsComponent) {
-            Helpers.onRegistryReady(worldGenSettingsComponent.registryHolder());
+        public static void registryReadyOnNewWorld(WorldCreationContext worldGenSettingsComponent) {
+            Helpers.onRegistryReady(worldGenSettingsComponent.worldgenLoadContext());
         }
 
         public static void registryReady(RegistryAccess access) {
@@ -165,22 +165,19 @@ public class WorldBootstrap {
 
         public static void setupNewWorld(
                 Optional<LevelStorageSource.LevelStorageAccess> levelStorageAccess,
-                WorldGenSettingsComponent worldGenSettingsComponent
+                WorldCreationUiState uiState
         ) {
+
             if (levelStorageAccess.isPresent()) {
-                if (worldGenSettingsComponent instanceof WorldGenSettingsComponentAccessor acc) {
-                    Optional<Holder<WorldPreset>> currentPreset = acc.bcl_getPreset();
-                    currentPreset = Helpers.presetFromDatapack(currentPreset);
-                    Optional<Holder<WorldPreset>> newPreset = setupNewWorldCommon(
-                            levelStorageAccess.get(),
-                            currentPreset,
-                            worldGenSettingsComponent.settings().selectedDimensions()
-                    );
-                    if (newPreset != currentPreset) {
-                        acc.bcl_setPreset(newPreset);
-                    }
-                } else {
-                    WorldsTogether.LOGGER.error("Unable to access WorldGenSettingsComponent.");
+                Holder<WorldPreset> currentPreset = uiState.getWorldType().preset();
+                currentPreset = Helpers.presetFromDatapack(currentPreset);
+                Holder<WorldPreset> newPreset = setupNewWorldCommon(
+                        levelStorageAccess.get(),
+                        currentPreset,
+                        uiState.getSettings().selectedDimensions()
+                );
+                if (newPreset != null && newPreset != currentPreset) {
+                    uiState.setWorldType(new WorldCreationUiState.WorldTypeEntry(newPreset));
                 }
             } else {
                 WorldsTogether.LOGGER.error("Unable to access Level Folder.");
@@ -188,13 +185,13 @@ public class WorldBootstrap {
 
         }
 
-        static Optional<Holder<WorldPreset>> setupNewWorldCommon(
+        static Holder<WorldPreset> setupNewWorldCommon(
                 LevelStorageSource.LevelStorageAccess levelStorageAccess,
-                Optional<Holder<WorldPreset>> currentPreset,
+                Holder<WorldPreset> currentPreset,
                 WorldDimensions worldDims
         ) {
             final WorldDimensions dimensions;
-            if (currentPreset.map(Holder::value).orElse(null) instanceof TogetherWorldPreset t) {
+            if (currentPreset.value() instanceof TogetherWorldPreset t) {
                 dimensions = t.getWorldDimensions();
             } else {
                 dimensions = TogetherWorldPreset.getWorldDimensions(net.minecraft.world.level.levelgen.presets.WorldPresets.NORMAL);
@@ -251,7 +248,7 @@ public class WorldBootstrap {
                 String levelID,
                 WorldDimensions worldDims,
                 LevelStorageSource levelSource,
-                Optional<Holder<WorldPreset>> worldPreset
+                Holder<WorldPreset> worldPreset
         ) {
             try {
                 var levelStorageAccess = levelSource.createAccess(levelID);
@@ -280,10 +277,10 @@ public class WorldBootstrap {
         }
     }
 
-    private static void writeWorldPresets(WorldDimensions dimensions, Optional<Holder<WorldPreset>> currentPreset) {
+    private static void writeWorldPresets(WorldDimensions dimensions, Holder<WorldPreset> currentPreset) {
         currentPreset = WorldEventsImpl.ADAPT_WORLD_PRESET.emit(currentPreset, dimensions);
 
-        if (currentPreset.map(Holder::value).orElse(null) instanceof WorldPresetAccessor acc) {
+        if (currentPreset != null && currentPreset.value() instanceof WorldPresetAccessor acc) {
             TogetherWorldPreset.writeWorldPresetSettings(acc.bcl_getDimensions());
         } else {
             WorldsTogether.LOGGER.error("Failed writing together File");

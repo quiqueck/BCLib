@@ -13,7 +13,6 @@ import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -24,6 +23,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.DoorHingeSide;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -38,12 +38,12 @@ import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
 public class BaseDoorBlock extends DoorBlock implements RenderLayerProvider, BlockModelProvider, TagProvider {
-    public BaseDoorBlock(Block source) {
-        this(Properties.copy(source).strength(3F, 3F).noOcclusion());
+    public BaseDoorBlock(Block source, BlockSetType type) {
+        this(Properties.copy(source).strength(3F, 3F).noOcclusion(), type);
     }
 
-    public BaseDoorBlock(BlockBehaviour.Properties properties) {
-        super(properties, SoundEvents.WOODEN_DOOR_CLOSE, SoundEvents.WOODEN_DOOR_OPEN);
+    public BaseDoorBlock(BlockBehaviour.Properties properties, BlockSetType type) {
+        super(properties, type);
     }
 
     @Override

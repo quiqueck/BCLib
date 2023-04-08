@@ -10,12 +10,12 @@ import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.storage.loot.LootContext;
 
 import net.fabricmc.api.EnvType;
@@ -30,14 +30,19 @@ import org.jetbrains.annotations.Nullable;
 public abstract class BaseButtonBlock extends ButtonBlock implements BlockModelProvider {
     private final Block parent;
 
-    protected BaseButtonBlock(Block parent, Properties properties, boolean sensitive) {
-        this(parent, properties, 30, sensitive);
+    protected BaseButtonBlock(Block parent, Properties properties, boolean sensitive, BlockSetType type) {
+        this(parent, properties, 30, sensitive, type);
     }
 
-    protected BaseButtonBlock(Block parent, Properties properties, int ticksToStayPressed, boolean sensitive) {
+    protected BaseButtonBlock(
+            Block parent,
+            Properties properties,
+            int ticksToStayPressed,
+            boolean sensitive,
+            BlockSetType type
+    ) {
         super(
-                properties.noCollission(), ticksToStayPressed, sensitive,
-                SoundEvents.STONE_BUTTON_CLICK_OFF, SoundEvents.STONE_BUTTON_CLICK_ON
+                properties.noCollission(), type, ticksToStayPressed, sensitive
         );
         this.parent = parent;
     }

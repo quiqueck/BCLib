@@ -3,7 +3,6 @@ package org.betterx.bclib.client.render;
 import org.betterx.bclib.blockentities.BaseSignBlockEntity;
 import org.betterx.bclib.blocks.BaseSignBlock;
 
-import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -20,6 +19,7 @@ import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -85,10 +85,10 @@ public class BaseSignBlockEntityRenderer implements BlockEntityRenderer<BaseSign
         matrixStack.translate(0.0D, 0.3333333432674408D, 0.046666666865348816D);
         matrixStack.scale(0.010416667F, -0.010416667F, 0.010416667F);
         int m = signBlockEntity.getColor().getTextColor();
-        int n = (int) (NativeImage.getR(m) * 0.4D);
-        int o = (int) (NativeImage.getG(m) * 0.4D);
-        int p = (int) (NativeImage.getB(m) * 0.4D);
-        int q = NativeImage.combine(0, p, o, n);
+        int n = (int) (FastColor.ARGB32.red(m) * 0.4D);
+        int o = (int) (FastColor.ARGB32.green(m) * 0.4D);
+        int p = (int) (FastColor.ARGB32.blue(m) * 0.4D);
+        int q = FastColor.ARGB32.color(0, p, o, n);
 
         FormattedCharSequence[] formattedCharSequences = signBlockEntity.getRenderMessages(
                 Minecraft.getInstance()
@@ -114,11 +114,12 @@ public class BaseSignBlockEntityRenderer implements BlockEntityRenderer<BaseSign
         for (int s = 0; s < 4; ++s) {
             FormattedCharSequence formattedCharSequence = formattedCharSequences[s];
             float t = (float) (-this.font.width(formattedCharSequence) / 2);
+            int marginHeight = 4 * signBlockEntity.getTextLineHeight() / 2;
             if (drawOutlined) {
                 this.font.drawInBatch8xOutline(
                         formattedCharSequence,
                         t,
-                        (float) (s * 10 - 20),
+                        (float) (s * signBlockEntity.getTextLineHeight() - marginHeight),
                         drawColor,
                         m,
                         matrixStack.last().pose(),
@@ -129,12 +130,12 @@ public class BaseSignBlockEntityRenderer implements BlockEntityRenderer<BaseSign
                 this.font.drawInBatch(
                         formattedCharSequence,
                         t,
-                        (float) (s * 10 - 20),
+                        (float) (s * signBlockEntity.getTextLineHeight() - marginHeight),
                         drawColor,
                         false,
                         matrixStack.last().pose(),
                         provider,
-                        false,
+                        Font.DisplayMode.NORMAL,
                         0,
                         drawLight
                 );

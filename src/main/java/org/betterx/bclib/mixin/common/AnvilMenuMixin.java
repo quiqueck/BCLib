@@ -5,6 +5,7 @@ import org.betterx.bclib.blocks.LeveledAnvilBlock;
 import org.betterx.bclib.interfaces.AnvilScreenHandlerExtended;
 import org.betterx.bclib.recipes.AnvilRecipe;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.player.Inventory;
@@ -164,7 +165,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu implements AnvilSc
 
     private void be_updateResult() {
         if (be_currentRecipe == null) return;
-        resultSlots.setItem(0, be_currentRecipe.assemble(inputSlots));
+        resultSlots.setItem(0, be_currentRecipe.assemble(inputSlots, Minecraft.getInstance().level.registryAccess()));
         broadcastChanges();
     }
 

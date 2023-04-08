@@ -49,13 +49,13 @@ public class EquipmentDescription<I extends Item> {
         if (tool instanceof ShearsItem) {
             builder.setShape(" #", "# ");
         } else if (tool instanceof BaseArmorItem bai) {
-            if (bai.getSlot() == EquipmentSlot.FEET) {
+            if (bai.getType().getSlot() == EquipmentSlot.FEET) {
                 builder.setShape("# #", "# #");
-            } else if (bai.getSlot() == EquipmentSlot.HEAD) {
+            } else if (bai.getType().getSlot() == EquipmentSlot.HEAD) {
                 builder.setShape("###", "# #");
-            } else if (bai.getSlot() == EquipmentSlot.CHEST) {
+            } else if (bai.getType().getSlot() == EquipmentSlot.CHEST) {
                 builder.setShape("# #", "###", "###");
-            } else if (bai.getSlot() == EquipmentSlot.LEGS) {
+            } else if (bai.getType().getSlot() == EquipmentSlot.LEGS) {
                 builder.setShape("###", "# #", "# #");
             } else return true;
         } else {

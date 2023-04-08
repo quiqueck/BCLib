@@ -157,34 +157,40 @@ public class WoodenComplexMaterial extends ComplexMaterial {
 
         addBlockEntry(new BlockEntry(
                 BLOCK_GATE,
-                (complexMaterial, settings) -> new BaseGateBlock(getBlock(BLOCK_PLANKS))
+                (complexMaterial, settings) -> new BaseGateBlock(getBlock(BLOCK_PLANKS), this.woodType)
         )
                 .setBlockTags(BlockTags.FENCE_GATES));
 
         addBlockEntry(new BlockEntry(
                 BLOCK_BUTTON,
-                (complexMaterial, settings) -> new BaseWoodenButtonBlock(getBlock(BLOCK_PLANKS))
+                (complexMaterial, settings) -> new BaseWoodenButtonBlock(
+                        getBlock(BLOCK_PLANKS),
+                        this.woodType.setType()
+                )
         )
                 .setBlockTags(BlockTags.BUTTONS, BlockTags.WOODEN_BUTTONS)
                 .setItemTags(ItemTags.BUTTONS, ItemTags.WOODEN_BUTTONS));
 
         addBlockEntry(new BlockEntry(
                 BLOCK_PRESSURE_PLATE,
-                (complexMaterial, settings) -> new WoodenPressurePlateBlock(getBlock(BLOCK_PLANKS))
+                (complexMaterial, settings) -> new WoodenPressurePlateBlock(
+                        getBlock(BLOCK_PLANKS),
+                        this.woodType.setType()
+                )
         )
                 .setBlockTags(BlockTags.PRESSURE_PLATES, BlockTags.WOODEN_PRESSURE_PLATES)
                 .setItemTags(ItemTags.WOODEN_PRESSURE_PLATES));
 
         addBlockEntry(new BlockEntry(
                 BLOCK_TRAPDOOR,
-                (complexMaterial, settings) -> new BaseTrapdoorBlock(getBlock(BLOCK_PLANKS))
+                (complexMaterial, settings) -> new BaseTrapdoorBlock(getBlock(BLOCK_PLANKS), this.woodType.setType())
         )
                 .setBlockTags(BlockTags.TRAPDOORS, BlockTags.WOODEN_TRAPDOORS)
                 .setItemTags(ItemTags.TRAPDOORS, ItemTags.WOODEN_TRAPDOORS));
 
         addBlockEntry(new BlockEntry(
                 BLOCK_DOOR,
-                (complexMaterial, settings) -> new BaseDoorBlock(getBlock(BLOCK_PLANKS))
+                (complexMaterial, settings) -> new BaseDoorBlock(getBlock(BLOCK_PLANKS), this.woodType.setType())
         )
                 .setBlockTags(BlockTags.DOORS, BlockTags.WOODEN_DOORS)
                 .setItemTags(ItemTags.DOORS, ItemTags.WOODEN_DOORS));

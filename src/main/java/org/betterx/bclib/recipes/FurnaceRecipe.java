@@ -110,7 +110,7 @@ public class FurnaceRecipe extends AbstractAdvancementRecipe {
                 time
         );
         BCLRecipeManager.addRecipe(RecipeType.SMELTING, recipe);
-        registerAdvancement(recipe);
+        registerAdvancement(recipe, output);
 
         if (blasting) {
             BlastingRecipe recipe2 = new BlastingRecipe(

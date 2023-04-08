@@ -25,10 +25,10 @@ public class BaseArmorItem extends ArmorItem implements ItemModelProvider {
 
     protected final Multimap<Attribute, AttributeModifier> defaultModifiers;
 
-    public BaseArmorItem(ArmorMaterial material, EquipmentSlot equipmentSlot, Properties settings) {
-        super(material, equipmentSlot, settings);
+    public BaseArmorItem(ArmorMaterial material, Type type, Properties settings) {
+        super(material, type, settings);
         this.defaultModifiers = HashMultimap.create();
-        UUID uuid = ARMOR_MODIFIER_UUID_PER_SLOT[equipmentSlot.getIndex()];
+        UUID uuid = ARMOR_MODIFIER_UUID_PER_SLOT[type.getSlot().getIndex()];
         addAttributeModifier(
                 Attributes.ARMOR,
                 new AttributeModifier(uuid, "Armor modifier", getDefense(), AttributeModifier.Operation.ADDITION)
@@ -52,7 +52,7 @@ public class BaseArmorItem extends ArmorItem implements ItemModelProvider {
 
     @Override
     public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot equipmentSlot) {
-        return equipmentSlot == slot ? defaultModifiers : super.getDefaultAttributeModifiers(equipmentSlot);
+        return equipmentSlot == type.getSlot() ? defaultModifiers : super.getDefaultAttributeModifiers(equipmentSlot);
     }
 
     protected void addAttributeModifier(Attribute attribute, AttributeModifier modifier) {

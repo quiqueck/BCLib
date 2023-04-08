@@ -93,7 +93,7 @@ public class BCLBiomeBuilder {
     private BiomeSpecialEffects.Builder effectsBuilder;
     private MobSpawnSettings.Builder spawnSettings;
     private SurfaceRules.RuleSource surfaceRule;
-    private Precipitation precipitation;
+    private boolean hasPrecipitation;
     final private ResourceLocation biomeID;
 
 
@@ -116,7 +116,7 @@ public class BCLBiomeBuilder {
 
     BCLBiomeBuilder(ResourceLocation biomeID) {
         this.biomeID = biomeID;
-        this.precipitation = Precipitation.NONE;
+        this.hasPrecipitation = false;
         this.generationSettings = null;
         this.effectsBuilder = null;
         this.spawnSettings = null;
@@ -174,9 +174,21 @@ public class BCLBiomeBuilder {
      *
      * @param precipitation {@link Precipitation}
      * @return same {@link BCLBiomeBuilder} instance.
+     * @deprecated Use hasPrecipitation() instead
      */
+    @Deprecated(forRemoval = true)
     public BCLBiomeBuilder precipitation(Precipitation precipitation) {
-        this.precipitation = precipitation;
+        return hasPrecipitation(precipitation != Precipitation.NONE);
+    }
+
+    /**
+     * Set biome {@link Precipitation}. Affect biome visual effects (rain, snow, none).
+     *
+     * @param precipitation true, if this biome can have presipitation. Rain/Snow is determined by temperature
+     * @return same {@link BCLBiomeBuilder} instance.
+     */
+    public BCLBiomeBuilder hasPrecipitation(boolean precipitation) {
+        this.hasPrecipitation = precipitation;
         return this;
     }
 
@@ -948,7 +960,7 @@ public class BCLBiomeBuilder {
 
 
         BiomeBuilder builder = new BiomeBuilder()
-                .precipitation(precipitation)
+                .hasPrecipitation(hasPrecipitation)
                 .temperature(temperature)
                 .downfall(downfall);
 

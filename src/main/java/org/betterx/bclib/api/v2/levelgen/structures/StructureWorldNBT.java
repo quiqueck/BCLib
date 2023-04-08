@@ -253,8 +253,8 @@ public class StructureWorldNBT extends StructureNBT {
 
         float y1 = Math.min(offsetY, 0);
         float y2 = Math.max(offsetY, 0);
-        BlockPos start = pos.offset(-(size.getX() >> 1), y1, -(size.getZ() >> 1));
-        BlockPos end = pos.offset(size.getX() >> 1, y2, size.getZ() >> 1);
+        BlockPos start = pos.offset(-(size.getX() >> 1), (int) y1, -(size.getZ() >> 1));
+        BlockPos end = pos.offset(size.getX() >> 1, (int) y2, size.getZ() >> 1);
         int count = 0;
 
         for (int x = start.getX(); x <= end.getX(); x++) {

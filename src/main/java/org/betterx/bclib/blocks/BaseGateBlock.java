@@ -9,11 +9,11 @@ import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.storage.loot.LootContext;
 
 import net.fabricmc.api.EnvType;
@@ -28,8 +28,8 @@ import org.jetbrains.annotations.Nullable;
 public class BaseGateBlock extends FenceGateBlock implements BlockModelProvider {
     private final Block parent;
 
-    public BaseGateBlock(Block source) {
-        super(Properties.copy(source).noOcclusion(), SoundEvents.FENCE_GATE_CLOSE, SoundEvents.FENCE_GATE_OPEN);
+    public BaseGateBlock(Block source, WoodType type) {
+        super(Properties.copy(source).noOcclusion(), type);
         this.parent = source;
     }
 

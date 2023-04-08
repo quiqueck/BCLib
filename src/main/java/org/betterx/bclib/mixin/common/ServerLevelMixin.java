@@ -5,6 +5,7 @@ import org.betterx.worlds.together.world.BiomeSourceWithNoiseRelatedSettings;
 import org.betterx.worlds.together.world.BiomeSourceWithSeed;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -34,6 +35,7 @@ public abstract class ServerLevelMixin extends Level {
     protected ServerLevelMixin(
             WritableLevelData writableLevelData,
             ResourceKey<Level> resourceKey,
+            RegistryAccess registryAccess,
             Holder<DimensionType> holder,
             Supplier<ProfilerFiller> supplier,
             boolean bl,
@@ -41,7 +43,7 @@ public abstract class ServerLevelMixin extends Level {
             long l,
             int i
     ) {
-        super(writableLevelData, resourceKey, holder, supplier, bl, bl2, l, i);
+        super(writableLevelData, resourceKey, registryAccess, holder, supplier, bl, bl2, l, i);
     }
 
 

@@ -9,10 +9,11 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.UpgradeRecipe;
+import net.minecraft.world.item.crafting.SmithingRecipe;
+import net.minecraft.world.item.crafting.SmithingTransformRecipe;
 import net.minecraft.world.level.ItemLike;
 
-public class SmithingTableRecipe extends AbstractSimpleRecipe<SmithingTableRecipe, Container, UpgradeRecipe> {
+public class SmithingTableRecipe extends AbstractSimpleRecipe<SmithingTableRecipe, Container, SmithingRecipe> {
     protected Ingredient addon;
 
     protected SmithingTableRecipe(ResourceLocation id, ItemLike output) {
@@ -57,7 +58,7 @@ public class SmithingTableRecipe extends AbstractSimpleRecipe<SmithingTableRecip
     }
 
     @Override
-    protected UpgradeRecipe buildRecipe() {
-        return new UpgradeRecipe(id, input, addon, new ItemStack(output, count));
+    protected SmithingRecipe buildRecipe() {
+        return new SmithingTransformRecipe(id, input, addon, null, new ItemStack(output, count));
     }
 }

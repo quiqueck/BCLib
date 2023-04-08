@@ -194,7 +194,7 @@ public class CommandRegistry {
         final ServerPlayer player = source.getPlayerOrException();
         Vec3 pos = source.getPosition();
         final ServerLevel level = source.getLevel();
-        MutableBlockPos mPos = new BlockPos(pos).mutable();
+        MutableBlockPos mPos = new BlockPos((int) pos.x, (int) pos.y, (int) pos.z).mutable();
         System.out.println("Staring at: " + mPos + " -> " + level.getBlockState(mPos));
         boolean found = org.betterx.bclib.util.BlocksHelper.findSurroundingSurface(
                 level,
@@ -204,7 +204,11 @@ public class CommandRegistry {
                 state -> BlocksHelper.isTerrain(state)
         );
         System.out.println("Ending at: " + mPos + " -> " + level.getBlockState(mPos) + " = " + found);
-        org.betterx.bclib.util.BlocksHelper.setWithoutUpdate(level, new BlockPos(pos), Blocks.YELLOW_CONCRETE);
+        org.betterx.bclib.util.BlocksHelper.setWithoutUpdate(
+                level,
+                new BlockPos((int) pos.x, (int) pos.y, (int) pos.z),
+                Blocks.YELLOW_CONCRETE
+        );
         org.betterx.bclib.util.BlocksHelper.setWithoutUpdate(level, mPos, Blocks.LIGHT_BLUE_CONCRETE);
         return Command.SINGLE_SUCCESS;
     }

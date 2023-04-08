@@ -11,10 +11,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.BiomeSource;
-import net.minecraft.world.level.biome.MultiNoiseBiomeSource;
-import net.minecraft.world.level.biome.TheEndBiomeSource;
+import net.minecraft.world.level.biome.*;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.dimension.DimensionType;
@@ -69,7 +66,10 @@ public class WorldPresets {
         public final WorldGenUtil.Context netherContext;
         public final WorldGenUtil.Context endContext;
 
+        public final HolderGetter<MultiNoiseBiomeSourceParameterList> parameterLists;
+
         public BootstrapData(BootstapContext<WorldPreset> bootstapContext) {
+            this.parameterLists = bootstapContext.lookup(Registries.MULTI_NOISE_BIOME_SOURCE_PARAMETER_LIST);
             final HolderGetter<DimensionType> dimensionTypes = bootstapContext.lookup(Registries.DIMENSION_TYPE);
 
             this.noiseSettings = bootstapContext.lookup(Registries.NOISE_SETTINGS);
@@ -78,16 +78,20 @@ public class WorldPresets {
             this.structureSets = bootstapContext.lookup(Registries.STRUCTURE_SET);
 
             this.overworldDimensionType = dimensionTypes.getOrThrow(BuiltinDimensionTypes.OVERWORLD);
-            MultiNoiseBiomeSource overworldBiomeSource = MultiNoiseBiomeSource.Preset.OVERWORLD.biomeSource(this.biomes);
+            Holder.Reference<MultiNoiseBiomeSourceParameterList> overworldParameters = parameterLists
+                    .getOrThrow(MultiNoiseBiomeSourceParameterLists.OVERWORLD);
+            MultiNoiseBiomeSource overworldBiomeSource = MultiNoiseBiomeSource.createFromPreset(overworldParameters);
             Holder<NoiseGeneratorSettings> defaultOverworldNoise = this.noiseSettings.getOrThrow(NoiseGeneratorSettings.OVERWORLD);
             this.overworldStem = makeNoiseBasedOverworld(overworldBiomeSource, defaultOverworldNoise);
 
             this.netherDimensionType = dimensionTypes.getOrThrow(BuiltinDimensionTypes.NETHER);
+            Holder.Reference<MultiNoiseBiomeSourceParameterList> netherParameters = parameterLists
+                    .getOrThrow(MultiNoiseBiomeSourceParameterLists.NETHER);
             Holder<NoiseGeneratorSettings> defaultNetherNoise = this.noiseSettings.getOrThrow(NoiseGeneratorSettings.NETHER);
             this.netherStem = new LevelStem(
                     netherDimensionType,
                     new NoiseBasedChunkGenerator(
-                            MultiNoiseBiomeSource.Preset.NETHER.biomeSource(this.biomes),
+                            MultiNoiseBiomeSource.createFromPreset(netherParameters),
                             defaultNetherNoise
                     )
             );

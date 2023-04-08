@@ -8,6 +8,7 @@ import org.betterx.bclib.util.ItemUtil;
 import org.betterx.bclib.util.RecipeHelper;
 
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -89,7 +90,7 @@ public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCateg
     }
 
     @Override
-    public ItemStack assemble(Container inv) {
+    public ItemStack assemble(Container inv, RegistryAccess registryAccess) {
         return this.output.copy();
     }
 
@@ -99,7 +100,7 @@ public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCateg
     }
 
     @Override
-    public ItemStack getResultItem() {
+    public ItemStack getResultItem(RegistryAccess acc) {
         return this.output;
     }
 

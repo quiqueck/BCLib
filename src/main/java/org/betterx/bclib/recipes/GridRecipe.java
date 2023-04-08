@@ -161,6 +161,6 @@ public class GridRecipe extends AbstractAdvancementRecipe {
         ) : new ShapelessRecipe(id, group, bookCategory, result, materials);
 
         BCLRecipeManager.addRecipe(type, recipe);
-        registerAdvancement(recipe);
+        registerAdvancement(recipe, output);
     }
 }

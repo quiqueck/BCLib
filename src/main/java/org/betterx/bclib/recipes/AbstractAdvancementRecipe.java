@@ -201,10 +201,10 @@ public class AbstractAdvancementRecipe {
      *
      * @param recipe The generated recipe that need to be linked to the Advancement
      */
-    protected void registerAdvancement(Recipe<?> recipe) {
+    protected void registerAdvancement(Recipe<?> recipe, ItemLike icon) {
         if (hasUnlockTrigger && generateAdvancement && advancement != null) {
             advancement
-                    .startDisplay(recipe.getResultItem().getItem())
+                    .startDisplay(icon)
                     .hideFromChat()
                     .hideToast()
                     .endDisplay()

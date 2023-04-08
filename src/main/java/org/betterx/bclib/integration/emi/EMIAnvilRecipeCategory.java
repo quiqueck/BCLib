@@ -67,16 +67,104 @@ public class EMIAnvilRecipeCategory extends EmiRecipeCategory {
         final int yy = y + 6 + 3;
         final Matrix4f matrix = stack.last().pose();
 
-        font.drawInBatch(content, xx - 1, yy - 1, 0xFF000000, false, matrix, bufferSource, false, 0, 0xF000F0);
-        font.drawInBatch(content, xx, yy - 1, 0xFF000000, false, matrix, bufferSource, false, 0, 0xF000F0);
-        font.drawInBatch(content, xx + 1, yy - 1, 0xFF000000, false, matrix, bufferSource, false, 0, 0xF000F0);
-        font.drawInBatch(content, xx - 1, yy, 0xFF000000, false, matrix, bufferSource, false, 0, 0xF000F0);
-        font.drawInBatch(content, xx + 1, yy, 0xFF000000, false, matrix, bufferSource, false, 0, 0xF000F0);
-        font.drawInBatch(content, xx - 1, yy + 1, 0xFF000000, false, matrix, bufferSource, false, 0, 0xF000F0);
-        font.drawInBatch(content, xx + 1, yy + 1, 0xFF000000, false, matrix, bufferSource, false, 0, 0xF000F0);
-        font.drawInBatch(content, xx, yy + 1, 0xFF000000, false, matrix, bufferSource, false, 0, 0xF000F0);
+        font.drawInBatch(
+                content,
+                xx - 1,
+                yy - 1,
+                0xFF000000,
+                false,
+                matrix,
+                bufferSource,
+                Font.DisplayMode.NORMAL,
+                0,
+                0xF000F0
+        );
+        font.drawInBatch(
+                content,
+                xx,
+                yy - 1,
+                0xFF000000,
+                false,
+                matrix,
+                bufferSource,
+                Font.DisplayMode.NORMAL,
+                0,
+                0xF000F0
+        );
+        font.drawInBatch(
+                content,
+                xx + 1,
+                yy - 1,
+                0xFF000000,
+                false,
+                matrix,
+                bufferSource,
+                Font.DisplayMode.NORMAL,
+                0,
+                0xF000F0
+        );
+        font.drawInBatch(
+                content,
+                xx - 1,
+                yy,
+                0xFF000000,
+                false,
+                matrix,
+                bufferSource,
+                Font.DisplayMode.NORMAL,
+                0,
+                0xF000F0
+        );
+        font.drawInBatch(
+                content,
+                xx + 1,
+                yy,
+                0xFF000000,
+                false,
+                matrix,
+                bufferSource,
+                Font.DisplayMode.NORMAL,
+                0,
+                0xF000F0
+        );
+        font.drawInBatch(
+                content,
+                xx - 1,
+                yy + 1,
+                0xFF000000,
+                false,
+                matrix,
+                bufferSource,
+                Font.DisplayMode.NORMAL,
+                0,
+                0xF000F0
+        );
+        font.drawInBatch(
+                content,
+                xx + 1,
+                yy + 1,
+                0xFF000000,
+                false,
+                matrix,
+                bufferSource,
+                Font.DisplayMode.NORMAL,
+                0,
+                0xF000F0
+        );
+        font.drawInBatch(
+                content,
+                xx,
+                yy + 1,
+                0xFF000000,
+                false,
+                matrix,
+                bufferSource,
+                Font.DisplayMode.NORMAL,
+                0,
+                0xF000F0
+        );
 
-        font.drawInBatch(content, xx, yy, 0xFFFFFFFF, true, matrix, bufferSource, false, 0, 0xF000F0);
+        font.drawInBatch(content, xx, yy, 0xFFFFFFFF, true, matrix, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
         bufferSource.endBatch();
     }
 

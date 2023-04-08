@@ -3,6 +3,7 @@ package org.betterx.bclib.integration.emi;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.recipes.AnvilRecipe;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -36,7 +37,7 @@ public class EMIAnvilRecipe implements EmiRecipe {
                 EmiIngredient.of(recipe.getMainIngredient(), recipe.getInputCount()),
                 EmiIngredient.of(Ingredient.of(hammer))
         );
-        this.output = List.of(EmiStack.of(recipe.getResultItem()));
+        this.output = List.of(EmiStack.of(recipe.getResultItem(Minecraft.getInstance().level.registryAccess())));
         this.category = EMIPlugin.getAnvilCategoryForLevel(recipe.getAnvilLevel());
     }
 

@@ -7,12 +7,12 @@ import org.betterx.bclib.api.v2.generator.config.BCLNetherBiomeSourceConfig;
 import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
 import org.betterx.bclib.registry.PresetsRegistry;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
-import org.betterx.worlds.together.worldPreset.WorldGenSettingsComponentAccessor;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.client.gui.screens.worldselection.WorldCreationContext;
+import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -22,6 +22,7 @@ import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.WorldDimensions;
+import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.levelgen.presets.WorldPresets;
 
 import net.fabricmc.api.EnvType;
@@ -34,7 +35,6 @@ import org.wunder.lib.ui.layout.values.Size;
 import org.wunder.lib.ui.vanilla.LayoutScreen;
 
 import java.util.Map;
-import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
 @Environment(EnvType.CLIENT)
@@ -300,16 +300,14 @@ public class WorldSetupScreen extends LayoutScreen {
             updateConfiguration(LevelStem.NETHER, BuiltinDimensionTypes.NETHER, endGenerator);
         }
 
-        if (createWorldScreen.worldGenSettingsComponent instanceof WorldGenSettingsComponentAccessor acc
-                && acc.bcl_getPreset()
-                      .isPresent() && acc.bcl_getPreset()
-                                         .get()
-                                         .value() instanceof TogetherWorldPreset worldPreset) {
-            acc.bcl_setPreset(Optional.of(Holder.direct(
+        final WorldCreationUiState acc = createWorldScreen.getUiState();
+        final Holder<WorldPreset> configuredPreset = acc.getWorldType().preset();
+        if (configuredPreset != null && configuredPreset.value() instanceof TogetherWorldPreset worldPreset) {
+            acc.setWorldType(new WorldCreationUiState.WorldTypeEntry(Holder.direct(
                     worldPreset.withDimensions(
                             createWorldScreen
-                                    .worldGenSettingsComponent
-                                    .settings()
+                                    .getUiState()
+                                    .getSettings()
                                     .selectedDimensions()
                                     .dimensions()
                     )
@@ -323,7 +321,7 @@ public class WorldSetupScreen extends LayoutScreen {
             ResourceKey<DimensionType> dimensionTypeKey,
             ChunkGenerator chunkGenerator
     ) {
-        createWorldScreen.worldGenSettingsComponent.updateSettings(
+        createWorldScreen.getUiState().updateDimensions(
                 (registryAccess, worldDimensions) -> new WorldDimensions(LevelGenUtil.replaceGenerator(
                         dimensionKey,
                         dimensionTypeKey,
@@ -359,12 +357,10 @@ public class WorldSetupScreen extends LayoutScreen {
     protected LayoutComponent<?, ?> initContent() {
         BCLEndBiomeSourceConfig endConfig = BCLEndBiomeSourceConfig.VANILLA;
         BCLNetherBiomeSourceConfig netherConfig = BCLNetherBiomeSourceConfig.VANILLA;
-        if (createWorldScreen.worldGenSettingsComponent instanceof WorldGenSettingsComponentAccessor acc
-                && acc.bcl_getPreset()
-                      .isPresent() && acc.bcl_getPreset()
-                                         .get()
-                                         .value() instanceof TogetherWorldPreset wp) {
 
+        final WorldCreationUiState acc = createWorldScreen.getUiState();
+        final Holder<WorldPreset> configuredPreset = acc.getWorldType().preset();
+        if (configuredPreset.value() instanceof TogetherWorldPreset wp) {
             LevelStem endStem = wp.getDimension(LevelStem.END);
             if (endStem != null && endStem.generator().getBiomeSource() instanceof BCLibEndBiomeSource bs) {
                 endConfig = bs.getTogetherConfig();
@@ -375,8 +371,8 @@ public class WorldSetupScreen extends LayoutScreen {
             }
         }
 
-        var netherPage = netherPage(netherConfig);
-        var endPage = endPage(endConfig);
+        LayoutComponent<?, ? extends LayoutComponent<?, ?>> netherPage = netherPage(netherConfig);
+        LayoutComponent<?, ? extends LayoutComponent<?, ?>> endPage = endPage(endConfig);
 
         Tabs main = new Tabs(fill(), fill()).setPadding(8, 0, 0, 0);
         main.addPage(Component.translatable("title.bclib.the_nether"), VerticalScroll.create(netherPage));

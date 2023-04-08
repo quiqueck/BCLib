@@ -7,6 +7,7 @@ import org.betterx.bclib.items.complex.EquipmentSet;
 
 import net.minecraft.advancements.*;
 import net.minecraft.advancements.critereon.*;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.network.chat.Component;
@@ -199,7 +200,7 @@ public class AdvancementManager {
                 T recipe,
                 AdvancementType type
         ) {
-            Item item = recipe.getResultItem().getItem();
+            Item item = recipe.getResultItem(Minecraft.getInstance().level.registryAccess()).getItem();
             return create(item, type, displayBuilder -> displayBuilder.hideToast().hideFromChat())
                     //.awardRecipe(item)
                     .addRecipeUnlockCriterion("has_the_recipe", recipe)

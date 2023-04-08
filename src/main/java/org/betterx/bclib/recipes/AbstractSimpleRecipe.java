@@ -97,6 +97,6 @@ public abstract class AbstractSimpleRecipe<T extends AbstractSimpleRecipe, C ext
 
         R recipe = buildRecipe();
         BCLRecipeManager.addRecipe(type, recipe);
-        registerAdvancement(recipe);
+        registerAdvancement(recipe, output);
     }
 }

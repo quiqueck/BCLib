@@ -45,7 +45,7 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
     Set<Holder<Biome>> dynamicPossibleBiomes;
 
     protected BCLBiomeSource(long seed) {
-        super(List.of());
+        super();
         this.dynamicPossibleBiomes = Set.of();
         this.currentSeed = seed;
         this.didCreatePickers = false;

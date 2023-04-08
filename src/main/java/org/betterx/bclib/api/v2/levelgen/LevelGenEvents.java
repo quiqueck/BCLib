@@ -30,7 +30,6 @@ import net.minecraft.world.level.storage.LevelStorageSource;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 public class LevelGenEvents {
@@ -73,17 +72,17 @@ public class LevelGenEvents {
         return DataFixerAPI.fixData(storageAccess, allDone != null && BCLib.isClient(), allDone);
     }
 
-    private static Optional<Holder<WorldPreset>> adaptWorldPreset(
-            Optional<Holder<WorldPreset>> currentPreset,
+    private static Holder<WorldPreset> adaptWorldPreset(
+            Holder<WorldPreset> currentPreset,
             WorldDimensions worldDims
     ) {
         LevelStem endStem = worldDims.dimensions().get(LevelStem.END);
 
         //We probably loaded a Datapack for the End
         if (!(endStem.generator().getBiomeSource() instanceof BCLibEndBiomeSource)) {
-            if (currentPreset.isPresent()) {
-                if (currentPreset.get().value() instanceof TogetherWorldPreset worldPreset) {
-                    ResourceKey worldPresetKey = currentPreset.get().unwrapKey().orElse(null);
+            if (currentPreset != null) {
+                if (currentPreset instanceof TogetherWorldPreset worldPreset) {
+                    ResourceKey worldPresetKey = currentPreset.unwrapKey().orElse(null);
 
                     //user did not configure/change the Preset!
                     if (PresetsRegistry.BCL_WORLD.equals(worldPresetKey)

@@ -135,14 +135,14 @@ public class VoronoiNoise {
         }
 
         BlockPos p1 = new BlockPos(
-                (ix + (double) selX) * scale,
-                (iy + (double) selY) * scale,
-                (iz + (double) selZ) * scale
+                (int) ((ix + (double) selX) * scale),
+                (int) ((iy + (double) selY) * scale),
+                (int) ((iz + (double) selZ) * scale)
         );
         BlockPos p2 = new BlockPos(
-                (ix + (double) selXPre) * scale,
-                (iy + (double) selYPre) * scale,
-                (iz + (double) selZPre) * scale
+                (int) ((ix + (double) selXPre) * scale),
+                (int) ((iy + (double) selYPre) * scale),
+                (int) ((iz + (double) selZPre) * scale)
         );
         return new BlockPos[]{p1, p2};
     }

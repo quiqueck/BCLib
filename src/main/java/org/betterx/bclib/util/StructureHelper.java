@@ -80,7 +80,7 @@ public class StructureHelper {
                 rotation,
                 BlockPos.ZERO
         );
-        return pos.offset(-offset.x * 0.5, 0, -offset.z * 0.5);
+        return pos.offset((int) (-offset.x * 0.5), 0, (int) (-offset.z * 0.5));
     }
 
     public static void placeCenteredBottom(
@@ -126,8 +126,8 @@ public class StructureHelper {
     ) {
         Vec3i max = structure.getSize();
         Vec3 min = StructureTemplate.transform(Vec3.atCenterOf(structure.getSize()), mirror, rotation, BlockPos.ZERO);
-        max = max.offset(-min.x, -min.y, -min.z);
-        return BoundingBox.fromCorners(pos.offset(min.x, min.y, min.z), max.offset(pos));
+        max = max.offset((int) -min.x, (int) -min.y, (int) -min.z);
+        return BoundingBox.fromCorners(pos.offset((int) min.x, (int) min.y, (int) min.z), max.offset(pos));
     }
 
     public static BoundingBox intersectBoxes(BoundingBox box1, BoundingBox box2) {

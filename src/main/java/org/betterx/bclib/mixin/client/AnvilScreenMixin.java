@@ -37,6 +37,18 @@ public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
         super(handler, playerInventory, title, texture);
     }
 
+    @Override
+    protected void renderErrorIcon(PoseStack poseStack, int i, int j) {
+        if (this.hasRecipeError()) {
+            blit(poseStack, i + 65, j + 46, this.imageWidth, 0, 28, 21);
+        }
+    }
+
+    private boolean hasRecipeError() {
+        //TODO: 1.19.4 check error conditions
+        return false;
+    }
+
     @Inject(method = "subInit", at = @At("TAIL"))
     protected void be_subInit(CallbackInfo info) {
         int x = (width - imageWidth) / 2;

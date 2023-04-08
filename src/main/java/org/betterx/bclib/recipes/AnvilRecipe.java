@@ -9,9 +9,11 @@ import org.betterx.worlds.together.tag.v3.CommonItemTags;
 import org.betterx.worlds.together.world.event.WorldBootstrap;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
@@ -100,7 +102,7 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
     }
 
     @Override
-    public ItemStack getResultItem() {
+    public ItemStack getResultItem(RegistryAccess acc) {
         return this.output;
     }
 
@@ -110,7 +112,7 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
     }
 
     @Override
-    public ItemStack assemble(@NotNull Container craftingInventory) {
+    public ItemStack assemble(@NotNull Container craftingInventory, RegistryAccess acc) {
         return this.output.copy();
     }
 
@@ -155,7 +157,7 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
                 return ItemStack.EMPTY;
             }
         }
-        return this.assemble(craftingInventory);
+        return this.assemble(craftingInventory, Minecraft.getInstance().level.registryAccess());
     }
 
     public boolean checkHammerDurability(Container craftingInventory, Player player) {
