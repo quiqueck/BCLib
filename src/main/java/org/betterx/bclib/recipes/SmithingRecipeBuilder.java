@@ -7,6 +7,7 @@ import net.minecraft.data.recipes.SmithingTransformRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 
@@ -67,7 +68,11 @@ public class SmithingRecipeBuilder extends AbstractUnlockableRecipeBuilder<Smith
     @Override
     protected void buildRecipe(Consumer<FinishedRecipe> cc) {
         final SmithingTransformRecipeBuilder builder = SmithingTransformRecipeBuilder.smithing(
-                Ingredient.EMPTY, primaryInput, addon, category, output.getItem()
+                Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+                primaryInput,
+                addon,
+                category,
+                output.getItem()
         );
         for (var item : unlocks.entrySet()) {
             builder.unlocks(item.getKey(), item.getValue());
