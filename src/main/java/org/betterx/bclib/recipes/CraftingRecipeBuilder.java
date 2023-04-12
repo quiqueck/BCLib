@@ -1,7 +1,6 @@
 package org.betterx.bclib.recipes;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.config.PathConfig;
 
 import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.data.recipes.FinishedRecipe;
@@ -158,6 +157,7 @@ public class CraftingRecipeBuilder extends AbstractBaseRecipeBuilder<CraftingRec
         }
 
         builder.group(group);
+
         builder.save(cc, id);
     }
 
@@ -215,11 +215,8 @@ public class CraftingRecipeBuilder extends AbstractBaseRecipeBuilder<CraftingRec
             builder.pattern(row);
         }
         builder.group(group);
-
+        builder.showNotification(showNotification);
         builder.save(cc, id);
     }
 
-    public CraftingRecipeBuilder checkConfig(PathConfig config) {
-        return this;
-    }
 }

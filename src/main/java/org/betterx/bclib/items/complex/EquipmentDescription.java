@@ -5,6 +5,7 @@ import org.betterx.bclib.recipes.BCLRecipeBuilder;
 import org.betterx.bclib.recipes.CraftingRecipeBuilder;
 import org.betterx.bclib.registry.ItemRegistry;
 
+import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
@@ -36,7 +37,8 @@ public class EquipmentDescription<I extends Item> {
         final ItemLike ingot = repairItems[0].getItem();
 
         var builder = BCLRecipeBuilder.crafting(id, tool)
-                                      .addMaterial('#', ingot);
+                                      .addMaterial('#', ingot)
+                                      .setCategory(RecipeCategory.TOOLS);
 
         if (buildRecipe(tool, stick, builder)) return;
         builder
