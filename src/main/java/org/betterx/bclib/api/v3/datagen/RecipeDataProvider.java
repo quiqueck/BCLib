@@ -1,5 +1,7 @@
 package org.betterx.bclib.api.v3.datagen;
 
+import org.betterx.bclib.BCLib;
+
 import net.minecraft.data.recipes.FinishedRecipe;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -35,6 +37,10 @@ public class RecipeDataProvider extends FabricRecipeProvider {
 
     @ApiStatus.Internal
     public static void register(DatapackRecipeBuilder builder) {
+        //thi is only used withe the Data Generator, so we do not keep this list on a regular run
+        if (!BCLib.isDatagen()) {
+            return;
+        }
         if (RECIPES == null) RECIPES = new ArrayList<>();
         RECIPES.add(builder);
     }
