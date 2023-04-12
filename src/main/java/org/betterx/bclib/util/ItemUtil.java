@@ -2,11 +2,16 @@ package org.betterx.bclib.util;
 
 import org.betterx.bclib.BCLib;
 
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
 
 import com.google.gson.JsonObject;
 
@@ -54,6 +59,20 @@ public class ItemUtil {
         return null;
     }
 
+    public static ItemStack fromJsonRecipeWithNBT(JsonObject recipe) {
+        ItemStack output = ItemUtil.fromJsonRecipe(recipe);
+        if (output != null && recipe.has("nbt")) {
+            try {
+                String nbtData = GsonHelper.getAsString(recipe, "nbt");
+                CompoundTag nbt = TagParser.parseTag(nbtData);
+                output.setTag(nbt);
+            } catch (CommandSyntaxException ex) {
+                BCLib.LOGGER.warning("Error parse nbt data for output.", ex);
+            }
+        }
+        return output;
+    }
+
     @Nullable
     public static ItemStack fromJsonRecipe(JsonObject recipe) {
         try {
@@ -70,5 +89,43 @@ public class ItemUtil {
             BCLib.LOGGER.error("ItemStack deserialization error!", ex);
         }
         return null;
+    }
+
+
+    public static JsonObject toJsonRecipeWithNBT(ItemStack stack) {
+        return toJsonRecipeWithNBT(stack.getItem(), stack.getCount(), stack.getTag());
+    }
+
+    public static JsonObject toJsonRecipeWithNBT(ItemLike item, int count, CompoundTag nbt) {
+        JsonObject root = toJsonRecipe(item, count);
+        if (nbt != null) {
+            final String nbtData = NbtUtils.prettyPrint(nbt);
+            root.addProperty("nbt", nbtData);
+            //TODO: just for testing
+            try {
+                TagParser.parseTag(nbtData);
+            } catch (CommandSyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return root;
+    }
+
+    public static JsonObject toJsonRecipe(ItemStack stack) {
+        return toJsonRecipe(stack.getItem(), stack.getCount());
+    }
+
+    public static JsonObject toJsonRecipe(ItemLike item, int count) {
+        final ResourceLocation id = BuiltInRegistries.ITEM.getKey(item.asItem());
+        if (id == null) {
+            throw new IllegalStateException("Unknown Item " + item);
+        }
+
+        final JsonObject root = new JsonObject();
+        root.addProperty("item", BuiltInRegistries.ITEM.getKey(item.asItem()).toString());
+        if (count > 1) {
+            root.addProperty("count", count);
+        }
+        return root;
     }
 }

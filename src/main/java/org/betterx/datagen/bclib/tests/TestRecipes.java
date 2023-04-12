@@ -1,24 +1,24 @@
 package org.betterx.datagen.bclib.tests;
 
 import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v3.datagen.RecipeDataProvider;
 import org.betterx.bclib.recipes.BCLRecipeBuilder;
-import org.betterx.bclib.recipes.GridRecipe;
+import org.betterx.bclib.recipes.CraftingRecipeBuilder;
+import org.betterx.worlds.together.WorldsTogether;
 
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.world.item.Items;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 
-import java.util.function.Consumer;
+import java.util.List;
 
-public class TestRecipes extends FabricRecipeProvider {
+public class TestRecipes extends RecipeDataProvider {
     public TestRecipes(FabricDataOutput output) {
-        super(output);
+        super(List.of(BCLib.MOD_ID, WorldsTogether.MOD_ID), output);
     }
 
-    final GridRecipe WONDER = BCLRecipeBuilder
+    final CraftingRecipeBuilder WONDER = BCLRecipeBuilder
             .crafting(BCLib.makeID("test_star"), Items.NETHER_STAR)
             .setOutputCount(1)
             .setShape("ggg", "glg", "ggg")
@@ -27,8 +27,4 @@ public class TestRecipes extends FabricRecipeProvider {
             .setCategory(RecipeCategory.TOOLS)
             .build();
 
-    @Override
-    public void buildRecipes(Consumer<FinishedRecipe> exporter) {
-        GridRecipe.registerRecipes(exporter);
-    }
 }

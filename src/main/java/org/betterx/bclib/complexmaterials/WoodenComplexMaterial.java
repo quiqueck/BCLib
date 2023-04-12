@@ -270,7 +270,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
             BCLRecipeBuilder.crafting(id, planks)
                             .checkConfig(config)
                             .setOutputCount(4)
-                            .setList("#")
+                            .shapeless()
                             .addMaterial('#', log, bark, log_stripped, bark_stripped)
                             .setGroup(receipGroupPrefix + "_planks")
                             .build();
@@ -315,7 +315,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
         addRecipeEntry(new RecipeEntry("button", (material, config, id) -> {
             BCLRecipeBuilder.crafting(id, getBlock(BLOCK_BUTTON))
                             .checkConfig(config)
-                            .setList("#")
+                            .shapeless()
                             .addMaterial('#', planks)
                             .setGroup(receipGroupPrefix + "_planks_buttons")
                             .build();

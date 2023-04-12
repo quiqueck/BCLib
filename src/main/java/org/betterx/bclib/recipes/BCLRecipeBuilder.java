@@ -12,23 +12,23 @@ public class BCLRecipeBuilder {
         return AnvilRecipe.create(id, output);
     }
 
-    public static BlastFurnaceRecipe blasting(ResourceLocation id, ItemLike output) {
-        return BlastFurnaceRecipe.make(id, output);
+    public static CookingRecipeBuilder blasting(ResourceLocation id, ItemLike output) {
+        return CookingRecipeBuilder.make(id, output).disableSmelter().enableBlastFurnace();
     }
 
-    public static GridRecipe crafting(ResourceLocation id, ItemLike output) {
-        return GridRecipe.make(id, output);
+    public static CraftingRecipeBuilder crafting(ResourceLocation id, ItemLike output) {
+        return CraftingRecipeBuilder.make(id, output);
     }
 
-    public static FurnaceRecipe smelting(ResourceLocation id, ItemLike output) {
-        return FurnaceRecipe.make(id, output);
+    public static CookingRecipeBuilder smelting(ResourceLocation id, ItemLike output) {
+        return CookingRecipeBuilder.make(id, output);
     }
 
-    public static SmithingTableRecipe smithing(ResourceLocation id, ItemLike output) {
-        return SmithingTableRecipe.make(id, output);
+    public static SmithingRecipeBuilder smithing(ResourceLocation id, ItemLike output) {
+        return SmithingRecipeBuilder.make(id, output);
     }
 
-    public static StoneCutterRecipe stonecutting(ResourceLocation id, ItemLike output) {
-        return StoneCutterRecipe.make(id, output);
+    public static StonecutterRecipeBuilder stonecutting(ResourceLocation id, ItemLike output) {
+        return StonecutterRecipeBuilder.make(id, output);
     }
 }

@@ -129,4 +129,5 @@ public class JsonFactory {
         JsonElement elem = object.get(member);
         return elem == null ? def : elem.getAsString();
     }
+
 }

@@ -2,7 +2,7 @@ package org.betterx.bclib.items.complex;
 
 import org.betterx.bclib.items.BaseArmorItem;
 import org.betterx.bclib.recipes.BCLRecipeBuilder;
-import org.betterx.bclib.recipes.GridRecipe;
+import org.betterx.bclib.recipes.CraftingRecipeBuilder;
 import org.betterx.bclib.registry.ItemRegistry;
 
 import net.minecraft.resources.ResourceLocation;
@@ -45,7 +45,7 @@ public class EquipmentDescription<I extends Item> {
 
     }
 
-    protected boolean buildRecipe(Item tool, ItemLike stick, GridRecipe builder) {
+    protected boolean buildRecipe(Item tool, ItemLike stick, CraftingRecipeBuilder builder) {
         if (tool instanceof ShearsItem) {
             builder.setShape(" #", "# ");
         } else if (tool instanceof BaseArmorItem bai) {

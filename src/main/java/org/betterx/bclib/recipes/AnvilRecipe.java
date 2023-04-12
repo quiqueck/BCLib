@@ -1,14 +1,11 @@
 package org.betterx.bclib.recipes;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.config.PathConfig;
 import org.betterx.bclib.interfaces.UnknownReceipBookCategory;
 import org.betterx.bclib.util.ItemUtil;
-import org.betterx.bclib.util.RecipeHelper;
 import org.betterx.worlds.together.tag.v3.CommonItemTags;
 import org.betterx.worlds.together.world.event.WorldBootstrap;
 
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
@@ -16,7 +13,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.TagParser;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -83,17 +79,7 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
     }
 
     static Builder create(ResourceLocation id, ItemLike output) {
-        Builder.INSTANCE.id = id;
-        Builder.INSTANCE.input = null;
-        Builder.INSTANCE.output = output;
-        Builder.INSTANCE.inputCount = 1;
-        Builder.INSTANCE.toolLevel = 1;
-        Builder.INSTANCE.anvilLevel = 1;
-        Builder.INSTANCE.damage = 1;
-        Builder.INSTANCE.alright = true;
-        Builder.INSTANCE.exist = RecipeHelper.exists(output);
-
-        return Builder.INSTANCE;
+        return new Builder(id, output);
     }
 
     @Override
@@ -261,36 +247,54 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
         return "AnvilRecipe [" + id + "]";
     }
 
-    public static class Builder {
-        private final static Builder INSTANCE = new Builder();
+    public static class Builder extends AbstractDoubleInputRecipeBuilder<Builder, AnvilRecipe> {
+        private int inputCount;
+        private int toolLevel;
+        private int anvilLevel;
+        private int damage;
 
-        private ResourceLocation id;
-        private Ingredient input;
-        private ItemLike output;
-        private int inputCount = 1;
-        private int outputCount = 1;
-        private int toolLevel = 1;
-        private int anvilLevel = 1;
-        private int damage = 1;
-        private boolean alright;
-        private boolean exist;
+        protected Builder(ResourceLocation id, ItemLike output) {
+            super(id, output);
 
-        private Builder() {
+            this.inputCount = 1;
+            this.toolLevel = 1;
+            this.anvilLevel = 1;
+            this.damage = 1;
         }
 
+        @Override
+        protected Builder setOutputTag(CompoundTag tag) {
+            return super.setOutputTag(tag);
+        }
+
+        @Override
+        protected Builder setOutputCount(int count) {
+            return super.setOutputCount(count);
+        }
+
+        /**
+         * @param inputItems
+         * @return
+         * @deprecated Use {@link #setPrimaryInput(ItemLike...)} instead
+         */
+        @Deprecated(forRemoval = true)
         public Builder setInput(ItemLike... inputItems) {
-            this.alright &= RecipeHelper.exists(inputItems);
-            this.setInput(Ingredient.of(inputItems));
-            return this;
+            return super.setPrimaryInput(inputItems);
         }
 
+        /**
+         * @param inputTag
+         * @return
+         * @deprecated Use {@link #setPrimaryInput(TagKey)} instead
+         */
+        @Deprecated(forRemoval = true)
         public Builder setInput(TagKey<Item> inputTag) {
-            this.setInput(Ingredient.of(inputTag));
-            return this;
+            return super.setPrimaryInput(inputTag);
         }
 
+        @Deprecated(forRemoval = true)
         public Builder setInput(Ingredient ingredient) {
-            this.input = ingredient;
+            this.primaryInput = ingredient;
             return this;
         }
 
@@ -299,10 +303,6 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
             return this;
         }
 
-        public Builder setOutputCount(int count) {
-            this.outputCount = count;
-            return this;
-        }
 
         public Builder setToolLevel(int level) {
             this.toolLevel = level;
@@ -319,44 +319,39 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
             return this;
         }
 
-        public Builder checkConfig(PathConfig config) {
-            exist &= config.getBoolean("anvil", id.getPath(), true);
-            return this;
+        @Override
+        protected RecipeSerializer<AnvilRecipe> getSerializer() {
+            return SERIALIZER;
         }
 
-        public void build() {
-            if (!exist) {
-                return;
+        @Override
+        protected boolean checkRecipe() {
+            if (inputCount <= 0) {
+                BCLib.LOGGER.warning(
+                        "Number of input items for Recipe must be positive. Recipe {} will be ignored!",
+                        id
+                );
+                return false;
             }
+            return super.checkRecipe();
+        }
 
-            if (input == null) {
-                BCLib.LOGGER.warning("Input for Anvil recipe can't be 'null', recipe {} will be ignored!", id);
-                return;
+        @Override
+        protected void serializeRecipeData(JsonObject root) {
+            super.serializeRecipeData(root);
+
+            if (inputCount > 1) {
+                root.addProperty("inputCount", inputCount);
             }
-            if (output == null) {
-                BCLib.LOGGER.warning("Output for Anvil recipe can't be 'null', recipe {} will be ignored!", id);
-                return;
+            if (toolLevel != 1) {
+                root.addProperty("toolLevel", toolLevel);
             }
-            if (BCLRecipeManager.getRecipe(TYPE, id) != null) {
-                BCLib.LOGGER.warning("Can't add Anvil recipe! Id {} already exists!", id);
-                return;
+            if (anvilLevel != 1) {
+                root.addProperty("anvilLevel", anvilLevel);
             }
-            if (!alright) {
-                BCLib.LOGGER.debug("Can't add Anvil recipe {}! Ingeredient or output not exists.", id);
-                return;
+            if (damage != 1) {
+                root.addProperty("damage", damage);
             }
-            BCLRecipeManager.addRecipe(
-                    TYPE,
-                    new AnvilRecipe(
-                            id,
-                            input,
-                            new ItemStack(output, outputCount),
-                            inputCount,
-                            toolLevel,
-                            anvilLevel,
-                            damage
-                    )
-            );
         }
     }
 
@@ -365,19 +360,11 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
         public AnvilRecipe fromJson(ResourceLocation id, JsonObject json) {
             Ingredient input = Ingredient.fromJson(json.get("input"));
             JsonObject result = GsonHelper.getAsJsonObject(json, "result");
-            ItemStack output = ItemUtil.fromJsonRecipe(result);
+            ItemStack output = ItemUtil.fromJsonRecipeWithNBT(result);
             if (output == null) {
                 throw new IllegalStateException("Output item does not exists!");
             }
-            if (result.has("nbt")) {
-                try {
-                    String nbtData = GsonHelper.getAsString(result, "nbt");
-                    CompoundTag nbt = TagParser.parseTag(nbtData);
-                    output.setTag(nbt);
-                } catch (CommandSyntaxException ex) {
-                    BCLib.LOGGER.warning("Error parse nbt data for output.", ex);
-                }
-            }
+
             int inputCount = GsonHelper.getAsInt(json, "inputCount", 1);
             int toolLevel = GsonHelper.getAsInt(json, "toolLevel", 1);
             int anvilLevel = GsonHelper.getAsInt(json, "anvilLevel", 1);
