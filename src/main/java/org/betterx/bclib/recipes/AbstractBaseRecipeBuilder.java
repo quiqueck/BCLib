@@ -135,9 +135,6 @@ public abstract class AbstractBaseRecipeBuilder<T extends AbstractBaseRecipeBuil
     public final T build() {
         if (!checkRecipe())
             return (T) this;
-        if (id.toString().equals("betternether:mushroom_fir_taburet")) {
-            System.out.println("betternether:mushroom_fir_taburet");
-        }
         RecipeDataProvider.register(this);
         return (T) this;
     }
