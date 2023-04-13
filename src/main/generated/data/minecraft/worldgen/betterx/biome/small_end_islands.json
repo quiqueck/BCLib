@@ -1,0 +1,10 @@
+{
+  "type": "bclib:biome",
+  "biome": "minecraft:small_end_islands",
+  "edgeSize": 0,
+  "fogDensity": 1.0,
+  "genChance": 1.0,
+  "intended_for": "OTHER_END_VOID",
+  "terrainHeight": 0.1,
+  "vertical": false
+}

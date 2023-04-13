@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "tag": "c:iron_ingots"
+    }
+  },
+  "pattern": [
+    "I I",
+    "III"
+  ],
+  "result": {
+    "item": "minecraft:minecart"
+  },
+  "show_notification": true
+}

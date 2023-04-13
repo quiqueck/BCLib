@@ -1,0 +1,11 @@
+{
+  "type": "bclib:biome",
+  "biome": "minecraft:end_highlands",
+  "edge": "minecraft:end_midlands",
+  "edgeSize": 8,
+  "fogDensity": 1.0,
+  "genChance": 0.5,
+  "intended_for": "OTHER_END_LAND",
+  "terrainHeight": 0.1,
+  "vertical": false
+}

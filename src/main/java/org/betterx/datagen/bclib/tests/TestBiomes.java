@@ -23,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
 public class TestBiomes extends TagDataProvider<Biome> {
     static BCLBiomeContainer<BCLBiome> THE_YELLOW = BCLBiomeBuilder
             .start(BCLib.makeID("the_yellow"))
-            .precipitation(Biome.Precipitation.NONE)
+            .hasPrecipitation(false)
             .temperature(1.0f)
             .wetness(1.0f)
             .fogColor(0xFFFF00)
@@ -38,7 +38,7 @@ public class TestBiomes extends TagDataProvider<Biome> {
 
     static BCLBiomeContainer<BCLBiome> THE_BLUE = BCLBiomeBuilder
             .start(BCLib.makeID("the_blue"))
-            .precipitation(Biome.Precipitation.NONE)
+            .hasPrecipitation(false)
             .temperature(1.0f)
             .wetness(1.0f)
             .fogColor(0x0000FF)
@@ -53,7 +53,7 @@ public class TestBiomes extends TagDataProvider<Biome> {
 
     static BCLBiomeContainer<BCLBiome> THE_GRAY = BCLBiomeBuilder
             .start(BCLib.makeID("the_gray"))
-            .precipitation(Biome.Precipitation.NONE)
+            .hasPrecipitation(false)
             .temperature(1.0f)
             .wetness(1.0f)
             .fogColor(0xFFFFFF)
@@ -66,7 +66,7 @@ public class TestBiomes extends TagDataProvider<Biome> {
             .build();
     static BCLBiomeContainer<BCLBiome> THE_ORANGE = BCLBiomeBuilder
             .start(BCLib.makeID("the_orange"))
-            .precipitation(Biome.Precipitation.NONE)
+            .hasPrecipitation(false)
             .temperature(1.0f)
             .wetness(1.0f)
             .fogColor(0xFF7700)
@@ -79,7 +79,7 @@ public class TestBiomes extends TagDataProvider<Biome> {
             .build();
     static BCLBiomeContainer<BCLBiome> THE_PURPLE = BCLBiomeBuilder
             .start(BCLib.makeID("the_purple"))
-            .precipitation(Biome.Precipitation.NONE)
+            .hasPrecipitation(false)
             .temperature(1.0f)
             .wetness(1.0f)
             .fogColor(0xFF00FF)
