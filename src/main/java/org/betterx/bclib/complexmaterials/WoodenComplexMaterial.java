@@ -263,7 +263,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
     @Override
     public void initDefaultRecipes() {
         Block planks = getBlock(BLOCK_PLANKS);
-        addRecipeEntry(new RecipeEntry("planks", (material, config, id) -> {
+        addRecipeEntry(new RecipeEntry("planks", (material, id) -> {
             Block log_stripped = getBlock(BLOCK_STRIPPED_LOG);
             Block bark_stripped = getBlock(BLOCK_STRIPPED_BARK);
             Block log = getBlock(BLOCK_LOG);
@@ -276,7 +276,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
                             .setCategory(RecipeCategory.BUILDING_BLOCKS)
                             .build();
         }));
-        addRecipeEntry(new RecipeEntry("stairs", (material, config, id) -> {
+        addRecipeEntry(new RecipeEntry("stairs", (material, id) -> {
             BCLRecipeBuilder.crafting(id, getBlock(BLOCK_STAIRS))
                             .setOutputCount(4)
                             .setShape("#  ", "## ", "###")
@@ -285,7 +285,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
                             .setCategory(RecipeCategory.BUILDING_BLOCKS)
                             .build();
         }));
-        addRecipeEntry(new RecipeEntry("slab", (material, config, id) -> {
+        addRecipeEntry(new RecipeEntry("slab", (material, id) -> {
             BCLRecipeBuilder.crafting(id, getBlock(BLOCK_SLAB))
                             .setOutputCount(6)
                             .setShape("###")
@@ -294,7 +294,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
                             .setCategory(RecipeCategory.BUILDING_BLOCKS)
                             .build();
         }));
-        addRecipeEntry(new RecipeEntry("fence", (material, config, id) -> {
+        addRecipeEntry(new RecipeEntry("fence", (material, id) -> {
             BCLRecipeBuilder.crafting(id, getBlock(BLOCK_FENCE))
                             .setOutputCount(3)
                             .setShape("#I#", "#I#")
@@ -304,7 +304,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
                             .setCategory(RecipeCategory.DECORATIONS)
                             .build();
         }));
-        addRecipeEntry(new RecipeEntry("gate", (material, config, id) -> {
+        addRecipeEntry(new RecipeEntry("gate", (material, id) -> {
             BCLRecipeBuilder.crafting(id, getBlock(BLOCK_GATE))
                             .setShape("I#I", "I#I")
                             .addMaterial('#', planks)
@@ -313,7 +313,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
                             .setCategory(RecipeCategory.REDSTONE)
                             .build();
         }));
-        addRecipeEntry(new RecipeEntry("button", (material, config, id) -> {
+        addRecipeEntry(new RecipeEntry("button", (material, id) -> {
             BCLRecipeBuilder.crafting(id, getBlock(BLOCK_BUTTON))
                             .shapeless()
                             .addMaterial('#', planks)
@@ -321,7 +321,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
                             .setCategory(RecipeCategory.REDSTONE)
                             .build();
         }));
-        addRecipeEntry(new RecipeEntry("pressure_plate", (material, config, id) -> {
+        addRecipeEntry(new RecipeEntry("pressure_plate", (material, id) -> {
             BCLRecipeBuilder.crafting(id, getBlock(BLOCK_PRESSURE_PLATE))
                             .setShape("##")
                             .addMaterial('#', planks)
@@ -329,7 +329,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
                             .setCategory(RecipeCategory.REDSTONE)
                             .build();
         }));
-        addRecipeEntry(new RecipeEntry("trapdoor", (material, config, id) -> {
+        addRecipeEntry(new RecipeEntry("trapdoor", (material, id) -> {
             BCLRecipeBuilder.crafting(id, getBlock(BLOCK_TRAPDOOR))
                             .setOutputCount(2)
                             .setShape("###", "###")
@@ -338,7 +338,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
                             .setCategory(RecipeCategory.REDSTONE)
                             .build();
         }));
-        addRecipeEntry(new RecipeEntry("door", (material, config, id) -> {
+        addRecipeEntry(new RecipeEntry("door", (material, id) -> {
             BCLRecipeBuilder.crafting(id, getBlock(BLOCK_DOOR))
                             .setOutputCount(3)
                             .setShape("##", "##", "##")
@@ -347,7 +347,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
                             .setCategory(RecipeCategory.REDSTONE)
                             .build();
         }));
-        addRecipeEntry(new RecipeEntry("crafting_table", (material, config, id) -> {
+        addRecipeEntry(new RecipeEntry("crafting_table", (material, id) -> {
             BCLRecipeBuilder.crafting(id, getBlock(BLOCK_CRAFTING_TABLE))
                             .setShape("##", "##")
                             .addMaterial('#', planks)
@@ -355,7 +355,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
                             .setCategory(RecipeCategory.DECORATIONS)
                             .build();
         }));
-        addRecipeEntry(new RecipeEntry("ladder", (material, config, id) -> {
+        addRecipeEntry(new RecipeEntry("ladder", (material, id) -> {
             BCLRecipeBuilder.crafting(id, getBlock(BLOCK_LADDER))
                             .setOutputCount(3)
                             .setShape("I I", "I#I", "I I")
@@ -365,7 +365,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
                             .setCategory(RecipeCategory.DECORATIONS)
                             .build();
         }));
-        addRecipeEntry(new RecipeEntry("sign", (material, config, id) -> {
+        addRecipeEntry(new RecipeEntry("sign", (material, id) -> {
             BCLRecipeBuilder.crafting(id, getBlock(BLOCK_SIGN))
                             .setOutputCount(3)
                             .setShape("###", "###", " I ")
@@ -375,7 +375,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
                             .setCategory(RecipeCategory.DECORATIONS)
                             .build();
         }));
-        addRecipeEntry(new RecipeEntry("chest", (material, config, id) -> {
+        addRecipeEntry(new RecipeEntry("chest", (material, id) -> {
             BCLRecipeBuilder.crafting(id, getBlock(BLOCK_CHEST))
                             .setShape("###", "# #", "###")
                             .addMaterial('#', planks)
@@ -383,7 +383,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
                             .setCategory(RecipeCategory.DECORATIONS)
                             .build();
         }));
-        addRecipeEntry(new RecipeEntry("barrel", (material, config, id) -> {
+        addRecipeEntry(new RecipeEntry("barrel", (material, id) -> {
             BCLRecipeBuilder.crafting(id, getBlock(BLOCK_BARREL))
                             .setShape("#S#", "# #", "#S#")
                             .addMaterial('#', planks)
@@ -392,7 +392,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
                             .setCategory(RecipeCategory.DECORATIONS)
                             .build();
         }));
-        addRecipeEntry(new RecipeEntry("bookshelf", (material, config, id) -> {
+        addRecipeEntry(new RecipeEntry("bookshelf", (material, id) -> {
             BCLRecipeBuilder.crafting(id, getBlock(BLOCK_BOOKSHELF))
                             .setShape("###", "PPP", "###")
                             .addMaterial('#', planks)
@@ -401,7 +401,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
                             .setCategory(RecipeCategory.BUILDING_BLOCKS)
                             .build();
         }));
-        addRecipeEntry(new RecipeEntry("bark", (material, config, id) -> {
+        addRecipeEntry(new RecipeEntry("bark", (material, id) -> {
             BCLRecipeBuilder.crafting(id, getBlock(BLOCK_BARK))
                             .setShape("##", "##")
                             .addMaterial('#', getBlock(BLOCK_LOG))
@@ -409,7 +409,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
                             .setCategory(RecipeCategory.BUILDING_BLOCKS)
                             .build();
         }));
-        addRecipeEntry(new RecipeEntry("log", (material, config, id) -> {
+        addRecipeEntry(new RecipeEntry("log", (material, id) -> {
             BCLRecipeBuilder.crafting(id, getBlock(BLOCK_LOG))
                             .setShape("##", "##")
                             .addMaterial('#', getBlock(BLOCK_BARK))
@@ -417,7 +417,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
                             .setCategory(RecipeCategory.BUILDING_BLOCKS)
                             .build();
         }));
-        addRecipeEntry(new RecipeEntry("stripped_bark", (material, config, id) -> {
+        addRecipeEntry(new RecipeEntry("stripped_bark", (material, id) -> {
             BCLRecipeBuilder.crafting(id, getBlock(BLOCK_STRIPPED_BARK))
                             .setShape("##", "##")
                             .addMaterial('#', getBlock(BLOCK_STRIPPED_LOG))
@@ -425,7 +425,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
                             .setCategory(RecipeCategory.BUILDING_BLOCKS)
                             .build();
         }));
-        addRecipeEntry(new RecipeEntry("stripped_log", (material, config, id) -> {
+        addRecipeEntry(new RecipeEntry("stripped_log", (material, id) -> {
             BCLRecipeBuilder.crafting(id, getBlock(BLOCK_STRIPPED_LOG))
                             .setShape("##", "##")
                             .addMaterial('#', getBlock(BLOCK_STRIPPED_BARK))
@@ -433,7 +433,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
                             .setCategory(RecipeCategory.BUILDING_BLOCKS)
                             .build();
         }));
-        addRecipeEntry(new RecipeEntry("composter", (material, config, id) -> {
+        addRecipeEntry(new RecipeEntry("composter", (material, id) -> {
             BCLRecipeBuilder.crafting(id, getBlock(BLOCK_COMPOSTER))
                             .setShape("# #", "# #", "###")
                             .addMaterial('#', getBlock(BLOCK_SLAB))

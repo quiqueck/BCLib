@@ -3,7 +3,6 @@ package org.betterx.bclib.complexmaterials;
 import org.betterx.bclib.complexmaterials.entry.BlockEntry;
 import org.betterx.bclib.complexmaterials.entry.ItemEntry;
 import org.betterx.bclib.complexmaterials.entry.RecipeEntry;
-import org.betterx.bclib.config.PathConfig;
 import org.betterx.bclib.registry.BlockRegistry;
 import org.betterx.bclib.registry.ItemRegistry;
 import org.betterx.worlds.together.tag.v3.TagManager;
@@ -13,7 +12,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-
 
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 
@@ -56,10 +54,9 @@ public abstract class ComplexMaterial {
      *
      * @param blocksRegistry {@link BlockRegistry} instance to add blocks in;
      * @param itemsRegistry  {@link ItemRegistry} instance to add items in;
-     * @param recipeConfig   {@link PathConfig} for recipes check.
      * @return {@link ComplexMaterial}.
      */
-    public ComplexMaterial init(BlockRegistry blocksRegistry, ItemRegistry itemsRegistry, PathConfig recipeConfig) {
+    public ComplexMaterial init(BlockRegistry blocksRegistry, ItemRegistry itemsRegistry) {
         initTags();
 
         final BlockBehaviour.Properties blockSettings = getBlockSettings();
@@ -78,7 +75,7 @@ public abstract class ComplexMaterial {
 
         initDefaultRecipes();
         getRecipeEntries().forEach(entry -> {
-            entry.init(this, recipeConfig);
+            entry.init(this);
         });
 
         initFlammable(FlammableBlockRegistry.getDefaultInstance());
@@ -182,6 +179,7 @@ public abstract class ComplexMaterial {
      * @return {@link BlockBehaviour.Properties}
      */
     protected abstract BlockBehaviour.Properties getBlockSettings();
+
     /**
      * Get default item settings for this material.
      *
