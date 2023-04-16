@@ -16,11 +16,16 @@ import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 
+import net.fabricmc.fabric.api.biome.v1.NetherBiomes;
+import net.fabricmc.fabric.api.biome.v1.TheEndBiomes;
+import net.fabricmc.fabric.api.event.registry.DynamicRegistrySetupCallback;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
+import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
 
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.ApiStatus;
@@ -199,5 +204,44 @@ public class BCLBiomeRegistry {
         for (Map.Entry<ResourceKey<BCLBiome>, BCLBiome> e : BUILTIN_BCL_BIOMES.entrySet()) {
             ctx.register(e.getKey(), e.getValue());
         }
+    }
+
+    private static void onBiomeLoad(Registry<BCLBiome> registry, int rawID, ResourceLocation id, BCLBiome biome) {
+        //this ensures that all BCL Manage Biomes get added to the fabric Biome-API on load
+        if (!"minecraft".equals(id.getNamespace())) {
+            if (biome.getIntendedType().is(BiomeAPI.BiomeType.BCL_NETHER)) {
+                for (var params : biome.parameterPoints) {
+                    NetherBiomes.addNetherBiome(biome.getBiomeKey(), params);
+                }
+            } else if (biome.getIntendedType().is(BiomeAPI.BiomeType.BCL_END_CENTER)) {
+                TheEndBiomes.addMainIslandBiome(biome.getBiomeKey(), 1.0);
+            } else if (biome.getIntendedType().is(BiomeAPI.BiomeType.BCL_END_BARRENS)) {
+                TheEndBiomes.addBarrensBiome(biome.getParentBiome().getBiomeKey(), biome.getBiomeKey(), 1.0);
+            } else if (biome.getIntendedType().is(BiomeAPI.BiomeType.BCL_END_LAND)) {
+                TheEndBiomes.addHighlandsBiome(biome.getBiomeKey(), 1.0);
+                TheEndBiomes.addMidlandsBiome(biome.getBiomeKey(), biome.getBiomeKey(), 1.0);
+            } else if (biome.getIntendedType().is(BiomeAPI.BiomeType.BCL_END_VOID)) {
+                TheEndBiomes.addSmallIslandsBiome(biome.getBiomeKey(), 1.0);
+            } else {
+                BCLib.LOGGER.info("Did not manage biome " + biome);
+            }
+
+            System.out.println("Loaded " + biome);
+        }
+    }
+
+    static {
+        DynamicRegistrySetupCallback.EVENT.register(registryManager -> {
+            Optional<? extends Registry<BCLBiome>> oBCLBiomeRegistry = registryManager.asDynamicRegistryManager()
+                                                                                      .registry(BCLBiomeRegistry.BCL_BIOMES_REGISTRY);
+            if (oBCLBiomeRegistry.isPresent()) {
+                final Registry<BCLBiome> registry = oBCLBiomeRegistry.orElseThrow();
+                RegistryEntryAddedCallback
+                        .event(oBCLBiomeRegistry.get())
+                        .register((rawId, loc, biome) -> BCLBiomeRegistry.onBiomeLoad(registry, rawId, loc, biome));
+            } else {
+                BCLib.LOGGER.warning("No valid BCLBiome Registry available!");
+            }
+        });
     }
 }
