@@ -117,4 +117,7 @@ public class TestBiomes extends TagDataProvider<Biome> {
             THE_PURPLE = THE_PURPLE.register(bootstrapContext);
         }
     }
+
+    public static void ensureStaticallyLoaded() {
+    }
 }
