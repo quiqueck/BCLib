@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "bclib:the_blue",
+    "bclib:the_gray",
+    "bclib:the_yellow"
+  ]
+}

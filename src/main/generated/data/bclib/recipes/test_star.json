@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "g": {
+      "item": "minecraft:glass_pane"
+    },
+    "l": {
+      "item": "minecraft:lapis_lazuli"
+    }
+  },
+  "pattern": [
+    "ggg",
+    "glg",
+    "ggg"
+  ],
+  "result": {
+    "item": "minecraft:nether_star"
+  },
+  "show_notification": true
+}
