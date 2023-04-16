@@ -1,5 +1,7 @@
 package org.betterx.worlds.together.surfaceRules;
 
+import org.betterx.bclib.BCLib;
+import org.betterx.bclib.config.Configs;
 import org.betterx.worlds.together.chunkgenerator.InjectableSurfaceRules;
 import org.betterx.worlds.together.world.event.WorldBootstrap;
 
@@ -53,16 +55,18 @@ public class SurfaceRuleUtil {
     ) {
         return mergeSurfaceRules(
                 org,
+                source,
                 getRulesForBiomes(source.possibleBiomes().stream().map(h -> h.value()).toList())
         );
     }
 
     private static SurfaceRules.RuleSource mergeSurfaceRules(
             SurfaceRules.RuleSource org,
+            BiomeSource source,
             List<SurfaceRules.RuleSource> additionalRules
     ) {
         if (additionalRules == null || additionalRules.isEmpty()) return org;
-
+        final int count = additionalRules.size();
         if (org instanceof SurfaceRules.SequenceRuleSource sequenceRule) {
             List<SurfaceRules.RuleSource> existingSequence = sequenceRule.sequence();
             additionalRules = additionalRules
@@ -76,6 +80,9 @@ public class SurfaceRuleUtil {
                 additionalRules.add(org);
         }
 
+        if (Configs.MAIN_CONFIG.verboseLogging()) {
+            BCLib.LOGGER.info("Merged " + count + " additional Surface Rules for " + source + " => " + additionalRules.size());
+        }
         return new SurfaceRules.SequenceRuleSource(additionalRules);
     }
 
