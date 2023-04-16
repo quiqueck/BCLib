@@ -14,7 +14,7 @@ import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 
 public class BCLibDatagen implements DataGeneratorEntrypoint {
-    public static final boolean ADD_TESTS = true;
+    public static final boolean ADD_TESTS = false;
 
     @Override
     public void onInitializeDataGenerator(FabricDataGenerator dataGenerator) {
@@ -23,7 +23,7 @@ public class BCLibDatagen implements DataGeneratorEntrypoint {
 
         if (ADD_TESTS) {
             TestBiomes.ensureStaticallyLoaded();
-            
+
             pack.addProvider(TestWorldgenProvider::new);
             pack.addProvider(TestBiomes::new);
             RecipeDataProvider.createTestRecipes();
