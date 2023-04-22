@@ -4,7 +4,6 @@ import org.betterx.bclib.BCLib;
 import org.betterx.bclib.config.Configs;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.levelgen.WorldGenUtil;
-import org.betterx.worlds.together.mixin.common.RegistryOpsAccessor;
 import org.betterx.worlds.together.mixin.common.WorldPresetAccessor;
 import org.betterx.worlds.together.surfaceRules.SurfaceRuleUtil;
 import org.betterx.worlds.together.world.WorldConfig;
@@ -18,8 +17,6 @@ import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.RegistryLayer;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -109,10 +106,8 @@ public class WorldBootstrap {
     }
 
     public static class DedicatedServer {
-        public static void registryReady(RegistryOps<Tag> regOps) {
-            if (regOps instanceof RegistryOpsAccessor acc) {
-                //Helpers.onRegistryReady(acc.bcl_getLookupProvider().);
-            }
+        public static void registryReady(RegistryAccess acc) {
+            Helpers.onRegistryReady(acc);
         }
 
         public static void setupWorld(LevelStorageSource.LevelStorageAccess levelStorageAccess) {

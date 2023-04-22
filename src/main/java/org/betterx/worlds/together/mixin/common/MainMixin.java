@@ -2,9 +2,7 @@ package org.betterx.worlds.together.mixin.common;
 
 import org.betterx.worlds.together.world.event.WorldBootstrap;
 
-import com.mojang.serialization.DynamicOps;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.RegistryOps;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.Main;
 import net.minecraft.world.level.storage.LevelStorageSource;
 
@@ -23,14 +21,12 @@ abstract public class MainMixin {
         WorldBootstrap.DedicatedServer.applyWorldPatches(levelStorageAccess);
         return levelStorageAccess;
     }
-
-
-    @ModifyArg(method = "method_43613", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess;getDataTag(Lcom/mojang/serialization/DynamicOps;Lnet/minecraft/world/level/WorldDataConfiguration;Lnet/minecraft/core/Registry;Lcom/mojang/serialization/Lifecycle;)Lcom/mojang/datafixers/util/Pair;"))
-    private static DynamicOps<Tag> bcl_onCreate(DynamicOps<Tag> dynamicOps) {
-        if (dynamicOps instanceof RegistryOps<Tag> regOps) {
-            WorldBootstrap.DedicatedServer.registryReady(regOps);
-        }
+    
+    @ModifyArg(method = "main", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess;saveDataTag(Lnet/minecraft/core/RegistryAccess;Lnet/minecraft/world/level/storage/WorldData;)V"))
+    private static RegistryAccess bcl_onCreate(RegistryAccess registryAccess) {
+        WorldBootstrap.DedicatedServer.registryReady(registryAccess);
         WorldBootstrap.DedicatedServer.setupWorld(bcl_levelStorageAccess);
-        return dynamicOps;
+
+        return registryAccess;
     }
 }
