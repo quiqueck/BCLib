@@ -6,31 +6,31 @@ import org.betterx.bclib.recipes.AnvilRecipe;
 import java.util.List;
 
 public interface AnvilScreenHandlerExtended {
-    void be_updateCurrentRecipe(AnvilRecipe recipe);
+    void bcl_updateCurrentRecipe(AnvilRecipe recipe);
 
-    AnvilRecipe be_getCurrentRecipe();
+    AnvilRecipe bcl_getCurrentRecipe();
 
-    List<AnvilRecipe> be_getRecipes();
+    List<AnvilRecipe> bcl_getRecipes();
 
     default void be_nextRecipe() {
-        List<AnvilRecipe> recipes = be_getRecipes();
+        List<AnvilRecipe> recipes = bcl_getRecipes();
         if (recipes.size() < 2) return;
-        AnvilRecipe current = be_getCurrentRecipe();
+        AnvilRecipe current = bcl_getCurrentRecipe();
         int i = recipes.indexOf(current) + 1;
         if (i >= recipes.size()) {
             i = 0;
         }
-        be_updateCurrentRecipe(recipes.get(i));
+        bcl_updateCurrentRecipe(recipes.get(i));
     }
 
     default void be_previousRecipe() {
-        List<AnvilRecipe> recipes = be_getRecipes();
+        List<AnvilRecipe> recipes = bcl_getRecipes();
         if (recipes.size() < 2) return;
-        AnvilRecipe current = be_getCurrentRecipe();
+        AnvilRecipe current = bcl_getCurrentRecipe();
         int i = recipes.indexOf(current) - 1;
         if (i <= 0) {
             i = recipes.size() - 1;
         }
-        be_updateCurrentRecipe(recipes.get(i));
+        bcl_updateCurrentRecipe(recipes.get(i));
     }
 }

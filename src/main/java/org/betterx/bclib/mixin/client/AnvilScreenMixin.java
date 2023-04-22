@@ -74,8 +74,8 @@ public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
     @Inject(method = "slotChanged", at = @At("HEAD"), cancellable = true)
     public void be_onSlotUpdate(AbstractContainerMenu handler, int slotId, ItemStack stack, CallbackInfo info) {
         AnvilScreenHandlerExtended anvilHandler = (AnvilScreenHandlerExtended) handler;
-        if (anvilHandler.be_getCurrentRecipe() != null) {
-            if (anvilHandler.be_getRecipes().size() > 1) {
+        if (anvilHandler.bcl_getCurrentRecipe() != null) {
+            if (anvilHandler.bcl_getRecipes().size() > 1) {
                 be_buttons.forEach(button -> button.visible = true);
             } else {
                 be_buttons.forEach(button -> button.visible = false);

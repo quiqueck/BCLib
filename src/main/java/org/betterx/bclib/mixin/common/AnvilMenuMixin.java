@@ -5,7 +5,6 @@ import org.betterx.bclib.blocks.LeveledAnvilBlock;
 import org.betterx.bclib.interfaces.AnvilScreenHandlerExtended;
 import org.betterx.bclib.recipes.AnvilRecipe;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.player.Inventory;
@@ -34,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 @Mixin(AnvilMenu.class)
 public abstract class AnvilMenuMixin extends ItemCombinerMenu implements AnvilScreenHandlerExtended {
     private List<AnvilRecipe> be_recipes = Collections.emptyList();
-    private AnvilRecipe be_currentRecipe;
+    private AnvilRecipe bcl_currentRecipe;
     private DataSlot anvilLevel;
 
     @Shadow
@@ -71,14 +70,14 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu implements AnvilSc
     public abstract void createResult();
 
     @Inject(method = "mayPickup", at = @At("HEAD"), cancellable = true)
-    protected void be_canTakeOutput(Player player, boolean present, CallbackInfoReturnable<Boolean> info) {
-        if (be_currentRecipe != null) {
-            info.setReturnValue(be_currentRecipe.checkHammerDurability(inputSlots, player));
+    protected void bcl_canTakeOutput(Player player, boolean present, CallbackInfoReturnable<Boolean> info) {
+        if (bcl_currentRecipe != null) {
+            info.setReturnValue(bcl_currentRecipe.checkHammerDurability(inputSlots, player));
         }
     }
 
     @Inject(method = "method_24922", at = @At(value = "HEAD"), cancellable = true)
-    private static void bclib_onDamageAnvil(Player player, Level level, BlockPos blockPos, CallbackInfo ci) {
+    private static void bcl_onDamageAnvil(Player player, Level level, BlockPos blockPos, CallbackInfo ci) {
         BlockState blockState = level.getBlockState(blockPos);
         if (blockState.getBlock() instanceof BaseAnvilBlock anvil) {
             BlockState damaged = anvil.damageAnvilUse(blockState, player.getRandom());
@@ -98,12 +97,12 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu implements AnvilSc
     }
 
     @Inject(method = "onTake", at = @At("HEAD"), cancellable = true)
-    protected void bclib_onTakeAnvilOutput(Player player, ItemStack stack, CallbackInfo info) {
-        if (be_currentRecipe != null) {
+    protected void bcl_onTakeAnvilOutput(Player player, ItemStack stack, CallbackInfo info) {
+        if (bcl_currentRecipe != null) {
             final int ingredientSlot = AnvilRecipe.getIngredientSlot(inputSlots);
 
-            inputSlots.getItem(ingredientSlot).shrink(be_currentRecipe.getInputCount());
-            stack = be_currentRecipe.craft(inputSlots, player);
+            inputSlots.getItem(ingredientSlot).shrink(bcl_currentRecipe.getInputCount());
+            stack = bcl_currentRecipe.craft(inputSlots, player);
             slotsChanged(inputSlots);
             access.execute((level, blockPos) -> {
                 final BlockState anvilState = level.getBlockState(blockPos);
@@ -124,7 +123,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu implements AnvilSc
     }
 
     @Inject(method = "createResult", at = @At("HEAD"), cancellable = true)
-    public void be_updateOutput(CallbackInfo info) {
+    public void bcl_updateOutput(CallbackInfo info) {
         RecipeManager recipeManager = this.player.level.getRecipeManager();
         be_recipes = recipeManager.getRecipesFor(AnvilRecipe.TYPE, inputSlots, player.level);
         if (be_recipes.size() > 0) {
@@ -133,20 +132,20 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu implements AnvilSc
                                    .filter(recipe -> anvilLevel >= recipe.getAnvilLevel())
                                    .collect(Collectors.toList());
             if (be_recipes.size() > 0) {
-                if (be_currentRecipe == null || !be_recipes.contains(be_currentRecipe)) {
-                    be_currentRecipe = be_recipes.get(0);
+                if (bcl_currentRecipe == null || !be_recipes.contains(bcl_currentRecipe)) {
+                    bcl_currentRecipe = be_recipes.get(0);
                 }
-                be_updateResult();
+                bcl_updateResult();
                 info.cancel();
             } else {
-                be_currentRecipe = null;
+                bcl_currentRecipe = null;
             }
         }
     }
 
     @Inject(method = "setItemName", at = @At("HEAD"), cancellable = true)
-    public void be_setNewItemName(String string, CallbackInfo info) {
-        if (be_currentRecipe != null) {
+    public void bcl_setNewItemName(String string, CallbackInfo info) {
+        if (bcl_currentRecipe != null) {
             info.cancel();
         }
     }
@@ -163,25 +162,25 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu implements AnvilSc
         return super.clickMenuButton(player, id);
     }
 
-    private void be_updateResult() {
-        if (be_currentRecipe == null) return;
-        resultSlots.setItem(0, be_currentRecipe.assemble(inputSlots, Minecraft.getInstance().level.registryAccess()));
+    private void bcl_updateResult() {
+        if (bcl_currentRecipe == null) return;
+        resultSlots.setItem(0, bcl_currentRecipe.assemble(inputSlots, this.player.level.registryAccess()));
         broadcastChanges();
     }
 
     @Override
-    public void be_updateCurrentRecipe(AnvilRecipe recipe) {
-        this.be_currentRecipe = recipe;
-        be_updateResult();
+    public void bcl_updateCurrentRecipe(AnvilRecipe recipe) {
+        this.bcl_currentRecipe = recipe;
+        bcl_updateResult();
     }
 
     @Override
-    public AnvilRecipe be_getCurrentRecipe() {
-        return be_currentRecipe;
+    public AnvilRecipe bcl_getCurrentRecipe() {
+        return bcl_currentRecipe;
     }
 
     @Override
-    public List<AnvilRecipe> be_getRecipes() {
+    public List<AnvilRecipe> bcl_getRecipes() {
         return be_recipes;
     }
 }
