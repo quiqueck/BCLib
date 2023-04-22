@@ -26,7 +26,6 @@
     "PoiTypeMixin",
     "PortalShapeMixin",
     "PotionBrewingAccessor",
-    "RecipeManagerAccessor",
     "RecipeManagerMixin",
     "RecipeMixin",
     "RegistryDataLoaderMixin",
