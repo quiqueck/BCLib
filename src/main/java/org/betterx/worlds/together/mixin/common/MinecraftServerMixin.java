@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
  * We need a hook here to alter surface rules after Fabric did add its biomes
- * in {@link net.fabricmc.fabric.mixin.biome.MinecraftServerMixin}
+ * in {@link net.fabricmc.fabric.mixin.biome.modification.MinecraftServerMixin}
  */
 @Mixin(value = MinecraftServer.class, priority = 2000)
 public class MinecraftServerMixin {
