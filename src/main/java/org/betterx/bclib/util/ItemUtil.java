@@ -5,7 +5,6 @@ import org.betterx.bclib.BCLib;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -17,24 +16,9 @@ import net.minecraft.world.level.ItemLike;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ItemUtil {
-
-    public static String toStackString(@NotNull ItemStack stack) {
-        try {
-            if (stack == null) {
-                throw new IllegalStateException("Stack can't be null!");
-            }
-            Item item = stack.getItem();
-            return BuiltInRegistries.ITEM.getKey(item) + ":" + stack.getCount();
-        } catch (Exception ex) {
-            BCLib.LOGGER.error("ItemStack serialization error!", ex);
-        }
-        return "";
-    }
-
     @Nullable
     public static ItemStack fromStackString(String stackString) {
         if (stackString == null || stackString.equals("")) {
@@ -51,9 +35,8 @@ public class ItemUtil {
                 return new ItemStack(item);
             }
             ResourceLocation itemId = new ResourceLocation(parts[0], parts[1]);
-            Item item = BuiltInRegistries.ITEM.getOptional(itemId).orElseThrow(() -> {
-                return new IllegalStateException("Output item " + itemId + " does not exists!");
-            });
+            Item item = BuiltInRegistries.ITEM.getOptional(itemId)
+                                              .orElseThrow(() -> new IllegalStateException("Output item " + itemId + " does not exists!"));
             return new ItemStack(item, Integer.valueOf(parts[2]));
         } catch (Exception ex) {
             BCLib.LOGGER.error("ItemStack deserialization error!", ex);
@@ -68,7 +51,7 @@ public class ItemUtil {
                 CompoundTag nbt = TagParser.parseTag(nbtData);
                 return nbt;
             } catch (CommandSyntaxException ex) {
-                BCLib.LOGGER.warning("Error parse nbt data for output.", ex);
+                BCLib.LOGGER.warning("Error parsing nbt data for output.", ex);
             }
         }
         return null;
@@ -76,7 +59,7 @@ public class ItemUtil {
 
     public static void writeNBT(JsonObject root, CompoundTag nbt) {
         if (nbt != null) {
-            final String nbtData = NbtUtils.prettyPrint(nbt);
+            final String nbtData = nbt.toString();
             root.addProperty("nbt", nbtData);
         }
     }
