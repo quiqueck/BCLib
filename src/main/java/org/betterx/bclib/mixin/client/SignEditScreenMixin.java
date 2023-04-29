@@ -9,7 +9,6 @@ import net.minecraft.client.gui.screens.inventory.AbstractSignEditScreen;
 import net.minecraft.client.gui.screens.inventory.SignEditScreen;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.SignRenderer;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -34,14 +33,6 @@ public abstract class SignEditScreenMixin extends AbstractSignEditScreen {
 
     public SignEditScreenMixin(SignBlockEntity signBlockEntity, boolean bl) {
         super(signBlockEntity, bl);
-    }
-
-    public SignEditScreenMixin(
-            SignBlockEntity signBlockEntity,
-            boolean bl,
-            Component component
-    ) {
-        super(signBlockEntity, bl, component);
     }
 
 
