@@ -12,6 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.ItemLike;
@@ -26,6 +27,10 @@ public abstract class AbstractSingleInputRecipeBuilder<T extends AbstractSingleI
 
 
     protected AbstractSingleInputRecipeBuilder(ResourceLocation id, ItemLike output) {
+        this(id, new ItemStack(output, 1));
+    }
+
+    protected AbstractSingleInputRecipeBuilder(ResourceLocation id, ItemStack output) {
         super(id, output);
         this.advancement = Advancement.Builder.advancement();
     }
@@ -56,7 +61,7 @@ public abstract class AbstractSingleInputRecipeBuilder<T extends AbstractSingleI
     protected abstract RecipeSerializer<R> getSerializer();
 
     protected void serializeRecipeData(JsonObject root) {
-        root.add("input", primaryInput.toJson());
+        root.add("input", ItemUtil.toJsonIngredientWithNBT(primaryInput));
 
         if (group != null && !group.isEmpty()) {
             root.addProperty("group", group);

@@ -11,8 +11,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import org.jetbrains.annotations.NotNull;
@@ -59,16 +61,40 @@ public class ItemUtil {
         return null;
     }
 
-    public static ItemStack fromJsonRecipeWithNBT(JsonObject recipe) {
-        ItemStack output = ItemUtil.fromJsonRecipe(recipe);
-        if (output != null && recipe.has("nbt")) {
+    public static CompoundTag readNBT(JsonObject recipe) {
+        if (recipe.has("nbt")) {
             try {
                 String nbtData = GsonHelper.getAsString(recipe, "nbt");
                 CompoundTag nbt = TagParser.parseTag(nbtData);
-                output.setTag(nbt);
+                return nbt;
             } catch (CommandSyntaxException ex) {
                 BCLib.LOGGER.warning("Error parse nbt data for output.", ex);
             }
+        }
+        return null;
+    }
+
+    public static void writeNBT(JsonObject root, CompoundTag nbt) {
+        if (nbt != null) {
+            final String nbtData = NbtUtils.prettyPrint(nbt);
+            root.addProperty("nbt", nbtData);
+        }
+    }
+
+    public static Ingredient fromJsonIngredientWithNBT(JsonObject ingredient) {
+        Ingredient ing = Ingredient.fromJson(ingredient);
+        CompoundTag nbt = readNBT(ingredient);
+        if (nbt != null && !ing.isEmpty()) {
+            ing.getItems()[0].setTag(nbt);
+        }
+        return ing;
+    }
+
+    public static ItemStack fromJsonRecipeWithNBT(JsonObject recipe) {
+        ItemStack output = ItemUtil.fromJsonRecipe(recipe);
+        CompoundTag nbt = ItemUtil.readNBT(recipe);
+        if (output != null && nbt != null) {
+            output.setTag(nbt);
         }
         return output;
     }
@@ -91,6 +117,15 @@ public class ItemUtil {
         return null;
     }
 
+    public static JsonElement toJsonIngredientWithNBT(Ingredient ing) {
+        JsonElement el = ing.toJson();
+        if (el.isJsonObject() && !ing.isEmpty() && ing.getItems()[0].hasTag()) {
+            JsonObject obj = el.getAsJsonObject();
+            writeNBT(obj, ing.getItems()[0].getTag());
+        }
+        return el;
+    }
+
 
     public static JsonObject toJsonRecipeWithNBT(ItemStack stack) {
         return toJsonRecipeWithNBT(stack.getItem(), stack.getCount(), stack.getTag());
@@ -98,16 +133,7 @@ public class ItemUtil {
 
     public static JsonObject toJsonRecipeWithNBT(ItemLike item, int count, CompoundTag nbt) {
         JsonObject root = toJsonRecipe(item, count);
-        if (nbt != null) {
-            final String nbtData = NbtUtils.prettyPrint(nbt);
-            root.addProperty("nbt", nbtData);
-            //TODO: just for testing
-            try {
-                TagParser.parseTag(nbtData);
-            } catch (CommandSyntaxException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        writeNBT(root, nbt);
         return root;
     }
 

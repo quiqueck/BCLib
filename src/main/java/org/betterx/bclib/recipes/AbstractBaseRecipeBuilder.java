@@ -33,12 +33,15 @@ public abstract class AbstractBaseRecipeBuilder<T extends AbstractBaseRecipeBuil
 
     protected boolean alright;
 
+    protected AbstractBaseRecipeBuilder(ResourceLocation id, ItemStack output) {
+        this.id = id;
+        this.output = output;
+        this.category = RecipeCategory.MISC;
+        this.alright = RecipeHelper.exists(output.getItem());
+    }
 
     protected AbstractBaseRecipeBuilder(ResourceLocation id, ItemLike output) {
-        this.id = id;
-        this.output = new ItemStack(output, 1);
-        this.category = RecipeCategory.MISC;
-        this.alright = RecipeHelper.exists(output);
+        this(id, new ItemStack(output, 1));
     }
 
     public T setCategory(RecipeCategory category) {
