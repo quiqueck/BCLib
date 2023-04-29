@@ -247,7 +247,7 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
         return "AnvilRecipe [" + id + "]";
     }
 
-    public static class Builder extends AbstractDoubleInputRecipeBuilder<Builder, AnvilRecipe> {
+    public static class Builder extends AbstractSingleInputRecipeBuilder<Builder, AnvilRecipe> {
         private int inputCount;
         private int toolLevel;
         private int anvilLevel;

@@ -67,7 +67,7 @@ public abstract class AbstractSingleInputRecipeBuilder<T extends AbstractSingleI
             root.addProperty("group", group);
         }
 
-        root.add("result", ItemUtil.toJsonRecipe(output));
+        root.add("result", ItemUtil.toJsonRecipeWithNBT(output));
     }
 
     protected void setupAdvancementForResult() {
