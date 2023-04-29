@@ -226,7 +226,7 @@ public class BCLBiomeRegistry {
                 BCLib.LOGGER.info("Did not manage biome " + biome);
             }
 
-            System.out.println("Loaded " + biome);
+            //System.out.println("Loaded " + biome);
         }
     }
 
