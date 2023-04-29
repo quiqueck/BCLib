@@ -48,8 +48,9 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
     );
     public final static ResourceLocation ID = BCLib.makeID(GROUP);
 
-    public static void register() {
 
+    public static void register() {
+        //we call this to make sure that TYPE is initialized
     }
 
     private final ResourceLocation id;

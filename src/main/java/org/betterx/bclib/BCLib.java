@@ -16,6 +16,7 @@ import org.betterx.bclib.api.v3.tag.BCLBlockTags;
 import org.betterx.bclib.commands.CommandRegistry;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.networking.VersionChecker;
+import org.betterx.bclib.recipes.AlloyingRecipe;
 import org.betterx.bclib.recipes.AnvilRecipe;
 import org.betterx.bclib.recipes.CraftingRecipes;
 import org.betterx.bclib.registry.BaseBlockEntities;
@@ -63,6 +64,7 @@ public class BCLib implements ModInitializer {
         WorldConfig.registerModCache(MOD_ID);
         DataExchangeAPI.registerMod(MOD_ID);
         AnvilRecipe.register();
+        AlloyingRecipe.register();
         Conditions.registerAll();
         CommandRegistry.register();
         BCLBlockTags.ensureStaticallyLoaded();

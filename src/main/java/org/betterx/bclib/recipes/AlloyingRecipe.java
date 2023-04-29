@@ -250,4 +250,8 @@ public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCateg
             packetBuffer.writeVarInt(recipe.smeltTime);
         }
     }
+
+    public static void register() {
+        //we call this to make sure that TYPE is initialized
+    }
 }
