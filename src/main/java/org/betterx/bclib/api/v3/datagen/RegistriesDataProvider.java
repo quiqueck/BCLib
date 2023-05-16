@@ -23,8 +23,6 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public abstract class RegistriesDataProvider implements DataProvider {
-
-
     protected final RegistrySupplier registries;
     protected final PackOutput output;
     protected final Logger LOGGER;
