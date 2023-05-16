@@ -1,0 +1,10 @@
+{
+  "type": "bclib:biome",
+  "biome": "nullscape:void_barrens",
+  "edgeSize": 0,
+  "fogDensity": 1.0,
+  "genChance": 1.0,
+  "intended_for": "END_VOID",
+  "terrainHeight": 0.1,
+  "vertical": false
+}
