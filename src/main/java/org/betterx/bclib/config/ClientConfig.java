@@ -25,8 +25,8 @@ public class ClientConfig extends NamedPathConfig {
 
     @ConfigUI(leftPadding = 8)
     public static final ConfigToken<Boolean> PREFER_MODRINTH_FOR_UPDATES = ConfigToken.Boolean(
-            true,
-            "preferModrinthForUpdates",
+            false,
+            "useModrinthForUpdates",
             "ui"
     );
 
@@ -46,8 +46,8 @@ public class ClientConfig extends NamedPathConfig {
 
     @ConfigUI(hide = true)
     public static final ConfigToken<Boolean> NO_DONOR = ConfigToken.Boolean(
-            false,
-            "iAmNotTheDonorType",
+            true,
+            "notTheDonorType",
             "ui"
     );
 
@@ -114,7 +114,7 @@ public class ClientConfig extends NamedPathConfig {
             "rendering",
             (config) -> config.get(CUSTOM_FOG_RENDERING)
     );
-    
+
     @ConfigUI(topPadding = 12)
     public static final ConfigToken<Boolean> SURVIES_ON_HINT = ConfigToken.Boolean(
             true,
