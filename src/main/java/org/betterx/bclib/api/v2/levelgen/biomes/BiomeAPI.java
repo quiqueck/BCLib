@@ -537,9 +537,10 @@ public class BiomeAPI {
     }
 
     public static Holder<Biome> getFromRegistry(ResourceLocation biomeID) {
-        if (InternalBiomeAPI.biomeRegistry != null)
-            return InternalBiomeAPI.biomeRegistry.getHolder(ResourceKey.create(Registries.BIOME, biomeID))
-                                                 .orElseThrow();
+        if (InternalBiomeAPI.biomeRegistry != null) {
+            var holder = InternalBiomeAPI.biomeRegistry.getHolder(ResourceKey.create(Registries.BIOME, biomeID));
+            if (holder.isPresent()) return holder.get();
+        }
 
         if (WorldBootstrap.getLastRegistryAccess() != null) {
             var reg = WorldBootstrap.getLastRegistryAccess().registryOrThrow(Registries.BIOME);
