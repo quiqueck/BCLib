@@ -41,9 +41,12 @@ public class WorldBootstrap {
         return LAST_REGISTRY_ACCESS;
     }
 
+    private static byte WARN_COUNT_GLOBAL_REGISTRY = 0;
+
     public static RegistryAccess getLastRegistryAccessOrElseBuiltin() {
-        if (LAST_REGISTRY_ACCESS == null) {
+        if (WARN_COUNT_GLOBAL_REGISTRY < 10 && LAST_REGISTRY_ACCESS == null && Configs.MAIN_CONFIG.verboseLogging()) {
             WorldsTogether.LOGGER.error("Tried to read from global registry!");
+            WARN_COUNT_GLOBAL_REGISTRY++;
         }
         return LAST_REGISTRY_ACCESS;
     }
