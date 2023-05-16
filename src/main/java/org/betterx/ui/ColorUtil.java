@@ -1,5 +1,6 @@
 package org.betterx.ui;
 
+import de.ambertation.wunderlib.ui.ColorHelper;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.util.ColorExtractor;
 import org.betterx.bclib.util.MHelper;
@@ -17,7 +18,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import com.google.common.collect.Maps;
-import org.wunder.lib.ui.ColorHelper;
 
 import java.io.IOException;
 import java.util.ArrayList;

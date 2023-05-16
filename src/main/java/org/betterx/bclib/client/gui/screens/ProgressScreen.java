@@ -1,5 +1,10 @@
 package org.betterx.bclib.client.gui.screens;
 
+import de.ambertation.wunderlib.ui.ColorHelper;
+import de.ambertation.wunderlib.ui.layout.components.*;
+import de.ambertation.wunderlib.ui.layout.values.Rectangle;
+import de.ambertation.wunderlib.ui.layout.values.Value;
+import de.ambertation.wunderlib.ui.vanilla.LayoutScreen;
 import org.betterx.bclib.BCLib;
 
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -11,12 +16,6 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ProgressListener;
-
-import org.wunder.lib.ui.ColorHelper;
-import org.wunder.lib.ui.layout.components.*;
-import org.wunder.lib.ui.layout.values.Rectangle;
-import org.wunder.lib.ui.layout.values.Value;
-import org.wunder.lib.ui.vanilla.LayoutScreen;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import org.jetbrains.annotations.Nullable;
@@ -207,7 +206,7 @@ public class ProgressScreen extends LayoutScreen implements ProgressListener, At
     }
 
     @Override
-    protected LayoutComponent<?, ?> addTitle(LayoutComponent<?, ?> content) {
+    protected LayoutComponent<?, ?> createScreen(LayoutComponent<?, ?> content) {
         return content;
     }
 
@@ -215,7 +214,7 @@ public class ProgressScreen extends LayoutScreen implements ProgressListener, At
     protected LayoutComponent<?, ?> initContent() {
         VerticalStack grid = new VerticalStack(fill(), fill()).setDebugName("grid");
         grid.addFiller();
-        grid.add(buildTitle());
+        grid.add(createTitle());
         grid.addSpacer(4);
 
         HorizontalStack contentRow = grid.addRow(fit(), fit())

@@ -1,5 +1,9 @@
 package org.betterx.bclib.client.gui.screens;
 
+import de.ambertation.wunderlib.ui.layout.components.Checkbox;
+import de.ambertation.wunderlib.ui.layout.components.HorizontalStack;
+import de.ambertation.wunderlib.ui.layout.components.LayoutComponent;
+import de.ambertation.wunderlib.ui.layout.components.VerticalStack;
 import org.betterx.bclib.api.v2.dataexchange.handler.autosync.HelloClient;
 import org.betterx.worlds.together.util.ModUtil;
 
@@ -9,11 +13,6 @@ import net.minecraft.network.chat.Component;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
-import org.wunder.lib.ui.layout.components.Checkbox;
-import org.wunder.lib.ui.layout.components.HorizontalStack;
-import org.wunder.lib.ui.layout.components.LayoutComponent;
-import org.wunder.lib.ui.layout.components.VerticalStack;
 
 @Environment(EnvType.CLIENT)
 public class SyncFilesScreen extends BCLibLayoutScreen {

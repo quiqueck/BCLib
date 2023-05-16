@@ -1,5 +1,11 @@
 package org.betterx.bclib.client.gui.screens;
 
+import de.ambertation.wunderlib.ui.ColorHelper;
+import de.ambertation.wunderlib.ui.layout.components.HorizontalStack;
+import de.ambertation.wunderlib.ui.layout.components.LayoutComponent;
+import de.ambertation.wunderlib.ui.layout.components.VerticalStack;
+import de.ambertation.wunderlib.ui.layout.values.Size;
+import de.ambertation.wunderlib.ui.layout.values.Value;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.networking.VersionChecker;
@@ -17,13 +23,6 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.CustomValue;
-
-import org.wunder.lib.ui.ColorHelper;
-import org.wunder.lib.ui.layout.components.HorizontalStack;
-import org.wunder.lib.ui.layout.components.LayoutComponent;
-import org.wunder.lib.ui.layout.components.VerticalStack;
-import org.wunder.lib.ui.layout.values.Size;
-import org.wunder.lib.ui.layout.values.Value;
 
 @Environment(EnvType.CLIENT)
 public class UpdatesScreen extends BCLibLayoutScreen {

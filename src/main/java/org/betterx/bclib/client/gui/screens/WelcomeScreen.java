@@ -1,5 +1,8 @@
 package org.betterx.bclib.client.gui.screens;
 
+import de.ambertation.wunderlib.ui.ColorHelper;
+import de.ambertation.wunderlib.ui.layout.components.*;
+import de.ambertation.wunderlib.ui.layout.values.Size;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.networking.VersionChecker;
@@ -14,10 +17,6 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
-
-import org.wunder.lib.ui.ColorHelper;
-import org.wunder.lib.ui.layout.components.*;
-import org.wunder.lib.ui.layout.values.Size;
 
 public class WelcomeScreen extends BCLibLayoutScreen {
     static final ResourceLocation BETTERX_LOCATION = new ResourceLocation(BCLib.MOD_ID, "betterx.png");
@@ -169,7 +168,7 @@ public class WelcomeScreen extends BCLibLayoutScreen {
     }
 
     @Override
-    protected LayoutComponent<?, ?> addTitle(LayoutComponent<?, ?> content) {
+    protected LayoutComponent<?, ?> createScreen(LayoutComponent<?, ?> content) {
         return content;
     }
 

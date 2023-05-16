@@ -24,6 +24,8 @@ repositories {
     maven { url 'https://maven.terraformersmc.com' }
 }
 
+def local_wunderlib = findProject(':WunderLib') != null
+
 loom {
     accessWidenerPath = file("src/main/resources/bclib.accesswidener")
     runs {
@@ -49,11 +51,6 @@ sourceSets {
                     'src/main/generated'
             ]
         }
-        java {
-            srcDirs += [
-                    'WunderLib/src/main/java'
-            ]
-        }
     }
 }
 
@@ -66,6 +63,15 @@ dependencies {
 
     modCompileOnly "dev.emi:emi:${emi_version}"
     //modImplementation "dev.emi:emi:${emi_version}"
+
+    println "Using local WunderLib: ${local_wunderlib}"
+    if (local_wunderlib) {
+        implementation project(path: ":WunderLib", configuration: 'dev')
+        include project(path: ":WunderLib", configuration: 'dev')
+    } else {
+        modApi "com.github.quiqueck:WunderLib:${project.wunderlib_version}"
+        include "com.github.quiqueck:WunderLib:${project.wunderlib_version}"
+    }
 }
 
 processResources {

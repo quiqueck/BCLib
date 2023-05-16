@@ -1,5 +1,7 @@
 package org.betterx.bclib.client.gui.modmenu;
 
+import de.ambertation.wunderlib.ui.layout.components.*;
+import de.ambertation.wunderlib.ui.vanilla.LayoutScreenWithIcon;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.config.ConfigKeeper;
 import org.betterx.bclib.config.Configs;
@@ -11,9 +13,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-
-import org.wunder.lib.ui.layout.components.*;
-import org.wunder.lib.ui.vanilla.LayoutScreenWithIcon;
 
 import java.util.HashMap;
 import java.util.Map;

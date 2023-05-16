@@ -1,10 +1,10 @@
 package org.betterx.bclib.client.gui.screens;
 
-import org.wunder.lib.ui.layout.components.*;
-import org.wunder.lib.ui.layout.components.render.RenderHelper;
-import org.wunder.lib.ui.layout.values.Rectangle;
-import org.wunder.lib.ui.layout.values.Size;
-import org.wunder.lib.ui.vanilla.LayoutScreen;
+import de.ambertation.wunderlib.ui.layout.components.*;
+import de.ambertation.wunderlib.ui.layout.components.render.RenderHelper;
+import de.ambertation.wunderlib.ui.layout.values.Rectangle;
+import de.ambertation.wunderlib.ui.layout.values.Size;
+import de.ambertation.wunderlib.ui.vanilla.LayoutScreen;
 import org.betterx.bclib.api.v2.generator.BCLibEndBiomeSource;
 import org.betterx.bclib.api.v2.generator.BCLibNetherBiomeSource;
 import org.betterx.bclib.api.v2.generator.config.BCLEndBiomeSourceConfig;
@@ -332,7 +332,7 @@ public class WorldSetupScreen extends LayoutScreen {
     }
 
     @Override
-    protected LayoutComponent<?, ?> addTitle(LayoutComponent<?, ?> content) {
+    protected LayoutComponent<?, ?> createScreen(LayoutComponent<?, ?> content) {
         VerticalStack rows = new VerticalStack(fill(), fill()).setDebugName("title stack");
 
         if (topPadding > 0) rows.addSpacer(topPadding);
@@ -386,7 +386,7 @@ public class WorldSetupScreen extends LayoutScreen {
         title.addSpacer(4);
         VerticalStack logos = title.addColumn(fit(), fit());
         logos.addImage(fixed(178 / 3), fixed(40 / 3), WelcomeScreen.BETTERX_LOCATION, Size.of(178, 40));
-        logos.add(super.buildTitle());
+        logos.add(super.createTitle());
         logos.addSpacer(2);
 
         main.addFiller();

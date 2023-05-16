@@ -1,5 +1,10 @@
 package org.betterx.bclib.client.gui.screens;
 
+import de.ambertation.wunderlib.ui.ColorHelper;
+import de.ambertation.wunderlib.ui.layout.components.HorizontalStack;
+import de.ambertation.wunderlib.ui.layout.components.LayoutComponent;
+import de.ambertation.wunderlib.ui.layout.components.Text;
+import de.ambertation.wunderlib.ui.layout.components.VerticalStack;
 import org.betterx.bclib.api.v2.dataexchange.handler.autosync.HelloClient;
 import org.betterx.bclib.util.Triple;
 import org.betterx.worlds.together.util.ModUtil;
@@ -12,12 +17,6 @@ import net.minecraft.network.chat.Component;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.metadata.ModEnvironment;
-
-import org.wunder.lib.ui.ColorHelper;
-import org.wunder.lib.ui.layout.components.HorizontalStack;
-import org.wunder.lib.ui.layout.components.LayoutComponent;
-import org.wunder.lib.ui.layout.components.Text;
-import org.wunder.lib.ui.layout.components.VerticalStack;
 
 import java.util.*;
 import java.util.stream.Collectors;

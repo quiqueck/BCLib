@@ -1,11 +1,12 @@
 package org.betterx.bclib.util;
 
+import de.ambertation.wunderlib.math.Float3;
+
 import net.minecraft.core.Vec3i;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.PositionalRandomFactory;
 
 import org.joml.Vector3f;
-import org.wunder.lib.math.Float3;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
