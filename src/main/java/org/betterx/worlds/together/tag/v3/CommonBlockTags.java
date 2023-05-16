@@ -35,6 +35,7 @@ public class CommonBlockTags {
     public static final TagKey<Block> IS_OBSIDIAN = TagManager.BLOCKS.makeCommonTag("is_obsidian");
     public static final TagKey<Block> TERRAIN = TagManager.BLOCKS.makeCommonTag("terrain");
     public static final TagKey<Block> NETHER_TERRAIN = TagManager.BLOCKS.makeCommonTag("nether_terrain");
+    public static final TagKey<Block> BUDDING_BLOCKS = TagManager.BLOCKS.makeCommonTag("budding_blocks");
 
     static void prepareTags() {
         TagManager.BLOCKS.add(SCULK_LIKE, Blocks.SCULK);
