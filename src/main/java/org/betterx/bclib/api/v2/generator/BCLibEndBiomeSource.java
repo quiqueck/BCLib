@@ -96,7 +96,7 @@ public class BCLibEndBiomeSource extends BCLBiomeSource implements BiomeSourceWi
 
     @Override
     protected BiomeAPI.BiomeType defaultBiomeType() {
-        return BiomeAPI.BiomeType.END;
+        return BiomeAPI.BiomeType.END_LAND;
     }
 
     @Override
