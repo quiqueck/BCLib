@@ -11,6 +11,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.progress.ChunkProgressListener;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.RandomSequences;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
@@ -49,7 +50,7 @@ public abstract class ServerLevelMixin extends Level {
 
     @Inject(method = "<init>*", at = @At("TAIL"))
     private void bclib_onServerWorldInit(
-            MinecraftServer server,
+            MinecraftServer minecraftServer,
             Executor executor,
             LevelStorageAccess levelStorageAccess,
             ServerLevelData serverLevelData,
@@ -60,12 +61,13 @@ public abstract class ServerLevelMixin extends Level {
             long l,
             List list,
             boolean bl2,
+            RandomSequences randomSequences,
             CallbackInfo ci
     ) {
         ServerLevel level = ServerLevel.class.cast(this);
         LifeCycleAPI._runLevelLoad(
                 level,
-                server,
+                minecraftServer,
                 executor,
                 levelStorageAccess,
                 serverLevelData,
