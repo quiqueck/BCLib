@@ -1,5 +1,6 @@
 package org.betterx.bclib.complexmaterials;
 
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
@@ -61,5 +62,20 @@ public class BehaviourBuilders {
         return BlockBehaviour.Properties.of()
                                         .mapColor(color)
                                         .instrument(NoteBlockInstrument.BASEDRUM);
+    }
+
+    public static BlockBehaviour.Properties createSign(MapColor color) {
+        return BlockBehaviour.Properties.of()
+                                        .mapColor(color)
+                                        .forceSolidOn()
+                                        .instrument(NoteBlockInstrument.BASS)
+                                        .noCollission()
+                                        .strength(1.0f)
+                                        .ignitedByLava();
+    }
+
+    public static BlockBehaviour.Properties createWallSign(MapColor color, Block dropBlock) {
+        return createSign(color).dropsLike(dropBlock);
+
     }
 }
