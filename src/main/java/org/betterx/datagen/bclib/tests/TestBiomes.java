@@ -5,7 +5,6 @@ import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeBuilder;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeContainer;
 import org.betterx.bclib.api.v3.datagen.TagDataProvider;
-import org.betterx.datagen.bclib.BCLibDatagen;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.tag.v3.TagManager;
 
@@ -107,7 +106,7 @@ public class TestBiomes extends TagDataProvider<Biome> {
     }
 
     public static void bootstrap(BootstapContext<Biome> bootstrapContext) {
-        if (BCLibDatagen.ADD_TESTS && BCLib.isDevEnvironment()) {
+        if (BCLib.ADD_TEST_DATA && BCLib.isDevEnvironment()) {
             BCLib.LOGGER.info("Bootstrap Biomes");
 
             THE_YELLOW = THE_YELLOW.register(bootstrapContext);

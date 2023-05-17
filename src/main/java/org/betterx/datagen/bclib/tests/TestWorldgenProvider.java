@@ -1,6 +1,6 @@
 package org.betterx.datagen.bclib.tests;
 
-import org.betterx.datagen.bclib.BCLibDatagen;
+import org.betterx.bclib.BCLib;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -20,7 +20,7 @@ public class TestWorldgenProvider extends FabricDynamicRegistryProvider {
 
     @Override
     protected void configure(HolderLookup.Provider registries, Entries entries) {
-        if (BCLibDatagen.ADD_TESTS) {
+        if (BCLib.ADD_TEST_DATA) {
             entries.addAll(registries.lookupOrThrow(Registries.CONFIGURED_FEATURE));
             entries.addAll(registries.lookupOrThrow(Registries.PLACED_FEATURE));
             entries.addAll(registries.lookupOrThrow(Registries.BIOME));
