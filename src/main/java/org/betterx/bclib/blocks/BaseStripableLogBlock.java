@@ -14,14 +14,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 
 
 public class BaseStripableLogBlock extends BaseRotatedPillarBlock {
     private final Block striped;
 
-    public BaseStripableLogBlock(MaterialColor color, Block striped) {
+    public BaseStripableLogBlock(MapColor color, Block striped) {
         super(Properties.copy(striped).color(color));
         this.striped = striped;
     }

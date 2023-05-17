@@ -7,9 +7,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootContext;
-
 
 import java.util.Collections;
 import java.util.List;
@@ -61,7 +60,7 @@ public class BaseBlock extends Block implements BlockModelProvider {
      * It is called from Block-Contructors, to allow the augmentation of the blocks
      * preset properties.
      * <p>
-     * For example in {@link BaseLeavesBlock#BaseLeavesBlock(Block, MaterialColor, Consumer)}
+     * For example in {@link BaseLeavesBlock#BaseLeavesBlock(Block, MapColor, Consumer)}
      *
      * @param customizeProperties A {@link Consumer} to call with the preset properties
      * @param settings            The properties as created by the Block

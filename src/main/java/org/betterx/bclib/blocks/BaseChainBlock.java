@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChainBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootContext;
 
 import net.fabricmc.api.EnvType;
@@ -29,7 +29,7 @@ import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
 public class BaseChainBlock extends ChainBlock implements BlockModelProvider, RenderLayerProvider {
-    public BaseChainBlock(MaterialColor color) {
+    public BaseChainBlock(MapColor color) {
         this(Properties.copy(Blocks.CHAIN).color(color));
     }
 

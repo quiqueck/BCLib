@@ -24,8 +24,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DropExperienceBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
@@ -46,7 +46,7 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
     public BaseOreBlock(Supplier<Item> drop, int minCount, int maxCount, int experience, int miningLevel) {
         this(
                 Properties
-                        .of(Material.STONE, MaterialColor.SAND)
+                        .of(Material.STONE, MapColor.SAND)
                         .requiresCorrectToolForDrops()
                         .destroyTime(3F)
                         .explosionResistance(9F)
@@ -137,7 +137,7 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
     @Override
     public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
         blockTags.add(CommonBlockTags.ORES);
-        
+
         if (this.miningLevel == Tiers.STONE.getLevel()) {
             blockTags.add(BlockTags.NEEDS_STONE_TOOL);
         } else if (this.miningLevel == Tiers.IRON.getLevel()) {

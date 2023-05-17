@@ -13,13 +13,13 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
 
 import java.util.List;
 
 public class SimpleLeavesBlock extends BaseBlockNotFull implements RenderLayerProvider, TagProvider, AddMineableShears, AddMineableHoe {
-    public SimpleLeavesBlock(MaterialColor color) {
+    public SimpleLeavesBlock(MapColor color) {
         this(
                 Properties
                         .of(Material.LEAVES)
@@ -33,11 +33,11 @@ public class SimpleLeavesBlock extends BaseBlockNotFull implements RenderLayerPr
         );
     }
 
-    public SimpleLeavesBlock(MaterialColor color, int light) {
+    public SimpleLeavesBlock(MapColor color, int light) {
         this(
                 Properties
                         .of(Material.LEAVES)
-                        .lightLevel(ignored->light)
+                        .lightLevel(ignored -> light)
                         .color(color)
                         .strength(0.2F)
                         .sound(SoundType.GRASS)
