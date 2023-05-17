@@ -2,7 +2,7 @@ package org.betterx.bclib.mixin.client;
 
 import org.betterx.bclib.interfaces.AnvilScreenHandlerExtended;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -31,6 +31,9 @@ public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
     @Shadow
     private EditBox name;
 
+    @Shadow
+    @Final
+    private static ResourceLocation ANVIL_LOCATION;
     private final List<AbstractWidget> be_buttons = Lists.newArrayList();
 
     public AnvilScreenMixin(AnvilMenu handler, Inventory playerInventory, Component title, ResourceLocation texture) {
@@ -38,9 +41,9 @@ public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
     }
 
     @Override
-    public void renderErrorIcon(PoseStack poseStack, int i, int j) {
+    public void renderErrorIcon(GuiGraphics guiGraphics, int i, int j) {
         if (this.bcl_hasRecipeError()) {
-            blit(poseStack, i + 65, j + 46, this.imageWidth, 0, 28, 21);
+            guiGraphics.blit(ANVIL_LOCATION, i + 65, j + 46, this.imageWidth, 0, 28, 21);
         }
     }
 
@@ -65,9 +68,15 @@ public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
     }
 
     @Inject(method = "renderFg", at = @At("TAIL"))
-    protected void be_renderForeground(PoseStack matrices, int mouseX, int mouseY, float delta, CallbackInfo info) {
+    protected void be_renderForeground(
+            GuiGraphics guiGraphics,
+            int mouseX,
+            int mouseY,
+            float delta,
+            CallbackInfo info
+    ) {
         be_buttons.forEach(button -> {
-            button.render(matrices, mouseX, mouseY, delta);
+            button.render(guiGraphics, mouseX, mouseY, delta);
         });
     }
 

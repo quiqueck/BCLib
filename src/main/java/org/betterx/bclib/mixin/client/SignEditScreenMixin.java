@@ -3,8 +3,8 @@ package org.betterx.bclib.mixin.client;
 import org.betterx.bclib.blocks.BaseSignBlock;
 import org.betterx.bclib.client.render.BaseSignBlockEntityRenderer;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractSignEditScreen;
 import net.minecraft.client.gui.screens.inventory.SignEditScreen;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -37,12 +37,12 @@ public abstract class SignEditScreenMixin extends AbstractSignEditScreen {
 
 
     @Inject(method = "offsetSign", at = @At("TAIL"))
-    private void bclib_offsetSign(PoseStack poseStack, BlockState blockState, CallbackInfo ci) {
+    private void bclib_offsetSign(GuiGraphics guiGraphics, BlockState blockState, CallbackInfo ci) {
         bclib_isSign = blockState.getBlock() instanceof BaseSignBlock;
         if (bclib_isSign) {
             bclib_renderStick = blockState.getValue(BaseSignBlock.FLOOR);
             if (bclib_renderStick) {
-                poseStack.translate(0.0, 0.3125, 0.0);
+                guiGraphics.pose().translate(0.0, 0.3125, 0.0);
             }
         }
     }

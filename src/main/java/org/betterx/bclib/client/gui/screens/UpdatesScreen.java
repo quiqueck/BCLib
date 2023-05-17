@@ -10,8 +10,7 @@ import org.betterx.bclib.BCLib;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.networking.VersionChecker;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -164,7 +163,7 @@ public class UpdatesScreen extends BCLibLayoutScreen {
     }
 
     @Override
-    protected void renderBackground(PoseStack poseStack, int i, int j, float f) {
-        GuiComponent.fill(poseStack, 0, 0, width, height, 0xBD343444);
+    protected void renderBackground(GuiGraphics guiGraphics, int i, int j, float f) {
+        guiGraphics.fill(0, 0, width, height, 0xBD343444);
     }
 }

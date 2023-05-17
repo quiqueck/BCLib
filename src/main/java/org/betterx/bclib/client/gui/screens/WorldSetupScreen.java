@@ -13,8 +13,7 @@ import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
 import org.betterx.bclib.registry.PresetsRegistry;
 import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.client.gui.screens.worldselection.WorldCreationContext;
 import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
@@ -409,8 +408,8 @@ public class WorldSetupScreen extends LayoutScreen {
     }
 
     @Override
-    protected void renderBackground(PoseStack poseStack, int i, int j, float f) {
-        GuiComponent.fill(poseStack, 0, 0, width, height, 0xBD343444);
+    protected void renderBackground(GuiGraphics guiGraphics, int i, int j, float f) {
+        guiGraphics.fill(0, 0, width, height, 0xBD343444);
     }
 
     record IconState(int left, int top, int size) {
@@ -444,8 +443,8 @@ public class WorldSetupScreen extends LayoutScreen {
     double targetT = 1;
 
     @Override
-    public void render(PoseStack poseStack, int i, int j, float f) {
-        super.render(poseStack, i, j, f);
+    public void render(GuiGraphics guiGraphics, int i, int j, float f) {
+        super.render(guiGraphics, i, j, f);
         final double SPEED = 0.05;
         if (targetT < iconT && iconT > 0) iconT = Math.max(0, iconT - f * SPEED);
         else if (targetT > iconT && iconT < 1) iconT = Math.min(1, iconT + f * SPEED);
@@ -474,22 +473,22 @@ public class WorldSetupScreen extends LayoutScreen {
                         32
                 );
             }
-            poseStack.pushPose();
-            poseStack.translate(
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(
                     IconState.lerp(t, endOn.left, endOff.left),
                     IconState.lerp(t, endOn.top, endOff.top),
                     0
             );
             int size = IconState.lerp(t, endOn.size, endOff.size);
             RenderHelper.renderImage(
-                    poseStack, 0, 0,
+                    guiGraphics, 0, 0,
                     size,
                     size,
                     WelcomeScreen.ICON_BETTEREND,
                     Size.of(32), new Rectangle(0, 0, 32, 32),
                     (float) 1
             );
-            poseStack.popPose();
+            guiGraphics.pose().popPose();
         }
 
         if (netherButton != null) {
@@ -501,22 +500,22 @@ public class WorldSetupScreen extends LayoutScreen {
                 );
                 netherOn = endOn;
             }
-            poseStack.pushPose();
-            poseStack.translate(
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(
                     IconState.lerp(t, netherOff.left, netherOn.left),
                     IconState.lerp(t, netherOff.top, netherOn.top),
                     0
             );
             int size = IconState.lerp(t, netherOff.size, netherOn.size);
             RenderHelper.renderImage(
-                    poseStack, 0, 0,
+                    guiGraphics, 0, 0,
                     size,
                     size,
                     WelcomeScreen.ICON_BETTERNETHER,
                     Size.of(32), new Rectangle(0, 0, 32, 32),
                     (float) 1
             );
-            poseStack.popPose();
+            guiGraphics.pose().popPose();
         }
     }
 }

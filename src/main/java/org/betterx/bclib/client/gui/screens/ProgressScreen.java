@@ -9,8 +9,7 @@ import org.betterx.bclib.BCLib;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
@@ -43,7 +42,7 @@ class ProgressLogoRender extends CustomRenderComponent<ProgressLogoRender> {
 
     @Override
     protected void customRender(
-            PoseStack poseStack,
+            GuiGraphics guiGraphics,
             int x,
             int y,
             float deltaTicks,
@@ -76,8 +75,7 @@ class ProgressLogoRender extends CustomRenderComponent<ProgressLogoRender> {
 
         if (yBarImage > 0) {
             final int uvTopLogo = (int) (relativeY * LOGO_SIZE);
-            RenderSystem.setShaderTexture(0, BCLibLayoutScreen.BCLIB_LOGO_LOCATION);
-            GuiComponent.blit(poseStack,
+            guiGraphics.blit(BCLibLayoutScreen.BCLIB_LOGO_LOCATION,
                     xOffset,
                     yOffset,
                     width,
@@ -90,7 +88,7 @@ class ProgressLogoRender extends CustomRenderComponent<ProgressLogoRender> {
         if (yBarImage < height) {
             final int uvTopPixelated = (int) (relativeY * PIXELATED_SIZE);
             RenderSystem.setShaderTexture(0, ProgressScreen.BCLIB_LOGO_PIXELATED_LOCATION);
-            GuiComponent.blit(poseStack,
+            guiGraphics.blit(ProgressScreen.BCLIB_LOGO_PIXELATED_LOCATION,
                     xOffset,
                     yOffset + yBarImage,
                     width,
@@ -101,8 +99,7 @@ class ProgressLogoRender extends CustomRenderComponent<ProgressLogoRender> {
         }
 
         if (percentage > 0 && percentage < 1.0) {
-            GuiComponent.fill(
-                    poseStack,
+            guiGraphics.fill(
                     0,
                     yBar,
                     transform.width,

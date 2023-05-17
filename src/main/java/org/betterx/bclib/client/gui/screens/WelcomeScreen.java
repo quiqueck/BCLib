@@ -10,8 +10,7 @@ import org.betterx.bclib.registry.PresetsRegistry;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -173,8 +172,8 @@ public class WelcomeScreen extends BCLibLayoutScreen {
     }
 
     @Override
-    protected void renderBackground(PoseStack poseStack, int i, int j, float f) {
-        GuiComponent.fill(poseStack, 0, 0, width, height, 0xBD343444);
+    protected void renderBackground(GuiGraphics guiGraphics, int i, int j, float f) {
+        guiGraphics.fill(0, 0, width, height, 0xBD343444);
 //        Rectangle BANNER_UV = new Rectangle(0, 0, 427, 100);
 //        Size BANNER_RESOURCE_SIZE = BANNER_UV.size();
 //        Size BANNER_SIZE = BANNER_UV.sizeFromWidth(this.width);
