@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 public class AdvancementManager {
     static class OrderedBuilder extends Advancement.Builder {
         OrderedBuilder() {
-            super(null, null, AdvancementRewards.EMPTY, new LinkedHashMap<>(), null);
+            super(false);
         }
     }
 
