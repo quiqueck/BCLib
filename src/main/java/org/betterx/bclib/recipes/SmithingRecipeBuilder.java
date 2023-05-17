@@ -3,7 +3,7 @@ package org.betterx.bclib.recipes;
 import org.betterx.bclib.BCLib;
 
 import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.data.recipes.LegacyUpgradeRecipeBuilder;
+import net.minecraft.data.recipes.SmithingTransformRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 
 public class SmithingRecipeBuilder extends AbstractUnlockableRecipeBuilder<SmithingRecipeBuilder> {
     protected Ingredient addon;
+    protected Item template;
 
     protected SmithingRecipeBuilder(
             ResourceLocation id,
@@ -24,6 +25,11 @@ public class SmithingRecipeBuilder extends AbstractUnlockableRecipeBuilder<Smith
 
     static SmithingRecipeBuilder make(ResourceLocation id, ItemLike output) {
         return new SmithingRecipeBuilder(id, output);
+    }
+
+    public SmithingRecipeBuilder setTemplate(Item in) {
+        this.template = in;
+        return this;
     }
 
     /**
@@ -61,19 +67,21 @@ public class SmithingRecipeBuilder extends AbstractUnlockableRecipeBuilder<Smith
             );
             return false;
         }
+
+        if (template == null) {
+            BCLib.LOGGER.warning(
+                    "Smithing Recipes need a template. Recipe {} will be ignored!",
+                    id
+            );
+            return false;
+        }
         return super.checkRecipe();
     }
 
     @Override
     protected void buildRecipe(Consumer<FinishedRecipe> cc) {
-//        final SmithingTransformRecipeBuilder builder = SmithingTransformRecipeBuilder.smithing(
-//                Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
-//                primaryInput,
-//                addon,
-//                category,
-//                output.getItem()
-//        );
-        final LegacyUpgradeRecipeBuilder builder = LegacyUpgradeRecipeBuilder.smithing(
+        final SmithingTransformRecipeBuilder builder = SmithingTransformRecipeBuilder.smithing(
+                Ingredient.of(template),
                 primaryInput,
                 addon,
                 category,
