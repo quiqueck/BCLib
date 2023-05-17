@@ -98,7 +98,7 @@ public abstract class BoatMixin extends Entity implements CustomBoatTypeOverride
     void bcl_checkFallDamage(double d, boolean bl, BlockState blockState, BlockPos blockPos, CallbackInfo ci) {
         BoatTypeOverride type = this.bcl_getCustomType();
         if (type != null) {
-            if (this.level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+            if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
                 for (int i = 0; i < 3; ++i) {
                     this.spawnAtLocation(type.getPlanks());
                 }

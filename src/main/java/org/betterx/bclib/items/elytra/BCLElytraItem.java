@@ -20,7 +20,7 @@ public interface BCLElytraItem extends FabricElytraItem {
     static void vanillaElytraTick(LivingEntity entity, ItemStack chestStack) {
         int nextRoll = entity.getFallFlyingTicks() + 1;
 
-        if (!entity.level.isClientSide && nextRoll % 10 == 0) {
+        if (!entity.level().isClientSide && nextRoll % 10 == 0) {
             if ((nextRoll / 10) % 2 == 0) {
                 chestStack.hurtAndBreak(1, entity, (e) -> BCLElytraUtils.onBreak.accept(e, chestStack));
             }

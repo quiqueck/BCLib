@@ -124,8 +124,8 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu implements AnvilSc
 
     @Inject(method = "createResult", at = @At("HEAD"), cancellable = true)
     public void bcl_updateOutput(CallbackInfo info) {
-        RecipeManager recipeManager = this.player.level.getRecipeManager();
-        be_recipes = recipeManager.getRecipesFor(AnvilRecipe.TYPE, inputSlots, player.level);
+        RecipeManager recipeManager = this.player.level().getRecipeManager();
+        be_recipes = recipeManager.getRecipesFor(AnvilRecipe.TYPE, inputSlots, player.level());
         if (be_recipes.size() > 0) {
             int anvilLevel = this.anvilLevel.get();
             be_recipes = be_recipes.stream()
@@ -164,7 +164,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu implements AnvilSc
 
     private void bcl_updateResult() {
         if (bcl_currentRecipe == null) return;
-        resultSlots.setItem(0, bcl_currentRecipe.assemble(inputSlots, this.player.level.registryAccess()));
+        resultSlots.setItem(0, bcl_currentRecipe.assemble(inputSlots, this.player.level().registryAccess()));
         broadcastChanges();
     }
 

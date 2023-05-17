@@ -39,8 +39,8 @@ public class CustomFogRenderer {
         }
         Entity entity = camera.getEntity();
 
-        if (!isForcedDimension(entity.level) && shouldIgnoreArea(
-                entity.level,
+        if (!isForcedDimension(entity.level()) && shouldIgnoreArea(
+                entity.level(),
                 (int) entity.getX(),
                 (int) entity.getEyeY(),
                 (int) entity.getZ()
@@ -50,14 +50,14 @@ public class CustomFogRenderer {
         }
 
         float fog = getFogDensity(
-                entity.level,
+                entity.level(),
                 entity.getX(),
                 entity.getEyeY(),
                 entity.getZ()
         ) * Configs.CLIENT_CONFIG.fogDensity();
         BackgroundInfo.fogDensity = fog;
 
-        if (thickFog(thickFog, entity.level)) {
+        if (thickFog(thickFog, entity.level())) {
             fogStart = viewDistance * 0.05F / fog;
             fogEnd = Math.min(viewDistance, 192.0F) * 0.5F / fog;
         } else {
