@@ -2,7 +2,6 @@ package org.betterx.datagen.bclib.tests;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v3.levelgen.features.BCLFeature;
-import org.betterx.datagen.bclib.BCLibDatagen;
 
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.world.level.block.Blocks;
@@ -26,7 +25,7 @@ public class TestPlacedFeatures {
             .build();
 
     public static void bootstrap(BootstapContext<PlacedFeature> bootstrapContext) {
-        if (BCLibDatagen.ADD_TESTS && BCLib.isDevEnvironment()) {
+        if (BCLib.ADD_TEST_DATA && BCLib.isDevEnvironment()) {
             BCLib.LOGGER.info("Bootstrap PLACEDFeatures");
             YELLOW_PLACED = YELLOW_PLACED.register(bootstrapContext);
         }

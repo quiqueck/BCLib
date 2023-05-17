@@ -3,7 +3,6 @@ package org.betterx.datagen.bclib.tests;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v3.levelgen.features.BCLConfigureFeature;
 import org.betterx.bclib.api.v3.levelgen.features.BCLFeatureBuilder;
-import org.betterx.datagen.bclib.BCLibDatagen;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
@@ -32,7 +31,7 @@ public class TestConfiguredFeatures {
                                                                          YELLOW_FEATURE.id
                                                                  ));
 
-        if (BCLibDatagen.ADD_TESTS && BCLib.isDevEnvironment()) {
+        if (BCLib.ADD_TEST_DATA && BCLib.isDevEnvironment()) {
             BCLib.LOGGER.info("Bootstrap CONFIGUREDFeatures" + holder);
             //YELLOW_FEATURE = YELLOW_FEATURE.register(bootstrapContext);
             BCLFeatureBuilder.registerUnbound(bootstrapContext);

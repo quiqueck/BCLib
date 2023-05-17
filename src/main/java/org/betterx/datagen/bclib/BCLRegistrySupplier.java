@@ -49,7 +49,7 @@ public class BCLRegistrySupplier extends RegistrySupplier {
         );
         registries.addUnfiltered(SurfaceRuleRegistry.SURFACE_RULES_REGISTRY, AssignedSurfaceRule.CODEC);
 
-        if (BCLibDatagen.ADD_TESTS) {
+        if (BCLib.ADD_TEST_DATA) {
             registries.add(Registries.STRUCTURE, Structure.DIRECT_CODEC, TestStructure::bootstrap);
             registries.add(Registries.STRUCTURE_SET, StructureSet.DIRECT_CODEC, TestStructure::bootstrapSet);
             registries.add(
