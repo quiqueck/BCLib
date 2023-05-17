@@ -28,5 +28,6 @@
     "recipes": [
       "bclib:tag_cauldron"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

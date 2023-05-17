@@ -39,5 +39,6 @@
     "recipes": [
       "bclib:tag_smith_table"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

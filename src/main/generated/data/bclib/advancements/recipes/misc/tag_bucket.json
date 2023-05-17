@@ -28,5 +28,6 @@
     "recipes": [
       "bclib:tag_bucket"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

@@ -41,5 +41,6 @@
     "recipes": [
       "bclib:tag_rail"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

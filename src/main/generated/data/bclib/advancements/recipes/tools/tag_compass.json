@@ -41,5 +41,6 @@
     "recipes": [
       "bclib:tag_compass"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

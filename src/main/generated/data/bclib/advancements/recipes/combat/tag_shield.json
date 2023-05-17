@@ -39,5 +39,6 @@
     "recipes": [
       "bclib:tag_shield"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }
