@@ -21,7 +21,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.WoodType;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
@@ -52,8 +52,8 @@ public class WoodenComplexMaterial extends ComplexMaterial {
 
     public static final String TAG_LOGS = "logs";
 
-    public final MaterialColor planksColor;
-    public final MaterialColor woodColor;
+    public final MapColor planksColor;
+    public final MapColor woodColor;
 
     public final WoodType woodType;
 
@@ -61,8 +61,8 @@ public class WoodenComplexMaterial extends ComplexMaterial {
             String modID,
             String baseName,
             String receipGroupPrefix,
-            MaterialColor woodColor,
-            MaterialColor planksColor
+            MapColor woodColor,
+            MapColor planksColor
     ) {
         super(modID, baseName, receipGroupPrefix);
         this.planksColor = planksColor;
