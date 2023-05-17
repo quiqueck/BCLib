@@ -13,7 +13,6 @@
     "MinecraftMixin",
     "ModelManagerMixin",
     "PresetEditorMixin",
-    "SignEditScreenMixin",
     "boat.BoatRendererMixin"
   ],
   "injectors": {

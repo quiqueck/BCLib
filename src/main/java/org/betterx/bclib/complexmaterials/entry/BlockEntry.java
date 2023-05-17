@@ -48,6 +48,7 @@ public class BlockEntry extends ComplexMaterialEntry {
     public Block init(ComplexMaterial material, BlockBehaviour.Properties blockSettings, BlockRegistry registry) {
         ResourceLocation location = getLocation(material.getModID(), material.getBaseName());
         Block block = initFunction.apply(material, blockSettings);
+        if (block == null) return null;
         if (hasItem) {
             registry.register(location, block);
             if (itemTags != null) {
