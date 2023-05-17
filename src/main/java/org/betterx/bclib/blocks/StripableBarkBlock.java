@@ -13,14 +13,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.phys.BlockHitResult;
 
 
 public class StripableBarkBlock extends BaseBarkBlock {
     private final Block striped;
 
-    public StripableBarkBlock(MapColor color, Block striped) {
+    public StripableBarkBlock(MaterialColor color, Block striped) {
         super(Properties.copy(striped).color(color));
         this.striped = striped;
     }

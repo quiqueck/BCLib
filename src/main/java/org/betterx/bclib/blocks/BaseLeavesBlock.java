@@ -24,7 +24,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
@@ -37,7 +37,7 @@ import java.util.function.Consumer;
 public class BaseLeavesBlock extends LeavesBlock implements BlockModelProvider, RenderLayerProvider, TagProvider, AddMineableShears, AddMineableHoe {
     protected final Block sapling;
 
-    private static BlockBehaviour.Properties makeLeaves(MapColor color) {
+    private static BlockBehaviour.Properties makeLeaves(MaterialColor color) {
         return BlockBehaviour.Properties
                 .copy(Blocks.OAK_LEAVES)
                 .color(color)
@@ -49,7 +49,7 @@ public class BaseLeavesBlock extends LeavesBlock implements BlockModelProvider, 
 
     public BaseLeavesBlock(
             Block sapling,
-            MapColor color,
+            MaterialColor color,
             Consumer<BlockBehaviour.Properties> customizeProperties
     ) {
         super(BaseBlock.acceptAndReturn(customizeProperties, makeLeaves(color)));
@@ -58,7 +58,7 @@ public class BaseLeavesBlock extends LeavesBlock implements BlockModelProvider, 
 
     public BaseLeavesBlock(
             Block sapling,
-            MapColor color,
+            MaterialColor color,
             int light,
             Consumer<BlockBehaviour.Properties> customizeProperties
     ) {
@@ -66,12 +66,12 @@ public class BaseLeavesBlock extends LeavesBlock implements BlockModelProvider, 
         this.sapling = sapling;
     }
 
-    public BaseLeavesBlock(Block sapling, MapColor color) {
+    public BaseLeavesBlock(Block sapling, MaterialColor color) {
         super(makeLeaves(color));
         this.sapling = sapling;
     }
 
-    public BaseLeavesBlock(Block sapling, MapColor color, int light) {
+    public BaseLeavesBlock(Block sapling, MaterialColor color, int light) {
         super(makeLeaves(color).lightLevel(state -> light));
         this.sapling = sapling;
     }

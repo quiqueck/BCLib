@@ -7,14 +7,14 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.MaterialColor;
 
 import java.util.List;
 
 public class LeveledAnvilBlock extends BaseAnvilBlock {
     protected final int level;
 
-    public LeveledAnvilBlock(MapColor color, int level) {
+    public LeveledAnvilBlock(MaterialColor color, int level) {
         super(color);
         this.level = level;
     }

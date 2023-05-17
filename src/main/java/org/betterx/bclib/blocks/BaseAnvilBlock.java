@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
@@ -42,7 +42,7 @@ public abstract class BaseAnvilBlock extends AnvilBlock implements BlockModelPro
     public static final IntegerProperty DESTRUCTION = BlockProperties.DESTRUCTION;
     public IntegerProperty durability;
 
-    public BaseAnvilBlock(MapColor color) {
+    public BaseAnvilBlock(MaterialColor color) {
         this(Properties.copy(Blocks.ANVIL).color(color));
     }
 

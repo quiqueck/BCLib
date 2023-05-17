@@ -31,7 +31,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.lighting.LayerLightEngine;
-import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
@@ -52,7 +52,7 @@ public class BaseTerrainBlock extends BaseBlock {
     private final Block baseBlock;
     private Block pathBlock;
 
-    public BaseTerrainBlock(Block baseBlock, MapColor color) {
+    public BaseTerrainBlock(Block baseBlock, MaterialColor color) {
         super(Properties
                 .copy(baseBlock)
                 .color(color)

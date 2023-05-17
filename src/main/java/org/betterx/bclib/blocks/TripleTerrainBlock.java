@@ -26,7 +26,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.phys.BlockHitResult;
 
 import net.fabricmc.api.EnvType;
@@ -48,7 +48,7 @@ public class TripleTerrainBlock extends BaseTerrainBlock {
         this.registerDefaultState(defaultBlockState().setValue(SHAPE, TripleShape.BOTTOM));
     }
 
-    public TripleTerrainBlock(Block baseBlock, MapColor color) {
+    public TripleTerrainBlock(Block baseBlock, MaterialColor color) {
         super(baseBlock, color);
         this.registerDefaultState(defaultBlockState().setValue(SHAPE, TripleShape.BOTTOM));
     }
