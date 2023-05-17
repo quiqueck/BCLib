@@ -1,6 +1,7 @@
 package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.client.render.BCLRenderLayer;
+import org.betterx.bclib.complexmaterials.BehaviourBuilders;
 import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.interfaces.TagProvider;
@@ -38,13 +39,8 @@ public class BaseLeavesBlock extends LeavesBlock implements BlockModelProvider, 
     protected final Block sapling;
 
     private static BlockBehaviour.Properties makeLeaves(MapColor color) {
-        return BlockBehaviour.Properties
-                .copy(Blocks.OAK_LEAVES)
-                .color(color)
-                //.requiresTool()
-                .isValidSpawn((state, world, pos, type) -> false)
-                .isSuffocating((state, world, pos) -> false)
-                .isViewBlocking((state, world, pos) -> false);
+        return BehaviourBuilders.createLeaves(color)
+                                .copy(Blocks.OAK_LEAVES);
     }
 
     public BaseLeavesBlock(

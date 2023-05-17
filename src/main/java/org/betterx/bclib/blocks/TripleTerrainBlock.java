@@ -44,7 +44,7 @@ public class TripleTerrainBlock extends BaseTerrainBlock {
     public static final EnumProperty<TripleShape> SHAPE = BlockProperties.TRIPLE_SHAPE;
 
     public TripleTerrainBlock(Block baseBlock) {
-        super(baseBlock, baseBlock.defaultMaterialColor());
+        super(baseBlock, baseBlock.defaultMapColor());
         this.registerDefaultState(defaultBlockState().setValue(SHAPE, TripleShape.BOTTOM));
     }
 

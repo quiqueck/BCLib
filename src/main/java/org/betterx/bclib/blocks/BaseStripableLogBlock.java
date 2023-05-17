@@ -22,7 +22,7 @@ public class BaseStripableLogBlock extends BaseRotatedPillarBlock {
     private final Block striped;
 
     public BaseStripableLogBlock(MapColor color, Block striped) {
-        super(Properties.copy(striped).color(color));
+        super(Properties.copy(striped).mapColor(color));
         this.striped = striped;
     }
 

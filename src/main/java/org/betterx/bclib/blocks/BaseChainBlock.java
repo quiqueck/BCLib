@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class BaseChainBlock extends ChainBlock implements BlockModelProvider, RenderLayerProvider {
     public BaseChainBlock(MapColor color) {
-        this(Properties.copy(Blocks.CHAIN).color(color));
+        this(Properties.copy(Blocks.CHAIN).mapColor(color));
     }
 
     public BaseChainBlock(BlockBehaviour.Properties properties) {

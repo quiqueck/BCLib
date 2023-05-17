@@ -43,7 +43,7 @@ public abstract class BaseAnvilBlock extends AnvilBlock implements BlockModelPro
     public IntegerProperty durability;
 
     public BaseAnvilBlock(MapColor color) {
-        this(Properties.copy(Blocks.ANVIL).color(color));
+        this(Properties.copy(Blocks.ANVIL).mapColor(color));
     }
 
     public BaseAnvilBlock(BlockBehaviour.Properties properties) {
