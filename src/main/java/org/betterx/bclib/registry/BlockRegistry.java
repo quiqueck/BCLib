@@ -19,10 +19,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.SignItem;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.SignBlock;
 
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 
@@ -38,9 +35,7 @@ public class BlockRegistry extends BaseRegistry<Block> {
             return block;
         }
         BlockItem item = null;
-        if (block instanceof SignBlock sb) {
-            item = new SignItem(makeItemSettings().stacksTo(16), sb, Blocks.SPRUCE_WALL_SIGN);
-        } else if (block instanceof CustomItemProvider) {
+        if (block instanceof CustomItemProvider) {
             item = ((CustomItemProvider) block).getCustomItem(id, makeItemSettings());
         } else {
             item = new BlockItem(block, makeItemSettings());
