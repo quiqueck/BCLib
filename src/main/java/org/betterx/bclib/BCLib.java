@@ -13,24 +13,38 @@ import org.betterx.bclib.api.v2.poi.PoiManager;
 import org.betterx.bclib.api.v3.levelgen.features.blockpredicates.BlockPredicates;
 import org.betterx.bclib.api.v3.levelgen.features.placement.PlacementModifiers;
 import org.betterx.bclib.api.v3.tag.BCLBlockTags;
+import org.betterx.bclib.blocks.BaseSignBlock;
 import org.betterx.bclib.commands.CommandRegistry;
+import org.betterx.bclib.complexmaterials.BCLWoodTypeWrapper;
 import org.betterx.bclib.config.Configs;
+import org.betterx.bclib.config.PathConfig;
 import org.betterx.bclib.networking.VersionChecker;
 import org.betterx.bclib.recipes.AlloyingRecipe;
 import org.betterx.bclib.recipes.AnvilRecipe;
 import org.betterx.bclib.recipes.CraftingRecipes;
 import org.betterx.bclib.registry.BaseBlockEntities;
 import org.betterx.bclib.registry.BaseRegistry;
+import org.betterx.bclib.registry.BlockRegistry;
 import org.betterx.bclib.registry.PresetsRegistry;
 import org.betterx.datagen.bclib.tests.TestStructure;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.util.Logger;
 import org.betterx.worlds.together.world.WorldConfig;
 
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.material.MapColor;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.util.List;
@@ -74,6 +88,10 @@ public class BCLib implements ModInitializer {
             TestStructure.registerBase();
         }
 
+        if (ADD_TEST_DATA) {
+            testObjects();
+        }
+
         DataExchangeAPI.registerDescriptors(List.of(
                         HelloClient.DESCRIPTOR,
                         HelloServer.DESCRIPTOR,
@@ -110,5 +128,56 @@ public class BCLib implements ModInitializer {
 
     public static ResourceLocation makeID(String path) {
         return new ResourceLocation(MOD_ID, path);
+    }
+
+    public final static BCLWoodTypeWrapper TEST_WOOD;
+    public static BaseSignBlock TEST_SIGN = null;
+
+    private static void testObjects() {
+        var bockReg = new BlockRegistry(new PathConfig(MOD_ID, "test"));
+        bockReg.register(
+                makeID("test_sign"),
+                TEST_SIGN
+        );
+        bockReg.registerBlockOnly(
+                makeID("test_wall_sign"),
+                TEST_SIGN.wallSign
+        );
+
+    }
+
+    static {
+        if (ADD_TEST_DATA) {
+            TEST_WOOD = BCLWoodTypeWrapper.create(makeID("test_wood")).setColor(MapColor.COLOR_MAGENTA).build();
+            TEST_SIGN = new BaseSignBlock(TEST_WOOD);
+
+
+            final ResourceKey<CreativeModeTab> TAB_TEST_KEY = ResourceKey.create(
+                    Registries.CREATIVE_MODE_TAB,
+                    makeID("test_tab")
+            );
+
+            CreativeModeTab.Builder builder = FabricItemGroup
+                    .builder();
+            builder.title(Component.translatable("itemGroup.bclib.test"));
+            builder.icon(() -> new ItemStack(Items.BARRIER));
+            builder.displayItems((itemDisplayParameters, output) -> {
+
+                var list = List.of(TEST_SIGN.asItem())
+                               .stream().map(b -> new ItemStack(b, 1)).toList();
+
+                output.acceptAll(list);
+            });
+            final CreativeModeTab TAB_TEST = builder.build();
+            ;
+
+            Registry.register(
+                    BuiltInRegistries.CREATIVE_MODE_TAB,
+                    TAB_TEST_KEY,
+                    TAB_TEST
+            );
+
+
+        }
     }
 }

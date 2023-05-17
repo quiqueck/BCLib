@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "bclib:block/empty_test"
+    }
+  }
+}
