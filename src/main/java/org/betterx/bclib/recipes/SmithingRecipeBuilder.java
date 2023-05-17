@@ -3,6 +3,7 @@ package org.betterx.bclib.recipes;
 import org.betterx.bclib.BCLib;
 
 import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.LegacyUpgradeRecipeBuilder;
 import net.minecraft.data.recipes.SmithingTransformRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -67,30 +68,35 @@ public class SmithingRecipeBuilder extends AbstractUnlockableRecipeBuilder<Smith
             );
             return false;
         }
-
-        if (template == null) {
-            BCLib.LOGGER.warning(
-                    "Smithing Recipes need a template. Recipe {} will be ignored!",
-                    id
-            );
-            return false;
-        }
         return super.checkRecipe();
     }
 
     @Override
     protected void buildRecipe(Consumer<FinishedRecipe> cc) {
-        final SmithingTransformRecipeBuilder builder = SmithingTransformRecipeBuilder.smithing(
-                Ingredient.of(template),
-                primaryInput,
-                addon,
-                category,
-                output.getItem()
-        );
+        if (template == null) {
+            final LegacyUpgradeRecipeBuilder builder = LegacyUpgradeRecipeBuilder.smithing(
+                    primaryInput,
+                    addon,
+                    category,
+                    output.getItem()
+            );
+            for (var item : unlocks.entrySet()) {
+                builder.unlocks(item.getKey(), item.getValue());
+            }
+            builder.save(cc, id);
+        } else {
+            final SmithingTransformRecipeBuilder builder = SmithingTransformRecipeBuilder.smithing(
+                    Ingredient.of(template),
+                    primaryInput,
+                    addon,
+                    category,
+                    output.getItem()
+            );
 
-        for (var item : unlocks.entrySet()) {
-            builder.unlocks(item.getKey(), item.getValue());
+            for (var item : unlocks.entrySet()) {
+                builder.unlocks(item.getKey(), item.getValue());
+            }
+            builder.save(cc, id);
         }
-        builder.save(cc, id);
     }
 }
