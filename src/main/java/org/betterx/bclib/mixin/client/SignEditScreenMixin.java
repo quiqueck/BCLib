@@ -23,6 +23,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(SignEditScreen.class)
 public abstract class SignEditScreenMixin extends AbstractSignEditScreen {
+    @Shadow
+    private final SignBlockEntity sign;
 
     @Shadow
     private SignRenderer.SignModel signModel;
@@ -31,8 +33,9 @@ public abstract class SignEditScreenMixin extends AbstractSignEditScreen {
     @Unique
     private boolean bclib_isSign;
 
-    public SignEditScreenMixin(SignBlockEntity signBlockEntity, boolean bl) {
-        super(signBlockEntity, bl);
+    public SignEditScreenMixin(SignBlockEntity signBlockEntity, boolean bl, boolean bl2) {
+        super(signBlockEntity, bl, bl2);
+        sign = null;
     }
 
 
@@ -51,7 +54,7 @@ public abstract class SignEditScreenMixin extends AbstractSignEditScreen {
     private VertexConsumer bclib_renderSignBackground(VertexConsumer consumer) {
         if (bclib_isSign) {
             signModel.stick.visible = bclib_renderStick;
-            Block block = sign.getBlockState().getBlock();
+            Block block = this.sign.getBlockState().getBlock();
             MultiBufferSource.BufferSource bufferSource = this.minecraft.renderBuffers().bufferSource();
             return BaseSignBlockEntityRenderer.getConsumer(bufferSource, block);
         }

@@ -28,10 +28,7 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.WoodType;
+import net.minecraft.world.level.block.state.properties.*;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
@@ -84,15 +81,20 @@ public class BaseSignBlock extends SignBlock implements BlockModelProvider, Cust
     }
 
     @Override
+    public float getYRotationDegrees(BlockState blockState) {
+        return RotationSegment.convertToDegrees(blockState.getValue(ROTATION));
+    }
+
+    @Override
     public void setPlacedBy(Level world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
         if (placer instanceof Player) {
             BaseSignBlockEntity sign = (BaseSignBlockEntity) world.getBlockEntity(pos);
             if (sign != null) {
                 if (!world.isClientSide) {
                     sign.setAllowedPlayerEditor(placer.getUUID());
-                    ((ServerPlayer) placer).connection.send(new ClientboundOpenSignEditorPacket(pos));
+                    ((ServerPlayer) placer).connection.send(new ClientboundOpenSignEditorPacket(pos, true));
                 } else {
-                    sign.setEditable(true);
+                    //sign.setEditable(true);
                 }
             }
         }
