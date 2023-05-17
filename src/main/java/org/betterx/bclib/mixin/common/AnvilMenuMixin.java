@@ -144,9 +144,10 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu implements AnvilSc
     }
 
     @Inject(method = "setItemName", at = @At("HEAD"), cancellable = true)
-    public void bcl_setNewItemName(String string, CallbackInfo info) {
+    public void bcl_setNewItemName(String string, CallbackInfoReturnable<Boolean> cir) {
         if (bcl_currentRecipe != null) {
-            info.cancel();
+            cir.setReturnValue(false);
+            cir.cancel();
         }
     }
 
