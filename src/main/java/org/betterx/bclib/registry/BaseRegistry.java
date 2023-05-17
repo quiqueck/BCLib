@@ -3,7 +3,6 @@ package org.betterx.bclib.registry;
 import org.betterx.bclib.config.PathConfig;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
@@ -12,18 +11,16 @@ import com.google.common.collect.Maps;
 
 import java.util.List;
 import java.util.Map;
+import org.jetbrains.annotations.ApiStatus;
 
 public abstract class BaseRegistry<T> {
     private static final List<BaseRegistry<?>> REGISTRIES = Lists.newArrayList();
     private static final Map<String, List<Item>> MOD_BLOCK_ITEMS = Maps.newHashMap();
     private static final Map<String, List<Block>> MOD_BLOCKS = Maps.newHashMap();
     private static final Map<String, List<Item>> MOD_ITEMS = Maps.newHashMap();
-
-    protected final CreativeModeTab creativeTab;
     protected final PathConfig config;
 
-    protected BaseRegistry(CreativeModeTab creativeTab, PathConfig config) {
-        this.creativeTab = creativeTab;
+    protected BaseRegistry(PathConfig config) {
         this.config = config;
         REGISTRIES.add(this);
     }
@@ -75,6 +72,7 @@ public abstract class BaseRegistry<T> {
         return modBlocks;
     }
 
+    @ApiStatus.Internal
     public static void register() {
         REGISTRIES.forEach(BaseRegistry::registerInternal);
     }

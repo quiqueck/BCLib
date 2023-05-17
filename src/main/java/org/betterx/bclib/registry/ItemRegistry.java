@@ -31,8 +31,8 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.DispenserBlock;
 
 public class ItemRegistry extends BaseRegistry<Item> {
-    public ItemRegistry(CreativeModeTab creativeTab, PathConfig config) {
-        super(creativeTab, config);
+    public ItemRegistry(PathConfig config) {
+        super(config);
     }
 
     public Item registerDisc(ResourceLocation itemId, int power, SoundEvent sound, int lengthInSeconds) {
