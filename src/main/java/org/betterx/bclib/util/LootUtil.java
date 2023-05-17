@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
-import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
@@ -25,17 +25,17 @@ public class LootUtil {
     public static Optional<List<ItemStack>> getDrops(
             BlockBehaviour block,
             BlockState state,
-            LootContext.Builder builder
+            LootParams.Builder builder
     ) {
         ResourceLocation tableID = block.getLootTable();
         if (tableID == BuiltInLootTables.EMPTY) {
             return Optional.empty();
         }
 
-        final LootContext ctx = builder.withParameter(LootContextParams.BLOCK_STATE, state)
-                                       .create(LootContextParamSets.BLOCK);
+        final LootParams ctx = builder.withParameter(LootContextParams.BLOCK_STATE, state)
+                                      .create(LootContextParamSets.BLOCK);
         final ServerLevel level = ctx.getLevel();
-        final LootTable table = level.getServer().getLootTables().get(tableID);
+        final LootTable table = level.getServer().getLootData().getLootTable(tableID);
 
         if (table == LootTable.EMPTY) return Optional.empty();
         return Optional.of(table.getRandomItems(ctx));

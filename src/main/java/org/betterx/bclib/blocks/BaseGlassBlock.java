@@ -12,7 +12,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
 import net.fabricmc.api.EnvType;
@@ -28,10 +28,10 @@ public class BaseGlassBlock extends BaseBlockNotFull implements AddMineablePicka
 
     public BaseGlassBlock(Block block, float resistance) {
         super(Properties.copy(block)
-                                 .explosionResistance(resistance)
-                                 .noOcclusion()
-                                 .isSuffocating((arg1, arg2, arg3) -> false)
-                                 .isViewBlocking((arg1, arg2, arg3) -> false));
+                        .explosionResistance(resistance)
+                        .noOcclusion()
+                        .isSuffocating((arg1, arg2, arg3) -> false)
+                        .isViewBlocking((arg1, arg2, arg3) -> false));
     }
 
     @Environment(EnvType.CLIENT)
@@ -50,7 +50,7 @@ public class BaseGlassBlock extends BaseBlockNotFull implements AddMineablePicka
     }
 
     @Override
-    public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
+    public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
         ItemStack tool = builder.getParameter(LootContextParams.TOOL);
         if (tool != null && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool) > 0) {
             return Collections.singletonList(new ItemStack(this));

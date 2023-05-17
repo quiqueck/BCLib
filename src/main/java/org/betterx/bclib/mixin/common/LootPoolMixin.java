@@ -3,7 +3,7 @@ package org.betterx.bclib.mixin.common;
 import org.betterx.bclib.interfaces.LootPoolAccessor;
 
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
@@ -29,13 +29,13 @@ public class LootPoolMixin implements LootPoolAccessor {
     public LootItemCondition[] conditions;
     @Shadow
     @Final
-    private Predicate<LootContext> compositeCondition;
+    private Predicate<LootParams> compositeCondition;
     @Shadow
     @Final
     public LootItemFunction[] functions;
     @Shadow
     @Final
-    private BiFunction<ItemStack, LootContext, ItemStack> compositeFunction;
+    private BiFunction<ItemStack, LootParams, ItemStack> compositeFunction;
     @Shadow
     @Final
     public NumberProvider rolls;

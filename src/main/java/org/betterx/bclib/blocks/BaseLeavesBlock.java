@@ -25,7 +25,7 @@ import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
 import com.google.common.collect.Lists;
@@ -83,14 +83,14 @@ public class BaseLeavesBlock extends LeavesBlock implements BlockModelProvider, 
 
     @Override
     @SuppressWarnings("deprecation")
-    public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
+    public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
         return BaseLeavesBlock.getLeaveDrops(this, this.sapling, builder, 16, 16);
     }
 
     public static List<ItemStack> getLeaveDrops(
             ItemLike leaveBlock,
             Block sapling,
-            LootContext.Builder builder,
+            LootParams.Builder builder,
             int fortuneRate,
             int dropRate
     ) {

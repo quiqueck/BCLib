@@ -26,7 +26,7 @@ import net.minecraft.world.level.block.DropExperienceBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
 import java.util.Collections;
@@ -76,7 +76,7 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
 
     @Override
     @SuppressWarnings("deprecation")
-    public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
+    public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
         return LootUtil
                 .getDrops(this, state, builder)
                 .orElseGet(
@@ -99,7 +99,7 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
             int minCount,
             int miningLevel,
             BlockState state,
-            LootContext.Builder builder
+            LootParams.Builder builder
     ) {
         ItemStack tool = builder.getParameter(LootContextParams.TOOL);
         if (tool != null && tool.isCorrectToolForDrops(state)) {
