@@ -17,16 +17,18 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.SignItem;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SignBlock;
 
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 
 public class BlockRegistry extends BaseRegistry<Block> {
-    public BlockRegistry(CreativeModeTab creativeTab, PathConfig config) {
-        super(creativeTab, config);
+    public BlockRegistry(PathConfig config) {
+        super(config);
     }
 
     @Override
@@ -36,7 +38,9 @@ public class BlockRegistry extends BaseRegistry<Block> {
             return block;
         }
         BlockItem item = null;
-        if (block instanceof CustomItemProvider) {
+        if (block instanceof SignBlock sb) {
+            item = new SignItem(makeItemSettings().stacksTo(16), sb, Blocks.SPRUCE_WALL_SIGN);
+        } else if (block instanceof CustomItemProvider) {
             item = ((CustomItemProvider) block).getCustomItem(id, makeItemSettings());
         } else {
             item = new BlockItem(block, makeItemSettings());
