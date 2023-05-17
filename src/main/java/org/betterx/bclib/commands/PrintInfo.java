@@ -44,7 +44,7 @@ public class PrintInfo {
                                               .setStyle(Style.EMPTY.withBold(false).withColor(cl));
             result.append(dimComponent);
         }
-        ctx.getSource().sendSuccess(result, false);
+        ctx.getSource().sendSuccess(() -> result, false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -53,7 +53,7 @@ public class PrintInfo {
         MutableComponent header = Component.literal("Mod Updates:")
                                            .setStyle(Style.EMPTY.withBold(false)
                                                                 .withColor(ChatFormatting.WHITE));
-        ctx.getSource().sendSuccess(header, false);
+        ctx.getSource().sendSuccess(() -> header, false);
 
         VersionChecker.forEachUpdate((mod, cur, updated) -> {
             ModContainer nfo = FabricLoader.getInstance().getModContainer(mod).orElse(null);
@@ -100,13 +100,14 @@ public class PrintInfo {
                 result.append(Component.literal("  ").setStyle(Style.EMPTY.withBold(true).withItalic(false)));
 
             }
-            ctx.getSource().sendSuccess(result, false);
+            MutableComponent finalResult = result;
+            ctx.getSource().sendSuccess(() -> finalResult, false);
         });
         MutableComponent footer = Component.literal("\n")
                                            .setStyle(Style.EMPTY.withBold(false)
                                                                 .withUnderlined(true)
                                                                 .withColor(ChatFormatting.WHITE));
-        ctx.getSource().sendSuccess(footer, false);
+        ctx.getSource().sendSuccess(() -> footer, false);
 
         if (withUI && BCLib.isClient() && Configs.CLIENT_CONFIG.showUpdateInfo() && !VersionChecker.isEmpty()) {
             if (!RenderSystem.isOnRenderThread()) {

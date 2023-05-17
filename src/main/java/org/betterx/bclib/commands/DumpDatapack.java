@@ -84,7 +84,7 @@ public class DumpDatapack {
 
 
         ctx.getSource().sendSuccess(
-                Component.literal("Succesfully written to:\n    ").append(
+                () -> Component.literal("Succesfully written to:\n    ").append(
                         Component.literal(base.toString()).setStyle(Style.EMPTY.withUnderlined(true))
                 ),
                 false
