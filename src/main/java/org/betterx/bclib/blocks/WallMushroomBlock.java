@@ -29,6 +29,6 @@ public abstract class WallMushroomBlock extends BaseWallPlantBlock {
 
     @Override
     public boolean isSupport(LevelReader world, BlockPos pos, BlockState blockState, Direction direction) {
-        return blockState.getMaterial().isSolid() && blockState.isFaceSturdy(world, pos, direction);
+        return blockState.isSolid() && blockState.isFaceSturdy(world, pos, direction);
     }
 }

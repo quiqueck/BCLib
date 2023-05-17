@@ -20,7 +20,7 @@ import java.util.function.Function;
 public abstract class SDF {
     private final List<Function<PosInfo, BlockState>> postProcesses = Lists.newArrayList();
     private Function<BlockState, Boolean> canReplace = (state) -> {
-        return state.getMaterial().isReplaceable();
+        return state.canBeReplaced();
     };
 
     public abstract float getDistance(float x, float y, float z);

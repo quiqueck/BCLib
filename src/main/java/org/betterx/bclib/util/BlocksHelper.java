@@ -85,7 +85,7 @@ public class BlocksHelper {
     public static int downRayRep(LevelAccessor world, BlockPos pos, int maxDist) {
         final MutableBlockPos POS = TL_POS.get();
         POS.set(pos);
-        for (int j = 1; j < maxDist && (world.getBlockState(POS)).getMaterial().isReplaceable(); j++) {
+        for (int j = 1; j < maxDist && (world.getBlockState(POS)).canBeReplaced(); j++) {
             POS.setY(POS.getY() - 1);
         }
         return pos.getY() - POS.getY();
@@ -94,7 +94,7 @@ public class BlocksHelper {
     public static int raycastSqr(LevelAccessor world, BlockPos pos, int dx, int dy, int dz, int maxDist) {
         final MutableBlockPos POS = TL_POS.get();
         POS.set(pos);
-        for (int j = 1; j < maxDist && (world.getBlockState(POS)).getMaterial().isReplaceable(); j++) {
+        for (int j = 1; j < maxDist && (world.getBlockState(POS)).canBeReplaced(); j++) {
             POS.move(dx, dy, dz);
         }
         return (int) pos.distSqr(POS);
@@ -326,7 +326,7 @@ public class BlocksHelper {
     }
 
     public static boolean isFluid(BlockState state) {
-        return state.getMaterial().isLiquid();
+        return state.liquid();
     }
 
     public static boolean isFree(BlockState state) {
@@ -334,7 +334,7 @@ public class BlocksHelper {
     }
 
     public static boolean isFreeOrReplaceable(BlockState state) {
-        return state.isAir() || state.getMaterial().isReplaceable();
+        return state.isAir() || state.canBeReplaced();
     }
 
     public static boolean isFreeOrFluid(BlockState state) {

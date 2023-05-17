@@ -2,6 +2,7 @@ package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.blocks.BlockProperties.TripleShape;
 import org.betterx.bclib.client.render.BCLRenderLayer;
+import org.betterx.bclib.complexmaterials.BehaviourBuilders;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.items.tool.BaseShearsItem;
 import org.betterx.bclib.util.BlocksHelper;
@@ -26,7 +27,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
@@ -57,13 +57,14 @@ public class BaseVineBlock extends BaseBlockNotFull implements RenderLayerProvid
 
     public BaseVineBlock(int light, boolean bottomOnly, Function<Properties, Properties> propMod) {
         this(
-                propMod.apply(Properties
-                        .of(Material.PLANT)
+                propMod.apply(BehaviourBuilders
+                        .createPlant()
                         .sound(SoundType.GRASS)
-                        .lightLevel((state) -> bottomOnly ? state.getValue(SHAPE) == TripleShape.BOTTOM
+                        .lightLevel((state) -> bottomOnly
+                                ? state.getValue(SHAPE) == TripleShape.BOTTOM
                                 ? light
-                                : 0 : light)
-                        .noCollission()
+                                : 0
+                                : light)
                         .offsetType(BlockBehaviour.OffsetType.XZ))
         );
     }

@@ -4,6 +4,7 @@ import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.client.render.BCLRenderLayer;
+import org.betterx.bclib.complexmaterials.BehaviourBuilders;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.interfaces.SettingsExtender;
 import org.betterx.bclib.items.tool.BaseShearsItem;
@@ -27,7 +28,6 @@ import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
@@ -57,12 +57,13 @@ public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderL
     }
 
     public static Properties basePlantSettings(boolean replaceable, int light) {
-        return basePlantSettings(replaceable ? Material.REPLACEABLE_PLANT : Material.PLANT, light);
+        return basePlantSettings(replaceable
+                ? BehaviourBuilders.createReplaceablePlant()
+                : BehaviourBuilders.createPlant(), light);
     }
 
-    public static Properties basePlantSettings(Material mat, int light) {
-        Properties props = Properties
-                .of(mat)
+    public static Properties basePlantSettings(BlockBehaviour.Properties props, int light) {
+        props
                 .sound(SoundType.GRASS)
                 .noCollission()
                 .offsetType(BlockBehaviour.OffsetType.XZ);
@@ -102,12 +103,14 @@ public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderL
     @Deprecated(forRemoval = true)
     public BasePlantBlock(boolean replaceable, int light, SettingsExtender propMod) {
         this(
-                propMod.amend(Properties
-                        .of(replaceable ? Material.REPLACEABLE_PLANT : Material.PLANT)
-                        .lightLevel((state) -> light)
-                        .sound(SoundType.GRASS)
-                        .noCollission()
-                        .offsetType(BlockBehaviour.OffsetType.XZ)
+                propMod.amend(
+                        (replaceable
+                                ? BehaviourBuilders.createReplaceablePlant()
+                                : BehaviourBuilders.createPlant()
+                        )
+                                .lightLevel((state) -> light)
+                                .sound(SoundType.GRASS)
+                                .offsetType(BlockBehaviour.OffsetType.XZ)
                 )
         );
     }

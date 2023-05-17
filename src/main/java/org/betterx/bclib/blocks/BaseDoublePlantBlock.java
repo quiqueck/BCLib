@@ -1,6 +1,7 @@
 package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.client.render.BCLRenderLayer;
+import org.betterx.bclib.complexmaterials.BehaviourBuilders;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.items.tool.BaseShearsItem;
 import org.betterx.bclib.util.BlocksHelper;
@@ -27,7 +28,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
@@ -45,20 +45,20 @@ public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements R
 
     public BaseDoublePlantBlock() {
         this(
-                Properties.of(Material.PLANT)
-                          .sound(SoundType.GRASS)
-                          .noCollission()
-                          .offsetType(BlockBehaviour.OffsetType.NONE)
+                BehaviourBuilders
+                        .createPlant()
+                        .sound(SoundType.GRASS)
+                        .offsetType(BlockBehaviour.OffsetType.NONE)
         );
     }
 
     public BaseDoublePlantBlock(int light) {
         this(
-                Properties.of(Material.PLANT)
-                          .sound(SoundType.GRASS)
-                          .lightLevel((state) -> state.getValue(TOP) ? light : 0)
-                          .noCollission()
-                          .offsetType(BlockBehaviour.OffsetType.NONE)
+                BehaviourBuilders
+                        .createPlant()
+                        .sound(SoundType.GRASS)
+                        .lightLevel((state) -> state.getValue(TOP) ? light : 0)
+                        .offsetType(BlockBehaviour.OffsetType.NONE)
         );
     }
 
@@ -84,7 +84,7 @@ public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements R
     public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
         BlockState down = world.getBlockState(pos.below());
         BlockState up = world.getBlockState(pos.above());
-        return state.getValue(TOP) ? down.getBlock() == this : isTerrain(down) && (up.getMaterial().isReplaceable());
+        return state.getValue(TOP) ? down.getBlock() == this : isTerrain(down) && (up.canBeReplaced());
     }
 
     public boolean canStayAt(BlockState state, LevelReader world, BlockPos pos) {

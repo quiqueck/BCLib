@@ -233,7 +233,7 @@ public class StructureWorldNBT extends StructureNBT {
                 POS.setY(y);
                 for (int z = start.getZ(); z <= end.getZ(); z++) {
                     POS.setZ(z);
-                    if (world.getBlockState(POS).getMaterial().isReplaceable())
+                    if (world.getBlockState(POS).canBeReplaced())
                         airCount++;
                     count++;
                 }
@@ -263,7 +263,7 @@ public class StructureWorldNBT extends StructureNBT {
                 POS.setY(y);
                 for (int z = start.getZ(); z <= end.getZ(); z++) {
                     POS.setZ(z);
-                    if (world.getBlockState(POS).getMaterial().isReplaceable())
+                    if (world.getBlockState(POS).canBeReplaced())
                         airCount++;
                     count++;
                 }

@@ -43,7 +43,7 @@ public class BlockRegistry extends BaseRegistry<Block> {
 
         }
         registerBlockItem(id, item);
-        if (block.defaultBlockState().getMaterial().isFlammable()
+        if (block.defaultBlockState().ignitedByLava()
                 && FlammableBlockRegistry.getDefaultInstance()
                                          .get(block)
                                          .getBurnChance() == 0) {

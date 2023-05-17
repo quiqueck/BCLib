@@ -5,6 +5,7 @@ import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.client.render.BCLRenderLayer;
+import org.betterx.bclib.complexmaterials.BehaviourBuilders;
 import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
 
@@ -26,7 +27,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -51,23 +51,17 @@ public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfig
 
     public FeatureSaplingBlock(FeatureSupplier<F, FC> featureSupplier) {
         this(
-                BlockBehaviour.Properties.of(Material.PLANT)
-                                         .noCollission()
-                                         .instabreak()
-                                         .sound(SoundType.GRASS)
-                                         .randomTicks(),
+                BehaviourBuilders.createTickingPlant()
+                                 .sound(SoundType.GRASS),
                 featureSupplier
         );
     }
 
     public FeatureSaplingBlock(int light, FeatureSupplier<F, FC> featureSupplier) {
         this(
-                BlockBehaviour.Properties.of(Material.PLANT)
-                                         .noCollission()
-                                         .lightLevel(state -> light)
-                                         .instabreak()
-                                         .sound(SoundType.GRASS)
-                                         .randomTicks(),
+                BehaviourBuilders.createTickingPlant()
+                                 .lightLevel(state -> light)
+                                 .sound(SoundType.GRASS),
                 featureSupplier
         );
     }

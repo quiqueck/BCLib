@@ -122,9 +122,9 @@ public class BaseSignBlock extends SignBlock implements BlockModelProvider, Cust
     public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
         if (!state.getValue(FLOOR)) {
             int index = (((state.getValue(ROTATION) >> 2) + 2)) & 3;
-            return world.getBlockState(pos.relative(BlocksHelper.HORIZONTAL[index])).getMaterial().isSolid();
+            return world.getBlockState(pos.relative(BlocksHelper.HORIZONTAL[index])).isSolid();
         } else {
-            return world.getBlockState(pos.below()).getMaterial().isSolid();
+            return world.getBlockState(pos.below()).isSolid();
         }
     }
 

@@ -1,5 +1,6 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.complexmaterials.BehaviourBuilders;
 import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.TagProvider;
 import org.betterx.bclib.util.LootUtil;
@@ -25,7 +26,6 @@ import net.minecraft.world.level.block.DropExperienceBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
@@ -45,8 +45,8 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
 
     public BaseOreBlock(Supplier<Item> drop, int minCount, int maxCount, int experience, int miningLevel) {
         this(
-                Properties
-                        .of(Material.STONE, MapColor.SAND)
+                BehaviourBuilders
+                        .createStone(MapColor.SAND)
                         .requiresCorrectToolForDrops()
                         .destroyTime(3F)
                         .explosionResistance(9F)

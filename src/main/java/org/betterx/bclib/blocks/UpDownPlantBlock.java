@@ -1,6 +1,7 @@
 package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.client.render.BCLRenderLayer;
+import org.betterx.bclib.complexmaterials.BehaviourBuilders;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.interfaces.tools.AddMineableHoe;
 import org.betterx.bclib.interfaces.tools.AddMineableShears;
@@ -21,12 +22,10 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
 
 import com.google.common.collect.Lists;
 
@@ -36,10 +35,9 @@ public abstract class UpDownPlantBlock extends BaseBlockNotFull implements Rende
     private static final VoxelShape SHAPE = box(4, 0, 4, 12, 16, 12);
 
     public UpDownPlantBlock() {
-        this(Properties
-                .of(Material.PLANT)
+        this(BehaviourBuilders
+                .createPlant()
                 .sound(SoundType.GRASS)
-                .noCollission()
         );
     }
 

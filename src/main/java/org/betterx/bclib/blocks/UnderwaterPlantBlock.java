@@ -1,6 +1,7 @@
 package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.client.render.BCLRenderLayer;
+import org.betterx.bclib.complexmaterials.BehaviourBuilders;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.items.tool.BaseShearsItem;
 
@@ -25,14 +26,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import com.google.common.collect.Lists;
 
@@ -54,14 +52,13 @@ public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements R
 
     public static Properties baseUnderwaterPlantSettings(boolean replaceable, int light) {
         return baseUnderwaterPlantSettings(
-                replaceable ? Material.REPLACEABLE_WATER_PLANT : Material.WATER_PLANT,
+                replaceable ? BehaviourBuilders.createReplaceableWaterPlant() : BehaviourBuilders.createWaterPlant(),
                 light
         );
     }
 
-    public static Properties baseUnderwaterPlantSettings(Material mat, int light) {
-        Properties props = FabricBlockSettings
-                .of(mat)
+    public static Properties baseUnderwaterPlantSettings(BlockBehaviour.Properties props, int light) {
+        props
                 .sound(SoundType.WET_GRASS)
                 .noCollission()
                 .offsetType(BlockBehaviour.OffsetType.XZ);

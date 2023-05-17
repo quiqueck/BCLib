@@ -17,7 +17,6 @@ import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.placement.*;
-import net.minecraft.world.level.material.Material;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -278,7 +277,7 @@ abstract class CommonPlacedFeatureBuilder<F extends Feature<FC>, FC extends Feat
 
     /**
      * Cast a ray with max {@code distance} length to find the next solid Block. The ray will travel through replaceable
-     * Blocks (see {@link Material#isReplaceable()}) and will be accepted if it hits a block with the
+     * Blocks and will be accepted if it hits a block with the
      * {@link CommonBlockTags#TERRAIN}-tag
      *
      * @param dir      The direction the ray is cast

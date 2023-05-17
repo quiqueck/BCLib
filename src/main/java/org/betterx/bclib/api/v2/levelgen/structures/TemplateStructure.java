@@ -79,7 +79,7 @@ public abstract class TemplateStructure extends Structure {
     }
 
     protected boolean isFloorPlaceable(BlockState state, BlockState before) {
-        return (state == null || state.is(Blocks.AIR)) && before.getMaterial().isSolid();
+        return (state == null || state.is(Blocks.AIR)) && before.isSolid();
     }
 
     protected int erosion(RandomSource rnd) {
@@ -219,7 +219,7 @@ public abstract class TemplateStructure extends Structure {
         int airCount = 0;
         for (int i = y; i < y + height && i > y - height; i += searchStep) {
             BlockState state = column.getBlock(i);
-            if (state.isAir() || state.getMaterial().isReplaceable()) {
+            if (state.isAir() || state.canBeReplaced()) {
                 airCount++;
             }
         }

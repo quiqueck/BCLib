@@ -1,6 +1,7 @@
 package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.client.render.BCLRenderLayer;
+import org.betterx.bclib.complexmaterials.BehaviourBuilders;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.interfaces.TagProvider;
 import org.betterx.bclib.interfaces.tools.AddMineableHoe;
@@ -14,37 +15,24 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.material.Material;
 
 import java.util.List;
 
 public class SimpleLeavesBlock extends BaseBlockNotFull implements RenderLayerProvider, TagProvider, AddMineableShears, AddMineableHoe {
     public SimpleLeavesBlock(MapColor color) {
         this(
-                Properties
-                        .of(Material.LEAVES)
-                        .strength(0.2F)
-                        .color(color)
+                BehaviourBuilders
+                        .createLeaves(color)
                         .sound(SoundType.GRASS)
-                        .noOcclusion()
-                        .isValidSpawn((state, world, pos, type) -> false)
-                        .isSuffocating((state, world, pos) -> false)
-                        .isViewBlocking((state, world, pos) -> false)
         );
     }
 
     public SimpleLeavesBlock(MapColor color, int light) {
         this(
-                Properties
-                        .of(Material.LEAVES)
+                BehaviourBuilders
+                        .createLeaves(color)
                         .lightLevel(ignored -> light)
-                        .color(color)
-                        .strength(0.2F)
                         .sound(SoundType.GRASS)
-                        .noOcclusion()
-                        .isValidSpawn((state, world, pos, type) -> false)
-                        .isSuffocating((state, world, pos) -> false)
-                        .isViewBlocking((state, world, pos) -> false)
         );
     }
 

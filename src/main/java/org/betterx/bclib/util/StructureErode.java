@@ -11,8 +11,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
-import net.minecraft.world.level.material.Material;
 
 import com.google.common.collect.Sets;
 
@@ -149,7 +149,7 @@ public class StructureErode {
                                 int px = MHelper.floor(random.nextGaussian() * 2 + x + 0.5);
                                 int pz = MHelper.floor(random.nextGaussian() * 2 + z + 0.5);
                                 mut2.set(px, y, pz);
-                                while (world.getBlockState(mut2).getMaterial().isReplaceable() && mut2.getY() > minY) {
+                                while (world.getBlockState(mut2).canBeReplaced() && mut2.getY() > minY) {
                                     mut2.setY(mut2.getY() - 1);
                                 }
                                 if (!world.getBlockState(mut2).isAir() && state.canSurvive(world, mut2)) {
@@ -225,7 +225,7 @@ public class StructureErode {
                     BlockState state = world.getBlockState(mut);
                     if (!ignore(state, world, mut) && !blocks.contains(mut)) {
                         BlocksHelper.setWithoutUpdate(world, mut, Blocks.AIR);
-                        while (world.getBlockState(mut).getMaterial().isReplaceable() && mut.getY() > minY) {
+                        while (world.getBlockState(mut).canBeReplaced() && mut.getY() > minY) {
                             mut.setY(mut.getY() - 1);
                         }
                         if (mut.getY() > minY) {
@@ -242,7 +242,10 @@ public class StructureErode {
         if (state.is(CommonBlockTags.GEN_END_STONES) || state.is(BlockTags.NYLIUM)) {
             return true;
         }
-        return !state.getMaterial().equals(Material.STONE) || BlocksHelper.isInvulnerable(state, world, pos);
+
+        //NoteBlockInstrument.BASEDRUM this is basically what Material.STONE was previously
+        return !state.instrument().equals(NoteBlockInstrument.BASEDRUM)
+                || BlocksHelper.isInvulnerable(state, world, pos);
     }
 
     private static boolean isTerrainNear(WorldGenLevel world, BlockPos pos) {
@@ -266,8 +269,7 @@ public class StructureErode {
                     mut.setY(y);
                     BlockState state = world.getBlockState(mut);
                     if (state.is(CommonBlockTags.TERRAIN) && !world.getBlockState(mut.above())
-                                                                   .getMaterial()
-                                                                   .isSolidBlocking()) {
+                                                                   .isSolid()) {
                         BlocksHelper.setWithoutUpdate(world, mut, top);
                     }
                 }
