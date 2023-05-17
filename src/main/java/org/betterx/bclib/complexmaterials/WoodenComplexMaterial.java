@@ -20,7 +20,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.MaterialColor;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -47,6 +46,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
     public static final String BLOCK_DOOR = "door";
     public static final String BLOCK_GATE = "gate";
     public static final String BLOCK_SIGN = "sign";
+    public static final String BLOCK_WALL_SIGN = "wall_sign";
     public static final String BLOCK_SLAB = "slab";
     public static final String BLOCK_LOG = "log";
 
@@ -55,7 +55,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
     public final MaterialColor planksColor;
     public final MaterialColor woodColor;
 
-    public final WoodType woodType;
+    public final BCLWoodTypeWrapper woodType;
 
     public WoodenComplexMaterial(
             String modID,
@@ -67,7 +67,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
         super(modID, baseName, receipGroupPrefix);
         this.planksColor = planksColor;
         this.woodColor = woodColor;
-        this.woodType = WoodType.register(new BCLWoodType(modID, baseName));
+        this.woodType = BCLWoodTypeWrapper.create(modID, baseName).setColor(planksColor).build();
     }
 
     @Override
@@ -158,7 +158,7 @@ public class WoodenComplexMaterial extends ComplexMaterial {
 
         addBlockEntry(new BlockEntry(
                 BLOCK_GATE,
-                (complexMaterial, settings) -> new BaseGateBlock(getBlock(BLOCK_PLANKS), this.woodType)
+                (complexMaterial, settings) -> new BaseGateBlock(getBlock(BLOCK_PLANKS), this.woodType.type())
         )
                 .setBlockTags(BlockTags.FENCE_GATES));
 
@@ -204,10 +204,22 @@ public class WoodenComplexMaterial extends ComplexMaterial {
 
         addBlockEntry(new BlockEntry(
                 BLOCK_SIGN,
-                (complexMaterial, settings) -> new BaseSignBlock(getBlock(BLOCK_PLANKS))
+                (complexMaterial, settings) -> new BaseSignBlock(woodType)
         )
                 .setBlockTags(BlockTags.SIGNS)
                 .setItemTags(ItemTags.SIGNS));
+
+        addBlockEntry(new BlockEntry(
+                BLOCK_WALL_SIGN,
+                false,
+                (complexMaterial, settings) -> {
+                    if (getBlock(BLOCK_SIGN) instanceof BaseSignBlock sign) {
+                        return sign.wallSign;
+                    }
+                    return null;
+                }
+        )
+                .setBlockTags(BlockTags.WALL_SIGNS));
     }
 
     final protected void initStorage(BlockBehaviour.Properties blockSettings, Item.Properties itemSettings) {
@@ -442,4 +454,5 @@ public class WoodenComplexMaterial extends ComplexMaterial {
                             .build();
         }));
     }
+
 }

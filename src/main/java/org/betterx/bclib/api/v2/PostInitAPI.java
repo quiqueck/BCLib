@@ -8,7 +8,6 @@ import org.betterx.bclib.blocks.BaseFurnaceBlock;
 import org.betterx.bclib.blocks.BaseSignBlock;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.client.render.BaseChestBlockEntityRenderer;
-import org.betterx.bclib.client.render.BaseSignBlockEntityRenderer;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.interfaces.Fuel;
 import org.betterx.bclib.interfaces.PostInitable;
@@ -90,8 +89,6 @@ public class PostInitAPI {
         }
         if (block instanceof BaseChestBlock) {
             BaseChestBlockEntityRenderer.registerRenderLayer(block);
-        } else if (block instanceof BaseSignBlock) {
-            BaseSignBlockEntityRenderer.registerRenderLayer(block);
         }
     }
 

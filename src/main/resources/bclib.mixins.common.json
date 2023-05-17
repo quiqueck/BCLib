@@ -45,7 +45,8 @@
     "shears.PumpkinBlockMixin",
     "shears.SheepMixin",
     "shears.SnowGolemMixin",
-    "shears.TripWireBlockMixin"
+    "shears.TripWireBlockMixin",
+    "signs.BlockEntityTypeMixin"
   ],
   "injectors": {
     "defaultRequire": 1
