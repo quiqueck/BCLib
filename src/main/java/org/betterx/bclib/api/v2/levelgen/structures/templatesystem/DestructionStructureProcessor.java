@@ -27,9 +27,9 @@ public class DestructionStructureProcessor extends StructureProcessor {
             StructurePlaceSettings structurePlacementData
     ) {
         if (!BlocksHelper.isInvulnerable(
-                structureBlockInfo2.state,
+                structureBlockInfo2.state(),
                 worldView,
-                structureBlockInfo2.pos
+                structureBlockInfo2.pos()
         ) && MHelper.RANDOM.nextInt(chance) == 0) {
             return null;
         }

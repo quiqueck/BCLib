@@ -27,11 +27,11 @@ public class TerrainStructureProcessor extends StructureProcessor {
             StructureBlockInfo structureBlockInfo2,
             StructurePlaceSettings structurePlacementData
     ) {
-        BlockPos bpos = structureBlockInfo2.pos;
-        if (structureBlockInfo2.state.is(defaultBlock) && worldView.isEmptyBlock(bpos.above())) {
+        BlockPos bpos = structureBlockInfo2.pos();
+        if (structureBlockInfo2.state().is(defaultBlock) && worldView.isEmptyBlock(bpos.above())) {
             final BlockState top = BiomeAPI.findTopMaterial(worldView.getBiome(pos))
                                            .orElse(defaultBlock.defaultBlockState());
-            return new StructureBlockInfo(bpos, top, structureBlockInfo2.nbt);
+            return new StructureBlockInfo(bpos, top, structureBlockInfo2.nbt());
         }
         return structureBlockInfo2;
     }
