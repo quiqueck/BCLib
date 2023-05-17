@@ -27,6 +27,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SignBlock;
 import net.minecraft.world.level.block.StandingSignBlock;
+import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.phys.Vec3;
@@ -58,6 +59,7 @@ public class BaseSignBlockEntityRenderer implements BlockEntityRenderer<BaseSign
             int light,
             int overlay
     ) {
+        final SignText frontText = signBlockEntity.getFrontText();
         BlockState state = signBlockEntity.getBlockState();
 
         matrixStack.pushPose();
@@ -84,13 +86,13 @@ public class BaseSignBlockEntityRenderer implements BlockEntityRenderer<BaseSign
         matrixStack.popPose();
         matrixStack.translate(0.0D, 0.3333333432674408D, 0.046666666865348816D);
         matrixStack.scale(0.010416667F, -0.010416667F, 0.010416667F);
-        int m = signBlockEntity.getColor().getTextColor();
+        int m = frontText.getColor().getTextColor();
         int n = (int) (FastColor.ARGB32.red(m) * 0.4D);
         int o = (int) (FastColor.ARGB32.green(m) * 0.4D);
         int p = (int) (FastColor.ARGB32.blue(m) * 0.4D);
         int q = FastColor.ARGB32.color(0, p, o, n);
 
-        FormattedCharSequence[] formattedCharSequences = signBlockEntity.getRenderMessages(
+        FormattedCharSequence[] formattedCharSequences = frontText.getRenderMessages(
                 Minecraft.getInstance()
                          .isTextFilteringEnabled(),
                 (component) -> {
@@ -101,8 +103,8 @@ public class BaseSignBlockEntityRenderer implements BlockEntityRenderer<BaseSign
         int drawColor;
         boolean drawOutlined;
         int drawLight;
-        if (signBlockEntity.hasGlowingText()) {
-            drawColor = signBlockEntity.getColor().getTextColor();
+        if (frontText.hasGlowingText()) {
+            drawColor = frontText.getColor().getTextColor();
             drawOutlined = isOutlineVisible(signBlockEntity, drawColor);
             drawLight = 15728880;
         } else {
