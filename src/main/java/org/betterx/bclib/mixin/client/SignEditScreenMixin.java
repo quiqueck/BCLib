@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -23,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(SignEditScreen.class)
 public abstract class SignEditScreenMixin extends AbstractSignEditScreen {
-    @Shadow
+    @Final
     private final SignBlockEntity sign;
 
     @Shadow
@@ -35,7 +36,7 @@ public abstract class SignEditScreenMixin extends AbstractSignEditScreen {
 
     public SignEditScreenMixin(SignBlockEntity signBlockEntity, boolean bl, boolean bl2) {
         super(signBlockEntity, bl, bl2);
-        sign = null;
+        this.sign = signBlockEntity;
     }
 
 
