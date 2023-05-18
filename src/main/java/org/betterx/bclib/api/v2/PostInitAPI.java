@@ -5,7 +5,6 @@ import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
 import org.betterx.bclib.blocks.BaseBarrelBlock;
 import org.betterx.bclib.blocks.BaseChestBlock;
 import org.betterx.bclib.blocks.BaseFurnaceBlock;
-import org.betterx.bclib.blocks.BaseSignBlock;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.client.render.BaseChestBlockEntityRenderer;
 import org.betterx.bclib.config.Configs;
@@ -110,8 +109,6 @@ public class PostInitAPI {
         }
         if (block instanceof BaseChestBlock) {
             BaseBlockEntities.CHEST.registerBlock(block);
-        } else if (block instanceof BaseSignBlock) {
-            BaseBlockEntities.SIGN.registerBlock(block);
         } else if (block instanceof BaseBarrelBlock) {
             BaseBlockEntities.BARREL.registerBlock(block);
         } else if (block instanceof BaseFurnaceBlock) {
