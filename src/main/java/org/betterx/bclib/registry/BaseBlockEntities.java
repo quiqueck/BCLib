@@ -16,17 +16,13 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.SignBlockEntity;
 
 public class BaseBlockEntities {
     public static final DynamicBlockEntityType<BaseChestBlockEntity> CHEST = registerBlockEntityType(BCLib.makeID(
             "chest"), BaseChestBlockEntity::new);
     public static final DynamicBlockEntityType<BaseBarrelBlockEntity> BARREL = registerBlockEntityType(BCLib.makeID(
             "barrel"), BaseBarrelBlockEntity::new);
-    public static final DynamicBlockEntityType<SignBlockEntity> SIGN = registerBlockEntityType(
-            BCLib.makeID("sign"),
-            SignBlockEntity::new
-    );
+
     public static final DynamicBlockEntityType<BaseFurnaceBlockEntity> FURNACE = registerBlockEntityType(BCLib.makeID(
             "furnace"), BaseFurnaceBlockEntity::new);
 
