@@ -1,7 +1,9 @@
 package org.betterx.bclib.mixin.common.signs;
 
-import org.betterx.bclib.blocks.BaseSignBlock;
-import org.betterx.bclib.blocks.BaseWallSignBlock;
+import org.betterx.bclib.blocks.signs.BaseHangingSignBlock;
+import org.betterx.bclib.blocks.signs.BaseSignBlock;
+import org.betterx.bclib.blocks.signs.BaseWallHangingSignBlock;
+import org.betterx.bclib.blocks.signs.BaseWallSignBlock;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -20,6 +22,11 @@ public class BlockEntityTypeMixin {
         if (self == BlockEntityType.SIGN) {
             final Block block = blockState.getBlock();
             if ((block instanceof BaseSignBlock) || (block instanceof BaseWallSignBlock)) {
+                cir.setReturnValue(true);
+            }
+        } else if (self == BlockEntityType.HANGING_SIGN) {
+            final Block block = blockState.getBlock();
+            if ((block instanceof BaseHangingSignBlock) || (block instanceof BaseWallHangingSignBlock)) {
                 cir.setReturnValue(true);
             }
         }

@@ -1,4 +1,4 @@
-package org.betterx.bclib.blocks;
+package org.betterx.bclib.blocks.signs;
 
 import net.minecraft.world.level.block.WallSignBlock;
 import net.minecraft.world.level.block.state.properties.WoodType;

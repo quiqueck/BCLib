@@ -1,4 +1,4 @@
-package org.betterx.bclib.blocks;
+package org.betterx.bclib.blocks.signs;
 
 import org.betterx.bclib.complexmaterials.BCLWoodTypeWrapper;
 import org.betterx.bclib.complexmaterials.BehaviourBuilders;
@@ -10,13 +10,14 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SignItem;
 import net.minecraft.world.level.block.StandingSignBlock;
-import net.minecraft.world.level.block.WallSignBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.RotationSegment;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.MaterialColor;
 
 @SuppressWarnings("deprecation")
 public class BaseSignBlock extends StandingSignBlock implements BlockModelProvider, CustomItemProvider {
-    public final WallSignBlock wallSign;
+    public final BaseWallSignBlock wallSign;
 
     public BaseSignBlock(WoodType type) {
         this(type, MaterialColor.WOOD);
