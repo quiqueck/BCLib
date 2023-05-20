@@ -14,7 +14,6 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
-import java.util.function.BiFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,11 +23,11 @@ public class Button extends SimpleMaterialSlot<WoodenComplexMaterial> {
     }
 
     @Override
-    protected @NotNull BiFunction<ComplexMaterial, BlockBehaviour.Properties, Block> getBlockSupplier(
-            WoodenComplexMaterial parentMaterial
+    protected @NotNull Block createBlock(
+            WoodenComplexMaterial parentMaterial, BlockBehaviour.Properties settings
     ) {
-        return (complexMaterial, settings) -> new BaseWoodenButtonBlock(
-                complexMaterial.getBlock(WoodSlots.PLANKS),
+        return new BaseWoodenButtonBlock(
+                parentMaterial.getBlock(WoodSlots.PLANKS),
                 parentMaterial.woodType.setType()
         );
     }
@@ -40,7 +39,7 @@ public class Button extends SimpleMaterialSlot<WoodenComplexMaterial> {
     }
 
     @Override
-    protected @Nullable void getRecipeSupplier(ComplexMaterial parentMaterial, ResourceLocation id) {
+    protected @Nullable void makeRecipe(ComplexMaterial parentMaterial, ResourceLocation id) {
         BCLRecipeBuilder
                 .crafting(id, parentMaterial.getBlock(suffix))
                 .shapeless()

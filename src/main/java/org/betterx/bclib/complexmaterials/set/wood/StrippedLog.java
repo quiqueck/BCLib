@@ -14,7 +14,6 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
-import java.util.function.BiFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,9 +23,10 @@ public class StrippedLog extends SimpleMaterialSlot<WoodenComplexMaterial> {
     }
 
     @Override
-    @NotNull
-    protected BiFunction<ComplexMaterial, BlockBehaviour.Properties, Block> getBlockSupplier(WoodenComplexMaterial parentMaterial) {
-        return (complexMaterial, settings) -> new BaseRotatedPillarBlock(settings);
+    protected @NotNull Block createBlock(
+            WoodenComplexMaterial parentMaterial, BlockBehaviour.Properties settings
+    ) {
+        return new BaseRotatedPillarBlock(settings);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class StrippedLog extends SimpleMaterialSlot<WoodenComplexMaterial> {
     }
 
     @Override
-    protected @Nullable void getRecipeSupplier(ComplexMaterial material, ResourceLocation id) {
+    protected @Nullable void makeRecipe(ComplexMaterial material, ResourceLocation id) {
         BCLRecipeBuilder
                 .crafting(id, material.getBlock(suffix))
                 .setShape("##", "##")

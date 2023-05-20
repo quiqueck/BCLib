@@ -15,7 +15,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
-import java.util.function.BiFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,10 +24,10 @@ public class Fence extends SimpleMaterialSlot<WoodenComplexMaterial> {
     }
 
     @Override
-    protected @NotNull BiFunction<ComplexMaterial, BlockBehaviour.Properties, Block> getBlockSupplier(
-            WoodenComplexMaterial parentMaterial
+    protected @NotNull Block createBlock(
+            WoodenComplexMaterial parentMaterial, BlockBehaviour.Properties settings
     ) {
-        return (complexMaterial, settings) -> new BaseFenceBlock(complexMaterial.getBlock(WoodSlots.PLANKS));
+        return new BaseFenceBlock(parentMaterial.getBlock(WoodSlots.PLANKS));
     }
 
     @Override
@@ -38,7 +37,7 @@ public class Fence extends SimpleMaterialSlot<WoodenComplexMaterial> {
     }
 
     @Override
-    protected @Nullable void getRecipeSupplier(ComplexMaterial parentMaterial, ResourceLocation id) {
+    protected @Nullable void makeRecipe(ComplexMaterial parentMaterial, ResourceLocation id) {
         BCLRecipeBuilder
                 .crafting(id, parentMaterial.getBlock(suffix))
                 .setOutputCount(3)

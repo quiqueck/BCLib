@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,14 +25,13 @@ public abstract class SimpleMaterialSlot<M extends ComplexMaterial> extends Mate
 
     @Nullable
     protected BlockEntry getBlockEntry(M parentMaterial) {
-        var supplier = getBlockSupplier(parentMaterial);
-        if (supplier != null) {
-            final BlockEntry entry = new BlockEntry(suffix, supplier);
-            modifyBlockEntry(parentMaterial, entry);
-            return entry;
-        }
-        return null;
+        final BlockEntry entry = new BlockEntry(suffix, (c, p) -> this.createBlock(parentMaterial, p));
+        modifyBlockEntry(parentMaterial, entry);
+        return entry;
     }
+
+    @NotNull
+    protected abstract Block createBlock(M parentMaterial, BlockBehaviour.Properties settings);
 
     protected void modifyBlockEntry(M parentMaterial, @NotNull BlockEntry entry) {
     }
@@ -41,17 +41,27 @@ public abstract class SimpleMaterialSlot<M extends ComplexMaterial> extends Mate
         adder.accept(getRecipeEntry(parentMaterial));
     }
 
-    @NotNull
-    protected abstract BiFunction<ComplexMaterial, BlockBehaviour.Properties, Block> getBlockSupplier(M parentMaterial);
-
     protected @Nullable RecipeEntry getRecipeEntry(M parentMaterial) {
-        return new RecipeEntry(suffix, this::getRecipeSupplier);
+        return new RecipeEntry(suffix, this::makeRecipe);
     }
 
-    protected abstract @Nullable void getRecipeSupplier(
+    protected abstract @Nullable void makeRecipe(
             ComplexMaterial parentMaterial,
             ResourceLocation id
     );
+
+    @Override
+    public void addItemEntry(M parentMaterial, Consumer<ItemEntry> adder) {
+        ItemEntry item = getItemEntry(parentMaterial);
+        if (item != null) {
+            adder.accept(item);
+        }
+    }
+
+    @Nullable
+    protected ItemEntry getItemEntry(M parentMaterial) {
+        return null;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -64,5 +74,39 @@ public abstract class SimpleMaterialSlot<M extends ComplexMaterial> extends Mate
     @Override
     public int hashCode() {
         return Objects.hash(suffix);
+    }
+
+    public static <M extends ComplexMaterial> SimpleMaterialSlot<M> createBlockItem(
+            @NotNull String suffix,
+            BiFunction<ComplexMaterial, BlockBehaviour.Properties, Block> maker
+    ) {
+        return new SimpleMaterialSlot(suffix) {
+            @Override
+            protected @NotNull Block createBlock(ComplexMaterial parentMaterial, BlockBehaviour.Properties settings) {
+                return maker.apply(parentMaterial, settings);
+            }
+
+            @Override
+            protected @Nullable void makeRecipe(ComplexMaterial parentMaterial, ResourceLocation id) {
+
+            }
+        };
+    }
+
+    public static <M extends ComplexMaterial> SimpleMaterialSlot<M> createBlockItem(
+            @NotNull String suffix,
+            Supplier<Block> maker
+    ) {
+        return new SimpleMaterialSlot(suffix) {
+            @Override
+            protected @NotNull Block createBlock(ComplexMaterial parentMaterial, BlockBehaviour.Properties settings) {
+                return maker.get();
+            }
+
+            @Override
+            protected @Nullable void makeRecipe(ComplexMaterial parentMaterial, ResourceLocation id) {
+
+            }
+        };
     }
 }
