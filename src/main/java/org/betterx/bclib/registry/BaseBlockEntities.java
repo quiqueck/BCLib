@@ -9,7 +9,7 @@ import org.betterx.bclib.blockentities.DynamicBlockEntityType.BlockEntitySupplie
 import org.betterx.bclib.blocks.BaseBarrelBlock;
 import org.betterx.bclib.blocks.BaseChestBlock;
 import org.betterx.bclib.blocks.BaseFurnaceBlock;
-import org.betterx.bclib.blocks.BaseSignBlock;
+import org.betterx.bclib.blocks.signs.BaseSignBlock;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;

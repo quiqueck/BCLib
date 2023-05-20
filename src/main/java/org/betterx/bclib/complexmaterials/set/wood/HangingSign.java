@@ -1,6 +1,6 @@
 package org.betterx.bclib.complexmaterials.set.wood;
 
-import org.betterx.bclib.blocks.signs.BaseSignBlock;
+import org.betterx.bclib.blocks.signs.BaseHangingSignBlock;
 import org.betterx.bclib.complexmaterials.WoodenComplexMaterial;
 import org.betterx.bclib.complexmaterials.entry.BlockEntry;
 import org.betterx.bclib.complexmaterials.entry.MaterialSlot;
@@ -15,32 +15,32 @@ import net.minecraft.world.item.Items;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
 
-public class Sign extends MaterialSlot<WoodenComplexMaterial> {
+public class HangingSign extends MaterialSlot<WoodenComplexMaterial> {
     @NotNull
-    public static final String WALL_SUFFFIX = "wall_sign";
+    public static final String WALL_SUFFFIX = "wall_hanging_sign";
 
-    public Sign() {
-        super("sign");
+    public HangingSign() {
+        super("hanging_sign");
     }
 
     @Override
     public void addBlockEntry(WoodenComplexMaterial parentMaterial, Consumer<BlockEntry> adder) {
         var signEntry = new BlockEntry(
                 suffix,
-                (complexMaterial, settings) -> new BaseSignBlock(parentMaterial.woodType)
-        ).setBlockTags(BlockTags.STANDING_SIGNS)
-         .setItemTags(ItemTags.SIGNS);
+                (complexMaterial, settings) -> new BaseHangingSignBlock(parentMaterial.woodType)
+        ).setBlockTags(BlockTags.CEILING_HANGING_SIGNS)
+         .setItemTags(ItemTags.HANGING_SIGNS);
 
         var wallSignEntry = new BlockEntry(
                 WALL_SUFFFIX,
                 false,
                 (complexMaterial, settings) -> {
-                    if (complexMaterial.getBlock(suffix) instanceof BaseSignBlock sign) {
+                    if (complexMaterial.getBlock(suffix) instanceof BaseHangingSignBlock sign) {
                         return sign.wallSign;
                     }
                     return null;
                 }
-        ).setBlockTags(BlockTags.WALL_SIGNS);
+        ).setBlockTags(BlockTags.WALL_HANGING_SIGNS);
         adder.accept(signEntry);
         adder.accept(wallSignEntry);
     }
