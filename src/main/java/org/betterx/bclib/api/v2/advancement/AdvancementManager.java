@@ -3,6 +3,7 @@ package org.betterx.bclib.api.v2.advancement;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.levelgen.structures.BCLStructure;
 import org.betterx.bclib.complexmaterials.WoodenComplexMaterial;
+import org.betterx.bclib.complexmaterials.set.wood.WoodSlots;
 import org.betterx.bclib.items.complex.EquipmentSet;
 
 import net.minecraft.advancements.*;
@@ -379,9 +380,9 @@ public class AdvancementManager {
         public Builder addWoodCriterion(WoodenComplexMaterial mat) {
             return addInventoryChangedAnyCriterion(
                     "got_" + mat.getBaseName(),
-                    mat.getBlock(WoodenComplexMaterial.BLOCK_LOG),
-                    mat.getBlock(WoodenComplexMaterial.BLOCK_BARK),
-                    mat.getBlock(WoodenComplexMaterial.BLOCK_PLANKS)
+                    mat.getBlock(WoodSlots.LOG),
+                    mat.getBlock(WoodSlots.BARK),
+                    mat.getBlock(WoodSlots.PLANKS)
             );
         }
 

@@ -2,6 +2,7 @@ package org.betterx.bclib.complexmaterials;
 
 import org.betterx.bclib.complexmaterials.entry.BlockEntry;
 import org.betterx.bclib.complexmaterials.entry.ItemEntry;
+import org.betterx.bclib.complexmaterials.entry.MaterialSlot;
 import org.betterx.bclib.complexmaterials.entry.RecipeEntry;
 import org.betterx.bclib.registry.BlockRegistry;
 import org.betterx.bclib.registry.ItemRegistry;
@@ -21,6 +22,7 @@ import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class ComplexMaterial {
@@ -163,6 +165,51 @@ public abstract class ComplexMaterial {
     }
 
     /**
+     * Get initiated {@link Block} from this {@link ComplexMaterial}.
+     *
+     * @param key          {@link String} block name suffix (example: "mod:custom_log" will have a "log" suffix if "custom" is a base name of this material)
+     * @param runIfPresent {@link Consumer} to run if block is present.
+     * @return {@link Block} or {@code null} if nothing is stored.
+     */
+    @Nullable
+    public Block ifBlockPresent(String key, Consumer<Block> runIfPresent) {
+        final Block block = blocks.get(key);
+        if (block != null) {
+            runIfPresent.accept(block);
+        }
+        return block;
+    }
+
+    /**
+     * Get initiated {@link Block} from this {@link ComplexMaterial}.
+     *
+     * @param slot         {@link MaterialSlot} The Block Entry
+     * @param runIfPresent {@link Consumer} to run if block is present.
+     * @param <M>          The {@link ComplexMaterial} this slot is usable for Type
+     * @return {@link Block} or {@code null} if nothing is stored.
+     */
+    @Nullable
+    public <M extends ComplexMaterial> Block ifBlockPresent(MaterialSlot<M> slot, Consumer<Block> runIfPresent) {
+        final Block block = blocks.get(slot.suffix);
+        if (block != null) {
+            runIfPresent.accept(block);
+        }
+        return block;
+    }
+
+    /**
+     * Get initiated {@link Block} from this {@link ComplexMaterial}.
+     *
+     * @param key {@link MaterialSlot} The Block Entry
+     * @param <M> The {@link ComplexMaterial} this slot is usable for Type
+     * @return {@link Block} or {@code null} if nothing is stored.
+     */
+    @Nullable
+    public <M extends ComplexMaterial> Block getBlock(MaterialSlot<M> key) {
+        return blocks.get(key.suffix);
+    }
+
+    /**
      * Get initiated {@link Item} from this {@link ComplexMaterial}.
      *
      * @param key {@link String} block name suffix (example: "mod:custom_apple" will have a "apple" suffix if "custom" is a base name of this material)
@@ -172,6 +219,52 @@ public abstract class ComplexMaterial {
     public Item getItem(String key) {
         return items.get(key);
     }
+
+    /**
+     * Get initiated {@link Item} from this {@link ComplexMaterial}.
+     *
+     * @param slot {@link MaterialSlot} The Item Entry
+     * @param <M>  The {@link ComplexMaterial} this slot is usable for Type
+     * @return {@link Item} or {@code null} if nothing is stored.
+     */
+    @Nullable
+    public <M extends ComplexMaterial> Item getItem(MaterialSlot<M> slot) {
+        return items.get(slot.suffix);
+    }
+
+    /**
+     * Get initiated {@link Item} from this {@link ComplexMaterial}.
+     *
+     * @param key          {@link String} item name suffix (example: "mod:custom_apple" will have a "apple" suffix if "custom" is a base name of this material)
+     * @param runIfPresent {@link Consumer} to run if item is present.
+     * @return {@link Item} or {@code null} if nothing is stored.
+     */
+    @Nullable
+    public Item ifItemPresent(String key, Consumer<Item> runIfPresent) {
+        final Item item = items.get(key);
+        if (item != null) {
+            runIfPresent.accept(item);
+        }
+        return item;
+    }
+
+    /**
+     * Get initiated {@link Item} from this {@link ComplexMaterial}.
+     *
+     * @param slot         {@link MaterialSlot} The Item Entry
+     * @param runIfPresent {@link Consumer} to run if item is present.
+     * @param <M>          The {@link ComplexMaterial} this slot is usable for Type
+     * @return {@link Item} or {@code null} if nothing is stored.
+     */
+    @Nullable
+    public <M extends ComplexMaterial> Item ifItemPresent(MaterialSlot<M> slot, Consumer<Item> runIfPresent) {
+        final Item item = items.get(slot.suffix);
+        if (item != null) {
+            runIfPresent.accept(item);
+        }
+        return item;
+    }
+
 
     /**
      * Get default block settings for this material.
