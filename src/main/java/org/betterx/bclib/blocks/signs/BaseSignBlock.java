@@ -20,16 +20,16 @@ public class BaseSignBlock extends StandingSignBlock implements BlockModelProvid
     public final BaseWallSignBlock wallSign;
 
     public BaseSignBlock(WoodType type) {
-        this(type, MapColor.WOOD);
+        this(type, MapColor.WOOD, true);
     }
 
     public BaseSignBlock(BCLWoodTypeWrapper type) {
-        this(type.type, type.color);
+        this(type.type, type.color, type.flammable);
     }
 
-    public BaseSignBlock(WoodType type, MapColor color) {
-        super(BehaviourBuilders.createSign(color), type);
-        this.wallSign = new BaseWallSignBlock(BehaviourBuilders.createWallSign(color, this), type);
+    public BaseSignBlock(WoodType type, MapColor color, boolean flammable) {
+        super(BehaviourBuilders.createSign(color, flammable), type);
+        this.wallSign = new BaseWallSignBlock(BehaviourBuilders.createWallSign(color, this, flammable), type);
     }
 
 

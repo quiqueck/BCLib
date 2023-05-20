@@ -20,16 +20,16 @@ public class BaseHangingSignBlock extends CeilingHangingSignBlock implements Blo
     public final BaseWallHangingSignBlock wallSign;
 
     public BaseHangingSignBlock(WoodType type) {
-        this(type, MapColor.WOOD);
+        this(type, MapColor.WOOD, true);
     }
 
     public BaseHangingSignBlock(BCLWoodTypeWrapper type) {
-        this(type.type, type.color);
+        this(type.type, type.color, type.flammable);
     }
 
-    public BaseHangingSignBlock(WoodType type, MapColor color) {
-        super(BehaviourBuilders.createSign(color), type);
-        this.wallSign = new BaseWallHangingSignBlock(BehaviourBuilders.createWallSign(color, this), type);
+    public BaseHangingSignBlock(WoodType type, MapColor color, boolean flammable) {
+        super(BehaviourBuilders.createSign(color, flammable), type);
+        this.wallSign = new BaseWallHangingSignBlock(BehaviourBuilders.createWallSign(color, this, flammable), type);
     }
 
 

@@ -1,5 +1,7 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.complexmaterials.BehaviourBuilders;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -21,7 +23,7 @@ public abstract class BasePlantWithAgeBlock extends BasePlantBlock {
 
     @Deprecated(forRemoval = true)
     public BasePlantWithAgeBlock(Function<Properties, Properties> propMod) {
-        this(propMod.apply(basePlantSettings().randomTicks()));
+        this(propMod.apply(BehaviourBuilders.applyBasePlantSettings().randomTicks()));
     }
 
     protected BasePlantWithAgeBlock(Properties settings) {

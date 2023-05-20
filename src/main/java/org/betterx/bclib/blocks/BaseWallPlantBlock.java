@@ -1,5 +1,6 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.complexmaterials.BehaviourBuilders;
 import org.betterx.bclib.util.BlocksHelper;
 
 import net.minecraft.core.BlockPos;
@@ -30,11 +31,11 @@ public abstract class BaseWallPlantBlock extends BasePlantBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
     public BaseWallPlantBlock() {
-        this(basePlantSettings());
+        this(BehaviourBuilders.applyBasePlantSettings());
     }
 
     public BaseWallPlantBlock(int light) {
-        this(basePlantSettings(light));
+        this(BehaviourBuilders.applyBasePlantSettings(light));
     }
 
     protected BaseWallPlantBlock(Properties settings) {

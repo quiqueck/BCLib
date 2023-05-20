@@ -1,5 +1,6 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.complexmaterials.BehaviourBuilders;
 import org.betterx.bclib.util.BlocksHelper;
 import org.betterx.bclib.util.MHelper;
 
@@ -37,7 +38,7 @@ public class BaseCropBlock extends BasePlantBlock {
     private final Item drop;
 
     public BaseCropBlock(Item drop, Block... terrain) {
-        this(basePlantSettings().randomTicks(), drop, terrain);
+        this(BehaviourBuilders.applyBasePlantSettings().randomTicks(), drop, terrain);
     }
 
     protected BaseCropBlock(BlockBehaviour.Properties properties, Item drop, Block... terrain) {

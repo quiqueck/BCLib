@@ -22,7 +22,7 @@ public class SimpleLeavesBlock extends BaseBlockNotFull implements RenderLayerPr
     public SimpleLeavesBlock(MapColor color) {
         this(
                 BehaviourBuilders
-                        .createLeaves(color)
+                        .createLeaves(color, true)
                         .sound(SoundType.GRASS)
         );
     }
@@ -30,7 +30,7 @@ public class SimpleLeavesBlock extends BaseBlockNotFull implements RenderLayerPr
     public SimpleLeavesBlock(MapColor color, int light) {
         this(
                 BehaviourBuilders
-                        .createLeaves(color)
+                        .createLeaves(color, true)
                         .lightLevel(ignored -> light)
                         .sound(SoundType.GRASS)
         );

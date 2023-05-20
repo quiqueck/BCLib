@@ -1,5 +1,7 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.complexmaterials.BehaviourBuilders;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
@@ -15,7 +17,7 @@ import java.util.List;
 
 public abstract class WallMushroomBlock extends BaseWallPlantBlock {
     public WallMushroomBlock(int light) {
-        super(basePlantSettings(light).destroyTime(0.2F).sound(SoundType.WOOD));
+        super(BehaviourBuilders.applyBasePlantSettings(light).destroyTime(0.2F).sound(SoundType.WOOD));
     }
 
     protected WallMushroomBlock(BlockBehaviour.Properties properties) {

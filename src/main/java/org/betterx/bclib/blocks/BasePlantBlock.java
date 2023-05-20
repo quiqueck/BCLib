@@ -44,41 +44,14 @@ import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderLayerProvider, BonemealableBlock {
-    public static Properties basePlantSettings() {
-        return basePlantSettings(false, 0);
-    }
-
-    public static Properties basePlantSettings(int light) {
-        return basePlantSettings(false, light);
-    }
-
-    public static Properties basePlantSettings(boolean replaceable) {
-        return basePlantSettings(replaceable, 0);
-    }
-
-    public static Properties basePlantSettings(boolean replaceable, int light) {
-        return basePlantSettings(replaceable
-                ? BehaviourBuilders.createReplaceablePlant()
-                : BehaviourBuilders.createPlant(), light);
-    }
-
-    public static Properties basePlantSettings(BlockBehaviour.Properties props, int light) {
-        props
-                .sound(SoundType.GRASS)
-                .noCollission()
-                .offsetType(BlockBehaviour.OffsetType.XZ);
-        if (light > 0) props.lightLevel(s -> light);
-        return props;
-    }
-
     private static final VoxelShape SHAPE = box(4, 0, 4, 12, 14, 12);
 
     public BasePlantBlock() {
-        this(basePlantSettings());
+        this(BehaviourBuilders.applyBasePlantSettings());
     }
 
     public BasePlantBlock(int light) {
-        this(basePlantSettings(light));
+        this(BehaviourBuilders.applyBasePlantSettings(light));
     }
 
     @Deprecated(forRemoval = true)
@@ -87,7 +60,7 @@ public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderL
     }
 
     public BasePlantBlock(boolean replaceable) {
-        this(basePlantSettings(replaceable));
+        this(BehaviourBuilders.applyBasePlantSettings(replaceable));
     }
 
     @Deprecated(forRemoval = true)
@@ -97,7 +70,7 @@ public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderL
 
 
     public BasePlantBlock(boolean replaceable, int light) {
-        this(basePlantSettings(replaceable, light));
+        this(BehaviourBuilders.applyBasePlantSettings(replaceable, light));
     }
 
     @Deprecated(forRemoval = true)
