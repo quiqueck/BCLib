@@ -57,7 +57,7 @@ public class TagDataProvider<T> extends FabricTagProvider<T> {
             tags.sort(Comparator.comparing(a -> a.location().toString()));
 
             locs.forEach(builder::add);
-            tags.forEach(builder::addTag);
+            tags.forEach(builder::forceAddTag);
         }, (tag, loc) -> shouldAdd(tag.location()) || this.shouldAdd(loc));
     }
 }
