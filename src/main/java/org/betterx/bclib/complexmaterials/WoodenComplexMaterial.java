@@ -1,7 +1,7 @@
 package org.betterx.bclib.complexmaterials;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.complexmaterials.entry.MaterialSlot;
+import org.betterx.bclib.complexmaterials.entry.SlotMap;
 import org.betterx.bclib.complexmaterials.set.wood.WoodSlots;
 import org.betterx.bclib.items.boat.BoatTypeOverride;
 import org.betterx.worlds.together.tag.v3.TagManager;
@@ -14,7 +14,6 @@ import net.minecraft.world.level.material.MapColor;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 
-import java.util.List;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.Nullable;
 
@@ -97,9 +96,8 @@ public class WoodenComplexMaterial extends ComplexMaterialSet<WoodenComplexMater
     }
 
     @Override
-    protected List<MaterialSlot<WoodenComplexMaterial>> createMaterialSlots() {
-
-        var list = List.of(
+    protected SlotMap<WoodenComplexMaterial> createMaterialSlots() {
+        return SlotMap.of(
                 WoodSlots.STRIPPED_LOG,
                 WoodSlots.STRIPPED_BARK,
                 WoodSlots.LOG,
@@ -119,12 +117,8 @@ public class WoodenComplexMaterial extends ComplexMaterialSet<WoodenComplexMater
                 WoodSlots.BARREL,
                 WoodSlots.CRAFTING_TABLE,
                 WoodSlots.BOOKSHELF,
-                WoodSlots.COMPOSTER,
-                WoodSlots.BOAT,
-                WoodSlots.CHEST_BOAT
+                WoodSlots.COMPOSTER
         );
-
-        return list;
     }
 
     @Override

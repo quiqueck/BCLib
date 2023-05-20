@@ -12,10 +12,10 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,12 +30,11 @@ public class ChestBoat extends SimpleMaterialSlot<WoodenComplexMaterial> {
     }
 
     @Override
-    protected @NotNull BiFunction<ComplexMaterial, BlockBehaviour.Properties, Block> getBlockSupplier(
-            WoodenComplexMaterial parentMaterial
+    protected @NotNull Block createBlock(
+            WoodenComplexMaterial parentMaterial, BlockBehaviour.Properties settings
     ) {
-        return (a, b) -> {
-            return null;
-        };
+        //this should never get called
+        return null;
     }
 
     @Override
@@ -47,18 +46,23 @@ public class ChestBoat extends SimpleMaterialSlot<WoodenComplexMaterial> {
     }
 
     @Override
-    protected @Nullable void getRecipeSupplier(ComplexMaterial parentMaterial, ResourceLocation id) {
-        BCLRecipeBuilder.crafting(id, parentMaterial.getBlock(suffix))
-                        .shapeless()
-                        .addMaterial('C', CommonItemTags.CHEST)
-                        .addMaterial('#', parentMaterial.getBlock(WoodSlots.BOAT))
-                        .setGroup("chest_boat")
-                        .setCategory(RecipeCategory.TRANSPORTATION)
-                        .build();
+    protected @Nullable void makeRecipe(ComplexMaterial parentMaterial, ResourceLocation id) {
+        makeChestBoatRecipe(id, parentMaterial.getItem(WoodSlots.BOAT), parentMaterial.getItem(WoodSlots.CHEST_BOAT));
     }
 
     @Override
     public void onInit(WoodenComplexMaterial parentMaterial) {
         parentMaterial.initBoatType();
+    }
+
+    public static void makeChestBoatRecipe(ResourceLocation id, Item boat, Item chestBoat) {
+        BCLRecipeBuilder
+                .crafting(id, chestBoat)
+                .shapeless()
+                .addMaterial('C', CommonItemTags.CHEST)
+                .addMaterial('#', boat)
+                .setGroup("chest_boat")
+                .setCategory(RecipeCategory.TRANSPORTATION)
+                .build();
     }
 }

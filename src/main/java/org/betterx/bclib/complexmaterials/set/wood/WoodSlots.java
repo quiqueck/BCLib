@@ -19,7 +19,6 @@ public class WoodSlots {
     public static final MaterialSlot<WoodenComplexMaterial> DOOR = new Door();
     public static final MaterialSlot<WoodenComplexMaterial> LADDER = new Ladder();
     public static final Sign SIGN = new Sign();
-    public static final String WALL_SIGN = Sign.WALL_SUFFFIX;
     public static final MaterialSlot<WoodenComplexMaterial> CHEST = new Chest();
     public static final MaterialSlot<WoodenComplexMaterial> BARREL = new Barrel();
     public static final MaterialSlot<WoodenComplexMaterial> CRAFTING_TABLE = new CraftingTable();
@@ -27,6 +26,9 @@ public class WoodSlots {
     public static final MaterialSlot<WoodenComplexMaterial> COMPOSTER = new Composter();
     public static final MaterialSlot<WoodenComplexMaterial> BOAT = new Boat();
     public static final MaterialSlot<WoodenComplexMaterial> CHEST_BOAT = new ChestBoat();
+
+    public static final String WALL_SIGN = Sign.WALL_SUFFFIX;
+    public static final String SAPLING = AbstractSaplingSlot.SAPLING_SUFFIX;
 }
 
 

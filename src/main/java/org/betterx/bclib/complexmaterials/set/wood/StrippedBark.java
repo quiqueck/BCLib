@@ -14,7 +14,6 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
-import java.util.function.BiFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,10 +23,10 @@ public class StrippedBark extends SimpleMaterialSlot<WoodenComplexMaterial> {
     }
 
     @Override
-    protected @NotNull BiFunction<ComplexMaterial, BlockBehaviour.Properties, Block> getBlockSupplier(
-            WoodenComplexMaterial parentMaterial
+    protected @NotNull Block createBlock(
+            WoodenComplexMaterial parentMaterial, BlockBehaviour.Properties settings
     ) {
-        return (complexMaterial, settings) -> new BaseBarkBlock(settings);
+        return new BaseBarkBlock(settings);
     }
 
     @Override
@@ -46,7 +45,7 @@ public class StrippedBark extends SimpleMaterialSlot<WoodenComplexMaterial> {
     }
 
     @Override
-    protected @Nullable void getRecipeSupplier(ComplexMaterial material, ResourceLocation id) {
+    protected @Nullable void makeRecipe(ComplexMaterial material, ResourceLocation id) {
         BCLRecipeBuilder
                 .crafting(id, material.getBlock(suffix))
                 .setShape("##", "##")

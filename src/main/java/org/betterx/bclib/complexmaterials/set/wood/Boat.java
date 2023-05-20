@@ -9,10 +9,10 @@ import org.betterx.bclib.recipes.BCLRecipeBuilder;
 
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,12 +27,11 @@ public class Boat extends SimpleMaterialSlot<WoodenComplexMaterial> {
     }
 
     @Override
-    protected @NotNull BiFunction<ComplexMaterial, BlockBehaviour.Properties, Block> getBlockSupplier(
-            WoodenComplexMaterial parentMaterial
+    protected @NotNull Block createBlock(
+            WoodenComplexMaterial parentMaterial, BlockBehaviour.Properties settings
     ) {
-        return (a, b) -> {
-            return null;
-        };
+        //this should never get called
+        return null;
     }
 
     @Override
@@ -41,18 +40,22 @@ public class Boat extends SimpleMaterialSlot<WoodenComplexMaterial> {
     }
 
     @Override
-    protected @Nullable void getRecipeSupplier(ComplexMaterial parentMaterial, ResourceLocation id) {
-        BCLRecipeBuilder
-                .crafting(id, parentMaterial.getBlock(suffix))
-                .setShape("# #", "###")
-                .addMaterial('#', parentMaterial.getBlock(WoodSlots.PLANKS))
-                .setGroup("boat")
-                .setCategory(RecipeCategory.TRANSPORTATION)
-                .build();
+    protected @Nullable void makeRecipe(ComplexMaterial parentMaterial, ResourceLocation id) {
+        makeBoatRecipe(id, parentMaterial.getBlock(WoodSlots.PLANKS), parentMaterial.getItem(suffix));
     }
 
     @Override
     public void onInit(WoodenComplexMaterial parentMaterial) {
         parentMaterial.initBoatType();
+    }
+
+    public static void makeBoatRecipe(ResourceLocation id, Block planks, Item boat) {
+        BCLRecipeBuilder
+                .crafting(id, boat)
+                .setShape("# #", "###")
+                .addMaterial('#', planks)
+                .setGroup("boat")
+                .setCategory(RecipeCategory.TRANSPORTATION)
+                .build();
     }
 }
