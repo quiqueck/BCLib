@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "bclib:item/test_sign"
+    "layer0": "bclib:item/test_hanging_sign"
   }
 }
