@@ -13,7 +13,8 @@ import org.betterx.bclib.api.v2.poi.PoiManager;
 import org.betterx.bclib.api.v3.levelgen.features.blockpredicates.BlockPredicates;
 import org.betterx.bclib.api.v3.levelgen.features.placement.PlacementModifiers;
 import org.betterx.bclib.api.v3.tag.BCLBlockTags;
-import org.betterx.bclib.blocks.BaseSignBlock;
+import org.betterx.bclib.blocks.signs.BaseHangingSignBlock;
+import org.betterx.bclib.blocks.signs.BaseSignBlock;
 import org.betterx.bclib.commands.CommandRegistry;
 import org.betterx.bclib.complexmaterials.BCLWoodTypeWrapper;
 import org.betterx.bclib.config.Configs;
@@ -132,6 +133,7 @@ public class BCLib implements ModInitializer {
 
     public final static BCLWoodTypeWrapper TEST_WOOD;
     public static BaseSignBlock TEST_SIGN = null;
+    public static BaseHangingSignBlock TEST_HANGING_SIGN = null;
 
     private static void testObjects() {
         var bockReg = new BlockRegistry(new PathConfig(MOD_ID, "test"));
@@ -143,13 +145,21 @@ public class BCLib implements ModInitializer {
                 makeID("test_wall_sign"),
                 TEST_SIGN.wallSign
         );
-
+        bockReg.register(
+                makeID("test_hanging_sign"),
+                TEST_HANGING_SIGN
+        );
+        bockReg.registerBlockOnly(
+                makeID("test_wall_hanging_sign"),
+                TEST_HANGING_SIGN.wallSign
+        );
     }
 
     static {
         if (ADD_TEST_DATA) {
             TEST_WOOD = BCLWoodTypeWrapper.create(makeID("test_wood")).setColor(MapColor.COLOR_MAGENTA).build();
             TEST_SIGN = new BaseSignBlock(TEST_WOOD);
+            TEST_HANGING_SIGN = new BaseHangingSignBlock(TEST_WOOD);
 
 
             final ResourceKey<CreativeModeTab> TAB_TEST_KEY = ResourceKey.create(
@@ -163,7 +173,7 @@ public class BCLib implements ModInitializer {
             builder.icon(() -> new ItemStack(Items.BARRIER));
             builder.displayItems((itemDisplayParameters, output) -> {
 
-                var list = List.of(TEST_SIGN.asItem())
+                var list = List.of(TEST_SIGN.asItem(), TEST_HANGING_SIGN.asItem())
                                .stream().map(b -> new ItemStack(b, 1)).toList();
 
                 output.acceptAll(list);
