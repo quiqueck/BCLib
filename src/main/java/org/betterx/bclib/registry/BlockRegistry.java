@@ -1,7 +1,6 @@
 package org.betterx.bclib.registry;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.blocks.BaseLeavesBlock;
 import org.betterx.bclib.blocks.BaseOreBlock;
 import org.betterx.bclib.blocks.FeatureSaplingBlock;
 import org.betterx.bclib.config.PathConfig;
@@ -52,18 +51,7 @@ public class BlockRegistry extends BaseRegistry<Block> {
         block = Registry.register(BuiltInRegistries.BLOCK, id, block);
         getModBlocks(id.getNamespace()).add(block);
 
-        if (block instanceof BaseLeavesBlock) {
-            TagManager.BLOCKS.add(
-                    block,
-                    BlockTags.LEAVES,
-                    CommonBlockTags.LEAVES,
-                    MineableTags.HOE,
-                    MineableTags.SHEARS
-            );
-            if (item != null) {
-                TagManager.ITEMS.add(item, CommonItemTags.LEAVES, ItemTags.LEAVES);
-            }
-        } else if (block instanceof BaseOreBlock) {
+        if (block instanceof BaseOreBlock) {
             TagManager.BLOCKS.add(block, MineableTags.PICKAXE);
         } else if (block instanceof FeatureSaplingBlock) {
             TagManager.BLOCKS.add(block, CommonBlockTags.SAPLINGS, BlockTags.SAPLINGS);

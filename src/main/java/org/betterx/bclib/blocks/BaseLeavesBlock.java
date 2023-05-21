@@ -4,18 +4,12 @@ import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.complexmaterials.BehaviourBuilders;
 import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
-import org.betterx.bclib.interfaces.TagProvider;
-import org.betterx.bclib.interfaces.tools.AddMineableHoe;
-import org.betterx.bclib.interfaces.tools.AddMineableShears;
+import org.betterx.bclib.interfaces.behaviours.BehaviourLeaves;
 import org.betterx.bclib.items.tool.BaseShearsItem;
 import org.betterx.bclib.util.MHelper;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -34,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class BaseLeavesBlock extends LeavesBlock implements BlockModelProvider, RenderLayerProvider, TagProvider, AddMineableShears, AddMineableHoe {
+public class BaseLeavesBlock extends LeavesBlock implements BlockModelProvider, RenderLayerProvider, BehaviourLeaves {
     protected final Block sapling;
 
     public BaseLeavesBlock(
@@ -123,9 +117,9 @@ public class BaseLeavesBlock extends LeavesBlock implements BlockModelProvider, 
         return getBlockModel(resourceLocation, defaultBlockState());
     }
 
+
     @Override
-    public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-        blockTags.add(BlockTags.LEAVES);
-        itemTags.add(ItemTags.LEAVES);
+    public float compostingChance() {
+        return 0.3f;
     }
 }

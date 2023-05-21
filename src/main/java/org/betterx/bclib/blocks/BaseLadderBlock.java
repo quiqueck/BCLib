@@ -6,6 +6,7 @@ import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
+import org.betterx.bclib.interfaces.behaviours.BehaviourClimable;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.UnbakedModel;
@@ -26,7 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public class BaseLadderBlock extends LadderBlock implements RenderLayerProvider, BlockModelProvider {
+public class BaseLadderBlock extends LadderBlock implements RenderLayerProvider, BlockModelProvider, BehaviourClimable {
     public BaseLadderBlock(Block block) {
         this(Properties.copy(block).noOcclusion());
     }
