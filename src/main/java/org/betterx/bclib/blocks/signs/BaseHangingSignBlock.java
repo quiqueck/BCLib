@@ -29,14 +29,9 @@ public abstract class BaseHangingSignBlock extends CeilingHangingSignBlock imple
         BaseWallHangingSignBlock create(Properties properties, WoodType woodType);
     }
 
-    protected BaseHangingSignBlock(WoodType type, MapColor color, boolean flammable, WallSignProvider provider) {
-        super(BehaviourBuilders.createSign(color, flammable), type);
-        this.wallSign = provider.create(BehaviourBuilders.createWallSign(color, this, flammable), type);
-    }
-
-    public BaseHangingSignBlock(WoodType type, MaterialColor color) {
+    protected BaseHangingSignBlock(WoodType type, MaterialColor color, boolean flammable, WallSignProvider provider) {
         super(BehaviourBuilders.createSign(color), type);
-        this.wallSign = new BaseWallHangingSignBlock(BehaviourBuilders.createWallSign(color, this), type);
+        this.wallSign = provider.create(BehaviourBuilders.createWallSign(color, this, flammable), type);
     }
 
     @Override
@@ -52,14 +47,14 @@ public abstract class BaseHangingSignBlock extends CeilingHangingSignBlock imple
 
     public static class Wood extends BaseHangingSignBlock implements BehaviourWood {
         public Wood(WoodType type) {
-            this(type, MapColor.WOOD, true);
+            this(type, MaterialColor.WOOD, true);
         }
 
         public Wood(BCLWoodTypeWrapper type) {
             this(type.type, type.color, type.flammable);
         }
 
-        public Wood(WoodType type, MapColor color, boolean flammable) {
+        public Wood(WoodType type, MaterialColor color, boolean flammable) {
             super(type, color, flammable, BaseWallHangingSignBlock.Wood::new);
         }
     }

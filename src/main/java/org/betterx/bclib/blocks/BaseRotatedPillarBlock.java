@@ -74,7 +74,7 @@ public abstract class BaseRotatedPillarBlock extends RotatedPillarBlock implemen
         protected final boolean flammable;
 
         public Wood(Properties settings, boolean flammable) {
-            super(flammable ? settings.ignitedByLava() : settings);
+            super(settings);
             this.flammable = flammable;
         }
 

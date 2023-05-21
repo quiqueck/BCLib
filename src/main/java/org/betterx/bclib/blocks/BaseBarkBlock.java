@@ -36,7 +36,7 @@ public abstract class BaseBarkBlock extends BaseRotatedPillarBlock {
         private final boolean flammable;
 
         public Wood(Properties settings, boolean flammable) {
-            super(flammable ? settings.ignitedByLava() : settings);
+            super(settings);
             this.flammable = flammable;
         }
 

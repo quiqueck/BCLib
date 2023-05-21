@@ -119,7 +119,10 @@ public abstract class BaseTrapdoorBlock extends TrapDoorBlock implements RenderL
 
     public static class Wood extends BaseTrapdoorBlock implements BehaviourWood {
         public Wood(Block source, BlockSetType type, boolean flammable) {
-            this(BehaviourBuilders.createTrapDoor(source.defaultMapColor(), flammable).sound(SoundType.WOOD), type);
+            this(
+                    BehaviourBuilders.createTrapDoor(source.defaultMaterialColor(), flammable).sound(SoundType.WOOD),
+                    type
+            );
         }
 
         public Wood(Properties properties, BlockSetType type) {
@@ -136,7 +139,7 @@ public abstract class BaseTrapdoorBlock extends TrapDoorBlock implements RenderL
 
     public static class Stone extends BaseTrapdoorBlock implements BehaviourStone {
         public Stone(Block source, BlockSetType type) {
-            this(BehaviourBuilders.createTrapDoor(source.defaultMapColor(), false).sound(SoundType.STONE), type);
+            this(BehaviourBuilders.createTrapDoor(source.defaultMaterialColor(), false).sound(SoundType.STONE), type);
         }
 
         public Stone(Properties properties, BlockSetType type) {
@@ -146,7 +149,7 @@ public abstract class BaseTrapdoorBlock extends TrapDoorBlock implements RenderL
 
     public static class Metal extends BaseTrapdoorBlock implements BehaviourMetal {
         public Metal(Block source, BlockSetType type) {
-            this(BehaviourBuilders.createTrapDoor(source.defaultMapColor(), false).sound(SoundType.METAL), type);
+            this(BehaviourBuilders.createTrapDoor(source.defaultMaterialColor(), false).sound(SoundType.METAL), type);
         }
 
         public Metal(Properties properties, BlockSetType type) {

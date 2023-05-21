@@ -67,27 +67,20 @@ public class BehaviourBuilders {
                                         .color(color)
                                         .noCollission()
                                         .strength(1.0f);
-        if (flammable) {
-            p.ignitedByLava();
-        }
-        return p;
     }
 
-    public static BlockBehaviour.Properties createWallSign(MapColor color, Block dropBlock, boolean flammable) {
-        return createSign(color, flammable).dropsLike(dropBlock);
+    public static BlockBehaviour.Properties createWallSign(MaterialColor color, Block dropBlock, boolean flammable) {
+        return createSign(color).dropsLike(dropBlock);
     }
 
-    public static BlockBehaviour.Properties createTrapDoor(MapColor color, boolean flammable) {
+    public static BlockBehaviour.Properties createTrapDoor(MaterialColor color, boolean flammable) {
         final BlockBehaviour.Properties p = BlockBehaviour.Properties
-                .of()
-                .mapColor(color)
-                .instrument(NoteBlockInstrument.BASS)
+                .of(Material.WOOD)
+                .color(color)
                 .strength(3.0F)
                 .noOcclusion()
                 .isValidSpawn(Blocks::never);
-        if (flammable) {
-            p.ignitedByLava();
-        }
+
         return p;
     }
 

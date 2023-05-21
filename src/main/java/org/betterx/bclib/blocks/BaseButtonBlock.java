@@ -146,14 +146,6 @@ public abstract class BaseButtonBlock extends ButtonBlock implements BlockModelP
         public Stone(Block source, BlockSetType type) {
             super(source, Properties.copy(source).noOcclusion(), false, type);
         }
-
-
-        @Override
-        public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-            super.addTags(blockTags, itemTags);
-            blockTags.add(BlockTags.STONE_BUTTONS);
-            itemTags.add(ItemTags.STONE_BUTTONS);
-        }
     }
 
     public static class Wood extends BaseButtonBlock implements BehaviourWood {

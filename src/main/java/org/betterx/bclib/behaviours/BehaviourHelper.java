@@ -5,16 +5,14 @@ import org.betterx.bclib.behaviours.interfaces.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
-import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import net.minecraft.world.level.material.Material;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class BehaviourHelper {
     public static boolean isStone(Block source) {
-        return source instanceof BehaviourStone || source.defaultBlockState()
-                                                         .instrument()
-                                                         .equals(NoteBlockInstrument.BASEDRUM);
+        return source instanceof BehaviourStone || source.defaultBlockState().getMaterial() == Material.STONE;
     }
 
     public static boolean isStone(BlockSetType type) {

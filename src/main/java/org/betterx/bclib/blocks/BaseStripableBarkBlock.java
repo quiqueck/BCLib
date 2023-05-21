@@ -65,12 +65,10 @@ public abstract class BaseStripableBarkBlock extends BaseBarkBlock {
     public static class Wood extends BaseStripableBarkBlock implements BehaviourWood, TagProvider {
         private final boolean flammable;
 
-        public Wood(MapColor color, Block stripedBlock, boolean flammable) {
+        public Wood(MaterialColor color, Block stripedBlock, boolean flammable) {
             super(
                     stripedBlock,
-                    (flammable
-                            ? Properties.copy(stripedBlock).ignitedByLava()
-                            : Properties.copy(stripedBlock)).mapColor(color)
+                    Properties.copy(stripedBlock).color(color)
             );
             this.flammable = flammable;
         }

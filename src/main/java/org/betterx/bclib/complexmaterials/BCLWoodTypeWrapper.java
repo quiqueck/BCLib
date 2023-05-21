@@ -14,11 +14,13 @@ public final class BCLWoodTypeWrapper {
     public final ResourceLocation id;
     public final WoodType type;
     public final MaterialColor color;
+    public final boolean flammable;
 
-    protected BCLWoodTypeWrapper(ResourceLocation id, WoodType type, MaterialColor color) {
+    protected BCLWoodTypeWrapper(ResourceLocation id, WoodType type, MaterialColor color, boolean flammable) {
         this.id = id;
         this.type = type;
         this.color = color;
+        this.flammable = flammable;
     }
 
     public static Builder create(String modID, String string) {
@@ -73,6 +75,7 @@ public final class BCLWoodTypeWrapper {
         private final ResourceLocation id;
         private BlockSetType setType;
         private MaterialColor color;
+        private boolean flammable;
 
         public Builder(ResourceLocation id) {
             this.id = id;
@@ -89,11 +92,16 @@ public final class BCLWoodTypeWrapper {
             return this;
         }
 
+        public Builder setFlammable(boolean v) {
+            this.flammable = v;
+            return this;
+        }
+
         public BCLWoodTypeWrapper build() {
             if (setType == null) setType = BlockSetTypeRegistry.registerWood(id);
 
             final WoodType type = WoodTypeRegistry.register(id, setType);
-            return new BCLWoodTypeWrapper(id, type, color);
+            return new BCLWoodTypeWrapper(id, type, color, flammable);
         }
     }
 }

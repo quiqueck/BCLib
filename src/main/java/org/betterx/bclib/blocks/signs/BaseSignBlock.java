@@ -16,8 +16,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SignItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.StandingSignBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.RotationSegment;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.MaterialColor;
 
@@ -33,13 +31,8 @@ public abstract class BaseSignBlock extends StandingSignBlock implements BlockMo
     }
 
     protected BaseSignBlock(WoodType type, MaterialColor color, boolean flammable, WallSignProvider provider) {
-        super(BehaviourBuilders.createSign(color, flammable), type);
-        this.wallSign = provider.create(BehaviourBuilders.createWallSign(color, this, flammable), type);
-    }
-
-    public BaseSignBlock(WoodType type, MaterialColor color) {
         super(BehaviourBuilders.createSign(color), type);
-        this.wallSign = new BaseWallSignBlock(BehaviourBuilders.createWallSign(color, this), type);
+        this.wallSign = provider.create(BehaviourBuilders.createWallSign(color, this, flammable), type);
     }
 
     @Override
@@ -55,14 +48,14 @@ public abstract class BaseSignBlock extends StandingSignBlock implements BlockMo
 
     public static class Wood extends BaseSignBlock implements BehaviourWood {
         public Wood(WoodType type) {
-            this(type, MapColor.WOOD, true);
+            this(type, MaterialColor.WOOD, true);
         }
 
         public Wood(BCLWoodTypeWrapper type) {
             this(type.type, type.color, type.flammable);
         }
 
-        public Wood(WoodType type, MapColor color, boolean flammable) {
+        public Wood(WoodType type, MaterialColor color, boolean flammable) {
             super(type, color, flammable, BaseWallSignBlock.Wood::new);
         }
     }
