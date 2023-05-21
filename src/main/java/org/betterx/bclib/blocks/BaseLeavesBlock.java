@@ -39,6 +39,15 @@ public class BaseLeavesBlock extends LeavesBlock implements BlockModelProvider, 
 
     public BaseLeavesBlock(
             Block sapling,
+            BlockBehaviour.Properties properties
+    ) {
+        super(properties);
+        this.sapling = sapling;
+    }
+
+    @Deprecated(forRemoval = true)
+    public BaseLeavesBlock(
+            Block sapling,
             MapColor color,
             Consumer<BlockBehaviour.Properties> customizeProperties
     ) {
@@ -46,6 +55,7 @@ public class BaseLeavesBlock extends LeavesBlock implements BlockModelProvider, 
         this.sapling = sapling;
     }
 
+    @Deprecated(forRemoval = true)
     public BaseLeavesBlock(
             Block sapling,
             MapColor color,
@@ -59,11 +69,13 @@ public class BaseLeavesBlock extends LeavesBlock implements BlockModelProvider, 
         this.sapling = sapling;
     }
 
+    @Deprecated(forRemoval = true)
     public BaseLeavesBlock(Block sapling, MapColor color) {
         super(BehaviourBuilders.createLeaves(color, true));
         this.sapling = sapling;
     }
 
+    @Deprecated(forRemoval = true)
     public BaseLeavesBlock(Block sapling, MapColor color, int light) {
         super(BehaviourBuilders.createLeaves(color, true).lightLevel(state -> light));
         this.sapling = sapling;

@@ -79,6 +79,33 @@ public class BehaviourBuilders {
         return p;
     }
 
+    public static BlockBehaviour.Properties createCactus(MapColor color, boolean flammable) {
+        final BlockBehaviour.Properties p = BlockBehaviour.Properties
+                .of()
+                .mapColor(color)
+                .randomTicks()
+                .strength(0.4F)
+                .sound(SoundType.WOOL)
+                .pushReaction(PushReaction.DESTROY)
+                .noOcclusion();
+        if (flammable) {
+            p.ignitedByLava();
+        }
+        return p;
+    }
+
+    public static BlockBehaviour.Properties createMetal() {
+        return createMetal(MapColor.METAL);
+    }
+
+    public static BlockBehaviour.Properties createMetal(MapColor color) {
+        return BlockBehaviour.Properties.of()
+                                        .mapColor(color)
+                                        .instrument(NoteBlockInstrument.IRON_XYLOPHONE)
+                                        .strength(5.0F, 6.0F)
+                                        .sound(SoundType.METAL);
+    }
+
     public static BlockBehaviour.Properties createStone() {
         return createStone(MapColor.STONE);
     }
