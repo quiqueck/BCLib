@@ -11,6 +11,7 @@ import org.betterx.worlds.together.tag.v3.CommonItemTags;
 
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
@@ -31,7 +32,7 @@ public class Chest extends SimpleMaterialSlot<WoodenComplexMaterial> {
 
     @Override
     protected void modifyBlockEntry(WoodenComplexMaterial parentMaterial, @NotNull BlockEntry entry) {
-        entry.setBlockTags(CommonBlockTags.CHEST, CommonBlockTags.WOODEN_CHEST)
+        entry.setBlockTags(BlockTags.MINEABLE_WITH_AXE, CommonBlockTags.CHEST, CommonBlockTags.WOODEN_CHEST)
              .setItemTags(CommonItemTags.CHEST, CommonItemTags.WOODEN_CHEST);
     }
 

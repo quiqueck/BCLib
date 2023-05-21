@@ -10,6 +10,7 @@ import org.betterx.worlds.together.tag.v3.CommonBlockTags;
 
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -31,7 +32,7 @@ public class Bookshelf extends SimpleMaterialSlot<WoodenComplexMaterial> {
 
     @Override
     protected void modifyBlockEntry(WoodenComplexMaterial parentMaterial, @NotNull BlockEntry entry) {
-        entry.setBlockTags(CommonBlockTags.BOOKSHELVES);
+        entry.setBlockTags(BlockTags.MINEABLE_WITH_AXE, CommonBlockTags.BOOKSHELVES);
     }
 
     @Override
