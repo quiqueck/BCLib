@@ -12,16 +12,24 @@ import org.betterx.bclib.interfaces.Fuel;
 import org.betterx.bclib.interfaces.PostInitable;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.interfaces.TagProvider;
+import org.betterx.bclib.interfaces.behaviours.BehaviourClimable;
+import org.betterx.bclib.interfaces.behaviours.BehaviourCompostable;
+import org.betterx.bclib.interfaces.behaviours.BehaviourLeaves;
 import org.betterx.bclib.interfaces.tools.*;
 import org.betterx.bclib.networking.VersionChecker;
 import org.betterx.bclib.registry.BaseBlockEntities;
+import org.betterx.worlds.together.tag.v3.CommonBlockTags;
+import org.betterx.worlds.together.tag.v3.CommonItemTags;
 import org.betterx.worlds.together.tag.v3.MineableTags;
 import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 
 import net.fabricmc.api.EnvType;
@@ -104,6 +112,7 @@ public class PostInitAPI {
     }
 
     private static void processBlockCommon(Block block) {
+        final Item item = block.asItem();
         if (block instanceof PostInitable) {
             ((PostInitable) block).postInit();
         }
@@ -137,10 +146,31 @@ public class PostInitAPI {
                 TagManager.BLOCKS.add(block, MineableTags.HAMMER);
             }
         }
+
+        if (block instanceof BehaviourCompostable c) {
+            if (item != null && item != Items.AIR) {
+                TagManager.ITEMS.add(block, CommonItemTags.COMPOSTABLE);
+                ComposterAPI.allowCompost(c.compostingChance(), item);
+            } else if (BCLib.isDatagen() && Configs.MAIN_CONFIG.verboseLogging()) {
+                BCLib.LOGGER.warning("Block " + block + " has compostable behaviour but no item!");
+            }
+        }
+
+        if (block instanceof BehaviourClimable c) {
+            TagManager.BLOCKS.add(block, BlockTags.CLIMBABLE);
+        }
+
+        if (block instanceof BehaviourLeaves) {
+            TagManager.BLOCKS.add(block, BlockTags.LEAVES, CommonBlockTags.LEAVES);
+            if (item != null && item != Items.AIR)
+                TagManager.ITEMS.add(item, ItemTags.LEAVES, CommonItemTags.LEAVES);
+        }
+
         if (block instanceof TagProvider) {
             ((TagProvider) block).addTags(blockTags, itemTags);
             blockTags.forEach(tag -> TagManager.BLOCKS.add(tag, block));
-            itemTags.forEach(tag -> TagManager.ITEMS.add(tag, block.asItem()));
+            if (item != null && item != Items.AIR)
+                itemTags.forEach(tag -> TagManager.ITEMS.add(tag, item));
             blockTags.clear();
             itemTags.clear();
         }

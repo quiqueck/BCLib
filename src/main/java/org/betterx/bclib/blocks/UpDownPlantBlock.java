@@ -2,6 +2,7 @@ package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
+import org.betterx.bclib.interfaces.behaviours.BehaviourCompostable;
 import org.betterx.bclib.interfaces.tools.AddMineableHoe;
 import org.betterx.bclib.interfaces.tools.AddMineableShears;
 import org.betterx.bclib.items.tool.BaseShearsItem;
@@ -32,7 +33,7 @@ import com.google.common.collect.Lists;
 
 import java.util.List;
 
-public abstract class UpDownPlantBlock extends BaseBlockNotFull implements RenderLayerProvider, AddMineableShears, AddMineableHoe {
+public abstract class UpDownPlantBlock extends BaseBlockNotFull implements RenderLayerProvider, AddMineableShears, AddMineableHoe, BehaviourCompostable {
     private static final VoxelShape SHAPE = box(4, 0, 4, 12, 16, 12);
 
     public UpDownPlantBlock() {

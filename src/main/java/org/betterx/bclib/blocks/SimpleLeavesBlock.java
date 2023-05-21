@@ -2,15 +2,8 @@ package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
-import org.betterx.bclib.interfaces.TagProvider;
-import org.betterx.bclib.interfaces.tools.AddMineableHoe;
-import org.betterx.bclib.interfaces.tools.AddMineableShears;
+import org.betterx.bclib.interfaces.behaviours.BehaviourLeaves;
 
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
@@ -18,7 +11,8 @@ import net.minecraft.world.level.material.MaterialColor;
 
 import java.util.List;
 
-public class SimpleLeavesBlock extends BaseBlockNotFull implements RenderLayerProvider, TagProvider, AddMineableShears, AddMineableHoe {
+public class SimpleLeavesBlock extends BaseBlockNotFull implements RenderLayerProvider, BehaviourLeaves
+{
     public SimpleLeavesBlock(MaterialColor color) {
         this(
                 Properties
@@ -58,8 +52,7 @@ public class SimpleLeavesBlock extends BaseBlockNotFull implements RenderLayerPr
     }
 
     @Override
-    public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-        blockTags.add(BlockTags.LEAVES);
-        itemTags.add(ItemTags.LEAVES);
+    public float compostingChance() {
+        return 0.3f;
     }
 }
