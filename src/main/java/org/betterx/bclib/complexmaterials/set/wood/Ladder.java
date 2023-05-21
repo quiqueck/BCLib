@@ -31,7 +31,7 @@ public class Ladder extends SimpleMaterialSlot<WoodenComplexMaterial> {
 
     @Override
     protected void modifyBlockEntry(WoodenComplexMaterial parentMaterial, @NotNull BlockEntry entry) {
-        entry.setBlockTags(BlockTags.CLIMBABLE);
+        entry.setBlockTags(BlockTags.MINEABLE_WITH_AXE, BlockTags.CLIMBABLE);
     }
 
     @Override
