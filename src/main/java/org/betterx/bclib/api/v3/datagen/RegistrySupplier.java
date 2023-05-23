@@ -18,7 +18,7 @@ import java.util.concurrent.Semaphore;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class RegistrySupplier {
-    private static final int MAX_PERMITS = 1000;
+    private static final int MAX_PERMITS = 2000;
     private final Semaphore BOOTSTRAP_LOCK = new Semaphore(MAX_PERMITS);
 
     final List<RegistrySupplier.RegistryInfo<?>> allRegistries;
@@ -55,7 +55,23 @@ public abstract class RegistrySupplier {
 
     void releaseLock() {
         BOOTSTRAP_LOCK.release(MAX_PERMITS);
+    }
 
+
+    public <T> void addWithLock(
+            RegistrySetBuilder registryBuilder,
+            ResourceKey<? extends Registry<T>> resourceKey,
+            RegistrySetBuilder.RegistryBootstrap<T> registryBootstrap
+    ) {
+        try {
+            BOOTSTRAP_LOCK.acquire();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        registryBuilder.add(resourceKey, (ctx) -> {
+            registryBootstrap.run(ctx);
+            BOOTSTRAP_LOCK.release();
+        });
     }
 
     public class InfoList extends LinkedList<RegistrySupplier.RegistryInfo<?>> {
