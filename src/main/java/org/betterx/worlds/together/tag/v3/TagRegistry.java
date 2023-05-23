@@ -1,5 +1,6 @@
 package org.betterx.worlds.together.tag.v3;
 
+import org.betterx.bclib.BCLib;
 import org.betterx.bclib.interfaces.TriConsumer;
 import org.betterx.worlds.together.WorldsTogether;
 
@@ -309,9 +310,12 @@ public class TagRegistry<T> {
     }
 
     public void apply(Map<ResourceLocation, List<TagLoader.EntryWithSource>> tagsMap) {
-
         //this.isFrozen = true;
-        this.forEach((id, ids) -> apply(id, tagsMap.computeIfAbsent(id, key -> Lists.newArrayList()), ids));
+        if (BCLib.isDatagen()) {
+            this.forEach((id, ids) -> apply(id, tagsMap.computeIfAbsent(id, key -> Lists.newArrayList()), ids));
+        } else {
+            tags.clear();
+        }
     }
 
     private static List<TagLoader.EntryWithSource> apply(
