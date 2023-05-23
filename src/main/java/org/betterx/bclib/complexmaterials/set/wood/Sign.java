@@ -8,8 +8,6 @@ import org.betterx.bclib.complexmaterials.entry.RecipeEntry;
 import org.betterx.bclib.recipes.BCLRecipeBuilder;
 
 import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
 
 import java.util.function.Consumer;
@@ -27,9 +25,8 @@ public class Sign extends MaterialSlot<WoodenComplexMaterial> {
     public void addBlockEntry(WoodenComplexMaterial parentMaterial, Consumer<BlockEntry> adder) {
         var signEntry = new BlockEntry(
                 suffix,
-                (complexMaterial, settings) -> new BaseSignBlock(parentMaterial.woodType)
-        ).setBlockTags(BlockTags.STANDING_SIGNS)
-         .setItemTags(ItemTags.SIGNS);
+                (complexMaterial, settings) -> new BaseSignBlock.Wood(parentMaterial.woodType)
+        );
 
         var wallSignEntry = new BlockEntry(
                 WALL_SUFFFIX,
@@ -40,7 +37,7 @@ public class Sign extends MaterialSlot<WoodenComplexMaterial> {
                     }
                     return null;
                 }
-        ).setBlockTags(BlockTags.WALL_SIGNS);
+        );
         adder.accept(signEntry);
         adder.accept(wallSignEntry);
     }

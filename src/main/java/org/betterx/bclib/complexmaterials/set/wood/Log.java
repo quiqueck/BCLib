@@ -9,8 +9,6 @@ import org.betterx.bclib.recipes.BCLRecipeBuilder;
 
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
@@ -26,9 +24,10 @@ public class Log extends SimpleMaterialSlot<WoodenComplexMaterial> {
     protected @NotNull Block createBlock(
             WoodenComplexMaterial parentMaterial, BlockBehaviour.Properties settings
     ) {
-        return new BaseStripableLogBlock(
+        return new BaseStripableLogBlock.Wood(
                 parentMaterial.woodColor,
-                parentMaterial.getBlock(WoodSlots.STRIPPED_LOG)
+                parentMaterial.getBlock(WoodSlots.STRIPPED_LOG),
+                parentMaterial.woodType.flammable
         );
     }
 
@@ -36,13 +35,9 @@ public class Log extends SimpleMaterialSlot<WoodenComplexMaterial> {
     protected void modifyBlockEntry(WoodenComplexMaterial parentMaterial, @NotNull BlockEntry entry) {
         entry
                 .setBlockTags(
-                        BlockTags.LOGS,
-                        BlockTags.LOGS_THAT_BURN,
                         parentMaterial.getBlockTag(WoodenComplexMaterial.TAG_LOGS)
                 )
                 .setItemTags(
-                        ItemTags.LOGS,
-                        ItemTags.LOGS_THAT_BURN,
                         parentMaterial.getItemTag(WoodenComplexMaterial.TAG_LOGS)
                 );
     }

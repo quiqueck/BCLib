@@ -1,12 +1,15 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.behaviours.BehaviourHelper;
+import org.betterx.bclib.behaviours.interfaces.BehaviourClimable;
+import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
+import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
-import org.betterx.bclib.interfaces.behaviours.BehaviourClimable;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.UnbakedModel;
@@ -27,8 +30,8 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public class BaseLadderBlock extends LadderBlock implements RenderLayerProvider, BlockModelProvider, BehaviourClimable {
-    public BaseLadderBlock(Block block) {
+public abstract class BaseLadderBlock extends LadderBlock implements RenderLayerProvider, BlockModelProvider, BehaviourClimable {
+    protected BaseLadderBlock(Block block) {
         this(Properties.copy(block).noOcclusion());
     }
 
@@ -70,5 +73,31 @@ public class BaseLadderBlock extends LadderBlock implements RenderLayerProvider,
     @SuppressWarnings("deprecation")
     public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
         return Collections.singletonList(new ItemStack(this));
+    }
+
+    public static class Wood extends BaseLadderBlock implements BehaviourWood {
+        public Wood(Block block) {
+            super(block);
+        }
+
+        public Wood(Properties properties) {
+            super(properties);
+        }
+    }
+
+    public static class Metal extends BaseLadderBlock implements BehaviourMetal {
+        public Metal(Block block) {
+            super(block);
+        }
+
+        public Metal(Properties properties) {
+            super(properties);
+        }
+    }
+
+    public static BaseLadderBlock from(Block source) {
+        return BehaviourHelper.from(source,
+                Wood::new, null, Metal::new
+        );
     }
 }

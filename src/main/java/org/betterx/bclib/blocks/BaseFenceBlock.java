@@ -1,19 +1,26 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.bclib.interfaces.TagProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.storage.loot.LootParams;
 
 import net.fabricmc.api.EnvType;
@@ -25,10 +32,10 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public class BaseFenceBlock extends FenceBlock implements BlockModelProvider {
+public abstract class BaseFenceBlock extends FenceBlock implements BlockModelProvider, TagProvider {
     private final Block parent;
 
-    public BaseFenceBlock(Block source) {
+    protected BaseFenceBlock(Block source) {
         super(Properties.copy(source).noOcclusion());
         this.parent = source;
     }
@@ -94,5 +101,28 @@ public class BaseFenceBlock extends FenceBlock implements BlockModelProvider {
         builder.part(postId).add();
 
         return builder.build();
+    }
+
+    @Override
+    public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
+        blockTags.add(BlockTags.FENCES);
+        itemTags.add(ItemTags.FENCES);
+    }
+
+    public static class Wood extends BaseFenceBlock implements BehaviourWood {
+        public Wood(Block source, BlockSetType type) {
+            super(source);
+        }
+
+        @Override
+        public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
+            super.addTags(blockTags, itemTags);
+            blockTags.add(BlockTags.WOODEN_FENCES);
+            itemTags.add(ItemTags.WOODEN_FENCES);
+        }
+    }
+
+    public static BaseFenceBlock from(Block source, BlockSetType type) {
+        return new BaseFenceBlock.Wood(source, type);
     }
 }

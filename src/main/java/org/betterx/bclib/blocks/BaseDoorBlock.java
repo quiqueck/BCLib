@@ -1,5 +1,9 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.behaviours.BehaviourHelper;
+import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
+import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
+import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
@@ -37,12 +41,12 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public class BaseDoorBlock extends DoorBlock implements RenderLayerProvider, BlockModelProvider, TagProvider {
-    public BaseDoorBlock(Block source, BlockSetType type) {
+public abstract class BaseDoorBlock extends DoorBlock implements RenderLayerProvider, BlockModelProvider, TagProvider {
+    protected BaseDoorBlock(Block source, BlockSetType type) {
         this(Properties.copy(source).strength(3F, 3F).noOcclusion(), type);
     }
 
-    public BaseDoorBlock(BlockBehaviour.Properties properties, BlockSetType type) {
+    protected BaseDoorBlock(BlockBehaviour.Properties properties, BlockSetType type) {
         super(properties, type);
     }
 
@@ -179,5 +183,47 @@ public class BaseDoorBlock extends DoorBlock implements RenderLayerProvider, Blo
         public String getSerializedName() {
             return name;
         }
+    }
+
+    public static class Wood extends BaseDoorBlock implements BehaviourWood {
+        public Wood(Block source, BlockSetType type) {
+            super(source, type);
+        }
+
+        public Wood(Properties properties, BlockSetType type) {
+            super(properties, type);
+        }
+
+        @Override
+        public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
+            super.addTags(blockTags, itemTags);
+            blockTags.add(BlockTags.WOODEN_DOORS);
+            itemTags.add(ItemTags.WOODEN_DOORS);
+        }
+    }
+
+    public static class Metal extends BaseDoorBlock implements BehaviourMetal {
+        public Metal(Block source, BlockSetType type) {
+            super(source, type);
+        }
+
+        public Metal(Properties properties, BlockSetType type) {
+            super(properties, type);
+        }
+    }
+
+    public static class Stone extends BaseDoorBlock implements BehaviourStone {
+        public Stone(Block source, BlockSetType type) {
+            super(source, type);
+        }
+
+        public Stone(Properties properties, BlockSetType type) {
+            super(properties, type);
+        }
+    }
+
+
+    public static BaseDoorBlock from(Block source, BlockSetType type) {
+        return BehaviourHelper.from(source, type, Wood::new, Stone::new, Metal::new);
     }
 }

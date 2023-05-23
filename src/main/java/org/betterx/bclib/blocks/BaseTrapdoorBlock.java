@@ -1,18 +1,29 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.behaviours.BehaviourBuilders;
+import org.betterx.bclib.behaviours.BehaviourHelper;
+import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
+import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
+import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
+import org.betterx.bclib.interfaces.TagProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -26,12 +37,8 @@ import net.fabricmc.api.Environment;
 import java.util.*;
 import org.jetbrains.annotations.Nullable;
 
-public class BaseTrapdoorBlock extends TrapDoorBlock implements RenderLayerProvider, BlockModelProvider {
-    public BaseTrapdoorBlock(Block source, BlockSetType type) {
-        this(Properties.copy(source).strength(3.0F, 3.0F).noOcclusion(), type);
-    }
-
-    public BaseTrapdoorBlock(BlockBehaviour.Properties properties, BlockSetType type) {
+public abstract class BaseTrapdoorBlock extends TrapDoorBlock implements RenderLayerProvider, BlockModelProvider, TagProvider {
+    protected BaseTrapdoorBlock(BlockBehaviour.Properties properties, BlockSetType type) {
         super(properties, type);
     }
 
@@ -102,5 +109,56 @@ public class BaseTrapdoorBlock extends TrapDoorBlock implements RenderLayerProvi
         }
         BlockModelRotation rotation = BlockModelRotation.by(x, y);
         return ModelsHelper.createMultiVariant(modelId, rotation.getRotation(), false);
+    }
+
+    @Override
+    public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
+        blockTags.add(BlockTags.TRAPDOORS);
+        itemTags.add(ItemTags.TRAPDOORS);
+    }
+
+    public static class Wood extends BaseTrapdoorBlock implements BehaviourWood {
+        public Wood(Block source, BlockSetType type, boolean flammable) {
+            this(BehaviourBuilders.createTrapDoor(source.defaultMapColor(), flammable).sound(SoundType.WOOD), type);
+        }
+
+        public Wood(Properties properties, BlockSetType type) {
+            super(properties, type);
+        }
+
+        @Override
+        public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
+            super.addTags(blockTags, itemTags);
+            blockTags.add(BlockTags.WOODEN_TRAPDOORS);
+            itemTags.add(ItemTags.WOODEN_TRAPDOORS);
+        }
+    }
+
+    public static class Stone extends BaseTrapdoorBlock implements BehaviourStone {
+        public Stone(Block source, BlockSetType type) {
+            this(BehaviourBuilders.createTrapDoor(source.defaultMapColor(), false).sound(SoundType.STONE), type);
+        }
+
+        public Stone(Properties properties, BlockSetType type) {
+            super(properties, type);
+        }
+    }
+
+    public static class Metal extends BaseTrapdoorBlock implements BehaviourMetal {
+        public Metal(Block source, BlockSetType type) {
+            this(BehaviourBuilders.createTrapDoor(source.defaultMapColor(), false).sound(SoundType.METAL), type);
+        }
+
+        public Metal(Properties properties, BlockSetType type) {
+            super(properties, type);
+        }
+    }
+
+    public static BaseTrapdoorBlock from(Block source, BlockSetType type, boolean flammable) {
+        return BehaviourHelper.from(source, type,
+                (s, t) -> new Wood(s, t, flammable),
+                Stone::new,
+                Metal::new
+        );
     }
 }

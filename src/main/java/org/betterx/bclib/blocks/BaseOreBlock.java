@@ -1,11 +1,11 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.complexmaterials.BehaviourBuilders;
+import org.betterx.bclib.behaviours.BehaviourBuilders;
+import org.betterx.bclib.behaviours.interfaces.BehaviourOre;
 import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.TagProvider;
 import org.betterx.bclib.util.LootUtil;
 import org.betterx.bclib.util.MHelper;
-import org.betterx.worlds.together.tag.v3.CommonBlockTags;
 import org.betterx.worlds.together.tag.v3.MineableTags;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -33,7 +33,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvider, TagProvider {
+public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvider, TagProvider, BehaviourOre {
     private final Supplier<Item> dropItem;
     private final int minCount;
     private final int maxCount;
@@ -136,8 +136,6 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
 
     @Override
     public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-        blockTags.add(CommonBlockTags.ORES);
-
         if (this.miningLevel == Tiers.STONE.getLevel()) {
             blockTags.add(BlockTags.NEEDS_STONE_TOOL);
         } else if (this.miningLevel == Tiers.IRON.getLevel()) {

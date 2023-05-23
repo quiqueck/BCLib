@@ -1,6 +1,6 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.complexmaterials.BehaviourBuilders;
+import org.betterx.bclib.behaviours.BehaviourBuilders;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;

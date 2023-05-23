@@ -1,4 +1,4 @@
-package org.betterx.bclib.interfaces.behaviours;
+package org.betterx.bclib.behaviours.interfaces;
 
 import org.betterx.bclib.interfaces.tools.AddMineableHoe;
 import org.betterx.bclib.interfaces.tools.AddMineableShears;

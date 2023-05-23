@@ -1,13 +1,19 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.bclib.interfaces.TagProvider;
+import org.betterx.worlds.together.tag.v3.CommonBlockTags;
+import org.betterx.worlds.together.tag.v3.CommonPoiTags;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ComposterBlock;
@@ -23,8 +29,8 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public class BaseComposterBlock extends ComposterBlock implements BlockModelProvider {
-    public BaseComposterBlock(Block source) {
+public abstract class BaseComposterBlock extends ComposterBlock implements BlockModelProvider, TagProvider {
+    protected BaseComposterBlock(Block source) {
         super(Properties.copy(source));
     }
 
@@ -72,5 +78,27 @@ public class BaseComposterBlock extends ComposterBlock implements BlockModelProv
         builder.part(modelId).add();
 
         return builder.build();
+    }
+
+    @Override
+    public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
+        blockTags.add(CommonBlockTags.COMPOSTER);
+        blockTags.add(CommonPoiTags.FARMER_WORKSTATION);
+    }
+
+    public static class Wood extends BaseComposterBlock implements BehaviourWood {
+        public Wood(Block source) {
+            super(source);
+        }
+
+        @Override
+        public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
+            super.addTags(blockTags, itemTags);
+            blockTags.add(CommonBlockTags.WOODEN_COMPOSTER);
+        }
+    }
+
+    public static BaseComposterBlock from(Block source) {
+        return new BaseComposterBlock.Wood(source);
     }
 }
