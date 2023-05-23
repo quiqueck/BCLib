@@ -861,7 +861,7 @@ public class BCLBiomeBuilder {
      * @return same {@link BCLBiomeBuilder} instance.
      */
     public BCLBiomeBuilder vertical() {
-        this.vertical = vertical;
+        this.vertical = true;
         return this;
     }
 
