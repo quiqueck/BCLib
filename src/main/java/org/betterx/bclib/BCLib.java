@@ -42,7 +42,7 @@ public class BCLib implements ModInitializer {
     public static final boolean RUNS_NULLSCAPE = FabricLoader.getInstance()
                                                              .getModContainer("nullscape")
                                                              .isPresent();
-    public static final boolean ADD_TEST_DATA = true;
+    public static final boolean ADD_TEST_DATA = false;
 
     private void onDatagen() {
 
