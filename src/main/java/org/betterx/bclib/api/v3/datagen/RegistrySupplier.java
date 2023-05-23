@@ -7,9 +7,12 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.data.DataProvider;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.RegistryDataLoader;
 import net.minecraft.resources.ResourceKey;
+
+import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -71,6 +74,38 @@ public abstract class RegistrySupplier {
         registryBuilder.add(resourceKey, (ctx) -> {
             registryBootstrap.run(ctx);
             BOOTSTRAP_LOCK.release();
+        });
+    }
+
+    public <T extends DataProvider> void addProviderWithLock(
+            FabricDataGenerator.Pack pack,
+            FabricDataGenerator.Pack.RegistryDependentFactory<T> factory
+    ) {
+        try {
+            BOOTSTRAP_LOCK.acquire();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        pack.addProvider((output, future) -> {
+            final T res = factory.create(output, future);
+            BOOTSTRAP_LOCK.release();
+            return res;
+        });
+    }
+
+    public <T extends DataProvider> void addProviderWithLock(
+            FabricDataGenerator.Pack pack,
+            FabricDataGenerator.Pack.Factory<T> factory
+    ) {
+        try {
+            BOOTSTRAP_LOCK.acquire();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        pack.addProvider((output, future) -> {
+            final T res = factory.create(output);
+            BOOTSTRAP_LOCK.release();
+            return res;
         });
     }
 
