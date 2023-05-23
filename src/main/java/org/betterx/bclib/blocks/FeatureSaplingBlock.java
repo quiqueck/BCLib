@@ -1,6 +1,7 @@
 package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.api.v3.levelgen.features.BCLConfigureFeature;
+import org.betterx.bclib.behaviours.BehaviourBuilders;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;

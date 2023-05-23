@@ -1,16 +1,25 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.behaviours.BehaviourHelper;
+import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
+import org.betterx.bclib.behaviours.interfaces.BehaviourObsidian;
+import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
+import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.CustomItemProvider;
+import org.betterx.bclib.interfaces.TagProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -29,15 +38,11 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public class BaseSlabBlock extends SlabBlock implements BlockModelProvider, CustomItemProvider {
+public abstract class BaseSlabBlock extends SlabBlock implements BlockModelProvider, CustomItemProvider, TagProvider {
     private final Block parent;
     public final boolean fireproof;
 
-    public BaseSlabBlock(Block source) {
-        this(source, false);
-    }
-
-    public BaseSlabBlock(Block source, boolean fireproof) {
+    protected BaseSlabBlock(Block source, boolean fireproof) {
         super(Properties.copy(source));
         this.parent = source;
         this.fireproof = fireproof;
@@ -89,8 +94,72 @@ public class BaseSlabBlock extends SlabBlock implements BlockModelProvider, Cust
     }
 
     @Override
+    public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
+        blockTags.add(BlockTags.SLABS);
+        itemTags.add(ItemTags.SLABS);
+    }
+
+    @Override
     public BlockItem getCustomItem(ResourceLocation blockID, Item.Properties settings) {
         if (fireproof) settings = settings.fireResistant();
         return new BlockItem(this, settings);
+    }
+
+    public static class Stone extends BaseSlabBlock implements BehaviourStone {
+        public Stone(Block source) {
+            this(source, true);
+        }
+
+        public Stone(Block source, boolean fireproof) {
+            super(source, fireproof);
+        }
+    }
+
+    public static class Metal extends BaseSlabBlock implements BehaviourMetal {
+        public Metal(Block source) {
+            this(source, true);
+        }
+
+        public Metal(Block source, boolean fireproof) {
+            super(source, fireproof);
+        }
+    }
+
+    public static class Wood extends BaseSlabBlock implements BehaviourWood {
+        public Wood(Block source) {
+            this(source, false);
+        }
+
+        public Wood(Block source, boolean fireproof) {
+            super(source, fireproof);
+        }
+
+        @Override
+        public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
+            super.addTags(blockTags, itemTags);
+            blockTags.add(BlockTags.WOODEN_SLABS);
+            itemTags.add(ItemTags.WOODEN_SLABS);
+        }
+    }
+
+    public static class Obsidian extends BaseSlabBlock implements BehaviourObsidian {
+        public Obsidian(Block source) {
+            super(source, true);
+        }
+
+        public Obsidian(Block source, boolean fireproof) {
+            super(source, fireproof);
+        }
+    }
+
+    public static BaseSlabBlock from(Block source, boolean flammable) {
+        return BehaviourHelper.from(
+                source,
+                (s) -> new BaseSlabBlock.Wood(s, !flammable),
+                (s) -> new BaseSlabBlock.Stone(s, !flammable),
+                (s) -> new BaseSlabBlock.Metal(s, !flammable),
+                (s) -> new BaseSlabBlock.Obsidian(s, !flammable),
+                null
+        );
     }
 }

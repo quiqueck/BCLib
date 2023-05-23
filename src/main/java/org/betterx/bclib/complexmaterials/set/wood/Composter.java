@@ -3,14 +3,11 @@ package org.betterx.bclib.complexmaterials.set.wood;
 import org.betterx.bclib.blocks.BaseComposterBlock;
 import org.betterx.bclib.complexmaterials.ComplexMaterial;
 import org.betterx.bclib.complexmaterials.WoodenComplexMaterial;
-import org.betterx.bclib.complexmaterials.entry.BlockEntry;
 import org.betterx.bclib.complexmaterials.entry.SimpleMaterialSlot;
 import org.betterx.bclib.recipes.BCLRecipeBuilder;
-import org.betterx.worlds.together.tag.v3.CommonPoiTags;
 
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
@@ -26,12 +23,7 @@ public class Composter extends SimpleMaterialSlot<WoodenComplexMaterial> {
     protected @NotNull Block createBlock(
             WoodenComplexMaterial parentMaterial, BlockBehaviour.Properties settings
     ) {
-        return new BaseComposterBlock(parentMaterial.getBlock(WoodSlots.PLANKS));
-    }
-
-    @Override
-    protected void modifyBlockEntry(WoodenComplexMaterial parentMaterial, @NotNull BlockEntry entry) {
-        entry.setBlockTags(BlockTags.MINEABLE_WITH_AXE, CommonPoiTags.FARMER_WORKSTATION);
+        return new BaseComposterBlock.Wood(parentMaterial.getBlock(WoodSlots.PLANKS));
     }
 
     @Override

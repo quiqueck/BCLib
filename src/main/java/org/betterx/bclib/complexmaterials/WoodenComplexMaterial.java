@@ -74,8 +74,12 @@ public class WoodenComplexMaterial extends ComplexMaterialSet<WoodenComplexMater
         super(modID, baseName, receipGroupPrefix);
         this.planksColor = planksColor;
         this.woodColor = woodColor;
-        this.woodType = BCLWoodTypeWrapper.create(modID, baseName).setColor(planksColor).build();
+        this.woodType = createWoodTypeBuilder().build();
         this.boatType = null;
+    }
+
+    protected BCLWoodTypeWrapper.Builder createWoodTypeBuilder() {
+        return BCLWoodTypeWrapper.create(getModID(), getBaseName()).setColor(planksColor);
     }
 
     @Override

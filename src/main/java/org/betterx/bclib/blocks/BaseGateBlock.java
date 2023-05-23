@@ -1,14 +1,19 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.bclib.interfaces.TagProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FenceGateBlock;
@@ -25,10 +30,10 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public class BaseGateBlock extends FenceGateBlock implements BlockModelProvider {
+public abstract class BaseGateBlock extends FenceGateBlock implements BlockModelProvider, TagProvider {
     private final Block parent;
 
-    public BaseGateBlock(Block source, WoodType type) {
+    protected BaseGateBlock(Block source, WoodType type) {
         super(Properties.copy(source).noOcclusion(), type);
         this.parent = source;
     }
@@ -83,5 +88,20 @@ public class BaseGateBlock extends FenceGateBlock implements BlockModelProvider 
         ResourceLocation modelId = new ResourceLocation(stateId.getNamespace(), "block/" + stateId.getPath() + state);
         registerBlockModel(stateId, modelId, blockState, modelCache);
         return ModelsHelper.createFacingModel(modelId, blockState.getValue(FACING), true, false);
+    }
+
+    @Override
+    public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
+        blockTags.add(BlockTags.FENCE_GATES);
+    }
+
+    public static class Wood extends BaseGateBlock implements BehaviourWood {
+        public Wood(Block source, WoodType type) {
+            super(source, type);
+        }
+    }
+
+    public static BaseGateBlock from(Block source, WoodType type) {
+        return new BaseGateBlock.Wood(source, type);
     }
 }

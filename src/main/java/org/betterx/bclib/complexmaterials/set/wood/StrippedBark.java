@@ -9,8 +9,6 @@ import org.betterx.bclib.recipes.BCLRecipeBuilder;
 
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
@@ -26,20 +24,16 @@ public class StrippedBark extends SimpleMaterialSlot<WoodenComplexMaterial> {
     protected @NotNull Block createBlock(
             WoodenComplexMaterial parentMaterial, BlockBehaviour.Properties settings
     ) {
-        return new BaseBarkBlock(settings);
+        return new BaseBarkBlock.Wood(settings, parentMaterial.woodType.flammable);
     }
 
     @Override
     protected void modifyBlockEntry(WoodenComplexMaterial parentMaterial, @NotNull BlockEntry entry) {
         entry
                 .setBlockTags(
-                        BlockTags.LOGS,
-                        BlockTags.LOGS_THAT_BURN,
                         parentMaterial.getBlockTag(WoodenComplexMaterial.TAG_LOGS)
                 )
                 .setItemTags(
-                        ItemTags.LOGS,
-                        ItemTags.LOGS_THAT_BURN,
                         parentMaterial.getItemTag(WoodenComplexMaterial.TAG_LOGS)
                 );
     }

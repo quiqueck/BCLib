@@ -1,12 +1,18 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.bclib.interfaces.TagProvider;
+import org.betterx.worlds.together.tag.v3.CommonBlockTags;
+import org.betterx.worlds.together.tag.v3.CommonItemTags;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CraftingTableBlock;
@@ -23,12 +29,12 @@ import java.util.List;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public class BaseCraftingTableBlock extends CraftingTableBlock implements BlockModelProvider {
-    public BaseCraftingTableBlock(Block source) {
+public abstract class BaseCraftingTableBlock extends CraftingTableBlock implements BlockModelProvider, TagProvider {
+    protected BaseCraftingTableBlock(Block source) {
         this(Properties.copy(source));
     }
 
-    public BaseCraftingTableBlock(BlockBehaviour.Properties properties) {
+    protected BaseCraftingTableBlock(BlockBehaviour.Properties properties) {
         super(properties);
     }
 
@@ -63,5 +69,25 @@ public class BaseCraftingTableBlock extends CraftingTableBlock implements BlockM
             }
         });
         return ModelsHelper.fromPattern(pattern);
+    }
+
+    @Override
+    public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
+        blockTags.add(CommonBlockTags.WORKBENCHES);
+        itemTags.add(CommonItemTags.WORKBENCHES);
+    }
+
+    public static class Wood extends BaseCraftingTableBlock implements BehaviourWood {
+        public Wood(Block source) {
+            super(source);
+        }
+
+        public Wood(BlockBehaviour.Properties properties) {
+            super(properties);
+        }
+    }
+
+    public static BaseCraftingTableBlock from(Block source) {
+        return new BaseCraftingTableBlock.Wood(source);
     }
 }

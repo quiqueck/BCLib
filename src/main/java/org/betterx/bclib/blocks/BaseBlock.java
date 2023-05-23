@@ -1,5 +1,8 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
+import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
+import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.interfaces.BlockModelProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -73,5 +76,23 @@ public class BaseBlock extends Block implements BlockModelProvider {
     ) {
         customizeProperties.accept(settings);
         return settings;
+    }
+
+    public static class Wood extends BaseBlock implements BehaviourWood {
+        public Wood(Properties settings) {
+            super(settings);
+        }
+    }
+
+    public static class Stone extends BaseBlock implements BehaviourStone {
+        public Stone(Properties settings) {
+            super(settings);
+        }
+    }
+
+    public static class Metal extends BaseBlock implements BehaviourMetal {
+        public Metal(Properties settings) {
+            super(settings);
+        }
     }
 }

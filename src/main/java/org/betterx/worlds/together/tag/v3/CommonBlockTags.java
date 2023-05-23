@@ -9,6 +9,7 @@ public class CommonBlockTags {
     public static final TagKey<Block> BARREL = TagManager.BLOCKS.makeCommonTag("barrel");
     public static final TagKey<Block> BOOKSHELVES = TagManager.BLOCKS.makeCommonTag("bookshelves");
     public static final TagKey<Block> CHEST = TagManager.BLOCKS.makeCommonTag("chest");
+    public static final TagKey<Block> COMPOSTER = TagManager.BLOCKS.makeCommonTag("composter");
     public static final TagKey<Block> END_STONES = TagManager.BLOCKS.makeCommonTag("end_stones");
     public static final TagKey<Block> GEN_END_STONES = END_STONES;
     public static final TagKey<Block> IMMOBILE = TagManager.BLOCKS.makeCommonTag("immobile");
@@ -26,6 +27,7 @@ public class CommonBlockTags {
     public static final TagKey<Block> SCULK_LIKE = TagManager.BLOCKS.makeCommonTag("sculk_like");
     public static final TagKey<Block> WOODEN_BARREL = TagManager.BLOCKS.makeCommonTag("wooden_barrels");
     public static final TagKey<Block> WOODEN_CHEST = TagManager.BLOCKS.makeCommonTag("wooden_chests");
+    public static final TagKey<Block> WOODEN_COMPOSTER = TagManager.BLOCKS.makeCommonTag("wooden_composter");
     public static final TagKey<Block> WORKBENCHES = TagManager.BLOCKS.makeCommonTag("workbench");
 
     public static final TagKey<Block> DRAGON_IMMUNE = TagManager.BLOCKS.makeCommonTag("dragon_immune");
@@ -114,6 +116,14 @@ public class CommonBlockTags {
                 BlockTags.NETHER_CARVER_REPLACEABLES,
                 CommonBlockTags.NETHER_STONES,
                 CommonBlockTags.NETHERRACK
+        );
+
+        TagManager.BLOCKS.addOtherTags(
+                BlockTags.MINEABLE_WITH_AXE,
+                WOODEN_BARREL,
+                WOODEN_COMPOSTER,
+                WOODEN_CHEST,
+                WORKBENCHES
         );
     }
 }

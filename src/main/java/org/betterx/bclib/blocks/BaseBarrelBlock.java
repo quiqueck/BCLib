@@ -1,11 +1,15 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.blockentities.BaseBarrelBlockEntity;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.bclib.interfaces.TagProvider;
 import org.betterx.bclib.registry.BaseBlockEntities;
+import org.betterx.worlds.together.tag.v3.CommonBlockTags;
+import org.betterx.worlds.together.tag.v3.CommonItemTags;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
@@ -15,12 +19,14 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BarrelBlock;
@@ -40,12 +46,12 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public class BaseBarrelBlock extends BarrelBlock implements BlockModelProvider {
-    public BaseBarrelBlock(Block source) {
+public abstract class BaseBarrelBlock extends BarrelBlock implements BlockModelProvider, TagProvider {
+    BaseBarrelBlock(Block source) {
         this(Properties.copy(source).noOcclusion());
     }
 
-    public BaseBarrelBlock(BlockBehaviour.Properties properties) {
+    BaseBarrelBlock(BlockBehaviour.Properties properties) {
         super(properties);
     }
 
@@ -158,5 +164,32 @@ public class BaseBarrelBlock extends BarrelBlock implements BlockModelProvider {
                 break;
         }
         return ModelsHelper.createMultiVariant(modelId, rotation.getRotation(), false);
+    }
+
+    @Override
+    public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
+        blockTags.add(CommonBlockTags.BARREL);
+        itemTags.add(CommonItemTags.BARREL);
+    }
+
+    public static class Wood extends BaseBarrelBlock implements BehaviourWood {
+        public Wood(Block source) {
+            super(source);
+        }
+
+        public Wood(Properties properties) {
+            super(properties);
+        }
+
+        @Override
+        public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
+            super.addTags(blockTags, itemTags);
+            blockTags.add(CommonBlockTags.WOODEN_BARREL);
+            itemTags.add(CommonItemTags.WOODEN_BARREL);
+        }
+    }
+
+    public static BaseBarrelBlock from(Block source) {
+        return new Wood(source);
     }
 }

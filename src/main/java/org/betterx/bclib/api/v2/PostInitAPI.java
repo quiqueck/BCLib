@@ -2,6 +2,7 @@ package org.betterx.bclib.api.v2;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
+import org.betterx.bclib.behaviours.interfaces.*;
 import org.betterx.bclib.blocks.BaseBarrelBlock;
 import org.betterx.bclib.blocks.BaseChestBlock;
 import org.betterx.bclib.blocks.BaseFurnaceBlock;
@@ -12,9 +13,6 @@ import org.betterx.bclib.interfaces.Fuel;
 import org.betterx.bclib.interfaces.PostInitable;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.interfaces.TagProvider;
-import org.betterx.bclib.interfaces.behaviours.BehaviourClimable;
-import org.betterx.bclib.interfaces.behaviours.BehaviourCompostable;
-import org.betterx.bclib.interfaces.behaviours.BehaviourLeaves;
 import org.betterx.bclib.interfaces.tools.*;
 import org.betterx.bclib.networking.VersionChecker;
 import org.betterx.bclib.registry.BaseBlockEntities;
@@ -116,6 +114,16 @@ public class PostInitAPI {
         if (block instanceof PostInitable) {
             ((PostInitable) block).postInit();
         }
+
+        if (block instanceof TagProvider) {
+            ((TagProvider) block).addTags(blockTags, itemTags);
+            blockTags.forEach(tag -> TagManager.BLOCKS.add(tag, block));
+            if (item != null && item != Items.AIR)
+                itemTags.forEach(tag -> TagManager.ITEMS.add(tag, item));
+            blockTags.clear();
+            itemTags.clear();
+        }
+
         if (block instanceof BaseChestBlock) {
             BaseBlockEntities.CHEST.registerBlock(block);
         } else if (block instanceof BaseBarrelBlock) {
@@ -128,7 +136,27 @@ public class PostInitAPI {
                 TagManager.BLOCKS.add(block, MineableTags.SHEARS);
             }
             if (block instanceof AddMineableAxe) {
-                TagManager.BLOCKS.add(block, MineableTags.AXE);
+                if (!TagManager.BLOCKS.contains(BlockTags.WOODEN_DOORS, block)
+                        && !TagManager.BLOCKS.contains(BlockTags.WOODEN_BUTTONS, block)
+                        && !TagManager.BLOCKS.contains(BlockTags.WOODEN_SLABS, block)
+                        && !TagManager.BLOCKS.contains(BlockTags.WOODEN_FENCES, block)
+                        && !TagManager.BLOCKS.contains(BlockTags.WOODEN_STAIRS, block)
+                        && !TagManager.BLOCKS.contains(BlockTags.WOODEN_PRESSURE_PLATES, block)
+                        && !TagManager.BLOCKS.contains(BlockTags.WOODEN_TRAPDOORS, block)
+                        && !TagManager.BLOCKS.contains(CommonBlockTags.WOODEN_BARREL, block)
+                        && !TagManager.BLOCKS.contains(CommonBlockTags.WOODEN_CHEST, block)
+                        && !TagManager.BLOCKS.contains(CommonBlockTags.WOODEN_COMPOSTER, block)
+                        && !TagManager.BLOCKS.contains(CommonBlockTags.WORKBENCHES, block)
+                        && !TagManager.BLOCKS.contains(BlockTags.SIGNS, block)
+                        && !TagManager.BLOCKS.contains(BlockTags.PLANKS, block)
+                        && !TagManager.BLOCKS.contains(BlockTags.LOGS, block)
+                        && !TagManager.BLOCKS.contains(BlockTags.FENCE_GATES, block)
+                        && !TagManager.BLOCKS.contains(BlockTags.ALL_HANGING_SIGNS, block)
+                        && !TagManager.BLOCKS.contains(CommonBlockTags.WORKBENCHES, block)
+                        && !TagManager.BLOCKS.contains(CommonBlockTags.BOOKSHELVES, block)
+                ) {
+                    TagManager.BLOCKS.add(block, MineableTags.AXE);
+                }
             }
             if (block instanceof AddMineablePickaxe) {
                 TagManager.BLOCKS.add(block, MineableTags.PICKAXE);
@@ -166,15 +194,22 @@ public class PostInitAPI {
                 TagManager.ITEMS.add(item, ItemTags.LEAVES, CommonItemTags.LEAVES);
         }
 
-        if (block instanceof TagProvider) {
-            ((TagProvider) block).addTags(blockTags, itemTags);
-            blockTags.forEach(tag -> TagManager.BLOCKS.add(tag, block));
-            if (item != null && item != Items.AIR)
-                itemTags.forEach(tag -> TagManager.ITEMS.add(tag, item));
-            blockTags.clear();
-            itemTags.clear();
+        if (block instanceof BehaviourImmobile) {
+            TagManager.BLOCKS.add(block, CommonBlockTags.IMMOBILE);
         }
 
+        if (block instanceof BehaviourObsidian) {
+            TagManager.BLOCKS.add(block, CommonBlockTags.IS_OBSIDIAN);
+        }
+
+        if (block instanceof BehaviourPortalFrame) {
+            TagManager.BLOCKS.add(block, CommonBlockTags.NETHER_PORTAL_FRAME);
+        }
+
+        if (block instanceof BehaviourOre) {
+            TagManager.BLOCKS.add(block, CommonBlockTags.ORES);
+        }
+        
         if (block instanceof Fuel fl) {
             FuelRegistry.INSTANCE.add(block, fl.getFuelTime());
         }

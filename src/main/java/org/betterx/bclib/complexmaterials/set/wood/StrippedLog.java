@@ -26,22 +26,34 @@ public class StrippedLog extends SimpleMaterialSlot<WoodenComplexMaterial> {
     protected @NotNull Block createBlock(
             WoodenComplexMaterial parentMaterial, BlockBehaviour.Properties settings
     ) {
-        return new BaseRotatedPillarBlock(settings);
+        return new BaseRotatedPillarBlock.Wood(settings, parentMaterial.woodType.flammable);
     }
 
     @Override
     protected void modifyBlockEntry(WoodenComplexMaterial parentMaterial, @NotNull BlockEntry entry) {
-        entry
-                .setBlockTags(
-                        BlockTags.LOGS,
-                        BlockTags.LOGS_THAT_BURN,
-                        parentMaterial.getBlockTag(WoodenComplexMaterial.TAG_LOGS)
-                )
-                .setItemTags(
-                        ItemTags.LOGS,
-                        ItemTags.LOGS_THAT_BURN,
-                        parentMaterial.getItemTag(WoodenComplexMaterial.TAG_LOGS)
-                );
+        if (parentMaterial.woodType.flammable) {
+            entry
+                    .setBlockTags(
+                            BlockTags.LOGS,
+                            BlockTags.LOGS_THAT_BURN,
+                            parentMaterial.getBlockTag(WoodenComplexMaterial.TAG_LOGS)
+                    )
+                    .setItemTags(
+                            ItemTags.LOGS,
+                            ItemTags.LOGS_THAT_BURN,
+                            parentMaterial.getItemTag(WoodenComplexMaterial.TAG_LOGS)
+                    );
+        } else {
+            entry
+                    .setBlockTags(
+                            BlockTags.LOGS,
+                            parentMaterial.getBlockTag(WoodenComplexMaterial.TAG_LOGS)
+                    )
+                    .setItemTags(
+                            ItemTags.LOGS,
+                            parentMaterial.getItemTag(WoodenComplexMaterial.TAG_LOGS)
+                    );
+        }
     }
 
     @Override

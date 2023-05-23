@@ -78,6 +78,10 @@ public class TagRegistry<T> {
         public final void add(T element, TagKey<T>... tagIDs) {
             super.add(element, tagIDs);
         }
+
+        public final boolean contains(TagKey<T> tagID, T element) {
+            return super.contains(tagID, element);
+        }
     }
 
     public static class Biomes extends Simple<Biome> {
@@ -252,6 +256,19 @@ public class TagRegistry<T> {
                 set.add(TagEntry.element(id));
             }
         }
+    }
+
+    protected boolean contains(TagKey<T> tagID, T element) {
+        final Set<TagEntry> set = getSetForTag(tagID);
+        final ResourceLocation id = locationProvider.apply(element);
+        if (id != null) {
+            for (var entry : set)
+                if (!entry.elementOrTag().tag()) {
+                    if (id.equals(entry.elementOrTag().id()))
+                        return true;
+                }
+        }
+        return false;
     }
 
     protected void add(T element, TagKey<T>... tagIDs) {
