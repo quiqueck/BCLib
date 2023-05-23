@@ -36,7 +36,6 @@ public class BCLibDatagen implements DataGeneratorEntrypoint {
         pack.addProvider(WorldPresetDataProvider::new);
         pack.addProvider(BCLibRegistriesDataProvider::new);
         pack.addProvider(BCLAdvancementDataProvider::new);
-
     }
 
 
