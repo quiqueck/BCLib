@@ -158,8 +158,8 @@ public class BCLib implements ModInitializer {
     static {
         if (ADD_TEST_DATA) {
             TEST_WOOD = BCLWoodTypeWrapper.create(makeID("test_wood")).setColor(MapColor.COLOR_MAGENTA).build();
-            TEST_SIGN = new BaseSignBlock(TEST_WOOD);
-            TEST_HANGING_SIGN = new BaseHangingSignBlock(TEST_WOOD);
+            TEST_SIGN = new BaseSignBlock.Wood(TEST_WOOD);
+            TEST_HANGING_SIGN = new BaseHangingSignBlock.Wood(TEST_WOOD);
 
 
             final ResourceKey<CreativeModeTab> TAB_TEST_KEY = ResourceKey.create(
