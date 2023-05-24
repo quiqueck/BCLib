@@ -26,10 +26,10 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public class BaseWallBlock extends WallBlock implements BlockModelProvider {
+public abstract class BaseWallBlock extends WallBlock implements BlockModelProvider {
     private final Block parent;
 
-    public BaseWallBlock(Block source) {
+    protected BaseWallBlock(Block source) {
         super(Properties.copy(source).noOcclusion());
         this.parent = source;
     }
@@ -122,5 +122,11 @@ public class BaseWallBlock extends WallBlock implements BlockModelProvider {
         builder.part(postId).setCondition(state -> state.getValue(UP)).add();
 
         return builder.build();
+    }
+
+    public static class Stone extends BaseWallBlock {
+        public Stone(Block source) {
+            super(source);
+        }
     }
 }
