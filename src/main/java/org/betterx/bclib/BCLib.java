@@ -57,7 +57,7 @@ public class BCLib implements ModInitializer {
     public static final boolean RUNS_NULLSCAPE = FabricLoader.getInstance()
                                                              .getModContainer("nullscape")
                                                              .isPresent();
-    public static final boolean ADD_TEST_DATA = true;
+    public static final boolean ADD_TEST_DATA = false;
 
     private void onDatagen() {
 
@@ -131,7 +131,7 @@ public class BCLib implements ModInitializer {
         return new ResourceLocation(MOD_ID, path);
     }
 
-    public final static BCLWoodTypeWrapper TEST_WOOD;
+    public static BCLWoodTypeWrapper TEST_WOOD;
     public static BaseSignBlock TEST_SIGN = null;
     public static BaseHangingSignBlock TEST_HANGING_SIGN = null;
 
