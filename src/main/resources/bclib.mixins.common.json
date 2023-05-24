@@ -31,6 +31,7 @@
     "RegistryDataLoaderMixin",
     "ServerLevelMixin",
     "ShovelItemAccessor",
+    "SpongeBlockMixin",
     "SurfaceRulesContextAccessor",
     "TheEndBiomesMixin",
     "WorldGenRegionMixin",

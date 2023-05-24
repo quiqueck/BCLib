@@ -1,6 +1,7 @@
 package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.behaviours.BehaviourBuilders;
+import org.betterx.bclib.behaviours.interfaces.BehaviourWaterPlant;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.items.tool.BaseShearsItem;
@@ -37,25 +38,7 @@ import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.function.Function;
 
-public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements RenderLayerProvider, BonemealableBlock, LiquidBlockContainer {
-    public static Properties baseUnderwaterPlantSettings() {
-        return baseUnderwaterPlantSettings(false, 0);
-    }
-
-    public static Properties baseUnderwaterPlantSettings(int light) {
-        return baseUnderwaterPlantSettings(false, light);
-    }
-
-    public static Properties baseUnderwaterPlantSettings(boolean replaceable) {
-        return baseUnderwaterPlantSettings(replaceable, 0);
-    }
-
-    public static Properties baseUnderwaterPlantSettings(boolean replaceable, int light) {
-        return baseUnderwaterPlantSettings(
-                replaceable ? BehaviourBuilders.createReplaceableWaterPlant() : BehaviourBuilders.createWaterPlant(),
-                light
-        );
-    }
+public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements RenderLayerProvider, BonemealableBlock, LiquidBlockContainer, BehaviourWaterPlant {
 
     public static Properties baseUnderwaterPlantSettings(BlockBehaviour.Properties props, int light) {
         props
@@ -75,7 +58,10 @@ public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements R
     @Deprecated(forRemoval = true)
     public UnderwaterPlantBlock(Function<Properties, Properties> propMod) {
         this(
-                propMod.apply(baseUnderwaterPlantSettings())
+                propMod.apply(baseUnderwaterPlantSettings(
+                        BehaviourBuilders.createWaterPlant(),
+                        0
+                ))
         );
     }
 
@@ -86,7 +72,10 @@ public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements R
     @Deprecated(forRemoval = true)
     public UnderwaterPlantBlock(int light, Function<Properties, Properties> propMod) {
         this(
-                propMod.apply(baseUnderwaterPlantSettings(light))
+                propMod.apply(baseUnderwaterPlantSettings(
+                        BehaviourBuilders.createWaterPlant(),
+                        light
+                ))
         );
     }
 

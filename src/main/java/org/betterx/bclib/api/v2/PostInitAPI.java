@@ -184,6 +184,28 @@ public class PostInitAPI {
             }
         }
 
+        if (block instanceof BehaviourWaterPlant) {
+            TagManager.BLOCKS.add(block, CommonBlockTags.WATER_PLANT);
+        }
+
+        if (block instanceof BehaviourPlant) {
+            TagManager.BLOCKS.add(block, CommonBlockTags.PLANT);
+        }
+
+        if (block instanceof BehaviourSeed) {
+            TagManager.BLOCKS.add(block, CommonBlockTags.SEEDS);
+            if (item != null && item != Items.AIR) {
+                TagManager.ITEMS.add(block, CommonItemTags.SEEDS);
+            }
+        }
+
+        if (block instanceof BehaviourSapling) {
+            TagManager.BLOCKS.add(block, CommonBlockTags.SAPLINGS);
+            if (item != null && item != Items.AIR) {
+                TagManager.ITEMS.add(block, CommonItemTags.SAPLINGS);
+            }
+        }
+
         if (block instanceof BehaviourClimable c) {
             TagManager.BLOCKS.add(block, BlockTags.CLIMBABLE);
         }
@@ -209,7 +231,7 @@ public class PostInitAPI {
         if (block instanceof BehaviourOre) {
             TagManager.BLOCKS.add(block, CommonBlockTags.ORES);
         }
-        
+
         if (block instanceof Fuel fl) {
             FuelRegistry.INSTANCE.add(block, fl.getFuelTime());
         }

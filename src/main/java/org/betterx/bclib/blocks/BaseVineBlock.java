@@ -1,6 +1,7 @@
 package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.behaviours.BehaviourBuilders;
+import org.betterx.bclib.behaviours.interfaces.BehaviourVine;
 import org.betterx.bclib.blocks.BlockProperties.TripleShape;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
@@ -39,7 +40,7 @@ import java.util.List;
 import java.util.function.Function;
 
 @SuppressWarnings("deprecation")
-public class BaseVineBlock extends BaseBlockNotFull implements RenderLayerProvider, BonemealableBlock {
+public class BaseVineBlock extends BaseBlockNotFull implements RenderLayerProvider, BonemealableBlock, BehaviourVine {
     public static final EnumProperty<TripleShape> SHAPE = BlockProperties.TRIPLE_SHAPE;
     private static final VoxelShape VOXEL_SHAPE = box(2, 0, 2, 14, 16, 14);
 

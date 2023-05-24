@@ -1,5 +1,7 @@
 package org.betterx.bclib.util;
 
+import org.betterx.bclib.behaviours.interfaces.BehaviourPlant;
+import org.betterx.bclib.behaviours.interfaces.BehaviourSeed;
 import org.betterx.worlds.together.tag.v3.CommonBlockTags;
 
 import net.minecraft.core.BlockPos;
@@ -8,13 +10,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.LavaFluid;
+import net.minecraft.world.level.material.PushReaction;
 
 import com.google.common.collect.Maps;
 
@@ -347,5 +347,24 @@ public class BlocksHelper {
 
     public static boolean isTerrainOrFluid(BlockState state) {
         return state.is(CommonBlockTags.TERRAIN) || isFluid(state);
+    }
+
+    public static Boolean replaceableOrPlant(BlockState state) {
+        final Block block = state.getBlock();
+        if (state.is(CommonBlockTags.PLANT) || state.is(CommonBlockTags.WATER_PLANT) || block instanceof BehaviourPlant || block instanceof BehaviourSeed) {
+            return true;
+        }
+        if (state.getPistonPushReaction() == PushReaction.DESTROY && block.defaultDestroyTime() == 0) return true;
+
+        if (state.getSoundType() == SoundType.GRASS
+                || state.getSoundType() == SoundType.WET_GRASS
+                || state.getSoundType() == SoundType.CROP
+                || state.getSoundType() == SoundType.CAVE_VINES
+
+        ) {
+            return true;
+        }
+        
+        return state.canBeReplaced();
     }
 }

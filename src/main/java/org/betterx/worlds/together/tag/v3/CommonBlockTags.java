@@ -23,6 +23,7 @@ public class CommonBlockTags {
     public static final TagKey<Block> ORES = TagManager.BLOCKS.makeCommonTag("ores");
     public static final TagKey<Block> END_ORES = TagManager.BLOCKS.makeCommonTag("end_ores");
     public static final TagKey<Block> SAPLINGS = TagManager.BLOCKS.makeCommonTag("saplings");
+    public static final TagKey<Block> SEEDS = TagManager.BLOCKS.makeCommonTag("seeds");
     public static final TagKey<Block> SOUL_GROUND = TagManager.BLOCKS.makeCommonTag("soul_ground");
     public static final TagKey<Block> SCULK_LIKE = TagManager.BLOCKS.makeCommonTag("sculk_like");
     public static final TagKey<Block> WOODEN_BARREL = TagManager.BLOCKS.makeCommonTag("wooden_barrels");
@@ -38,8 +39,13 @@ public class CommonBlockTags {
     public static final TagKey<Block> TERRAIN = TagManager.BLOCKS.makeCommonTag("terrain");
     public static final TagKey<Block> NETHER_TERRAIN = TagManager.BLOCKS.makeCommonTag("nether_terrain");
     public static final TagKey<Block> BUDDING_BLOCKS = TagManager.BLOCKS.makeCommonTag("budding_blocks");
+    public static final TagKey<Block> WATER_PLANT = TagManager.BLOCKS.makeCommonTag("water_plant");
+    ;
+    public static final TagKey<Block> PLANT = TagManager.BLOCKS.makeCommonTag("plant");
+    ;
 
     static void prepareTags() {
+        TagManager.BLOCKS.addOtherTags(MINABLE_WITH_HAMMER, BlockTags.MINEABLE_WITH_PICKAXE);
         TagManager.BLOCKS.add(SCULK_LIKE, Blocks.SCULK);
         TagManager.BLOCKS.addOtherTags(DRAGON_IMMUNE, BlockTags.DRAGON_IMMUNE);
 
@@ -124,6 +130,72 @@ public class CommonBlockTags {
                 WOODEN_COMPOSTER,
                 WOODEN_CHEST,
                 WORKBENCHES
+        );
+
+        TagManager.BLOCKS.add(WATER_PLANT, Blocks.KELP, Blocks.KELP_PLANT, Blocks.SEAGRASS, Blocks.TALL_SEAGRASS);
+        TagManager.BLOCKS.add(
+                SAPLINGS,
+                Blocks.OAK_SAPLING,
+                Blocks.SPRUCE_SAPLING,
+                Blocks.BIRCH_SAPLING,
+                Blocks.JUNGLE_SAPLING,
+                Blocks.ACACIA_SAPLING,
+                Blocks.DARK_OAK_SAPLING,
+                Blocks.MANGROVE_PROPAGULE
+        );
+        TagManager.BLOCKS.addOtherTags(PLANT, SAPLINGS);
+        TagManager.BLOCKS.add(
+                PLANT,
+                Blocks.MANGROVE_LEAVES,
+                Blocks.GRASS,
+                Blocks.FERN,
+                Blocks.DANDELION,
+                Blocks.TORCHFLOWER,
+                Blocks.POPPY,
+                Blocks.BLUE_ORCHID,
+                Blocks.ALLIUM,
+                Blocks.AZURE_BLUET,
+                Blocks.RED_TULIP,
+                Blocks.ORANGE_TULIP,
+                Blocks.WHITE_TULIP,
+                Blocks.PINK_TULIP,
+                Blocks.OXEYE_DAISY,
+                Blocks.CORNFLOWER,
+                Blocks.WITHER_ROSE,
+                Blocks.LILY_OF_THE_VALLEY,
+                Blocks.WHEAT,
+                Blocks.CACTUS,
+                Blocks.SUGAR_CANE,
+                Blocks.ATTACHED_PUMPKIN_STEM,
+                Blocks.ATTACHED_MELON_STEM,
+                Blocks.PUMPKIN_STEM,
+                Blocks.MELON_STEM,
+                Blocks.VINE,
+                Blocks.LILY_PAD,
+                Blocks.COCOA,
+                Blocks.CARROTS,
+                Blocks.POTATOES,
+                Blocks.SUNFLOWER,
+                Blocks.LILAC,
+                Blocks.ROSE_BUSH,
+                Blocks.PEONY,
+                Blocks.TALL_GRASS,
+                Blocks.LARGE_FERN,
+                Blocks.TORCHFLOWER_CROP,
+                Blocks.PITCHER_CROP,
+                Blocks.PITCHER_PLANT,
+                Blocks.BEETROOTS,
+                Blocks.BAMBOO,
+                Blocks.SWEET_BERRY_BUSH,
+                Blocks.CAVE_VINES,
+                Blocks.CAVE_VINES_PLANT,
+                Blocks.SPORE_BLOSSOM,
+                Blocks.AZALEA,
+                Blocks.FLOWERING_AZALEA,
+                Blocks.PINK_PETALS,
+                Blocks.BIG_DRIPLEAF,
+                Blocks.BIG_DRIPLEAF_STEM,
+                Blocks.SMALL_DRIPLEAF
         );
     }
 }

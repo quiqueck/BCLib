@@ -1,5 +1,8 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.behaviours.BehaviourBuilders;
+import org.betterx.bclib.behaviours.interfaces.BehaviourWaterPlant;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
@@ -10,7 +13,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 
-public abstract class BaseUnderwaterWallPlantBlock extends BaseWallPlantBlock implements LiquidBlockContainer {
+public abstract class BaseUnderwaterWallPlantBlock extends BaseWallPlantBlock implements LiquidBlockContainer, BehaviourWaterPlant {
 
     public BaseUnderwaterWallPlantBlock() {
         this(0);
@@ -18,7 +21,10 @@ public abstract class BaseUnderwaterWallPlantBlock extends BaseWallPlantBlock im
 
     public BaseUnderwaterWallPlantBlock(int light) {
         this(
-                UnderwaterPlantBlock.baseUnderwaterPlantSettings(light)
+                UnderwaterPlantBlock.baseUnderwaterPlantSettings(
+                        BehaviourBuilders.createWaterPlant(),
+                        light
+                )
         );
     }
 
