@@ -9,10 +9,18 @@ import net.minecraft.world.level.material.MaterialColor;
 
 public class BehaviourBuilders {
     public static BlockBehaviour.Properties createPlant() {
-        return BlockBehaviour.Properties.of(Material.PLANT)
+        return createPlant(false);
+    }
+
+    //TODO: Remove this method, and call noCollision explicitly
+    public static BlockBehaviour.Properties createPlant(boolean collission) {
+        var p =  BlockBehaviour.Properties.of(Material.PLANT)
                                         .color(MaterialColor.PLANT)
-                                        .noCollission()
                                         .instabreak();
+        if (!collission)
+            p.noCollission();
+
+        return p;
     }
 
     public static BlockBehaviour.Properties createTickingPlant() {
@@ -27,9 +35,17 @@ public class BehaviourBuilders {
     }
 
     public static BlockBehaviour.Properties createWaterPlant() {
-        return BlockBehaviour.Properties.of(Material.WATER_PLANT)
-                                        .noCollission()
+        return createWaterPlant(false);
+    }
+
+    //TODO: Remove this method, and call noCollision explicitly
+    public static BlockBehaviour.Properties createWaterPlant(boolean collission) {
+        var p = BlockBehaviour.Properties.of(Material.WATER_PLANT)
                                         .instabreak();
+        if (!collission)
+            p.noCollission();
+
+        return p;
     }
 
     public static BlockBehaviour.Properties createReplaceableWaterPlant() {
