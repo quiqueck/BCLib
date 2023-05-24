@@ -14,6 +14,7 @@ public class CommonItemTags {
     public static final TagKey<Item> IRON_INGOTS = TagManager.ITEMS.makeCommonTag("iron_ingots");
     public static final TagKey<Item> LEAVES = TagManager.ITEMS.makeCommonTag("leaves");
     public static final TagKey<Item> SAPLINGS = TagManager.ITEMS.makeCommonTag("saplings");
+    public static final TagKey<Item> SEEDS = TagManager.ITEMS.makeCommonTag("seeds");
     public static final TagKey<Item> SOUL_GROUND = TagManager.ITEMS.makeCommonTag("soul_ground");
     public static final TagKey<Item> WOODEN_BARREL = TagManager.ITEMS.makeCommonTag("wooden_barrels");
     public static final TagKey<Item> WOODEN_CHEST = TagManager.ITEMS.makeCommonTag("wooden_chests");
