@@ -168,6 +168,19 @@ public class BehaviourBuilders {
         return p;
     }
 
+    public static BlockBehaviour.Properties createGlass() {
+        return BlockBehaviour.Properties
+                .of()
+                .instrument(NoteBlockInstrument.HAT)
+                .strength(0.3F)
+                .sound(SoundType.GLASS)
+                .noOcclusion()
+                .isValidSpawn(Blocks::never)
+                .isRedstoneConductor(Blocks::never)
+                .isSuffocating(Blocks::never)
+                .isViewBlocking(Blocks::never);
+    }
+
     public static BlockBehaviour.Properties applyBasePlantSettings() {
         return applyBasePlantSettings(false, 0);
     }
@@ -192,5 +205,14 @@ public class BehaviourBuilders {
                 .offsetType(BlockBehaviour.OffsetType.XZ);
         if (light > 0) props.lightLevel(s -> light);
         return props;
+    }
+
+    public static BlockBehaviour.Properties createSnow() {
+        return BlockBehaviour.Properties
+                .of()
+                .mapColor(MapColor.SNOW)
+                .requiresCorrectToolForDrops()
+                .strength(0.2F)
+                .sound(SoundType.SNOW);
     }
 }
