@@ -141,6 +141,8 @@ public class CommonBlockTags {
                 Blocks.JUNGLE_SAPLING,
                 Blocks.ACACIA_SAPLING,
                 Blocks.DARK_OAK_SAPLING,
+                Blocks.CHERRY_SAPLING,
+                Blocks.BAMBOO_SAPLING,
                 Blocks.MANGROVE_PROPAGULE
         );
         TagManager.BLOCKS.addOtherTags(PLANT, SAPLINGS);
