@@ -2,6 +2,7 @@ package org.betterx.bclib.behaviours;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
@@ -84,8 +85,29 @@ public class BehaviourBuilders {
         return p;
     }
 
+    public static BlockBehaviour.Properties createGlass() {
+        return BlockBehaviour.Properties
+                .of(Material.GLASS)
+                .strength(0.3F)
+                .sound(SoundType.GLASS)
+                .noOcclusion()
+                .isValidSpawn(Blocks::never)
+                .isRedstoneConductor(Blocks::never)
+                .isSuffocating(Blocks::never)
+                .isViewBlocking(Blocks::never);
+    }
+
     public static BlockBehaviour.Properties createWallSign(MaterialColor color, Block dropBlock) {
         return createSign(color).dropsLike(dropBlock);
 
+    }
+
+    public static BlockBehaviour.Properties createSnow() {
+        return BlockBehaviour.Properties
+                .of(Material.SNOW)
+                .color(MaterialColor.SNOW)
+                .requiresCorrectToolForDrops()
+                .strength(0.2F)
+                .sound(SoundType.SNOW);
     }
 }

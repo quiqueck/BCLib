@@ -1,5 +1,9 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.behaviours.interfaces.BehaviourGlass;
+import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
+import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
+import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.util.BlocksHelper;
 
 import net.minecraft.core.BlockPos;
@@ -21,7 +25,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 public abstract class BaseAttachedBlock extends BaseBlockNotFull {
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
 
-    public BaseAttachedBlock(Properties settings) {
+    protected BaseAttachedBlock(Properties settings) {
         super(settings);
         registerDefaultState(defaultBlockState().setValue(FACING, Direction.UP));
     }
@@ -79,5 +83,29 @@ public abstract class BaseAttachedBlock extends BaseBlockNotFull {
     @Override
     public BlockState mirror(BlockState state, Mirror mirror) {
         return BlocksHelper.mirrorHorizontal(state, mirror, FACING);
+    }
+
+    public static class Wood extends BaseAttachedBlock implements BehaviourWood {
+        public Wood(Properties settings) {
+            super(settings);
+        }
+    }
+
+    public static class Stone extends BaseAttachedBlock implements BehaviourStone {
+        public Stone(Properties settings) {
+            super(settings);
+        }
+    }
+
+    public static class Metal extends BaseAttachedBlock implements BehaviourMetal {
+        public Metal(Properties settings) {
+            super(settings);
+        }
+    }
+
+    public static class Glass extends BaseAttachedBlock implements BehaviourGlass {
+        public Glass(Properties settings) {
+            super(settings);
+        }
     }
 }

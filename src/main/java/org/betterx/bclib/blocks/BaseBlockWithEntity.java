@@ -1,5 +1,7 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -10,8 +12,8 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import java.util.Collections;
 import java.util.List;
 
-public class BaseBlockWithEntity extends BaseEntityBlock {
-    public BaseBlockWithEntity(Properties settings) {
+public abstract class BaseBlockWithEntity extends BaseEntityBlock {
+    protected BaseBlockWithEntity(Properties settings) {
         super(settings);
     }
 
@@ -24,5 +26,11 @@ public class BaseBlockWithEntity extends BaseEntityBlock {
     @SuppressWarnings("deprecation")
     public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
         return Collections.singletonList(new ItemStack(this));
+    }
+
+    public static class Stone extends BaseBlockWithEntity implements BehaviourStone {
+        public Stone(Properties settings) {
+            super(settings);
+        }
     }
 }
