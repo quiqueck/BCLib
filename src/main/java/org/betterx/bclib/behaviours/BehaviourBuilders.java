@@ -14,11 +14,19 @@ public class BehaviourBuilders {
     }
 
     public static BlockBehaviour.Properties createPlant(MapColor color) {
-        return BlockBehaviour.Properties.of()
-                                        .mapColor(color)
-                                        .noCollission()
-                                        .instabreak()
-                                        .pushReaction(PushReaction.DESTROY);
+        return createPlant(color, false);
+    }
+
+    //TODO: Remove this method, and call noCollision explicitly
+    public static BlockBehaviour.Properties createPlant(MapColor color, boolean collission) {
+        var p = BlockBehaviour.Properties.of()
+                                         .mapColor(color)
+                                         .instabreak()
+                                         .pushReaction(PushReaction.DESTROY);
+        if (!collission)
+            p.noCollission();
+
+        return p;
     }
 
     public static BlockBehaviour.Properties createGrass(MapColor color, boolean flammable) {
@@ -45,11 +53,19 @@ public class BehaviourBuilders {
     }
 
     public static BlockBehaviour.Properties createWaterPlant() {
-        return BlockBehaviour.Properties.of()
-                                        .mapColor(MapColor.WATER)
-                                        .noCollission()
-                                        .instabreak()
-                                        .pushReaction(PushReaction.DESTROY);
+        return createWaterPlant(MapColor.WATER, false);
+    }
+
+    //TODO: Remove this method, and call noCollision explicitly
+    public static BlockBehaviour.Properties createWaterPlant(MapColor color, boolean collission) {
+        var p = BlockBehaviour.Properties.of()
+                                         .mapColor(color)
+                                         .instabreak()
+                                         .pushReaction(PushReaction.DESTROY);
+        if (!collission)
+            p.noCollission();
+
+        return p;
     }
 
     public static BlockBehaviour.Properties createReplaceableWaterPlant() {
