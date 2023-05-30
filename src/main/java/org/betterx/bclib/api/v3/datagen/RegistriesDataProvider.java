@@ -60,7 +60,8 @@ public abstract class RegistriesDataProvider implements DataProvider {
                                             cachedOutput,
                                             registriesProvider,
                                             dynamicOps,
-                                            registryData
+                                            registryData,
+                                            registries
                                     ))
                                     .toArray(CompletableFuture<?>[]::new);
 
@@ -71,12 +72,19 @@ public abstract class RegistriesDataProvider implements DataProvider {
         );
     }
 
+
     private <T> CompletableFuture<?> serializeRegistry(
             CachedOutput cachedOutput,
             HolderLookup.Provider registryAccess,
             DynamicOps<JsonElement> dynamicOps,
-            RegistrySupplier.RegistryInfo<T> registryData
+            RegistrySupplier.RegistryInfo<T> registryData,
+            RegistrySupplier registries
     ) {
+        try {
+            registries.MAIN_LOCK.acquire();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         final List<Holder<T>> elements = registryData.allElements(registryAccess);
         final HolderLookup.RegistryLookup<T> registry = registryAccess.lookupOrThrow(registryData.key());
         LOGGER.info("Serializing "
@@ -86,6 +94,7 @@ public abstract class RegistriesDataProvider implements DataProvider {
                 + " elements from "
                 + registryData.data.key()
         );
+        registries.MAIN_LOCK.release();
 
         if (!elements.isEmpty()) {
             PackOutput.PathProvider pathProvider = this.output.createPathProvider(

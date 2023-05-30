@@ -7,12 +7,9 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistrySetBuilder;
-import net.minecraft.data.DataProvider;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.RegistryDataLoader;
 import net.minecraft.resources.ResourceKey;
-
-import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -23,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class RegistrySupplier {
     private static final int MAX_PERMITS = 2000;
     private final Semaphore BOOTSTRAP_LOCK = new Semaphore(MAX_PERMITS);
+    public final Semaphore MAIN_LOCK = new Semaphore(1);
 
     final List<RegistrySupplier.RegistryInfo<?>> allRegistries;
     @Nullable List<String> defaultModIDs;
@@ -58,55 +56,6 @@ public abstract class RegistrySupplier {
 
     void releaseLock() {
         BOOTSTRAP_LOCK.release(MAX_PERMITS);
-    }
-
-
-    public <T> void addWithLock(
-            RegistrySetBuilder registryBuilder,
-            ResourceKey<? extends Registry<T>> resourceKey,
-            RegistrySetBuilder.RegistryBootstrap<T> registryBootstrap
-    ) {
-        try {
-            BOOTSTRAP_LOCK.acquire();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        registryBuilder.add(resourceKey, (ctx) -> {
-            registryBootstrap.run(ctx);
-            BOOTSTRAP_LOCK.release();
-        });
-    }
-
-    public <T extends DataProvider> void addProviderWithLock(
-            FabricDataGenerator.Pack pack,
-            FabricDataGenerator.Pack.RegistryDependentFactory<T> factory
-    ) {
-        try {
-            BOOTSTRAP_LOCK.acquire();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        pack.addProvider((output, future) -> {
-            final T res = factory.create(output, future);
-            BOOTSTRAP_LOCK.release();
-            return res;
-        });
-    }
-
-    public <T extends DataProvider> void addProviderWithLock(
-            FabricDataGenerator.Pack pack,
-            FabricDataGenerator.Pack.Factory<T> factory
-    ) {
-        try {
-            BOOTSTRAP_LOCK.acquire();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        pack.addProvider((output, future) -> {
-            final T res = factory.create(output);
-            BOOTSTRAP_LOCK.release();
-            return res;
-        });
     }
 
     public class InfoList extends LinkedList<RegistrySupplier.RegistryInfo<?>> {

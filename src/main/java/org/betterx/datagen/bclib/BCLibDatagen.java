@@ -25,17 +25,17 @@ public class BCLibDatagen implements DataGeneratorEntrypoint {
         if (BCLib.ADD_TEST_DATA) {
             TestBiomes.ensureStaticallyLoaded();
 
-            BCLRegistrySupplier.INSTANCE.addProviderWithLock(pack, TestWorldgenProvider::new);
-            BCLRegistrySupplier.INSTANCE.addProviderWithLock(pack, TestBiomes::new);
+            pack.addProvider(TestWorldgenProvider::new);
+            pack.addProvider(TestBiomes::new);
             RecipeDataProvider.createTestRecipes();
         } else {
-            BCLRegistrySupplier.INSTANCE.addProviderWithLock(pack, NullscapeBiomes::new);
+            pack.addProvider(NullscapeBiomes::new);
         }
 
-        BCLRegistrySupplier.INSTANCE.addProviderWithLock(pack, RecipeDataProvider::new);
-        BCLRegistrySupplier.INSTANCE.addProviderWithLock(pack, WorldPresetDataProvider::new);
-        BCLRegistrySupplier.INSTANCE.addProviderWithLock(pack, BCLibRegistriesDataProvider::new);
-        BCLRegistrySupplier.INSTANCE.addProviderWithLock(pack, BCLAdvancementDataProvider::new);
+        pack.addProvider(RecipeDataProvider::new);
+        pack.addProvider(WorldPresetDataProvider::new);
+        pack.addProvider(BCLibRegistriesDataProvider::new);
+        pack.addProvider(BCLAdvancementDataProvider::new);
     }
 
 
