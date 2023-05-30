@@ -24,6 +24,7 @@ import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import org.jetbrains.annotations.Nullable;
 
 public class StructureNBT {
     public final ResourceLocation location;
@@ -55,19 +56,9 @@ public class StructureNBT {
     }
 
     public boolean generateCentered(ServerLevelAccessor world, BlockPos pos, Rotation rotation, Mirror mirror) {
-        if (structure == null) {
-            BCLib.LOGGER.error("No structure: " + location.toString());
-            return false;
-        }
-
-        MutableBlockPos blockpos2 = new MutableBlockPos().set(structure.getSize());
-        if (mirror == Mirror.FRONT_BACK)
-            blockpos2.setX(-blockpos2.getX());
-        if (mirror == Mirror.LEFT_RIGHT)
-            blockpos2.setZ(-blockpos2.getZ());
-        blockpos2.set(blockpos2.rotate(rotation));
+        BlockPos newPos = getCenteredPos(pos, rotation, mirror);
+        if (newPos == null) return false;
         StructurePlaceSettings data = new StructurePlaceSettings().setRotation(rotation).setMirror(mirror);
-        BlockPos newPos = pos.offset(-blockpos2.getX() >> 1, 0, -blockpos2.getZ() >> 1);
         structure.placeInWorld(
                 world,
                 newPos,
@@ -77,6 +68,35 @@ public class StructureNBT {
                 Block.UPDATE_CLIENTS
         );
         return true;
+    }
+
+    public boolean generateAt(ServerLevelAccessor world, BlockPos pos, Rotation rotation, Mirror mirror) {
+        StructurePlaceSettings data = new StructurePlaceSettings().setRotation(rotation).setMirror(mirror);
+        structure.placeInWorld(
+                world,
+                pos,
+                pos,
+                data,
+                world.getRandom(),
+                Block.UPDATE_CLIENTS
+        );
+        return true;
+    }
+
+    @Nullable
+    private BlockPos getCenteredPos(BlockPos pos, Rotation rotation, Mirror mirror) {
+        if (structure == null) {
+            BCLib.LOGGER.error("No structure: " + location.toString());
+            return null;
+        }
+
+        MutableBlockPos blockpos2 = new MutableBlockPos().set(structure.getSize());
+        if (mirror == Mirror.FRONT_BACK)
+            blockpos2.setX(-blockpos2.getX());
+        if (mirror == Mirror.LEFT_RIGHT)
+            blockpos2.setZ(-blockpos2.getZ());
+        blockpos2.set(blockpos2.rotate(rotation));
+        return pos.offset(-blockpos2.getX() >> 1, 0, -blockpos2.getZ() >> 1);
     }
 
     private static final Map<ResourceLocation, StructureTemplate> READER_CACHE = Maps.newHashMap();
@@ -126,5 +146,12 @@ public class StructureNBT {
 
     public BoundingBox getBoundingBox(BlockPos pos, Rotation rotation, Mirror mirror) {
         return structure.getBoundingBox(new StructurePlaceSettings().setRotation(rotation).setMirror(mirror), pos);
+    }
+
+    public BoundingBox getCenteredBoundingBox(BlockPos pos, Rotation rotation, Mirror mirror) {
+        return structure.getBoundingBox(
+                new StructurePlaceSettings().setRotation(rotation).setMirror(mirror),
+                getCenteredPos(pos, rotation, mirror)
+        );
     }
 }

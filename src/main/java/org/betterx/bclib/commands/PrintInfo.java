@@ -7,10 +7,12 @@ import org.betterx.bclib.networking.VersionChecker;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.brigadier.Command;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -21,6 +23,20 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 
 public class PrintInfo {
+    public static LiteralArgumentBuilder<CommandSourceStack> register(LiteralArgumentBuilder<CommandSourceStack> bnContext) {
+        return bnContext
+                .then(Commands.literal("print")
+                              .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
+                              .then(Commands.literal("dimensions")
+                                            .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
+                                            .executes(PrintInfo::printDimensions)
+                              ).then(Commands.literal("updates")
+                                             .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
+                                             .executes(ctx -> PrintInfo.printUpdates(ctx, true))
+                        )
+                );
+    }
+
     static int printDimensions(CommandContext<CommandSourceStack> ctx) {
         MutableComponent result = Component.literal("World Dimensions: ")
                                            .setStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.BLUE));

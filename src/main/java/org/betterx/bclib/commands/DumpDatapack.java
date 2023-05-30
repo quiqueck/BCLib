@@ -9,11 +9,13 @@ import org.betterx.worlds.together.surfaceRules.AssignedSurfaceRule;
 import org.betterx.worlds.together.surfaceRules.SurfaceRuleRegistry;
 
 import com.mojang.brigadier.Command;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.KeyDispatchCodec;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
@@ -67,6 +69,14 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class DumpDatapack {
+    public static LiteralArgumentBuilder<CommandSourceStack> register(LiteralArgumentBuilder<CommandSourceStack> bnContext) {
+        return bnContext
+                .then(Commands.literal("dump_datapack")
+                              .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
+                              .executes(DumpDatapack::dumpDatapack)
+                );
+    }
+
     private record Dumper<T, C extends Codec<? extends T>, H extends Holder<? extends T>>(
             Function<T, C> codecFunction,
             Function<Holder<T>, T> contentTransform

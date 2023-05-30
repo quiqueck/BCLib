@@ -5,6 +5,7 @@ import org.betterx.worlds.together.tag.v3.CommonBlockTags;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandBuildContext;
@@ -37,30 +38,22 @@ public class CommandRegistry {
             CommandBuildContext commandBuildContext,
             Commands.CommandSelection commandSelection
     ) {
+        LiteralArgumentBuilder<CommandSourceStack> bnContext = Commands.literal("bclib")
+                                                                       .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS));
+
+        bnContext = Place.register(bnContext, commandBuildContext);
+        bnContext = PrintInfo.register(bnContext);
+        bnContext = DumpDatapack.register(bnContext);
+
         dispatcher.register(
-                Commands.literal("bclib")
-                        .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
+                bnContext
                         .then(Commands.literal("request_garbage_collection")
                                       .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
-                                      .executes(ctx -> requestGC(ctx))
-                        )
-                        .then(Commands.literal("dump_datapack")
-                                      .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
-                                      .executes(ctx -> DumpDatapack.dumpDatapack(ctx))
-                        )
-                        .then(Commands.literal("print")
-                                      .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
-                                      .then(Commands.literal("dimensions")
-                                                    .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
-                                                    .executes(ctx -> PrintInfo.printDimensions(ctx))
-                                      ).then(Commands.literal("updates")
-                                                     .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
-                                                     .executes(ctx -> PrintInfo.printUpdates(ctx, true))
-                                )
+                                      .executes(CommandRegistry::requestGC)
                         )
                         .then(Commands.literal("debug_ore")
                                       .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
-                                      .executes(ctx -> revealOre(ctx))
+                                      .executes(CommandRegistry::revealOre)
                         )
                         .then(Commands.literal("sliceZ")
                                       .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
