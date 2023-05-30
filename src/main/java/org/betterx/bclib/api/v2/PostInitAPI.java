@@ -200,9 +200,9 @@ public class PostInitAPI {
         }
 
         if (block instanceof BehaviourSapling) {
-            TagManager.BLOCKS.add(block, CommonBlockTags.SAPLINGS);
+            TagManager.BLOCKS.add(block, CommonBlockTags.SAPLINGS, BlockTags.SAPLINGS);
             if (item != null && item != Items.AIR) {
-                TagManager.ITEMS.add(block, CommonItemTags.SAPLINGS);
+                TagManager.ITEMS.add(block, CommonItemTags.SAPLINGS, ItemTags.SAPLINGS);
             }
         }
 

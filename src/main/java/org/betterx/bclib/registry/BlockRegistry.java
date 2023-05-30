@@ -1,20 +1,12 @@
 package org.betterx.bclib.registry;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.blocks.BaseOreBlock;
-import org.betterx.bclib.blocks.FeatureSaplingBlock;
 import org.betterx.bclib.config.PathConfig;
 import org.betterx.bclib.interfaces.CustomItemProvider;
-import org.betterx.worlds.together.tag.v3.CommonBlockTags;
-import org.betterx.worlds.together.tag.v3.CommonItemTags;
-import org.betterx.worlds.together.tag.v3.MineableTags;
-import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -50,15 +42,6 @@ public class BlockRegistry extends BaseRegistry<Block> {
 
         block = Registry.register(BuiltInRegistries.BLOCK, id, block);
         getModBlocks(id.getNamespace()).add(block);
-
-        if (block instanceof BaseOreBlock) {
-            TagManager.BLOCKS.add(block, MineableTags.PICKAXE);
-        } else if (block instanceof FeatureSaplingBlock) {
-            TagManager.BLOCKS.add(block, CommonBlockTags.SAPLINGS, BlockTags.SAPLINGS);
-            if (item != null) {
-                TagManager.ITEMS.add(item, CommonItemTags.SAPLINGS, ItemTags.SAPLINGS);
-            }
-        }
 
         return block;
     }
