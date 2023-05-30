@@ -10,6 +10,7 @@ import org.betterx.bclib.items.tool.BaseHoeItem;
 import org.betterx.bclib.items.tool.BasePickaxeItem;
 import org.betterx.bclib.items.tool.BaseShearsItem;
 import org.betterx.bclib.models.RecordItemModelProvider;
+import org.betterx.bclib.recipes.SmithingTemplates;
 import org.betterx.worlds.together.tag.v3.CommonItemTags;
 import org.betterx.worlds.together.tag.v3.TagManager;
 import org.betterx.worlds.together.tag.v3.ToolTags;
@@ -30,6 +31,8 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.DispenserBlock;
 
+import java.util.List;
+
 public class ItemRegistry extends BaseRegistry<Item> {
     public ItemRegistry(PathConfig config) {
         super(config);
@@ -44,6 +47,20 @@ public class ItemRegistry extends BaseRegistry<Item> {
             }
             register(itemId, item);
         }
+        return item;
+    }
+
+    public SmithingTemplateItem registerSmithingTemplateItem(
+            ResourceLocation id,
+            List<ResourceLocation> baseSlotEmptyIcons,
+            List<ResourceLocation> additionalSlotEmptyIcons
+    ) {
+        final SmithingTemplateItem item = SmithingTemplates
+                .create(id)
+                .setBaseSlotEmptyIcons(baseSlotEmptyIcons)
+                .setAdditionalSlotEmptyIcons(additionalSlotEmptyIcons)
+                .build();
+        register(new ResourceLocation(id.getNamespace(), id.getPath() + "_smithing_template"), item);
         return item;
     }
 
