@@ -1,5 +1,6 @@
 package org.betterx.bclib.commands;
 
+import de.ambertation.wunderlib.math.Bounds;
 import de.ambertation.wunderlib.math.Float3;
 import org.betterx.bclib.api.v2.levelgen.structures.StructureNBT;
 import org.betterx.bclib.commands.arguments.Float3ArgumentType;
@@ -128,6 +129,7 @@ class PlaceCommandBuilder {
         ) throws CommandSyntaxException;
     }
 
+    // /bclib place nbt betternether:city southOf 0 -59 0 controller
     protected static int placeNBT(
             CommandContext<CommandSourceStack> ctx,
             boolean border,
@@ -136,18 +138,64 @@ class PlaceCommandBuilder {
         final ResourceLocation id = ResourceLocationArgument.getId(ctx, PATH);
         final PlacementDirections searchDir = TemplatePlacementArgument.getPlacement(ctx, PLACEMENT);
         final BlockInput blockInput = border ? BlockStateArgument.getBlock(ctx, BORDER) : null;
-        final StructureNBT structureNBT = StructureNBT.create(id);
+        final BlockPos pos = BlockPosArgument.getLoadedBlockPos(ctx, POS);
+        var structures = StructureNBT.allResourcesFrom(id);
+        if (structures != null) {
+            Bounds b = Bounds.of(pos);
+            Bounds all = Bounds.of(pos);
+            BlockPos pNew = pos;
+            for (var s : structures) {
+                Bounds bb = Bounds.of(PlaceCommand.placeBlocks(
+                        ctx.getSource(),
+                        pNew,
+                        searchDir.getOffset(),
+                        blockInput,
+                        controlBlocks,
+                        s.location,
+                        (p) -> s.getBoundingBox(p, Rotation.NONE, Mirror.NONE),
+                        (level, p) -> s.generateAt(level, p, Rotation.NONE, Mirror.NONE)
+                ));
+                b = b.encapsulate(bb);
+                all = all.encapsulate(bb);
+                if (searchDir == PlacementDirections.NORTH_OF || searchDir == PlacementDirections.SOUTH_OF) {
+                    if (b.getSize().z > 10 * 16) {
+                        pNew = new BlockPos((int) b.max.x + 3, pNew.getY(), pNew.getZ());
+                        b = Bounds.of(pNew);
+                    }
+                } else if (searchDir == PlacementDirections.EAST_OF || searchDir == PlacementDirections.WEST_OF) {
+                    if (b.getSize().x > 10 * 16) {
+                        pNew = new BlockPos(pNew.getX(), pNew.getY(), (int) b.max.z + 3);
+                        b = Bounds.of(pNew);
+                    }
+                } else {
+                    if (b.getSize().y > 10 * 16) {
+                        pNew = new BlockPos(pNew.getX(), pNew.getY(), (int) b.max.z + 3);
+                        b = Bounds.of(pNew);
+                    }
+                }
 
-        return PlaceCommand.placeBlocks(
-                ctx.getSource(),
-                BlockPosArgument.getLoadedBlockPos(ctx, POS),
-                searchDir.getOffset(),
-                blockInput,
-                controlBlocks,
-                structureNBT.location,
-                (p) -> structureNBT.getBoundingBox(p, Rotation.NONE, Mirror.NONE),
-                (level, p) -> structureNBT.generateAt(level, p, Rotation.NONE, Mirror.NONE)
-        );
+            }
+            Bounds finalAll = all;
+            ctx.getSource()
+               .sendSuccess(() -> Component.literal("Placed " + structures.size() + " NBTs: " + finalAll.toString())
+                                           .setStyle(Style.EMPTY.withColor(ChatFormatting.LIGHT_PURPLE)), true);
+
+
+            return 0;
+        } else {
+            final StructureNBT structureNBT = StructureNBT.create(id);
+
+            return PlaceCommand.placeBlocks(
+                    ctx.getSource(),
+                    pos,
+                    searchDir.getOffset(),
+                    blockInput,
+                    controlBlocks,
+                    structureNBT.location,
+                    (p) -> structureNBT.getBoundingBox(p, Rotation.NONE, Mirror.NONE),
+                    (level, p) -> structureNBT.generateAt(level, p, Rotation.NONE, Mirror.NONE)
+            ) == null ? Command.SINGLE_SUCCESS : -1;
+        }
     }
 
     protected static int placeEmpty(
@@ -182,7 +230,7 @@ class PlaceCommandBuilder {
                         );
                     }
                 }
-        );
+        ) == null ? Command.SINGLE_SUCCESS : -1;
     }
 }
 
@@ -320,7 +368,7 @@ public class PlaceCommand {
     }
 
 
-    static int placeBlocks(
+    static BoundingBox placeBlocks(
             CommandSourceStack stack,
             BlockPos pos,
             BlockPos searchDir,
@@ -340,7 +388,6 @@ public class PlaceCommand {
                             structureBlock
                     )
             )) {
-
                 pos = pos.offset(searchDir);
                 tries--;
             }
@@ -348,16 +395,19 @@ public class PlaceCommand {
             if (tries <= 0) {
                 stack.sendFailure(Component.literal("Failed to find free space")
                                            .setStyle(Style.EMPTY.withColor(ChatFormatting.RED)));
-                return -1;
+                return null;
             }
         }
 
         final BoundingBox bbNBT = getBounds.apply(pos);
+        final BoundingBox bb;
         if (blockInput != null) {
-            final BoundingBox bb = bbNBT.inflatedBy(1);
+            bb = bbNBT.inflatedBy(1);
             outline(stack.getLevel(), bb, blockInput.getState());
             stack.sendSuccess(() -> Component.literal("Placed border: " + bb.toString())
                                              .setStyle(Style.EMPTY.withColor(ChatFormatting.GREEN)), true);
+        } else {
+            bb = adapt(bbNBT, false, structureBlock);
         }
 
         generate.accept(stack.getLevel(), pos);
@@ -369,7 +419,7 @@ public class PlaceCommand {
         if (structureBlock) {
             createControlBlocks(stack, location, bbNBT);
         }
-        return Command.SINGLE_SUCCESS;
+        return bb;
     }
 
 }

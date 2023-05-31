@@ -23,6 +23,12 @@ import com.google.common.collect.Maps;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.*;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.jetbrains.annotations.Nullable;
 
@@ -109,6 +115,7 @@ public class StructureNBT {
         String ns = resource.getNamespace();
         String nm = resource.getPath();
 
+        allResourcesFrom(resource);
         try {
             InputStream inputstream = MinecraftServer.class.getResourceAsStream("/data/" + ns + "/structures/" + nm + ".nbt");
             return readStructureFromStream(inputstream);
@@ -116,6 +123,61 @@ public class StructureNBT {
             e.printStackTrace();
         }
 
+        return null;
+    }
+
+    public static List<StructureNBT> allResourcesFrom(ResourceLocation resource) {
+        String ns = resource.getNamespace();
+        String nm = resource.getPath();
+
+        final URL url = MinecraftServer.class.getClassLoader().getResource("data/" + ns + "/structures/" + nm);
+        if (url != null) {
+            final URI uri;
+            try {
+                uri = url.toURI();
+            } catch (URISyntaxException e) {
+                BCLib.LOGGER.error("Unable to load Resources: ", e);
+                return null;
+            }
+            Path myPath;
+            if (uri.getScheme().equals("jar")) {
+                FileSystem fileSystem = null;
+                try {
+                    fileSystem = FileSystems.newFileSystem(uri, new HashMap<>());
+                } catch (IOException e) {
+                    BCLib.LOGGER.error("Unable to load Resources: ", e);
+                    return null;
+                }
+                myPath = fileSystem.getPath("/resources");
+            } else {
+                myPath = Paths.get(uri);
+            }
+            if (myPath.toFile().isDirectory()) {
+                try {
+                    return Files.walk(myPath, 1)
+                                .filter(p -> p.toFile().isFile())
+                                .map(p -> p.getFileName().toFile())
+                                .filter(f -> f.toString().endsWith(".nbt"))
+                                .map(f -> f.toString())
+                                .map(s -> new ResourceLocation(
+                                        ns,
+                                        (nm.isEmpty() ? "" : (nm + "/")) + s.substring(0, s.length() - 4)
+                                ))
+                                .map(r -> {
+                                    BCLib.LOGGER.info("Loading Structure: " + r);
+                                    try {
+                                        return StructureNBT.create(r);
+                                    } catch (Exception e) {
+                                        BCLib.LOGGER.error("Unable to load Structure " + r, e);
+                                    }
+                                    return null;
+                                }).toList();
+                } catch (IOException e) {
+                    BCLib.LOGGER.error("Unable to load Resources: ", e);
+                    return null;
+                }
+            }
+        }
         return null;
     }
 
