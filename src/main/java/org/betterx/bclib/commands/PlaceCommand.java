@@ -2,20 +2,25 @@ package org.betterx.bclib.commands;
 
 import de.ambertation.wunderlib.math.Float3;
 import org.betterx.bclib.api.v2.levelgen.structures.StructureNBT;
+import org.betterx.bclib.commands.arguments.Float3ArgumentType;
+import org.betterx.bclib.commands.arguments.PlacementDirections;
+import org.betterx.bclib.commands.arguments.TemplatePlacementArgument;
 import org.betterx.bclib.util.BlocksHelper;
 
 import com.mojang.brigadier.Command;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.arguments.blocks.BlockInput;
 import net.minecraft.commands.arguments.blocks.BlockStateArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
+import net.minecraft.commands.arguments.coordinates.Coordinates;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -33,230 +38,145 @@ import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.StructureMode;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
-import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-import org.jetbrains.annotations.NotNull;
+import java.util.function.Supplier;
 
-class PlaceNBT {
-    protected <T extends ArgumentBuilder<CommandSourceStack, T>> T execute(
-            T builder,
-            BlockPos searchDir, boolean border, boolean commandBlock
-    ) {
-        return builder.executes(commandContext -> placeNBT(
-                commandContext.getSource(),
-                BlockPosArgument.getLoadedBlockPos(commandContext, "pos"),
-                StringArgumentType.getString(commandContext, "path"),
-                searchDir, border ? BlockStateArgument.getBlock(commandContext, "block") : null, commandBlock
-        ));
-    }
+class PlaceCommandBuilder {
+    public static final String PATH = "path";
+    public static final String NBT = "nbt";
+    public static final String EMPTY = "empty";
+    public static final String PLACEMENT = "placement";
+    public static final String POS = "pos";
+    public static final String SPAN = "span";
+    public static final String BORDER = "border";
 
-    protected <T extends ArgumentBuilder<CommandSourceStack, T>> T buildPosArgument(
-            CommandBuildContext commandBuildContext,
-            T builder,
-            BlockPos searchDir
+    public void register(
+            CommandBuildContext ctx,
+            LiteralArgumentBuilder<CommandSourceStack> command
     ) {
-        final var posBuilder = Commands.argument(
-                "pos",
+        final Supplier<RequiredArgumentBuilder<CommandSourceStack, ResourceLocation>> path = () -> Commands.argument(
+                PATH,
+                ResourceLocationArgument.id()
+        );
+        final Supplier<RequiredArgumentBuilder<CommandSourceStack, PlacementDirections>> placement = () -> Commands.argument(
+                PLACEMENT,
+                TemplatePlacementArgument.templatePlacement()
+        );
+        final Supplier<RequiredArgumentBuilder<CommandSourceStack, Coordinates>> pos = () -> Commands.argument(
+                POS,
                 BlockPosArgument.blockPos()
         );
 
-        final var posOnly = addPosOnly(searchDir, posBuilder);
-        final var all = addPosWithAttributes(commandBuildContext, searchDir, posBuilder);
-
-        return builder.then(posOnly).then(all);
-    }
-
-    protected <P extends ArgumentBuilder<CommandSourceStack, P>> P addPosWithAttributes(
-            CommandBuildContext commandBuildContext,
-            BlockPos searchDir,
-            P posBuilder
-    ) {
-        return posBuilder
-                .then(execute(Commands.literal("structureblock"), searchDir, false, true))
-                .then(Commands.literal("border")
-                              .then(execute(
-                                              Commands.argument("block", BlockStateArgument.block(commandBuildContext)),
-                                              searchDir,
-                                              true,
-                                              false
-                                      ).then(execute(Commands.literal("structureblock"), searchDir, true, true))
-                              )
-                );
-    }
-
-    protected <P extends ArgumentBuilder<CommandSourceStack, P>> P addPosOnly(
-            BlockPos searchDir,
-            P posBuilder
-    ) {
-        return execute(posBuilder, searchDir, false, false);
-    }
-
-    public void register(
-            CommandBuildContext commandBuildContext,
-            Map<String, Float3> directions,
-            LiteralArgumentBuilder<CommandSourceStack> command
-    ) {
-
-        final LiteralArgumentBuilder<CommandSourceStack> nbtBuilder = Commands
-                .literal("nbt")
-                .then(Commands
-                        .argument("path", StringArgumentType.string())
-                        .then(buildPosArgument(commandBuildContext, Commands.literal("at"), null))
-                        .then(buildFindCommand(commandBuildContext, directions))
+        final var nbtTree = Commands.literal(NBT).then(
+                path.get().then(
+                        placement.get().then(
+                                addOptionalsAndExecute(
+                                        ctx,
+                                        pos.get(),
+                                        PlaceCommandBuilder::placeNBT
+                                )
+                        )
                 )
-//                .then(Commands.literal("test")
-//                              .then(Commands.argument("block", BlockStateArgument.block(commandBuildContext))
-//                                            .executes(commandContext -> placeNBT(
-//                                                    commandContext.getSource(),
-//                                                    new BlockPos(100, 10, 0),
-//                                                    "betternether:altar_01",
-//                                                    Float3.NORTH.toBlockPos(),
-//                                                    BlockStateArgument.getBlock(commandContext, "block"),
-//                                                    true
-//                                            )))
-//                )
-                ;
+        );
 
+        final var emptyTree = Commands.literal(EMPTY).then(
+                path.get().then(
+                        placement.get().then(
+                                pos.get().then(
+                                        addOptionalsAndExecute(
+                                                ctx,
+                                                Commands.argument(SPAN, Float3ArgumentType.int3(0, 64)),
+                                                PlaceCommandBuilder::placeEmpty
+                                        )
+                                )
+                        )
+                )
+        );
 
-        command.then(nbtBuilder);
+        command
+                .then(nbtTree)
+                .then(emptyTree);
     }
 
-    @NotNull
-    protected LiteralArgumentBuilder<CommandSourceStack> buildFindCommand(
+    private <T> RequiredArgumentBuilder<CommandSourceStack, T> addOptionalsAndExecute(
             CommandBuildContext commandBuildContext,
-            Map<String, Float3> directions
+            RequiredArgumentBuilder<CommandSourceStack, T> root,
+            Executor runner
     ) {
-        final LiteralArgumentBuilder<CommandSourceStack> executeFindFree = Commands.literal("find");
-        for (var dir : directions.entrySet()) {
-            executeFindFree.then(buildPosArgument(
-                    commandBuildContext,
-                    Commands.literal(dir.getKey()),
-                    dir.getValue().toBlockPos()
-            ));
-        }
-        return executeFindFree;
+        final Supplier<LiteralArgumentBuilder<CommandSourceStack>> addControllers = () -> Commands.literal("controller");
+        final Supplier<RequiredArgumentBuilder<CommandSourceStack, BlockInput>> addBorder = () -> Commands.argument(
+                BORDER,
+                BlockStateArgument.block(commandBuildContext)
+        );
+
+        return root
+                .executes(c -> runner.exec(c, false, false))
+                .then(addBorder.get()
+                               .executes(c -> runner.exec(c, true, false))
+                               .then(addControllers.get()
+                                                   .executes(c -> runner.exec(c, true, true)))
+                )
+                .then(addControllers.get().executes(c -> runner.exec(c, false, true)));
     }
 
-    static int placeNBT(
-            CommandSourceStack stack,
-            BlockPos pos,
-            String location,
-            BlockPos searchDir,
-            BlockInput blockInput,
-            boolean structureBlock
-    ) {
-        StructureNBT structureNBT = StructureNBT.create(new ResourceLocation(location));
-        return Place.placeBlocks(
-                stack,
-                pos,
-                searchDir,
+    interface Executor {
+        int exec(
+                CommandContext<CommandSourceStack> ctx,
+                boolean border,
+                boolean controlBlocks
+        ) throws CommandSyntaxException;
+    }
+
+    protected static int placeNBT(
+            CommandContext<CommandSourceStack> ctx,
+            boolean border,
+            boolean controlBlocks
+    ) throws CommandSyntaxException {
+        final ResourceLocation id = ResourceLocationArgument.getId(ctx, PATH);
+        final PlacementDirections searchDir = TemplatePlacementArgument.getPlacement(ctx, PLACEMENT);
+        final BlockInput blockInput = border ? BlockStateArgument.getBlock(ctx, BORDER) : null;
+        final StructureNBT structureNBT = StructureNBT.create(id);
+
+        return PlaceCommand.placeBlocks(
+                ctx.getSource(),
+                BlockPosArgument.getLoadedBlockPos(ctx, POS),
+                searchDir.getOffset(),
                 blockInput,
-                structureBlock,
+                controlBlocks,
                 structureNBT.location,
                 (p) -> structureNBT.getBoundingBox(p, Rotation.NONE, Mirror.NONE),
                 (level, p) -> structureNBT.generateAt(level, p, Rotation.NONE, Mirror.NONE)
         );
     }
-}
 
-class PlaceEmpty extends PlaceNBT {
-    @Override
-    protected <T extends ArgumentBuilder<CommandSourceStack, T>> T execute(
-            T builder,
-            BlockPos searchDir, boolean border, boolean commandBlock
-    ) {
-        return builder.executes(commandContext -> placeEmpty(
-                commandContext.getSource(),
-                BlockPosArgument.getLoadedBlockPos(commandContext, "pos"),
-                new BlockPos(
-                        IntegerArgumentType.getInteger(commandContext, "spanX"),
-                        IntegerArgumentType.getInteger(commandContext, "spanY"),
-                        IntegerArgumentType.getInteger(commandContext, "spanZ")
-                ),
-                StringArgumentType.getString(commandContext, "path"),
-                searchDir, border ? BlockStateArgument.getBlock(commandContext, "block") : null, commandBlock
-        ));
-    }
+    protected static int placeEmpty(
+            CommandContext<CommandSourceStack> ctx,
+            boolean border,
+            boolean controlBlocks
+    ) throws CommandSyntaxException {
+        final ResourceLocation id = ResourceLocationArgument.getId(ctx, PATH);
+        final PlacementDirections searchDir = TemplatePlacementArgument.getPlacement(ctx, PLACEMENT);
+        final BlockInput blockInput = border ? BlockStateArgument.getBlock(ctx, BORDER) : null;
+        final BlockPos span = Float3ArgumentType.getFloat3(ctx, SPAN).toBlockPos();
 
-    @Override
-    protected <T extends ArgumentBuilder<CommandSourceStack, T>> T buildPosArgument(
-            CommandBuildContext commandBuildContext,
-            T builder,
-            BlockPos searchDir
-    ) {
-        final var spanX = Commands.argument(
-                "spanX",
-                IntegerArgumentType.integer(0, 64)
-        );
-        final var spanY = Commands.argument(
-                "spanY",
-                IntegerArgumentType.integer(0, 64)
-        );
-        final var spanZ = Commands.argument(
-                "spanZ",
-                IntegerArgumentType.integer(0, 64)
-        );
-        final var posBuilder = Commands.argument(
-                "pos",
-                BlockPosArgument.blockPos()
-        );
-
-        final var posOnly = addPosOnly(searchDir, spanZ);
-        final var all = addPosWithAttributes(commandBuildContext, searchDir, spanZ);
-
-        return builder.then(posBuilder.then(spanX.then(spanY.then(posOnly).then(all))));
-    }
-
-    @Override
-    public void register(
-            CommandBuildContext commandBuildContext,
-            Map<String, Float3> directions,
-            LiteralArgumentBuilder<CommandSourceStack> command
-    ) {
-
-        final LiteralArgumentBuilder<CommandSourceStack> nbtBuilder = Commands
-                .literal("empty")
-                .then(Commands
-                        .argument("path", StringArgumentType.string())
-                        .then(buildPosArgument(commandBuildContext, Commands.literal("at"), null))
-                        .then(buildFindCommand(commandBuildContext, directions))
-                );
-
-
-        command.then(nbtBuilder);
-    }
-
-    private static int placeEmpty(
-            CommandSourceStack stack,
-            BlockPos start,
-            BlockPos span,
-            String location,
-            BlockPos searchDir,
-            BlockInput blockInput,
-            boolean structureBlock
-    ) {
-        return Place.placeBlocks(
-                stack,
-                start,
-                searchDir,
+        return PlaceCommand.placeBlocks(
+                ctx.getSource(),
+                BlockPosArgument.getLoadedBlockPos(ctx, POS),
+                searchDir == null || searchDir.dir == Float3.ZERO ? null : searchDir.dir.toBlockPos(),
                 blockInput,
-                structureBlock,
-                new ResourceLocation(location),
+                controlBlocks,
+                id,
                 (p) -> BoundingBox.fromCorners(p, p.offset(span)),
                 (level, p) -> {
                     var box = BoundingBox.fromCorners(p, p.offset(span));
-                    Place.fillStructureVoid(level, box);
+                    PlaceCommand.fillStructureVoid(level, box);
                     if (blockInput != null) {
-                        Place.fill(
+                        PlaceCommand.fill(
                                 level,
                                 new BoundingBox(
-                                        box.minX(),
-                                        box.minY() - 1,
-                                        box.minZ(),
-                                        box.maxX(),
-                                        box.minY() - 1,
-                                        box.maxZ()
+                                        box.minX(), box.minY() - 1, box.minZ(),
+                                        box.maxX(), box.minY() - 1, box.maxZ()
                                 ),
                                 blockInput.getState()
                         );
@@ -266,29 +186,19 @@ class PlaceEmpty extends PlaceNBT {
     }
 }
 
-public class Place {
-    public Place() {
+public class PlaceCommand {
+    public PlaceCommand() {
     }
 
     public static LiteralArgumentBuilder<CommandSourceStack> register(
             LiteralArgumentBuilder<CommandSourceStack> bnContext,
             CommandBuildContext commandBuildContext
     ) {
-        final Map<String, Float3> directions = Map.of(
-                "northOf", Float3.NORTH,
-                "southOf", Float3.SOUTH,
-                "eastOf", Float3.EAST,
-                "westOf", Float3.WEST,
-                "above", Float3.UP,
-                "below", Float3.DOWN
-        );
-
         final var command = Commands
                 .literal("place")
                 .requires(commandSourceStack -> commandSourceStack.hasPermission(2));
 
-        new PlaceNBT().register(commandBuildContext, directions, command);
-        new PlaceEmpty().register(commandBuildContext, directions, command);
+        new PlaceCommandBuilder().register(commandBuildContext, command);
 
         return bnContext.then(command);
     }
@@ -378,7 +288,7 @@ public class Place {
         stack.getLevel().setBlock(structureBlockPos, state, BlocksHelper.SET_OBSERV);
         if (stack.getLevel().getBlockEntity(structureBlockPos) instanceof StructureBlockEntity entity) {
             entity.setIgnoreEntities(false);
-            entity.setShowAir(true);
+            entity.setShowAir(false);
             entity.setMirror(Mirror.NONE);
             entity.setRotation(Rotation.NONE);
             entity.setShowBoundingBox(true);
@@ -462,5 +372,15 @@ public class Place {
         return Command.SINGLE_SUCCESS;
     }
 
-
 }
+
+/*
+
+/bclib place nbt "betternether:city/city_building_01" find northOf 0 -59 0 border glass structureblock
+/bclib place nbt "betternether:city/city_center_04" find northOf 32 -59 0 border glass structureblock
+/bclib place nbt "betternether:city/city_enchanter_02" find northOf 32 -59 0 border glass structureblock
+/bclib place nbt "betternether:city/city_library_03" find northOf 64 -59 0 border glass structureblock
+/bclib place nbt "betternether:city/city_park_02" find northOf 64 -59 0 border glass structureblock
+/bclib place nbt "betternether:city/city_tower_04" find northOf 96 -59 0 border glass structureblock
+/bclib place nbt "betternether:city/road_end_02" find northOf 96 -59 0 border glass structureblock
+ */

@@ -41,7 +41,7 @@ public class CommandRegistry {
         LiteralArgumentBuilder<CommandSourceStack> bnContext = Commands.literal("bclib")
                                                                        .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS));
 
-        bnContext = Place.register(bnContext, commandBuildContext);
+        bnContext = PlaceCommand.register(bnContext, commandBuildContext);
         bnContext = PrintInfo.register(bnContext);
         bnContext = DumpDatapack.register(bnContext);
 
