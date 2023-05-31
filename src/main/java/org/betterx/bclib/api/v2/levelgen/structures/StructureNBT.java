@@ -1,6 +1,7 @@
 package org.betterx.bclib.api.v2.levelgen.structures;
 
 import org.betterx.bclib.BCLib;
+import org.betterx.bclib.util.BlocksHelper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
@@ -12,7 +13,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -65,7 +65,7 @@ public class StructureNBT {
                 newPos,
                 data,
                 world.getRandom(),
-                Block.UPDATE_CLIENTS
+                BlocksHelper.SET_SILENT
         );
         return true;
     }
@@ -78,7 +78,7 @@ public class StructureNBT {
                 pos,
                 data,
                 world.getRandom(),
-                Block.UPDATE_CLIENTS
+                BlocksHelper.SET_SILENT
         );
         return true;
     }
