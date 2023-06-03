@@ -57,6 +57,12 @@ public class SmithingRecipeBuilder extends AbstractUnlockableRecipeBuilder<Smith
         return this;
     }
 
+    public SmithingRecipeBuilder setAdditionAndUnlock(ItemLike item) {
+        this.addon = Ingredient.of(item);
+        this.unlockedBy(item);
+        return this;
+    }
+
 
     @Override
     protected boolean checkRecipe() {

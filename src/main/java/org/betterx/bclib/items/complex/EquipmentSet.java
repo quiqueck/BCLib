@@ -2,6 +2,7 @@ package org.betterx.bclib.items.complex;
 
 import org.betterx.bclib.registry.ItemRegistry;
 
+import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Tier;
@@ -106,11 +107,11 @@ public abstract class EquipmentSet {
     }
 
     public interface ItemDescriptorCreator<I extends Item> {
-        EquipmentDescription<I> build(Item base, Function<Tier, I> creator);
+        EquipmentDescription<I> build(EquipmentSlot slot, Item base, Function<Tier, I> creator);
     }
 
     public interface DescriptorCreator<I extends Item> {
-        EquipmentDescription<I> build(Function<Tier, I> creator);
+        EquipmentDescription<I> build(EquipmentSlot slot, Function<Tier, I> creator);
     }
 
     public interface ItemCreator<I extends Item> {
@@ -118,7 +119,7 @@ public abstract class EquipmentSet {
     }
 
     public static class SetValues {
-        private final Map<String, Float> values;
+        private final Map<EquipmentSlot, Float> values;
 
         private SetValues() {
             values = new HashMap<>();
@@ -135,17 +136,17 @@ public abstract class EquipmentSet {
             return v;
         }
 
-        public SetValues add(String slot, float value) {
+        public SetValues add(EquipmentSlot slot, float value) {
             values.put(slot, value);
             return this;
         }
 
-        public SetValues offset(String slot, float offset) {
+        public SetValues offset(EquipmentSlot slot, float offset) {
             values.put(slot, get(slot) + offset);
             return this;
         }
 
-        public float get(String slot) {
+        public float get(EquipmentSlot slot) {
             return values.getOrDefault(slot, 0.0f);
         }
     }
@@ -155,31 +156,22 @@ public abstract class EquipmentSet {
     public final String modID;
     public final ItemLike stick;
 
-    public static final String PICKAXE_SLOT = "pickaxe";
-    public static final String AXE_SLOT = "axe";
-    public static final String SHOVEL_SLOT = "shovel";
-    public static final String SWORD_SLOT = "sword";
-    public static final String HOE_SLOT = "hoe";
-    public static final String SHEARS_SLOT = "shears";
-    public static final String HELMET_SLOT = "helmet";
-    public static final String CHESTPLATE_SLOT = "chestplate";
-    public static final String LEGGINGS_SLOT = "leggings";
-    public static final String BOOTS_SLOT = "boots";
+    public static final EquipmentSlot PICKAXE_SLOT = new EquipmentSlot("pickaxe", RecipeCategory.TOOLS);
+    public static final EquipmentSlot AXE_SLOT = new EquipmentSlot("axe", RecipeCategory.TOOLS);
+    public static final EquipmentSlot SHOVEL_SLOT = new EquipmentSlot("shovel", RecipeCategory.TOOLS);
+    public static final EquipmentSlot SWORD_SLOT = new EquipmentSlot("sword", RecipeCategory.COMBAT);
+    public static final EquipmentSlot HOE_SLOT = new EquipmentSlot("hoe", RecipeCategory.TOOLS);
+    public static final EquipmentSlot SHEARS_SLOT = new EquipmentSlot("shears", RecipeCategory.TOOLS);
+    public static final EquipmentSlot HELMET_SLOT = new EquipmentSlot("helmet", RecipeCategory.COMBAT);
+    public static final EquipmentSlot CHESTPLATE_SLOT = new EquipmentSlot("chestplate", RecipeCategory.COMBAT);
+    public static final EquipmentSlot LEGGINGS_SLOT = new EquipmentSlot("leggings", RecipeCategory.COMBAT);
+    public static final EquipmentSlot BOOTS_SLOT = new EquipmentSlot("boots", RecipeCategory.COMBAT);
 
     public final SetValues attackDamage;
     public final SetValues attackSpeed;
 
-    private final Map<String, EquipmentDescription<?>> descriptions = new HashMap<>();
-
-    @Deprecated(forRemoval = true)
-    public EquipmentSet(
-            Tier material,
-            String modID,
-            String baseName,
-            ItemLike stick
-    ) {
-        this(material, modID, baseName, stick, AttackDamage.IRON_LEVEL, AttackSpeed.IRON_LEVEL);
-    }
+    private final Map<EquipmentSlot, EquipmentDescription<?>> descriptions = new HashMap<>();
+    protected final EquipmentSet sourceSet;
 
     public EquipmentSet(
             Tier material,
@@ -189,33 +181,48 @@ public abstract class EquipmentSet {
             SetValues attackDamage,
             SetValues attackSpeed
     ) {
+        this(material, modID, baseName, stick, null, attackDamage, attackSpeed);
+    }
+
+    public EquipmentSet(
+            Tier material,
+            String modID,
+            String baseName,
+            ItemLike stick,
+            EquipmentSet sourceSet,
+            SetValues attackDamage,
+            SetValues attackSpeed
+    ) {
         this.material = material;
         this.baseName = baseName;
         this.modID = modID;
         this.stick = stick;
         this.attackDamage = attackDamage;
         this.attackSpeed = attackSpeed;
+        this.sourceSet = sourceSet;
     }
 
-    protected <I extends Item> void add(String slot, EquipmentDescription<I> desc) {
+    protected <I extends Item> void add(EquipmentSlot slot, EquipmentDescription<I> desc) {
         descriptions.put(slot, desc);
     }
 
     protected <I extends Item> void add(
-            String slot,
+            EquipmentSlot slot,
             EquipmentSet baseSet,
             ItemDescriptorCreator<I> descriptor,
             ItemCreator<I> item
     ) {
         EquipmentDescription<I> desc = descriptor.build(
+                slot,
                 baseSet.getSlot(slot),
                 (tier) -> item.build(tier, this.attackDamage.get(slot), this.attackSpeed.get(slot))
         );
         descriptions.put(slot, desc);
     }
 
-    protected <I extends Item> void add(String slot, DescriptorCreator<I> descriptor, ItemCreator<I> item) {
+    protected <I extends Item> void add(EquipmentSlot slot, DescriptorCreator<I> descriptor, ItemCreator<I> item) {
         EquipmentDescription<I> desc = descriptor.build(
+                slot,
                 (tier) -> item.build(tier, this.attackDamage.get(slot), this.attackSpeed.get(slot))
         );
         descriptions.put(slot, desc);
@@ -225,17 +232,17 @@ public abstract class EquipmentSet {
     public EquipmentSet init(ItemRegistry itemsRegistry) {
         for (var desc : descriptions.entrySet()) {
             desc.getValue()
-                .init(buildID(desc), itemsRegistry, material, stick);
+                .init(buildID(desc), itemsRegistry, material, stick, sourceSet);
         }
         return this;
     }
 
     @NotNull
-    protected ResourceLocation buildID(Map.Entry<String, EquipmentDescription<?>> desc) {
-        return new ResourceLocation(modID, baseName + "_" + desc.getKey());
+    protected ResourceLocation buildID(Map.Entry<EquipmentSlot, EquipmentDescription<?>> desc) {
+        return new ResourceLocation(modID, baseName + "_" + desc.getKey().name());
     }
 
-    public <I extends Item> I getSlot(String slot) {
+    public <I extends Item> I getSlot(EquipmentSlot slot) {
         return (I) descriptions.get(slot).getItem();
     }
 }

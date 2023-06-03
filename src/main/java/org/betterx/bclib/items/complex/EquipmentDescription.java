@@ -12,23 +12,38 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.ItemLike;
 
 import java.util.function.Function;
+import org.jetbrains.annotations.Nullable;
 
 public class EquipmentDescription<I extends Item> {
     private final Function<Tier, I> creator;
     private I item;
+    public final org.betterx.bclib.items.complex.EquipmentSlot slot;
 
-    public EquipmentDescription(Function<Tier, I> creator) {
+    public EquipmentDescription(org.betterx.bclib.items.complex.EquipmentSlot slot, Function<Tier, I> creator) {
         this.creator = creator;
+        this.slot = slot;
     }
 
-    public void init(ResourceLocation id, ItemRegistry itemsRegistry, Tier material, ItemLike stick) {
+    public void init(
+            ResourceLocation id,
+            ItemRegistry itemsRegistry,
+            Tier material,
+            ItemLike stick,
+            @Nullable EquipmentSet sourceSet
+    ) {
         item = creator.apply(material);
         itemsRegistry.registerTool(id, item);
 
-        addRecipe(id, item, material, stick);
+        addRecipe(id, item, material, stick, sourceSet);
     }
 
-    public void addRecipe(ResourceLocation id, Item tool, Tier material, ItemLike stick) {
+    public void addRecipe(
+            ResourceLocation id,
+            Item tool,
+            Tier material,
+            ItemLike stick,
+            @Nullable EquipmentSet sourceSet
+    ) {
         if (material == null) return;
         var repair = material.getRepairIngredient();
         if (repair == null) return;
@@ -36,14 +51,25 @@ public class EquipmentDescription<I extends Item> {
         if (repairItems == null || repairItems.length == 0) return;
         final ItemLike ingot = repairItems[0].getItem();
 
-        var builder = BCLRecipeBuilder.crafting(id, tool)
-                                      .addMaterial('#', ingot)
-                                      .setCategory(RecipeCategory.TOOLS);
+        if (material instanceof SmithingSet smit && smit.getSmithingTemplateItem() != null && sourceSet != null) {
+            var builder = BCLRecipeBuilder
+                    .smithing(id, tool)
+                    .setTemplate(smit.getSmithingTemplateItem())
+                    .setPrimaryInput(sourceSet.getSlot(this.slot))
+                    .setAdditionAndUnlock(ingot)
+                    .setCategory(slot.category());
 
-        if (buildRecipe(tool, stick, builder)) return;
-        builder
-                .setGroup(id.getPath())
-                .build();
+            builder.build();
+        } else {
+            var builder = BCLRecipeBuilder.crafting(id, tool)
+                                          .addMaterial('#', ingot)
+                                          .setCategory(RecipeCategory.TOOLS);
+
+            if (buildRecipe(tool, stick, builder)) return;
+            builder
+                    .setGroup(id.getPath())
+                    .build();
+        }
 
     }
 

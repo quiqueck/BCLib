@@ -5,6 +5,7 @@ import org.betterx.bclib.api.v2.levelgen.structures.BCLStructure;
 import org.betterx.bclib.complexmaterials.WoodenComplexMaterial;
 import org.betterx.bclib.complexmaterials.set.wood.WoodSlots;
 import org.betterx.bclib.items.complex.EquipmentSet;
+import org.betterx.bclib.items.complex.EquipmentSlot;
 
 import net.minecraft.advancements.*;
 import net.minecraft.advancements.critereon.*;
@@ -355,7 +356,7 @@ public class AdvancementManager {
 
         //
 
-        public Builder addEquipmentSetSlotCriterion(EquipmentSet set, String slot) {
+        public Builder addEquipmentSetSlotCriterion(EquipmentSet set, EquipmentSlot slot) {
             return addInventoryChangedCriterion(
                     set.baseName + "_" + slot,
                     set.getSlot(slot)
