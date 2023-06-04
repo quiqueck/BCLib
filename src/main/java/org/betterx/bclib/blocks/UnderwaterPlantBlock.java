@@ -39,6 +39,23 @@ import java.util.List;
 import java.util.function.Function;
 
 public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements RenderLayerProvider, BonemealableBlock, LiquidBlockContainer, BehaviourWaterPlant {
+    @Deprecated
+    public static Properties baseUnderwaterPlantSettings() {
+        return baseUnderwaterPlantSettings(false, 0);
+    }
+
+    @Deprecated
+    public static Properties baseUnderwaterPlantSettings(int light) {
+        return baseUnderwaterPlantSettings(false, light);
+    }
+
+    @Deprecated
+    public static Properties baseUnderwaterPlantSettings(boolean replaceable, int light) {
+        return baseUnderwaterPlantSettings(
+                replaceable ? BehaviourBuilders.createReplaceableWaterPlant() : BehaviourBuilders.createWaterPlant(),
+                light
+        );
+    }
 
     public static Properties baseUnderwaterPlantSettings(BlockBehaviour.Properties props, int light) {
         props
