@@ -10,6 +10,7 @@ import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -207,6 +208,31 @@ public abstract class ComplexMaterial {
     @Nullable
     public <M extends ComplexMaterial> Block getBlock(MaterialSlot<M> key) {
         return blocks.get(key.suffix);
+    }
+
+    /**
+     * Get initiated {@link Block} from this {@link ComplexMaterial}.
+     *
+     * @param key {@link MaterialSlot} The Block Entry
+     * @param <M> The {@link ComplexMaterial} this slot is usable for Type
+     * @return {@link Block} or {@code null} if nothing is stored.
+     */
+    @Nullable
+    public <M extends ComplexMaterial> BlockItem getBlockItem(MaterialSlot<M> key) {
+        return getBlockItem(key.suffix);
+    }
+
+    /**
+     * Get initiated {@link Block} from this {@link ComplexMaterial}.
+     *
+     * @param key {@link MaterialSlot} The Block Entry
+     * @param <M> The {@link ComplexMaterial} this slot is usable for Type
+     * @return {@link Block} or {@code null} if nothing is stored.
+     */
+    @Nullable
+    public BlockItem getBlockItem(String key) {
+        final Block bl = blocks.get(key);
+        return bl != null && bl.asItem() instanceof BlockItem bi ? bi : null;
     }
 
     /**
