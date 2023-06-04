@@ -49,7 +49,7 @@ public class WoodenComplexMaterial extends ComplexMaterialSet<WoodenComplexMater
     public final MapColor planksColor;
     public final MapColor woodColor;
     @Nullable
-    private BoatTypeOverride boatType;
+    protected BoatTypeOverride boatType;
 
     public final BCLWoodTypeWrapper woodType;
 
@@ -60,7 +60,7 @@ public class WoodenComplexMaterial extends ComplexMaterialSet<WoodenComplexMater
             MapColor woodColor,
             MapColor planksColor
     ) {
-        this(modID, baseName, receipGroupPrefix, woodColor, planksColor, false);
+        this(modID, baseName, receipGroupPrefix, woodColor, planksColor, null);
     }
 
     public WoodenComplexMaterial(
@@ -69,13 +69,13 @@ public class WoodenComplexMaterial extends ComplexMaterialSet<WoodenComplexMater
             String receipGroupPrefix,
             MapColor woodColor,
             MapColor planksColor,
-            boolean withBoats
+            BoatTypeOverride boatType
     ) {
         super(modID, baseName, receipGroupPrefix);
         this.planksColor = planksColor;
         this.woodColor = woodColor;
         this.woodType = createWoodTypeBuilder().build();
-        this.boatType = null;
+        this.boatType = boatType;
     }
 
     protected BCLWoodTypeWrapper.Builder createWoodTypeBuilder() {
@@ -139,14 +139,18 @@ public class WoodenComplexMaterial extends ComplexMaterialSet<WoodenComplexMater
     }
 
 
-    public void initBoatType() {
+    public final void initBoatType() {
         if (getBoatType() == null) {
-            boatType = BoatTypeOverride.create(
-                    getModID(),
-                    getBaseName(),
-                    getBlock(WoodSlots.PLANKS)
-            );
+            boatType = supplyBoatType();
         }
+    }
+
+    protected BoatTypeOverride supplyBoatType() {
+        return BoatTypeOverride.create(
+                getModID(),
+                getBaseName(),
+                getBlock(WoodSlots.PLANKS)
+        );
     }
 
     public BoatTypeOverride getBoatType() {

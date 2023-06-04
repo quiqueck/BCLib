@@ -6,7 +6,8 @@ import org.betterx.bclib.items.boat.CustomBoatTypeOverride;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import net.minecraft.client.model.BoatModel;
+import net.minecraft.client.model.ListModel;
+import net.minecraft.client.model.WaterPatchModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -54,7 +55,7 @@ public class BoatRenderer {
                     ));
                 }
                 ResourceLocation resourceLocation = hasChest ? type.chestBoatTexture : type.boatTexture;
-                BoatModel boatModel = type.getBoatModel(hasChest);
+                ListModel<Boat> boatModel = type.getBoatModel(hasChest);
                 poseStack.scale(-1.0f, -1.0f, 1.0f);
                 poseStack.mulPose(Axis.YP.rotationDegrees(90.0f));
                 boatModel.setupAnim(boat, g, 0.0f, -0.1f, 0.0f, 0.0f);
@@ -66,7 +67,9 @@ public class BoatRenderer {
                 );
                 if (!boat.isUnderWater()) {
                     VertexConsumer vertexConsumer2 = multiBufferSource.getBuffer(RenderType.waterMask());
-                    boatModel.waterPatch().render(poseStack, vertexConsumer2, i, OverlayTexture.NO_OVERLAY);
+                    if (boatModel instanceof WaterPatchModel waterPatchModel) {
+                        waterPatchModel.waterPatch().render(poseStack, vertexConsumer2, i, OverlayTexture.NO_OVERLAY);
+                    }
                 }
                 poseStack.popPose();
 

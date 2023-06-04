@@ -2,11 +2,11 @@ package org.betterx.bclib.items.boat;
 
 import org.betterx.bclib.BCLib;
 
-import net.minecraft.client.model.BoatModel;
-import net.minecraft.client.model.ChestBoatModel;
+import net.minecraft.client.model.*;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.BoatItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -32,10 +32,15 @@ public final class BoatTypeOverride {
     public final ModelLayerLocation boatModelName;
     public final ModelLayerLocation chestBoatModelName;
     @Environment(value = EnvType.CLIENT)
-    private BoatModel boatModel, chestBoatModel;
+    private ListModel<Boat> boatModel, chestBoatModel;
     private BoatItem boat, chestBoat;
+    public final boolean isRaft;
 
     BoatTypeOverride(String modID, String name, Block planks) {
+        this(modID, name, planks, false);
+    }
+
+    BoatTypeOverride(String modID, String name, Block planks, boolean isRaft) {
         this.id = new ResourceLocation(modID, name);
         this.name = name;
         this.planks = planks;
@@ -47,6 +52,7 @@ public final class BoatTypeOverride {
             if (nr >= 0 && nr <= 1000) nr += 1000;
         }
         this.ordinal = nr;
+        this.isRaft = isRaft;
         if (BCLib.isClient()) {
             this.boatModelName = createBoatModelName(id.getNamespace(), id.getPath());
             this.chestBoatModelName = createChestBoatModelName(id.getNamespace(), id.getPath());
@@ -63,15 +69,20 @@ public final class BoatTypeOverride {
     }
 
     @Environment(value = EnvType.CLIENT)
-    public BoatModel getBoatModel(boolean chest) {
+    public ListModel<Boat> getBoatModel(boolean chest) {
         return chest ? chestBoatModel : boatModel;
     }
 
     @Environment(value = EnvType.CLIENT)
     public void createBoatModels(EntityRendererProvider.Context context) {
         if (BCLib.isClient() && boatModel == null) {
-            boatModel = new BoatModel(context.bakeLayer(boatModelName));
-            chestBoatModel = new ChestBoatModel(context.bakeLayer(chestBoatModelName));
+            if (isRaft) {
+                boatModel = new RaftModel(context.bakeLayer(boatModelName));
+                chestBoatModel = new ChestRaftModel(context.bakeLayer(chestBoatModelName));
+            } else {
+                boatModel = new BoatModel(context.bakeLayer(boatModelName));
+                chestBoatModel = new ChestBoatModel(context.bakeLayer(chestBoatModelName));
+            }
         }
     }
 
@@ -115,7 +126,11 @@ public final class BoatTypeOverride {
     }
 
     public static BoatTypeOverride create(String modID, String name, Block planks) {
-        BoatTypeOverride t = new BoatTypeOverride(modID, name, planks);
+        return create(modID, name, planks, false);
+    }
+
+    public static BoatTypeOverride create(String modID, String name, Block planks, boolean isRaft) {
+        BoatTypeOverride t = new BoatTypeOverride(modID, name, planks, isRaft);
 
         return t;
     }
