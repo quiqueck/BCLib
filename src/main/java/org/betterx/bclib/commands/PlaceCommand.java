@@ -148,7 +148,7 @@ class PlaceCommandBuilder {
                                                     .then(pos.get().executes(cc -> placeJigsaw(cc, false, false, true)))
                                 )
                                 .then(rotate.get()
-                                            .then(pos.get().executes(cc -> placeJigsaw(cc, true, true, false))))
+                                            .then(pos.get().executes(cc -> placeJigsaw(cc, false, true, false))))
                                 .then(
                                         pos.get().executes(cc -> placeJigsaw(cc, false, false, false))
                                 )
@@ -259,6 +259,7 @@ class PlaceCommandBuilder {
                         blockInput,
                         controlBlocks,
                         replaceAir,
+                        true,
                         s.location,
                         (p) -> s.getBoundingBox(p, Rotation.NONE, Mirror.NONE),
                         (level, p) -> s.generateAt(level, p, Rotation.NONE, Mirror.NONE)
@@ -293,6 +294,7 @@ class PlaceCommandBuilder {
                     blockInput,
                     controlBlocks,
                     replaceAir,
+                    true,
                     structureNBT.location,
                     (p) -> structureNBT.getBoundingBox(p, Rotation.NONE, Mirror.NONE),
                     (level, p) -> structureNBT.generateAt(level, p, Rotation.NONE, Mirror.NONE)
@@ -319,7 +321,7 @@ class PlaceCommandBuilder {
                 blockInput,
                 controlBlocks,
                 replaceAir,
-                id,
+                false, id,
                 (p) -> BoundingBox.fromCorners(p, p.offset(span)),
                 (level, p) -> {
                     var box = BoundingBox.fromCorners(p, p.offset(span));
@@ -544,6 +546,7 @@ public class PlaceCommand {
             BlockInput blockInput,
             boolean structureBlock,
             boolean replaceAir,
+            boolean preFillStructureVoid,
             ResourceLocation location,
             Function<BlockPos, BoundingBox> getBounds,
             BiConsumer<ServerLevel, BlockPos> generate
@@ -583,6 +586,8 @@ public class PlaceCommand {
             bb = adapt(bbNBT, false, structureBlock);
         }
 
+        if (preFillStructureVoid)
+            replaceAir(stack.getLevel(), bb);
         generate.accept(stack.getLevel(), pos);
         if (replaceAir) {
             replaceAir(stack.getLevel(), bbNBT);

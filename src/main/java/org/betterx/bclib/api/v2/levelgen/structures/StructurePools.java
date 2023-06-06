@@ -5,6 +5,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.levelgen.structure.pools.LegacySinglePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.SinglePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
@@ -21,5 +22,12 @@ public class StructurePools {
             Holder<StructureProcessorList> holder
     ) {
         return (projection) -> new SinglePoolElement(Either.left(id), holder, projection);
+    }
+
+    public static Function<StructureTemplatePool.Projection, SinglePoolElement> legacy(
+            ResourceLocation id,
+            Holder<StructureProcessorList> holder
+    ) {
+        return (projection) -> new LegacySinglePoolElement(Either.left(id), holder, projection);
     }
 }

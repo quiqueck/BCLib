@@ -30,7 +30,7 @@ public class BCLJigsawStructureBuilder extends BCLBaseStructureBuilder<JigsawStr
         this.maxDepth = 6;
         this.startHeight = ConstantHeight.of(VerticalAnchor.absolute(0));
         this.maxDistanceFromCenter = 80;
-        this.useExpansionHack = true;
+        this.useExpansionHack = false;
         this.startJigsawName = Optional.empty();
         this.projectStartToHeightmap = Optional.empty();
     }
@@ -95,7 +95,7 @@ public class BCLJigsawStructureBuilder extends BCLBaseStructureBuilder<JigsawStr
                     maxDistanceFromCenter
             );
         };
-        
+
         return super.build();
     }
 }
