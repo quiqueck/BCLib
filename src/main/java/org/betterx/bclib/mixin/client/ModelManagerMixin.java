@@ -27,6 +27,7 @@ public class ModelManagerMixin {
             Executor executor2,
             CallbackInfoReturnable<CompletableFuture<Void>> cir
     ) {
+        //TODO: 1.20 check
         BCLibClient.modelBakery.loadCustomModels(resourceManager);
     }
 }
