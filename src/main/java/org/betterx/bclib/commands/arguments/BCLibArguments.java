@@ -19,5 +19,11 @@ public class BCLibArguments {
                 Float3ArgumentType.class,
                 new Float3ArgumentInfo()
         );
+
+        ArgumentTypeRegistry.registerArgumentType(
+                BCLib.makeID("connector"),
+                ConnectorArgument.class,
+                SingletonArgumentInfo.contextFree(ConnectorArgument::id)
+        );
     }
 }
