@@ -20,12 +20,27 @@ import com.google.common.collect.Lists;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class BCLStructure<S extends Structure> {
+    public interface StructureBuilder<S extends Structure> {
+        S apply(Structure.StructureSettings structureSettings);
+    }
+
+    public interface StructureCodecProvider<S extends Structure> {
+        Codec<S> getCodec();
+    }
+
+    public interface StructureBuilderWithContext<S extends Structure> extends StructureBuilder<S> {
+        default S apply(Structure.StructureSettings structureSettings) {
+            return apply(structureSettings, null);
+        }
+
+        S apply(Structure.StructureSettings structureSettings, BootstapContext<Structure> ctx);
+    }
+
     public static class Unbound<S extends Structure> extends BCLStructure<S> {
-        private final Function<Structure.StructureSettings, S> structureBuilder;
+        private final StructureBuilder<S> structureBuilder;
         private final TerrainAdjustment terrainAdjustment;
 
         private Bound<S> registered;
@@ -36,7 +51,7 @@ public abstract class BCLStructure<S extends Structure> {
                 @NotNull StructurePlacement placement,
                 @NotNull Codec<S> codec,
                 @NotNull TagKey<Biome> biomeTag,
-                @NotNull Function<Structure.StructureSettings, S> structureBuilder,
+                @NotNull StructureBuilder<S> structureBuilder,
                 @NotNull TerrainAdjustment terrainAdjustment
         ) {
             super(
@@ -58,12 +73,19 @@ public abstract class BCLStructure<S extends Structure> {
 
         public Bound<S> register(BootstapContext<Structure> bootstrapContext) {
             if (registered != null) return registered;
-            S baseStructure = structureBuilder.apply(structure(
+            final Structure.StructureSettings settings = structure(
                     bootstrapContext,
                     this.biomeTag,
                     this.featureStep,
                     terrainAdjustment
-            ));
+            );
+            S baseStructure;
+            if (structureBuilder instanceof StructureBuilderWithContext<S> sctx) {
+                baseStructure = sctx.apply(settings, bootstrapContext);
+            } else {
+                baseStructure = structureBuilder.apply(settings);
+            }
+
             Holder.Reference<Structure> structure = bootstrapContext.register(structureKey, baseStructure);
             BCLStructureBuilder.UNBOUND_STRUCTURES.remove(this);
             registered = new Bound<>(
