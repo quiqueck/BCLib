@@ -13,6 +13,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.material.LavaFluid;
 import net.minecraft.world.level.material.PushReaction;
 
@@ -21,6 +22,7 @@ import com.google.common.collect.Maps;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class BlocksHelper {
@@ -364,7 +366,37 @@ public class BlocksHelper {
         ) {
             return true;
         }
-        
+
         return state.canBeReplaced();
+    }
+
+    public static void forAllInBounds(BoundingBox bb, Consumer<BlockPos> worker) {
+        for (int x = bb.minX(); x <= bb.maxX(); x++)
+            for (int y = bb.minY(); y <= bb.maxY(); y++)
+                for (int z = bb.minZ(); z <= bb.maxZ(); z++) {
+                    BlockPos bp = new BlockPos(x, y, z);
+                    worker.accept(bp);
+                }
+    }
+
+    public static void forOutlineInBounds(BoundingBox bb, Consumer<BlockPos> worker) {
+        for (int x = bb.minX(); x <= bb.maxX(); x++) {
+            worker.accept(new BlockPos(x, bb.minY(), bb.minZ()));
+            worker.accept(new BlockPos(x, bb.maxY(), bb.minZ()));
+            worker.accept(new BlockPos(x, bb.minY(), bb.maxZ()));
+            worker.accept(new BlockPos(x, bb.maxY(), bb.maxZ()));
+        }
+        for (int y = bb.minY(); y <= bb.maxY(); y++) {
+            worker.accept(new BlockPos(bb.minX(), y, bb.minZ()));
+            worker.accept(new BlockPos(bb.maxX(), y, bb.minZ()));
+            worker.accept(new BlockPos(bb.minX(), y, bb.maxZ()));
+            worker.accept(new BlockPos(bb.maxX(), y, bb.maxZ()));
+        }
+        for (int z = bb.minZ(); z <= bb.maxZ(); z++) {
+            worker.accept(new BlockPos(bb.minX(), bb.minY(), z));
+            worker.accept(new BlockPos(bb.maxX(), bb.minY(), z));
+            worker.accept(new BlockPos(bb.minX(), bb.maxY(), z));
+            worker.accept(new BlockPos(bb.maxX(), bb.maxY(), z));
+        }
     }
 }

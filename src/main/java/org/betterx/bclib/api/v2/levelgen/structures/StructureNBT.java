@@ -27,6 +27,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.*;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -111,13 +112,13 @@ public class StructureNBT {
         return READER_CACHE.computeIfAbsent(resource, r -> _readStructureFromJar(r));
     }
 
-    private static StructureTemplate _readStructureFromJar(ResourceLocation resource) {
-        String ns = resource.getNamespace();
-        String nm = resource.getPath();
+    private static String getStructurePath(ResourceLocation resource) {
+        return "data/" + resource.getNamespace() + "/structures/" + resource.getPath();
+    }
 
-        allResourcesFrom(resource);
+    private static StructureTemplate _readStructureFromJar(ResourceLocation resource) {
         try {
-            InputStream inputstream = MinecraftServer.class.getResourceAsStream("/data/" + ns + "/structures/" + nm + ".nbt");
+            InputStream inputstream = MinecraftServer.class.getResourceAsStream("/" + getStructurePath(resource) + ".nbt");
             return readStructureFromStream(inputstream);
         } catch (IOException e) {
             e.printStackTrace();
@@ -126,11 +127,19 @@ public class StructureNBT {
         return null;
     }
 
-    public static List<StructureNBT> allResourcesFrom(ResourceLocation resource) {
+    /**
+     * Returns a list of all structures found at the given resource location.
+     *
+     * @param resource       The resource location to search.
+     * @param recursionDepth The maximum recursion depth or 0 to indicate no limitation
+     * @return A list of all structures found at the given resource location.
+     */
+    public static List<StructureNBT> createResourcesFrom(ResourceLocation resource, int recursionDepth) {
         String ns = resource.getNamespace();
         String nm = resource.getPath();
 
-        final URL url = MinecraftServer.class.getClassLoader().getResource("data/" + ns + "/structures/" + nm);
+        final String resourceFolder = getStructurePath(resource);
+        final URL url = MinecraftServer.class.getClassLoader().getResource(resourceFolder);
         if (url != null) {
             final URI uri;
             try {
@@ -143,26 +152,38 @@ public class StructureNBT {
             if (uri.getScheme().equals("jar")) {
                 FileSystem fileSystem = null;
                 try {
-                    fileSystem = FileSystems.newFileSystem(uri, new HashMap<>());
-                } catch (IOException e) {
-                    BCLib.LOGGER.error("Unable to load Resources: ", e);
-                    return null;
+                    fileSystem = FileSystems.getFileSystem(uri);
+                } catch (FileSystemNotFoundException notLoaded) {
+                    try {
+                        fileSystem = FileSystems.newFileSystem(uri, new HashMap<>());
+                    } catch (IOException e) {
+                        BCLib.LOGGER.error("Unable to load Filesystem: ", e);
+                        return null;
+                    }
                 }
-                myPath = fileSystem.getPath("/resources");
+
+                myPath = fileSystem.getPath(resourceFolder);
             } else {
                 myPath = Paths.get(uri);
             }
-            if (myPath.toFile().isDirectory()) {
+            if (Files.isDirectory(myPath)) {
                 try {
-                    return Files.walk(myPath, 1)
-                                .filter(p -> p.toFile().isFile())
-                                .map(p -> p.getFileName().toFile())
-                                .filter(f -> f.toString().endsWith(".nbt"))
-                                .map(f -> f.toString())
+                    // /bclib place nbt minecraft:village/plains 0 southOf 0 -60 -0 controller
+                    return Files.walk(myPath, recursionDepth <= 0 ? Integer.MAX_VALUE : recursionDepth)
+                                .filter(p -> Files.isRegularFile(p))
+                                .map(p -> {
+                                    if (p.isAbsolute())
+                                        return Path.of(uri).relativize(p).toString();
+                                    else {
+                                        return p.toString().replace(resourceFolder, "").replaceAll("^/+", "");
+                                    }
+                                })
+                                .filter(s -> s.endsWith(".nbt"))
                                 .map(s -> new ResourceLocation(
                                         ns,
                                         (nm.isEmpty() ? "" : (nm + "/")) + s.substring(0, s.length() - 4)
                                 ))
+                                .sorted(Comparator.comparing(ResourceLocation::toString))
                                 .map(r -> {
                                     BCLib.LOGGER.info("Loading Structure: " + r);
                                     try {
@@ -171,7 +192,8 @@ public class StructureNBT {
                                         BCLib.LOGGER.error("Unable to load Structure " + r, e);
                                     }
                                     return null;
-                                }).toList();
+                                })
+                                .toList();
                 } catch (IOException e) {
                     BCLib.LOGGER.error("Unable to load Resources: ", e);
                     return null;
