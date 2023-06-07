@@ -24,7 +24,6 @@ import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -200,10 +199,11 @@ public class BCLBiomeRegistry {
 
     @ApiStatus.Internal
     public static void bootstrap(BootstapContext<BCLBiome> ctx) {
-        //copy from builtin
-        for (Map.Entry<ResourceKey<BCLBiome>, BCLBiome> e : BUILTIN_BCL_BIOMES.entrySet()) {
-            ctx.register(e.getKey(), e.getValue());
-        }
+        //copy from builtin, disabled as we do not bootstrap any biomes, all are loaded from the default datapack
+        //vanilla biomes are provided by bclib
+//        for (Map.Entry<ResourceKey<BCLBiome>, BCLBiome> e : BUILTIN_BCL_BIOMES.entrySet()) {
+//            ctx.register(e.getKey(), e.getValue());
+//        }
     }
 
     private static void onBiomeLoad(Registry<BCLBiome> registry, int rawID, ResourceLocation id, BCLBiome biome) {
