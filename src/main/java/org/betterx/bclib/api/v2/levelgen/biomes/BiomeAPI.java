@@ -887,32 +887,6 @@ public class BiomeAPI {
         setBiome(chunk, pos, biome);
     }
 
-    private static void sortFeatures(List<Holder<PlacedFeature>> features) {
-//        InternalBiomeAPI.initFeatureOrder();
-//
-//        Set<Holder<PlacedFeature>> featuresWithoutDuplicates = Sets.newHashSet();
-//        features.forEach(holder -> featuresWithoutDuplicates.add(holder));
-//
-//        if (featuresWithoutDuplicates.size() != features.size()) {
-//            features.clear();
-//            featuresWithoutDuplicates.forEach(feature -> features.add(feature));
-//        }
-//
-//        features.forEach(feature -> {
-//            InternalBiomeAPI.FEATURE_ORDER.computeIfAbsent(
-//                    feature,
-//                    f -> InternalBiomeAPI.FEATURE_ORDER_ID.getAndIncrement()
-//            );
-//        });
-//
-//        features.sort((f1, f2) -> {
-//            int v1 = InternalBiomeAPI.FEATURE_ORDER.getOrDefault(f1, 70000);
-//            int v2 = InternalBiomeAPI.FEATURE_ORDER.getOrDefault(f2, 70000);
-//            return Integer.compare(v1, v2);
-//        });
-    }
-
-
     private static List<Holder<PlacedFeature>> getFeaturesListCopy(
             List<HolderSet<PlacedFeature>> features,
             Decoration step
