@@ -10,6 +10,8 @@ import org.betterx.bclib.BCLib;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.networking.VersionChecker;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
@@ -30,6 +32,15 @@ public class UpdatesScreen extends BCLibLayoutScreen {
 
     public UpdatesScreen(Screen parent) {
         super(parent, Component.translatable("bclib.updates.title"), 10, 10, 10);
+    }
+    
+    public static void showUpdateUI() {
+        if (!RenderSystem.isOnRenderThread()) {
+            RenderSystem.recordRenderCall(() -> Minecraft.getInstance()
+                                                         .setScreen(new UpdatesScreen(Minecraft.getInstance().screen)));
+        } else {
+            Minecraft.getInstance().setScreen(new UpdatesScreen(Minecraft.getInstance().screen));
+        }
     }
 
     public ResourceLocation getUpdaterIcon(String modID) {

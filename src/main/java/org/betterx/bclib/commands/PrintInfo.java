@@ -5,12 +5,10 @@ import org.betterx.bclib.client.gui.screens.UpdatesScreen;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.networking.VersionChecker;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.ClickEvent;
@@ -126,13 +124,9 @@ public class PrintInfo {
         ctx.getSource().sendSuccess(() -> footer, false);
 
         if (withUI && BCLib.isClient() && Configs.CLIENT_CONFIG.showUpdateInfo() && !VersionChecker.isEmpty()) {
-            if (!RenderSystem.isOnRenderThread()) {
-                RenderSystem.recordRenderCall(() -> Minecraft.getInstance()
-                                                             .setScreen(new UpdatesScreen(Minecraft.getInstance().screen)));
-            } else {
-                Minecraft.getInstance().setScreen(new UpdatesScreen(Minecraft.getInstance().screen));
-            }
+            UpdatesScreen.showUpdateUI();
         }
         return Command.SINGLE_SUCCESS;
     }
+
 }
