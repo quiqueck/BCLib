@@ -1,5 +1,6 @@
 package org.betterx.bclib.items;
 
+import org.betterx.bclib.BCLib;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.commands.PlaceCommand;
 import org.betterx.bclib.interfaces.ItemModelProvider;
@@ -93,7 +94,7 @@ public class DebugDataItem extends Item implements ItemModelProvider {
 
     @Override
     public InteractionResult useOn(UseOnContext useOnContext) {
-        if (!useOnContext.getPlayer().canUseGameMasterBlocks()) {
+        if (!useOnContext.getPlayer().canUseGameMasterBlocks() || !BCLib.isDevEnvironment()) {
             return InteractionResult.FAIL;
         }
         return interaction.use(useOnContext);
