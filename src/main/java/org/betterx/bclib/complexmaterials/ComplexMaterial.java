@@ -226,7 +226,6 @@ public abstract class ComplexMaterial {
      * Get initiated {@link Block} from this {@link ComplexMaterial}.
      *
      * @param key {@link MaterialSlot} The Block Entry
-     * @param <M> The {@link ComplexMaterial} this slot is usable for Type
      * @return {@link Block} or {@code null} if nothing is stored.
      */
     @Nullable

@@ -115,7 +115,7 @@ public class DebugDataItem extends Item implements ItemModelProvider {
 
     @Override
     public boolean canAttackBlock(BlockState blockState, Level level, BlockPos blockPos, Player player) {
-        return false;
+        return true;
     }
 
     @Override
@@ -127,7 +127,7 @@ public class DebugDataItem extends Item implements ItemModelProvider {
 
             BlockHitResult hit = level.isBlockInLine(new ClipBlockStateContext(
                     player.getEyePosition(),
-                    player.getEyePosition().add(vec.scale(6.0)),
+                    player.getEyePosition().add(vec.scale(4.9)),
                     BlockBehaviour.BlockStateBase::isAir
             ));
 
@@ -190,6 +190,7 @@ public class DebugDataItem extends Item implements ItemModelProvider {
         return forJigsaw(
                 pool == null ? Pools.EMPTY : pool,
                 new ResourceLocation(modID, "building_entrance"),
+                pool == null ? new ResourceLocation("empty") : new ResourceLocation(modID, "street"),
                 JigsawBlockEntity.JointType.ALIGNED,
                 null,
                 null,
@@ -208,7 +209,7 @@ public class DebugDataItem extends Item implements ItemModelProvider {
                 pool == null ? new ResourceLocation("empty") : new ResourceLocation(modID, "bottom"),
                 JigsawBlockEntity.JointType.ROLLABLE,
                 null,
-                pool == null ? FrontAndTop.NORTH_UP : null,
+                pool == null ? FrontAndTop.DOWN_WEST : FrontAndTop.UP_WEST,
                 icon
         );
     }
@@ -243,8 +244,11 @@ public class DebugDataItem extends Item implements ItemModelProvider {
                     var entity = level.getBlockEntity(pos);
                     var targetState = finalState;
                     if (!(entity instanceof JigsawBlockEntity)) {
-                        if (targetState == null)
-                            targetState = state;
+                        if (targetState == null) {
+
+                            targetState = state.isAir() ? Blocks.STRUCTURE_VOID.defaultBlockState() : state;
+                        }
+
                         state = Blocks.JIGSAW.defaultBlockState();
                         level.setBlock(pos, state, BlocksHelper.SET_SILENT);
                         entity = level.getBlockEntity(pos);
