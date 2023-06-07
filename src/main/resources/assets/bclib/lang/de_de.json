@@ -55,7 +55,6 @@
   "title.screen.bclib.worldgen.main": "Welt-Generator Eigenschaften",
   "title.bclib.the_nether": "Nether",
   "title.bclib.the_end": "Das Ende",
-  "title.screen.bclib.worldgen.custom_biome_source": "Benutzerdefinierte Biomquelle verwenden",
   "title.screen.bclib.worldgen.legacy_square": "Legacy-Verteilung (1.17)",
   "title.screen.bclib.worldgen.custom_end_terrain": "Angepasster End-Terrain-Generator",
   "title.screen.bclib.worldgen.end_void": "Kleine End-Inseln erzeugen",
@@ -108,5 +107,7 @@
   "tag.c.saplings": "Setzlinge",
   "tag.c.hammers": "Hämmer",
   "tag.c.leaves": "Blätter",
-  "tag.c.soul_ground": "Seelenböden"
+  "tag.c.soul_ground": "Seelenböden",
+  "title.screen.bclib.worldgen.custom_end_biome_source": "Benutzerdefinierte End-Biomquelle",
+  "title.screen.bclib.worldgen.custom_nether_biome_source": "Benutzerdefinierte Nether-Biomquelle"
 }

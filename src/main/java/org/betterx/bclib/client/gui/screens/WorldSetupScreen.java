@@ -69,7 +69,7 @@ public class WorldSetupScreen extends LayoutScreen {
 
         bclibNether = content.addCheckbox(
                 fit(), fit(),
-                Component.translatable("title.screen.bclib.worldgen.custom_biome_source"),
+                Component.translatable("title.screen.bclib.worldgen.custom_nether_biome_source"),
                 netherConfig.mapVersion != BCLNetherBiomeSourceConfig.NetherBiomeMapType.VANILLA
         );
 
@@ -135,7 +135,7 @@ public class WorldSetupScreen extends LayoutScreen {
         content.addSpacer(8);
         bclibEnd = content.addCheckbox(
                 fit(), fit(),
-                Component.translatable("title.screen.bclib.worldgen.custom_biome_source"),
+                Component.translatable("title.screen.bclib.worldgen.custom_end_biome_source"),
                 endConfig.mapVersion != BCLEndBiomeSourceConfig.EndBiomeMapType.VANILLA
         );
 
