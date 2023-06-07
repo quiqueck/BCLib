@@ -30,7 +30,7 @@
     "modmenu": [
       "org.betterx.bclib.integration.modmenu.ModMenuEntryPoint"
     ],
-    "emi": [
+    "emi_": [
       "org.betterx.bclib.integration.emi.EMIPlugin"
     ],
     "fabric-datagen": [
@@ -59,7 +59,7 @@
         "curseforge": "https://www.curseforge.com/minecraft/mc-mods/bclib"
       }
     },
-    "modmenu_": {
+    "modmenu": {
       "links": {
         "title.link.bclib.discord": "https://discord.gg/kYuATbYbKW"
       }
