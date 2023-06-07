@@ -26,13 +26,14 @@ public class BCLRecipeBuilder {
 
     private static CraftingRecipeBuilder copySmithingTemplateBase(
             ResourceLocation id,
+            ItemLike filler,
             ItemLike output
     ) {
         return CraftingRecipeBuilder
                 .make(id, output)
                 .setOutputCount(2)
                 .setCategory(RecipeCategory.MISC)
-                .addMaterial('#', Items.DIAMOND)
+                .addMaterial('#', filler)
                 .addMaterial('S', output)
                 .setShape("#S#", "#C#", "###");
     }
@@ -42,7 +43,7 @@ public class BCLRecipeBuilder {
             ItemLike output,
             TagKey<Item> tagKey
     ) {
-        return copySmithingTemplateBase(id, output)
+        return copySmithingTemplateBase(id, Items.DIAMOND, output)
                 .addMaterial('C', tagKey);
     }
 
@@ -51,7 +52,25 @@ public class BCLRecipeBuilder {
             ItemLike output,
             ItemLike ingredient
     ) {
-        return copySmithingTemplateBase(id, output)
+        return copySmithingTemplateBase(id, Items.DIAMOND, output)
+                .addMaterial('C', ingredient);
+    }
+
+    public static CraftingRecipeBuilder copyCheapSmithingTemplate(
+            ResourceLocation id,
+            ItemLike output,
+            TagKey<Item> tagKey
+    ) {
+        return copyCheapSmithingTemplate(id, Items.STICK, output)
+                .addMaterial('C', tagKey);
+    }
+
+    public static CraftingRecipeBuilder copyCheapSmithingTemplate(
+            ResourceLocation id,
+            ItemLike output,
+            ItemLike ingredient
+    ) {
+        return copySmithingTemplateBase(id, Items.STICK, output)
                 .addMaterial('C', ingredient);
     }
 
