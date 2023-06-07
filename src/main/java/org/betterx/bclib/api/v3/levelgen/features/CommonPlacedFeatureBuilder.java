@@ -392,15 +392,15 @@ abstract class CommonPlacedFeatureBuilder<F extends Feature<FC>, FC extends Feat
     }
 
     public T vanillaNetherGround(int countPerLayer) {
-        return (T) this.onEveryLayer(countPerLayer).onlyInBiome();
+        return (T) this.randomHeight4FromFloorCeil().onlyInBiome().onEveryLayer(countPerLayer).onlyInBiome();
     }
 
     public T betterNetherGround(int countPerLayer) {
-        return (T) this.count(countPerLayer).squarePlacement().onEveryLayerMin4().onlyInBiome();
+        return (T) this.randomHeight4FromFloorCeil().count(countPerLayer).squarePlacement().onlyInBiome().onEveryLayerMin4().onlyInBiome();
     }
 
     public T betterNetherCeiling(int countPerLayer) {
-        return (T) this.count(countPerLayer).squarePlacement().underEveryLayerMin4().onlyInBiome();
+        return (T)  this.randomHeight4FromFloorCeil().count(countPerLayer).squarePlacement().onlyInBiome().underEveryLayerMin4().onlyInBiome();
     }
 
     public T betterNetherOnWall(int countPerLayer) {
