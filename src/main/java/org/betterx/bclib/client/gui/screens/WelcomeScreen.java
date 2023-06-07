@@ -31,7 +31,7 @@ public class WelcomeScreen extends BCLibLayoutScreen {
     protected LayoutComponent<?, ?> initContent() {
         VerticalStack content = new VerticalStack(fill(), fit()).setDebugName("content");
 
-        content.addImage(fill(), fit(), BACKGROUND, new Size(427, 100));
+        content.addImage(fill(), fit(), BACKGROUND, new Size(854 / 2, 200 / 2));
         content.addHorizontalLine(1).setColor(ColorHelper.BLACK);
         content.addSpacer(16);
         HorizontalStack headerRow = content.addRow(fit(), fit()).setDebugName("title bar").centerHorizontal();
