@@ -6,6 +6,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.SmithingTemplateItem;
 
+import org.spongepowered.include.com.google.common.collect.ImmutableList;
+
 import java.util.List;
 
 public class SmithingTemplates {
@@ -25,17 +27,29 @@ public class SmithingTemplates {
     public static final ResourceLocation EMPTY_SLOT_REDSTONE_DUST = new ResourceLocation("item/empty_slot_redstone_dust");
     public static final ResourceLocation EMPTY_SLOT_DIAMOND = new ResourceLocation("item/empty_slot_diamond");
 
-    public static final List<ResourceLocation> ARMOR_AND_TOOLS = List.of(
-            EMPTY_SLOT_HELMET,
+    public static final List<ResourceLocation> TOOLS = List.of(
             EMPTY_SLOT_SWORD,
-            EMPTY_SLOT_CHESTPLATE,
             EMPTY_SLOT_PICKAXE,
-            EMPTY_SLOT_LEGGINGS,
             EMPTY_SLOT_AXE,
-            EMPTY_SLOT_BOOTS,
             EMPTY_SLOT_HOE,
             EMPTY_SLOT_SHOVEL
     );
+
+    public static final List<ResourceLocation> ARMOR = List.of(
+            EMPTY_SLOT_HELMET,
+            EMPTY_SLOT_CHESTPLATE,
+            EMPTY_SLOT_LEGGINGS,
+            EMPTY_SLOT_BOOTS
+    );
+    public static final List<ResourceLocation> ARMOR_AND_TOOLS = combine(ARMOR, TOOLS);
+
+    public static List<ResourceLocation> combine(List<ResourceLocation>... sources) {
+        final ImmutableList.Builder<ResourceLocation> builder = ImmutableList.builder();
+        for (var s : sources) {
+            builder.addAll(s);
+        }
+        return builder.build();
+    }
 
     public static Builder create(ResourceLocation id) {
         return new Builder(id);
