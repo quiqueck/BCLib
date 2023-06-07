@@ -54,6 +54,9 @@
       "1.19.2"
     ]
   },
+  "breaks": {
+    "emi": "<1.0.0"
+  },
   "custom": {
     "bclib": {
       "downloads": {
