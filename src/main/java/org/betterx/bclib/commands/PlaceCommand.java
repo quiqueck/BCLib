@@ -158,14 +158,14 @@ class PlaceCommandBuilder {
         );
 
 
-        final var testSpaner = Commands.literal("spawner")
-                                       .then(pos.get().executes(cc -> placeSpawner(cc)));
+//        final var testSpaner = Commands.literal("spawner")
+//                                       .then(pos.get().executes(cc -> placeSpawner(cc)));
 
         command
                 .then(nbtTree)
                 .then(emptyTree)
                 .then(jigsawTree)
-                .then(testSpaner);
+        ;
     }
 
     private <T> RequiredArgumentBuilder<CommandSourceStack, T> addOptionalsAndExecute(
