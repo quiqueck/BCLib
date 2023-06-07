@@ -7,6 +7,7 @@ import org.betterx.bclib.api.v2.generator.BCLibNetherBiomeSource;
 import org.betterx.bclib.api.v2.generator.GeneratorOptions;
 import org.betterx.bclib.api.v2.levelgen.LevelGenEvents;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
+import org.betterx.bclib.api.v2.levelgen.structures.BCLStructurePoolElementTypes;
 import org.betterx.bclib.api.v2.levelgen.structures.TemplatePiece;
 import org.betterx.bclib.api.v2.levelgen.surface.rules.Conditions;
 import org.betterx.bclib.api.v2.poi.PoiManager;
@@ -79,6 +80,7 @@ public class BCLib implements ModInitializer {
         BCLibEndBiomeSource.register();
         BCLibNetherBiomeSource.register();
         CraftingRecipes.init();
+        BCLStructurePoolElementTypes.ensureStaticallyLoaded();
         WorldConfig.registerModCache(MOD_ID);
         DataExchangeAPI.registerMod(MOD_ID);
         AnvilRecipe.register();
@@ -118,7 +120,7 @@ public class BCLib implements ModInitializer {
     }
 
     public static boolean isDevEnvironment() {
-        return FabricLoader.getInstance().isDevelopmentEnvironment();
+        return FabricLoader.getInstance().isDevelopmentEnvironment() || true;
     }
 
     public static boolean isDatagen() {

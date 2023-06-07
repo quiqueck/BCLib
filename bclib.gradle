@@ -60,8 +60,9 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
-//
-//    modCompileOnly "dev.emi:emi:${emi_version}"
+
+    modCompileOnly "dev.emi:emi-fabric:${emi_version}:api"
+    modLocalRuntime "dev.emi:emi-fabric:${emi_version}"
 
     println "Using local WunderLib: ${local_wunderlib}"
     if (local_wunderlib) {

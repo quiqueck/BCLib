@@ -30,7 +30,7 @@
     "modmenu": [
       "org.betterx.bclib.integration.modmenu.ModMenuEntryPoint"
     ],
-    "emi_": [
+    "emi": [
       "org.betterx.bclib.integration.emi.EMIPlugin"
     ],
     "fabric-datagen": [
@@ -55,6 +55,9 @@
   },
   "breaks": {
     "wunderlib": "<1.1.1"
+  },
+  "breaks": {
+    "emi": "<1.0.0"
   },
   "custom": {
     "bclib": {
