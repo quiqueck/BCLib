@@ -98,6 +98,7 @@ modrinth {
     changelog = changes
     dependencies {
         required.project "fabric-api"
+        optional.project "modmenu"
     }
     debugMode = false
 }
@@ -133,6 +134,7 @@ curseforge {
         addGameVersion 'Java 17'
         relations {
             requiredDependency 'fabric-api'
+            optionalDependency 'modmenu'
         }
         mainArtifact(remapJar) {
             displayName = "$project.archives_base_name-$project.version $latestVersion"
