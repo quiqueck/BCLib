@@ -3,11 +3,14 @@ package org.betterx.bclib.api.v2.levelgen.structures;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.QuartPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.NoiseColumn;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -23,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class TemplateStructure extends Structure {
     protected final List<Config> configs;
@@ -92,17 +96,21 @@ public abstract class TemplateStructure extends Structure {
 
     @Override
     public Optional<GenerationStub> findGenerationPoint(GenerationContext ctx) {
+        final Config config = randomConfig(ctx.random());
+        if (config == null) return Optional.empty();
+
+        ChunkPos chunkPos = ctx.chunkPos();
+        final int x = chunkPos.getMinBlockX();
+        final int z = chunkPos.getMinBlockZ();
+        if (!hasValidBiomeAtRandomHeight(ctx, x, z))
+            return Optional.empty();
+
         WorldGenerationContext worldGenerationContext = new WorldGenerationContext(
                 ctx.chunkGenerator(),
                 ctx.heightAccessor()
         );
-        final Config config = randomConfig(ctx.random());
-        if (config == null) return Optional.empty();
-        ChunkPos chunkPos = ctx.chunkPos();
-        final int x = chunkPos.getMinBlockX();
-        final int z = chunkPos.getMinBlockZ();
-        StructureTemplate structureTemplate = ctx.structureTemplateManager().getOrCreate(config.location);
 
+        StructureTemplate structureTemplate = ctx.structureTemplateManager().getOrCreate(config.location);
 
         final BiPredicate<BlockState, BlockState> isCorrectBase;
         final int searchStep;
@@ -213,6 +221,27 @@ public abstract class TemplateStructure extends Structure {
                                 ))
         ));
 
+    }
+
+    private boolean hasValidBiomeAtRandomHeight(GenerationContext ctx, int x, int z) {
+        final int randomY = ctx.random()
+                               .nextIntBetweenInclusive(
+                                       ctx.heightAccessor().getMinBuildHeight(),
+                                       ctx.heightAccessor().getMaxBuildHeight()
+                               );
+
+        Holder<Biome> holder = ctx.chunkGenerator()
+                                  .getBiomeSource()
+                                  .getNoiseBiome(
+                                          QuartPos.fromBlock(x),
+                                          QuartPos.fromBlock(randomY),
+                                          QuartPos.fromBlock(z),
+                                          ctx.randomState().sampler()
+                                  );
+        if (!ctx.validBiome().test(holder)) {
+            return false;
+        }
+        return true;
     }
 
     private float airRatio(NoiseColumn column, int y, int height, int searchStep) {
