@@ -36,6 +36,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.*;
@@ -603,6 +604,31 @@ public class PlaceCommand {
         return bb;
     }
 
+    public static BlockState setJigsawOrientation(
+            boolean rollable,
+            Player player,
+            BlockPos pos,
+            BlockState state
+    ) {
+        final int deltaY = player.getBlockY() - pos.getY();
+        if (deltaY < 2 && deltaY > -2 && rollable) {
+            state = state.setValue(
+                    JigsawBlock.ORIENTATION,
+                    FrontAndTop.fromFrontAndTop(player.getDirection().getOpposite(), Direction.UP)
+            );
+        } else if (deltaY < 0) {
+            state = state.setValue(
+                    JigsawBlock.ORIENTATION,
+                    FrontAndTop.fromFrontAndTop(Direction.DOWN, player.getDirection().getOpposite())
+            );
+        } else {
+            state = state.setValue(
+                    JigsawBlock.ORIENTATION,
+                    FrontAndTop.fromFrontAndTop(Direction.UP, player.getDirection().getOpposite())
+            );
+        }
+        return state;
+    }
 }
 
 /*

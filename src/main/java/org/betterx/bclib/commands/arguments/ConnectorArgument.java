@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 import org.jetbrains.annotations.NotNull;
 
 public class ConnectorArgument extends ResourceLocationArgument {
-    private static final Collection<String> EXAMPLES = Arrays.asList("-:entrance", "-:decoration", "-:street");
+    private static final Collection<String> EXAMPLES = Arrays.asList("-:building_entrance", "-:bottom", "-:street");
 
     @Override
     public Collection<String> getExamples() {

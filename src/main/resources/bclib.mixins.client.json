@@ -10,6 +10,7 @@
     "ClientPacketListenerMixin",
     "ClientRecipeBookMixin",
     "FogRendererMixin",
+    "LevelRendererMixin",
     "MinecraftMixin",
     "ModelManagerMixin",
     "PresetEditorMixin",
