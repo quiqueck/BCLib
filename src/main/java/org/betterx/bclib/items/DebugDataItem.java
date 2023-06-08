@@ -189,8 +189,12 @@ public class DebugDataItem extends Item implements ItemModelProvider {
     ) {
         return forJigsaw(
                 pool == null ? Pools.EMPTY : pool,
-                new ResourceLocation(modID, "building_entrance"),
-                pool == null ? new ResourceLocation("empty") : new ResourceLocation(modID, "street"),
+                pool == null
+                        ? new ResourceLocation(modID, "building_entrance")
+                        : new ResourceLocation(modID, "street_entrance"),
+                pool == null
+                        ? new ResourceLocation("street_entrance")
+                        : new ResourceLocation(modID, "building_entrance"),
                 JigsawBlockEntity.JointType.ALIGNED,
                 null,
                 null,
@@ -205,8 +209,24 @@ public class DebugDataItem extends Item implements ItemModelProvider {
     ) {
         return forJigsaw(
                 pool == null ? Pools.EMPTY : pool,
-                new ResourceLocation(modID, "bottom"),
-                pool == null ? new ResourceLocation("empty") : new ResourceLocation(modID, "bottom"),
+                pool == null ? new ResourceLocation(modID, "side") : new ResourceLocation(modID, "side_street"),
+                pool == null ? new ResourceLocation("side_street") : new ResourceLocation(modID, "side"),
+                JigsawBlockEntity.JointType.ALIGNED,
+                null,
+                null,
+                icon
+        );
+    }
+
+    public static DebugDataItem forStreetDecorationJigSaw(
+            String modID,
+            ResourceKey<StructureTemplatePool> pool,
+            Item icon
+    ) {
+        return forJigsaw(
+                pool == null ? Pools.EMPTY : pool,
+                pool == null ? new ResourceLocation(modID, "bottom") : new ResourceLocation(modID, "bottom_street"),
+                pool == null ? new ResourceLocation("bottom_street") : new ResourceLocation(modID, "bottom"),
                 JigsawBlockEntity.JointType.ROLLABLE,
                 null,
                 pool == null ? FrontAndTop.DOWN_WEST : FrontAndTop.UP_WEST,
