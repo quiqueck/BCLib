@@ -101,6 +101,14 @@ public class TagRegistry<T> {
             Set<TagEntry> set = getSetForTag(tagID);
             for (ResourceKey<Biome> element : elements) {
                 ResourceLocation id = element.location();
+
+                //only add if the set doesn't already contain the element
+                for (TagEntry tagEntry : set) {
+                    if (!tagEntry.elementOrTag().tag() && tagEntry.elementOrTag().id().equals(id)) {
+                        id = null;
+                        break;
+                    }
+                }
                 if (id != null) {
                     set.add(TagEntry.element(id));
                 }
