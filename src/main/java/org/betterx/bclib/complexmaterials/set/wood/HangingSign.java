@@ -52,9 +52,9 @@ public class HangingSign extends MaterialSlot<WoodenComplexMaterial> {
                 BCLRecipeBuilder
                         .crafting(id, parentMaterial.getBlock(suffix))
                         .setOutputCount(3)
-                        .setShape("###", "###", " I ")
-                        .addMaterial('#', parentMaterial.getBlock(WoodSlots.PLANKS))
-                        .addMaterial('I', Items.STICK)
+                        .setShape("I I", "###", "###")
+                        .addMaterial('#', parentMaterial.getBlock(WoodSlots.STRIPPED_LOG))
+                        .addMaterial('I', Items.CHAIN)
                         .setGroup("sign")
                         .setCategory(RecipeCategory.DECORATIONS)
                         .build()
