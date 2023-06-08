@@ -110,6 +110,7 @@ public class PostInitAPI {
     }
 
     private static void processBlockCommon(Block block) {
+        //TODO: Some of this only needs to run on DataGen, add a special PostDataGenAPI for that
         final Item item = block.asItem();
         if (block instanceof PostInitable) {
             ((PostInitable) block).postInit();
