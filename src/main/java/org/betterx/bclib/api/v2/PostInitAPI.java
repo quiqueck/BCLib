@@ -14,14 +14,13 @@ import org.betterx.bclib.interfaces.PostInitable;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.interfaces.TagProvider;
 import org.betterx.bclib.interfaces.tools.*;
+import org.betterx.bclib.items.tool.*;
 import org.betterx.bclib.networking.VersionChecker;
 import org.betterx.bclib.registry.BaseBlockEntities;
-import org.betterx.worlds.together.tag.v3.CommonBlockTags;
-import org.betterx.worlds.together.tag.v3.CommonItemTags;
-import org.betterx.worlds.together.tag.v3.MineableTags;
-import org.betterx.worlds.together.tag.v3.TagManager;
+import org.betterx.worlds.together.tag.v3.*;
 
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.dispenser.ShearsDispenseItemBehavior;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
@@ -29,6 +28,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.DispenserBlock;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -106,6 +106,21 @@ public class PostInitAPI {
             }
             itemTags.forEach(tag -> TagManager.ITEMS.add(tag, item));
             itemTags.clear();
+        }
+
+        if (item instanceof BaseShovelItem) {
+            TagManager.ITEMS.add(item, ToolTags.FABRIC_SHOVELS, ItemTags.SHOVELS);
+        } else if (item instanceof BaseSwordItem) {
+            TagManager.ITEMS.add(item, ToolTags.FABRIC_SWORDS, ItemTags.SWORDS);
+        } else if (item instanceof BasePickaxeItem) {
+            TagManager.ITEMS.add(item, ToolTags.FABRIC_PICKAXES, ItemTags.PICKAXES);
+        } else if (item instanceof BaseAxeItem) {
+            TagManager.ITEMS.add(item, ToolTags.FABRIC_AXES, ItemTags.AXES);
+        } else if (item instanceof BaseHoeItem) {
+            TagManager.ITEMS.add(item, ToolTags.FABRIC_HOES, ItemTags.HOES);
+        } else if (item instanceof BaseShearsItem) {
+            TagManager.ITEMS.add(item, ToolTags.FABRIC_SHEARS, CommonItemTags.SHEARS);
+            DispenserBlock.registerBehavior(item.asItem(), new ShearsDispenseItemBehavior());
         }
     }
 

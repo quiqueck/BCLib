@@ -5,21 +5,13 @@ import org.betterx.bclib.items.BaseDiscItem;
 import org.betterx.bclib.items.BaseDrinkItem;
 import org.betterx.bclib.items.BaseSpawnEggItem;
 import org.betterx.bclib.items.ModelProviderItem;
-import org.betterx.bclib.items.tool.BaseAxeItem;
-import org.betterx.bclib.items.tool.BaseHoeItem;
-import org.betterx.bclib.items.tool.BasePickaxeItem;
-import org.betterx.bclib.items.tool.BaseShearsItem;
 import org.betterx.bclib.models.RecordItemModelProvider;
 import org.betterx.bclib.recipes.SmithingTemplates;
-import org.betterx.worlds.together.tag.v3.CommonItemTags;
-import org.betterx.worlds.together.tag.v3.TagManager;
-import org.betterx.worlds.together.tag.v3.ToolTags;
 
 import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
-import net.minecraft.core.dispenser.ShearsDispenseItemBehavior;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -83,23 +75,7 @@ public class ItemRegistry extends BaseRegistry<Item> {
         if (!config.getBoolean("tools", itemId.getPath(), true)) {
             return item;
         }
-
         registerItem(itemId, item);
-
-        if (item instanceof ShovelItem) {
-            TagManager.ITEMS.add(ToolTags.FABRIC_SHOVELS, item);
-        } else if (item instanceof SwordItem) {
-            TagManager.ITEMS.add(ToolTags.FABRIC_SWORDS, item);
-        } else if (item instanceof BasePickaxeItem) {
-            TagManager.ITEMS.add(ToolTags.FABRIC_PICKAXES, item);
-        } else if (item instanceof BaseAxeItem) {
-            TagManager.ITEMS.add(ToolTags.FABRIC_AXES, item);
-        } else if (item instanceof BaseHoeItem) {
-            TagManager.ITEMS.add(ToolTags.FABRIC_HOES, item);
-        } else if (item instanceof BaseShearsItem) {
-            TagManager.ITEMS.add(item, ToolTags.FABRIC_SHEARS, CommonItemTags.SHEARS);
-            DispenserBlock.registerBehavior(item.asItem(), new ShearsDispenseItemBehavior());
-        }
 
         return item;
     }
