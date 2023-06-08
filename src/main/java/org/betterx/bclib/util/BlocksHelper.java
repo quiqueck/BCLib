@@ -1,7 +1,6 @@
 package org.betterx.bclib.util;
 
-import org.betterx.bclib.behaviours.interfaces.BehaviourPlant;
-import org.betterx.bclib.behaviours.interfaces.BehaviourSeed;
+import org.betterx.bclib.behaviours.interfaces.BehaviourPlantLike;
 import org.betterx.worlds.together.tag.v3.CommonBlockTags;
 
 import net.minecraft.core.BlockPos;
@@ -353,7 +352,7 @@ public class BlocksHelper {
 
     public static Boolean replaceableOrPlant(BlockState state) {
         final Block block = state.getBlock();
-        if (state.is(CommonBlockTags.PLANT) || state.is(CommonBlockTags.WATER_PLANT) || block instanceof BehaviourPlant || block instanceof BehaviourSeed) {
+        if (state.is(CommonBlockTags.PLANT) || state.is(CommonBlockTags.WATER_PLANT) || block instanceof BehaviourPlantLike) {
             return true;
         }
         if (state.getPistonPushReaction() == PushReaction.DESTROY && block.defaultDestroyTime() == 0) return true;

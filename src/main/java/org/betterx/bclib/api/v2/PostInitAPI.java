@@ -188,9 +188,10 @@ public class PostInitAPI {
             TagManager.BLOCKS.add(block, CommonBlockTags.WATER_PLANT);
         }
 
-        if (block instanceof BehaviourPlant) {
+        if (block instanceof BehaviourPlant || block instanceof BehaviourShearablePlant) {
             TagManager.BLOCKS.add(block, CommonBlockTags.PLANT);
         }
+
 
         if (block instanceof BehaviourSeed) {
             TagManager.BLOCKS.add(block, CommonBlockTags.SEEDS);

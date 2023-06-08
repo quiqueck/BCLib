@@ -8,5 +8,5 @@ import org.betterx.bclib.interfaces.tools.AddMineableShears;
  * <p>
  * This will add the {@link AddMineableShears}, {@link AddMineableHoe} and {@link BehaviourCompostable} behaviours.
  */
-public interface BehaviourVine extends AddMineableShears, AddMineableHoe, BehaviourCompostable, BehaviourClimable {
+public interface BehaviourVine extends AddMineableShears, AddMineableHoe, BehaviourPlantLike, BehaviourCompostable, BehaviourClimable {
 }

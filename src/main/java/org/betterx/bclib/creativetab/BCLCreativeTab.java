@@ -1,6 +1,7 @@
 package org.betterx.bclib.creativetab;
 
-import org.betterx.bclib.behaviours.interfaces.*;
+import org.betterx.bclib.behaviours.interfaces.BehaviourLeaves;
+import org.betterx.bclib.behaviours.interfaces.BehaviourPlantLike;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -17,12 +18,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class BCLCreativeTab {
     public static CreativeTabPredicate NATURE = item -> item instanceof BlockItem bi
-            && (bi.getBlock() instanceof BehaviourSapling
-            || bi.getBlock() instanceof BehaviourSeed
-            || bi.getBlock() instanceof BehaviourLeaves
-            || bi.getBlock() instanceof BehaviourPlant
-            || bi.getBlock() instanceof BehaviourWaterPlant
-            || bi.getBlock() instanceof BehaviourVine);
+            && (bi.getBlock() instanceof BehaviourPlantLike
+            || bi.getBlock() instanceof BehaviourLeaves);
 
     public static CreativeTabPredicate BLOCKS = item -> item instanceof BlockItem;
 
