@@ -64,7 +64,7 @@ public class BCLCreativeTabManager {
                     .title(tab.title)
                     .displayItems((featureFlagSet, output) -> {
                         output.acceptAll(tab.items.stream().map(ItemStack::new).toList());
-                        tab.items.clear();
+                        //tab.items.clear();
                     }).build();
 
             Registry.register(
@@ -74,6 +74,6 @@ public class BCLCreativeTabManager {
             );
         }
 
-        this.tabs.clear();
+        //this.tabs.clear();
     }
 }
