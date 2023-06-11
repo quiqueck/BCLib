@@ -46,11 +46,11 @@ public class DebugDataItem extends Item implements ItemModelProvider {
 
     public static final ResourceLocation DEFAULT_ICON = new ResourceLocation("stick");
 
-    interface DebugInteraction {
+    public interface DebugInteraction {
         InteractionResult use(UseOnContext useOnContext);
     }
 
-    interface DebugEntityInteraction extends DebugInteraction {
+    public interface DebugEntityInteraction extends DebugInteraction {
         @Override
         default InteractionResult use(UseOnContext useOnContext) {
             var entity = useOnContext.getLevel().getBlockEntity(useOnContext.getClickedPos());
