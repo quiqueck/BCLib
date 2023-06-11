@@ -1,5 +1,6 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
@@ -125,8 +126,14 @@ public abstract class BaseWallBlock extends WallBlock implements BlockModelProvi
         return builder.build();
     }
 
-    public static class Stone extends BaseWallBlock implements BehaviourWood {
+    public static class Stone extends BaseWallBlock implements BehaviourStone {
         public Stone(Block source) {
+            super(source);
+        }
+    }
+
+    public static class Wood extends BaseWallBlock implements BehaviourWood {
+        public Wood(Block source) {
             super(source);
         }
     }
