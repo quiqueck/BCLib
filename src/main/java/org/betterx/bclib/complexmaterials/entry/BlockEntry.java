@@ -15,12 +15,13 @@ import java.util.function.BiFunction;
 public class BlockEntry extends ComplexMaterialEntry {
     final BiFunction<ComplexMaterial, BlockBehaviour.Properties, Block> initFunction;
     final boolean hasItem;
+    final boolean isPseudoEntry;
 
     TagKey<Block>[] blockTags;
     TagKey<Item>[] itemTags;
 
     public BlockEntry(String suffix, BiFunction<ComplexMaterial, BlockBehaviour.Properties, Block> initFunction) {
-        this(suffix, true, initFunction);
+        this(suffix, true, false, initFunction);
     }
 
     public BlockEntry(
@@ -28,9 +29,19 @@ public class BlockEntry extends ComplexMaterialEntry {
             boolean hasItem,
             BiFunction<ComplexMaterial, BlockBehaviour.Properties, Block> initFunction
     ) {
+        this(suffix, hasItem, false, initFunction);
+    }
+
+    public BlockEntry(
+            String suffix,
+            boolean hasItem,
+            boolean isPseudoEntry,
+            BiFunction<ComplexMaterial, BlockBehaviour.Properties, Block> initFunction
+    ) {
         super(suffix);
         this.initFunction = initFunction;
         this.hasItem = hasItem;
+        this.isPseudoEntry = isPseudoEntry;
     }
 
     @SafeVarargs
@@ -49,17 +60,22 @@ public class BlockEntry extends ComplexMaterialEntry {
         ResourceLocation location = getLocation(material.getModID(), material.getBaseName());
         Block block = initFunction.apply(material, blockSettings);
         if (block == null) return null;
-        if (hasItem) {
-            registry.register(location, block);
-            if (itemTags != null) {
-                TagManager.ITEMS.add(block.asItem(), itemTags);
+
+        if (!isPseudoEntry) {
+            if (hasItem) {
+                registry.register(location, block);
+
+            } else {
+                registry.registerBlockOnly(location, block);
             }
-        } else {
-            registry.registerBlockOnly(location, block);
+        }
+        if (hasItem && itemTags != null) {
+            TagManager.ITEMS.add(block.asItem(), itemTags);
         }
         if (blockTags != null) {
             TagManager.BLOCKS.add(block, blockTags);
         }
+
         return block;
     }
 }
