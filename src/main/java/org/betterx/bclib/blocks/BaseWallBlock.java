@@ -1,16 +1,21 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.bclib.interfaces.TagProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.WallBlock;
@@ -27,7 +32,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseWallBlock extends WallBlock implements BlockModelProvider {
+public abstract class BaseWallBlock extends WallBlock implements BlockModelProvider, TagProvider {
     private final Block parent;
 
     protected BaseWallBlock(Block source) {
@@ -125,8 +130,20 @@ public abstract class BaseWallBlock extends WallBlock implements BlockModelProvi
         return builder.build();
     }
 
-    public static class Stone extends BaseWallBlock implements BehaviourWood {
+
+    @Override
+    public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
+        blockTags.add(BlockTags.WALLS);
+    }
+
+    public static class Stone extends BaseWallBlock implements BehaviourStone {
         public Stone(Block source) {
+            super(source);
+        }
+    }
+
+    public static class Wood extends BaseWallBlock implements BehaviourWood {
+        public Wood(Block source) {
             super(source);
         }
     }
