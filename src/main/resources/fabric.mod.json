@@ -50,7 +50,11 @@
     "fabric": ">=0.83.0",
     "minecraft": [
       "1.20"
-    ]
+    ],
+    "wunderlib": "1.1.x"
+  },
+  "breaks": {
+    "wunderlib": "<1.1.0"
   },
   "custom": {
     "bclib": {
