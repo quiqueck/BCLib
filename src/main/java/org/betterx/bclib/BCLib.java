@@ -120,7 +120,7 @@ public class BCLib implements ModInitializer {
     }
 
     public static boolean isDevEnvironment() {
-        return FabricLoader.getInstance().isDevelopmentEnvironment() || true;
+        return FabricLoader.getInstance().isDevelopmentEnvironment();
     }
 
     public static boolean isDatagen() {
