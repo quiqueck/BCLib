@@ -14,58 +14,73 @@ public class BehaviourBuilders {
     }
 
     public static BlockBehaviour.Properties createPlant(MapColor color) {
-        return createPlant(color, false);
+        return createWalkablePlant(color).noCollission();
     }
 
-    //TODO: Remove this method, and call noCollision explicitly
-    public static BlockBehaviour.Properties createPlant(MapColor color, boolean collission) {
-        var p = BlockBehaviour.Properties.of()
-                                         .mapColor(color)
-                                         .instabreak()
-                                         .pushReaction(PushReaction.DESTROY);
-        if (!collission)
-            p.noCollission();
-
-        return p;
+    public static BlockBehaviour.Properties createWalkablePlant() {
+        return createWalkablePlant(MapColor.PLANT);
     }
 
-    public static BlockBehaviour.Properties createGrass(MapColor color, boolean flammable) {
-        final BlockBehaviour.Properties p = createPlant(color);
-        if (flammable)
-            p.ignitedByLava();
-        return p;
+    public static BlockBehaviour.Properties createWalkablePlant(MapColor color) {
+        return BlockBehaviour.Properties
+                .of()
+                .mapColor(color)
+                .noOcclusion()
+                .instabreak()
+                .pushReaction(PushReaction.DESTROY);
     }
 
-    public static BlockBehaviour.Properties createTickingPlant() {
-        return createTickingPlant(MapColor.PLANT);
+    public static BlockBehaviour.Properties createVine() {
+        return createVine(MapColor.PLANT);
     }
 
-    public static BlockBehaviour.Properties createTickingPlant(MapColor color) {
-        return createPlant(color).randomTicks();
+    public static BlockBehaviour.Properties createVine(MapColor color) {
+        return createPlant(color)
+                .replaceable()
+                .noCollission()
+                .randomTicks()
+                .strength(0.2f)
+                .sound(SoundType.VINE);
     }
 
-    public static BlockBehaviour.Properties createReplaceablePlant() {
-        return createReplaceablePlant(MapColor.PLANT);
+    public static BlockBehaviour.Properties createGrass(MapColor color) {
+        return createPlant(color)
+                .noCollission()
+                .noOcclusion()
+                .offsetType(BlockBehaviour.OffsetType.XZ)
+                .sound(SoundType.GRASS);
     }
 
-    public static BlockBehaviour.Properties createReplaceablePlant(MapColor color) {
-        return createPlant(color).replaceable();
+    public static BlockBehaviour.Properties createSeed(MapColor color) {
+        return createPlant(color)
+                .noCollission()
+                .randomTicks()
+                .sound(SoundType.HARD_CROP)
+                .offsetType(BlockBehaviour.OffsetType.XZ);
+    }
+
+    public static BlockBehaviour.Properties createPlantCover(MapColor color) {
+        return createPlant(color).forceSolidOn()
+                                 .noCollission()
+                                 .replaceable()
+                                 .strength(0.2f)
+                                 .sound(SoundType.GLOW_LICHEN);
     }
 
     public static BlockBehaviour.Properties createWaterPlant() {
-        return createWaterPlant(MapColor.WATER, false);
+        return createWaterPlant(MapColor.WATER);
     }
 
-    //TODO: Remove this method, and call noCollision explicitly
-    public static BlockBehaviour.Properties createWaterPlant(MapColor color, boolean collission) {
-        var p = BlockBehaviour.Properties.of()
-                                         .mapColor(color)
-                                         .instabreak()
-                                         .pushReaction(PushReaction.DESTROY);
-        if (!collission)
-            p.noCollission();
+    public static BlockBehaviour.Properties createWaterPlant(MapColor color) {
+        return BlockBehaviour.Properties.of()
+                                        .mapColor(color)
+                                        .instabreak()
+                                        .noOcclusion()
+                                        .noCollission()
+                                        .sound(SoundType.WET_GRASS)
+                                        .offsetType(BlockBehaviour.OffsetType.XZ)
+                                        .pushReaction(PushReaction.DESTROY);
 
-        return p;
     }
 
     public static BlockBehaviour.Properties createReplaceableWaterPlant() {
@@ -195,32 +210,6 @@ public class BehaviourBuilders {
                 .isRedstoneConductor(Blocks::never)
                 .isSuffocating(Blocks::never)
                 .isViewBlocking(Blocks::never);
-    }
-
-    public static BlockBehaviour.Properties applyBasePlantSettings() {
-        return applyBasePlantSettings(false, 0);
-    }
-
-    public static BlockBehaviour.Properties applyBasePlantSettings(int light) {
-        return applyBasePlantSettings(false, light);
-    }
-
-    public static BlockBehaviour.Properties applyBasePlantSettings(boolean replaceable) {
-        return applyBasePlantSettings(replaceable, 0);
-    }
-
-    public static BlockBehaviour.Properties applyBasePlantSettings(boolean replaceable, int light) {
-        return applyBasePlantSettings(replaceable
-                ? createReplaceablePlant()
-                : createPlant(), light);
-    }
-
-    public static BlockBehaviour.Properties applyBasePlantSettings(BlockBehaviour.Properties props, int light) {
-        props
-                .sound(SoundType.GRASS)
-                .offsetType(BlockBehaviour.OffsetType.XZ);
-        if (light > 0) props.lightLevel(s -> light);
-        return props;
     }
 
     public static BlockBehaviour.Properties createSnow() {
