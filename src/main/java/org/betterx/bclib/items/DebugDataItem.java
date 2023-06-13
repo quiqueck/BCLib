@@ -1,5 +1,6 @@
 package org.betterx.bclib.items;
 
+import de.ambertation.wunderlib.math.Bounds;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.commands.PlaceCommand;
 import org.betterx.bclib.interfaces.ItemModelProvider;
@@ -10,6 +11,7 @@ import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.commands.arguments.blocks.BlockStateParser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.FrontAndTop;
+import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.worldgen.Pools;
 import net.minecraft.nbt.CompoundTag;
@@ -33,6 +35,7 @@ import net.minecraft.world.level.block.JigsawBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.JigsawBlockEntity;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
+import net.minecraft.world.level.block.entity.StructureBlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
@@ -42,9 +45,104 @@ import net.minecraft.world.phys.Vec3;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class DebugDataItem extends Item implements ItemModelProvider {
 
     public static final ResourceLocation DEFAULT_ICON = new ResourceLocation("stick");
+
+    public static InteractionResult fillStructureEntityBounds(
+            UseOnContext useOnContext,
+            BlockEntity entity,
+            BlockStatePredicate predicate,
+            BlockState newState,
+            boolean floodFill
+    ) {
+        if (entity instanceof StructureBlockEntity e) {
+            if (floodFill) {
+                floodFillStructureEntityBounds(useOnContext, e, predicate, newState);
+            } else {
+                fillStructureEntityBounds(useOnContext, e, predicate, newState);
+            }
+            return InteractionResult.SUCCESS;
+        }
+        return InteractionResult.FAIL;
+    }
+
+    public static void fillStructureEntityBounds(
+            UseOnContext useOnContext,
+            StructureBlockEntity entity,
+            BlockStatePredicate predicate,
+            BlockState newState
+    ) {
+        final var level = useOnContext.getLevel();
+        final Vec3i size = entity.getStructureSize();
+        final BlockPos pos = useOnContext.getClickedPos().offset(entity.getStructurePos());
+
+        for (int x = 0; x < size.getX(); x++) {
+            for (int y = 0; y < size.getY(); y++) {
+                for (int z = 0; z < size.getZ(); z++) {
+                    var blockPos = pos.offset(x, y, z);
+                    var state = level.getBlockState(blockPos);
+                    if (predicate.test(state)) {
+                        level.setBlock(
+                                blockPos,
+                                newState,
+                                BlocksHelper.SET_SILENT
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    public static void floodFillStructureEntityBounds(
+            UseOnContext useOnContext,
+            StructureBlockEntity entity,
+            BlockStatePredicate predicate,
+            BlockState newState
+    ) {
+        final Bounds bounds = Bounds.of(
+                useOnContext.getClickedPos().offset(entity.getStructurePos()),
+                entity.getStructureSize()
+        );
+
+        floodFillStructureEntityBounds(
+                useOnContext.getLevel(),
+                bounds,
+                bounds.max.toBlockPos(),
+                entity,
+                predicate,
+                newState,
+                new HashSet<>()
+        );
+    }
+
+    private static void floodFillStructureEntityBounds(
+            Level level,
+            Bounds bounds,
+            BlockPos pos,
+            StructureBlockEntity entity,
+            BlockStatePredicate predicate,
+            BlockState newState,
+            Set<BlockPos> visited
+    ) {
+        if (!bounds.isInside(pos)) return;
+        if (visited.contains(pos)) return;
+        visited.add(pos);
+
+        if (predicate.test(level.getBlockState(pos))) {
+            level.setBlock(pos, newState, BlocksHelper.SET_SILENT);
+            
+            floodFillStructureEntityBounds(level, bounds, pos.above(), entity, predicate, newState, visited);
+            floodFillStructureEntityBounds(level, bounds, pos.below(), entity, predicate, newState, visited);
+            floodFillStructureEntityBounds(level, bounds, pos.north(), entity, predicate, newState, visited);
+            floodFillStructureEntityBounds(level, bounds, pos.east(), entity, predicate, newState, visited);
+            floodFillStructureEntityBounds(level, bounds, pos.south(), entity, predicate, newState, visited);
+            floodFillStructureEntityBounds(level, bounds, pos.west(), entity, predicate, newState, visited);
+        }
+    }
 
     public interface DebugInteraction {
         InteractionResult use(UseOnContext useOnContext);
@@ -305,4 +403,7 @@ public class DebugDataItem extends Item implements ItemModelProvider {
         );
     }
 
+    public interface BlockStatePredicate {
+        boolean test(BlockState state);
+    }
 }
