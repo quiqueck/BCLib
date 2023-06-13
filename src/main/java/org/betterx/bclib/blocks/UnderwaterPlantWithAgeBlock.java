@@ -7,6 +7,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -14,11 +16,16 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 public abstract class UnderwaterPlantWithAgeBlock extends UnderwaterPlantBlock {
     public static final IntegerProperty AGE = BlockProperties.AGE;
 
+    public UnderwaterPlantWithAgeBlock(BlockBehaviour.Properties properties) {
+        super(properties.randomTicks());
+    }
+
     public UnderwaterPlantWithAgeBlock() {
-        super(baseUnderwaterPlantSettings(
-                BehaviourBuilders.createWaterPlant(),
-                0
-        ).randomTicks());
+        this(BehaviourBuilders
+                .createWaterPlant()
+                .sound(SoundType.WET_GRASS)
+                .offsetType(BlockBehaviour.OffsetType.XZ)
+        );
     }
 
     @Override

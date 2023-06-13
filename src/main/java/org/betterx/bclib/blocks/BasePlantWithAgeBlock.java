@@ -1,7 +1,5 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.behaviours.BehaviourBuilders;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -12,22 +10,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
-import java.util.function.Function;
-
 public abstract class BasePlantWithAgeBlock extends BasePlantBlock {
     public static final IntegerProperty AGE = BlockProperties.AGE;
 
-    public BasePlantWithAgeBlock() {
-        this(p -> p);
-    }
-
-    @Deprecated(forRemoval = true)
-    public BasePlantWithAgeBlock(Function<Properties, Properties> propMod) {
-        this(propMod.apply(BehaviourBuilders.applyBasePlantSettings().randomTicks()));
-    }
-
     protected BasePlantWithAgeBlock(Properties settings) {
-        super(settings);
+        super(settings.randomTicks());
     }
 
     @Override

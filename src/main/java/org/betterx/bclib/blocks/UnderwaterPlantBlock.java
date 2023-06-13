@@ -1,7 +1,5 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.behaviours.BehaviourBuilders;
-import org.betterx.bclib.behaviours.interfaces.BehaviourWaterPlant;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.items.tool.BaseShearsItem;
@@ -21,8 +19,6 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.LiquidBlockContainer;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
@@ -36,48 +32,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import com.google.common.collect.Lists;
 
 import java.util.List;
-import java.util.function.Function;
 
-public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements RenderLayerProvider, BonemealableBlock, LiquidBlockContainer, BehaviourWaterPlant {
-
-    public static Properties baseUnderwaterPlantSettings(BlockBehaviour.Properties props, int light) {
-        props
-                .sound(SoundType.WET_GRASS)
-                .noCollission()
-                .offsetType(BlockBehaviour.OffsetType.XZ);
-        if (light > 0) props.lightLevel(s -> light);
-        return props;
-    }
-
+public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements RenderLayerProvider, BonemealableBlock, LiquidBlockContainer {
     private static final VoxelShape SHAPE = box(4, 0, 4, 12, 14, 12);
-
-    public UnderwaterPlantBlock() {
-        this(p -> p);
-    }
-
-    @Deprecated(forRemoval = true)
-    public UnderwaterPlantBlock(Function<Properties, Properties> propMod) {
-        this(
-                propMod.apply(baseUnderwaterPlantSettings(
-                        BehaviourBuilders.createWaterPlant(),
-                        0
-                ))
-        );
-    }
-
-    public UnderwaterPlantBlock(int light) {
-        this(light, p -> p);
-    }
-
-    @Deprecated(forRemoval = true)
-    public UnderwaterPlantBlock(int light, Function<Properties, Properties> propMod) {
-        this(
-                propMod.apply(baseUnderwaterPlantSettings(
-                        BehaviourBuilders.createWaterPlant(),
-                        light
-                ))
-        );
-    }
 
     public UnderwaterPlantBlock(Properties settings) {
         super(settings);

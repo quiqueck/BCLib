@@ -17,7 +17,11 @@ import java.util.List;
 
 public abstract class WallMushroomBlock extends BaseWallPlantBlock {
     public WallMushroomBlock(int light) {
-        super(BehaviourBuilders.applyBasePlantSettings(light).destroyTime(0.2F).sound(SoundType.WOOD));
+        super(BehaviourBuilders.createPlant()
+                               .destroyTime(0.2F)
+                               .lightLevel(state -> light)
+                               .sound(SoundType.WOOD)
+        );
     }
 
     protected WallMushroomBlock(BlockBehaviour.Properties properties) {

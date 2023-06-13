@@ -1,6 +1,5 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.behaviours.BehaviourBuilders;
 import org.betterx.bclib.util.BlocksHelper;
 
 import net.minecraft.core.BlockPos;
@@ -29,14 +28,6 @@ public abstract class BaseWallPlantBlock extends BasePlantBlock {
             Direction.EAST, box(0, 1, 1, 8, 15, 15)
     ));
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-
-    public BaseWallPlantBlock() {
-        this(BehaviourBuilders.applyBasePlantSettings());
-    }
-
-    public BaseWallPlantBlock(int light) {
-        this(BehaviourBuilders.applyBasePlantSettings(light));
-    }
 
     protected BaseWallPlantBlock(Properties settings) {
         super(settings.offsetType(OffsetType.NONE));

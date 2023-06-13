@@ -200,7 +200,7 @@ public class PostInitAPI {
             }
         }
 
-        if (block instanceof BehaviourWaterPlant) {
+        if (block instanceof BehaviourWaterPlantLike) {
             TagManager.BLOCKS.add(block, CommonBlockTags.WATER_PLANT);
         }
 
@@ -209,14 +209,14 @@ public class PostInitAPI {
         }
 
 
-        if (block instanceof BehaviourSeed) {
+        if (block instanceof BehaviourSeedLike) {
             TagManager.BLOCKS.add(block, CommonBlockTags.SEEDS);
             if (item != null && item != Items.AIR) {
                 TagManager.ITEMS.add(block, CommonItemTags.SEEDS);
             }
         }
 
-        if (block instanceof BehaviourSapling) {
+        if (block instanceof BehaviourSaplingLike) {
             TagManager.BLOCKS.add(block, CommonBlockTags.SAPLINGS, BlockTags.SAPLINGS);
             if (item != null && item != Items.AIR) {
                 TagManager.ITEMS.add(block, CommonItemTags.SAPLINGS, ItemTags.SAPLINGS);

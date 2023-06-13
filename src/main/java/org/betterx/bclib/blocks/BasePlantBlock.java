@@ -1,12 +1,10 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.behaviours.BehaviourBuilders;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
-import org.betterx.bclib.interfaces.SettingsExtender;
 import org.betterx.bclib.items.tool.BaseShearsItem;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -25,8 +23,6 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableBlock;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -45,48 +41,6 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderLayerProvider, BonemealableBlock {
     private static final VoxelShape SHAPE = box(4, 0, 4, 12, 14, 12);
-
-    public BasePlantBlock() {
-        this(BehaviourBuilders.applyBasePlantSettings());
-    }
-
-    public BasePlantBlock(int light) {
-        this(BehaviourBuilders.applyBasePlantSettings(light));
-    }
-
-    @Deprecated(forRemoval = true)
-    public BasePlantBlock(int light, SettingsExtender propMod) {
-        this(false, light, propMod);
-    }
-
-    public BasePlantBlock(boolean replaceable) {
-        this(BehaviourBuilders.applyBasePlantSettings(replaceable));
-    }
-
-    @Deprecated(forRemoval = true)
-    public BasePlantBlock(boolean replaceable, SettingsExtender propMod) {
-        this(replaceable, 0, propMod);
-    }
-
-
-    public BasePlantBlock(boolean replaceable, int light) {
-        this(BehaviourBuilders.applyBasePlantSettings(replaceable, light));
-    }
-
-    @Deprecated(forRemoval = true)
-    public BasePlantBlock(boolean replaceable, int light, SettingsExtender propMod) {
-        this(
-                propMod.amend(
-                        (replaceable
-                                ? BehaviourBuilders.createReplaceablePlant()
-                                : BehaviourBuilders.createPlant()
-                        )
-                                .lightLevel((state) -> light)
-                                .sound(SoundType.GRASS)
-                                .offsetType(BlockBehaviour.OffsetType.XZ)
-                )
-        );
-    }
 
     protected BasePlantBlock(Properties settings) {
         super(settings);

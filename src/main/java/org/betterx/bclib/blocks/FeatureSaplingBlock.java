@@ -50,16 +50,13 @@ public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfig
     private final FeatureSupplier<F, FC> feature;
 
     public FeatureSaplingBlock(FeatureSupplier<F, FC> featureSupplier) {
-        this(
-                BehaviourBuilders.createTickingPlant()
-                                 .sound(SoundType.GRASS),
-                featureSupplier
-        );
+        this(0, featureSupplier);
     }
 
     public FeatureSaplingBlock(int light, FeatureSupplier<F, FC> featureSupplier) {
         this(
-                BehaviourBuilders.createTickingPlant()
+                BehaviourBuilders.createPlant().randomTicks()
+                                 .noCollission()
                                  .lightLevel(state -> light)
                                  .sound(SoundType.GRASS),
                 featureSupplier
