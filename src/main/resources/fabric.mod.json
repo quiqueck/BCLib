@@ -54,9 +54,7 @@
     "wunderlib": "1.1.x"
   },
   "breaks": {
-    "wunderlib": "<1.1.1"
-  },
-  "breaks": {
+    "wunderlib": "<1.1.1",
     "emi": "<1.0.0"
   },
   "custom": {
