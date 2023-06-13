@@ -15,8 +15,12 @@ import com.google.common.collect.Lists;
 
 import java.util.List;
 
-public interface SurvivesOnSpecialGround {
+public interface SurvivesOnSpecialGround extends SurvivesOn {
     String getSurvivableBlocksString();
+
+    default String prefixComponent() {
+        return "tooltip.bclib.place_on";
+    }
 
     @Environment(EnvType.CLIENT)
     static List<String> splitLines(String input) {
@@ -38,14 +42,15 @@ public interface SurvivesOnSpecialGround {
     }
 
     @Environment(EnvType.CLIENT)
-    static void appendHoverText(List<Component> list, String description) {
+    static void appendHoverText(SurvivesOnSpecialGround surv, List<Component> list) {
         if (!Configs.CLIENT_CONFIG.survivesOnHint()) return;
         final int MAX_LINES = 7;
+        final String description = surv.getSurvivableBlocksString();
         List<String> lines = splitLines(description);
         if (lines.size() == 1) {
-            list.add(Component.translatable("tooltip.bclib.place_on", lines.get(0)).withStyle(ChatFormatting.GREEN));
+            list.add(Component.translatable(surv.prefixComponent(), lines.get(0)).withStyle(ChatFormatting.GREEN));
         } else if (lines.size() > 1) {
-            list.add(Component.translatable("tooltip.bclib.place_on", "").withStyle(ChatFormatting.GREEN));
+            list.add(Component.translatable(surv.prefixComponent(), "").withStyle(ChatFormatting.GREEN));
             for (int i = 0; i < Math.min(lines.size(), MAX_LINES); i++) {
                 String line = lines.get(i);
                 if (i == MAX_LINES - 1 && i < lines.size() - 1) line += " ...";
@@ -53,8 +58,6 @@ public interface SurvivesOnSpecialGround {
             }
         }
     }
-
-    boolean isSurvivable(BlockState state);
 
     default boolean canSurviveOnTop(LevelReader world, BlockPos pos) {
         return isSurvivable(world.getBlockState(pos.below()));

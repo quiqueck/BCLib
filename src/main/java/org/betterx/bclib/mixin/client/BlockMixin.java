@@ -27,7 +27,7 @@ public class BlockMixin {
             CallbackInfo ci
     ) {
         if (this instanceof SurvivesOnSpecialGround surv) {
-            SurvivesOnSpecialGround.appendHoverText(list, surv.getSurvivableBlocksString());
+            SurvivesOnSpecialGround.appendHoverText(surv, list);
         }
     }
 }
