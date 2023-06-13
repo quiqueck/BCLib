@@ -109,5 +109,6 @@
   "title.screen.bclib.worldgen.other": "Sonstiges",
   "title.screen.bclib.worldgen.void_biome_size": "Kleine Inseln",
   "tooltip.bclib.place_on": "Lebt auf: %s",
+  "tooltip.bclib.pottable_on": "Eintopfen auf: %s",
   "warning.config.bclib.client.ui.forceBetterXPreset": "IN DEN MEISTEN FÄLLEN SOLLTE DIESE OPTION AKTIVIERT BLEIBEN.\n"
 }
