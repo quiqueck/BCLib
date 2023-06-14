@@ -28,6 +28,9 @@ public abstract class CreateWorldScreen_Mixin {
     @Shadow
     public abstract WorldCreationUiState getUiState();
 
+    @Shadow
+    private boolean recreated;
+
     @Inject(method = "<init>", at = @At("TAIL"))
     private void wt_init(
             Minecraft minecraft,
@@ -50,6 +53,6 @@ public abstract class CreateWorldScreen_Mixin {
     @Inject(method = "createNewWorldDirectory", at = @At("RETURN"))
     void wt_createNewWorld(CallbackInfoReturnable<Optional<LevelStorageSource.LevelStorageAccess>> cir) {
         WorldBootstrap.InGUI.registryReadyOnNewWorld(this.getUiState().getSettings());
-        WorldBootstrap.InGUI.setupNewWorld(cir.getReturnValue(), this.getUiState());
+        WorldBootstrap.InGUI.setupNewWorld(cir.getReturnValue(), this.getUiState(), this.recreated);
     }
 }

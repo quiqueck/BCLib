@@ -163,7 +163,8 @@ public class WorldBootstrap {
 
         public static void setupNewWorld(
                 Optional<LevelStorageSource.LevelStorageAccess> levelStorageAccess,
-                WorldCreationUiState uiState
+                WorldCreationUiState uiState,
+                boolean recreated
         ) {
 
             if (levelStorageAccess.isPresent()) {
@@ -172,7 +173,8 @@ public class WorldBootstrap {
                 Holder<WorldPreset> newPreset = setupNewWorldCommon(
                         levelStorageAccess.get(),
                         currentPreset,
-                        uiState.getSettings().selectedDimensions()
+                        uiState.getSettings().selectedDimensions(),
+                        recreated
                 );
                 if (newPreset != null && newPreset != currentPreset) {
                     uiState.setWorldType(new WorldCreationUiState.WorldTypeEntry(newPreset));
@@ -186,11 +188,14 @@ public class WorldBootstrap {
         static Holder<WorldPreset> setupNewWorldCommon(
                 LevelStorageSource.LevelStorageAccess levelStorageAccess,
                 Holder<WorldPreset> currentPreset,
-                WorldDimensions worldDims
+                WorldDimensions worldDims,
+                boolean recreated
         ) {
             final WorldDimensions dimensions;
-            if (currentPreset.value() instanceof TogetherWorldPreset t) {
+            if (currentPreset != null && currentPreset.value() instanceof TogetherWorldPreset t) {
                 dimensions = t.getWorldDimensions();
+            } else if (recreated) {
+                dimensions = worldDims;
             } else {
                 dimensions = TogetherWorldPreset.getWorldDimensions(net.minecraft.world.level.levelgen.presets.WorldPresets.NORMAL);
             }
@@ -250,7 +255,7 @@ public class WorldBootstrap {
         ) {
             try {
                 var levelStorageAccess = levelSource.createAccess(levelID);
-                InGUI.setupNewWorldCommon(levelStorageAccess, worldPreset, worldDims);
+                InGUI.setupNewWorldCommon(levelStorageAccess, worldPreset, worldDims, false);
                 levelStorageAccess.close();
             } catch (Exception e) {
                 WorldsTogether.LOGGER.error("Failed to initialize data in world", e);
