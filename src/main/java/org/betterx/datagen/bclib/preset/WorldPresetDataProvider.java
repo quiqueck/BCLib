@@ -77,7 +77,7 @@ public class WorldPresetDataProvider extends FabricTagProvider<WorldPreset> {
                         amplifiedBiomeGenerator
                 ),
                 amplifiedNetherContext, BCLNetherBiomeSourceConfig.MINECRAFT_18_AMPLIFIED,
-                ctx.endContext, BCLEndBiomeSourceConfig.MINECRAFT_18_AMPLIFIED
+                ctx.endContext, BCLEndBiomeSourceConfig.MINECRAFT_20_AMPLIFIED
         );
     }
 
@@ -90,7 +90,7 @@ public class WorldPresetDataProvider extends FabricTagProvider<WorldPreset> {
                         largeBiomeGenerator
                 ),
                 ctx.netherContext, BCLNetherBiomeSourceConfig.MINECRAFT_18_LARGE,
-                ctx.endContext, BCLEndBiomeSourceConfig.MINECRAFT_18_LARGE
+                ctx.endContext, BCLEndBiomeSourceConfig.MINECRAFT_20_LARGE
         );
     }
 

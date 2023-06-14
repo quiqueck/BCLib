@@ -67,7 +67,40 @@ public class BCLEndBiomeSourceConfig implements BiomeSourceConfig<BCLibEndBiomeS
             MINECRAFT_18.landBiomesSize,
             MINECRAFT_18.barrensBiomesSize
     );
-    public static final BCLEndBiomeSourceConfig DEFAULT = MINECRAFT_18;
+
+    public static final BCLEndBiomeSourceConfig MINECRAFT_20 = new BCLEndBiomeSourceConfig(
+            EndBiomeMapType.HEX,
+            EndBiomeGeneratorType.VANILLA,
+            BCLib.RUNS_NULLSCAPE ? false : true,
+            MINECRAFT_17.innerVoidRadiusSquared,
+            MINECRAFT_17.centerBiomesSize,
+            MINECRAFT_17.voidBiomesSize,
+            MINECRAFT_17.landBiomesSize,
+            MINECRAFT_17.barrensBiomesSize
+    );
+
+    public static final BCLEndBiomeSourceConfig MINECRAFT_20_LARGE = new BCLEndBiomeSourceConfig(
+            EndBiomeMapType.HEX,
+            EndBiomeGeneratorType.VANILLA,
+            BCLib.RUNS_NULLSCAPE ? false : true,
+            MINECRAFT_18.innerVoidRadiusSquared,
+            MINECRAFT_18.centerBiomesSize,
+            MINECRAFT_18.voidBiomesSize * 2,
+            MINECRAFT_18.landBiomesSize * 4,
+            MINECRAFT_18.barrensBiomesSize * 2
+    );
+
+    public static final BCLEndBiomeSourceConfig MINECRAFT_20_AMPLIFIED = new BCLEndBiomeSourceConfig(
+            EndBiomeMapType.HEX,
+            EndBiomeGeneratorType.VANILLA,
+            true,
+            MINECRAFT_18.innerVoidRadiusSquared,
+            MINECRAFT_18.centerBiomesSize,
+            MINECRAFT_18.voidBiomesSize,
+            MINECRAFT_18.landBiomesSize,
+            MINECRAFT_18.barrensBiomesSize
+    );
+    public static final BCLEndBiomeSourceConfig DEFAULT = MINECRAFT_20;
 
     public static final Codec<BCLEndBiomeSourceConfig> CODEC = RecordCodecBuilder.create(instance -> instance
             .group(

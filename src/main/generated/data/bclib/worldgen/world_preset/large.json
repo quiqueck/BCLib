@@ -20,7 +20,7 @@
           "config": {
             "barrens_biomes_size": 512,
             "center_biomes_size": 256,
-            "generator_version": "paulevs",
+            "generator_version": "vanilla",
             "inner_void_radius_squared": 1048576,
             "land_biomes_size": 1024,
             "map_type": "hex",
