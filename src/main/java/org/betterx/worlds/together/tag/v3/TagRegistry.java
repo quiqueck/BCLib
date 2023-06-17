@@ -263,6 +263,15 @@ public class TagRegistry<T> {
         Set<TagEntry> set = getSetForTag(tagID);
         for (T element : elements) {
             ResourceLocation id = locationProvider.apply(element);
+            
+            //only add if the set doesn't already contain the element
+            for (TagEntry tagEntry : set) {
+                if (!tagEntry.elementOrTag().tag() && tagEntry.elementOrTag().id().equals(id)) {
+                    id = null;
+                    break;
+                }
+            }
+
             if (id != null) {
                 set.add(TagEntry.element(id));
             }
