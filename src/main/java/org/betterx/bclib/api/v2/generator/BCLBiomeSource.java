@@ -238,24 +238,30 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
         final List<String> excludeList = Configs.BIOMES_CONFIG.getExcludeMatching(defaultBiomeType());
         final Registry<BCLBiome> bclBiomes = access.registryOrThrow(BCLBiomeRegistry.BCL_BIOMES_REGISTRY);
 
-        for (Holder<Biome> possibleBiome : inputBiomeSource.possibleBiomes()) {
-            ResourceKey<Biome> key = possibleBiome.unwrapKey().orElse(null);
-            if (key != null) {
-                //skip over all biomes that were excluded in the config
-                if (excludeList.contains(key.location())) continue;
+        try {
+            for (Holder<Biome> possibleBiome : inputBiomeSource.possibleBiomes()) {
+                ResourceKey<Biome> key = possibleBiome.unwrapKey().orElse(null);
+                if (key != null) {
+                    //skip over all biomes that were excluded in the config
+                    if (excludeList.contains(key.location())) continue;
 
-                //this is a biome that has no type entry => create a new one for the default type of this registry
-                if (!BCLBiomeRegistry.hasBiome(key, bclBiomes)) {
-                    BiomeAPI.BiomeType type = typeForUnknownBiome(key, defaultBiomeType());
+                    //this is a biome that has no type entry => create a new one for the default type of this registry
+                    if (!BCLBiomeRegistry.hasBiome(key, bclBiomes)) {
+                        BiomeAPI.BiomeType type = typeForUnknownBiome(key, defaultBiomeType());
 
-                    //check if there was an override defined in the configs
-                    type = getBiomeType(includeMap, key, type);
+                        //check if there was an override defined in the configs
+                        type = getBiomeType(includeMap, key, type);
 
-                    //create and register a biome wrapper
-                    BCLBiome bclBiome = new BCLBiome(key.location(), type);
-                    BCLBiomeRegistry.register(bclBiome);
+                        //create and register a biome wrapper
+                        BCLBiome bclBiome = new BCLBiome(key.location(), type);
+                        BCLBiomeRegistry.register(bclBiome);
+                    }
                 }
             }
+        } catch (RuntimeException e) {
+            BCLib.LOGGER.error("Error while rebuilding Biomesources!", e);
+        } catch (Exception e) {
+            BCLib.LOGGER.error("Error while rebuilding Biomesources!", e);
         }
 
         this.reloadBiomes();
