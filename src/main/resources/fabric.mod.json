@@ -54,7 +54,7 @@
     "wunderlib": "1.0.x"
   },
   "breaks": {
-    "wunderlib": "<1.0.0"
+    "wunderlib": "<1.0.1"
   },
   "custom": {
     "bclib": {
