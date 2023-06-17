@@ -22,6 +22,7 @@ import org.betterx.worlds.together.tag.v3.*;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.dispenser.ShearsDispenseItemBehavior;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -251,6 +252,15 @@ public class PostInitAPI {
 
         if (block instanceof Fuel fl) {
             FuelRegistry.INSTANCE.add(block, fl.getFuelTime());
+        }
+
+        if (BCLib.isDatagen()) {
+            final ResourceLocation location = BuiltInRegistries.BLOCK.getKey(block);
+            if (!location.getNamespace().equals("minecraft")) {
+                if (!(block instanceof HasMinableBehaviour)) {
+                    BCLib.LOGGER.warning("Block " + block + " has no minable behaviour!");
+                }
+            }
         }
     }
 }
