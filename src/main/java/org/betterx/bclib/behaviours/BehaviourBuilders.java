@@ -27,6 +27,7 @@ public class BehaviourBuilders {
                 .mapColor(color)
                 .noOcclusion()
                 .instabreak()
+                .sound(SoundType.GRASS)
                 .pushReaction(PushReaction.DESTROY);
     }
 
