@@ -21,7 +21,7 @@ abstract class BlockSpreader implements BonemealBlockSpreader {
             BlockState blockState,
             boolean bl
     ) {
-        if (!blockGetter.getBlockState(blockPos.above()).propagatesSkylightDown(blockGetter, blockPos)) {
+        if (!canSpreadAt(blockGetter, blockPos)) {
             return false;
         } else {
             for (BlockPos testPos : BlockPos.betweenClosed(

@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public interface BonemealBlockSpreader {
     boolean isValidBonemealSpreadTarget(BlockGetter blockGetter, BlockPos blockPos, BlockState blockState, boolean bl);
-
+    boolean canSpreadAt(BlockGetter blockGetter, BlockPos blockPos);
 
     boolean performBonemealSpread(
             ServerLevel serverLevel,

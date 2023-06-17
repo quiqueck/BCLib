@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -91,9 +92,13 @@ public class BonemealAPI {
      * @return A valid spreader instance, or {@code null}
      */
     @ApiStatus.Internal
-    public BonemealBlockSpreader blockSpreaderForState(@NotNull BlockState state) {
+    public BonemealBlockSpreader blockSpreaderForState(
+            BlockGetter blockGetter,
+            BlockPos pos,
+            @NotNull BlockState state
+    ) {
         for (var e : taggedSpreaders.entrySet()) {
-            if (state.is(e.getKey())) {
+            if (state.is(e.getKey()) && e.getValue().canSpreadAt(blockGetter, pos)) {
                 return e.getValue();
             }
         }
@@ -111,7 +116,7 @@ public class BonemealAPI {
         BlockState blockState = level.getBlockState(blockPos);
         BonemealBlockSpreader spreader = org.betterx.bclib.api.v3.bonemeal.BonemealAPI
                 .INSTANCE
-                .blockSpreaderForState(blockState);
+                .blockSpreaderForState(level, blockPos, blockState);
 
         if (spreader != null) {
             if (spreader.isValidBonemealSpreadTarget(level, blockPos, blockState, level.isClientSide)) {
