@@ -257,8 +257,9 @@ public class PostInitAPI {
         if (BCLib.isDatagen()) {
             final ResourceLocation location = BuiltInRegistries.BLOCK.getKey(block);
             if (!location.getNamespace().equals("minecraft")) {
-                if (!(block instanceof HasMinableBehaviour)) {
-                    BCLib.LOGGER.warning("Block " + block + " has no minable behaviour!");
+                if (!(block instanceof HasMinableBehaviour) && block.defaultBlockState()
+                                                                    .requiresCorrectToolForDrops()) {
+                    BCLib.LOGGER.error("Block " + block + "(" + block.getClass() + ")" + " has no mineable behaviour!");
                 }
             }
         }
