@@ -59,6 +59,18 @@ public interface SurvivesOnSpecialGround extends SurvivesOn {
         }
     }
 
+    @Environment(EnvType.CLIENT)
+    public static void appendHoverTextUnderwater(List<Component> list) {
+        list.add(Component.translatable("tooltip.bclib.place_underwater")
+                          .withStyle(ChatFormatting.GREEN));
+    }
+
+    @Environment(EnvType.CLIENT)
+    public static void appendHoverTextUnderwaterInDepth(List<Component> list, int depth) {
+        list.add(Component.translatable("tooltip.bclib.place_underwater_depth", depth)
+                          .withStyle(ChatFormatting.GREEN));
+    }
+
     default boolean canSurviveOnTop(LevelReader world, BlockPos pos) {
         return isSurvivable(world.getBlockState(pos.below()));
     }

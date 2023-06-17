@@ -110,6 +110,8 @@
   "title.screen.bclib.worldgen.void_biome_size": "Small Island Biomes",
   "tooltip.bclib.place_on": "Survives on: %s",
   "tooltip.bclib.place_underwater_on": "Survives under water on: %s",
+  "tooltip.bclib.place_underwater": "Survives under water",
+  "tooltip.bclib.place_underwater_depth": "min. depth: %d",
   "tooltip.bclib.pottable_on": "Pottable on: %s",
   "warning.config.bclib.client.ui.forceBetterXPreset": "MOST LIKELY YOU WILL WANT TO KEEP THIS OPTION ENABLED.\n"
 }
