@@ -1,5 +1,9 @@
 package org.betterx.bclib.furniture.block;
 
+import org.betterx.bclib.behaviours.BehaviourHelper;
+import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
+import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
+import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.util.BlocksHelper;
 
 import net.minecraft.core.BlockPos;
@@ -27,7 +31,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import java.util.Collections;
 import java.util.List;
 
-public class BaseChair extends AbstractChair {
+public abstract class BaseChair extends AbstractChair {
     private static final VoxelShape SHAPE_BOTTOM = box(3, 0, 3, 13, 16, 13);
     private static final VoxelShape SHAPE_TOP = box(3, 0, 3, 13, 6, 13);
     private static final VoxelShape COLLIDER = box(3, 0, 3, 13, 10, 13);
@@ -113,5 +117,27 @@ public class BaseChair extends AbstractChair {
             world.setBlockAndUpdate(pos.below(), Blocks.AIR.defaultBlockState());
         }
         super.playerWillDestroy(world, pos, state, player);
+    }
+
+    public static class Wood extends BaseChair implements BehaviourWood {
+        public Wood(Block block) {
+            super(block);
+        }
+    }
+
+    public static class Stone extends BaseChair implements BehaviourStone {
+        public Stone(Block block) {
+            super(block);
+        }
+    }
+
+    public static class Metal extends BaseChair implements BehaviourMetal {
+        public Metal(Block block) {
+            super(block);
+        }
+    }
+
+    public static BaseChair from(Block source) {
+        return BehaviourHelper.from(source, Wood::new, Stone::new, Metal::new);
     }
 }

@@ -1,5 +1,6 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
@@ -32,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public class BasePathBlock extends BaseBlockNotFull {
+public abstract class BasePathBlock extends BaseBlockNotFull {
     private static final VoxelShape SHAPE = box(0, 0, 0, 16, 15, 16);
 
     private Block baseBlock;
@@ -99,5 +100,11 @@ public class BasePathBlock extends BaseBlockNotFull {
         ResourceLocation modelId = new ResourceLocation(stateId.getNamespace(), "block/" + stateId.getPath());
         registerBlockModel(stateId, modelId, blockState, modelCache);
         return ModelsHelper.createRandomTopModel(modelId);
+    }
+
+    public static class Stone extends BasePathBlock implements BehaviourStone {
+        public Stone(Block source) {
+            super(source);
+        }
     }
 }

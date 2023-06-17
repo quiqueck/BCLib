@@ -1,6 +1,8 @@
 package org.betterx.bclib.blocks.signs;
 
 import org.betterx.bclib.behaviours.BehaviourBuilders;
+import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
+import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.complexmaterials.BCLWoodTypeWrapper;
 import org.betterx.bclib.interfaces.BlockModelProvider;
@@ -65,6 +67,34 @@ public abstract class BaseHangingSignBlock extends CeilingHangingSignBlock imple
 
         public Wood(WoodType type, MapColor color, boolean flammable) {
             super(type, color, flammable, BaseWallHangingSignBlock.Wood::new);
+        }
+    }
+
+    public static class Stone extends BaseHangingSignBlock implements BehaviourStone {
+        public Stone(WoodType type) {
+            this(type, MapColor.WOOD, true);
+        }
+
+        public Stone(BCLWoodTypeWrapper type) {
+            this(type.type, type.color, type.flammable);
+        }
+
+        public Stone(WoodType type, MapColor color, boolean flammable) {
+            super(type, color, flammable, BaseWallHangingSignBlock.Stone::new);
+        }
+    }
+
+    public static class Metal extends BaseHangingSignBlock implements BehaviourMetal {
+        public Metal(WoodType type) {
+            this(type, MapColor.WOOD, true);
+        }
+
+        public Metal(BCLWoodTypeWrapper type) {
+            this(type.type, type.color, type.flammable);
+        }
+
+        public Metal(WoodType type, MapColor color, boolean flammable) {
+            super(type, color, flammable, BaseWallHangingSignBlock.Stone::new);
         }
     }
 

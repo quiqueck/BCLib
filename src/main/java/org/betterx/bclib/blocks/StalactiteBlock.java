@@ -1,5 +1,6 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
@@ -45,7 +46,7 @@ import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("deprecation")
-public class StalactiteBlock extends BaseBlockNotFull implements SimpleWaterloggedBlock, LiquidBlockContainer, RenderLayerProvider {
+public abstract class StalactiteBlock extends BaseBlockNotFull implements SimpleWaterloggedBlock, LiquidBlockContainer, RenderLayerProvider {
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final BooleanProperty IS_FLOOR = BlockProperties.IS_FLOOR;
     public static final IntegerProperty SIZE = BlockProperties.SIZE;
@@ -249,6 +250,17 @@ public class StalactiteBlock extends BaseBlockNotFull implements SimpleWaterlogg
     @Override
     public BCLRenderLayer getRenderLayer() {
         return BCLRenderLayer.CUTOUT;
+    }
+
+    public static class Stone extends StalactiteBlock implements BehaviourStone {
+
+        public Stone(Block source) {
+            super(source);
+        }
+
+        public Stone(Properties properties) {
+            super(properties);
+        }
     }
 
     static {

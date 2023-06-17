@@ -1,5 +1,6 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.blockentities.BaseFurnaceBlockEntity;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
@@ -40,7 +41,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public class BaseFurnaceBlock extends FurnaceBlock implements BlockModelProvider, RenderLayerProvider {
+public abstract class BaseFurnaceBlock extends FurnaceBlock implements BlockModelProvider, RenderLayerProvider {
     public BaseFurnaceBlock(Block source) {
         this(Properties.copy(source).lightLevel(state -> state.getValue(LIT) ? 13 : 0));
     }
@@ -142,5 +143,15 @@ public class BaseFurnaceBlock extends FurnaceBlock implements BlockModelProvider
                 blockEntityType2,
                 AbstractFurnaceBlockEntity::serverTick
         );
+    }
+
+    public static class Stone extends BaseFurnaceBlock implements BehaviourStone {
+        public Stone(Block source) {
+            super(source);
+        }
+
+        public Stone(BlockBehaviour.Properties properties) {
+            super(properties);
+        }
     }
 }

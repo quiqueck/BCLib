@@ -1,5 +1,6 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
@@ -28,7 +29,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public class BaseChainBlock extends ChainBlock implements BlockModelProvider, RenderLayerProvider {
+public abstract class BaseChainBlock extends ChainBlock implements BlockModelProvider, RenderLayerProvider {
     public BaseChainBlock(MapColor color) {
         this(Properties.copy(Blocks.CHAIN).mapColor(color));
     }
@@ -72,5 +73,16 @@ public class BaseChainBlock extends ChainBlock implements BlockModelProvider, Re
     @Override
     public BCLRenderLayer getRenderLayer() {
         return BCLRenderLayer.CUTOUT;
+    }
+
+    public static class Metal extends BaseChainBlock implements BehaviourMetal {
+
+        public Metal(MapColor color) {
+            super(color);
+        }
+
+        public Metal(Properties properties) {
+            super(properties);
+        }
     }
 }

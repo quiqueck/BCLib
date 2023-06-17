@@ -36,7 +36,7 @@ public class BarStool extends SimpleMaterialSlot<WoodenComplexMaterial> {
     protected @NotNull Block createBlock(
             WoodenComplexMaterial parentMaterial, BlockBehaviour.Properties settings
     ) {
-        return new BaseBarStool(parentMaterial.getBlock(WoodSlots.SLAB));
+        return new BaseBarStool.Wood(parentMaterial.getBlock(WoodSlots.SLAB));
     }
 
     @Override

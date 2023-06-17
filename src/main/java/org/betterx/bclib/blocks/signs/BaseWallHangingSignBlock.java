@@ -1,5 +1,7 @@
 package org.betterx.bclib.blocks.signs;
 
+import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
+import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.interfaces.TagProvider;
 
@@ -27,6 +29,18 @@ public abstract class BaseWallHangingSignBlock extends WallHangingSignBlock impl
 
     public static class Wood extends BaseWallHangingSignBlock implements BehaviourWood {
         public Wood(Properties properties, WoodType woodType) {
+            super(properties, woodType);
+        }
+    }
+
+    public static class Stone extends BaseWallHangingSignBlock implements BehaviourStone {
+        public Stone(Properties properties, WoodType woodType) {
+            super(properties, woodType);
+        }
+    }
+
+    public static class Metal extends BaseWallHangingSignBlock implements BehaviourMetal {
+        public Metal(Properties properties, WoodType woodType) {
             super(properties, woodType);
         }
     }

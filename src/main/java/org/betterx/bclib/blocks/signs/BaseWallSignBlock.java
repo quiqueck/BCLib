@@ -1,5 +1,6 @@
 package org.betterx.bclib.blocks.signs;
 
+import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.interfaces.TagProvider;
 
 import net.minecraft.tags.BlockTags;
@@ -21,7 +22,7 @@ public abstract class BaseWallSignBlock extends WallSignBlock implements TagProv
         blockTags.add(BlockTags.WALL_SIGNS);
     }
 
-    public static class Wood extends BaseWallSignBlock {
+    public static class Wood extends BaseWallSignBlock implements BehaviourWood {
         public Wood(Properties properties, WoodType woodType) {
             super(properties, woodType);
         }

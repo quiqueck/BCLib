@@ -1,5 +1,6 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
@@ -29,12 +30,12 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public class BaseMetalBarsBlock extends IronBarsBlock implements BlockModelProvider, RenderLayerProvider {
-    public BaseMetalBarsBlock(Block source) {
+public abstract class BaseBarsBlock extends IronBarsBlock implements BlockModelProvider, RenderLayerProvider, BehaviourMetal {
+    public BaseBarsBlock(Block source) {
         this(Properties.copy(source).strength(5.0F, 6.0F).noOcclusion());
     }
 
-    public BaseMetalBarsBlock(BlockBehaviour.Properties properties) {
+    public BaseBarsBlock(BlockBehaviour.Properties properties) {
         super(properties);
     }
 
@@ -125,5 +126,16 @@ public class BaseMetalBarsBlock extends IronBarsBlock implements BlockModelProvi
     @Override
     public BCLRenderLayer getRenderLayer() {
         return BCLRenderLayer.CUTOUT;
+    }
+
+    public static class Metal extends BaseBarsBlock implements BehaviourMetal {
+
+        public Metal(Block source) {
+            super(source);
+        }
+
+        public Metal(Properties properties) {
+            super(properties);
+        }
     }
 }
