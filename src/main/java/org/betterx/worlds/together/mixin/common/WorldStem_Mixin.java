@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
-@Mixin(WorldStem.class)
+@Mixin(value = WorldStem.class, priority = 1500)
 public class WorldStem_Mixin {
     @ModifyVariable(method = "<init>", argsOnly = true, at = @At(value = "INVOKE", target = "Ljava/lang/Record;<init>()V", shift = At.Shift.AFTER))
     LayeredRegistryAccess<RegistryLayer> wt_bake(LayeredRegistryAccess<RegistryLayer> registries) {
