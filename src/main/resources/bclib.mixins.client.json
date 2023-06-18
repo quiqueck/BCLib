@@ -12,7 +12,7 @@
     "FogRendererMixin",
     "MinecraftMixin",
     "ModelManagerMixin",
-    "PresetEditorMixin",
+    "WorldCreationUIStateMixin",
     "boat.BoatRendererMixin"
   ],
   "injectors": {

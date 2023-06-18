@@ -36,22 +36,40 @@ public class TogetherWorldPreset extends WorldPreset {
 
     private static int NEXT_IN_SORT_ORDER = 1000;
     private final WorldDimensions worldDimensions;
-
+    @Nullable
+    public final ResourceKey<WorldPreset> parentKey;
 
     public TogetherWorldPreset(
             Map<ResourceKey<LevelStem>, LevelStem> map,
             Optional<Integer> sortOrder
     ) {
-        this(map, sortOrder.orElse(NEXT_IN_SORT_ORDER++));
+        this(map, sortOrder.orElse(NEXT_IN_SORT_ORDER++), null);
+    }
+
+    public TogetherWorldPreset(
+            Map<ResourceKey<LevelStem>, LevelStem> map,
+            Optional<Integer> sortOrder,
+            @Nullable ResourceKey<WorldPreset> parentKey
+    ) {
+        this(map, sortOrder.orElse(NEXT_IN_SORT_ORDER++), parentKey);
     }
 
     public TogetherWorldPreset(
             Map<ResourceKey<LevelStem>, LevelStem> map,
             int sortOrder
     ) {
+        this(map, sortOrder, null);
+    }
+
+    public TogetherWorldPreset(
+            Map<ResourceKey<LevelStem>, LevelStem> map,
+            int sortOrder,
+            @Nullable ResourceKey<WorldPreset> parentKey
+    ) {
         super(map);
         this.sortOrder = sortOrder;
         this.worldDimensions = buildWorldDimensions(map);
+        this.parentKey = parentKey;
     }
 
     public static WorldDimensions buildWorldDimensions(Map<ResourceKey<LevelStem>, LevelStem> map) {
@@ -67,14 +85,17 @@ public class TogetherWorldPreset extends WorldPreset {
         return this.worldDimensions;
     }
 
-    public TogetherWorldPreset withDimensions(Registry<LevelStem> dimensions) {
+    public TogetherWorldPreset withDimensions(
+            Registry<LevelStem> dimensions,
+            @Nullable ResourceKey<WorldPreset> parentKey
+    ) {
         Map<ResourceKey<LevelStem>, LevelStem> map = new HashMap<>();
         for (var entry : dimensions.entrySet()) {
             ResourceKey<LevelStem> key = entry.getKey();
             LevelStem stem = entry.getValue();
             map.put(key, stem);
         }
-        return new TogetherWorldPreset(map, sortOrder);
+        return new TogetherWorldPreset(map, sortOrder, parentKey);
     }
 
     private Map<ResourceKey<LevelStem>, LevelStem> getDimensions() {
