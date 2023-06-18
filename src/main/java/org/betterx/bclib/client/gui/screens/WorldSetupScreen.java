@@ -301,13 +301,17 @@ public class WorldSetupScreen extends LayoutScreen {
         final WorldCreationUiState acc = createWorldScreen.getUiState();
         final Holder<WorldPreset> configuredPreset = acc.getWorldType().preset();
         if (configuredPreset != null && configuredPreset.value() instanceof TogetherWorldPreset worldPreset) {
+            ResourceKey<WorldPreset> key = configuredPreset.unwrapKey().orElse(null);
+            if (key == null) key = worldPreset.parentKey;
+            
             acc.setWorldType(new WorldCreationUiState.WorldTypeEntry(Holder.direct(
                     worldPreset.withDimensions(
                             createWorldScreen
                                     .getUiState()
                                     .getSettings()
                                     .selectedDimensions()
-                                    .dimensions()
+                                    .dimensions(),
+                            key
                     )
             )));
         }
