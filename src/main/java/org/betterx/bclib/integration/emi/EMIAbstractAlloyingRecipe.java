@@ -2,12 +2,12 @@ package org.betterx.bclib.integration.emi;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 
-import dev.emi.emi.EmiPort;
 import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.recipe.EmiRecipeCategory;
 import dev.emi.emi.api.render.EmiTexture;
@@ -82,12 +82,11 @@ public abstract class EMIAbstractAlloyingRecipe<C extends Container, T extends R
     @Override
     public void addWidgets(WidgetHolder widgets) {
         // Add an arrow texture to indicate processing
-        widgets.addFillingArrow(24 + getXOffset(), 5, 50 * getSmeltTime()).tooltip((mx, my) -> {
-            return List.of(ClientTooltipComponent.create(EmiPort.ordered(EmiPort.translatable(
-                    "emi.cooking.time",
-                    new Object[]{(float) getSmeltTime() / 20.0F}
-            ))));
-        });
+        widgets.addFillingArrow(24 + getXOffset(), 5, 50 * getSmeltTime())
+               .tooltip((mx, my) -> List.of(ClientTooltipComponent.create(Component.translatable(
+                       "emi.cooking.time",
+                       new Object[]{(float) getSmeltTime() / 20.0F}
+               ).getVisualOrderText())));
 
         if (this.infiniBurn) {
             widgets.addTexture(EmiTexture.FULL_FLAME, 1, 24);
@@ -100,14 +99,14 @@ public abstract class EMIAbstractAlloyingRecipe<C extends Container, T extends R
         widgets.addSlot(input.get(0), 0, 4);
         widgets.addSlot((input.size() > 1) ? input.get(1) : null, 20, 4);
         widgets.addText(
-                EmiPort.ordered(EmiPort.translatable("emi.cooking.experience", getExperience())),
+                Component.translatable("emi.cooking.experience", getExperience()).getVisualOrderText(),
                 24 + getXOffset(), 28, 0xFFFFFFFF, true
         );
 
         // Adds an output slot on the right
         // Note that output slots need to call `recipeContext` to inform EMI about their recipe context
         // This includes being able to resolve recipe trees, favorite stacks with recipe context, and more
-        widgets.addSlot(output.get(0), 56 + getXOffset(), 0).output(true).recipeContext(this);
+        widgets.addSlot(output.get(0), 56 + getXOffset(), 0).large(true).recipeContext(this);
     }
 
     @Override
