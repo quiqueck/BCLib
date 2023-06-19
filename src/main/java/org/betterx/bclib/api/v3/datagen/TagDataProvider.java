@@ -4,6 +4,7 @@ import org.betterx.worlds.together.tag.v3.TagRegistry;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagEntry;
 import net.minecraft.tags.TagKey;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -74,18 +75,29 @@ public class TagDataProvider<T> extends FabricTagProvider<T> {
         return modIDs == null || modIDs.contains(loc.getNamespace());
     }
 
+    protected boolean isOptional(TagEntry e) {
+        return (e.verifyIfPresent(id -> false, id -> false));
+    }
+
     @Override
     protected void addTags(HolderLookup.Provider arg) {
-        tagRegistry.forEachTag((tag, locs, tags) -> {
+        tagRegistry.forEachEntry((tag, locs, tags) -> {
             if (!forceWrite.contains(tag) && locs.isEmpty() && tags.isEmpty()) return;
 
             final FabricTagProvider<T>.FabricTagBuilder builder = getOrCreateTagBuilder(tag);
 
-            locs.sort(Comparator.comparing(ResourceLocation::toString));
-            tags.sort(Comparator.comparing(a -> a.location().toString()));
+            locs.sort(Comparator.comparing(a -> a.first.toString()));
+            tags.sort(Comparator.comparing(a -> a.first.location().toString()));
 
-            locs.forEach(builder::add);
-            tags.forEach(builder::forceAddTag);
+            locs.forEach(pair -> {
+                if (isOptional(pair.second)) builder.addOptional(pair.first);
+                else builder.add(pair.first);
+            });
+            
+            tags.forEach(pair -> {
+                if (isOptional(pair.second)) builder.addOptionalTag(pair.first);
+                else builder.forceAddTag(pair.first);
+            });
         }, (tag, loc) -> forceWrite.contains(tag) || shouldAdd(tag.location()) || this.shouldAdd(loc));
     }
 }

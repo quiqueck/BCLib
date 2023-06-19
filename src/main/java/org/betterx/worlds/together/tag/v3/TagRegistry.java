@@ -2,6 +2,7 @@ package org.betterx.worlds.together.tag.v3;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.interfaces.TriConsumer;
+import org.betterx.bclib.util.Pair;
 import org.betterx.worlds.together.WorldsTogether;
 
 import net.minecraft.core.DefaultedRegistry;
@@ -76,6 +77,11 @@ public class TagRegistry<T> {
         }
 
         @SafeVarargs
+        public final void addOptional(TagKey<T> tagID, T... elements) {
+            super.addOptional(tagID, elements);
+        }
+
+        @SafeVarargs
         public final void add(T element, TagKey<T>... tagIDs) {
             super.add(element, tagIDs);
         }
@@ -97,6 +103,14 @@ public class TagRegistry<T> {
          * @param elements array of Elements to add into tag.
          */
         public void add(TagKey<Biome> tagID, ResourceKey<Biome>... elements) {
+            add(tagID, false, elements);
+        }
+
+        public void addOptional(TagKey<Biome> tagID, ResourceKey<Biome>... elements) {
+            add(tagID, true, elements);
+        }
+
+        void add(TagKey<Biome> tagID, boolean optional, ResourceKey<Biome>... elements) {
             if (isFrozen) WorldsTogether.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
             synchronized (this) {
                 Set<TagEntry> set = getSetForTag(tagID);
@@ -110,8 +124,9 @@ public class TagRegistry<T> {
                             break;
                         }
                     }
+
                     if (id != null) {
-                        set.add(TagEntry.element(id));
+                        set.add(optional ? TagEntry.optionalElement(id) : TagEntry.element(id));
                     }
                 }
             }
@@ -136,6 +151,13 @@ public class TagRegistry<T> {
         public final void add(TagKey<Item> tagID, ItemLike... elements) {
             for (ItemLike element : elements) {
                 add(tagID, element.asItem());
+            }
+        }
+
+        @SafeVarargs
+        public final void addOptional(TagKey<Item> tagID, ItemLike... elements) {
+            for (ItemLike element : elements) {
+                addOptional(tagID, element.asItem());
             }
         }
 
@@ -242,12 +264,20 @@ public class TagRegistry<T> {
     }
 
     public void addOtherTags(TagKey<T> tagID, TagKey<T>... tags) {
+        addOtherTags(tagID, false, tags);
+    }
+
+    public void addOptionalOtherTags(TagKey<T> tagID, TagKey<T>... tags) {
+        addOtherTags(tagID, true, tags);
+    }
+
+    void addOtherTags(TagKey<T> tagID, boolean optional, TagKey<T>... tags) {
         if (isFrozen) WorldsTogether.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
         Set<TagEntry> set = getSetForTag(tagID);
         for (TagKey<T> tag : tags) {
             ResourceLocation id = tag.location();
             if (id != null) {
-                set.add(TagEntry.tag(id));
+                set.add(optional ? TagEntry.optionalTag(id) : TagEntry.tag(id));
             }
         }
     }
@@ -259,11 +289,19 @@ public class TagRegistry<T> {
      * @param elements array of Elements to add into tag.
      */
     protected void add(TagKey<T> tagID, T... elements) {
+        add(tagID, false, elements);
+    }
+
+    protected void addOptional(TagKey<T> tagID, T... elements) {
+        add(tagID, true, elements);
+    }
+
+    protected void add(TagKey<T> tagID, boolean optional, T... elements) {
         if (isFrozen) WorldsTogether.LOGGER.warning("Adding Tag " + tagID + " after the API was frozen.");
         Set<TagEntry> set = getSetForTag(tagID);
         for (T element : elements) {
             ResourceLocation id = locationProvider.apply(element);
-            
+
             //only add if the set doesn't already contain the element
             for (TagEntry tagEntry : set) {
                 if (!tagEntry.elementOrTag().tag() && tagEntry.elementOrTag().id().equals(id)) {
@@ -273,7 +311,7 @@ public class TagRegistry<T> {
             }
 
             if (id != null) {
-                set.add(TagEntry.element(id));
+                set.add(optional ? TagEntry.optionalElement(id) : TagEntry.element(id));
             }
         }
     }
@@ -320,6 +358,30 @@ public class TagRegistry<T> {
                         tags.add(TagKey.create(registryKey, t.id()));
                     } else {
                         locations.add(t.id());
+                    }
+                }
+            });
+
+            consumer.accept(tag, locations, tags);
+        });
+    }
+
+    public void forEachEntry(
+            TriConsumer<TagKey<T>, List<Pair<ResourceLocation, TagEntry>>, List<Pair<TagKey<T>, TagEntry>>> consumer,
+            BiPredicate<TagKey<T>, ResourceLocation> allow
+    ) {
+        tags.forEach((tag, set) -> {
+            List<Pair<ResourceLocation, TagEntry>> locations = new LinkedList<>();
+            List<Pair<TagKey<T>, TagEntry>> tags = new LinkedList<>();
+
+
+            set.forEach(e -> {
+                ExtraCodecs.TagOrElementLocation t = e.elementOrTag();
+                if (allow == null || allow.test(tag, t.id())) {
+                    if (t.tag()) {
+                        tags.add(new Pair<>(TagKey.create(registryKey, t.id()), e));
+                    } else {
+                        locations.add(new Pair<>(t.id(), e));
                     }
                 }
             });
