@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:small_end_islands",
+    {
+      "id": "nullscape:void_barrens",
+      "required": false
+    }
+  ]
+}
