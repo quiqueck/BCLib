@@ -1,14 +1,10 @@
 package org.betterx.worlds.together.levelgen;
 
 import org.betterx.worlds.together.WorldsTogether;
-import org.betterx.worlds.together.biomesource.BiomeSourceWithConfig;
-import org.betterx.worlds.together.biomesource.ReloadableBiomeSource;
-import org.betterx.worlds.together.chunkgenerator.EnforceableChunkGenerator;
 import org.betterx.worlds.together.world.BiomeSourceWithNoiseRelatedSettings;
 import org.betterx.worlds.together.world.BiomeSourceWithSeed;
 import org.betterx.worlds.together.world.WorldConfig;
 import org.betterx.worlds.together.world.event.WorldBootstrap;
-import org.betterx.worlds.together.worldPreset.TogetherWorldPreset;
 import org.betterx.worlds.together.worldPreset.WorldPresets;
 
 import net.minecraft.core.Holder;
@@ -21,7 +17,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
@@ -30,7 +25,6 @@ import net.minecraft.world.level.levelgen.WorldDimensions;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 
-import java.util.Map;
 import org.jetbrains.annotations.ApiStatus;
 
 public class WorldGenUtil {
@@ -99,8 +93,6 @@ public class WorldGenUtil {
     }
 
     public static class Context extends StemContext {
-
-
         public Context(
                 Holder<DimensionType> dimension,
                 HolderGetter<StructureSet> structureSets,
@@ -133,63 +125,7 @@ public class WorldGenUtil {
             RegistryAccess registryAccess,
             Registry<LevelStem> dimensionRegistry
     ) {
-        Map<ResourceKey<LevelStem>, ChunkGenerator> dimensions = TogetherWorldPreset.loadWorldDimensions();
-        for (var entry : dimensionRegistry.entrySet()) {
-            boolean didRepair = false;
-            ResourceKey<LevelStem> key = entry.getKey();
-            LevelStem loadedStem = entry.getValue();
-
-            ChunkGenerator referenceGenerator = dimensions.get(key);
-            if (referenceGenerator instanceof EnforceableChunkGenerator enforcer) {
-
-//                // probably not a datapack, so we need to check what other mods would have
-//                // added to the vanilla settings
-//                if (loadedStem.generator() instanceof EnforceableChunkGenerator) {
-//                    // This list contains the vanilla default level stem (only available if a new world is loaded) as well as
-//                    // The currently loaded stem
-//                    var vanillaDimensionMap = WorldGenUtil.getDimensionsWithModData(net.minecraft.world.level.levelgen.presets.WorldPresets.NORMAL);
-//
-//                    LevelStem vanillaDefaultStem = vanillaDimensionMap.get(key);
-//                    if (vanillaDefaultStem != null) {
-//                        loadedStem = vanillaDefaultStem;
-//                    }
-//                }
-
-
-                // now compare the reference world settings (the ones that were created when the world was
-                // started) with the settings that were loaded by the game.
-                // If those do not match, we will create a new ChunkGenerator / BiomeSources with appropriate
-                // settings
-
-                final ChunkGenerator loadedChunkGenerator = loadedStem.generator();
-
-                if (enforcer.togetherShouldRepair(loadedChunkGenerator)) {
-                    dimensionRegistry = enforcer.enforceGeneratorInWorldGenSettings(
-                            registryAccess,
-                            key,
-                            loadedStem.type().unwrapKey().orElseThrow(),
-                            loadedChunkGenerator,
-                            dimensionRegistry
-                    );
-                    didRepair = true;
-                } else if (loadedChunkGenerator.getBiomeSource() instanceof BiomeSourceWithConfig bs) {
-                    if (referenceGenerator.getBiomeSource() instanceof BiomeSourceWithConfig refbs) {
-                        if (!refbs.getTogetherConfig().sameConfig(bs.getTogetherConfig())) {
-                            bs.setTogetherConfig(refbs.getTogetherConfig());
-                        }
-                    }
-                }
-            }
-
-
-            if (!didRepair) {
-                if (loadedStem.generator().getBiomeSource() instanceof ReloadableBiomeSource reload) {
-                    reload.reloadBiomes();
-                }
-            }
-
-        }
-        return dimensionRegistry;
+        return new BiomeRepairHelper().repairBiomeSourceInAllDimensions(registryAccess, dimensionRegistry);
     }
 
     public static ResourceLocation getBiomeID(Biome biome) {

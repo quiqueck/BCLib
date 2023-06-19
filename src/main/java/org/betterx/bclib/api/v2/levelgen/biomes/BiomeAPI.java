@@ -193,6 +193,13 @@ public class BiomeAPI {
         public final BiomeType parentOrNull;
         private final String name;
 
+        public static BiomeType getMainBiomeTypeForDimension(ResourceKey<LevelStem> key) {
+            if (key.equals(LevelStem.END)) return END_LAND;
+            else if (key.equals(LevelStem.NETHER)) return NETHER;
+            else if (key.equals(LevelStem.OVERWORLD)) return OVERWORLD;
+            return null;
+        }
+
         @FunctionalInterface
         interface ExtraRegisterTaks {
             void register(@NotNull BCLBiome biome, @Nullable BCLBiome parent);
