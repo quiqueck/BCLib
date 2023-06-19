@@ -6,6 +6,7 @@ import org.betterx.bclib.interfaces.SurfaceMaterialProvider;
 import org.betterx.bclib.mixin.common.BiomeGenerationSettingsAccessor;
 import org.betterx.bclib.mixin.common.MobSpawnSettingsAccessor;
 import org.betterx.bclib.util.CollectionsUtil;
+import org.betterx.worlds.together.tag.v3.CommonBiomeTags;
 import org.betterx.worlds.together.tag.v3.TagManager;
 import org.betterx.worlds.together.world.event.WorldBootstrap;
 
@@ -301,7 +302,18 @@ public class BiomeAPI {
             TagManager.BIOMES.add(BiomeTags.IS_NETHER, bclbiome.getBiomeKey());
         } else if (dim != null && dim.is(BiomeType.END)) {
             TagManager.BIOMES.add(BiomeTags.IS_END, bclbiome.getBiomeKey());
+
+            if (dim.is(BiomeType.END_VOID)) {
+                TagManager.BIOMES.add(CommonBiomeTags.IS_SMALL_END_ISLAND, bclbiome.getBiomeKey());
+            } else if (dim.is(BiomeType.END_BARRENS)) {
+                TagManager.BIOMES.add(CommonBiomeTags.IS_END_BARRENS, bclbiome.getBiomeKey());
+            } else if (dim.is(BiomeType.END_LAND)) {
+                TagManager.BIOMES.add(CommonBiomeTags.IS_END_HIGHLAND, bclbiome.getBiomeKey());
+            } else if (dim.is(BiomeType.END_CENTER)) {
+                TagManager.BIOMES.add(CommonBiomeTags.IS_END_CENTER, bclbiome.getBiomeKey());
+            }
         }
+
 
         bclbiome.afterRegistration();
 

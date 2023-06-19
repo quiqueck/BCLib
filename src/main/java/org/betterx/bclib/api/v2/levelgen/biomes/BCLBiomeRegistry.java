@@ -6,6 +6,7 @@ import org.betterx.worlds.together.world.event.WorldBootstrap;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
+import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
@@ -28,6 +29,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class BCLBiomeRegistry {
@@ -99,6 +101,25 @@ public class BCLBiomeRegistry {
 
     public static void register(BCLBiome biome) {
         registerForDatagen(biome);
+    }
+
+    public static BCLBiome registerIfUnknown(Holder<Biome> biomeHolder, @NotNull BiomeAPI.BiomeType intendedType) {
+        if (biomeHolder == null) return null;
+        return registerIfUnknown(biomeHolder.unwrapKey().orElse(null), intendedType);
+    }
+
+    public static BCLBiome registerIfUnknown(ResourceKey<Biome> biomeKey, @NotNull BiomeAPI.BiomeType intendedType) {
+        if (biomeKey != null) {
+            if (!hasBiome(biomeKey, BCLBiomeRegistry.registryOrNull())) {
+                final var bclBiome = new BCLBiome(
+                        biomeKey.location(),
+                        intendedType
+                );
+                BCLBiomeRegistry.register(bclBiome);
+                return bclBiome;
+            }
+        }
+        return null;
     }
 
     public static boolean hasBiome(ResourceKey<Biome> key, Registry<BCLBiome> bclBiomes) {

@@ -85,6 +85,7 @@ public class TagManager {
     public static void ensureStaticallyLoaded() {
         CommonItemTags.prepareTags();
         CommonBlockTags.prepareTags();
+        CommonBiomeTags.prepareTags();
         MineableTags.prepareTags();
         ToolTags.prepareTags();
     }
