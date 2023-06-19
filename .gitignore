@@ -33,3 +33,4 @@ output/
 *.log
 /CHANGES.md
 /src/main/generated/.cache/
+/modrinth.json
