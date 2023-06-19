@@ -1,5 +1,7 @@
 package org.betterx.bclib.behaviours;
 
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
@@ -33,6 +35,10 @@ public class BehaviourBuilders {
 
     public static BlockBehaviour.Properties createVine() {
         return createVine(MapColor.PLANT);
+    }
+
+    public static Item.Properties createDisc() {
+        return new Item.Properties().stacksTo(1).rarity(Rarity.RARE);
     }
 
     public static BlockBehaviour.Properties createVine(MapColor color) {

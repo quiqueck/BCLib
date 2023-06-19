@@ -1,5 +1,6 @@
 package org.betterx.bclib.registry;
 
+import org.betterx.bclib.behaviours.BehaviourBuilders;
 import org.betterx.bclib.config.PathConfig;
 import org.betterx.bclib.items.BaseDiscItem;
 import org.betterx.bclib.items.BaseDrinkItem;
@@ -7,6 +8,7 @@ import org.betterx.bclib.items.BaseSpawnEggItem;
 import org.betterx.bclib.items.ModelProviderItem;
 import org.betterx.bclib.models.RecordItemModelProvider;
 import org.betterx.bclib.recipes.SmithingTemplates;
+import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
@@ -15,6 +17,7 @@ import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -31,13 +34,14 @@ public class ItemRegistry extends BaseRegistry<Item> {
     }
 
     public Item registerDisc(ResourceLocation itemId, int power, SoundEvent sound, int lengthInSeconds) {
-        RecordItem item = BaseDiscItem.create(power, sound, makeItemSettings().stacksTo(1), lengthInSeconds);
+        RecordItem item = BaseDiscItem.create(power, sound, BehaviourBuilders.createDisc(), lengthInSeconds);
         if (item != null) {
             RecordItemModelProvider.add(item);
             if (!config.getBoolean("musicDiscs", itemId.getPath(), true)) {
                 return item;
             }
             register(itemId, item);
+            TagManager.ITEMS.add(ItemTags.MUSIC_DISCS, item);
         }
         return item;
     }
