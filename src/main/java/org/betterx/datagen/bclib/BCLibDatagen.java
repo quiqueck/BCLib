@@ -8,6 +8,7 @@ import org.betterx.datagen.bclib.preset.WorldPresetDataProvider;
 import org.betterx.datagen.bclib.tests.TestBiomes;
 import org.betterx.datagen.bclib.tests.TestWorldgenProvider;
 import org.betterx.datagen.bclib.worldgen.BCLibRegistriesDataProvider;
+import org.betterx.datagen.bclib.worldgen.BiomeDatagenProvider;
 
 import net.minecraft.core.RegistrySetBuilder;
 
@@ -29,7 +30,7 @@ public class BCLibDatagen implements DataGeneratorEntrypoint {
             pack.addProvider(TestBiomes::new);
             RecipeDataProvider.createTestRecipes();
         } else {
-            pack.addProvider(NullscapeBiomes::new);
+            pack.addProvider(BiomeDatagenProvider::new);
         }
 
         pack.addProvider(RecipeDataProvider::new);

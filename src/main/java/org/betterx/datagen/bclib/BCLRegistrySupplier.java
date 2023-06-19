@@ -60,7 +60,7 @@ public class BCLRegistrySupplier extends RegistrySupplier {
             registries.add(Registries.PLACED_FEATURE, PlacedFeature.DIRECT_CODEC, TestPlacedFeatures::bootstrap);
             registries.add(Registries.BIOME, Biome.DIRECT_CODEC, TestBiomes::bootstrap);
         } else {
-            registries.addBootstrapOnly(Registries.BIOME, Biome.DIRECT_CODEC, BiomeDatagenProvider::bootstrap);
+            registries.add(Registries.BIOME, Biome.DIRECT_CODEC, BiomeDatagenProvider::bootstrap);
         }
 
         registries.add(
