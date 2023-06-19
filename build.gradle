@@ -152,7 +152,8 @@ curseforge {
 task nextVersion() {
     doLast {
         def inputFile = new File('modrinth.json')
-        new URL("https://api.modrinth.com/v2/project/${project.archives_base_name}/version?&game_versions=${project.modrinth_versions}").withInputStream { i -> inputFile.withOutputStream { it << i } }
+        def gameVersions = java.net.URLEncoder.encode(project.modrinth_versions, "UTF-8")
+        new URL("https://api.modrinth.com/v2/project/${project.archives_base_name}/version?&game_versions=${gameVersions}").withInputStream { i -> inputFile.withOutputStream { it << i } }
 
         def json = new groovy.json.JsonSlurper().parseText(inputFile.text)
         def version = json[0].version_number
