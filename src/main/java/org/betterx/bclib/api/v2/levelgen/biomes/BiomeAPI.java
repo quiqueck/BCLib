@@ -532,7 +532,7 @@ public class BiomeAPI {
      * @return {@link BCLBiome} or {@code BiomeAPI.EMPTY_BIOME}.
      */
     public static BCLBiome getBiome(ResourceLocation biomeID) {
-        return BCLBiomeRegistry.getBiomeOrEmpty(biomeID, BCLBiomeRegistry.registryOrNull());
+        return BCLBiomeRegistry.getBiomeOrNull(biomeID, BCLBiomeRegistry.registryOrNull());
     }
 
     /**
