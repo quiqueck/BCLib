@@ -49,23 +49,12 @@ public class SurfaceRuleUtil {
                        .collect(Collectors.toCollection(LinkedList::new));
     }
 
-    private static SurfaceRules.RuleSource mergeSurfaceRulesFromBiomes(
-            SurfaceRules.RuleSource org,
-            BiomeSource source
-    ) {
-        return mergeSurfaceRules(
-                org,
-                source,
-                getRulesForBiomes(source.possibleBiomes().stream().map(h -> h.value()).toList())
-        );
-    }
-
     private static SurfaceRules.RuleSource mergeSurfaceRules(
             SurfaceRules.RuleSource org,
             BiomeSource source,
             List<SurfaceRules.RuleSource> additionalRules
     ) {
-        if (additionalRules == null || additionalRules.isEmpty()) return org;
+        if (additionalRules == null || additionalRules.isEmpty()) return null;
         final int count = additionalRules.size();
         if (org instanceof SurfaceRules.SequenceRuleSource sequenceRule) {
             List<SurfaceRules.RuleSource> existingSequence = sequenceRule.sequence();
@@ -73,7 +62,7 @@ public class SurfaceRuleUtil {
                     .stream()
                     .filter(r -> existingSequence.indexOf(r) < 0)
                     .collect(Collectors.toList());
-            if (additionalRules.size() == 0) return org;
+            if (additionalRules.size() == 0) return null;
             additionalRules.addAll(existingSequence);
         } else {
             if (!additionalRules.contains(org))
@@ -88,8 +77,12 @@ public class SurfaceRuleUtil {
 
     public static void injectSurfaceRules(NoiseGeneratorSettings noiseSettings, BiomeSource loadedBiomeSource) {
         if (((Object) noiseSettings) instanceof SurfaceRuleProvider srp) {
-            SurfaceRules.RuleSource originalRules = noiseSettings.surfaceRule();
-            srp.bclib_overwrite(mergeSurfaceRulesFromBiomes(originalRules, loadedBiomeSource));
+            SurfaceRules.RuleSource originalRules = srp.bclib_getOriginalSurfaceRules();
+            srp.bclib_overwriteSurfaceRules(mergeSurfaceRules(
+                    originalRules,
+                    loadedBiomeSource,
+                    getRulesForBiomes(loadedBiomeSource.possibleBiomes().stream().map(h -> h.value()).toList())
+            ));
         }
     }
 
