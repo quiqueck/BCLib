@@ -2,13 +2,16 @@ package org.betterx.bclib.mixin.client;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.interfaces.AirSelectionItem;
+import org.betterx.bclib.interfaces.LevelRendererAccess;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.*;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
@@ -19,6 +22,9 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -27,8 +33,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import org.jetbrains.annotations.Nullable;
+
 @Mixin(LevelRenderer.class)
-public abstract class LevelRendererMixin {
+@Environment(EnvType.CLIENT)
+public abstract class LevelRendererMixin implements LevelRendererAccess {
     @Final
     @Shadow
     private Minecraft minecraft;
@@ -36,20 +45,36 @@ public abstract class LevelRendererMixin {
     @Final
     private RenderBuffers renderBuffers;
 
+    public Particle bcl_addParticle(
+            ParticleOptions particleOptions,
+            double x, double y, double z,
+            double vx, double vy, double vz
+    ) {
+        return this.addParticleInternal(particleOptions, false, x, y, z, vx, vy, vz);
+    }
+
     @Shadow
     protected static void renderShape(
             PoseStack poseStack,
             VertexConsumer vertexConsumer,
             VoxelShape voxelShape,
+            double x, double y, double z,
+            float r, float g, float b, float a
+    ) {
+    }
+
+    @Shadow
+    @Nullable
+    protected abstract Particle addParticleInternal(
+            ParticleOptions particleOptions,
+            boolean bl,
             double d,
             double e,
             double f,
-            float g,
-            float h,
-            float i,
-            float j
-    ) {
-    }
+            double g,
+            double h,
+            double i
+    );
 
     @Inject(method = "renderLevel", at = @At(
             value = "INVOKE",
