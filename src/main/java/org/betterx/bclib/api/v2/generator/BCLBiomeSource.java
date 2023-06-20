@@ -21,8 +21,6 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 
-import com.google.common.collect.Sets;
-
 import java.util.*;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
@@ -95,22 +93,11 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
     protected abstract void onInitMap(long newSeed);
     protected abstract void onHeightChange(int newHeight);
 
-    public BCLBiomeSource createCopyForDatapack(Set<Holder<Biome>> datapackBiomes) {
-        Set<Holder<Biome>> mutableSet = Sets.newHashSet();
-        mutableSet.addAll(datapackBiomes);
-        return cloneForDatapack(mutableSet);
-    }
-
-    protected abstract BCLBiomeSource cloneForDatapack(Set<Holder<Biome>> datapackBiomes);
 
     @NotNull
     protected String getNamespaces() {
         return BiomeSourceHelper.getNamespaces(possibleBiomes());
     }
-
-//    public interface ValidBiomePredicate {
-//        boolean isValid(Holder<Biome> biome, ResourceLocation location);
-//    }
 
     protected boolean addToPicker(BCLBiome bclBiome, BiomeAPI.BiomeType type, BiomePicker picker) {
         picker.addBiome(bclBiome);
