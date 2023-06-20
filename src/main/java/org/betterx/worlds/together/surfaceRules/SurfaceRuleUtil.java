@@ -15,6 +15,7 @@ import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.SurfaceRules;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,6 +48,7 @@ public class SurfaceRuleUtil {
     }
 
     private static SurfaceRules.RuleSource mergeSurfaceRules(
+            ResourceKey<LevelStem> dimensionKey,
             SurfaceRules.RuleSource org,
             BiomeSource source,
             List<SurfaceRules.RuleSource> additionalRules
@@ -59,8 +61,23 @@ public class SurfaceRuleUtil {
                     .stream()
                     .filter(r -> existingSequence.indexOf(r) < 0)
                     .collect(Collectors.toList());
-            if (additionalRules.size() == 0) return null;
-            additionalRules.addAll(existingSequence);
+            if (additionalRules.isEmpty()) return null;
+
+            // when we are in the nether, we want to keep the nether roof and floor rules in the beginning of the sequence
+            // we will add our rules whne the first biome test sequence is found
+            if (dimensionKey.equals(LevelStem.NETHER)) {
+                final List<SurfaceRules.RuleSource> combined = new ArrayList<>(existingSequence.size() + additionalRules.size());
+                for (SurfaceRules.RuleSource rule : existingSequence) {
+                    if (rule instanceof SurfaceRules.TestRuleSource testRule
+                            && testRule.ifTrue() instanceof SurfaceRules.BiomeConditionSource) {
+                        combined.addAll(additionalRules);
+                    }
+                    combined.add(rule);
+                }
+                additionalRules = combined;
+            } else {
+                additionalRules.addAll(existingSequence);
+            }
         } else {
             if (!additionalRules.contains(org))
                 additionalRules.add(org);
@@ -72,10 +89,15 @@ public class SurfaceRuleUtil {
         return new SurfaceRules.SequenceRuleSource(additionalRules);
     }
 
-    public static void injectSurfaceRules(NoiseGeneratorSettings noiseSettings, BiomeSource loadedBiomeSource) {
+    public static void injectSurfaceRules(
+            ResourceKey<LevelStem> dimensionKey,
+            NoiseGeneratorSettings noiseSettings,
+            BiomeSource loadedBiomeSource
+    ) {
         if (((Object) noiseSettings) instanceof SurfaceRuleProvider srp) {
             SurfaceRules.RuleSource originalRules = srp.bclib_getOriginalSurfaceRules();
             srp.bclib_overwriteSurfaceRules(mergeSurfaceRules(
+                    dimensionKey,
                     originalRules,
                     loadedBiomeSource,
                     getRulesForBiomes(loadedBiomeSource.possibleBiomes().stream().map(h -> h.value()).toList())
