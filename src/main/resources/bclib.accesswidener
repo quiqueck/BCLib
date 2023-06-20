@@ -15,7 +15,8 @@ accessible  class    net/minecraft/world/level/levelgen/SurfaceRules$SequenceRul
 accessible  class    net/minecraft/server/dedicated/DedicatedServerProperties$WorldDimensionData
 accessible  class    net/minecraft/client/resources/model/AtlasSet$AtlasEntry
 extendable  class   net/minecraft/world/level/block/state/properties/WoodType
-
+accessible class net/minecraft/world/level/levelgen/SurfaceRules$BiomeConditionSource
+accessible class net/minecraft/world/level/levelgen/SurfaceRules$TestRuleSource
 
 #Methods
 accessible method net/minecraft/world/level/storage/loot/LootPool <init> ([Lnet/minecraft/world/level/storage/loot/entries/LootPoolEntryContainer;[Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition;[Lnet/minecraft/world/level/storage/loot/functions/LootItemFunction;Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;)V
