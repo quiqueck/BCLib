@@ -73,7 +73,7 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
         }
 
         if (WorldsTogether.RUNS_TERRABLENDER) {
-            BCLib.LOGGER.info("Make sure features are loaded from terrablender" + biomeSource);
+            BCLib.LOGGER.info("Make sure features are loaded from terrablender:" + biomeSource.getClass().getName());
 
             //terrablender is invalidating the feature initialization
             //we redo it at this point, otherwise we will get blank biomes
@@ -95,7 +95,7 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
     }
 
     /**
-     * Other Mods like TerraBlender might inject new BiomeSources. We und that change after the world setup did run.
+     * Other Mods like TerraBlender might inject new BiomeSources. We undo that change after the world setup did run.
      *
      * @param dimensionKey The Dimension where this ChunkGenerator is used from
      */
@@ -152,13 +152,10 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
                         bs = referenceGenerator.getBiomeSource();
                     }
 
+                    referenceProvider.bclib_getNoiseGeneratorSettingHolders();
                     referenceGenerator = new BCLChunkGenerator(
                             bs,
-                            buildGeneratorSettings(
-                                    referenceProvider.bclib_getNoiseGeneratorSettingHolders(),
-                                    noiseProvider.bclib_getNoiseGeneratorSettingHolders(),
-                                    bs
-                            )
+                            noiseProvider.bclib_getNoiseGeneratorSettingHolders()
                     );
                 }
             }
@@ -172,32 +169,6 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
                 referenceGenerator
         );
 
-    }
-
-    private static Holder<NoiseGeneratorSettings> buildGeneratorSettings(
-            Holder<NoiseGeneratorSettings> reference,
-            Holder<NoiseGeneratorSettings> settings,
-            BiomeSource biomeSource
-    ) {
-        return settings;
-//        NoiseGeneratorSettings old = settings.value();
-//        NoiseGeneratorSettings noise = new NoiseGeneratorSettings(
-//                old.noiseSettings(),
-//                old.defaultBlock(),
-//                old.defaultFluid(),
-//                old.noiseRouter(),
-//                SurfaceRuleRegistry.mergeSurfaceRulesFromBiomes(old.surfaceRule(), biomeSource),
-//                //SurfaceRuleUtil.addRulesForBiomeSource(old.surfaceRule(), biomeSource),
-//                old.spawnTarget(),
-//                old.seaLevel(),
-//                old.disableMobGeneration(),
-//                old.aquifersEnabled(),
-//                old.oreVeinsEnabled(),
-//                old.useLegacyRandomSource()
-//        );
-//
-//
-//        return Holder.direct(noise);
     }
 
 
