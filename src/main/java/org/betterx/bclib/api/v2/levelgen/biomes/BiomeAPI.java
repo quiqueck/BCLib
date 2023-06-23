@@ -529,9 +529,9 @@ public class BiomeAPI {
      * Get {@link BCLBiome} from given {@link ResourceLocation}.
      *
      * @param biomeID - biome {@link ResourceLocation}.
-     * @return {@link BCLBiome} or {@code BiomeAPI.EMPTY_BIOME}.
+     * @return {@link BCLBiome} or {@code null}.
      */
-    public static BCLBiome getBiome(ResourceLocation biomeID) {
+    public static @Nullable BCLBiome getBiome(ResourceLocation biomeID) {
         return BCLBiomeRegistry.getBiomeOrNull(biomeID, BCLBiomeRegistry.registryOrNull());
     }
 
@@ -539,9 +539,9 @@ public class BiomeAPI {
      * Get {@link BCLBiome} from given {@link Biome}.
      *
      * @param biome - biome {@link Biome}.
-     * @return {@link BCLBiome} or {@code BiomeAPI.EMPTY_BIOME}.
+     * @return {@link BCLBiome} or {@code null}.
      */
-    public static BCLBiome getBiome(Biome biome) {
+    public static @Nullable BCLBiome getBiome(Biome biome) {
         return getBiome(BiomeAPI.getBiomeID(biome));
     }
 
@@ -549,9 +549,9 @@ public class BiomeAPI {
      * Get {@link BCLBiome} from given {@link Biome}.
      *
      * @param biome - biome {@link Biome}.
-     * @return {@link BCLBiome} or {@code BiomeAPI.EMPTY_BIOME}.
+     * @return {@link BCLBiome} or {@code null}.
      */
-    public static BCLBiome getBiome(Holder<Biome> biome) {
+    public static @Nullable BCLBiome getBiome(Holder<Biome> biome) {
         return getBiome(BiomeAPI.getBiomeID(biome));
     }
 
