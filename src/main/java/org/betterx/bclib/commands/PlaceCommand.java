@@ -463,7 +463,7 @@ public class PlaceCommand {
     private static void removeLootTableSeed(Level level, BoundingBox bb) {
         BlocksHelper.forAllInBounds(bb, (bp) -> {
             if (level.getBlockEntity(bp) instanceof RandomizableContainerBlockEntity rnd) {
-                rnd.setLootTable(null, 0);
+                rnd.setLootTable(rnd.lootTable, 0);
             }
         });
     }
