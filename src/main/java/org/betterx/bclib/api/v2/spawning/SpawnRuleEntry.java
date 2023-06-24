@@ -14,10 +14,12 @@ import org.jetbrains.annotations.NotNull;
 public class SpawnRuleEntry<M extends Mob> implements Comparable<SpawnRuleEntry> {
     private final SpawnRule rule;
     private final byte priority;
+    //public final String debugName;
 
-    public SpawnRuleEntry(int priority, SpawnRule rule) {
+    public SpawnRuleEntry(int priority, SpawnRule rule, String debugName) {
         this.priority = (byte) priority;
         this.rule = rule;
+        //this.debugName = debugName;
     }
 
     protected boolean canSpawn(

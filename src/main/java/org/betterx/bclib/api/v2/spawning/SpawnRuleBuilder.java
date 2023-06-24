@@ -2,6 +2,7 @@ package org.betterx.bclib.api.v2.spawning;
 
 import org.betterx.bclib.entity.BCLEntityWrapper;
 import org.betterx.bclib.interfaces.SpawnRule;
+import org.betterx.bclib.util.BlocksHelper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Difficulty;
@@ -64,7 +65,7 @@ public class SpawnRuleBuilder<M extends Mob> {
      */
     public SpawnRuleBuilder preventSpawn() {
         entryInstance = getFromCache("prevent", () -> {
-            return new SpawnRuleEntry(-1, (type, world, spawnReason, pos, random) -> false);
+            return new SpawnRuleEntry(-1, (type, world, spawnReason, pos, random) -> false, "Prevent Spawn");
         });
         rules.add(entryInstance);
         return this;
@@ -79,7 +80,8 @@ public class SpawnRuleBuilder<M extends Mob> {
         entryInstance = getFromCache("not_peaceful", () -> {
             return new SpawnRuleEntry(
                     0,
-                    (type, world, spawnReason, pos, random) -> world.getDifficulty() != Difficulty.PEACEFUL
+                    (type, world, spawnReason, pos, random) -> world.getDifficulty() != Difficulty.PEACEFUL,
+                    "Not Peaceful"
             );
         });
         rules.add(entryInstance);
@@ -98,8 +100,17 @@ public class SpawnRuleBuilder<M extends Mob> {
                 if (pos.getY() < world.getMinBuildHeight() + 2) {
                     return false;
                 }
-                return pos.getY() > world.getHeight(Types.WORLD_SURFACE, pos.getX(), pos.getZ()) + minHeight;
-            });
+                return BlocksHelper.findSurfaceBelow(
+                                           world,
+                                           pos,
+                                           pos.getY() - minHeight,
+                                           (bs) -> !BlocksHelper.isFree(bs)
+                                   )
+                                   .isEmpty();
+                //return pos.getY() > world.getHeight(Types.WORLD_SURFACE, pos.getX(), pos.getZ()) + minHeight;
+            },
+                    "Above Ground"
+            );
         });
         rules.add(entryInstance);
         return this;
@@ -115,7 +126,8 @@ public class SpawnRuleBuilder<M extends Mob> {
             return new SpawnRuleEntry(
                     0,
                     (type, world, spawnReason, pos, random) -> pos.getY() < world.dimensionType()
-                                                                                 .logicalHeight()
+                                                                                 .logicalHeight(),
+                    "Below Max Height"
             );
         });
         rules.add(entryInstance);
@@ -132,7 +144,7 @@ public class SpawnRuleBuilder<M extends Mob> {
             return new SpawnRuleEntry(0, (type, world, spawnReason, pos, random) -> {
                 BlockPos below = pos.below();
                 return world.getBlockState(below).isValidSpawn(world, below, type);
-            });
+            }, "Only On Valid Blocks");
         });
         rules.add(entryInstance);
         return this;
@@ -162,7 +174,7 @@ public class SpawnRuleBuilder<M extends Mob> {
                     }
                 }
                 return false;
-            });
+            }, "Only On Blocks");
         });
 
         rules.add(entryInstance);
@@ -177,7 +189,11 @@ public class SpawnRuleBuilder<M extends Mob> {
      */
     public SpawnRuleBuilder withChance(int chance) {
         entryInstance = getFromCache("with_chance_" + chance, () -> {
-            return new SpawnRuleEntry(1, (type, world, spawnReason, pos, random) -> random.nextInt(chance) == 0);
+            return new SpawnRuleEntry(
+                    1,
+                    (type, world, spawnReason, pos, random) -> random.nextInt(chance) == 0,
+                    "With Chance"
+            );
         });
         rules.add(entryInstance);
         return this;
@@ -193,7 +209,8 @@ public class SpawnRuleBuilder<M extends Mob> {
         entryInstance = getFromCache("below_brightness_" + lightLevel, () -> {
             return new SpawnRuleEntry(
                     2,
-                    (type, world, spawnReason, pos, random) -> world.getMaxLocalRawBrightness(pos) <= lightLevel
+                    (type, world, spawnReason, pos, random) -> world.getMaxLocalRawBrightness(pos) <= lightLevel,
+                    "Below Brightness"
             );
         });
         rules.add(entryInstance);
@@ -210,7 +227,8 @@ public class SpawnRuleBuilder<M extends Mob> {
         entryInstance = getFromCache("above_brightness_" + lightLevel, () -> {
             return new SpawnRuleEntry(
                     2,
-                    (type, world, spawnReason, pos, random) -> world.getMaxLocalRawBrightness(pos) >= lightLevel
+                    (type, world, spawnReason, pos, random) -> world.getMaxLocalRawBrightness(pos) >= lightLevel,
+                    "Above Brightness"
             );
         });
         rules.add(entryInstance);
@@ -255,7 +273,7 @@ public class SpawnRuleBuilder<M extends Mob> {
                 } catch (Exception e) {
                     return true;
                 }
-            });
+            }, "Max Nearby " + count + "/" + side);
         });
         rules.add(entryInstance);
         return this;
@@ -289,7 +307,7 @@ public class SpawnRuleBuilder<M extends Mob> {
      * @return same {@link SpawnRuleBuilder} instance.
      */
     public SpawnRuleBuilder customRule(SpawnRule rule) {
-        rules.add(new SpawnRuleEntry(7, rule));
+        rules.add(new SpawnRuleEntry(7, rule, "Custom Rule"));
         return this;
     }
 
@@ -306,9 +324,18 @@ public class SpawnRuleBuilder<M extends Mob> {
         SpawnPredicate<M> predicate = (entityType, serverLevelAccessor, mobSpawnType, blockPos, random) -> {
             for (SpawnRuleEntry rule : rulesCopy) {
                 if (!rule.canSpawn(entityType, serverLevelAccessor, mobSpawnType, blockPos, random)) {
+//                    BCLib.LOGGER.info("Rejected Spawn of "
+//                            + entityType.getDescriptionId()
+//                            + " at " + blockPos.getX() + " " + blockPos.getY() + " " + blockPos.getZ()
+//                            + " because " + rule.debugName
+//                            + " at " + serverLevelAccessor.getBlockState(blockPos)
+//                            + " above " + serverLevelAccessor.getBlockState(blockPos.below())
+//                    );
+
                     return false;
                 }
             }
+//            BCLib.LOGGER.info("Spawning " + entityType.getDescriptionId() + " at " + blockPos.getX() + " " + blockPos.getY() + " " + blockPos.getZ() + "");
             return true;
         };
 
@@ -359,11 +386,12 @@ public class SpawnRuleBuilder<M extends Mob> {
      * @return new or existing {@link SpawnRuleEntry}.
      */
     private static SpawnRuleEntry getFromCache(String name, Supplier<SpawnRuleEntry> supplier) {
-        SpawnRuleEntry entry = RULES_CACHE.get(name);
-        if (entry == null) {
-            entry = supplier.get();
-            RULES_CACHE.put(name, entry);
-        }
-        return entry;
+        return supplier.get();
+//        SpawnRuleEntry entry = RULES_CACHE.get(name);
+//        if (entry == null) {
+//            entry = supplier.get();
+//            RULES_CACHE.put(name, entry);
+//        }
+//        return entry;
     }
 }
