@@ -62,6 +62,9 @@ public class SingleEndPoolElement extends SinglePoolElement {
     ) {
         //in the end, we don't want to generate anything below y=5
         if (blockPos.getY() < 5) return false;
+        boolean hasEmptySpace = worldGenLevel.isEmptyBlock(blockPos.above(2)) || worldGenLevel.isEmptyBlock(blockPos);
+        if (!hasEmptySpace)
+            return false;
 
         return super.place(
                 structureTemplateManager,
