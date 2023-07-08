@@ -20,6 +20,6 @@ public class ModelManagerMixin {
             ProfilerFiller profilerFiller,
             CallbackInfoReturnable<ModelBakery> info
     ) {
-        BCLibClient.modelBakery.loadCustomModels(resourceManager);
+        BCLibClient.lazyModelbakery().loadCustomModels(resourceManager);
     }
 }

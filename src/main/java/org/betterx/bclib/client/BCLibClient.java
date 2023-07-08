@@ -20,16 +20,24 @@ import net.fabricmc.fabric.api.client.model.*;
 import org.jetbrains.annotations.Nullable;
 
 public class BCLibClient implements ClientModInitializer, ModelResourceProvider, ModelVariantProvider {
-    public static CustomModelBakery modelBakery;
+    private static CustomModelBakery modelBakery;
+
+    public static CustomModelBakery lazyModelbakery() {
+        if (modelBakery == null) {
+            modelBakery = new CustomModelBakery();
+        }
+        return modelBakery;
+    }
 
     @Override
     public void onInitializeClient() {
+        modelBakery = new CustomModelBakery();
+
         WorldsTogetherClient.onInitializeClient();
         ModIntegrationAPI.registerAll();
         BaseBlockEntityRenders.register();
         DataExchangeAPI.prepareClientside();
         PostInitAPI.postInit(true);
-        modelBakery = new CustomModelBakery();
         ModelLoadingRegistry.INSTANCE.registerResourceProvider(rm -> this);
         ModelLoadingRegistry.INSTANCE.registerVariantProvider(rm -> this);
 
