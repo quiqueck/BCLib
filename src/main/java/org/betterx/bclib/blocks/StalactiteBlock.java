@@ -115,7 +115,10 @@ public class StalactiteBlock extends BaseBlockNotFull implements SimpleWaterlogg
             int startSize = floor ? 1 : 2;
             mut.set(pos.getX(), pos.getY() + 1, pos.getZ());
             for (int i = 0; i < 8 && isThis(bState); i++) {
-                world.setBlockAndUpdate(mut, bState.setValue(SIZE, startSize++).setValue(IS_FLOOR, false));
+                world.setBlockAndUpdate(
+                        mut,
+                        bState.setValue(SIZE, Math.min(7, startSize + i)).setValue(IS_FLOOR, false)
+                );
                 mut.setY(mut.getY() + 1);
                 bState = world.getBlockState(mut);
             }
@@ -124,7 +127,10 @@ public class StalactiteBlock extends BaseBlockNotFull implements SimpleWaterlogg
             startSize = floor ? 2 : 1;
             mut.set(pos.getX(), pos.getY() - 1, pos.getZ());
             for (int i = 0; i < 8 && isThis(bState); i++) {
-                world.setBlockAndUpdate(mut, bState.setValue(SIZE, startSize++).setValue(IS_FLOOR, true));
+                world.setBlockAndUpdate(
+                        mut,
+                        bState.setValue(SIZE, Math.min(7, startSize + i)).setValue(IS_FLOOR, true)
+                );
                 mut.setY(mut.getY() - 1);
                 bState = world.getBlockState(mut);
             }
