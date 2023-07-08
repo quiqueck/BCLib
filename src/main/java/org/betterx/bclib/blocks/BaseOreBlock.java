@@ -102,7 +102,7 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
             LootParams.Builder builder
     ) {
         ItemStack tool = builder.getParameter(LootContextParams.TOOL);
-        if (tool != null && tool.isCorrectToolForDrops(state)) {
+        if (tool != null && tool.isCorrectToolForDrops(state) && dropItem != null) {
             boolean canMine = miningLevel == 0;
             if (tool.getItem() instanceof TieredItem tired) {
                 canMine = tired.getTier().getLevel() >= miningLevel;
