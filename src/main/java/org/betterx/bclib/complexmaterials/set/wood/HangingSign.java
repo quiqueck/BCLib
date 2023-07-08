@@ -33,7 +33,7 @@ public class HangingSign extends MaterialSlot<WoodenComplexMaterial> {
                 false,
                 (complexMaterial, settings) -> {
                     if (complexMaterial.getBlock(suffix) instanceof BaseHangingSignBlock sign) {
-                        return sign.wallSign;
+                        return sign.getWallSignBlock();
                     }
                     return null;
                 }

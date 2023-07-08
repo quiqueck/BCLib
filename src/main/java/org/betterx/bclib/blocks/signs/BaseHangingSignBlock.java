@@ -25,9 +25,12 @@ import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.MapColor;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public abstract class BaseHangingSignBlock extends CeilingHangingSignBlock implements BlockModelProvider, CustomItemProvider, TagProvider {
-    public final BaseWallHangingSignBlock wallSign;
+    protected final Supplier<BaseWallHangingSignBlock> wallSign;
+    private BlockItem customItem;
+    private BaseWallHangingSignBlock wallSignBlock;
 
     @FunctionalInterface
     public interface WallSignProvider {
@@ -36,9 +39,15 @@ public abstract class BaseHangingSignBlock extends CeilingHangingSignBlock imple
 
     protected BaseHangingSignBlock(WoodType type, MapColor color, boolean flammable, WallSignProvider provider) {
         super(BehaviourBuilders.createSign(color, flammable), type);
-        this.wallSign = provider.create(BehaviourBuilders.createWallSign(color, this, flammable), type);
+        this.wallSign = () -> provider.create(BehaviourBuilders.createWallSign(color, this, flammable), type);
     }
 
+    public BaseWallHangingSignBlock getWallSignBlock() {
+        if (wallSignBlock == null) {
+            wallSignBlock = wallSign.get();
+        }
+        return wallSignBlock;
+    }
 
     @Override
     public float getYRotationDegrees(BlockState blockState) {
@@ -47,7 +56,10 @@ public abstract class BaseHangingSignBlock extends CeilingHangingSignBlock imple
 
     @Override
     public BlockItem getCustomItem(ResourceLocation blockID, Item.Properties settings) {
-        return new HangingSignItem(this, wallSign, settings.stacksTo(16));
+        if (customItem == null) {
+            customItem = new HangingSignItem(this, getWallSignBlock(), settings.stacksTo(16));
+        }
+        return customItem;
     }
 
     @Override

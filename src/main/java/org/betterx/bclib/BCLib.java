@@ -147,7 +147,7 @@ public class BCLib implements ModInitializer {
         );
         bockReg.registerBlockOnly(
                 makeID("test_wall_sign"),
-                TEST_SIGN.wallSign
+                TEST_SIGN.getWallSignBlock()
         );
         bockReg.register(
                 makeID("test_hanging_sign"),
@@ -155,7 +155,7 @@ public class BCLib implements ModInitializer {
         );
         bockReg.registerBlockOnly(
                 makeID("test_wall_hanging_sign"),
-                TEST_HANGING_SIGN.wallSign
+                TEST_HANGING_SIGN.getWallSignBlock()
         );
     }
 
