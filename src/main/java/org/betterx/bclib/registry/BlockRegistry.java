@@ -34,6 +34,8 @@ public class BlockRegistry extends BaseRegistry<Block> {
             BCLib.LOGGER.warning("Block " + id + " disabled");
             return block;
         }
+        block = Registry.register(Registry.BLOCK, id, block);
+
         BlockItem item = null;
         if (block instanceof CustomItemProvider) {
             item = ((CustomItemProvider) block).getCustomItem(id, makeItemSettings());
@@ -49,7 +51,6 @@ public class BlockRegistry extends BaseRegistry<Block> {
             FlammableBlockRegistry.getDefaultInstance().add(block, 5, 5);
         }
 
-        block = Registry.register(Registry.BLOCK, id, block);
         getModBlocks(id.getNamespace()).add(block);
 
         if (block instanceof BaseLeavesBlock) {
