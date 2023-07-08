@@ -3,6 +3,7 @@ package org.betterx.bclib;
 import org.betterx.bclib.api.v2.datafixer.DataFixerAPI;
 import org.betterx.bclib.api.v2.datafixer.ForcedLevelPatch;
 import org.betterx.bclib.api.v2.datafixer.MigrationProfile;
+import org.betterx.bclib.api.v2.datafixer.Patch;
 import org.betterx.bclib.api.v2.generator.GeneratorOptions;
 import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
 import org.betterx.bclib.config.Configs;
@@ -16,11 +17,27 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.dimension.LevelStem;
 
+import java.util.Map;
+
 public final class BCLibPatch {
     public static void register() {
         if (Configs.MAIN_CONFIG.repairBiomes() && (GeneratorOptions.fixEndBiomeSource() || GeneratorOptions.fixNetherBiomeSource())) {
             DataFixerAPI.registerPatch(BiomeSourcePatch::new);
         }
+        DataFixerAPI.registerPatch(SignPatch::new);
+    }
+}
+
+class SignPatch extends Patch {
+    public SignPatch() {
+        super(BCLib.MOD_ID, "3.0.11");
+    }
+
+    @Override
+    public Map<String, String> getIDReplacements() {
+        return Map.ofEntries(
+                Map.entry("bclib:sign", "minecraft:sign")
+        );
     }
 }
 
