@@ -6,18 +6,22 @@ import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.CustomItemProvider;
 import org.betterx.bclib.items.BaseAnvilItem;
+import org.betterx.bclib.util.BlocksHelper;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PickaxeItem;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AnvilBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -36,6 +40,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseAnvilBlock extends AnvilBlock implements BlockModelProvider, CustomItemProvider {
@@ -126,7 +131,7 @@ public abstract class BaseAnvilBlock extends AnvilBlock implements BlockModelPro
     public BlockState damageAnvilUse(BlockState state, RandomSource random) {
         IntegerProperty durability = getDurabilityProp();
         int value = state.getValue(durability);
-        if (value < getMaxDurability() && random.nextInt(10) == 0) {
+        if (value < getMaxDurability()) {
             return state.setValue(durability, value + 1);
         }
         value = state.getValue(DESTRUCTION);
@@ -136,5 +141,16 @@ public abstract class BaseAnvilBlock extends AnvilBlock implements BlockModelPro
     public BlockState damageAnvilFall(BlockState state) {
         int destruction = state.getValue(DESTRUCTION);
         return destruction < 2 ? state.setValue(DESTRUCTION, destruction + 1) : null;
+    }
+
+    @ApiStatus.Internal
+    public static void destroyWhenNull(Level level, BlockPos blockPos, BlockState damaged) {
+        if (damaged == null) {
+            level.removeBlock(blockPos, false);
+            level.levelEvent(LevelEvent.SOUND_ANVIL_BROKEN, blockPos, 0);
+        } else {
+            level.setBlock(blockPos, damaged, BlocksHelper.FLAG_SEND_CLIENT_CHANGES);
+            level.levelEvent(LevelEvent.SOUND_ANVIL_USED, blockPos, 0);
+        }
     }
 }
