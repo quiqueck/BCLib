@@ -5,7 +5,7 @@ import org.betterx.bclib.behaviours.interfaces.BehaviourLeaves;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
-import org.betterx.bclib.util.LootUtil;
+import org.betterx.bclib.items.tool.BaseShearsItem;
 import org.betterx.bclib.util.MHelper;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -95,7 +95,7 @@ public class BaseLeavesBlock extends LeavesBlock implements BlockModelProvider, 
     ) {
         ItemStack tool = builder.getParameter(LootContextParams.TOOL);
         if (tool != null) {
-            if (LootUtil.isCorrectTool(leaveBlock, null, tool) || EnchantmentHelper.getItemEnchantmentLevel(
+            if (tool != null && BaseShearsItem.isShear(tool) || EnchantmentHelper.getItemEnchantmentLevel(
                     Enchantments.SILK_TOUCH,
                     tool
             ) > 0) {
