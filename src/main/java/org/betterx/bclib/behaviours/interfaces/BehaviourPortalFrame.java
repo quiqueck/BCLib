@@ -1,4 +1,4 @@
 package org.betterx.bclib.behaviours.interfaces;
 
-public interface BehaviourPortalFrame {
+public interface BehaviourPortalFrame extends BlockBehaviour {
 }

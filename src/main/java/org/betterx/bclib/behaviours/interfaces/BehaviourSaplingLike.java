@@ -1,4 +1,4 @@
 package org.betterx.bclib.behaviours.interfaces;
 
-public interface BehaviourSaplingLike {
+public interface BehaviourSaplingLike extends BlockBehaviour {
 }

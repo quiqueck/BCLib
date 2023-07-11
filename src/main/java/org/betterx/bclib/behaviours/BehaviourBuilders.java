@@ -41,13 +41,16 @@ public class BehaviourBuilders {
         return new Item.Properties().stacksTo(1).rarity(Rarity.RARE);
     }
 
-    public static BlockBehaviour.Properties createVine(MapColor color) {
+    public static BlockBehaviour.Properties createStaticVine(MapColor color) {
         return createPlant(color)
                 .replaceable()
                 .noCollission()
-                .randomTicks()
                 .strength(0.2f)
                 .sound(SoundType.VINE);
+    }
+    public static BlockBehaviour.Properties createVine(MapColor color) {
+        return createStaticVine(color)
+                .randomTicks();
     }
 
     public static BlockBehaviour.Properties createGrass(MapColor color) {
