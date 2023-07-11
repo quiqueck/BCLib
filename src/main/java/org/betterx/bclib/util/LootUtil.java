@@ -2,10 +2,16 @@ package org.betterx.bclib.util;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.interfaces.LootPoolAccessor;
+import org.betterx.bclib.interfaces.tools.*;
+import org.betterx.bclib.items.tool.BaseShearsItem;
+import org.betterx.worlds.together.tag.v3.CommonItemTags;
+import org.betterx.worlds.together.tag.v3.ToolTags;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
@@ -70,6 +76,34 @@ public class LootUtil {
             BCLib.LOGGER.error("ERROR building loot table: " + t.getMessage());
         }
 
+        return false;
+    }
+
+    public static boolean isCorrectTool(ItemLike block, BlockState state, ItemStack tool) {
+        if (tool == null) return false;
+        if (state != null && tool.isCorrectToolForDrops(state)) return true;
+
+        if (block instanceof AddMineableAxe) {
+            if (tool.is(ItemTags.AXES) || tool.is(ToolTags.FABRIC_AXES)) return true;
+        }
+        if (block instanceof AddMineablePickaxe) {
+            if (tool.is(ItemTags.PICKAXES) || tool.is(ToolTags.FABRIC_PICKAXES)) return true;
+        }
+        if (block instanceof AddMineableHoe) {
+            if (tool.is(ItemTags.HOES) || tool.is(ToolTags.FABRIC_HOES)) return true;
+        }
+        if (block instanceof AddMineableShovel) {
+            if (tool.is(ItemTags.SHOVELS) || tool.is(ToolTags.FABRIC_SHOVELS)) return true;
+        }
+        if (block instanceof AddMineableSword) {
+            if (tool.is(ItemTags.SWORDS) || tool.is(ToolTags.FABRIC_SWORDS)) return true;
+        }
+        if (block instanceof AddMineableShears) {
+            if (BaseShearsItem.isShear(tool)) return true;
+        }
+        if (block instanceof AddMineableHammer) {
+            if (tool.is(CommonItemTags.HAMMERS)) return true;
+        }
         return false;
     }
 }
