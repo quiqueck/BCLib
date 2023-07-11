@@ -1,5 +1,6 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.api.v3.datagen.DropSelfLootProvider;
 import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.client.models.BasePatterns;
@@ -16,34 +17,25 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.WallSide;
-import net.minecraft.world.level.storage.loot.LootParams;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseWallBlock extends WallBlock implements BlockModelProvider, TagProvider {
+public abstract class BaseWallBlock extends WallBlock implements BlockModelProvider, TagProvider, DropSelfLootProvider<BaseWallBlock> {
     private final Block parent;
 
     protected BaseWallBlock(Block source) {
         super(Properties.copy(source).noOcclusion());
         this.parent = source;
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
-        return Collections.singletonList(new ItemStack(this));
     }
 
     @Override

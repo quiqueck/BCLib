@@ -1,5 +1,6 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.api.v3.datagen.DropSelfLootProvider;
 import org.betterx.bclib.api.v3.levelgen.features.BCLConfigureFeature;
 import org.betterx.bclib.behaviours.BehaviourBuilders;
 import org.betterx.bclib.client.models.BasePatterns;
@@ -15,7 +16,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -27,19 +27,16 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
-import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfiguration> extends SaplingBlock implements RenderLayerProvider, BlockModelProvider {
+public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfiguration> extends SaplingBlock implements RenderLayerProvider, BlockModelProvider, DropSelfLootProvider<FeatureSaplingBlock> {
 
     @FunctionalInterface
     public interface FeatureSupplier<F extends Feature<FC>, FC extends FeatureConfiguration> {
@@ -73,11 +70,6 @@ public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfig
 
     protected BCLConfigureFeature<F, FC> getConfiguredFeature(BlockState state) {
         return feature != null ? feature.get(state) : null;
-    }
-
-    @Override
-    public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
-        return Collections.singletonList(new ItemStack(this));
     }
 
     @Override

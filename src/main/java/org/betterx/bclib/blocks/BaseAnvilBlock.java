@@ -5,8 +5,10 @@ import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.CustomItemProvider;
+import org.betterx.bclib.interfaces.tools.AddMineablePickaxe;
 import org.betterx.bclib.items.BaseAnvilItem;
 import org.betterx.bclib.util.BlocksHelper;
+import org.betterx.bclib.util.LootUtil;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.UnbakedModel;
@@ -16,7 +18,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.PickaxeItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AnvilBlock;
 import net.minecraft.world.level.block.Block;
@@ -43,7 +44,7 @@ import java.util.Optional;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseAnvilBlock extends AnvilBlock implements BlockModelProvider, CustomItemProvider {
+public abstract class BaseAnvilBlock extends AnvilBlock implements AddMineablePickaxe, BlockModelProvider, CustomItemProvider {
     public static final IntegerProperty DESTRUCTION = BlockProperties.DESTRUCTION;
     public IntegerProperty durability;
 
@@ -112,7 +113,7 @@ public abstract class BaseAnvilBlock extends AnvilBlock implements BlockModelPro
         int durability = state.getValue(getDurabilityProp());
         int value = destruction * getMaxDurability() + durability;
         ItemStack tool = builder.getParameter(LootContextParams.TOOL);
-        if (tool != null && tool.getItem() instanceof PickaxeItem) {
+        if (LootUtil.isCorrectTool(this, state, tool)) {
             ItemStack itemStack = new ItemStack(this);
             itemStack.getOrCreateTag().putInt(BaseAnvilItem.DESTRUCTION, value);
             return Lists.newArrayList(itemStack);

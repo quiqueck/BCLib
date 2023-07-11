@@ -1,5 +1,6 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.api.v3.datagen.DropSelfLootProvider;
 import org.betterx.bclib.behaviours.BehaviourHelper;
 import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
 import org.betterx.bclib.behaviours.interfaces.BehaviourObsidian;
@@ -22,23 +23,20 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
-import net.minecraft.world.level.storage.loot.LootParams;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseSlabBlock extends SlabBlock implements BlockModelProvider, CustomItemProvider, TagProvider {
+public abstract class BaseSlabBlock extends SlabBlock implements BlockModelProvider, CustomItemProvider, TagProvider, DropSelfLootProvider<BaseSlabBlock> {
     private final Block parent;
     public final boolean fireproof;
 
@@ -46,13 +44,6 @@ public abstract class BaseSlabBlock extends SlabBlock implements BlockModelProvi
         super(Properties.copy(source));
         this.parent = source;
         this.fireproof = fireproof;
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
-        int count = state.getValue(TYPE) == SlabType.DOUBLE ? 2 : 1;
-        return Collections.singletonList(new ItemStack(this, count));
     }
 
     @Override

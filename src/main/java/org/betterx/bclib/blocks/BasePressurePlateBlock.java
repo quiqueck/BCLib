@@ -1,5 +1,6 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.api.v3.datagen.DropSelfLootProvider;
 import org.betterx.bclib.behaviours.BehaviourHelper;
 import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
 import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
@@ -18,23 +19,20 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
-import net.minecraft.world.level.storage.loot.LootParams;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BasePressurePlateBlock extends PressurePlateBlock implements BlockModelProvider, TagProvider {
+public abstract class BasePressurePlateBlock extends PressurePlateBlock implements BlockModelProvider, TagProvider, DropSelfLootProvider<BasePressurePlateBlock> {
     private final Block parent;
 
     protected BasePressurePlateBlock(Sensitivity rule, Block source, BlockSetType type) {
@@ -45,11 +43,6 @@ public abstract class BasePressurePlateBlock extends PressurePlateBlock implemen
         this.parent = source;
     }
 
-    @Override
-    @SuppressWarnings("deprecation")
-    public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
-        return Collections.singletonList(new ItemStack(this));
-    }
 
     @Override
     @Environment(EnvType.CLIENT)

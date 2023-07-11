@@ -1,5 +1,6 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.api.v3.datagen.DropSelfLootProvider;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.blockentities.BaseBarrelBlockEntity;
 import org.betterx.bclib.client.models.BasePatterns;
@@ -35,7 +36,6 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.BlockHitResult;
 
 import net.fabricmc.api.EnvType;
@@ -46,7 +46,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseBarrelBlock extends BarrelBlock implements BlockModelProvider, TagProvider {
+public abstract class BaseBarrelBlock extends BarrelBlock implements BlockModelProvider, TagProvider, DropSelfLootProvider<BaseBarrelBlock> {
     BaseBarrelBlock(Block source) {
         this(Properties.copy(source).noOcclusion());
     }
@@ -58,14 +58,6 @@ public abstract class BaseBarrelBlock extends BarrelBlock implements BlockModelP
     @Override
     public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
         return BaseBlockEntities.BARREL.create(blockPos, blockState);
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
-        List<ItemStack> drop = super.getDrops(state, builder);
-        drop.add(new ItemStack(this.asItem()));
-        return drop;
     }
 
     @Override

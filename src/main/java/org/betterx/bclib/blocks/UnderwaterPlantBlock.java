@@ -2,7 +2,7 @@ package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
-import org.betterx.bclib.items.tool.BaseShearsItem;
+import org.betterx.bclib.util.LootUtil;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -78,7 +78,7 @@ public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements R
     @Override
     public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
         ItemStack tool = builder.getParameter(LootContextParams.TOOL);
-        if (tool != null && BaseShearsItem.isShear(tool) || EnchantmentHelper.getItemEnchantmentLevel(
+        if (LootUtil.isCorrectTool(this, state, tool) || EnchantmentHelper.getItemEnchantmentLevel(
                 Enchantments.SILK_TOUCH,
                 tool
         ) > 0) {

@@ -3,6 +3,7 @@ package org.betterx.bclib.blocks;
 import org.betterx.bclib.behaviours.BehaviourBuilders;
 import org.betterx.bclib.interfaces.SurvivesOnBlocks;
 import org.betterx.bclib.util.BlocksHelper;
+import org.betterx.bclib.util.LootUtil;
 import org.betterx.bclib.util.MHelper;
 
 import net.minecraft.core.BlockPos;
@@ -65,7 +66,7 @@ public class BaseCropBlock extends BasePlantBlock implements SurvivesOnBlocks {
             return Collections.singletonList(new ItemStack(this));
         }
         ItemStack tool = builder.getParameter(LootContextParams.TOOL);
-        if (tool != null && tool.isCorrectToolForDrops(state)) {
+        if (LootUtil.isCorrectTool(this, state, tool)) {
             int enchantment = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, tool);
             if (enchantment > 0) {
                 int countSeeds = MHelper.randRange(Mth.clamp(1 + enchantment, 1, 3), 3, MHelper.RANDOM_SOURCE);

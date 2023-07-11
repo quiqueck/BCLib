@@ -15,7 +15,6 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SignItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.StandingSignBlock;
@@ -23,7 +22,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.RotationSegment;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.storage.loot.LootParams;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -44,7 +42,7 @@ public abstract class BaseSignBlock extends StandingSignBlock implements BlockMo
         super(BehaviourBuilders.createSign(color, flammable), type);
         this.wallSign = () -> provider.create(BehaviourBuilders.createWallSign(color, this, flammable), type);
     }
-    
+
     public BaseWallSignBlock getWallSignBlock() {
         if (wallSignBlock == null) {
             wallSignBlock = wallSign.get();
@@ -87,10 +85,5 @@ public abstract class BaseSignBlock extends StandingSignBlock implements BlockMo
 
     public static BaseSignBlock from(BCLWoodTypeWrapper type) {
         return new BaseSignBlock.Wood(type);
-    }
-
-    @Override
-    public List<ItemStack> getDrops(BlockState blockState, LootParams.Builder builder) {
-        return super.getDrops(blockState, builder);
     }
 }
