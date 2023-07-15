@@ -12,6 +12,8 @@ import org.betterx.worlds.together.chunkgenerator.InjectableSurfaceRules;
 import org.betterx.worlds.together.chunkgenerator.RestorableBiomeSource;
 import org.betterx.worlds.together.world.BiomeSourceWithNoiseRelatedSettings;
 
+import com.mojang.datafixers.DSL;
+import com.mojang.datafixers.types.templates.TypeTemplate;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
@@ -34,8 +36,11 @@ import net.minecraft.world.level.levelgen.*;
 
 import com.google.common.base.Suppliers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements RestorableBiomeSource<BCLChunkGenerator>, InjectableSurfaceRules<BCLChunkGenerator>, EnforceableChunkGenerator<BCLChunkGenerator> {
 
@@ -168,7 +173,6 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
                 dimensionRegistry,
                 referenceGenerator
         );
-
     }
 
 
@@ -191,5 +195,14 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
                 false,
                 true
         );
+    }
+
+    public static Map<String, Supplier<TypeTemplate>> addGeneratorDSL(Map<String, Supplier<TypeTemplate>> map) {
+        if (map.containsKey("minecraft:flat")) {
+            Map<String, Supplier<TypeTemplate>> nMap = new HashMap<>(map);
+            nMap.put("bclib:betterx", DSL::remainder);
+            return nMap;
+        }
+        return map;
     }
 }
