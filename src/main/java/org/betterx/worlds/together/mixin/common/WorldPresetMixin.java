@@ -21,7 +21,7 @@ import java.util.function.Function;
 @Mixin(WorldPreset.class)
 public class WorldPresetMixin {
     @ModifyArg(method = "<clinit>", at = @At(value = "INVOKE", target = "Lcom/mojang/serialization/codecs/RecordCodecBuilder;create(Ljava/util/function/Function;)Lcom/mojang/serialization/Codec;"))
-    private static Function<RecordCodecBuilder.Instance<WorldPreset>, ? extends App<RecordCodecBuilder.Mu<WorldPreset>, WorldPreset>> foo(
+    private static Function<RecordCodecBuilder.Instance<WorldPreset>, ? extends App<RecordCodecBuilder.Mu<WorldPreset>, WorldPreset>> wt_injectCodec(
             Function<RecordCodecBuilder.Instance<WorldPreset>, ? extends App<RecordCodecBuilder.Mu<WorldPreset>, WorldPreset>> builder
     ) {
         final Function<RecordCodecBuilder.Instance<WorldPreset>, App<RecordCodecBuilder.Mu<WorldPreset>, WorldPreset>> CODEC_FUNCTION = builderInstance -> {
