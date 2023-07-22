@@ -56,7 +56,8 @@
   },
   "breaks": {
     "wunderlib": "<1.1.2",
-    "emi": "<1.0.0"
+    "emi": "<1.0.0",
+    "fabric": ">=0.86"
   },
   "custom": {
     "bclib": {
