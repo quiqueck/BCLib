@@ -31,10 +31,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.JigsawBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.JigsawBlockEntity;
-import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
-import net.minecraft.world.level.block.entity.StructureBlockEntity;
+import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 
@@ -235,6 +232,22 @@ public class DebugDataItem extends Item implements ItemModelProvider, AirSelecti
                     entity.load(tag);
                     message(player, "Did set Loot Table to " + table.toString());
                     return InteractionResult.SUCCESS;
+                },
+                false,
+                iconId
+        );
+    }
+
+    public static DebugDataItem forSpawner(CompoundTag tag, Item icon) {
+        ResourceLocation iconId = BuiltInRegistries.ITEM.getKey(icon);
+        return new DebugDataItem(
+                (player, entity, ctx) -> {
+                    if (entity instanceof SpawnerBlockEntity) {
+                        entity.load(tag);
+                        message(player, "Did set Data to " + tag.toString());
+                        return InteractionResult.SUCCESS;
+                    }
+                    return InteractionResult.FAIL;
                 },
                 false,
                 iconId
