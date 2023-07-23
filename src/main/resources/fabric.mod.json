@@ -47,7 +47,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.14.21",
-    "fabric": ">=0.86.0",
+    "fabric": ">=0.83.0",
     "minecraft": [
       "1.20",
       "1.20.1"
@@ -55,8 +55,9 @@
     "wunderlib": "1.1.x"
   },
   "breaks": {
-    "wunderlib": "<1.1.6",
-    "emi": "<1.0.0"
+    "wunderlib": "<1.1.2",
+    "emi": "<1.0.0",
+    "fabric": ">=0.86"
   },
   "custom": {
     "bclib": {
