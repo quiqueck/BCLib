@@ -15,13 +15,21 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
+import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class CustomModelBakery {
+    private record StateModelPair(BlockState state, UnbakedModel model) {
+    }
+
     private final Map<ResourceLocation, UnbakedModel> models = Maps.newConcurrentMap();
+    private final Map<Block, List<StateModelPair>> blockModels = Maps.newConcurrentMap();
 
     public UnbakedModel getBlockModel(ResourceLocation location) {
         return models.get(location);
@@ -29,6 +37,17 @@ public class CustomModelBakery {
 
     public UnbakedModel getItemModel(ResourceLocation location) {
         return models.get(location);
+    }
+
+    public void registerBlockStateResolvers(ModelLoadingPlugin.Context pluginContext) {
+        for (Map.Entry<Block, List<StateModelPair>> e : this.blockModels.entrySet()) {
+            pluginContext.registerBlockStateResolver(
+                    e.getKey(),
+                    context -> {
+                        e.getValue().forEach(p -> context.setModel(p.state, p.model));
+                    }
+            );
+        }
     }
 
     public void loadCustomModels(ResourceManager resourceManager) {
@@ -80,10 +99,12 @@ public class CustomModelBakery {
         ResourceLocation defaultStateID = BlockModelShaper.stateToModelLocation(blockID, defaultState);
         UnbakedModel defaultModel = provider.getModelVariant(defaultStateID, defaultState, models);
 
+        List<StateModelPair> stateModels = new ArrayList<>(states.size());
         if (defaultModel instanceof MultiPart) {
             states.forEach(blockState -> {
                 ResourceLocation stateID = BlockModelShaper.stateToModelLocation(blockID, blockState);
                 models.put(stateID, defaultModel);
+                stateModels.add(new StateModelPair(blockState, defaultModel));
             });
         } else {
             states.forEach(blockState -> {
@@ -92,8 +113,10 @@ public class CustomModelBakery {
                         ? defaultModel
                         : provider.getModelVariant(stateID, blockState, models);
                 models.put(stateID, model);
+                stateModels.add(new StateModelPair(blockState, model));
             });
         }
+        blockModels.put(block, stateModels);
     }
 
     private void addItemModel(ResourceLocation itemID, ItemModelProvider provider) {
@@ -102,10 +125,12 @@ public class CustomModelBakery {
                 itemID.getPath(),
                 "inventory"
         );
-        if (models.containsKey(modelLocation)) {
-            return;
+        
+        if (!models.containsKey(modelLocation)) {
+            ResourceLocation itemModelLocation = itemID.withPrefix("item/");
+            BlockModel model = provider.getItemModel(modelLocation);
+            models.put(modelLocation, model);
+            models.put(itemModelLocation, model);
         }
-        BlockModel model = provider.getItemModel(modelLocation);
-        models.put(modelLocation, model);
     }
 }

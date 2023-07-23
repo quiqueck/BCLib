@@ -14,14 +14,13 @@ import org.betterx.worlds.together.client.WorldsTogetherClient;
 
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
-import net.minecraft.resources.ResourceLocation;
 
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.model.*;
+import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
+import net.fabricmc.fabric.api.client.model.loading.v1.ModelModifier;
+import net.fabricmc.fabric.api.client.model.loading.v1.ModelResolver;
 
-import org.jetbrains.annotations.Nullable;
-
-public class BCLibClient implements ClientModInitializer, ModelResourceProvider, ModelVariantProvider {
+public class BCLibClient implements ClientModInitializer {
     private static CustomModelBakery modelBakery;
 
     public static CustomModelBakery lazyModelbakery() {
@@ -33,15 +32,15 @@ public class BCLibClient implements ClientModInitializer, ModelResourceProvider,
 
     @Override
     public void onInitializeClient() {
-        modelBakery = new CustomModelBakery();
+        modelBakery = lazyModelbakery();
 
         WorldsTogetherClient.onInitializeClient();
         ModIntegrationAPI.registerAll();
         BaseBlockEntityRenders.register();
         DataExchangeAPI.prepareClientside();
         PostInitAPI.postInit(true);
-        ModelLoadingRegistry.INSTANCE.registerResourceProvider(rm -> this);
-        ModelLoadingRegistry.INSTANCE.registerVariantProvider(rm -> this);
+
+        ModelLoadingPlugin.register(BCLibClient::onInitializeModelLoader);
 
         PresetsRegistryClient.onLoad();
         WorldsTogether.SURPRESS_EXPERIMENTAL_DIALOG = Configs.CLIENT_CONFIG.suppressExperimentalDialog();
@@ -50,22 +49,33 @@ public class BCLibClient implements ClientModInitializer, ModelResourceProvider,
         AtlasSetManager.addSource(AtlasSetManager.VANILLA_BLOCKS, new SpriteLister("blocks"));
     }
 
-    @Override
-    public @Nullable UnbakedModel loadModelResource(
-            ResourceLocation resourceId,
-            ModelProviderContext context
-    ) throws ModelProviderException {
-        return modelBakery.getBlockModel(resourceId);
+    private static void onInitializeModelLoader(ModelLoadingPlugin.Context pluginContext) {
+        modelBakery.registerBlockStateResolvers(pluginContext);
+
+        pluginContext.resolveModel().register(BCLibClient::resolveModel);
+        pluginContext.modifyModelOnLoad().register(BCLibClient::modifyModelOnLoad);
     }
 
-    @Override
-    public @Nullable UnbakedModel loadModelVariant(
-            ModelResourceLocation modelId,
-            ModelProviderContext context
-    ) throws ModelProviderException {
-        return modelId.getVariant().equals("inventory")
-                ? modelBakery.getItemModel(modelId)
-                : modelBakery.getBlockModel(modelId);
+    private static UnbakedModel resolveModel(ModelResolver.Context ctx) {
+        boolean isItem = ctx.id().getPath().startsWith("item/");
+        if (ctx.id() instanceof ModelResourceLocation modelId && modelId.getVariant().equals("inventory")) {
+            isItem = true;
+        }
+
+        return isItem ? modelBakery.getItemModel(ctx.id()) : modelBakery.getBlockModel(ctx.id());
+    }
+
+    private static UnbakedModel modifyModelOnLoad(UnbakedModel model, ModelModifier.OnLoad.Context ctx) {
+        UnbakedModel res = null;
+        if (ctx.id() instanceof ModelResourceLocation modelId) {
+            res = modelId.getVariant().equals("inventory")
+                    ? modelBakery.getItemModel(modelId)
+                    : modelBakery.getBlockModel(modelId);
+        }
+
+        if (res == null)
+            return model;
+        return res;
     }
 
 
