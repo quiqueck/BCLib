@@ -59,6 +59,8 @@ dependencies {
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    //make sure we are compatible to the old model API
+    modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
     modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
 
     modCompileOnly "dev.emi:emi-fabric:${emi_version}:api"

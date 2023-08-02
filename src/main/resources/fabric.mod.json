@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "bclib",
-  "version": "3.0.12",
+  "version": "3.0.13",
   "name": "BCLib",
   "description": "A library for BetterX team mods",
   "authors": [
@@ -57,7 +57,7 @@
   "breaks": {
     "wunderlib": "<1.1.2",
     "emi": "<1.0.0",
-    "fabric": ">=0.86"
+    "fabric-api": "0.86.0"
   },
   "custom": {
     "bclib": {
