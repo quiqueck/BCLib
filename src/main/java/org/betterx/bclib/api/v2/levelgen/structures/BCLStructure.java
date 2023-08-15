@@ -60,7 +60,7 @@ public abstract class BCLStructure<S extends Structure> {
                     ResourceKey.create(Registries.STRUCTURE_SET, id),
                     step,
                     placement,
-                    codec,
+                    //codec,
                     biomeTag,
                     BCLStructure.registerStructureType(id, codec)
             );
@@ -94,7 +94,7 @@ public abstract class BCLStructure<S extends Structure> {
                     this.structureSetKey,
                     this.featureStep,
                     this.spreadConfig,
-                    this.STRUCTURE_CODEC,
+                    //this.STRUCTURE_CODEC,
                     this.biomeTag,
                     this.structureType,
                     baseStructure,
@@ -114,13 +114,13 @@ public abstract class BCLStructure<S extends Structure> {
                 @NotNull ResourceKey<StructureSet> structureSetKey,
                 @NotNull GenerationStep.Decoration featureStep,
                 @NotNull StructurePlacement placement,
-                @NotNull Codec<S> codec,
+                //@NotNull Codec<S> codec,
                 @NotNull TagKey<Biome> biomeTag,
                 @NotNull StructureType<S> structureType,
                 @NotNull S baseStructure,
                 @NotNull Holder<Structure> structure
         ) {
-            super(id, structureKey, structureSetKey, featureStep, placement, codec, biomeTag, structureType);
+            super(id, structureKey, structureSetKey, featureStep, placement, /**codec,**/biomeTag, structureType);
 
             this.baseStructure = baseStructure;
             this.structure = structure;
@@ -147,7 +147,7 @@ public abstract class BCLStructure<S extends Structure> {
 
     public final StructureType<S> structureType;
 
-    public final Codec<S> STRUCTURE_CODEC;
+    //public final Codec<S> STRUCTURE_CODEC;
 
     private static HolderSet<Biome> biomes(BootstapContext<Structure> bootstrapContext, TagKey<Biome> tagKey) {
         return bootstrapContext.lookup(Registries.BIOME).getOrThrow(tagKey);
@@ -190,13 +190,13 @@ public abstract class BCLStructure<S extends Structure> {
             @NotNull ResourceKey<StructureSet> structureSetKey,
             @NotNull GenerationStep.Decoration step,
             @NotNull StructurePlacement placement,
-            @NotNull Codec<S> codec,
+            //@NotNull Codec<S> codec,
             @NotNull TagKey<Biome> biomeTag,
             @NotNull StructureType<S> structureType
     ) {
         this.id = id;
         this.featureStep = step;
-        this.STRUCTURE_CODEC = codec;
+        //this.STRUCTURE_CODEC = codec;
         this.spreadConfig = placement;
         this.structureKey = structureKey;
         this.structureSetKey = structureSetKey;

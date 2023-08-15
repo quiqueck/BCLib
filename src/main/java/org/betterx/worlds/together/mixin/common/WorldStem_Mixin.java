@@ -17,5 +17,4 @@ public class WorldStem_Mixin {
         LayeredRegistryAccess<RegistryLayer> rNew = WorldBootstrap.enforceInLayeredRegistry(registries);
         return rNew;
     }
-
 }
