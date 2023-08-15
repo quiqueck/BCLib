@@ -100,13 +100,15 @@ public class BehaviourBuilders {
     public static BlockBehaviour.Properties createLeaves() {
         return createLeaves(MapColor.PLANT, true);
     }
+    public static BlockBehaviour.Properties createStaticLeaves() {
+        return createStaticLeaves(MapColor.PLANT, true);
+    }
 
-    public static BlockBehaviour.Properties createLeaves(MapColor color, boolean flammable) {
+    public static BlockBehaviour.Properties createStaticLeaves(MapColor color, boolean flammable) {
         final BlockBehaviour.Properties p = BlockBehaviour.Properties
                 .of()
                 .mapColor(color)
                 .strength(0.2f)
-                .randomTicks()
                 .noOcclusion()
                 .isValidSpawn(Blocks::ocelotOrParrot)
                 .isSuffocating(Blocks::never)
@@ -118,6 +120,10 @@ public class BehaviourBuilders {
             p.ignitedByLava();
         }
         return p;
+    }
+
+    public static BlockBehaviour.Properties createLeaves(MapColor color, boolean flammable) {
+        return createStaticLeaves(color, flammable).randomTicks();
     }
 
     public static BlockBehaviour.Properties createCactus(MapColor color, boolean flammable) {
