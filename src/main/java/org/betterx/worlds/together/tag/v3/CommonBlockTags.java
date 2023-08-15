@@ -37,6 +37,7 @@ public class CommonBlockTags {
 
     public static final TagKey<Block> IS_OBSIDIAN = TagManager.BLOCKS.makeCommonTag("is_obsidian");
     public static final TagKey<Block> TERRAIN = TagManager.BLOCKS.makeCommonTag("terrain");
+    public static final TagKey<Block> GRASS_SOIL = TagManager.BLOCKS.makeCommonTag("grass_soil");
     public static final TagKey<Block> NETHER_TERRAIN = TagManager.BLOCKS.makeCommonTag("nether_terrain");
     public static final TagKey<Block> BUDDING_BLOCKS = TagManager.BLOCKS.makeCommonTag("budding_blocks");
     public static final TagKey<Block> WATER_PLANT = TagManager.BLOCKS.makeCommonTag("water_plant");
@@ -68,6 +69,8 @@ public class CommonBlockTags {
 
         TagManager.BLOCKS.add(MYCELIUM, Blocks.MYCELIUM);
         TagManager.BLOCKS.addOtherTags(MYCELIUM, NETHER_MYCELIUM);
+
+        TagManager.BLOCKS.addOtherTags(GRASS_SOIL, BlockTags.DIRT, TERRAIN, BlockTags.LOGS, BlockTags.PLANKS);
 
 
         TagManager.BLOCKS.add(
