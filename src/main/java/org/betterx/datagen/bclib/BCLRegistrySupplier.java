@@ -4,7 +4,6 @@ import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeData;
 import org.betterx.bclib.api.v3.datagen.RegistrySupplier;
-import org.betterx.datagen.bclib.tests.TestBiomes;
 import org.betterx.datagen.bclib.tests.TestConfiguredFeatures;
 import org.betterx.datagen.bclib.tests.TestPlacedFeatures;
 import org.betterx.datagen.bclib.tests.TestStructure;
@@ -51,7 +50,6 @@ public class BCLRegistrySupplier extends RegistrySupplier {
                     TestConfiguredFeatures::bootstrap
             );
             registries.add(Registries.PLACED_FEATURE, PlacedFeature.DIRECT_CODEC, TestPlacedFeatures::bootstrap);
-            registries.add(Registries.BIOME, Biome.DIRECT_CODEC, TestBiomes::bootstrap);
         } else {
             registries.add(Registries.BIOME, Biome.DIRECT_CODEC, BiomeDatagenProvider::bootstrap);
         }
