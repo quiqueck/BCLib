@@ -1,20 +1,14 @@
 package org.betterx.worlds.together.world.event;
 
-import org.betterx.bclib.BCLib;
 import org.betterx.bclib.config.Configs;
 import org.betterx.worlds.together.WorldsTogether;
-import org.betterx.worlds.together.surfaceRules.SurfaceRuleUtil;
 import org.betterx.worlds.together.world.WorldConfig;
 
-import net.minecraft.client.gui.screens.worldselection.WorldCreationContext;
-import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
 import net.minecraft.core.Holder;
-import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.RegistryLayer;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.WorldDimensions;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
@@ -58,7 +52,7 @@ public class WorldBootstrap {
             WorldConfig.load(new File(levelBaseDir, "data"));
         }
 
-        private static void onRegistryReady(RegistryAccess a) {
+        public static void onRegistryReady(RegistryAccess a) {
             if (a != LAST_REGISTRY_ACCESS) {
                 LAST_REGISTRY_ACCESS = a;
                 WorldEventsImpl.WORLD_REGISTRY_READY.emit(e -> e.initRegistry(a));
@@ -117,34 +111,9 @@ public class WorldBootstrap {
     }
 
     public static class InGUI {
-        public static void registryReadyOnNewWorld(WorldCreationContext worldGenSettingsComponent) {
-            Helpers.onRegistryReady(worldGenSettingsComponent.worldgenLoadContext());
-        }
 
         public static void registryReady(RegistryAccess access) {
             Helpers.onRegistryReady(access);
-        }
-
-        public static void setupNewWorld(
-                Optional<LevelStorageSource.LevelStorageAccess> levelStorageAccess,
-                WorldCreationUiState uiState,
-                boolean recreated
-        ) {
-
-            if (levelStorageAccess.isPresent()) {
-                Holder<WorldPreset> currentPreset = uiState.getWorldType().preset();
-                currentPreset = Helpers.presetFromDatapack(currentPreset);
-                Holder<WorldPreset> newPreset = setupNewWorldCommon(
-                        levelStorageAccess.get(),
-                        currentPreset
-                );
-                if (newPreset != null && newPreset != currentPreset) {
-                    uiState.setWorldType(new WorldCreationUiState.WorldTypeEntry(newPreset));
-                }
-            } else {
-                WorldsTogether.LOGGER.error("Unable to access Level Folder.");
-            }
-
         }
 
         static Holder<WorldPreset> setupNewWorldCommon(
@@ -232,34 +201,15 @@ public class WorldBootstrap {
     }
 
     public static void finalizeWorldGenSettings(Registry<LevelStem> dimensionRegistry) {
-        String output = "World Dimensions: ";
         for (var entry : dimensionRegistry.entrySet()) {
             WorldEventsImpl.ON_FINALIZE_LEVEL_STEM.emit(e -> e.now(
                     dimensionRegistry,
                     entry.getKey(),
                     entry.getValue()
             ));
-
-            if (Configs.MAIN_CONFIG.verboseLogging())
-                output += "\n - " + entry.getKey().location().toString() + ": " +
-                        "\n     " + entry.getValue().generator().toString() + " " +
-                        entry.getValue()
-                             .generator()
-                             .getBiomeSource()
-                             .toString()
-                             .replace("\n", "\n     ");
         }
-        if (Configs.MAIN_CONFIG.verboseLogging())
-            BCLib.LOGGER.info(output);
-        SurfaceRuleUtil.injectSurfaceRulesToAllDimensions(dimensionRegistry);
 
         WorldEventsImpl.ON_FINALIZED_WORLD_LOAD.emit(e -> e.done(dimensionRegistry));
-    }
-
-    public static LayeredRegistryAccess<RegistryLayer> enforceInLayeredRegistry(LayeredRegistryAccess<RegistryLayer> registries) {
-        RegistryAccess access = registries.compositeAccess();
-        Helpers.onRegistryReady(access);
-        return registries;
     }
 
 

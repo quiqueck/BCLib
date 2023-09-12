@@ -12,7 +12,7 @@ public class WorldEventsImpl {
     public static final EventImpl<OnFinalizeWorldLoad> ON_FINALIZED_WORLD_LOAD = new EventImpl<>();
 
     public static final PatchWorldEvent PATCH_WORLD = new PatchWorldEvent();
-    public static final AdaptWorldPresetSettingEvent ADAPT_WORLD_PRESET = new AdaptWorldPresetSettingEvent();
+
 
     public static final EventImpl<BeforeAddingTags> BEFORE_ADDING_TAGS = new EventImpl<>();
 }
