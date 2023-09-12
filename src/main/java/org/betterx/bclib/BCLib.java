@@ -2,9 +2,6 @@ package org.betterx.bclib;
 
 import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
 import org.betterx.bclib.api.v2.dataexchange.handler.autosync.*;
-import org.betterx.bclib.api.v2.generator.BCLibEndBiomeSource;
-import org.betterx.bclib.api.v2.generator.BCLibNetherBiomeSource;
-import org.betterx.bclib.api.v2.generator.GeneratorOptions;
 import org.betterx.bclib.api.v2.levelgen.LevelGenEvents;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
 import org.betterx.bclib.api.v2.levelgen.structures.BCLStructurePoolElementTypes;
@@ -73,10 +70,7 @@ public class BCLib implements ModInitializer {
         BlockPredicates.ensureStaticInitialization();
         BCLBiomeRegistry.register();
         BaseRegistry.register();
-        GeneratorOptions.init();
         BaseBlockEntities.register();
-        BCLibEndBiomeSource.register();
-        BCLibNetherBiomeSource.register();
         CraftingRecipes.init();
         BCLStructurePoolElementTypes.ensureStaticallyLoaded();
         WorldConfig.registerModCache(MOD_ID);
