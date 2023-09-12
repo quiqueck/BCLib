@@ -4,7 +4,6 @@ import org.betterx.bclib.BCLib;
 import org.betterx.datagen.bclib.advancement.BCLAdvancementDataProvider;
 import org.betterx.datagen.bclib.advancement.RecipeDataProvider;
 import org.betterx.datagen.bclib.integrations.NullscapeBiomes;
-import org.betterx.datagen.bclib.tests.TestBiomes;
 import org.betterx.datagen.bclib.tests.TestWorldgenProvider;
 import org.betterx.datagen.bclib.worldgen.BCLibRegistriesDataProvider;
 import org.betterx.datagen.bclib.worldgen.BiomeDatagenProvider;
@@ -25,10 +24,7 @@ public class BCLibDatagen implements DataGeneratorEntrypoint {
 
         NullscapeBiomes.ensureStaticallyLoaded();
         if (BCLib.ADD_TEST_DATA) {
-            TestBiomes.ensureStaticallyLoaded();
-
             pack.addProvider(TestWorldgenProvider::new);
-            pack.addProvider(TestBiomes::new);
             RecipeDataProvider.createTestRecipes();
         } else {
             pack.addProvider(BiomeDatagenProvider::new);
