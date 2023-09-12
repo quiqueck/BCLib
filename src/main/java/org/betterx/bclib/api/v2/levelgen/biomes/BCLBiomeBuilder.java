@@ -8,7 +8,6 @@ import org.betterx.bclib.mixin.common.BiomeGenerationSettingsAccessor;
 import org.betterx.bclib.util.CollectionsUtil;
 import org.betterx.bclib.util.Pair;
 import org.betterx.ui.ColorUtil;
-import org.betterx.worlds.together.surfaceRules.SurfaceRuleRegistry;
 import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.core.Holder;
@@ -953,7 +952,6 @@ public class BCLBiomeBuilder {
         final T bclBiome = biomeConstructor.apply(ResourceKey.create(Registries.BIOME, biomeID), settings);
         tags.forEach(tagKey -> TagManager.BIOMES.add(tagKey, bclBiome.getBiomeKey()));
 
-        SurfaceRuleRegistry.registerRule(biomeID, surfaceRule, biomeID);
         bclBiome.addClimateParameters(parameters);
         if (biomeType != null)
             bclBiome._setIntendedType(biomeType);

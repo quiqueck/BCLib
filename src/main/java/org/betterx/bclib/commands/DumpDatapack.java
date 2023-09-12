@@ -5,8 +5,6 @@ import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeData;
 import org.betterx.bclib.blocks.BaseStairsBlock;
-import org.betterx.worlds.together.surfaceRules.AssignedSurfaceRule;
-import org.betterx.worlds.together.surfaceRules.SurfaceRuleRegistry;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -169,10 +167,7 @@ public class DumpDatapack {
                 new Dumper<>((DimensionType v) -> DimensionType.DIRECT_CODEC)
         );
         DUMPERS.put(BCLBiomeRegistry.BCL_BIOMES_REGISTRY.location(), new Dumper<>((BCLBiome v) -> v.codec().codec()));
-        DUMPERS.put(
-                SurfaceRuleRegistry.SURFACE_RULES_REGISTRY.location(),
-                new Dumper<>((AssignedSurfaceRule v) -> AssignedSurfaceRule.CODEC)
-        );
+
         DUMPERS.put(
                 Registries.CONFIGURED_CARVER.location(),
                 new Dumper<>((ConfiguredWorldCarver v) -> ConfiguredWorldCarver.DIRECT_CODEC)

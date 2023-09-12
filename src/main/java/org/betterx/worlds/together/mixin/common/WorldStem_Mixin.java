@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public class WorldStem_Mixin {
     @ModifyVariable(method = "<init>", argsOnly = true, at = @At(value = "INVOKE", target = "Ljava/lang/Record;<init>()V", shift = At.Shift.AFTER))
     LayeredRegistryAccess<RegistryLayer> wt_bake(LayeredRegistryAccess<RegistryLayer> registries) {
-        LayeredRegistryAccess<RegistryLayer> rNew = WorldBootstrap.enforceInLayeredRegistry(registries);
-        return rNew;
+        WorldBootstrap.Helpers.onRegistryReady(registries.compositeAccess());
+        return registries;
     }
 }

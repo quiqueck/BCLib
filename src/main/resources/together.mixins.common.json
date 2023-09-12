@@ -4,10 +4,11 @@
   "package": "org.betterx.worlds.together.mixin.common",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "BiomeSourceMixin", "DiggerItemAccessor", "MainDataMixin", "MainMixin",
-    "MinecraftServerMixin", "MinecraftServerMixinLate", "NoiseBasedChunkGeneratorMixin",
-    "NoiseGeneratorSettingsMixin", "RegistryDataLoaderMixin", "RegistryOpsAccessor", "TagLoaderMixin",
-    "VanillaRegistriesMixin", "WorldLoaderMixin", "WorldPresetAccessor",
+    "DiggerItemAccessor",
+    "MainMixin",
+    "MinecraftServerMixin",
+    "TagLoaderMixin",
+    "WorldLoaderMixin",
     "WorldStem_Mixin"
   ],
   "injectors": {
