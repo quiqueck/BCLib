@@ -8,7 +8,6 @@
     "AnvilMenuMixin",
     "BiomeGenerationSettingsAccessor",
     "BiomeMixin",
-    "BiomeSourceMixin",
     "BoneMealItemMixin",
     "ChunkGeneratorMixin",
     "ComposterBlockAccessor",

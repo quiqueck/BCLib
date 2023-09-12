@@ -1,7 +1,5 @@
 package org.betterx.bclib.api.v2.levelgen.biomes;
 
-import org.betterx.bclib.api.v2.generator.BiomePicker;
-
 public class BCLBiomeSettings {
     public static Builder createBCL() {
         return new Builder();
@@ -118,11 +116,6 @@ public class BCLBiomeSettings {
     boolean vertical;
 
 
-    /**
-     * Getter for biome generation chance, used in {@link BiomePicker} and in custom generators.
-     *
-     * @return biome generation chance as float.
-     */
     public float getGenChance() {
         return this.genChance;
     }
