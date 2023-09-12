@@ -4,7 +4,6 @@ import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeData;
 import org.betterx.bclib.api.v3.datagen.RegistrySupplier;
-import org.betterx.datagen.bclib.preset.WorldPresetDataProvider;
 import org.betterx.datagen.bclib.tests.TestBiomes;
 import org.betterx.datagen.bclib.tests.TestConfiguredFeatures;
 import org.betterx.datagen.bclib.tests.TestPlacedFeatures;
@@ -21,7 +20,6 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
-import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 
@@ -68,7 +66,6 @@ public class BCLRegistrySupplier extends RegistrySupplier {
                 NoiseGeneratorSettings.DIRECT_CODEC,
                 NoiseTypesDataProvider::bootstrap
         );
-        registries.add(Registries.WORLD_PRESET, WorldPreset.DIRECT_CODEC, WorldPresetDataProvider::bootstrap);
 
         return registries;
     }

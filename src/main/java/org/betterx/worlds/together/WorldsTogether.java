@@ -4,7 +4,6 @@ import org.betterx.worlds.together.surfaceRules.SurfaceRuleRegistry;
 import org.betterx.worlds.together.tag.v3.TagManager;
 import org.betterx.worlds.together.util.Logger;
 import org.betterx.worlds.together.world.WorldConfig;
-import org.betterx.worlds.together.worldPreset.WorldPresets;
 
 import net.minecraft.resources.ResourceLocation;
 
@@ -26,10 +25,8 @@ public class WorldsTogether {
     public static void onInitialize() {
         TagManager.ensureStaticallyLoaded();
         SurfaceRuleRegistry.ensureStaticallyLoaded();
-
-
+        
         WorldConfig.registerModCache(WorldsTogether.MOD_ID);
-        WorldPresets.ensureStaticallyLoaded();
     }
 
     public static ResourceLocation makeID(String s) {

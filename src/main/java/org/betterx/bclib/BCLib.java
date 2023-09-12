@@ -28,7 +28,6 @@ import org.betterx.bclib.recipes.CraftingRecipes;
 import org.betterx.bclib.registry.BaseBlockEntities;
 import org.betterx.bclib.registry.BaseRegistry;
 import org.betterx.bclib.registry.BlockRegistry;
-import org.betterx.bclib.registry.PresetsRegistry;
 import org.betterx.datagen.bclib.tests.TestStructure;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.util.Logger;
@@ -70,7 +69,6 @@ public class BCLib implements ModInitializer {
     public void onInitialize() {
         WorldsTogether.onInitialize();
         BCLibArguments.register();
-        PresetsRegistry.register();
         LevelGenEvents.register();
         BlockPredicates.ensureStaticInitialization();
         BCLBiomeRegistry.register();
