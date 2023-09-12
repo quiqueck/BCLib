@@ -6,9 +6,7 @@ import de.ambertation.wunderlib.ui.layout.values.Size;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.networking.VersionChecker;
-import org.betterx.bclib.registry.PresetsRegistry;
 import org.betterx.worlds.together.WorldsTogether;
-import org.betterx.worlds.together.worldPreset.WorldPresets;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.CommonComponents;
@@ -142,10 +140,6 @@ public class WelcomeScreen extends BCLibLayoutScreen {
             Configs.CLIENT_CONFIG.saveChanges();
 
             WorldsTogether.SURPRESS_EXPERIMENTAL_DIALOG = Configs.CLIENT_CONFIG.suppressExperimentalDialog();
-            if (Configs.CLIENT_CONFIG.forceBetterXPreset())
-                WorldPresets.setDEFAULT(PresetsRegistry.BCL_WORLD);
-            else
-                WorldPresets.setDEFAULT(net.minecraft.world.level.levelgen.presets.WorldPresets.NORMAL);
             VersionChecker.startCheck(true);
             onClose();
         }).alignRight();
