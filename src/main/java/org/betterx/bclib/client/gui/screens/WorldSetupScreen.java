@@ -303,7 +303,7 @@ public class WorldSetupScreen extends LayoutScreen {
         if (configuredPreset != null && configuredPreset.value() instanceof TogetherWorldPreset worldPreset) {
             ResourceKey<WorldPreset> key = configuredPreset.unwrapKey().orElse(null);
             if (key == null) key = worldPreset.parentKey;
-            
+
             acc.setWorldType(new WorldCreationUiState.WorldTypeEntry(Holder.direct(
                     worldPreset.withDimensions(
                             createWorldScreen
@@ -412,7 +412,7 @@ public class WorldSetupScreen extends LayoutScreen {
     }
 
     @Override
-    protected void renderBackground(GuiGraphics guiGraphics, int i, int j, float f) {
+    protected void renderBackgroundLayer(GuiGraphics guiGraphics, int i, int j, float f) {
         guiGraphics.fill(0, 0, width, height, 0xBD343444);
     }
 

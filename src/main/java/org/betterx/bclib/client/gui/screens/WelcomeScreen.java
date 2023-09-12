@@ -172,7 +172,7 @@ public class WelcomeScreen extends BCLibLayoutScreen {
     }
 
     @Override
-    protected void renderBackground(GuiGraphics guiGraphics, int i, int j, float f) {
+    protected void renderBackgroundLayer(GuiGraphics guiGraphics, int i, int j, float f) {
         guiGraphics.fill(0, 0, width, height, 0xBD343444);
 //        Rectangle BANNER_UV = new Rectangle(0, 0, 427, 100);
 //        Size BANNER_RESOURCE_SIZE = BANNER_UV.size();

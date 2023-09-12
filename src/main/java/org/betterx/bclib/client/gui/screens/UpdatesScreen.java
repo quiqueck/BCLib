@@ -33,7 +33,7 @@ public class UpdatesScreen extends BCLibLayoutScreen {
     public UpdatesScreen(Screen parent) {
         super(parent, Component.translatable("bclib.updates.title"), 10, 10, 10);
     }
-    
+
     public static void showUpdateUI() {
         if (!RenderSystem.isOnRenderThread()) {
             RenderSystem.recordRenderCall(() -> Minecraft.getInstance()
@@ -174,7 +174,7 @@ public class UpdatesScreen extends BCLibLayoutScreen {
     }
 
     @Override
-    protected void renderBackground(GuiGraphics guiGraphics, int i, int j, float f) {
+    protected void renderBackgroundLayer(GuiGraphics guiGraphics, int i, int j, float f) {
         guiGraphics.fill(0, 0, width, height, 0xBD343444);
     }
 }
