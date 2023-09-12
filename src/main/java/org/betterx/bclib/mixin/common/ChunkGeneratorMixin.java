@@ -1,13 +1,9 @@
 package org.betterx.bclib.mixin.common;
 
-import org.betterx.bclib.interfaces.ChunkGeneratorAccessor;
-
-import net.minecraft.core.Registry;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.levelgen.structure.StructureSet;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ChunkGenerator.class)
-public class ChunkGeneratorMixin implements ChunkGeneratorAccessor {
+public class ChunkGeneratorMixin {
     private int bclib_featureIteratorSeed;
 
 
@@ -33,9 +29,5 @@ public class ChunkGeneratorMixin implements ChunkGeneratorAccessor {
             CallbackInfo ci
     ) {
         bclib_featureIteratorSeed = 0;
-    }
-
-    public Registry<StructureSet> bclib_getStructureSetsRegistry() {
-        return null;
     }
 }
