@@ -10,7 +10,6 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.dimension.LevelStem;
-import net.minecraft.world.level.levelgen.WorldDimensions;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.level.storage.LevelStorageSource;
@@ -114,14 +113,23 @@ public class WorldBootstrap {
             Helpers.onRegistryReady(access);
         }
 
-        static Holder<WorldPreset> setupNewWorldCommon(
-                LevelStorageSource.LevelStorageAccess levelStorageAccess,
-                Holder<WorldPreset> currentPreset
+        public static void setupNewWorld(
+                Optional<LevelStorageSource.LevelStorageAccess> levelStorageAccess
+        ) {
+
+            if (levelStorageAccess.isPresent()) {
+                setupNewWorldCommon(levelStorageAccess.get());
+            } else {
+                WorldsTogether.LOGGER.error("Unable to access Level Folder.");
+            }
+
+        }
+
+        public static void setupNewWorldCommon(
+                LevelStorageSource.LevelStorageAccess levelStorageAccess
         ) {
             setupWorld(levelStorageAccess, true, false);
             finishedWorldLoad();
-
-            return currentPreset;
         }
 
         /**
@@ -160,23 +168,6 @@ public class WorldBootstrap {
             return result;
         }
 
-    }
-
-    public static class InFreshLevel {
-        public static void setupNewWorld(
-                String levelID,
-                WorldDimensions worldDims,
-                LevelStorageSource levelSource,
-                Holder<WorldPreset> worldPreset
-        ) {
-            try {
-                var levelStorageAccess = levelSource.createAccess(levelID);
-                InGUI.setupNewWorldCommon(levelStorageAccess, worldPreset);
-                levelStorageAccess.close();
-            } catch (Exception e) {
-                WorldsTogether.LOGGER.error("Failed to initialize data in world", e);
-            }
-        }
     }
 
     private static void setupWorld(
