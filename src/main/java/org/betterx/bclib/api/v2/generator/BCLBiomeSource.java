@@ -49,13 +49,13 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
     }
 
     @Override
-    protected Stream<Holder<Biome>> collectPossibleBiomes() {
+    protected @NotNull Stream<Holder<Biome>> collectPossibleBiomes() {
         reloadBiomes();
         return dynamicPossibleBiomes.stream();
     }
 
     @Override
-    public Set<Holder<Biome>> possibleBiomes() {
+    public @NotNull Set<Holder<Biome>> possibleBiomes() {
         return dynamicPossibleBiomes;
     }
 
