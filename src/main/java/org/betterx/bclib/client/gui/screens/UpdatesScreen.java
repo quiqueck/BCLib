@@ -174,7 +174,7 @@ public class UpdatesScreen extends BCLibLayoutScreen {
     }
 
     @Override
-    protected void renderBackground(GuiGraphics guiGraphics, int i, int j, float f) {
+    public void renderBackground(GuiGraphics guiGraphics, int i, int j, float f) {
         guiGraphics.fill(0, 0, width, height, 0xBD343444);
     }
 }
