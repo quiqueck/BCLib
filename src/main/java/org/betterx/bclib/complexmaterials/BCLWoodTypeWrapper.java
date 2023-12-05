@@ -5,8 +5,8 @@ import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.MapColor;
 
-import net.fabricmc.fabric.api.object.builder.v1.block.type.BlockSetTypeRegistry;
-import net.fabricmc.fabric.api.object.builder.v1.block.type.WoodTypeRegistry;
+import net.fabricmc.fabric.api.object.builder.v1.block.type.BlockSetTypeBuilder;
+import net.fabricmc.fabric.api.object.builder.v1.block.type.WoodTypeBuilder;
 
 import java.util.Objects;
 
@@ -99,9 +99,9 @@ public final class BCLWoodTypeWrapper {
         }
 
         public BCLWoodTypeWrapper build() {
-            if (setType == null) setType = BlockSetTypeRegistry.registerWood(id);
+            if (setType == null) setType = new BlockSetTypeBuilder().register(id);
 
-            final WoodType type = WoodTypeRegistry.register(id, setType);
+            final WoodType type = new WoodTypeBuilder().register(id,setType);
             return new BCLWoodTypeWrapper(id, type, color, flammable);
         }
     }
