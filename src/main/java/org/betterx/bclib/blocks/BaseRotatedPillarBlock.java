@@ -29,7 +29,7 @@ public abstract class BaseRotatedPillarBlock extends RotatedPillarBlock implemen
     }
 
     protected BaseRotatedPillarBlock(Block block) {
-        this(Properties.copy(block));
+        this(Properties.ofFullCopy(block));
     }
 
 
@@ -71,7 +71,7 @@ public abstract class BaseRotatedPillarBlock extends RotatedPillarBlock implemen
         }
 
         public Wood(Block block, boolean flammable) {
-            this(Properties.copy(block), flammable);
+            this(Properties.ofFullCopy(block), flammable);
         }
     }
 

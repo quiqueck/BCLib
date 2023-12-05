@@ -35,10 +35,9 @@ import org.jetbrains.annotations.Nullable;
 public abstract class BasePressurePlateBlock extends PressurePlateBlock implements BlockModelProvider, TagProvider, DropSelfLootProvider<BasePressurePlateBlock> {
     private final Block parent;
 
-    protected BasePressurePlateBlock(Sensitivity rule, Block source, BlockSetType type) {
+    protected BasePressurePlateBlock(Block source, BlockSetType type) {
         super(
-                rule, Properties.copy(source).noCollission().noOcclusion().strength(0.5F),
-                type
+                type, Properties.ofFullCopy(source).noCollission().noOcclusion().strength(0.5F)
         );
         this.parent = source;
     }
@@ -83,7 +82,7 @@ public abstract class BasePressurePlateBlock extends PressurePlateBlock implemen
 
     public static class Wood extends BasePressurePlateBlock implements BehaviourWood {
         public Wood(Block source, BlockSetType type) {
-            super(Sensitivity.EVERYTHING, source, type);
+            super(/*Sensitivity.EVERYTHING,*/ source, type);
         }
 
         @Override
@@ -96,13 +95,13 @@ public abstract class BasePressurePlateBlock extends PressurePlateBlock implemen
 
     public static class Stone extends BasePressurePlateBlock implements BehaviourStone {
         public Stone(Block source, BlockSetType type) {
-            super(Sensitivity.MOBS, source, type);
+            super(/*Sensitivity.MOBS,*/ source, type);
         }
     }
 
     public static class Metal extends BasePressurePlateBlock implements BehaviourMetal {
         public Metal(Block source, BlockSetType type) {
-            super(Sensitivity.MOBS, source, type);
+            super(/*Sensitivity.MOBS,*/ source, type);
         }
     }
 

@@ -19,7 +19,7 @@ public abstract class BaseWallHangingSignBlock extends WallHangingSignBlock impl
             Properties properties,
             WoodType woodType
     ) {
-        super(properties, woodType);
+        super(woodType, properties);
     }
 
     @Override

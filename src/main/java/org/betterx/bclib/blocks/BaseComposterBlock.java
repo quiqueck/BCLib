@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseComposterBlock extends ComposterBlock implements BlockModelProvider, TagProvider, DropSelfLootProvider<BaseComposterBlock> {
     protected BaseComposterBlock(Block source) {
-        super(Properties.copy(source));
+        super(Properties.ofFullCopy(source));
     }
 
 

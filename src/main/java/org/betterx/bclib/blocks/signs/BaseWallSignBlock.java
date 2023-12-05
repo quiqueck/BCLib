@@ -14,7 +14,7 @@ import java.util.List;
 
 public abstract class BaseWallSignBlock extends WallSignBlock implements TagProvider {
     protected BaseWallSignBlock(Properties properties, WoodType woodType) {
-        super(properties, woodType);
+        super(woodType, properties);
     }
 
     @Override

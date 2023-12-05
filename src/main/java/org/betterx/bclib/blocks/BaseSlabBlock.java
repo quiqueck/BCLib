@@ -41,7 +41,7 @@ public abstract class BaseSlabBlock extends SlabBlock implements BlockModelProvi
     public final boolean fireproof;
 
     protected BaseSlabBlock(Block source, boolean fireproof) {
-        super(Properties.copy(source));
+        super(Properties.ofFullCopy(source));
         this.parent = source;
         this.fireproof = fireproof;
     }

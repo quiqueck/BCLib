@@ -20,8 +20,7 @@ public interface BonemealNyliumLike extends BonemealableBlock {
     default boolean isValidBonemealTarget(
             LevelReader blockGetter,
             BlockPos blockPos,
-            BlockState blockState,
-            boolean bl
+            BlockState blockState
     ) {
         return blockGetter.getBlockState(blockPos.above()).isAir();
     }

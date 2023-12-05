@@ -49,7 +49,7 @@ public abstract class BaseAnvilBlock extends AnvilBlock implements AddMineablePi
     public IntegerProperty durability;
 
     public BaseAnvilBlock(MapColor color) {
-        this(Properties.copy(Blocks.ANVIL).mapColor(color));
+        this(Properties.ofFullCopy(Blocks.ANVIL).mapColor(color));
     }
 
     public BaseAnvilBlock(BlockBehaviour.Properties properties) {

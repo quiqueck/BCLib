@@ -44,7 +44,7 @@ public abstract class BaseStairsBlock extends StairBlock implements BlockModelPr
     public final boolean fireproof;
 
     protected BaseStairsBlock(Block source, boolean fireproof) {
-        super(source.defaultBlockState(), Properties.copy(source));
+        super(source.defaultBlockState(), Properties.ofFullCopy(source));
         this.parent = source;
         this.fireproof = fireproof;
     }

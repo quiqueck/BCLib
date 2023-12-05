@@ -39,7 +39,7 @@ public abstract class BasePathBlock extends BaseBlockNotFull {
     private Block baseBlock;
 
     public BasePathBlock(Block source) {
-        super(Properties.copy(source).isValidSpawn((state, world, pos, type) -> false));
+        super(Properties.ofFullCopy(source).isValidSpawn((state, world, pos, type) -> false));
         this.baseBlock = Blocks.DIRT;
         if (source instanceof BaseTerrainBlock) {
             BaseTerrainBlock terrain = (BaseTerrainBlock) source;

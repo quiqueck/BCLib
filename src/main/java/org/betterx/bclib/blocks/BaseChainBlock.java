@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseChainBlock extends ChainBlock implements BlockModelProvider, RenderLayerProvider, DropSelfLootProvider<BaseChainBlock> {
     public BaseChainBlock(MapColor color) {
-        this(Properties.copy(Blocks.CHAIN).mapColor(color));
+        this(Properties.ofFullCopy(Blocks.CHAIN).mapColor(color));
     }
 
     public BaseChainBlock(BlockBehaviour.Properties properties) {

@@ -37,19 +37,18 @@ import org.jetbrains.annotations.Nullable;
 public abstract class BaseButtonBlock extends ButtonBlock implements BlockModelProvider, TagProvider, DropSelfLootProvider<BaseButtonBlock> {
     private final Block parent;
 
-    protected BaseButtonBlock(Block parent, Properties properties, boolean sensitive, BlockSetType type) {
-        this(parent, properties, 30, sensitive, type);
+    protected BaseButtonBlock(Block parent, Properties properties, BlockSetType type) {
+        this(parent, properties, 30, type);
     }
 
     protected BaseButtonBlock(
             Block parent,
             Properties properties,
             int ticksToStayPressed,
-            boolean sensitive,
             BlockSetType type
     ) {
         super(
-                properties.noCollission(), type, ticksToStayPressed, sensitive
+                type, ticksToStayPressed, properties.noCollission()
         );
         this.parent = parent;
     }
@@ -130,13 +129,13 @@ public abstract class BaseButtonBlock extends ButtonBlock implements BlockModelP
 
     public static class Metal extends BaseButtonBlock implements BehaviourMetal {
         public Metal(Block source, BlockSetType type) {
-            super(source, Properties.copy(source).noOcclusion(), false, type);
+            super(source, Properties.ofFullCopy(source).noOcclusion(), type);
         }
     }
 
     public static class Stone extends BaseButtonBlock implements BehaviourStone {
         public Stone(Block source, BlockSetType type) {
-            super(source, Properties.copy(source).noOcclusion(), false, type);
+            super(source, Properties.ofFullCopy(source).noOcclusion(), type);
         }
 
 
@@ -150,7 +149,7 @@ public abstract class BaseButtonBlock extends ButtonBlock implements BlockModelP
 
     public static class Wood extends BaseButtonBlock implements BehaviourWood {
         public Wood(Block source, BlockSetType type) {
-            super(source, Properties.copy(source).strength(0.5F, 0.5F).noOcclusion(), true, type);
+            super(source, Properties.ofFullCopy(source).strength(0.5F, 0.5F).noOcclusion(), type);
         }
 
         @Override

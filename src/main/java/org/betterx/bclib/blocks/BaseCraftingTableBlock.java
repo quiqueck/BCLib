@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseCraftingTableBlock extends CraftingTableBlock implements BlockModelProvider, TagProvider, DropSelfLootProvider<BaseCraftingTableBlock> {
     protected BaseCraftingTableBlock(Block source) {
-        this(Properties.copy(source));
+        this(Properties.ofFullCopy(source));
     }
 
     protected BaseCraftingTableBlock(BlockBehaviour.Properties properties) {

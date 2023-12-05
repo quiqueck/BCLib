@@ -32,7 +32,7 @@ public abstract class BaseGateBlock extends FenceGateBlock implements BlockModel
     private final Block parent;
 
     protected BaseGateBlock(Block source, WoodType type) {
-        super(Properties.copy(source).noOcclusion(), type);
+        super(type, Properties.ofFullCopy(source).noOcclusion());
         this.parent = source;
     }
 

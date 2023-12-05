@@ -130,13 +130,9 @@ public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements R
         return BCLRenderLayer.CUTOUT;
     }
 
+
     @Override
-    public boolean isValidBonemealTarget(
-            LevelReader levelReader,
-            BlockPos blockPos,
-            BlockState blockState,
-            boolean isClient
-    ) {
+    public boolean isValidBonemealTarget(LevelReader levelReader, BlockPos blockPos, BlockState blockState) {
         return true;
     }
 

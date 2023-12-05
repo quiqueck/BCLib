@@ -43,7 +43,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseFurnaceBlock extends FurnaceBlock implements BlockModelProvider, RenderLayerProvider {
     public BaseFurnaceBlock(Block source) {
-        this(Properties.copy(source).lightLevel(state -> state.getValue(LIT) ? 13 : 0));
+        this(Properties.ofFullCopy(source).lightLevel(state -> state.getValue(LIT) ? 13 : 0));
     }
 
     public BaseFurnaceBlock(BlockBehaviour.Properties properties) {

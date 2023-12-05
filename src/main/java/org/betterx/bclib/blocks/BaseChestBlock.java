@@ -33,7 +33,7 @@ public abstract class BaseChestBlock extends ChestBlock implements BlockModelPro
     private final Block parent;
 
     protected BaseChestBlock(Block source) {
-        super(Properties.copy(source).noOcclusion(), () -> BaseBlockEntities.CHEST);
+        super(Properties.ofFullCopy(source).noOcclusion(), () -> BaseBlockEntities.CHEST);
         this.parent = source;
     }
 

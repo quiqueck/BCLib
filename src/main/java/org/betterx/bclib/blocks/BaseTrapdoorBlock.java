@@ -41,7 +41,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseTrapdoorBlock extends TrapDoorBlock implements RenderLayerProvider, BlockModelProvider, TagProvider, DropSelfLootProvider<BaseTrapdoorBlock> {
     protected BaseTrapdoorBlock(BlockBehaviour.Properties properties, BlockSetType type) {
-        super(properties, type);
+        super(type, properties);
     }
 
 

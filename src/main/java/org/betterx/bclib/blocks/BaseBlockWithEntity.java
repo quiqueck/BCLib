@@ -2,9 +2,11 @@ package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.PiglinWallSkullBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootParams;
@@ -13,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class BaseBlockWithEntity extends BaseEntityBlock {
+
     protected BaseBlockWithEntity(Properties settings) {
         super(settings);
     }
@@ -29,8 +32,14 @@ public abstract class BaseBlockWithEntity extends BaseEntityBlock {
     }
 
     public static class Stone extends BaseBlockWithEntity implements BehaviourStone {
+        public static final MapCodec<Stone> CODEC = simpleCodec(Stone::new);
         public Stone(Properties settings) {
             super(settings);
+        }
+
+        @Override
+        protected MapCodec<? extends BaseEntityBlock> codec() {
+            return Stone.CODEC;
         }
     }
 }

@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseBookshelfBlock extends BaseBlock implements TagProvider {
     protected BaseBookshelfBlock(Block source) {
-        this(Properties.copy(source));
+        this(Properties.ofFullCopy(source));
     }
 
     protected BaseBookshelfBlock(BlockBehaviour.Properties properties) {

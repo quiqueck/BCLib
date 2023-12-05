@@ -3,6 +3,7 @@ package org.betterx.bclib.blocks;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWaterPlant;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
@@ -18,7 +19,7 @@ public abstract class BaseUnderwaterWallPlantBlock extends BaseWallPlantBlock im
     }
 
     @Override
-    public boolean canPlaceLiquid(BlockGetter world, BlockPos pos, BlockState state, Fluid fluid) {
+    public boolean canPlaceLiquid(Player p, BlockGetter world, BlockPos pos, BlockState state, Fluid fluid) {
         return false;
     }
 

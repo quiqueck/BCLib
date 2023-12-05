@@ -54,7 +54,7 @@ public class BaseTerrainBlock extends BaseBlock {
 
     public BaseTerrainBlock(Block baseBlock, MapColor color) {
         super(Properties
-                .copy(baseBlock)
+                .ofFullCopy(baseBlock)
                 .mapColor(color)
                 .sound(BlockSounds.TERRAIN_SOUND)
                 .randomTicks()

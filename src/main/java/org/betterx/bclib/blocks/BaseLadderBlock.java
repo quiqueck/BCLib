@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseLadderBlock extends LadderBlock implements RenderLayerProvider, BlockModelProvider, BehaviourClimable, DropSelfLootProvider<BaseLadderBlock> {
     protected BaseLadderBlock(Block block) {
-        this(Properties.copy(block).noOcclusion());
+        this(Properties.ofFullCopy(block).noOcclusion());
     }
 
     public BaseLadderBlock(BlockBehaviour.Properties properties) {

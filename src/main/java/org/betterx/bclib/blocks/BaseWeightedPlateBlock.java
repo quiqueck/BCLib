@@ -28,12 +28,12 @@ public class BaseWeightedPlateBlock extends WeightedPressurePlateBlock implement
     public BaseWeightedPlateBlock(Block source, BlockSetType type) {
         super(
                 15,
-                Properties.copy(source)
+                type,
+                Properties.ofFullCopy(source)
                           .noCollission()
                           .noOcclusion()
                           .requiresCorrectToolForDrops()
-                          .strength(0.5F),
-                type
+                          .strength(0.5F)
         );
         this.parent = source;
     }

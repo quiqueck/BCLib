@@ -39,7 +39,7 @@ public abstract class BaseSignBlock extends StandingSignBlock implements BlockMo
     }
 
     protected BaseSignBlock(WoodType type, MapColor color, boolean flammable, WallSignProvider provider) {
-        super(BehaviourBuilders.createSign(color, flammable), type);
+        super(type, BehaviourBuilders.createSign(color, flammable));
         this.wallSign = () -> provider.create(BehaviourBuilders.createWallSign(color, this, flammable), type);
     }
 

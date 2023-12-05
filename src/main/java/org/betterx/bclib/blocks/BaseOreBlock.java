@@ -67,7 +67,7 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
             int experience,
             int miningLevel
     ) {
-        super(properties, UniformInt.of(experience > 0 ? 1 : 0, experience));
+        super(UniformInt.of(experience > 0 ? 1 : 0, experience), properties);
         this.dropItem = drop;
         this.minCount = minCount;
         this.maxCount = maxCount;

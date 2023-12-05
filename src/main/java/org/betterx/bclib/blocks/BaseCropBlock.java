@@ -88,7 +88,7 @@ public class BaseCropBlock extends BasePlantBlock implements SurvivesOnBlocks {
     }
 
     @Override
-    public boolean isValidBonemealTarget(LevelReader world, BlockPos pos, BlockState state, boolean isClient) {
+    public boolean isValidBonemealTarget(LevelReader world, BlockPos pos, BlockState state) {
         return state.getValue(AGE) < 3;
     }
 

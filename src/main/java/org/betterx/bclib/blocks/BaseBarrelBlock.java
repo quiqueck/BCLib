@@ -48,7 +48,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseBarrelBlock extends BarrelBlock implements BlockModelProvider, TagProvider, DropSelfLootProvider<BaseBarrelBlock> {
     BaseBarrelBlock(Block source) {
-        this(Properties.copy(source).noOcclusion());
+        this(Properties.ofFullCopy(source).noOcclusion());
     }
 
     BaseBarrelBlock(BlockBehaviour.Properties properties) {

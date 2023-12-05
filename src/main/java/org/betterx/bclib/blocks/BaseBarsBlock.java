@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseBarsBlock extends IronBarsBlock implements BlockModelProvider, RenderLayerProvider, BehaviourMetal {
     public BaseBarsBlock(Block source) {
-        this(Properties.copy(source).strength(5.0F, 6.0F).noOcclusion());
+        this(Properties.ofFullCopy(source).strength(5.0F, 6.0F).noOcclusion());
     }
 
     public BaseBarsBlock(BlockBehaviour.Properties properties) {

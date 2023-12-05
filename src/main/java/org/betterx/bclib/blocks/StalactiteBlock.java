@@ -16,6 +16,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -53,7 +54,7 @@ public abstract class StalactiteBlock extends BaseBlockNotFull implements Simple
     private static final VoxelShape[] SHAPES;
 
     public StalactiteBlock(Block source) {
-        this(Properties.copy(source).noOcclusion());
+        this(Properties.ofFullCopy(source).noOcclusion());
     }
 
     public StalactiteBlock(BlockBehaviour.Properties properties) {
@@ -239,7 +240,7 @@ public abstract class StalactiteBlock extends BaseBlockNotFull implements Simple
     }
 
     @Override
-    public boolean canPlaceLiquid(BlockGetter world, BlockPos pos, BlockState state, Fluid fluid) {
+    public boolean canPlaceLiquid(Player player, BlockGetter world, BlockPos pos, BlockState state, Fluid fluid) {
         return false;
     }
 

@@ -69,8 +69,8 @@ public abstract class BaseStripableBarkBlock extends BaseBarkBlock {
             super(
                     stripedBlock,
                     (flammable
-                            ? Properties.copy(stripedBlock).ignitedByLava()
-                            : Properties.copy(stripedBlock)).mapColor(color)
+                            ? Properties.ofFullCopy(stripedBlock).ignitedByLava()
+                            : Properties.ofFullCopy(stripedBlock)).mapColor(color)
             );
             this.flammable = flammable;
         }

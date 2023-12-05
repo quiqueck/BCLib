@@ -43,11 +43,11 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseDoorBlock extends DoorBlock implements RenderLayerProvider, BlockModelProvider, TagProvider {
     protected BaseDoorBlock(Block source, BlockSetType type) {
-        this(Properties.copy(source).strength(3F, 3F).noOcclusion(), type);
+        this(Properties.ofFullCopy(source).strength(3F, 3F).noOcclusion(), type);
     }
 
     protected BaseDoorBlock(BlockBehaviour.Properties properties, BlockSetType type) {
-        super(properties, type);
+        super(type, properties);
     }
 
     @Override

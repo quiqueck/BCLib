@@ -38,7 +38,7 @@ public abstract class BaseHangingSignBlock extends CeilingHangingSignBlock imple
     }
 
     protected BaseHangingSignBlock(WoodType type, MapColor color, boolean flammable, WallSignProvider provider) {
-        super(BehaviourBuilders.createSign(color, flammable), type);
+        super(type, BehaviourBuilders.createSign(color, flammable));
         this.wallSign = () -> provider.create(BehaviourBuilders.createWallSign(color, this, flammable), type);
     }
 

@@ -21,11 +21,10 @@ public class FeatureSpreader implements BonemealNyliumLike {
     public boolean isValidBonemealTarget(
             LevelReader blockGetter,
             BlockPos blockPos,
-            BlockState blockState,
-            boolean bl
+            BlockState blockState
     ) {
         return spreadableFeature != null
-                && BonemealNyliumLike.super.isValidBonemealTarget(blockGetter, blockPos, blockState, bl);
+                && BonemealNyliumLike.super.isValidBonemealTarget(blockGetter, blockPos, blockState);
     }
 
     @Override

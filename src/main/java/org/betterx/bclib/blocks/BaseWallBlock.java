@@ -34,7 +34,7 @@ public abstract class BaseWallBlock extends WallBlock implements BlockModelProvi
     private final Block parent;
 
     protected BaseWallBlock(Block source) {
-        super(Properties.copy(source).noOcclusion());
+        super(Properties.ofFullCopy(source).noOcclusion());
         this.parent = source;
     }
 

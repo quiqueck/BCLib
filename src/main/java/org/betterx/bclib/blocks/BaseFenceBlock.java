@@ -34,7 +34,7 @@ public abstract class BaseFenceBlock extends FenceBlock implements BlockModelPro
     private final Block parent;
 
     protected BaseFenceBlock(Block source) {
-        super(Properties.copy(source).noOcclusion());
+        super(Properties.ofFullCopy(source).noOcclusion());
         this.parent = source;
     }
 
