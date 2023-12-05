@@ -6,6 +6,7 @@ import org.betterx.worlds.together.world.event.WorldBootstrap;
 
 import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
 
 import net.fabricmc.loader.api.FabricLoader;
@@ -50,7 +51,7 @@ public class WorldConfig {
                 CompoundTag root = new CompoundTag();
                 if (file.exists()) {
                     try {
-                        root = NbtIo.readCompressed(file);
+                        root = NbtIo.readCompressed(file.toPath(), NbtAccounter.unlimitedHeap());
                     } catch (IOException e) {
                         WorldsTogether.LOGGER.error("World data loading failed", e);
                     }
@@ -140,11 +141,11 @@ public class WorldConfig {
 
 
             final File tempFile = new File(dataDir, modID + "_temp.nbt");
-            NbtIo.writeCompressed(tag, tempFile);
+            NbtIo.writeCompressed(tag, tempFile.toPath());
 
             final File oldFile = new File(dataDir, modID + "_old.nbt");
             final File dataFile = new File(dataDir, modID + ".nbt");
-            Util.safeReplaceFile(dataFile, tempFile, oldFile);
+            Util.safeReplaceFile(dataFile.toPath(), tempFile.toPath(), oldFile.toPath());
         } catch (IOException e) {
             WorldsTogether.LOGGER.error("World data saving failed", e);
         }

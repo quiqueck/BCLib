@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
@@ -65,7 +66,7 @@ public class StructureHelper {
     }
 
     private static StructureTemplate readStructureFromStream(InputStream stream) throws IOException {
-        CompoundTag nbttagcompound = NbtIo.readCompressed(stream);
+        CompoundTag nbttagcompound = NbtIo.readCompressed(stream, NbtAccounter.unlimitedHeap());
 
         StructureTemplate template = new StructureTemplate();
         template.load(BuiltInRegistries.BLOCK.asLookup(), nbttagcompound);
