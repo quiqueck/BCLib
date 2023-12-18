@@ -1,13 +1,12 @@
 package org.betterx.bclib.recipes;
 
-import org.betterx.bclib.util.ItemUtil;
-
 import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.CriterionTriggerInstance;
-import net.minecraft.advancements.RequirementsStrategy;
+import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.advancements.AdvancementRequirements;
+import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeBuilder;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
@@ -17,9 +16,6 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.ItemLike;
 
-import com.google.gson.JsonObject;
-
-import java.util.function.Consumer;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractSingleInputRecipeBuilder<T extends AbstractSingleInputRecipeBuilder, R extends Recipe<? extends Container>> extends AbstractSimpleRecipeBuilder<T> {
@@ -46,73 +42,49 @@ public abstract class AbstractSingleInputRecipeBuilder<T extends AbstractSingleI
     }
 
     @Override
-    protected T unlocks(String name, CriterionTriggerInstance trigger) {
+    protected T unlocks(String name, Criterion<?> trigger) {
         this.advancement.addCriterion(name, trigger);
         return (T) this;
     }
 
 
     @Override
-    protected void buildRecipe(Consumer<FinishedRecipe> cc) {
+    protected void buildRecipe(RecipeOutput cc) {
         setupAdvancementForResult();
-        cc.accept(new AbstractSingleInputRecipeBuilder<T, R>.Result());
+        final AdvancementHolder advancementHolder = advancement.build(getId());
+        final R recipe = createRecipe(getId());
+        cc.accept(getId(), recipe, advancementHolder);
     }
+
+    protected abstract R createRecipe(ResourceLocation id);
 
     protected abstract RecipeSerializer<R> getSerializer();
 
-    protected void serializeRecipeData(JsonObject root) {
-        root.add("input", ItemUtil.toJsonIngredientWithNBT(primaryInput));
-
-        if (group != null && !group.isEmpty()) {
-            root.addProperty("group", group);
-        }
-
-        root.add("result", ItemUtil.toJsonRecipeWithNBT(output));
-    }
-
     protected void setupAdvancementForResult() {
-        advancement.parent(RecipeBuilder.ROOT_RECIPE_ADVANCEMENT)
-                   .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id))
-                   .rewards(net.minecraft.advancements.AdvancementRewards.Builder.recipe(id))
-                   .requirements(RequirementsStrategy.OR);
+        advancement
+                .parent(RecipeBuilder.ROOT_RECIPE_ADVANCEMENT)//automatically at root level
+                .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id))
+                .rewards(net.minecraft.advancements.AdvancementRewards.Builder.recipe(id))
+                .requirements(AdvancementRequirements.Strategy.OR);
     }
 
     protected ResourceLocation createAdvancementId() {
         return id.withPrefix("recipes/" + category.getFolderName() + "/");
     }
 
-    public class Result implements FinishedRecipe {
-        private final ResourceLocation advancementId;
+    public class Result implements RecipeOutput {
+        @Override
+        public void accept(
+                ResourceLocation resourceLocation,
+                Recipe<?> recipe,
+                @Nullable AdvancementHolder advancementHolder
+        ) {
 
-        protected Result() {
-            this.advancementId = createAdvancementId();
         }
 
         @Override
-        public ResourceLocation getId() {
-            return AbstractSingleInputRecipeBuilder.this.getId();
-        }
-
-        @Override
-        public RecipeSerializer<R> getType() {
-            return getSerializer();
-        }
-
-        @Nullable
-        @Override
-        public JsonObject serializeAdvancement() {
-            return advancement.serializeToJson();
-        }
-
-        @Nullable
-        @Override
-        public ResourceLocation getAdvancementId() {
-            return advancementId;
-        }
-
-        @Override
-        public void serializeRecipeData(JsonObject root) {
-            AbstractSingleInputRecipeBuilder.this.serializeRecipeData(root);
+        public Advancement.Builder advancement() {
+            return null;
         }
     }
 }

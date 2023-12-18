@@ -2,7 +2,7 @@ package org.betterx.bclib.api.v3.datagen;
 
 import org.betterx.bclib.BCLib;
 
-import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeOutput;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
@@ -25,7 +25,7 @@ public class RecipeDataProvider extends FabricRecipeProvider {
     }
 
     @Override
-    public void buildRecipes(Consumer<FinishedRecipe> exporter) {
+    public void buildRecipes(RecipeOutput exporter) {
         if (RECIPES == null) return;
 
         for (var r : RECIPES) {

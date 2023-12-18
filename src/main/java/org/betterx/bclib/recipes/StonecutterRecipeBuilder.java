@@ -1,13 +1,14 @@
 package org.betterx.bclib.recipes;
 
-import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.advancements.Criterion;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.SingleItemRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 
-import java.util.function.Consumer;
+import java.util.Map;
 
 public class StonecutterRecipeBuilder extends AbstractUnlockableRecipeBuilder<StonecutterRecipeBuilder> {
 
@@ -53,11 +54,11 @@ public class StonecutterRecipeBuilder extends AbstractUnlockableRecipeBuilder<St
     }
 
     @Override
-    protected void buildRecipe(Consumer<FinishedRecipe> cc) {
+    protected void buildRecipe(RecipeOutput cc) {
         final SingleItemRecipeBuilder builder = SingleItemRecipeBuilder.stonecutting(
                 primaryInput, category, output.getItem(), output.getCount()
         );
-        for (var item : unlocks.entrySet()) {
+        for (Map.Entry<String, Criterion<?>> item : unlocks.entrySet()) {
             builder.unlockedBy(item.getKey(), item.getValue());
         }
         builder.group(group);

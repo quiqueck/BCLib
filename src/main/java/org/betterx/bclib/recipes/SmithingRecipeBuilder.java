@@ -2,7 +2,7 @@ package org.betterx.bclib.recipes;
 
 import org.betterx.bclib.BCLib;
 
-import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.SmithingTransformRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -85,7 +85,7 @@ public class SmithingRecipeBuilder extends AbstractUnlockableRecipeBuilder<Smith
     }
 
     @Override
-    protected void buildRecipe(Consumer<FinishedRecipe> cc) {
+    protected void buildRecipe(RecipeOutput cc) {
         final SmithingTransformRecipeBuilder builder = SmithingTransformRecipeBuilder.smithing(
                 Ingredient.of(template),
                 primaryInput,

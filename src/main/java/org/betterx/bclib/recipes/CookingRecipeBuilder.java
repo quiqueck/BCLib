@@ -2,7 +2,7 @@ package org.betterx.bclib.recipes;
 
 import org.betterx.bclib.BCLib;
 
-import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -139,7 +139,7 @@ public class CookingRecipeBuilder extends AbstractUnlockableRecipeBuilder<Cookin
         build(false, true, true);
     }
 
-    private void buildRecipe(Consumer<FinishedRecipe> cc, SimpleCookingRecipeBuilder builder, String postfix) {
+    private void buildRecipe(RecipeOutput cc, SimpleCookingRecipeBuilder builder, String postfix) {
         ResourceLocation loc = new ResourceLocation(id.getNamespace(), id.getPath() + "_" + postfix);
         for (var item : unlocks.entrySet()) {
             builder.unlockedBy(item.getKey(), item.getValue());
@@ -148,7 +148,7 @@ public class CookingRecipeBuilder extends AbstractUnlockableRecipeBuilder<Cookin
     }
 
     @Override
-    protected void buildRecipe(Consumer<FinishedRecipe> cc) {
+    protected void buildRecipe(RecipeOutput cc) {
         if (smelting) {
             buildRecipe(
                     cc,

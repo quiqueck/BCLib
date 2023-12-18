@@ -1,6 +1,6 @@
 package org.betterx.bclib.recipes;
 
-import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.advancements.Criterion;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -15,7 +15,7 @@ public abstract class AbstractUnlockableRecipeBuilder<T extends AbstractUnlockab
         super(id, output);
     }
 
-    protected final Map<String, CriterionTriggerInstance> unlocks = new HashMap<>();
+    protected final Map<String, Criterion<?>> unlocks = new HashMap<>();
 
     @Override
     public T unlockedBy(ItemLike item) {
@@ -28,8 +28,8 @@ public abstract class AbstractUnlockableRecipeBuilder<T extends AbstractUnlockab
     }
 
     @Override
-    protected T unlocks(String name, CriterionTriggerInstance trigger) {
-        this.unlocks.put(name, trigger);
+    protected T unlocks(String name, Criterion<?> criterion) {
+        this.unlocks.put(name, criterion);
         return (T) this;
     }
 }

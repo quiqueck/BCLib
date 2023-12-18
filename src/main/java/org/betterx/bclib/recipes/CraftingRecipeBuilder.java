@@ -2,8 +2,8 @@ package org.betterx.bclib.recipes;
 
 import org.betterx.bclib.BCLib;
 
-import net.minecraft.advancements.CriterionTriggerInstance;
-import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.advancements.Criterion;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
@@ -16,7 +16,6 @@ import net.minecraft.world.level.ItemLike;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
 public class CraftingRecipeBuilder extends AbstractBaseRecipeBuilder<CraftingRecipeBuilder> {
     private String[] shape;
@@ -35,7 +34,7 @@ public class CraftingRecipeBuilder extends AbstractBaseRecipeBuilder<CraftingRec
         return new CraftingRecipeBuilder(id, output);
     }
 
-    protected final Map<String, CriterionTriggerInstance> unlocks = new HashMap<>();
+    protected final Map<String, Criterion<?>> unlocks = new HashMap<>();
     protected final Map<Character, Ingredient> materials = new HashMap<>();
 
     @Override
@@ -112,10 +111,10 @@ public class CraftingRecipeBuilder extends AbstractBaseRecipeBuilder<CraftingRec
     public CraftingRecipeBuilder unlockedBy(ItemStack... stacks) {
         return super.unlockedBy(stacks);
     }
-
+    
     @Override
-    protected CraftingRecipeBuilder unlocks(String name, CriterionTriggerInstance trigger) {
-        this.unlocks.put(name, trigger);
+    protected CraftingRecipeBuilder unlocks(String name, Criterion<?> criterion) {
+        this.unlocks.put(name, criterion);
         return this;
     }
 
@@ -132,7 +131,7 @@ public class CraftingRecipeBuilder extends AbstractBaseRecipeBuilder<CraftingRec
     }
 
     @Override
-    protected void buildRecipe(Consumer<FinishedRecipe> cc) {
+    protected void buildRecipe(RecipeOutput cc) {
         if (shape != null) buildShaped(cc);
         else buildShapeless(cc);
     }
@@ -145,11 +144,11 @@ public class CraftingRecipeBuilder extends AbstractBaseRecipeBuilder<CraftingRec
         return super.checkRecipe();
     }
 
-    protected void buildShapeless(Consumer<FinishedRecipe> cc) {
+    protected void buildShapeless(RecipeOutput cc) {
         final ShapelessRecipeBuilder builder = ShapelessRecipeBuilder.shapeless(
                 category, output.getItem(), output.getCount()
         );
-        for (Map.Entry<String, CriterionTriggerInstance> item : unlocks.entrySet()) {
+        for (Map.Entry<String, Criterion<?>> item : unlocks.entrySet()) {
             builder.unlockedBy(item.getKey(), item.getValue());
         }
         for (Map.Entry<Character, Ingredient> mat : materials.entrySet()) {
@@ -201,11 +200,11 @@ public class CraftingRecipeBuilder extends AbstractBaseRecipeBuilder<CraftingRec
     }
 
 
-    protected void buildShaped(Consumer<FinishedRecipe> cc) {
+    protected void buildShaped(RecipeOutput cc) {
         final ShapedRecipeBuilder builder = ShapedRecipeBuilder.shaped(
                 category, output.getItem(), output.getCount()
         );
-        for (Map.Entry<String, CriterionTriggerInstance> item : unlocks.entrySet()) {
+        for (Map.Entry<String, Criterion<?>> item : unlocks.entrySet()) {
             builder.unlockedBy(item.getKey(), item.getValue());
         }
         for (Map.Entry<Character, Ingredient> mat : materials.entrySet()) {

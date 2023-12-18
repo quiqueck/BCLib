@@ -5,11 +5,11 @@ import org.betterx.bclib.api.v3.datagen.DatapackRecipeBuilder;
 import org.betterx.bclib.api.v3.datagen.RecipeDataProvider;
 import org.betterx.bclib.util.RecipeHelper;
 
-import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -21,7 +21,6 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 
 import java.util.Arrays;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public abstract class AbstractBaseRecipeBuilder<T extends AbstractBaseRecipeBuilder> implements DatapackRecipeBuilder {
@@ -132,7 +131,7 @@ public abstract class AbstractBaseRecipeBuilder<T extends AbstractBaseRecipeBuil
         return unlockedBy(items);
     }
 
-    protected abstract T unlocks(String name, CriterionTriggerInstance trigger);
+    protected abstract T unlocks(String name, Criterion<?> criterion);
 
 
     public final T build() {
@@ -158,10 +157,10 @@ public abstract class AbstractBaseRecipeBuilder<T extends AbstractBaseRecipeBuil
         return true;
     }
 
-    protected abstract void buildRecipe(Consumer<FinishedRecipe> cc);
+    protected abstract void buildRecipe(RecipeOutput cc);
 
     @Override
-    public final void build(Consumer<FinishedRecipe> cc) {
+    public final void build(RecipeOutput cc) {
         if (!checkRecipe()) return;
         buildRecipe(cc);
     }
