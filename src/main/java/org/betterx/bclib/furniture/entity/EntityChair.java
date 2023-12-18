@@ -9,14 +9,13 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySelector;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+
+import org.joml.Vector3f;
 
 import java.util.List;
 import org.jetbrains.annotations.Nullable;
@@ -115,13 +114,13 @@ public class EntityChair extends Entity {
     }
 
     @Override
-    public double getPassengersRidingOffset() {
-        return 0.0;
+    protected Vector3f getPassengerAttachmentPoint(Entity entity, EntityDimensions entityDimensions, float f) {
+        return new Vector3f(0.0f, 0.0f, 0.0f);
     }
 
     @Override
-    public double getMyRidingOffset() {
-        return 0.0;
+    protected float ridingOffset(Entity entity) {
+        return 0.0f;
     }
 
     @Override
