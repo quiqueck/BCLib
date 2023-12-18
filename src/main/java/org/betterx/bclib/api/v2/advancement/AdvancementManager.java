@@ -382,6 +382,16 @@ public class AdvancementManager {
             return this;
         }
 
+        public Builder requireAll() {
+            builder.requirements(AdvancementRequirements.Strategy.AND);
+            return this;
+        }
+
+        public Builder requireOne() {
+            builder.requirements(AdvancementRequirements.Strategy.OR);
+            return this;
+        }
+
         public Builder requirements(AdvancementRequirements.Strategy requirementsStrategy) {
             builder.requirements(requirementsStrategy);
             return this;
