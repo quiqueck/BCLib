@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.Slice;
 
 @Mixin(value = LivingEntity.class, priority = 199)
 public abstract class LivingEntityMixin {
+
     @Shadow
     public abstract ItemStack getItemBySlot(EquipmentSlot equipmentSlot);
 
