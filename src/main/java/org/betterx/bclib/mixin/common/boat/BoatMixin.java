@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -26,6 +27,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Boat.class)
 public abstract class BoatMixin extends Entity implements CustomBoatTypeOverride {
+    @Unique
     private BoatTypeOverride bcl_type = null;
     @Shadow
     @Final
@@ -35,7 +37,8 @@ public abstract class BoatMixin extends Entity implements CustomBoatTypeOverride
         super(entityType, level);
     }
 
-    public void setCustomType(BoatTypeOverride type) {
+    @Override
+    public void bcl_setCustomType(BoatTypeOverride type) {
         bcl_type = type;
         if (type == null)
             this.entityData.set(DATA_ID_TYPE, Boat.Type.OAK.ordinal());
@@ -43,12 +46,13 @@ public abstract class BoatMixin extends Entity implements CustomBoatTypeOverride
             this.entityData.set(DATA_ID_TYPE, bcl_type.ordinal());
     }
 
+    @Override
     public BoatTypeOverride bcl_getCustomType() {
         bcl_type = BoatTypeOverride.byId(this.entityData.get(DATA_ID_TYPE));
         return bcl_type;
     }
 
-    @Inject(method = "setVariant", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "setVariant(Lnet/minecraft/world/entity/vehicle/Boat$Type;)V", at = @At("HEAD"), cancellable = true)
     void bcl_setType(Boat.Type type, CallbackInfo ci) {
         if (bcl_type != null) {
             this.entityData.set(DATA_ID_TYPE, bcl_type.ordinal());
@@ -56,7 +60,7 @@ public abstract class BoatMixin extends Entity implements CustomBoatTypeOverride
         }
     }
 
-    @Inject(method = "getVariant", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "getVariant()Lnet/minecraft/world/entity/vehicle/Boat$Type;", at = @At("HEAD"), cancellable = true)
     void bcl_getBoatType(CallbackInfoReturnable<Boat.Type> cir) {
         BoatTypeOverride type = BoatTypeOverride.byId(this.entityData.get(DATA_ID_TYPE));
         if (type != null) {
@@ -77,9 +81,9 @@ public abstract class BoatMixin extends Entity implements CustomBoatTypeOverride
     @Inject(method = "readAdditionalSaveData", at = @At("HEAD"))
     void bcl_readAdditionalSaveData(CompoundTag compoundTag, CallbackInfo ci) {
         if (compoundTag.contains("cType")) {
-            this.setCustomType(BoatTypeOverride.byName(compoundTag.getString("cType")));
+            this.bcl_setCustomType(BoatTypeOverride.byName(compoundTag.getString("cType")));
         } else {
-            this.setCustomType(null);
+            this.bcl_setCustomType(null);
         }
     }
 

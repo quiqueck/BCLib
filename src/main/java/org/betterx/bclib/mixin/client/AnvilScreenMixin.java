@@ -34,7 +34,8 @@ public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
     @Shadow
     @Final
     private static ResourceLocation ANVIL_LOCATION;
-    private final List<AbstractWidget> be_buttons = Lists.newArrayList();
+    @Unique
+    private final List<AbstractWidget> bcl_buttons = Lists.newArrayList();
 
     public AnvilScreenMixin(AnvilMenu handler, Inventory playerInventory, Component title, ResourceLocation texture) {
         super(handler, playerInventory, title, texture);
@@ -47,6 +48,7 @@ public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
         }
     }
 
+    @Unique
     private boolean bcl_hasRecipeError() {
         //TODO: 1.19.4 check error conditions
         return false;
@@ -56,15 +58,15 @@ public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
     protected void be_subInit(CallbackInfo info) {
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
-        be_buttons.clear();
-        be_buttons.add(Button.builder(Component.literal("<"), b -> be_previousRecipe())
-                             .bounds(x + 8, y + 45, 15, 20)
-                             .build());
-        be_buttons.add(Button.builder(Component.literal(">"), b -> be_nextRecipe())
-                             .bounds(x + 154, y + 45, 15, 20)
-                             .build());
+        bcl_buttons.clear();
+        bcl_buttons.add(Button.builder(Component.literal("<"), b -> be_previousRecipe())
+                              .bounds(x + 8, y + 45, 15, 20)
+                              .build());
+        bcl_buttons.add(Button.builder(Component.literal(">"), b -> be_nextRecipe())
+                              .bounds(x + 154, y + 45, 15, 20)
+                              .build());
 
-        be_buttons.forEach(button -> addWidget(button));
+        bcl_buttons.forEach(this::addWidget);
     }
 
     @Inject(method = "renderFg", at = @At("TAIL"))
@@ -75,9 +77,7 @@ public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
             float delta,
             CallbackInfo info
     ) {
-        be_buttons.forEach(button -> {
-            button.render(guiGraphics, mouseX, mouseY, delta);
-        });
+        bcl_buttons.forEach(button -> button.render(guiGraphics, mouseX, mouseY, delta));
     }
 
     @Inject(method = "slotChanged", at = @At("HEAD"), cancellable = true)
@@ -85,21 +85,23 @@ public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
         AnvilScreenHandlerExtended anvilHandler = (AnvilScreenHandlerExtended) handler;
         if (anvilHandler.bcl_getCurrentRecipe() != null) {
             if (anvilHandler.bcl_getRecipes().size() > 1) {
-                be_buttons.forEach(button -> button.visible = true);
+                bcl_buttons.forEach(button -> button.visible = true);
             } else {
-                be_buttons.forEach(button -> button.visible = false);
+                bcl_buttons.forEach(button -> button.visible = false);
             }
             name.setValue("");
             info.cancel();
         } else {
-            be_buttons.forEach(button -> button.visible = false);
+            bcl_buttons.forEach(button -> button.visible = false);
         }
     }
 
+    @Unique
     private void be_nextRecipe() {
         ((AnvilScreenHandlerExtended) menu).be_nextRecipe();
     }
 
+    @Unique
     private void be_previousRecipe() {
         ((AnvilScreenHandlerExtended) menu).be_previousRecipe();
     }
@@ -109,10 +111,10 @@ public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
     //@Override
     public boolean bcl$mouseClicked(double mouseX, double mouseY, int button) {
         if (minecraft != null) {
-            for (AbstractWidget elem : be_buttons) {
+            for (AbstractWidget elem : bcl_buttons) {
                 if (elem.visible && elem.mouseClicked(mouseX, mouseY, button)) {
                     if (minecraft.gameMode != null) {
-                        int i = be_buttons.indexOf(elem);
+                        int i = bcl_buttons.indexOf(elem);
                         minecraft.gameMode.handleInventoryButtonClick(menu.containerId, i);
                         return true;
                     }

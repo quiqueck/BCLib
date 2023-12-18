@@ -5,10 +5,13 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.placement.PlacementContext;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(PlacementContext.class)
 public class PlacementContextMixin implements org.betterx.bclib.interfaces.BCLPlacementContext {
+    @Unique
     private Rotation bcl_rotation = Rotation.NONE;
+    @Unique
     private Mirror bcl_mirror = Mirror.NONE;
 
 

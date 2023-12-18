@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.portal.PortalShape;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
@@ -44,6 +45,7 @@ public class PortalShapeMixin {
         return be_FRAME(statePredicate, blockState, blockGetter, blockPos);
     }
 
+    @Unique
     private static boolean be_FRAME(StatePredicate FRAME, BlockState state, BlockGetter getter, BlockPos pos) {
         return state.is(CommonBlockTags.NETHER_PORTAL_FRAME) || FRAME.test(state, getter, pos);
     }

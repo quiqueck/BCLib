@@ -18,8 +18,6 @@ public class DiggerItemMixin {
     @Inject(method = "getDestroySpeed", at = @At(value = "RETURN"), cancellable = true)
     void bn_getDestroySpeed(ItemStack stack, BlockState state, CallbackInfoReturnable<Float> cir) {
         final Optional<Float> newSpeed = DiggerItemSpeed.getModifiedSpeed(stack, state, cir.getReturnValue());
-        if (newSpeed.isPresent()) {
-            cir.setReturnValue(newSpeed.get());
-        }
+        newSpeed.ifPresent(cir::setReturnValue);
     }
 }

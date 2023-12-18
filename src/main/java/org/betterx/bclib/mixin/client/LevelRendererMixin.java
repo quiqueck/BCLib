@@ -54,7 +54,7 @@ public abstract class LevelRendererMixin implements LevelRendererAccess {
     }
 
     @Shadow
-    protected static void renderShape(
+    private static void renderShape(
             PoseStack poseStack,
             VertexConsumer vertexConsumer,
             VoxelShape voxelShape,
@@ -107,7 +107,7 @@ public abstract class LevelRendererMixin implements LevelRendererAccess {
                 final VertexConsumer consumer = bufferSource.getBuffer(RenderType.lines());
                 final Vec3 camPos = camera.getPosition();
 
-                this.renderShape(
+                renderShape(
                         poseStack, consumer,
                         state.getShape(minecraft.level, pos, CollisionContext.of(camera.getEntity())),
                         pos.getX() - camPos.x(), pos.getY() - camPos.y(), pos.getZ() - camPos.z(),

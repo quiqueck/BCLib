@@ -2,8 +2,6 @@ package org.betterx.bclib.mixin.common;
 
 import org.betterx.bclib.interfaces.LootPoolAccessor;
 
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
@@ -16,17 +14,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Predicate;
 
 @Mixin(LootPool.class)
 public class LootPoolMixin implements LootPoolAccessor {
-    @Shadow
-    @Final
-    private Predicate<LootParams> compositeCondition;
-    @Shadow
-    @Final
-    private BiFunction<ItemStack, LootParams, ItemStack> compositeFunction;
     @Shadow
     @Final
     public NumberProvider rolls;
@@ -34,11 +24,17 @@ public class LootPoolMixin implements LootPoolAccessor {
     @Final
     public NumberProvider bonusRolls;
 
-    @Shadow @Final public List<LootItemCondition> conditions;
+    @Shadow
+    @Final
+    public List<LootItemCondition> conditions;
 
-    @Shadow @Final public List<LootItemFunction> functions;
+    @Shadow
+    @Final
+    public List<LootItemFunction> functions;
 
-    @Shadow @Final public List<LootPoolEntryContainer> entries;
+    @Shadow
+    @Final
+    public List<LootPoolEntryContainer> entries;
 
     @Override
     public LootPool bcl_mergeEntries(List<LootPoolEntryContainer> newEntries) {

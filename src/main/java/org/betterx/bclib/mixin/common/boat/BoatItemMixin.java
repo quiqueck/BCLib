@@ -15,7 +15,7 @@ public class BoatItemMixin {
     Entity bcl_suse(Entity boat) {
         if (this instanceof CustomBoatTypeOverride self) {
             if (boat instanceof CustomBoatTypeOverride newBoat) {
-                newBoat.setCustomType(self.bcl_getCustomType());
+                newBoat.bcl_setCustomType(self.bcl_getCustomType());
             }
         }
         return boat;

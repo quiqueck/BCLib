@@ -14,8 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class AnvilBlockMixin {
     @Inject(method = "damage", at = @At("HEAD"), cancellable = true)
     private static void bclib_anvilDamage(BlockState state, CallbackInfoReturnable<BlockState> info) {
-        if (state.getBlock() instanceof BaseAnvilBlock) {
-            BaseAnvilBlock anvil = (BaseAnvilBlock) state.getBlock();
+        if (state.getBlock() instanceof BaseAnvilBlock anvil) {
             info.setReturnValue(anvil.damageAnvilFall(state));
         }
     }

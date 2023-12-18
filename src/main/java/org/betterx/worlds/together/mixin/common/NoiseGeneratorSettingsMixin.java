@@ -6,10 +6,7 @@ import org.betterx.worlds.together.surfaceRules.SurfaceRuleProvider;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.SurfaceRules;
 
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Mutable;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.*;
 
 @Mixin(NoiseGeneratorSettings.class)
 public abstract class NoiseGeneratorSettingsMixin implements SurfaceRuleProvider {
@@ -31,6 +28,7 @@ public abstract class NoiseGeneratorSettingsMixin implements SurfaceRuleProvider
         return this.surfaceRule;
     }
 
+    @Unique
     private boolean bcl_containsOverride = false;
 
 }

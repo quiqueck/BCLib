@@ -1,6 +1,6 @@
 package org.betterx.bclib.items.boat;
 
 public interface CustomBoatTypeOverride {
-    void setCustomType(BoatTypeOverride type);
+    void bcl_setCustomType(BoatTypeOverride type);
     BoatTypeOverride bcl_getCustomType();
 }
