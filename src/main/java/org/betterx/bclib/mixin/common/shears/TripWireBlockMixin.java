@@ -13,17 +13,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(TripWireBlock.class)
 public class TripWireBlockMixin {
-    @Inject(method = "playerWillDestroy(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/entity/player/Player;)V", at = @At("HEAD"))
+    @Inject(method = "playerWillDestroy", at = @At("HEAD"))
     private void bclib_isShears(
-            Level level,
-            BlockPos blockPos,
-            BlockState blockState,
-            Player player,
-            CallbackInfo info
+            Level level, BlockPos blockPos, BlockState blockState, Player player, CallbackInfoReturnable<BlockState> cir
     ) {
         MethodReplace.addItemReplace(Items.SHEARS, BaseShearsItem::isShear);
     }
