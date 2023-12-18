@@ -114,25 +114,27 @@ public class WorldBootstrap {
         }
 
         public static void setupWorld(LevelStorageSource.LevelStorageAccess levelStorageAccess) {
-            File levelDat = levelStorageAccess.getLevelPath(LevelResource.LEVEL_DATA_FILE).toFile();
-            if (!levelDat.exists()) {
-                WorldsTogether.LOGGER.info("Creating a new World, no fixes needed");
-                final WorldDimensions dimensions = Helpers.defaultServerDimensions();
+            if (levelStorageAccess != null && levelStorageAccess.hasWorldData()) {
+                File levelDat = levelStorageAccess.getLevelPath(LevelResource.LEVEL_DATA_FILE).toFile();
+                if (!levelDat.exists()) {
+                    WorldsTogether.LOGGER.info("Creating a new World, no fixes needed");
+                    final WorldDimensions dimensions = Helpers.defaultServerDimensions();
 
-                WorldBootstrap.setupWorld(
-                        levelStorageAccess, TogetherWorldPreset.getDimensionMap(dimensions),
-                        true, true
-                );
+                    WorldBootstrap.setupWorld(
+                            levelStorageAccess, TogetherWorldPreset.getDimensionMap(dimensions),
+                            true, true
+                    );
 
-                Holder<WorldPreset> currentPreset = Helpers.defaultServerPreset();
-                writeWorldPresets(dimensions, currentPreset);
-                finishedWorldLoad();
-            } else {
-                WorldBootstrap.setupWorld(
-                        levelStorageAccess, TogetherWorldPreset.loadWorldDimensions(),
-                        false, true
-                );
-                finishedWorldLoad();
+                    Holder<WorldPreset> currentPreset = Helpers.defaultServerPreset();
+                    writeWorldPresets(dimensions, currentPreset);
+                    finishedWorldLoad();
+                } else {
+                    WorldBootstrap.setupWorld(
+                            levelStorageAccess, TogetherWorldPreset.loadWorldDimensions(),
+                            false, true
+                    );
+                    finishedWorldLoad();
+                }
             }
         }
 
