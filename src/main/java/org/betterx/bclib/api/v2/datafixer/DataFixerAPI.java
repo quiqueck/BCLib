@@ -156,6 +156,20 @@ public class DataFixerAPI {
         return ps;
     }
 
+    private static void makeBackupAndShowToast(LevelStorageSource storageSource, String levelID) {
+        boolean didOpen = false;
+        try (LevelStorageSource.LevelStorageAccess access = storageSource.createAccess(levelID);){
+            didOpen = true;
+            EditWorldScreen.makeBackupAndShowToast(access);
+        }
+        catch (IOException ex) {
+            if (!didOpen) {
+                SystemToast.onWorldAccessFailure(Minecraft.getInstance(), levelID);
+            }
+            LOGGER.warning("Failed to create backup of level {}", levelID, ex);
+        }
+    }
+
     private static boolean fixData(File dir, String levelID, boolean showUI, Consumer<Boolean> onResume) {
         MigrationProfile profile = loadProfileIfNeeded(dir);
 
@@ -198,7 +212,7 @@ public class DataFixerAPI {
             Supplier<State> runner = () -> {
                 if (createBackup) {
                     progress.progressStage(Component.translatable("message.bclib.datafixer.progress.waitbackup"));
-                    EditWorldScreen.makeBackupAndShowToast(Minecraft.getInstance().getLevelSource(), levelID);
+                    makeBackupAndShowToast(Minecraft.getInstance().getLevelSource(), levelID);
                 }
 
                 if (applyFixes) {
@@ -305,7 +319,7 @@ public class DataFixerAPI {
 
         progress.progressStage(Component.translatable("message.bclib.datafixer.progress.players"));
         players.parallelStream().forEach((file) -> {
-            fixPlayer(profile, state, file);
+            fixPlayer(profile, state, file.toPath());
             progress.incAtomic(maxProgress);
         });
 
@@ -362,8 +376,8 @@ public class DataFixerAPI {
             }
 
             if (changed[0]) {
-                LOGGER.warning("Writing '{}'", profile.getLevelDatFile());
-                NbtIo.writeCompressed(level, profile.getLevelDatFile());
+                LOGGER.warning("Writing '{}'", profile.getLevelDatPath());
+                NbtIo.writeCompressed(level, profile.getLevelDatPath());
             }
         } catch (Exception e) {
             BCLib.LOGGER.error("Failed fixing Level-Data.");
@@ -373,7 +387,7 @@ public class DataFixerAPI {
         }
     }
 
-    private static void fixPlayer(MigrationProfile data, State state, File file) {
+    private static void fixPlayer(MigrationProfile data, State state, Path file) {
         try {
             LOGGER.info("Inspecting " + file);
 
@@ -387,7 +401,7 @@ public class DataFixerAPI {
             }
         } catch (Exception e) {
             BCLib.LOGGER.error("Failed fixing Player-Data.");
-            state.addError("Failed fixing Player-Data in " + file.getName() + " (" + e.getMessage() + ")");
+            state.addError("Failed fixing Player-Data in " + file.getFileName() + " (" + e.getMessage() + ")");
             state.didFail = true;
             e.printStackTrace();
         }
@@ -587,9 +601,9 @@ public class DataFixerAPI {
         Patch.getALL().add(patch.get());
     }
 
-    private static CompoundTag readNbt(File file) throws IOException {
+    private static CompoundTag readNbt(Path file) throws IOException {
         try {
-            return NbtIo.readCompressed(file);
+            return NbtIo.readCompressed(file, NbtAccounter.unlimitedHeap());
         } catch (ZipException | EOFException e) {
             return NbtIo.read(file);
         }
