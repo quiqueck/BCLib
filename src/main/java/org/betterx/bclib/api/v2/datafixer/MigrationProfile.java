@@ -6,13 +6,11 @@ import org.betterx.bclib.interfaces.PatchFunction;
 import org.betterx.worlds.together.util.ModUtil;
 import org.betterx.worlds.together.world.WorldConfig;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtIo;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
@@ -87,7 +85,7 @@ public class MigrationProfile {
         nbts.parallelStream().forEach((file) -> {
             DataFixerAPI.LOGGER.info("Loading NBT " + file);
             try {
-                CompoundTag root = NbtIo.readCompressed(file);
+                CompoundTag root = NbtIo.readCompressed(file.toPath(), NbtAccounter.unlimitedHeap());
                 boolean[] changed = {false};
                 int spawnerIdx = -1;
                 if (root.contains("palette")) {
@@ -155,7 +153,7 @@ public class MigrationProfile {
 
                 if (changed[0]) {
                     DataFixerAPI.LOGGER.info("Writing NBT " + file);
-                    NbtIo.writeCompressed(root, file);
+                    NbtIo.writeCompressed(root, file.toPath());
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -192,6 +190,10 @@ public class MigrationProfile {
         return new File(levelBaseDir, "level.dat");
     }
 
+    final public Path getLevelDatPath() {
+        return getLevelDatFile().toPath();
+    }
+
     final public Exception getPrePatchException() {
         return prePatchException;
     }
@@ -213,7 +215,7 @@ public class MigrationProfile {
 
     private boolean runPreLevelPatches(File levelDat) {
         try {
-            level = NbtIo.readCompressed(levelDat);
+            level = NbtIo.readCompressed(levelDat.toPath(), NbtAccounter.unlimitedHeap());
 
             boolean changed = patchLevelDat(level);
             return changed;
