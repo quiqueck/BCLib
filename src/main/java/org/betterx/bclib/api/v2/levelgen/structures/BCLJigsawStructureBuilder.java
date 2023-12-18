@@ -10,8 +10,10 @@ import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.heightproviders.ConstantHeight;
 import net.minecraft.world.level.levelgen.heightproviders.HeightProvider;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
+import net.minecraft.world.level.levelgen.structure.pools.alias.PoolAliasBinding;
 import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure;
 
+import java.util.List;
 import java.util.Optional;
 
 public class BCLJigsawStructureBuilder extends BCLBaseStructureBuilder<JigsawStructure, BCLJigsawStructureBuilder> {
@@ -22,6 +24,7 @@ public class BCLJigsawStructureBuilder extends BCLBaseStructureBuilder<JigsawStr
     private boolean useExpansionHack;
     private Optional<Heightmap.Types> projectStartToHeightmap;
     private int maxDistanceFromCenter;
+    private List<PoolAliasBinding> aliasBindings;
 
     public BCLJigsawStructureBuilder(
             ResourceLocation structureID
@@ -70,6 +73,11 @@ public class BCLJigsawStructureBuilder extends BCLBaseStructureBuilder<JigsawStr
         return this;
     }
 
+    public BCLJigsawStructureBuilder aliasBindings(List<PoolAliasBinding> aliasBindings) {
+        this.aliasBindings = aliasBindings;
+        return this;
+    }
+
     @Override
     protected Codec<JigsawStructure> getCodec() {
         return JigsawStructure.CODEC;
@@ -83,7 +91,6 @@ public class BCLJigsawStructureBuilder extends BCLBaseStructureBuilder<JigsawStr
 
         this.structureBuilder = (BCLStructure.StructureBuilderWithContext<JigsawStructure>) (structureSettings, ctx) -> {
             HolderGetter<StructureTemplatePool> templateGetter = ctx.lookup(Registries.TEMPLATE_POOL);
-
             return new JigsawStructure(
                     structureSettings,
                     templateGetter.getOrThrow(startPool),
@@ -92,7 +99,8 @@ public class BCLJigsawStructureBuilder extends BCLBaseStructureBuilder<JigsawStr
                     startHeight,
                     useExpansionHack,
                     projectStartToHeightmap,
-                    maxDistanceFromCenter
+                    maxDistanceFromCenter,
+                    aliasBindings == null ? List.of() : aliasBindings
             );
         };
 
