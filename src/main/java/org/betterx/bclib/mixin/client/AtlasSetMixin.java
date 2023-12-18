@@ -2,8 +2,8 @@ package org.betterx.bclib.mixin.client;
 
 import org.betterx.bclib.client.textures.AtlasSetManager;
 
-import net.minecraft.client.renderer.texture.atlas.SpriteResourceLoader;
 import net.minecraft.client.renderer.texture.atlas.SpriteSource;
+import net.minecraft.client.renderer.texture.atlas.SpriteSourceList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 
@@ -13,9 +13,9 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import java.util.List;
 
-@Mixin(SpriteResourceLoader.class)
+@Mixin(SpriteSourceList.class)
 public class AtlasSetMixin {
-    @ModifyVariable(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/texture/atlas/SpriteResourceLoader;<init>(Ljava/util/List;)V"))
+    @ModifyVariable(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/texture/atlas/SpriteSourceList;<init>(Ljava/util/List;)V"))
     private static List<SpriteSource> bcl_load(
             List<SpriteSource> list,
             ResourceManager resourceManager,
