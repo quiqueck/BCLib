@@ -134,7 +134,7 @@ public class BonemealAPI {
                 .featureSpreaderForState(blockState);
 
         if (fSpreader != null) {
-            if (fSpreader.isValidBonemealTarget(level, blockPos, blockState, level.isClientSide)) {
+            if (fSpreader.isValidBonemealTarget(level, blockPos, blockState)) {
                 if (level instanceof ServerLevel) {
                     if (forceBonemeal || fSpreader.isBonemealSuccess(level, level.random, blockPos, blockState)) {
                         fSpreader.performBonemeal((ServerLevel) level, level.random, blockPos, blockState);
