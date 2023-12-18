@@ -23,16 +23,7 @@ import java.util.function.Predicate;
 public class LootPoolMixin implements LootPoolAccessor {
     @Shadow
     @Final
-    public LootPoolEntryContainer[] entries;
-    @Shadow
-    @Final
-    public LootItemCondition[] conditions;
-    @Shadow
-    @Final
     private Predicate<LootParams> compositeCondition;
-    @Shadow
-    @Final
-    public LootItemFunction[] functions;
     @Shadow
     @Final
     private BiFunction<ItemStack, LootParams, ItemStack> compositeFunction;
@@ -43,13 +34,19 @@ public class LootPoolMixin implements LootPoolAccessor {
     @Final
     public NumberProvider bonusRolls;
 
+    @Shadow @Final public List<LootItemCondition> conditions;
+
+    @Shadow @Final public List<LootItemFunction> functions;
+
+    @Shadow @Final public List<LootPoolEntryContainer> entries;
+
     @Override
     public LootPool bcl_mergeEntries(List<LootPoolEntryContainer> newEntries) {
         final List<LootPoolEntryContainer> merged = Lists.newArrayList(entries);
         merged.addAll(newEntries);
 
         return new LootPool(
-                merged.toArray(new LootPoolEntryContainer[0]),
+                merged,
                 this.conditions,
                 this.functions,
                 this.rolls,
