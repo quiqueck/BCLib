@@ -34,8 +34,6 @@ import net.minecraft.world.level.Level;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import com.google.gson.JsonObject;
-
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
@@ -338,21 +336,9 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
         }
 
         @Override
-        protected void serializeRecipeData(JsonObject root) {
-            super.serializeRecipeData(root);
-
-            if (inputCount > 1) {
-                root.addProperty("inputCount", inputCount);
-            }
-            if (toolLevel != 1) {
-                root.addProperty("toolLevel", toolLevel);
-            }
-            if (anvilLevel != 1) {
-                root.addProperty("anvilLevel", anvilLevel);
-            }
-            if (damage != 1) {
-                root.addProperty("damage", damage);
-            }
+        protected AnvilRecipe createRecipe(ResourceLocation id) {
+            checkRecipe();
+            return new AnvilRecipe(primaryInput, output, inputCount, toolLevel, anvilLevel, damage);
         }
     }
 
@@ -360,10 +346,10 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
         public static Codec<AnvilRecipe> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Ingredient.CODEC_NONEMPTY.fieldOf("input").forGetter(recipe -> recipe.input),
                 ItemUtil.CODEC_ITEM_STACK_WITH_NBT.fieldOf("result").forGetter(recipe -> recipe.output),
-                Codec.INT.fieldOf("inputCount").forGetter(recipe -> recipe.inputCount),
-                Codec.INT.fieldOf("toolLevel").forGetter(recipe -> recipe.toolLevel),
-                Codec.INT.fieldOf("anvilLevel").forGetter(recipe -> recipe.anvilLevel),
-                Codec.INT.fieldOf("damage").forGetter(recipe -> recipe.damage)
+                Codec.INT.optionalFieldOf("inputCount", 1).forGetter(recipe -> recipe.inputCount),
+                Codec.INT.optionalFieldOf("toolLevel", 1).forGetter(recipe -> recipe.toolLevel),
+                Codec.INT.optionalFieldOf("anvilLevel", 1).forGetter(recipe -> recipe.anvilLevel),
+                Codec.INT.optionalFieldOf("damage", 1).forGetter(recipe -> recipe.damage)
         ).apply(instance, AnvilRecipe::new));
 
         @Override

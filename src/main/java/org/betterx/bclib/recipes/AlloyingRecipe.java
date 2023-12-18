@@ -26,8 +26,6 @@ import net.minecraft.world.level.Level;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import com.google.gson.JsonObject;
-
 import java.util.List;
 
 public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCategory {
@@ -207,15 +205,9 @@ public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCateg
         }
 
         @Override
-        protected void serializeRecipeData(JsonObject root) {
-            super.serializeRecipeData(root);
-
-            if (experience != 0) {
-                root.addProperty("experience", experience);
-            }
-            if (experience != 350) {
-                root.addProperty("smelttime", smeltTime);
-            }
+        protected AlloyingRecipe createRecipe(ResourceLocation id) {
+            checkRecipe();
+            return new AlloyingRecipe(group, primaryInput, secondaryInput, output, experience, smeltTime);
         }
     }
 
