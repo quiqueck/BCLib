@@ -5,13 +5,14 @@ import org.betterx.bclib.interfaces.AlloyingRecipeWorkstation;
 import org.betterx.bclib.interfaces.UnknownReceipBookCategory;
 import org.betterx.bclib.util.ItemUtil;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -25,8 +26,9 @@ import net.minecraft.world.level.Level;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+
+import java.util.List;
 
 public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCategory {
     public final static String GROUP = "alloying";
@@ -38,7 +40,6 @@ public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCateg
     );
 
     protected final RecipeType<?> type;
-    protected final ResourceLocation id;
     protected final Ingredient primaryInput;
     protected final Ingredient secondaryInput;
     protected final ItemStack output;
@@ -47,7 +48,23 @@ public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCateg
     protected final int smeltTime;
 
     public AlloyingRecipe(
-            ResourceLocation id,
+            List<Ingredient> inputs,
+            String group,
+            ItemStack output,
+            float experience,
+            int smeltTime
+    ) {
+        this(
+                group,
+                !inputs.isEmpty() ? inputs.get(0) : null,
+                inputs.size() > 1 ? inputs.get(1) : null,
+                output,
+                experience,
+                smeltTime
+        );
+    }
+
+    public AlloyingRecipe(
             String group,
             Ingredient primaryInput,
             Ingredient secondaryInput,
@@ -56,7 +73,6 @@ public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCateg
             int smeltTime
     ) {
         this.group = group;
-        this.id = id;
         this.primaryInput = primaryInput;
         this.secondaryInput = secondaryInput;
         this.output = output;
@@ -101,11 +117,6 @@ public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCateg
     @Override
     public ItemStack getResultItem(RegistryAccess acc) {
         return this.output;
-    }
-
-    @Override
-    public ResourceLocation getId() {
-        return this.id;
     }
 
     @Override
@@ -209,27 +220,19 @@ public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCateg
     }
 
     public static class Serializer implements RecipeSerializer<AlloyingRecipe> {
-        @Override
-        public AlloyingRecipe fromJson(ResourceLocation id, JsonObject json) {
-            JsonArray ingredients = GsonHelper.getAsJsonArray(json, "ingredients");
-            Ingredient primaryInput = Ingredient.fromJson(ingredients.get(0));
-            Ingredient secondaryInput = Ingredient.fromJson(ingredients.get(1));
-
-            String group = GsonHelper.getAsString(json, "group", "");
-
-            JsonObject result = GsonHelper.getAsJsonObject(json, "result");
-            ItemStack output = ItemUtil.fromJsonRecipeWithNBT(result);
-            if (output == null) {
-                throw new IllegalStateException("Output item does not exists!");
-            }
-            float experience = GsonHelper.getAsFloat(json, "experience", 0.0F);
-            int smeltTime = GsonHelper.getAsInt(json, "smelttime", 350);
-
-            return new AlloyingRecipe(id, group, primaryInput, secondaryInput, output, experience, smeltTime);
-        }
+        public static final Codec<AlloyingRecipe> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.list(Ingredient.CODEC_NONEMPTY)
+                     .fieldOf("ingredients")
+                     .forGetter(recipe -> List.of(recipe.primaryInput, recipe.secondaryInput)),
+                Codec.STRING.optionalFieldOf("group", "")
+                            .forGetter(recipe -> recipe.group),
+                ItemUtil.CODEC_ITEM_STACK_WITH_NBT.fieldOf("result").forGetter(recipe -> recipe.output),
+                Codec.FLOAT.optionalFieldOf("experience", 0f).forGetter(recipe -> recipe.experience),
+                Codec.INT.optionalFieldOf("smelttime", 350).forGetter(recipe -> recipe.smeltTime)
+        ).apply(instance, AlloyingRecipe::new));
 
         @Override
-        public AlloyingRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf packetBuffer) {
+        public AlloyingRecipe fromNetwork(FriendlyByteBuf packetBuffer) {
             String group = packetBuffer.readUtf(32767);
             Ingredient primary = Ingredient.fromNetwork(packetBuffer);
             Ingredient secondary = Ingredient.fromNetwork(packetBuffer);
@@ -237,7 +240,12 @@ public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCateg
             float experience = packetBuffer.readFloat();
             int smeltTime = packetBuffer.readVarInt();
 
-            return new AlloyingRecipe(id, group, primary, secondary, output, experience, smeltTime);
+            return new AlloyingRecipe(group, primary, secondary, output, experience, smeltTime);
+        }
+
+        @Override
+        public Codec<AlloyingRecipe> codec() {
+            return null;
         }
 
         @Override
