@@ -10,9 +10,9 @@ import org.betterx.bclib.models.RecordItemModelProvider;
 import org.betterx.bclib.recipes.SmithingTemplates;
 import org.betterx.worlds.together.tag.v3.TagManager;
 
-import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
+import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -93,13 +93,13 @@ public class ItemRegistry extends BaseRegistry<Item> {
 
         DefaultDispenseItemBehavior behavior = new DefaultDispenseItemBehavior() {
             public ItemStack execute(BlockSource pointer, ItemStack stack) {
-                Direction direction = pointer.getBlockState().getValue(DispenserBlock.FACING);
+                Direction direction = pointer.state().getValue(DispenserBlock.FACING);
                 EntityType<?> entityType = ((SpawnEggItem) stack.getItem()).getType(stack.getTag());
                 entityType.spawn(
-                        pointer.getLevel(),
+                        pointer.level(),
                         stack,
                         null,
-                        pointer.getPos().relative(direction),
+                        pointer.pos().relative(direction),
                         MobSpawnType.DISPENSER,
                         direction != Direction.UP,
                         false
