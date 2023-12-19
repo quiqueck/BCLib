@@ -30,9 +30,6 @@
     "modmenu": [
       "org.betterx.bclib.integration.modmenu.ModMenuEntryPoint"
     ],
-    "emi": [
-      "org.betterx.bclib.integration.emi.EMIPlugin"
-    ],
     "fabric-datagen": [
       "org.betterx.datagen.bclib.BCLibDatagen"
     ]
