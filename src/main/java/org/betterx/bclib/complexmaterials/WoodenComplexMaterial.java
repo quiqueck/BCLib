@@ -9,6 +9,7 @@ import org.betterx.worlds.together.tag.v3.TagManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -83,7 +84,7 @@ public class WoodenComplexMaterial extends ComplexMaterialSet<WoodenComplexMater
     }
 
     @Override
-    protected FabricBlockSettings getBlockSettings() {
+    protected BlockBehaviour.Properties getBlockSettings() {
         return FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)
                                   .mapColor(planksColor);
     }
