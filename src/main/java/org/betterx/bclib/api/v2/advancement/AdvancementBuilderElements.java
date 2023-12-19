@@ -37,7 +37,8 @@ class Display {
     DisplayInfo build() {
         return new DisplayInfo(
                 icon, title, description,
-                Optional.of(background), frame, showToast, announceChat, hidden
+                background == null ? Optional.empty() : Optional.of(background),
+                frame, showToast, announceChat, hidden
         );
     }
 }
