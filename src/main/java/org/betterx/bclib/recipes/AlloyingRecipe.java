@@ -13,6 +13,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -27,6 +28,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import java.util.List;
+import java.util.Optional;
 
 public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCategory {
     public final static String GROUP = "alloying";
@@ -60,6 +62,16 @@ public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCateg
                 experience,
                 smeltTime
         );
+    }
+
+    public AlloyingRecipe(
+            List<Ingredient> inputs,
+            Optional<String> group,
+            ItemStack output,
+            float experience,
+            int smeltTime
+    ) {
+        this(inputs, group.orElse(null), output, experience, smeltTime);
     }
 
     public AlloyingRecipe(
@@ -216,8 +228,8 @@ public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCateg
                 Codec.list(Ingredient.CODEC_NONEMPTY)
                      .fieldOf("ingredients")
                      .forGetter(recipe -> List.of(recipe.primaryInput, recipe.secondaryInput)),
-                Codec.STRING.optionalFieldOf("group", "")
-                            .forGetter(recipe -> recipe.group),
+                ExtraCodecs.strictOptionalField(Codec.STRING, "group")
+                           .forGetter(recipe -> Optional.ofNullable(recipe.group)),
                 ItemUtil.CODEC_ITEM_STACK_WITH_NBT.fieldOf("result").forGetter(recipe -> recipe.output),
                 Codec.FLOAT.optionalFieldOf("experience", 0f).forGetter(recipe -> recipe.experience),
                 Codec.INT.optionalFieldOf("smelttime", 350).forGetter(recipe -> recipe.smeltTime)

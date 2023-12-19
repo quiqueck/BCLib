@@ -49,7 +49,7 @@ public abstract class AbstractSimpleRecipeBuilder<T extends AbstractSimpleRecipe
 
 
     protected boolean checkRecipe() {
-        if (primaryInput == null) {
+        if (primaryInput == null || primaryInput.isEmpty()) {
             BCLib.LOGGER.warning(
                     "Primary input for Recipe can't be 'null', recipe {} will be ignored!",
                     id

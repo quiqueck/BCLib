@@ -14,8 +14,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
@@ -59,61 +57,34 @@ public class ItemUtil {
                        .forGetter((itemStack) -> Optional.ofNullable(itemStack.getTag()))
     ).apply(instance, ItemStack::new));
 
-    public static Codec<Ingredient> CODEC_INGREDIENT_WITH_NBT = ingredientCodec(true);
-    public static Codec<Ingredient> CODEC_INGREDIENT_WITH_NBT_NOT_EMPTY = ingredientCodec(false);
+    private static final Codec<Ingredient.ItemValue> CODEC_NBT_ITEM_VALUE = RecordCodecBuilder.create((instance) -> instance
+            .group(CODEC_ITEM_STACK_WITH_NBT.fieldOf("item").forGetter((itemValue) -> itemValue.item()))
+            .apply(instance, Ingredient.ItemValue::new));
 
+    private static final Codec<Ingredient.Value> VALUE_CODEC = ExtraCodecs
+            .xor(CODEC_NBT_ITEM_VALUE, Ingredient.TagValue.CODEC)
+            .xmap(
+                    (either) -> either.map((itemValue) -> itemValue, (tagValue) -> tagValue),
+                    (value) -> {
+                        if (value instanceof Ingredient.TagValue tagValue) {
+                            return Either.right(tagValue);
+                        } else if (value instanceof Ingredient.ItemValue itemValue) {
+                            return Either.left(itemValue);
+                        } else {
+                            throw new UnsupportedOperationException(
+                                    "This is neither an nbt-item value nor a tag value.");
+                        }
+                    }
+            );
 
     private static Codec<Ingredient> ingredientCodec(boolean allowEmpty) {
-        record NbtItemValue(ItemStack item) implements Ingredient.Value {
-            static final Codec<NbtItemValue> CODEC = RecordCodecBuilder.create((instance) -> instance
-                    .group(CODEC_ITEM_STACK_WITH_NBT.fieldOf("item").forGetter((itemValue) -> itemValue.item))
-                    .apply(instance, NbtItemValue::new));
-
-            public boolean equals(Object object) {
-                if (object instanceof NbtItemValue itemValue) {
-                    return ItemStack.isSameItemSameTags(itemValue.item, this.item)
-                            && itemValue.item.getCount() == this.item.getCount();
-                } else if (object instanceof Ingredient.ItemValue itemValue) {
-                    return ItemStack.isSameItemSameTags(itemValue.item(), this.item)
-                            && itemValue.item().getCount() == this.item.getCount();
-                } else {
-                    return false;
-                }
-            }
-
-            public Collection<ItemStack> getItems() {
-                return Collections.singleton(this.item);
-            }
-
-            public ItemStack item() {
-                return this.item;
-            }
-        }
-
-        Codec<Ingredient.Value> VALUE_CODEC = ExtraCodecs
-                .xor(NbtItemValue.CODEC, Ingredient.TagValue.CODEC)
-                .xmap(
-                        (either) -> either.map((itemValue) -> itemValue, (tagValue) -> tagValue),
-                        (value) -> {
-                            if (value instanceof Ingredient.TagValue tagValue) {
-                                return Either.right(tagValue);
-                            } else if (value instanceof NbtItemValue itemValue) {
-                                return Either.left(itemValue);
-                            } else {
-                                throw new UnsupportedOperationException(
-                                        "This is neither an nbt-item value nor a tag value.");
-                            }
-                        }
-                );
-
-
-        Codec<Ingredient.Value[]> codec = Codec.list(VALUE_CODEC).comapFlatMap((list) ->
-                        !allowEmpty && list.size() < 1
+        Codec<Ingredient.Value[]> LIST_CODEC = Codec.list(VALUE_CODEC).comapFlatMap((list) ->
+                        !allowEmpty && list.isEmpty()
                                 ? DataResult.error(() -> "Item array cannot be empty, at least one item must be defined")
                                 : DataResult.success(list.toArray(new Ingredient.Value[0]))
                 , List::of);
 
-        return ExtraCodecs.either(codec, VALUE_CODEC).flatComapMap(
+        return ExtraCodecs.either(LIST_CODEC, VALUE_CODEC).flatComapMap(
                 (either) -> either.map(Ingredient::new, (value) -> new Ingredient(new Ingredient.Value[]{value})),
                 (ingredient) -> {
                     if (ingredient.values.length == 1) {
@@ -126,4 +97,7 @@ public class ItemUtil {
                 }
         );
     }
+
+    public static Codec<Ingredient> CODEC_INGREDIENT_WITH_NBT = ingredientCodec(true);
+    public static Codec<Ingredient> CODEC_INGREDIENT_WITH_NBT_NOT_EMPTY = ingredientCodec(false);
 }

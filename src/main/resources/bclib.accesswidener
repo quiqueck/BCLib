@@ -1,7 +1,7 @@
 accessWidener   v1  named
 
 # Classes
-accessible	class	net/minecraft/server/MinecraftServer$ReloadableResources
+accessible class net/minecraft/server/MinecraftServer$ReloadableResources
 accessible	class	net/minecraft/world/level/levelgen/SurfaceRules$Context
 accessible	class	net/minecraft/world/level/levelgen/SurfaceRules$Condition
 accessible	class	net/minecraft/world/level/levelgen/SurfaceRules$SurfaceRule
@@ -41,6 +41,7 @@ accessible method net/minecraft/world/level/levelgen/structure/pools/SinglePoolE
 accessible method net/minecraft/world/level/levelgen/structure/pools/LegacySinglePoolElement <init> (Lcom/mojang/datafixers/util/Either;Lnet/minecraft/core/Holder;Lnet/minecraft/world/level/levelgen/structure/pools/StructureTemplatePool$Projection;)V
 accessible method net/minecraft/world/item/crafting/Ingredient <init> ([Lnet/minecraft/world/item/crafting/Ingredient$Value;)V
 accessible method net/minecraft/world/item/crafting/Ingredient$TagValue <init> (Lnet/minecraft/tags/TagKey;)V
+accessible method net/minecraft/world/item/crafting/Ingredient$ItemValue <init> (Lnet/minecraft/world/item/ItemStack;)V
 
 #Fields
 accessible field net/minecraft/world/entity/ai/village/poi/PoiTypes TYPE_BY_STATE Ljava/util/Map;
