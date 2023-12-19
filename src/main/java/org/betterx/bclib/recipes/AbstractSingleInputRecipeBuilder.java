@@ -51,7 +51,8 @@ public abstract class AbstractSingleInputRecipeBuilder<T extends AbstractSingleI
     @Override
     protected void buildRecipe(RecipeOutput cc) {
         setupAdvancementForResult();
-        final AdvancementHolder advancementHolder = advancement.build(getId());
+
+        final AdvancementHolder advancementHolder = advancement.build(createAdvancementId());
         final R recipe = createRecipe(getId());
         cc.accept(getId(), recipe, advancementHolder);
     }
