@@ -16,9 +16,11 @@ import net.minecraft.world.item.crafting.Ingredient;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import org.jetbrains.annotations.Nullable;
 
 public class ItemUtil {
+
     @Nullable
     public static ItemStack fromStackString(String stackString) {
         if (stackString == null || stackString.isEmpty()) {
@@ -47,19 +49,45 @@ public class ItemUtil {
         return null;
     }
 
-    public static Codec<ItemStack> CODEC_ITEM_STACK_WITH_NBT = RecordCodecBuilder.create((instance) -> instance.group(
-            BuiltInRegistries.ITEM.holderByNameCodec()
-                                  .fieldOf("item")
-                                  .forGetter(ItemStack::getItemHolder),
-            Codec.INT.optionalFieldOf("count", 1)
-                     .forGetter(ItemStack::getCount),
-            ExtraCodecs.strictOptionalField(TagParser.AS_CODEC, "nbt")
-                       .forGetter((itemStack) -> Optional.ofNullable(itemStack.getTag()))
-    ).apply(instance, ItemStack::new));
+//    public static Codec<ItemStack> CODEC_ITEM_STACK_WITH_NBT = RecordCodecBuilder.create((instance) -> instance.group(
+//            BuiltInRegistries.ITEM.holderByNameCodec()
+//                                  .fieldOf("item")
+//                                  .forGetter(ItemStack::getItemHolder),
+//            Codec.INT.optionalFieldOf("count", 1)
+//                     .forGetter(ItemStack::getCount),
+//            ExtraCodecs.strictOptionalField(TagParser.AS_CODEC, "nbt")
+//                       .forGetter((itemStack) -> Optional.ofNullable(itemStack.getTag()))
+//    ).apply(instance, ItemStack::new));
 
-    private static final Codec<Ingredient.ItemValue> CODEC_NBT_ITEM_VALUE = RecordCodecBuilder.create((instance) -> instance
-            .group(CODEC_ITEM_STACK_WITH_NBT.fieldOf("item").forGetter((itemValue) -> itemValue.item()))
-            .apply(instance, Ingredient.ItemValue::new));
+    public static <T> Codec<T> codecItemStackWithNBT(
+            Function<T, ItemStack> getter,
+            Function<ItemStack, T> factory
+    ) {
+        return RecordCodecBuilder.create((instance) -> instance.group(
+                BuiltInRegistries.ITEM.holderByNameCodec()
+                                      .fieldOf("item")
+                                      .forGetter(o -> getter.apply(o).getItemHolder()),
+                Codec.INT.optionalFieldOf("count", 1)
+                         .forGetter(o -> getter.apply(o).getCount()),
+                ExtraCodecs.strictOptionalField(TagParser.AS_CODEC, "nbt")
+                           .forGetter(o -> Optional.ofNullable(getter.apply(o).getTag()))
+        ).apply(instance, (item, count, nbt) -> factory.apply(new ItemStack(item, count, nbt))));
+    }
+
+    public static Codec<ItemStack> CODEC_ITEM_STACK_WITH_NBT = codecItemStackWithNBT(
+            Function.identity(),
+            Function.identity()
+    );
+
+    public static Codec<Ingredient.ItemValue> CODEC_NBT_ITEM_VALUE = codecItemStackWithNBT(
+            (itemValue) -> itemValue.item(),
+            (stack) -> new Ingredient.ItemValue(stack)
+    );
+
+
+//    private static final Codec<Ingredient.ItemValue> CODEC_NBT_ITEM_VALUE = RecordCodecBuilder.create((instance) -> instance
+//            .group(CODEC_ITEM_STACK_WITH_NBT.fieldOf("item").forGetter((itemValue) -> itemValue.item()))
+//            .apply(instance, Ingredient.ItemValue::new));
 
     private static final Codec<Ingredient.Value> VALUE_CODEC = ExtraCodecs
             .xor(CODEC_NBT_ITEM_VALUE, Ingredient.TagValue.CODEC)
