@@ -118,10 +118,10 @@ public class AdvancementManager {
             ResourceLocation ID;
             if (type == AdvancementType.RECIPE_DECORATIONS) {
                 ID = new ResourceLocation(id.getNamespace(), "recipes/decorations/" + id.getPath());
-                //builder.parent(RECIPES_ROOT); //will be root by default
+                builder.parent(RECIPES_ROOT); //will be root by default
             } else if (type == AdvancementType.RECIPE_TOOL) {
                 ID = new ResourceLocation(id.getNamespace(), "recipes/tools/" + id.getPath());
-                //builder.parent(RECIPES_ROOT); //will be root by default
+                builder.parent(RECIPES_ROOT); //will be root by default
             } else {
                 ID = id;
             }
