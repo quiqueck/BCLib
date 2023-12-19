@@ -227,7 +227,9 @@ public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCateg
                      .fieldOf("ingredients")
                      .forGetter(recipe -> List.of(recipe.primaryInput, recipe.secondaryInput)),
                 ExtraCodecs.strictOptionalField(Codec.STRING, "group")
-                           .forGetter(recipe -> Optional.ofNullable(recipe.group)),
+                           .forGetter(recipe -> recipe.group == null || recipe.group.isEmpty()
+                                   ? Optional.empty()
+                                   : Optional.ofNullable(recipe.group)),
                 ItemUtil.CODEC_ITEM_STACK_WITH_NBT.fieldOf("result").forGetter(recipe -> recipe.output),
                 Codec.FLOAT.optionalFieldOf("experience", 0f).forGetter(recipe -> recipe.experience),
                 Codec.INT.optionalFieldOf("smelttime", 350).forGetter(recipe -> recipe.smeltTime)

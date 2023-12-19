@@ -1,54 +1,20 @@
 package org.betterx.bclib.util;
 
-import org.betterx.bclib.BCLib;
-
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.TagParser;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import org.jetbrains.annotations.Nullable;
 
 public class ItemUtil {
-
-    @Nullable
-    public static ItemStack fromStackString(String stackString) {
-        if (stackString == null || stackString.isEmpty()) {
-            return null;
-        }
-        try {
-            String[] parts = stackString.split(":");
-            if (parts.length < 2) return null;
-            if (parts.length == 2) {
-                ResourceLocation itemId = new ResourceLocation(stackString);
-                Item item = BuiltInRegistries
-                        .ITEM
-                        .getOptional(itemId)
-                        .orElseThrow(() -> new IllegalStateException("Output item " + itemId + " does not exists!"));
-                return new ItemStack(item);
-            }
-            ResourceLocation itemId = new ResourceLocation(parts[0], parts[1]);
-            Item item = BuiltInRegistries
-                    .ITEM
-                    .getOptional(itemId)
-                    .orElseThrow(() -> new IllegalStateException("Output item " + itemId + " does not exists!"));
-            return new ItemStack(item, Integer.parseInt(parts[2]));
-        } catch (Exception ex) {
-            BCLib.LOGGER.error("ItemStack deserialization error!", ex);
-        }
-        return null;
-    }
-
     public static <T> Codec<T> codecItemStackWithNBT(
             Function<T, ItemStack> getter,
             Function<ItemStack, T> factory
