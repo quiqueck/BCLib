@@ -32,15 +32,14 @@
   },
   "requirements": [
     [
+      "has_the_recipe",
       "has_stone",
-      "has_tag_c_iron_ingots",
-      "has_the_recipe"
+      "has_tag_c_iron_ingots"
     ]
   ],
   "rewards": {
     "recipes": [
       "bclib:tag_stonecutter"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

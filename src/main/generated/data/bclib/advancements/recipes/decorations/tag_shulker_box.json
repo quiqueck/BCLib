@@ -32,15 +32,14 @@
   },
   "requirements": [
     [
+      "has_the_recipe",
       "has_tag_c_chest",
-      "has_shulker_shell",
-      "has_the_recipe"
+      "has_shulker_shell"
     ]
   ],
   "rewards": {
     "recipes": [
       "bclib:tag_shulker_box"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

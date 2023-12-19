@@ -111,7 +111,7 @@ public class CraftingRecipeBuilder extends AbstractBaseRecipeBuilder<CraftingRec
     public CraftingRecipeBuilder unlockedBy(ItemStack... stacks) {
         return super.unlockedBy(stacks);
     }
-    
+
     @Override
     protected CraftingRecipeBuilder unlocks(String name, Criterion<?> criterion) {
         this.unlocks.put(name, criterion);
@@ -148,6 +148,7 @@ public class CraftingRecipeBuilder extends AbstractBaseRecipeBuilder<CraftingRec
         final ShapelessRecipeBuilder builder = ShapelessRecipeBuilder.shapeless(
                 category, output.getItem(), output.getCount()
         );
+
         for (Map.Entry<String, Criterion<?>> item : unlocks.entrySet()) {
             builder.unlockedBy(item.getKey(), item.getValue());
         }

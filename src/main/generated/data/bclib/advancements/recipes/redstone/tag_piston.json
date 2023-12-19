@@ -54,17 +54,16 @@
   },
   "requirements": [
     [
+      "has_the_recipe",
       "has_cobblestone",
       "has_tag_c_iron_ingots",
       "has_redstone",
-      "has_tag_minecraft_planks",
-      "has_the_recipe"
+      "has_tag_minecraft_planks"
     ]
   ],
   "rewards": {
     "recipes": [
       "bclib:tag_piston"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

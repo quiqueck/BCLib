@@ -30,15 +30,14 @@
   },
   "requirements": [
     [
+      "has_the_recipe",
       "has_tag_c_iron_ingots",
-      "has_tag_minecraft_planks",
-      "has_the_recipe"
+      "has_tag_minecraft_planks"
     ]
   ],
   "rewards": {
     "recipes": [
       "bclib:tag_smith_table"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

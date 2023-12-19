@@ -20,14 +20,13 @@
   },
   "requirements": [
     [
-      "has_tag_c_iron_ingots",
-      "has_the_recipe"
+      "has_the_recipe",
+      "has_tag_c_iron_ingots"
     ]
   ],
   "rewards": {
     "recipes": [
       "bclib:tag_cauldron"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

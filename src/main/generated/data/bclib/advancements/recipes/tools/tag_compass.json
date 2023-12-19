@@ -32,15 +32,14 @@
   },
   "requirements": [
     [
+      "has_the_recipe",
       "has_tag_c_iron_ingots",
-      "has_redstone",
-      "has_the_recipe"
+      "has_redstone"
     ]
   ],
   "rewards": {
     "recipes": [
       "bclib:tag_compass"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

@@ -30,15 +30,14 @@
   },
   "requirements": [
     [
+      "has_the_recipe",
       "has_tag_c_chest",
-      "has_tag_c_iron_ingots",
-      "has_the_recipe"
+      "has_tag_c_iron_ingots"
     ]
   ],
   "rewards": {
     "recipes": [
       "bclib:tag_hopper"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }
