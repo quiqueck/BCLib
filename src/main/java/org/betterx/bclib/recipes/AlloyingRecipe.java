@@ -29,6 +29,7 @@ import net.fabricmc.api.Environment;
 
 import java.util.List;
 import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
 
 public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCategory {
     public final static String GROUP = "alloying";
@@ -47,15 +48,15 @@ public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCateg
     protected final float experience;
     protected final int smeltTime;
 
-    public AlloyingRecipe(
+    private AlloyingRecipe(
             List<Ingredient> inputs,
-            String group,
+            Optional<String> group,
             ItemStack output,
             float experience,
             int smeltTime
     ) {
         this(
-                group,
+                group.orElse(""),
                 !inputs.isEmpty() ? inputs.get(0) : null,
                 inputs.size() > 1 ? inputs.get(1) : null,
                 output,
@@ -64,18 +65,8 @@ public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCateg
         );
     }
 
-    public AlloyingRecipe(
-            List<Ingredient> inputs,
-            Optional<String> group,
-            ItemStack output,
-            float experience,
-            int smeltTime
-    ) {
-        this(inputs, group.orElse(null), output, experience, smeltTime);
-    }
-
-    public AlloyingRecipe(
-            String group,
+    private AlloyingRecipe(
+            @NotNull String group,
             Ingredient primaryInput,
             Ingredient secondaryInput,
             ItemStack output,
@@ -219,7 +210,14 @@ public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCateg
         @Override
         protected AlloyingRecipe createRecipe(ResourceLocation id) {
             checkRecipe();
-            return new AlloyingRecipe(group, primaryInput, secondaryInput, output, experience, smeltTime);
+            return new AlloyingRecipe(
+                    group == null ? "" : group,
+                    primaryInput,
+                    secondaryInput,
+                    output,
+                    experience,
+                    smeltTime
+            );
         }
     }
 
@@ -236,7 +234,7 @@ public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCateg
         ).apply(instance, AlloyingRecipe::new));
 
         @Override
-        public AlloyingRecipe fromNetwork(FriendlyByteBuf packetBuffer) {
+        public @NotNull AlloyingRecipe fromNetwork(FriendlyByteBuf packetBuffer) {
             String group = packetBuffer.readUtf(32767);
             Ingredient primary = Ingredient.fromNetwork(packetBuffer);
             Ingredient secondary = Ingredient.fromNetwork(packetBuffer);
@@ -244,11 +242,11 @@ public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCateg
             float experience = packetBuffer.readFloat();
             int smeltTime = packetBuffer.readVarInt();
 
-            return new AlloyingRecipe(group, primary, secondary, output, experience, smeltTime);
+            return new AlloyingRecipe(group == null ? "" : group, primary, secondary, output, experience, smeltTime);
         }
 
         @Override
-        public Codec<AlloyingRecipe> codec() {
+        public @NotNull Codec<AlloyingRecipe> codec() {
             return CODEC;
         }
 
