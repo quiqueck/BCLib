@@ -303,7 +303,7 @@ public class WorldSetupScreen extends LayoutScreen {
         if (configuredPreset != null && configuredPreset.value() instanceof TogetherWorldPreset worldPreset) {
             ResourceKey<WorldPreset> key = configuredPreset.unwrapKey().orElse(null);
             if (key == null) key = worldPreset.parentKey;
-            
+
             acc.setWorldType(new WorldCreationUiState.WorldTypeEntry(Holder.direct(
                     worldPreset.withDimensions(
                             createWorldScreen

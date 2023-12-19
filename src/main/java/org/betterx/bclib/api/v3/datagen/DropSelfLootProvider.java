@@ -19,7 +19,7 @@ public interface DropSelfLootProvider<B extends ItemLike> extends LootDropProvid
         if (this instanceof BehaviourExplosionResistant) {
             pool = pool.when(ExplosionCondition.survivesExplosion());
         }
-        
+
         builder.withPool(pool);
     }
 }

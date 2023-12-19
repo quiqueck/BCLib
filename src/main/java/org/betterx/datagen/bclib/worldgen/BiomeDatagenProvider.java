@@ -23,6 +23,6 @@ public class BiomeDatagenProvider extends TagDataProvider<Biome> {
     }
 
     public static void bootstrap(BootstapContext<Biome> bootstrapContext) {
-        
+
     }
 }

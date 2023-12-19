@@ -101,7 +101,7 @@ public final class BCLWoodTypeWrapper {
         public BCLWoodTypeWrapper build() {
             if (setType == null) setType = new BlockSetTypeBuilder().register(id);
 
-            final WoodType type = new WoodTypeBuilder().register(id,setType);
+            final WoodType type = new WoodTypeBuilder().register(id, setType);
             return new BCLWoodTypeWrapper(id, type, color, flammable);
         }
     }

@@ -35,7 +35,7 @@ public class RomanNumeral {
     private static String _toRoman(int number) {
         //there is no 0 in roman, but we need it anyway ;)
         if (number == 0) return "0";
-        
+
         int l = LITERALS.floorKey(number);
         if (number == l) {
             return LITERALS.get(number);

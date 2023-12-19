@@ -125,7 +125,7 @@ public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements R
             BlockPos pos,
             BlockState state,
             Fluid fluid
-    )  {
+    ) {
         return false;
     }
 

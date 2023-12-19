@@ -68,7 +68,9 @@ public abstract class BaseStripableLogBlock extends BaseRotatedPillarBlock {
         public Wood(MapColor color, Block striped, boolean flammable) {
             super(
                     striped,
-                    (flammable ? Properties.ofFullCopy(striped).ignitedByLava() : Properties.ofFullCopy(striped)).mapColor(color)
+                    (flammable
+                            ? Properties.ofFullCopy(striped).ignitedByLava()
+                            : Properties.ofFullCopy(striped)).mapColor(color)
             );
             this.flammable = flammable;
         }

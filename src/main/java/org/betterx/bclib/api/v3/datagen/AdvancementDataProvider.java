@@ -2,7 +2,6 @@ package org.betterx.bclib.api.v3.datagen;
 
 import org.betterx.bclib.api.v2.advancement.AdvancementManager;
 
-import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;

@@ -10,8 +10,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 
-import java.util.function.Consumer;
-
 public class SmithingRecipeBuilder extends AbstractUnlockableRecipeBuilder<SmithingRecipeBuilder> {
     protected Ingredient addon;
     protected Item template;

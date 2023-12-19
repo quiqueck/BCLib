@@ -48,6 +48,7 @@ public class BehaviourBuilders {
                 .strength(0.2f)
                 .sound(SoundType.VINE);
     }
+
     public static BlockBehaviour.Properties createVine(MapColor color) {
         return createStaticVine(color)
                 .randomTicks();
@@ -100,6 +101,7 @@ public class BehaviourBuilders {
     public static BlockBehaviour.Properties createLeaves() {
         return createLeaves(MapColor.PLANT, true);
     }
+
     public static BlockBehaviour.Properties createStaticLeaves() {
         return createStaticLeaves(MapColor.PLANT, true);
     }

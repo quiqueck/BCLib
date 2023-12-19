@@ -41,7 +41,7 @@ public class BlockRegistry extends BaseRegistry<Block> {
                                          .getBurnChance() == 0) {
             FlammableBlockRegistry.getDefaultInstance().add(block, 5, 5);
         }
-        
+
         getModBlocks(id.getNamespace()).add(block);
 
         return block;

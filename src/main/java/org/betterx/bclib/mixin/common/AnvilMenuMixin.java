@@ -122,7 +122,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu implements AnvilSc
         if (!bcl_recipes.isEmpty()) {
             int anvilLevel = this.bcl_anvilLevel.get();
             bcl_recipes = bcl_recipes.stream()
-                                      .filter(recipe -> anvilLevel >= recipe.value().getAnvilLevel())
+                                     .filter(recipe -> anvilLevel >= recipe.value().getAnvilLevel())
                                      .collect(Collectors.toList());
             if (!bcl_recipes.isEmpty()) {
                 if (bcl_currentRecipe == null || !bcl_recipes.contains(bcl_currentRecipe)) {

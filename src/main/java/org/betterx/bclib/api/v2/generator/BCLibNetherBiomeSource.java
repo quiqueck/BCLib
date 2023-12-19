@@ -96,7 +96,7 @@ public class BCLibNetherBiomeSource extends BCLBiomeSource implements BiomeSourc
     public static void register() {
         Registry.register(BuiltInRegistries.BIOME_SOURCE, BCLib.makeID("nether_biome_source"), CODEC);
     }
-    
+
     @Override
     public Holder<Biome> getNoiseBiome(int biomeX, int biomeY, int biomeZ, Climate.Sampler var4) {
         if (!wasBound()) reloadBiomes(false);

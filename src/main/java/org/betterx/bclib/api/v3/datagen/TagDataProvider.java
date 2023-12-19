@@ -93,7 +93,7 @@ public class TagDataProvider<T> extends FabricTagProvider<T> {
                 if (isOptional(pair.second)) builder.addOptional(pair.first);
                 else builder.add(pair.first);
             });
-            
+
             tags.forEach(pair -> {
                 if (isOptional(pair.second)) builder.addOptionalTag(pair.first);
                 else builder.forceAddTag(pair.first);

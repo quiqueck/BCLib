@@ -97,7 +97,7 @@ public abstract class TemplateStructure extends Structure {
     public Optional<GenerationStub> findGenerationPoint(GenerationContext ctx) {
         final Config config = randomConfig(ctx.random());
         if (config == null) return Optional.empty();
-        
+
         ChunkPos chunkPos = ctx.chunkPos();
         final int x = chunkPos.getMinBlockX();
         final int z = chunkPos.getMinBlockZ();

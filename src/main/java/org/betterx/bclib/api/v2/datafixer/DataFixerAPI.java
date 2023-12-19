@@ -158,11 +158,10 @@ public class DataFixerAPI {
 
     private static void makeBackupAndShowToast(LevelStorageSource storageSource, String levelID) {
         boolean didOpen = false;
-        try (LevelStorageSource.LevelStorageAccess access = storageSource.createAccess(levelID);){
+        try (LevelStorageSource.LevelStorageAccess access = storageSource.createAccess(levelID);) {
             didOpen = true;
             EditWorldScreen.makeBackupAndShowToast(access);
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             if (!didOpen) {
                 SystemToast.onWorldAccessFailure(Minecraft.getInstance(), levelID);
             }

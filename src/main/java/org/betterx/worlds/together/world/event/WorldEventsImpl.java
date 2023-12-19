@@ -6,7 +6,7 @@ import org.jetbrains.annotations.ApiStatus;
 public class WorldEventsImpl {
     public static final EventImpl<OnWorldRegistryReady> WORLD_REGISTRY_READY = new EventImpl<>();
     public static final EventImpl<BeforeWorldLoad> BEFORE_WORLD_LOAD = new EventImpl<>();
-    
+
     public static final EventImpl<OnWorldLoad> ON_WORLD_LOAD = new EventImpl<>();
     public static final EventImpl<OnFinalizeLevelStem> ON_FINALIZE_LEVEL_STEM = new EventImpl<>();
     public static final EventImpl<OnFinalizeWorldLoad> ON_FINALIZED_WORLD_LOAD = new EventImpl<>();
