@@ -35,8 +35,7 @@ public interface BonemealGrassLike extends BonemealableBlock {
     default boolean isValidBonemealTarget(
             BlockGetter blockGetter,
             BlockPos blockPos,
-            BlockState blockState,
-            boolean bl
+            BlockState blockState
     ) {
         return blockGetter.getBlockState(blockPos.above()).isAir();
     }
