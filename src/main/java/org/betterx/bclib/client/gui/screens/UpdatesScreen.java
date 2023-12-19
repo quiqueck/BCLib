@@ -30,10 +30,14 @@ public class UpdatesScreen extends BCLibLayoutScreen {
     public static final String DONATION_URL = "https://www.buymeacoffee.com/quiqueck";
     static final ResourceLocation UPDATE_LOGO_LOCATION = new ResourceLocation(BCLib.MOD_ID, "icon_updater.png");
 
+    public UpdatesScreen(Runnable onClose) {
+        super(onClose, Component.translatable("bclib.updates.title"), 10, 10, 10);
+    }
+
     public UpdatesScreen(Screen parent) {
         super(parent, Component.translatable("bclib.updates.title"), 10, 10, 10);
     }
-    
+
     public static void showUpdateUI() {
         if (!RenderSystem.isOnRenderThread()) {
             RenderSystem.recordRenderCall(() -> Minecraft.getInstance()

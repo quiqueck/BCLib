@@ -35,4 +35,21 @@ public abstract class BCLibLayoutScreen extends LayoutScreenWithIcon {
     ) {
         super(parent, BCLIB_LOGO_LOCATION, component, topPadding, bottomPadding, sidePadding);
     }
+
+    public BCLibLayoutScreen(
+            @Nullable Runnable onClose,
+            Component component
+    ) {
+        super(onClose, BCLIB_LOGO_LOCATION, component);
+    }
+
+    public BCLibLayoutScreen(
+            @Nullable Runnable onClose,
+            Component component,
+            int topPadding,
+            int bottomPadding,
+            int sidePadding
+    ) {
+        super(onClose, BCLIB_LOGO_LOCATION, component, topPadding, bottomPadding, sidePadding);
+    }
 }

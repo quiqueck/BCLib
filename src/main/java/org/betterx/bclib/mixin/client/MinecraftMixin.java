@@ -17,6 +17,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.List;
+import java.util.function.Function;
 import org.jetbrains.annotations.Nullable;
 
 @Mixin(Minecraft.class)
@@ -34,6 +36,14 @@ public abstract class MinecraftMixin {
     @Nullable
     public Screen screen;
 
+    @Inject(
+            method = "addInitialScreens",
+            at = @At("TAIL")
+    )
+    private void bclib_onScreenInit(List<Function<Runnable, Screen>> list, CallbackInfo ci) {
+        VersionCheckerClient.presentUpdateScreen(list);
+    }
+
     @Inject(method = "<init>*", at = @At("TAIL"))
     private void bclib_onMCInit(GameConfig args, CallbackInfo info) {
         BuiltInRegistries.BLOCK.forEach(block -> {
@@ -42,7 +52,5 @@ public abstract class MinecraftMixin {
                 itemColors.register(provider.getItemProvider(), block.asItem());
             }
         });
-
-        VersionCheckerClient.presentUpdateScreen(screen);
     }
 }
