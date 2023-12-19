@@ -49,16 +49,6 @@ public class ItemUtil {
         return null;
     }
 
-//    public static Codec<ItemStack> CODEC_ITEM_STACK_WITH_NBT = RecordCodecBuilder.create((instance) -> instance.group(
-//            BuiltInRegistries.ITEM.holderByNameCodec()
-//                                  .fieldOf("item")
-//                                  .forGetter(ItemStack::getItemHolder),
-//            Codec.INT.optionalFieldOf("count", 1)
-//                     .forGetter(ItemStack::getCount),
-//            ExtraCodecs.strictOptionalField(TagParser.AS_CODEC, "nbt")
-//                       .forGetter((itemStack) -> Optional.ofNullable(itemStack.getTag()))
-//    ).apply(instance, ItemStack::new));
-
     public static <T> Codec<T> codecItemStackWithNBT(
             Function<T, ItemStack> getter,
             Function<ItemStack, T> factory
@@ -83,11 +73,6 @@ public class ItemUtil {
             (itemValue) -> itemValue.item(),
             (stack) -> new Ingredient.ItemValue(stack)
     );
-
-
-//    private static final Codec<Ingredient.ItemValue> CODEC_NBT_ITEM_VALUE = RecordCodecBuilder.create((instance) -> instance
-//            .group(CODEC_ITEM_STACK_WITH_NBT.fieldOf("item").forGetter((itemValue) -> itemValue.item()))
-//            .apply(instance, Ingredient.ItemValue::new));
 
     private static final Codec<Ingredient.Value> VALUE_CODEC = ExtraCodecs
             .xor(CODEC_NBT_ITEM_VALUE, Ingredient.TagValue.CODEC)
