@@ -237,7 +237,7 @@ public class AlloyingRecipe implements Recipe<Container>, UnknownReceipBookCateg
 
         @Override
         public Codec<AlloyingRecipe> codec() {
-            return null;
+            return CODEC;
         }
 
         @Override
