@@ -16,7 +16,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.state.BlockState;
@@ -32,6 +31,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import com.google.common.collect.Lists;
 
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements RenderLayerProvider, BonemealableBlock, LiquidBlockContainer {
     private static final VoxelShape SHAPE = box(4, 0, 4, 12, 14, 12);
@@ -58,8 +58,15 @@ public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements R
     protected abstract boolean isTerrain(BlockState state);
 
     @Override
+    public void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource randomSource) {
+        if (!canSurvive(state, world, pos)) {
+            world.destroyBlock(pos, true);
+        }
+    }
+
+    @Override
     @SuppressWarnings("deprecation")
-    public BlockState updateShape(
+    public @NotNull BlockState updateShape(
             BlockState state,
             Direction facing,
             BlockState neighborState,
@@ -68,11 +75,10 @@ public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements R
             BlockPos neighborPos
     ) {
         if (!canSurvive(state, world, pos)) {
-            world.destroyBlock(pos, true);
-            return Blocks.WATER.defaultBlockState();
-        } else {
-            return state;
+            world.scheduleTick(pos, this, 1);
         }
+
+        return state;
     }
 
     @Override
