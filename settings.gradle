@@ -17,7 +17,7 @@ def allowLocalLibUse = true
 def allowLocalLibInConsoleMode = false
 
 //The path were to look for the local BCLib
-def WunderLibPath = '../WunderLib'
+def WunderLibPath = '../WorldWeaver/WunderLib'
 
 
 // #### Logic ####
