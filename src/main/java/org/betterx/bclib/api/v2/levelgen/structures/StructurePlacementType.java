@@ -3,6 +3,8 @@ package org.betterx.bclib.api.v2.levelgen.structures;
 import com.mojang.serialization.Codec;
 import net.minecraft.util.StringRepresentable;
 
+import org.jetbrains.annotations.NotNull;
+
 public enum StructurePlacementType implements StringRepresentable {
     FLOOR, WALL, CEIL, LAVA, UNDER;
 
@@ -13,7 +15,7 @@ public enum StructurePlacementType implements StringRepresentable {
     }
 
     @Override
-    public String getSerializedName() {
+    public @NotNull String getSerializedName() {
         return this.name().toLowerCase();
     }
 }
