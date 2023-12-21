@@ -6,6 +6,7 @@ import com.mojang.serialization.Dynamic;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.GenericDirtMessageScreen;
 import net.minecraft.client.gui.screens.worldselection.WorldOpenFlows;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.storage.LevelStorageSource;
 
 import org.spongepowered.asm.mixin.Final;
