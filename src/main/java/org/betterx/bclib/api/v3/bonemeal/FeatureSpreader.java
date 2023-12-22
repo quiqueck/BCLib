@@ -1,18 +1,19 @@
 package org.betterx.bclib.api.v3.bonemeal;
 
-import org.betterx.bclib.api.v3.levelgen.features.BCLConfigureFeature;
-
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+
+import org.jetbrains.annotations.Nullable;
 
 public class FeatureSpreader implements BonemealNyliumLike {
-    public final BCLConfigureFeature<? extends Feature<?>, ?> spreadableFeature;
+    public final BonemealAPI.FeatureProvider spreadableFeature;
     public final Block hostBlock;
 
-    public FeatureSpreader(Block hostBlock, BCLConfigureFeature<? extends Feature<?>, ?> spreadableFeature) {
+    public FeatureSpreader(Block hostBlock, BonemealAPI.FeatureProvider spreadableFeature) {
         this.spreadableFeature = spreadableFeature;
         this.hostBlock = hostBlock;
     }
@@ -33,7 +34,7 @@ public class FeatureSpreader implements BonemealNyliumLike {
     }
 
     @Override
-    public BCLConfigureFeature<? extends Feature<?>, ?> getCoverFeature() {
-        return spreadableFeature;
+    public @Nullable Holder<? extends ConfiguredFeature<?, ?>> getCoverFeature() {
+        return spreadableFeature.getFeature();
     }
 }

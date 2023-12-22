@@ -4,6 +4,7 @@ import org.betterx.bclib.api.v3.levelgen.features.BCLConfigureFeature;
 import org.betterx.bclib.api.v3.tag.BCLBlockTags;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
@@ -11,14 +12,21 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 
 import java.util.HashMap;
 import java.util.Map;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class BonemealAPI {
+    @FunctionalInterface
+    public interface FeatureProvider {
+        @Nullable
+        Holder<? extends ConfiguredFeature<?, ?>> getFeature();
+    }
+
     public static BonemealAPI INSTANCE = new BonemealAPI();
     private final Map<TagKey<Block>, BonemealBlockSpreader> taggedSpreaders;
     private final Map<Block, FeatureSpreader> featureSpreaders;
@@ -47,7 +55,27 @@ public class BonemealAPI {
      */
     public void addSpreadableFeatures(
             Block target,
-            @NotNull BCLConfigureFeature<? extends Feature<?>, ?> spreadableFeature
+            @NotNull BCLConfigureFeature<?, ?> spreadableFeature
+    ) {
+        featureSpreaders.put(target, new FeatureSpreader(target, () -> spreadableFeature.configuredFeature));
+    }
+
+    /**
+     * Bonemeal can be used to spread vegetation to neighbouring blocks.
+     * <p>
+     * This method allows you to register a block (the type that was clicked with bonemeal) with
+     * a {@link BCLConfigureFeature} that will be placed on the bonemeald block
+     * <p>
+     * You can achieve the same behaviour by implementing {@link BonemealNyliumLike} on your custom
+     * BlockClass. This is mainly intended for vanilla Blocks where you need to add bonemeal
+     * behaviour
+     *
+     * @param target            The block-type
+     * @param spreadableFeature the feature to place
+     */
+    public void addSpreadableFeatures(
+            Block target,
+            @NotNull FeatureProvider spreadableFeature
     ) {
         featureSpreaders.put(target, new FeatureSpreader(target, spreadableFeature));
     }

@@ -3,6 +3,7 @@ package org.betterx.bclib.api.v3.bonemeal;
 import org.betterx.bclib.api.v3.levelgen.features.BCLConfigureFeature;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
@@ -10,12 +11,15 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
+
+import org.jetbrains.annotations.Nullable;
 
 //adapted from NyliumBlock
 public interface BonemealNyliumLike extends BonemealableBlock {
     Block getHostBlock(); //this
-    BCLConfigureFeature<? extends Feature<?>, ?> getCoverFeature();
+    @Nullable Holder<? extends ConfiguredFeature<?, ? extends Feature<?>>> getCoverFeature();
 
     default boolean isValidBonemealTarget(
             LevelReader blockGetter,
@@ -42,9 +46,9 @@ public interface BonemealNyliumLike extends BonemealableBlock {
     ) {
         final BlockState currentState = serverLevel.getBlockState(blockPos);
         if (currentState.is(getHostBlock())) {
-            BCLConfigureFeature<? extends Feature<?>, ?> feature = getCoverFeature();
+            Holder<? extends ConfiguredFeature<?, ?>> feature = getCoverFeature();
             if (feature != null) {
-                feature.placeInWorld(serverLevel, blockPos.above(), randomSource, true);
+                BCLConfigureFeature.placeInWorld(feature, serverLevel, blockPos.above(), randomSource);
             }
         }
     }

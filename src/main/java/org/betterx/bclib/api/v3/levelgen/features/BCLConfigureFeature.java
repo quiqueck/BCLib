@@ -126,6 +126,18 @@ public class BCLConfigureFeature<F extends Feature<FC>, FC extends FeatureConfig
         return placeUnboundInWorld(feature, FeatureConfiguration.NONE, level, pos, random, true);
     }
 
+    public static boolean placeInWorld(
+            Holder<? extends ConfiguredFeature<?, ?>> feature,
+            ServerLevel level,
+            BlockPos pos,
+            RandomSource random
+    ) {
+        if (feature != null && feature.value() != null) {
+            return placeUnboundInWorld(feature.value().feature(), feature.value().config(), level, pos, random, true);
+        }
+        return false;
+    }
+
     public static <FC extends FeatureConfiguration> boolean placeInWorld(
             Feature<FC> feature,
             FC config,
