@@ -1,7 +1,6 @@
 package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.api.v3.datagen.DropSelfLootProvider;
-import org.betterx.bclib.api.v3.levelgen.features.BCLConfigureFeature;
 import org.betterx.bclib.behaviours.BehaviourBuilders;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
@@ -34,13 +33,19 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfiguration> extends SaplingBlock implements RenderLayerProvider, BlockModelProvider, DropSelfLootProvider<FeatureSaplingBlock> {
 
     @FunctionalInterface
     public interface FeatureSupplier<F extends Feature<FC>, FC extends FeatureConfiguration> {
-        BCLConfigureFeature<F, FC> get(BlockState state);
+        boolean grow(
+                @NotNull ServerLevel level,
+                @NotNull BlockPos pos,
+                @NotNull BlockState state,
+                @NotNull RandomSource random
+        );
     }
 
     private static final VoxelShape SHAPE = Block.box(4, 0, 4, 12, 14, 12);
@@ -68,8 +73,16 @@ public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfig
         this.feature = featureSupplier;
     }
 
-    protected BCLConfigureFeature<F, FC> getConfiguredFeature(BlockState state) {
-        return feature != null ? feature.get(state) : null;
+    protected boolean growFeature(
+            @NotNull ServerLevel world,
+            @NotNull BlockPos pos,
+            @NotNull BlockState blockState,
+            @NotNull RandomSource random
+    ) {
+        if (feature != null) {
+            return feature.grow(world, pos, blockState, random);
+        }
+        return false;
     }
 
     @Override
@@ -95,13 +108,11 @@ public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfig
         if (blockState.getValue(STAGE) == 0) {
             world.setBlock(pos, blockState.cycle(STAGE), 4);
         } else {
-            BCLConfigureFeature<F, FC> conf = getConfiguredFeature(blockState);
-            growFeature(conf, world, pos, blockState, random);
+            doGrowFeature(world, pos, blockState, random);
         }
     }
 
-    protected boolean growFeature(
-            BCLConfigureFeature<F, FC> feature,
+    protected boolean doGrowFeature(
             ServerLevel serverLevel,
             BlockPos blockPos,
             BlockState originalBlockState,
@@ -112,7 +123,8 @@ public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfig
         } else {
             BlockState emptyState = serverLevel.getFluidState(blockPos).createLegacyBlock();
             serverLevel.setBlock(blockPos, emptyState, 4);
-            if (feature.placeInWorld(serverLevel, blockPos, randomSource)) {
+            ;
+            if (growFeature(serverLevel, blockPos, originalBlockState, randomSource)) {
                 if (serverLevel.getBlockState(blockPos) == emptyState) {
                     serverLevel.sendBlockUpdated(blockPos, originalBlockState, emptyState, 2);
                 }
