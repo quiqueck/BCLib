@@ -10,12 +10,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 
 import com.google.common.collect.Lists;
-import dev.emi.emi.EmiPort;
-import dev.emi.emi.EmiUtil;
 import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.recipe.EmiRecipeCategory;
 import dev.emi.emi.api.render.EmiRenderable;
@@ -80,24 +79,19 @@ public class EMIAnvilRecipeCategory extends EmiRecipeCategory {
         bufferSource.endBatch();
     }
 
+    @Override
     public List<ClientTooltipComponent> getTooltip() {
-        List<ClientTooltipComponent> list = Lists.newArrayList();
-        if (titleLines.isEmpty()) {
-            list.add(ClientTooltipComponent.create(EmiPort.ordered(EmiPort.translatable(EmiUtil.translateId(
-                    "emi.category.",
-                    this.getId()
-            )))));
-        } else {
+        List<ClientTooltipComponent> list = super.getTooltip();
+        if (!titleLines.isEmpty()) {
+            List<ClientTooltipComponent> newList = Lists.newArrayList();
             for (var line : titleLines)
-                list.add(ClientTooltipComponent.create(line));
+                newList.add(ClientTooltipComponent.create(line));
+
+            if (list.size() > 0) list.remove(0);
+            newList.addAll(list);
+            return newList;
         }
 
-
-        list.add(ClientTooltipComponent.create(EmiPort.ordered(EmiPort.literal(
-                EmiUtil.getModName(this.getId()
-                                       .getNamespace()),
-                new ChatFormatting[]{ChatFormatting.BLUE, ChatFormatting.ITALIC}
-        ))));
         return list;
     }
 }
