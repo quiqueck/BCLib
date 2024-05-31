@@ -15,7 +15,7 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BiomeDefaultFeatures;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.biome.OverworldBiomes;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -77,7 +77,7 @@ public class BCLBiomeBuilder {
     }
 
     @FunctionalInterface
-    interface BuildCompletion extends Function<BootstapContext<Biome>, Biome> {
+    interface BuildCompletion extends Function<BootstrapContext<Biome>, Biome> {
     }
 
     private static final SurfaceRules.ConditionSource SURFACE_NOISE = SurfaceRules.noiseCondition(
@@ -914,7 +914,7 @@ public class BCLBiomeBuilder {
      *
      * @return new or same {@link BiomeGenerationSettings.Builder} instance.
      */
-    private BiomeGenerationSettings.Builder getGeneration(BootstapContext<Biome> bootstrapContext) {
+    private BiomeGenerationSettings.Builder getGeneration(BootstrapContext<Biome> bootstrapContext) {
 
         if (generationSettings == null) {
             generationSettings = new BiomeGenerationSettings.Builder(
@@ -987,7 +987,7 @@ public class BCLBiomeBuilder {
         return unbound;
     }
 
-    public static void registerUnbound(BootstapContext<Biome> context) {
+    public static void registerUnbound(BootstrapContext<Biome> context) {
         UNBOUND_BIOMES.forEach(u -> u.register(context));
         UNBOUND_BIOMES.clear();
     }

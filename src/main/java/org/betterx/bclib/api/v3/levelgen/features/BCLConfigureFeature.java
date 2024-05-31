@@ -2,7 +2,7 @@ package org.betterx.bclib.api.v3.levelgen.features;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -27,7 +27,7 @@ public class BCLConfigureFeature<F extends Feature<FC>, FC extends FeatureConfig
         }
 
         @Override
-        public BCLConfigureFeature<F, FC> register(BootstapContext<ConfiguredFeature<?, ?>> bootstrapContext) {
+        public BCLConfigureFeature<F, FC> register(BootstrapContext<ConfiguredFeature<?, ?>> bootstrapContext) {
             if (registered != null) return registered;
 
             Holder<ConfiguredFeature<FC, F>> holder = BCLFeatureBuilder.register(
@@ -148,7 +148,7 @@ public class BCLConfigureFeature<F extends Feature<FC>, FC extends FeatureConfig
         return placeUnboundInWorld(feature, config, level, pos, random, true);
     }
 
-    public BCLConfigureFeature<F, FC> register(BootstapContext<ConfiguredFeature<?, ?>> bootstrapContext) {
+    public BCLConfigureFeature<F, FC> register(BootstrapContext<ConfiguredFeature<?, ?>> bootstrapContext) {
         return this;
     }
 }

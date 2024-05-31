@@ -6,7 +6,7 @@ import com.mojang.serialization.Codec;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -36,7 +36,7 @@ public abstract class BCLStructure<S extends Structure> {
             return apply(structureSettings, null);
         }
 
-        S apply(Structure.StructureSettings structureSettings, BootstapContext<Structure> ctx);
+        S apply(Structure.StructureSettings structureSettings, BootstrapContext<Structure> ctx);
     }
 
     public static class Unbound<S extends Structure> extends BCLStructure<S> {
@@ -71,7 +71,7 @@ public abstract class BCLStructure<S extends Structure> {
         }
 
 
-        public Bound<S> register(BootstapContext<Structure> bootstrapContext) {
+        public Bound<S> register(BootstrapContext<Structure> bootstrapContext) {
             if (registered != null) return registered;
             final Structure.StructureSettings settings = structure(
                     bootstrapContext,
@@ -130,7 +130,7 @@ public abstract class BCLStructure<S extends Structure> {
             return structure;
         }
 
-        public Bound<S> register(BootstapContext<Structure> bootstrapContext) {
+        public Bound<S> register(BootstrapContext<Structure> bootstrapContext) {
             return this;
         }
     }
@@ -149,12 +149,12 @@ public abstract class BCLStructure<S extends Structure> {
 
     //public final Codec<S> STRUCTURE_CODEC;
 
-    private static HolderSet<Biome> biomes(BootstapContext<Structure> bootstrapContext, TagKey<Biome> tagKey) {
+    private static HolderSet<Biome> biomes(BootstrapContext<Structure> bootstrapContext, TagKey<Biome> tagKey) {
         return bootstrapContext.lookup(Registries.BIOME).getOrThrow(tagKey);
     }
 
     private static Structure.StructureSettings structure(
-            BootstapContext<Structure> bootstrapContext,
+            BootstrapContext<Structure> bootstrapContext,
             TagKey<Biome> tagKey,
             Map<MobCategory, StructureSpawnOverride> map,
             GenerationStep.Decoration decoration,
@@ -164,7 +164,7 @@ public abstract class BCLStructure<S extends Structure> {
     }
 
     private static Structure.StructureSettings structure(
-            BootstapContext<Structure> bootstrapContext,
+            BootstrapContext<Structure> bootstrapContext,
             TagKey<Biome> tagKey,
             GenerationStep.Decoration decoration,
             TerrainAdjustment terrainAdjustment
@@ -273,7 +273,7 @@ public abstract class BCLStructure<S extends Structure> {
 
     private boolean registeredSet = false;
 
-    public void registerSet(BootstapContext<StructureSet> bootstrapContext) {
+    public void registerSet(BootstrapContext<StructureSet> bootstrapContext) {
         if (registeredSet) return;
         registeredSet = true;
         bootstrapContext.register(structureSetKey, new StructureSet(
@@ -283,5 +283,5 @@ public abstract class BCLStructure<S extends Structure> {
         BCLStructureBuilder.UNBOUND_STRUCTURE_SETS.remove(this);
     }
 
-    public abstract Bound<S> register(BootstapContext<Structure> bootstrapContext);
+    public abstract Bound<S> register(BootstrapContext<Structure> bootstrapContext);
 }

@@ -1,6 +1,6 @@
 package org.betterx.bclib.api.v2.levelgen.biomes;
 
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.world.level.biome.Biome;
 
 import java.util.Objects;
@@ -18,7 +18,7 @@ class UnboundBCLBiome<T extends BCLBiome> extends BCLBiomeContainer<T> {
 
 
     @Override
-    public BCLBiomeContainer<T> register(BootstapContext<Biome> bootstrapContext, BiomeAPI.BiomeType dim) {
+    public BCLBiomeContainer<T> register(BootstrapContext<Biome> bootstrapContext, BiomeAPI.BiomeType dim) {
         if (registered != null) return registered;
         if (dim == null) dim = BiomeAPI.BiomeType.NONE;
 

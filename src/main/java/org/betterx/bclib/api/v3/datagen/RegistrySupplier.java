@@ -7,7 +7,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistrySetBuilder;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.RegistryDataLoader;
 import net.minecraft.resources.ResourceKey;
 
@@ -214,7 +214,7 @@ public abstract class RegistrySupplier {
                 throw new RuntimeException(e);
             }
             BCLib.LOGGER.info("Adding:" + key());
-            registryBuilder.add(key(), (BootstapContext<T> ctx) -> {
+            registryBuilder.add(key(), (BootstrapContext<T> ctx) -> {
                 if (registryBootstrap != null) {
                     registryBootstrap.run(ctx);
                 }

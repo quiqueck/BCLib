@@ -7,7 +7,7 @@ import org.betterx.bclib.api.v3.levelgen.features.features.*;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -31,7 +31,7 @@ public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> 
         }
 
         @Override
-        public BCLFeature<F, FC> register(BootstapContext<PlacedFeature> bootstrapContext) {
+        public BCLFeature<F, FC> register(BootstrapContext<PlacedFeature> bootstrapContext) {
             if (registered != null) return registered;
             Holder<PlacedFeature> holder = BCLPlacedFeatureBuilder.register(
                     bootstrapContext,
@@ -129,7 +129,7 @@ public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> 
         return Registry.register(BuiltInRegistries.FEATURE, location, feature);
     }
 
-    public BCLFeature<F, FC> register(BootstapContext<PlacedFeature> bootstrapContext) {
+    public BCLFeature<F, FC> register(BootstrapContext<PlacedFeature> bootstrapContext) {
         return this;
     }
 }

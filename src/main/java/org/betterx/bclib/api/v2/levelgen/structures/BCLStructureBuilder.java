@@ -1,7 +1,7 @@
 package org.betterx.bclib.api.v2.levelgen.structures;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
@@ -53,11 +53,11 @@ public class BCLStructureBuilder<S extends Structure> extends BCLBaseStructureBu
     }
 
 
-    public static void registerUnbound(BootstapContext<Structure> context) {
+    public static void registerUnbound(BootstrapContext<Structure> context) {
         BCLBaseStructureBuilder.registerUnbound(context);
     }
 
-    public static void registerUnboundSets(BootstapContext<StructureSet> context) {
+    public static void registerUnboundSets(BootstrapContext<StructureSet> context) {
         BCLBaseStructureBuilder.registerUnboundSets(context);
     }
 }

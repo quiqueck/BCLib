@@ -14,7 +14,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
@@ -107,7 +107,7 @@ public class BiomeAPI {
      * @return {@link BCLBiome}
      */
     static BCLBiome registerBuiltinBiomeAndOverrideIntendedDimension(
-            BootstapContext<Biome> bootstrapContext,
+            BootstrapContext<Biome> bootstrapContext,
             BCLBiome bclbiome,
             BiomeType dim
     ) {
@@ -283,7 +283,7 @@ public class BiomeAPI {
      * @param bclbiome {@link BCLBiome}
      * @return {@link BCLBiome}
      */
-    static BCLBiome registerBiome(BootstapContext<Biome> bootstrapContext, BCLBiome bclbiome) {
+    static BCLBiome registerBiome(BootstrapContext<Biome> bootstrapContext, BCLBiome bclbiome) {
         HolderGetter<Biome> registryOrNull = bootstrapContext.lookup(Registries.BIOME);
         if (registryOrNull != null
                 && bclbiome._hasBiomeToRegister()
@@ -321,7 +321,7 @@ public class BiomeAPI {
     }
 
     static BCLBiome registerSubBiome(
-            BootstapContext<Biome> bootstrapContext,
+            BootstrapContext<Biome> bootstrapContext,
             BCLBiome parent,
             BCLBiome subBiome
     ) {
@@ -334,7 +334,7 @@ public class BiomeAPI {
     }
 
     static BCLBiome registerSubBiome(
-            BootstapContext<Biome> bootstrapContext,
+            BootstrapContext<Biome> bootstrapContext,
             BCLBiome parent,
             BCLBiome subBiome,
             BiomeType dim
@@ -352,7 +352,7 @@ public class BiomeAPI {
      * @param biome {@link BCLBiome}
      * @return {@link BCLBiome}
      */
-    static BCLBiome registerEndLandBiome(BootstapContext<Biome> bootstrapContext, BCLBiome biome) {
+    static BCLBiome registerEndLandBiome(BootstrapContext<Biome> bootstrapContext, BCLBiome biome) {
         registerBuiltinBiomeAndOverrideIntendedDimension(bootstrapContext, biome, BiomeType.BCL_END_LAND);
 
         float weight = biome.settings.getGenChance();
@@ -376,7 +376,7 @@ public class BiomeAPI {
      * @param biome {@link BCLBiome}
      * @return {@link BCLBiome}
      */
-    static BCLBiome registerEndVoidBiome(BootstapContext<Biome> bootstrapContext, BCLBiome biome) {
+    static BCLBiome registerEndVoidBiome(BootstrapContext<Biome> bootstrapContext, BCLBiome biome) {
         registerBuiltinBiomeAndOverrideIntendedDimension(bootstrapContext, biome, BiomeType.BCL_END_VOID);
 
         float weight = biome.settings.getGenChance();
@@ -395,7 +395,7 @@ public class BiomeAPI {
      * @param biome {@link BCLBiome}
      * @return {@link BCLBiome}
      */
-    static BCLBiome registerEndCenterBiome(BootstapContext<Biome> bootstrapContext, BCLBiome biome) {
+    static BCLBiome registerEndCenterBiome(BootstrapContext<Biome> bootstrapContext, BCLBiome biome) {
         registerBuiltinBiomeAndOverrideIntendedDimension(bootstrapContext, biome, BiomeType.BCL_END_CENTER);
 
         float weight = biome.settings.getGenChance();
@@ -415,7 +415,7 @@ public class BiomeAPI {
      * @return {@link BCLBiome}
      */
     static BCLBiome registerEndBarrensBiome(
-            BootstapContext<Biome> bootstrapContext,
+            BootstrapContext<Biome> bootstrapContext,
             BCLBiome highlandBiome,
             BCLBiome biome
     ) {
@@ -438,7 +438,7 @@ public class BiomeAPI {
      * @param bclBiome {@link BCLBiome}
      * @return {@link BCLBiome}
      */
-    static BCLBiome registerNetherBiome(BootstapContext<Biome> bootstrapContext, BCLBiome bclBiome) {
+    static BCLBiome registerNetherBiome(BootstrapContext<Biome> bootstrapContext, BCLBiome bclBiome) {
         registerBuiltinBiomeAndOverrideIntendedDimension(bootstrapContext, bclBiome, BiomeType.BCL_NETHER);
 
         ResourceKey<Biome> key = bclBiome.getBiomeKey();

@@ -10,7 +10,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -219,7 +219,7 @@ public class BCLBiomeRegistry {
     }
 
     @ApiStatus.Internal
-    public static void bootstrap(BootstapContext<BCLBiome> ctx) {
+    public static void bootstrap(BootstrapContext<BCLBiome> ctx) {
         //copy from builtin, disabled as we do not bootstrap any biomes, all are loaded from the default datapack
         //vanilla biomes are provided by bclib
 //        for (Map.Entry<ResourceKey<BCLBiome>, BCLBiome> e : BUILTIN_BCL_BIOMES.entrySet()) {

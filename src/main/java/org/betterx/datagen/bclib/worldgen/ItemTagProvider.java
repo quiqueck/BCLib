@@ -6,7 +6,7 @@ import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.core.HolderLookup;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.world.item.Item;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -22,7 +22,7 @@ public class ItemTagProvider extends TagDataProvider<Item> {
         super(TagManager.ITEMS, List.of(BCLib.MOD_ID, WorldsTogether.MOD_ID, "c"), output, registriesFuture);
     }
 
-    public static void bootstrap(BootstapContext<Item> bootstrapContext) {
+    public static void bootstrap(BootstrapContext<Item> bootstrapContext) {
 
     }
 }

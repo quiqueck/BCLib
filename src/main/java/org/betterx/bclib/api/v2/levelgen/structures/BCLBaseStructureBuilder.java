@@ -3,7 +3,7 @@ package org.betterx.bclib.api.v2.levelgen.structures;
 import org.betterx.worlds.together.tag.v3.TagManager;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
@@ -107,12 +107,12 @@ abstract class BCLBaseStructureBuilder<S extends Structure, T extends BCLBaseStr
         return res;
     }
 
-    static void registerUnbound(BootstapContext<Structure> context) {
+    static void registerUnbound(BootstrapContext<Structure> context) {
         UNBOUND_STRUCTURES.forEach(s -> s.register(context));
         UNBOUND_STRUCTURES.clear();
     }
 
-    static void registerUnboundSets(BootstapContext<StructureSet> context) {
+    static void registerUnboundSets(BootstrapContext<StructureSet> context) {
         UNBOUND_STRUCTURE_SETS.forEach(s -> s.registerSet(context));
         UNBOUND_STRUCTURE_SETS.clear();
     }

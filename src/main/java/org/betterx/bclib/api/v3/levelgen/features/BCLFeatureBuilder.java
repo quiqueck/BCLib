@@ -19,7 +19,7 @@ import org.betterx.bclib.util.Triple;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.random.SimpleWeightedRandomList;
@@ -226,7 +226,7 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
 
     /**
      * Internally used by the builder. Normally you should not have to call this method directly as it is
-     * handled by {@link #buildAndRegister(BootstapContext)}
+     * handled by {@link #buildAndRegister(BootstrapContext)}
      *
      * @param id       The ID to register this feature with
      * @param cFeature The configured Feature
@@ -235,7 +235,7 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
      * @return The Holder for the new Feature
      */
     public static <F extends Feature<FC>, FC extends FeatureConfiguration> Holder<ConfiguredFeature<FC, F>> register(
-            BootstapContext<ConfiguredFeature<?, ?>> ctx,
+            BootstrapContext<ConfiguredFeature<?, ?>> ctx,
             ResourceLocation id,
             ConfiguredFeature<FC, F> cFeature
     ) {
@@ -265,7 +265,7 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         return featureBuilder.create(featureID, holder);
     }
 
-    public BCLConfigureFeature<F, FC> buildAndRegister(BootstapContext<ConfiguredFeature<?, ?>> bootstrapCtx) {
+    public BCLConfigureFeature<F, FC> buildAndRegister(BootstrapContext<ConfiguredFeature<?, ?>> bootstrapCtx) {
         return buildAndCreateHolder((featureID, cFeature) -> register(bootstrapCtx, featureID, cFeature));
     }
 
@@ -288,7 +288,7 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         return res;
     }
 
-    public static void registerUnbound(BootstapContext<ConfiguredFeature<?, ?>> bootstapContext) {
+    public static void registerUnbound(BootstrapContext<ConfiguredFeature<?, ?>> bootstapContext) {
         UNBOUND_FEATURES.forEach(u -> u.register(bootstapContext));
         UNBOUND_FEATURES.clear();
     }

@@ -10,7 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
@@ -150,12 +150,12 @@ public class TestStructure extends Structure {
         return TEST.structureType;
     }
 
-    public static void bootstrap(BootstapContext<Structure> bootstrapContext) {
+    public static void bootstrap(BootstrapContext<Structure> bootstrapContext) {
         BCLib.LOGGER.info("Bootstrap Structure");
         TEST.register(bootstrapContext);
     }
 
-    public static void bootstrapSet(BootstapContext<StructureSet> bootstrapContext) {
+    public static void bootstrapSet(BootstrapContext<StructureSet> bootstrapContext) {
         BCLib.LOGGER.info("Bootstrap StructureSet");
         TEST.registerSet(bootstrapContext);
     }

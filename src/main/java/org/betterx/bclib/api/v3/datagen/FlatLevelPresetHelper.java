@@ -3,7 +3,7 @@ package org.betterx.bclib.api.v3.datagen;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.biome.Biome;
@@ -19,7 +19,7 @@ import java.util.Set;
 
 public class FlatLevelPresetHelper {
     public static void register(
-            BootstapContext<FlatLevelGeneratorPreset> ctx,
+            BootstrapContext<FlatLevelGeneratorPreset> ctx,
             ResourceKey<FlatLevelGeneratorPreset> presetKey,
             ItemLike icon,
             ResourceKey<Biome> biomeKey,

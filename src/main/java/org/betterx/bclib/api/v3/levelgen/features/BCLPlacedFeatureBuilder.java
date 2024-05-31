@@ -4,7 +4,7 @@ import org.betterx.bclib.util.FullReferenceHolder;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.GenerationStep;
@@ -93,13 +93,13 @@ public class BCLPlacedFeatureBuilder<F extends Feature<FC>, FC extends FeatureCo
         return res;
     }
 
-    public static void registerUnbound(BootstapContext<PlacedFeature> bootstrapContext) {
+    public static void registerUnbound(BootstrapContext<PlacedFeature> bootstrapContext) {
         UNBOUND_FEATURES.forEach(u -> u.register(bootstrapContext));
         UNBOUND_FEATURES.clear();
     }
 
     public static Holder<PlacedFeature> register(
-            BootstapContext<PlacedFeature> bootstrapContext,
+            BootstrapContext<PlacedFeature> bootstrapContext,
             Holder<PlacedFeature> holder
     ) {
         return bootstrapContext.register(holder.unwrapKey().orElseThrow(), holder.value());
@@ -112,7 +112,7 @@ public class BCLPlacedFeatureBuilder<F extends Feature<FC>, FC extends FeatureCo
      *
      * @return created {@link BCLFeature} instance.
      */
-    public BCLFeature<F, FC> buildAndRegister(BootstapContext<PlacedFeature> bootstapContext) {
+    public BCLFeature<F, FC> buildAndRegister(BootstrapContext<PlacedFeature> bootstapContext) {
         return build().register(bootstapContext);
     }
 }
