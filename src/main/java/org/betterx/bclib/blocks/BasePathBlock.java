@@ -4,10 +4,13 @@ import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
+import org.betterx.bclib.interfaces.BlockModelProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -51,7 +54,7 @@ public abstract class BasePathBlock extends BaseBlockNotFull {
     @Override
     public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
         ItemStack tool = builder.getParameter(LootContextParams.TOOL);
-        if (tool != null && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool) > 0) {
+        if (tool != null && EnchantmentHelper.getItemEnchantmentLevel(new Holder.Direct(Enchantments.SILK_TOUCH), tool) > 0) {
             return Collections.singletonList(new ItemStack(this));
         }
         return Collections.singletonList(new ItemStack(Blocks.END_STONE));
@@ -93,13 +96,13 @@ public abstract class BasePathBlock extends BaseBlockNotFull {
     @Override
     @Environment(EnvType.CLIENT)
     public UnbakedModel getModelVariant(
-            ResourceLocation stateId,
+            ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ResourceLocation, UnbakedModel> modelCache
+            Map<ModelResourceLocation, UnbakedModel> modelCache
     ) {
-        ResourceLocation modelId = new ResourceLocation(stateId.getNamespace(), "block/" + stateId.getPath());
+        ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState);
         registerBlockModel(stateId, modelId, blockState, modelCache);
-        return ModelsHelper.createRandomTopModel(modelId);
+        return ModelsHelper.createRandomTopModel(modelId.id());
     }
 
     public static class Stone extends BasePathBlock implements BehaviourStone {

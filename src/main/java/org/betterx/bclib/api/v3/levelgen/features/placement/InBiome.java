@@ -1,6 +1,7 @@
 package org.betterx.bclib.api.v3.levelgen.features.placement;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class InBiome extends PlacementFilter {
-    public static final Codec<InBiome> CODEC = RecordCodecBuilder.create((instance) -> instance
+    public static final MapCodec<InBiome> CODEC = RecordCodecBuilder.mapCodec((instance) -> instance
             .group(
                     Codec.BOOL
                             .fieldOf("negate")

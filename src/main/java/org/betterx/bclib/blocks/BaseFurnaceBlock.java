@@ -11,6 +11,7 @@ import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.registry.BaseBlockEntities;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -93,14 +94,14 @@ public abstract class BaseFurnaceBlock extends FurnaceBlock implements BlockMode
     @Override
     @Environment(EnvType.CLIENT)
     public UnbakedModel getModelVariant(
-            ResourceLocation stateId,
+            ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ResourceLocation, UnbakedModel> modelCache
+            Map<ModelResourceLocation, UnbakedModel> modelCache
     ) {
         String lit = blockState.getValue(LIT) ? "_lit" : "";
-        ResourceLocation modelId = new ResourceLocation(stateId.getNamespace(), "block/" + stateId.getPath() + lit);
+        ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, lit);
         registerBlockModel(stateId, modelId, blockState, modelCache);
-        return ModelsHelper.createFacingModel(modelId, blockState.getValue(FACING), false, true);
+        return ModelsHelper.createFacingModel(modelId.id(), blockState.getValue(FACING), false, true);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package org.betterx.bclib.api.v3.levelgen.features.blockpredicates;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
@@ -11,7 +11,7 @@ import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicateType;
 
 public class IsFullShape implements BlockPredicate {
     public static final IsFullShape HERE = new IsFullShape();
-    public static final Codec<IsFullShape> CODEC = RecordCodecBuilder.create(
+    public static final MapCodec<IsFullShape> CODEC = RecordCodecBuilder.mapCodec(
             instance -> instance
                     .group(
                             Vec3i.offsetCodec(16).optionalFieldOf("offset", Vec3i.ZERO).forGetter((p) -> p.offset)

@@ -3,6 +3,7 @@ package org.betterx.bclib.api.v3.levelgen.features.placement;
 import org.betterx.bclib.util.BlocksHelper;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,20 +21,20 @@ import java.util.stream.Stream;
 
 public class FindSolidInDirection extends PlacementModifier {
 
-    public static final Codec<FindSolidInDirection> CODEC = RecordCodecBuilder
-            .create((instance) -> instance.group(
-                                                  ExtraCodecs.nonEmptyList(Direction.CODEC.listOf())
-                                                             .fieldOf("dir")
-                                                             .orElse(List.of(Direction.DOWN))
-                                                             .forGetter(a -> a.direction),
-                                                  Codec.intRange(1, 32).fieldOf("dist").orElse(12).forGetter((p) -> p.maxSearchDistance),
-                                                  Codec.BOOL.fieldOf("random_select").orElse(true).forGetter(p -> p.randomSelect),
-                                                  Codec.INT.fieldOf("offset_in_dir").orElse(0).forGetter(p -> p.offsetInDir)
-                                          )
-                                          .apply(
-                                                  instance,
-                                                  FindSolidInDirection::new
-                                          ));
+    public static final MapCodec<FindSolidInDirection> CODEC = RecordCodecBuilder
+            .mapCodec((instance) -> instance.group(
+                                                    ExtraCodecs.nonEmptyList(Direction.CODEC.listOf())
+                                                               .fieldOf("dir")
+                                                               .orElse(List.of(Direction.DOWN))
+                                                               .forGetter(a -> a.direction),
+                                                    Codec.intRange(1, 32).fieldOf("dist").orElse(12).forGetter((p) -> p.maxSearchDistance),
+                                                    Codec.BOOL.fieldOf("random_select").orElse(true).forGetter(p -> p.randomSelect),
+                                                    Codec.INT.fieldOf("offset_in_dir").orElse(0).forGetter(p -> p.offsetInDir)
+                                            )
+                                            .apply(
+                                                    instance,
+                                                    FindSolidInDirection::new
+                                            ));
     protected static final FindSolidInDirection DOWN = new FindSolidInDirection(Direction.DOWN, 6, 0);
     protected static final FindSolidInDirection UP = new FindSolidInDirection(Direction.UP, 6, 0);
     private final List<Direction> direction;

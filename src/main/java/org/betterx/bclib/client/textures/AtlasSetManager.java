@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Environment(value = EnvType.CLIENT)
 public class AtlasSetManager {
-    public static final ResourceLocation VANILLA_BLOCKS = new ResourceLocation("blocks");
+    public static final ResourceLocation VANILLA_BLOCKS = ResourceLocation.withDefaultNamespace("blocks");
     private static Map<ResourceLocation, List<SpriteSource>> additionalSets = new HashMap<>();
 
     public static void addSource(ResourceLocation type, SpriteSource source) {

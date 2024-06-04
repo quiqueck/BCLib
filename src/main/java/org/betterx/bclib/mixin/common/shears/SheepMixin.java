@@ -1,27 +1,27 @@
 package org.betterx.bclib.mixin.common.shears;
 
 import org.betterx.bclib.items.tool.BaseShearsItem;
-import org.betterx.bclib.util.MethodReplace;
 
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.animal.Sheep;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Sheep.class)
 public class SheepMixin {
-    @Inject(method = "mobInteract(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;", at = @At("HEAD"))
-    private void bclib_isShears(
-            Player player,
-            InteractionHand interactionHand,
-            CallbackInfoReturnable<InteractionResult> info
-    ) {
-        MethodReplace.addItemReplace(Items.SHEARS, BaseShearsItem::isShear);
+    @WrapOperation(
+            method = "mobInteract",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/world/item/Item;)Z"
+            )
+    )
+    private boolean bclib_isShears(ItemStack instance, Item item, Operation<Boolean> original) {
+        return original.call(instance, item) || (item == Items.SHEARS && BaseShearsItem.isShear(instance));
     }
 }

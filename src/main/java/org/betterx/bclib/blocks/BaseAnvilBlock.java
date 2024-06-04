@@ -7,10 +7,12 @@ import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.CustomItemProvider;
 import org.betterx.bclib.interfaces.tools.AddMineablePickaxe;
 import org.betterx.bclib.items.BaseAnvilItem;
+import org.betterx.bclib.util.BCLDataComponents;
 import org.betterx.bclib.util.BlocksHelper;
 import org.betterx.bclib.util.LootUtil;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -18,6 +20,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AnvilBlock;
 import net.minecraft.world.level.block.Block;
@@ -89,16 +92,14 @@ public abstract class BaseAnvilBlock extends AnvilBlock implements AddMineablePi
     @Override
     @Environment(EnvType.CLIENT)
     public UnbakedModel getModelVariant(
-            ResourceLocation stateId,
+            ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ResourceLocation, UnbakedModel> modelCache
+            Map<ModelResourceLocation, UnbakedModel> modelCache
     ) {
         int destruction = blockState.getValue(DESTRUCTION);
-        String modId = stateId.getNamespace();
-        String modelId = "block/" + stateId.getPath() + "_top_" + destruction;
-        ResourceLocation modelLocation = new ResourceLocation(modId, modelId);
+        ModelResourceLocation modelLocation = BlockModelProvider.remapModelResourceLocation(stateId, blockState, "_top_" + destruction);
         registerBlockModel(stateId, modelLocation, blockState, modelCache);
-        return ModelsHelper.createFacingModel(modelLocation, blockState.getValue(FACING), false, false);
+        return ModelsHelper.createFacingModel(modelLocation.id(), blockState.getValue(FACING), false, false);
     }
 
     @Override
@@ -115,7 +116,11 @@ public abstract class BaseAnvilBlock extends AnvilBlock implements AddMineablePi
         ItemStack tool = builder.getParameter(LootContextParams.TOOL);
         if (LootUtil.isCorrectTool(this, state, tool)) {
             ItemStack itemStack = new ItemStack(this);
-            itemStack.getOrCreateTag().putInt(BaseAnvilItem.DESTRUCTION, value);
+
+            CustomData.update(BCLDataComponents.ANVIL_ENTITY_DATA, itemStack, (compoundTag) -> {
+                compoundTag.putInt(BaseAnvilItem.DESTRUCTION, value);
+            });
+
             return Lists.newArrayList(itemStack);
         }
         return Collections.emptyList();

@@ -4,8 +4,8 @@ import org.betterx.bclib.BCLib;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.world.event.WorldBootstrap;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
@@ -36,10 +36,10 @@ public class BCLBiomeRegistry {
     public static final ResourceKey<Registry<BCLBiome>> BCL_BIOMES_REGISTRY =
             createRegistryKey(WorldsTogether.makeID("worldgen/betterx/biome"));
 
-    public static final ResourceKey<Registry<Codec<? extends BCLBiome>>> BCL_BIOME_CODEC_REGISTRY =
+    public static final ResourceKey<Registry<MapCodec<? extends BCLBiome>>> BCL_BIOME_CODEC_REGISTRY =
             createRegistryKey(WorldsTogether.makeID("worldgen/betterx/biome_codec"));
 
-    public static Registry<Codec<? extends BCLBiome>> BIOME_CODECS = FabricRegistryBuilder
+    public static Registry<MapCodec<? extends BCLBiome>> BIOME_CODECS = FabricRegistryBuilder
             .from(new MappedRegistry<>(BCL_BIOME_CODEC_REGISTRY, Lifecycle.stable()))
             .attribute(RegistryAttribute.MODDED)
             .buildAndRegister();
@@ -72,7 +72,7 @@ public class BCLBiomeRegistry {
      * @param codec    The matching Codec
      * @return The codec that will get used
      */
-    public static <E extends BCLBiome> Codec<E> registerBiomeCodec(
+    public static <E extends BCLBiome> MapCodec<E> registerBiomeCodec(
             ResourceLocation location,
             KeyDispatchDataCodec<E> codec
     ) {
@@ -170,7 +170,7 @@ public class BCLBiomeRegistry {
     }
 
 
-    private static Codec<? extends BCLBiome> bootstrapCodecs(Registry<Codec<? extends BCLBiome>> registry) {
+    private static MapCodec<? extends BCLBiome> bootstrapCodecs(Registry<MapCodec<? extends BCLBiome>> registry) {
         return Registry.register(registry, BCLib.makeID("biome"), BCLBiome.KEY_CODEC.codec());
     }
 

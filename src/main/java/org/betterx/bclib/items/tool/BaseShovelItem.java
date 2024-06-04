@@ -13,7 +13,11 @@ import net.fabricmc.api.Environment;
 
 public class BaseShovelItem extends ShovelItem implements ItemModelProvider {
     public BaseShovelItem(Tier material, float attackDamage, float attackSpeed, Properties settings) {
-        super(material, attackDamage, attackSpeed, settings);
+        this(material, settings.attributes(ShovelItem.createAttributes(material, attackDamage, attackSpeed)));
+    }
+
+    public BaseShovelItem(Tier material, Properties settings) {
+        super(material, settings);
     }
 
     @Override

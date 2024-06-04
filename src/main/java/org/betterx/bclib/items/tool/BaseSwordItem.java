@@ -12,8 +12,12 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 public class BaseSwordItem extends SwordItem implements ItemModelProvider {
+    public BaseSwordItem(Tier material, Properties settings) {
+        super(material, settings);
+    }
+
     public BaseSwordItem(Tier material, int attackDamage, float attackSpeed, Properties settings) {
-        super(material, attackDamage, attackSpeed, settings);
+        this(material, settings.attributes(SwordItem.createAttributes(material, attackDamage, attackSpeed)));
     }
 
     @Override

@@ -11,6 +11,7 @@ import org.betterx.worlds.together.tag.v3.CommonBlockTags;
 import org.betterx.worlds.together.tag.v3.CommonPoiTags;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -47,13 +48,12 @@ public abstract class BaseComposterBlock extends ComposterBlock implements Block
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
     public UnbakedModel getModelVariant(
-            ResourceLocation stateId,
+            ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ResourceLocation, UnbakedModel> modelCache
+            Map<ModelResourceLocation, UnbakedModel> modelCache
     ) {
-        ResourceLocation modelId = new ResourceLocation(stateId.getNamespace(), "block/" + stateId.getPath());
+        ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState);
         registerBlockModel(stateId, modelId, blockState, modelCache);
 
         ModelsHelper.MultiPartBuilder builder = ModelsHelper.MultiPartBuilder.create(stateDefinition);
@@ -61,14 +61,14 @@ public abstract class BaseComposterBlock extends ComposterBlock implements Block
             if (level > 0) {
                 ResourceLocation contentId;
                 if (level > 7) {
-                    contentId = new ResourceLocation("block/composter_contents_ready");
+                    contentId = ResourceLocation.withDefaultNamespace("block/composter_contents_ready");
                 } else {
-                    contentId = new ResourceLocation("block/composter_contents" + level);
+                    contentId = ResourceLocation.withDefaultNamespace("block/composter_contents" + level);
                 }
                 builder.part(contentId).setCondition(state -> state.getValue(LEVEL).equals(level)).add();
             }
         });
-        builder.part(modelId).add();
+        builder.part(modelId.id()).add();
 
         return builder.build();
     }

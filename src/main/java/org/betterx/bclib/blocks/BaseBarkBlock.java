@@ -29,7 +29,7 @@ public abstract class BaseBarkBlock extends BaseRotatedPillarBlock {
 
     private ResourceLocation replacePath(ResourceLocation blockId) {
         String newPath = blockId.getPath().replace("_bark", "_log_side");
-        return new ResourceLocation(blockId.getNamespace(), newPath);
+        return ResourceLocation.fromNamespaceAndPath(blockId.getNamespace(), newPath);
     }
 
     public static class Wood extends BaseBarkBlock implements BehaviourWood, TagProvider {

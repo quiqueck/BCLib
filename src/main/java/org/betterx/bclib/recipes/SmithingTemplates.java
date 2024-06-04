@@ -14,18 +14,18 @@ public class SmithingTemplates {
     public static final ChatFormatting TITLE_FORMAT = ChatFormatting.GRAY;
     public static final ChatFormatting DESCRIPTION_FORMAT = ChatFormatting.BLUE;
 
-    public static final ResourceLocation EMPTY_SLOT_HELMET = new ResourceLocation("item/empty_armor_slot_helmet");
-    public static final ResourceLocation EMPTY_SLOT_CHESTPLATE = new ResourceLocation("item/empty_armor_slot_chestplate");
-    public static final ResourceLocation EMPTY_SLOT_LEGGINGS = new ResourceLocation("item/empty_armor_slot_leggings");
-    public static final ResourceLocation EMPTY_SLOT_BOOTS = new ResourceLocation("item/empty_armor_slot_boots");
-    public static final ResourceLocation EMPTY_SLOT_HOE = new ResourceLocation("item/empty_slot_hoe");
-    public static final ResourceLocation EMPTY_SLOT_AXE = new ResourceLocation("item/empty_slot_axe");
-    public static final ResourceLocation EMPTY_SLOT_SWORD = new ResourceLocation("item/empty_slot_sword");
-    public static final ResourceLocation EMPTY_SLOT_SHOVEL = new ResourceLocation("item/empty_slot_shovel");
-    public static final ResourceLocation EMPTY_SLOT_PICKAXE = new ResourceLocation("item/empty_slot_pickaxe");
-    public static final ResourceLocation EMPTY_SLOT_INGOT = new ResourceLocation("item/empty_slot_ingot");
-    public static final ResourceLocation EMPTY_SLOT_REDSTONE_DUST = new ResourceLocation("item/empty_slot_redstone_dust");
-    public static final ResourceLocation EMPTY_SLOT_DIAMOND = new ResourceLocation("item/empty_slot_diamond");
+    public static final ResourceLocation EMPTY_SLOT_HELMET = ResourceLocation.withDefaultNamespace("item/empty_armor_slot_helmet");
+    public static final ResourceLocation EMPTY_SLOT_CHESTPLATE = ResourceLocation.withDefaultNamespace("item/empty_armor_slot_chestplate");
+    public static final ResourceLocation EMPTY_SLOT_LEGGINGS = ResourceLocation.withDefaultNamespace("item/empty_armor_slot_leggings");
+    public static final ResourceLocation EMPTY_SLOT_BOOTS = ResourceLocation.withDefaultNamespace("item/empty_armor_slot_boots");
+    public static final ResourceLocation EMPTY_SLOT_HOE = ResourceLocation.withDefaultNamespace("item/empty_slot_hoe");
+    public static final ResourceLocation EMPTY_SLOT_AXE = ResourceLocation.withDefaultNamespace("item/empty_slot_axe");
+    public static final ResourceLocation EMPTY_SLOT_SWORD = ResourceLocation.withDefaultNamespace("item/empty_slot_sword");
+    public static final ResourceLocation EMPTY_SLOT_SHOVEL = ResourceLocation.withDefaultNamespace("item/empty_slot_shovel");
+    public static final ResourceLocation EMPTY_SLOT_PICKAXE = ResourceLocation.withDefaultNamespace("item/empty_slot_pickaxe");
+    public static final ResourceLocation EMPTY_SLOT_INGOT = ResourceLocation.withDefaultNamespace("item/empty_slot_ingot");
+    public static final ResourceLocation EMPTY_SLOT_REDSTONE_DUST = ResourceLocation.withDefaultNamespace("item/empty_slot_redstone_dust");
+    public static final ResourceLocation EMPTY_SLOT_DIAMOND = ResourceLocation.withDefaultNamespace("item/empty_slot_diamond");
 
     public static final List<ResourceLocation> TOOLS = List.of(
             EMPTY_SLOT_SWORD,
@@ -86,11 +86,11 @@ public class SmithingTemplates {
             return new SmithingTemplateItem(
                     Component.translatable(Util.makeDescriptionId(
                             "item",
-                            new ResourceLocation(ID.getNamespace(), "smithing_template." + ID.getPath() + ".applies_to")
+                            ResourceLocation.fromNamespaceAndPath(ID.getNamespace(), "smithing_template." + ID.getPath() + ".applies_to")
                     )).withStyle(DESCRIPTION_FORMAT),
                     Component.translatable(Util.makeDescriptionId(
                             "item",
-                            new ResourceLocation(
+                            ResourceLocation.fromNamespaceAndPath(
                                     ID.getNamespace(),
                                     "smithing_template." + ID.getPath() + ".ingredients"
                             )
@@ -101,14 +101,14 @@ public class SmithingTemplates {
                     )).withStyle(TITLE_FORMAT),
                     Component.translatable(Util.makeDescriptionId(
                             "item",
-                            new ResourceLocation(
+                            ResourceLocation.fromNamespaceAndPath(
                                     ID.getNamespace(),
                                     "smithing_template." + ID.getPath() + ".base_slot_description"
                             )
                     )),
                     Component.translatable(Util.makeDescriptionId(
                             "item",
-                            new ResourceLocation(
+                            ResourceLocation.fromNamespaceAndPath(
                                     ID.getNamespace(),
                                     "smithing_template." + ID.getPath() + ".additions_slot_description"
                             )

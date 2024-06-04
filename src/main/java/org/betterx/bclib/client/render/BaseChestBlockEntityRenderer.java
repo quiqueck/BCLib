@@ -171,12 +171,12 @@ public class BaseChestBlockEntityRenderer implements BlockEntityRenderer<BaseChe
         LAYERS.put(
                 block,
                 new RenderType[]{
-                        RenderType.entityCutout(new ResourceLocation(modId, "textures/entity/chest/" + path + ".png")),
-                        RenderType.entityCutout(new ResourceLocation(
+                        RenderType.entityCutout(ResourceLocation.fromNamespaceAndPath(modId, "textures/entity/chest/" + path + ".png")),
+                        RenderType.entityCutout(ResourceLocation.fromNamespaceAndPath(
                                 modId,
                                 "textures/entity/chest/" + path + "_left.png"
                         )),
-                        RenderType.entityCutout(new ResourceLocation(
+                        RenderType.entityCutout(ResourceLocation.fromNamespaceAndPath(
                                 modId,
                                 "textures/entity/chest/" + path + "_right.png"
                         ))
@@ -186,9 +186,9 @@ public class BaseChestBlockEntityRenderer implements BlockEntityRenderer<BaseChe
 
     static {
         RENDER_TYPES = new RenderType[]{
-                RenderType.entityCutout(new ResourceLocation("textures/entity/chest/normal.png")),
-                RenderType.entityCutout(new ResourceLocation("textures/entity/chest/normal_left.png")),
-                RenderType.entityCutout(new ResourceLocation("textures/entity/chest/normal_right.png"))
+                RenderType.entityCutout(ResourceLocation.withDefaultNamespace("textures/entity/chest/normal.png")),
+                RenderType.entityCutout(ResourceLocation.withDefaultNamespace("textures/entity/chest/normal_left.png")),
+                RenderType.entityCutout(ResourceLocation.withDefaultNamespace("textures/entity/chest/normal_right.png"))
         };
     }
 }

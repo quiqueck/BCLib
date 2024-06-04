@@ -24,7 +24,7 @@ public final class BCLWoodTypeWrapper {
     }
 
     public static Builder create(String modID, String string) {
-        return new Builder(new ResourceLocation(modID, string));
+        return new Builder(ResourceLocation.fromNamespaceAndPath(modID, string));
     }
 
     public static Builder create(ResourceLocation id) {

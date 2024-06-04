@@ -63,7 +63,7 @@ public class BCLCreativeTab {
         public Builder(@NotNull BCLCreativeTabManager manager, @NotNull String name) {
             this.name = name;
             this.manager = manager;
-            this.id = new ResourceLocation(manager.modID, name + "_tab");
+            this.id = ResourceLocation.fromNamespaceAndPath(manager.modID, name + "_tab");
             this.title = Component.translatable("itemGroup." + manager.modID + "." + name);
         }
 

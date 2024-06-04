@@ -15,6 +15,7 @@ import org.betterx.bclib.interfaces.TagProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -70,9 +71,9 @@ public abstract class BaseStairsBlock extends StairBlock implements BlockModelPr
     @Override
     @Environment(EnvType.CLIENT)
     public UnbakedModel getModelVariant(
-            ResourceLocation stateId,
+            ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ResourceLocation, UnbakedModel> modelCache
+            Map<ModelResourceLocation, UnbakedModel> modelCache
     ) {
         String state;
         StairsShape shape = blockState.getValue(SHAPE);
@@ -81,7 +82,7 @@ public abstract class BaseStairsBlock extends StairBlock implements BlockModelPr
             case OUTER_LEFT, OUTER_RIGHT -> "_outer";
             default -> "";
         };
-        ResourceLocation modelId = new ResourceLocation(stateId.getNamespace(), "block/" + stateId.getPath() + state);
+        ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, state);
         registerBlockModel(stateId, modelId, blockState, modelCache);
 
         boolean isTop = blockState.getValue(HALF) == Half.TOP;
@@ -108,7 +109,7 @@ public abstract class BaseStairsBlock extends StairBlock implements BlockModelPr
                 break;
         }
         BlockModelRotation rotation = BlockModelRotation.by(x, y);
-        return ModelsHelper.createMultiVariant(modelId, rotation.getRotation(), true);
+        return ModelsHelper.createMultiVariant(modelId.id(), rotation.getRotation(), true);
     }
 
     @Override

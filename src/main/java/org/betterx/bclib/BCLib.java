@@ -124,7 +124,7 @@ public class BCLib implements ModInitializer {
     }
 
     public static ResourceLocation makeID(String path) {
-        return new ResourceLocation(MOD_ID, path);
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 
     public static BCLWoodTypeWrapper TEST_WOOD;

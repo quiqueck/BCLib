@@ -5,14 +5,14 @@ import org.betterx.worlds.together.tag.v3.CommonBlockTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EnchantmentTableBlock;
+import net.minecraft.world.level.block.EnchantingTableBlock;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(EnchantmentTableBlock.class)
+@Mixin(EnchantingTableBlock.class)
 public abstract class EnchantingTableBlockMixin extends Block {
     public EnchantingTableBlockMixin(Properties settings) {
         super(settings);

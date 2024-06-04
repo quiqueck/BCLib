@@ -10,6 +10,7 @@ import net.minecraft.world.level.levelgen.structure.pools.SinglePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 public class StructurePools {
@@ -21,13 +22,13 @@ public class StructurePools {
             ResourceLocation id,
             Holder<StructureProcessorList> holder
     ) {
-        return (projection) -> new SinglePoolElement(Either.left(id), holder, projection);
+        return (projection) -> new SinglePoolElement(Either.left(id), holder, projection, Optional.empty());
     }
 
     public static Function<StructureTemplatePool.Projection, SinglePoolElement> legacy(
             ResourceLocation id,
             Holder<StructureProcessorList> holder
     ) {
-        return (projection) -> new LegacySinglePoolElement(Either.left(id), holder, projection);
+        return (projection) -> new LegacySinglePoolElement(Either.left(id), holder, projection, Optional.empty());
     }
 }

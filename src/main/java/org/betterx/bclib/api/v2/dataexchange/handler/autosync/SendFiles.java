@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 public class SendFiles extends DataHandler.FromServer {
     public static final DataHandlerDescriptor DESCRIPTOR = new DataHandlerDescriptor(
-            new ResourceLocation(
+            ResourceLocation.fromNamespaceAndPath(
                     BCLib.MOD_ID,
                     "send_files"
             ),

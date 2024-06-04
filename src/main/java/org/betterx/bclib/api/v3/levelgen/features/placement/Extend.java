@@ -1,6 +1,6 @@
 package org.betterx.bclib.api.v3.levelgen.features.placement;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -14,7 +14,7 @@ import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import java.util.stream.Stream;
 
 public class Extend extends PlacementModifier {
-    public static final Codec<Extend> CODEC = RecordCodecBuilder.create((instance) -> instance
+    public static final MapCodec<Extend> CODEC = RecordCodecBuilder.mapCodec((instance) -> instance
             .group(
                     Direction.CODEC
                             .fieldOf("direction")

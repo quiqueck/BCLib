@@ -239,7 +239,7 @@ public abstract class EquipmentSet {
 
     @NotNull
     protected ResourceLocation buildID(Map.Entry<EquipmentSlot, EquipmentDescription<?>> desc) {
-        return new ResourceLocation(modID, baseName + "_" + desc.getKey().name());
+        return ResourceLocation.fromNamespaceAndPath(modID, baseName + "_" + desc.getKey().name());
     }
 
     public <I extends Item> I getSlot(EquipmentSlot slot) {

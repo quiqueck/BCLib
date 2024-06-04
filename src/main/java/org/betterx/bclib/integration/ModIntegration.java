@@ -34,7 +34,7 @@ public abstract class ModIntegration {
     }
 
     public ResourceLocation getID(String name) {
-        return new ResourceLocation(modID, name);
+        return ResourceLocation.fromNamespaceAndPath(modID, name);
     }
 
     public ResourceKey<PlacedFeature> getFeatureKey(String name) {

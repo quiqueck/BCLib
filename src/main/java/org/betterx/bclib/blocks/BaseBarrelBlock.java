@@ -14,6 +14,7 @@ import org.betterx.worlds.together.tag.v3.CommonItemTags;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -22,13 +23,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BarrelBlock;
 import net.minecraft.world.level.block.Block;
@@ -61,12 +59,11 @@ public abstract class BaseBarrelBlock extends BarrelBlock implements BlockModelP
     }
 
     @Override
-    public InteractionResult use(
+    public InteractionResult useWithoutItem(
             BlockState state,
             Level level,
             BlockPos pos,
             Player player,
-            InteractionHand hand,
             BlockHitResult hit
     ) {
         if (level.isClientSide) {
@@ -97,16 +94,6 @@ public abstract class BaseBarrelBlock extends BarrelBlock implements BlockModelP
     }
 
     @Override
-    public void setPlacedBy(Level world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
-        if (itemStack.hasCustomHoverName()) {
-            BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof BaseBarrelBlockEntity) {
-                ((BaseBarrelBlockEntity) blockEntity).setCustomName(itemStack.getHoverName());
-            }
-        }
-    }
-
-    @Override
     @Environment(EnvType.CLIENT)
     public BlockModel getItemModel(ResourceLocation blockId) {
         return getBlockModel(blockId, defaultBlockState());
@@ -127,12 +114,12 @@ public abstract class BaseBarrelBlock extends BarrelBlock implements BlockModelP
     @Override
     @Environment(EnvType.CLIENT)
     public UnbakedModel getModelVariant(
-            ResourceLocation stateId,
+            ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ResourceLocation, UnbakedModel> modelCache
+            Map<ModelResourceLocation, UnbakedModel> modelCache
     ) {
         String open = blockState.getValue(OPEN) ? "_open" : "";
-        ResourceLocation modelId = new ResourceLocation(stateId.getNamespace(), "block/" + stateId.getPath() + open);
+        ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, open);
         registerBlockModel(stateId, modelId, blockState, modelCache);
         Direction facing = blockState.getValue(FACING);
         BlockModelRotation rotation = BlockModelRotation.X0_Y0;
@@ -155,7 +142,7 @@ public abstract class BaseBarrelBlock extends BarrelBlock implements BlockModelP
             default:
                 break;
         }
-        return ModelsHelper.createMultiVariant(modelId, rotation.getRotation(), false);
+        return ModelsHelper.createMultiVariant(modelId.id(), rotation.getRotation(), false);
     }
 
     @Override

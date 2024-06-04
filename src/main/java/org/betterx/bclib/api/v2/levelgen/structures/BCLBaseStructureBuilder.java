@@ -2,7 +2,7 @@ package org.betterx.bclib.api.v2.levelgen.structures;
 
 import org.betterx.worlds.together.tag.v3.TagManager;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -80,7 +80,7 @@ abstract class BCLBaseStructureBuilder<S extends Structure, T extends BCLBaseStr
         return (T) this;
     }
 
-    protected abstract Codec<S> getCodec();
+    protected abstract MapCodec<S> getCodec();
 
     public BCLStructure<S> build() {
         if (placement == null) {

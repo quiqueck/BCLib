@@ -138,7 +138,7 @@ public class CookingRecipeBuilder extends AbstractUnlockableRecipeBuilder<Cookin
     }
 
     private void buildRecipe(RecipeOutput cc, SimpleCookingRecipeBuilder builder, String postfix) {
-        ResourceLocation loc = new ResourceLocation(id.getNamespace(), id.getPath() + "_" + postfix);
+        ResourceLocation loc = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), id.getPath() + "_" + postfix);
         for (var item : unlocks.entrySet()) {
             builder.unlockedBy(item.getKey(), item.getValue());
         }

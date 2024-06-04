@@ -9,6 +9,7 @@ import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.TagProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -71,16 +72,16 @@ public abstract class BaseGateBlock extends FenceGateBlock implements BlockModel
     @Override
     @Environment(EnvType.CLIENT)
     public UnbakedModel getModelVariant(
-            ResourceLocation stateId,
+            ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ResourceLocation, UnbakedModel> modelCache
+            Map<ModelResourceLocation, UnbakedModel> modelCache
     ) {
         boolean inWall = blockState.getValue(IN_WALL);
         boolean isOpen = blockState.getValue(OPEN);
         String state = "" + (inWall ? "_wall" : "") + (isOpen ? "_open" : "_closed");
-        ResourceLocation modelId = new ResourceLocation(stateId.getNamespace(), "block/" + stateId.getPath() + state);
+        ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, state);
         registerBlockModel(stateId, modelId, blockState, modelCache);
-        return ModelsHelper.createFacingModel(modelId, blockState.getValue(FACING), true, false);
+        return ModelsHelper.createFacingModel(modelId.id(), blockState.getValue(FACING), true, false);
     }
 
     @Override

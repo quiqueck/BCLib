@@ -62,8 +62,7 @@ public class BoatRenderer {
                 VertexConsumer vertexConsumer = multiBufferSource.getBuffer(boatModel.renderType(resourceLocation));
                 boatModel.renderToBuffer(
                         poseStack, vertexConsumer, i,
-                        OverlayTexture.NO_OVERLAY,
-                        1.0f, 1.0f, 1.0f, 1.0f
+                        OverlayTexture.NO_OVERLAY
                 );
                 if (!boat.isUnderWater()) {
                     VertexConsumer vertexConsumer2 = multiBufferSource.getBuffer(RenderType.waterMask());

@@ -8,8 +8,9 @@ import org.betterx.bclib.util.BlocksHelper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -48,7 +49,8 @@ public abstract class AbstractChair extends BaseBlockNotFull {
     }
 
     @Override
-    public InteractionResult use(
+    public ItemInteractionResult useItemOn(
+            ItemStack itemStack,
             BlockState state,
             Level world,
             BlockPos pos,
@@ -57,10 +59,10 @@ public abstract class AbstractChair extends BaseBlockNotFull {
             BlockHitResult hit
     ) {
         if (world.isClientSide) {
-            return InteractionResult.FAIL;
+            return ItemInteractionResult.FAIL;
         } else {
             if (player.isPassenger() || player.isSpectator())
-                return InteractionResult.FAIL;
+                return ItemInteractionResult.FAIL;
 
 
             Optional<EntityChair> active = getEntity(world, pos);
@@ -71,7 +73,7 @@ public abstract class AbstractChair extends BaseBlockNotFull {
             } else {
                 entity = active.get();
                 if (entity.isVehicle())
-                    return InteractionResult.FAIL;
+                    return ItemInteractionResult.FAIL;
             }
 
             if (entity != null) {
@@ -79,10 +81,10 @@ public abstract class AbstractChair extends BaseBlockNotFull {
                 player.startRiding(entity, true);
                 player.setYBodyRot(yaw);
                 player.setYHeadRot(yaw);
-                return InteractionResult.SUCCESS;
+                return ItemInteractionResult.SUCCESS;
             }
 
-            return InteractionResult.FAIL;
+            return ItemInteractionResult.FAIL;
         }
     }
 

@@ -10,6 +10,7 @@ import org.betterx.bclib.interfaces.RenderLayerProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -81,32 +82,32 @@ public abstract class BaseBarsBlock extends IronBarsBlock implements BlockModelP
     @Override
     @Environment(EnvType.CLIENT)
     public UnbakedModel getModelVariant(
-            ResourceLocation stateId,
+            ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ResourceLocation, UnbakedModel> modelCache
+            Map<ModelResourceLocation, UnbakedModel> modelCache
     ) {
-        ResourceLocation postId = new ResourceLocation(stateId.getNamespace(), "block/" + stateId.getPath() + "_post");
-        ResourceLocation sideId = new ResourceLocation(stateId.getNamespace(), "block/" + stateId.getPath() + "_side");
+        ModelResourceLocation postId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, "_post");
+        ModelResourceLocation sideId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, "_side");
         registerBlockModel(postId, postId, blockState, modelCache);
         registerBlockModel(sideId, sideId, blockState, modelCache);
 
         ModelsHelper.MultiPartBuilder builder = ModelsHelper.MultiPartBuilder.create(stateDefinition);
-        builder.part(postId)
+        builder.part(postId.id())
                .setCondition(state -> !state.getValue(NORTH) && !state.getValue(EAST) && !state.getValue(SOUTH) && !state
                        .getValue(WEST))
                .add();
-        builder.part(sideId).setCondition(state -> state.getValue(NORTH)).setUVLock(true).add();
-        builder.part(sideId)
+        builder.part(sideId.id()).setCondition(state -> state.getValue(NORTH)).setUVLock(true).add();
+        builder.part(sideId.id())
                .setCondition(state -> state.getValue(EAST))
                .setTransformation(BlockModelRotation.X0_Y90.getRotation())
                .setUVLock(true)
                .add();
-        builder.part(sideId)
+        builder.part(sideId.id())
                .setCondition(state -> state.getValue(SOUTH))
                .setTransformation(BlockModelRotation.X0_Y180.getRotation())
                .setUVLock(true)
                .add();
-        builder.part(sideId)
+        builder.part(sideId.id())
                .setCondition(state -> state.getValue(WEST))
                .setTransformation(BlockModelRotation.X0_Y270.getRotation())
                .setUVLock(true)

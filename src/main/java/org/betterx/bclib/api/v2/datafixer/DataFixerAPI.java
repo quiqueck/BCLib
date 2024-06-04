@@ -14,10 +14,13 @@ import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.client.gui.screens.worldselection.EditWorldScreen;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.storage.RegionFile;
+import net.minecraft.world.level.chunk.storage.RegionStorageInfo;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.LevelStorageSource.LevelStorageAccess;
@@ -52,7 +55,7 @@ public class DataFixerAPI {
         }
 
         public boolean hasError() {
-            return errors.size() > 0;
+            return !errors.isEmpty();
         }
 
         public String getErrorMessage() {
@@ -215,7 +218,7 @@ public class DataFixerAPI {
                 }
 
                 if (applyFixes) {
-                    return runDataFixes(dir, profile, progress);
+                    return runDataFixes(levelID, dir, profile, progress);
                 }
 
                 return new State();
@@ -306,7 +309,12 @@ public class DataFixerAPI {
         Minecraft.getInstance().setScreen(new ConfirmFixScreen(null, whenFinished::accept));
     }
 
-    private static State runDataFixes(File dir, MigrationProfile profile, AtomicProgressListener progress) {
+    private static State runDataFixes(
+            String levelID,
+            File dir,
+            MigrationProfile profile,
+            AtomicProgressListener progress
+    ) {
         State state = new State();
         progress.resetAtomic();
 
@@ -317,13 +325,14 @@ public class DataFixerAPI {
         progress.incAtomic(maxProgress);
 
         progress.progressStage(Component.translatable("message.bclib.datafixer.progress.players"));
+        RegionStorageInfo regionStorageInfo = new RegionStorageInfo(levelID, ResourceKey.create(Registries.DIMENSION, BCLib.makeID("WORLD_FIXER")), "mca");
         players.parallelStream().forEach((file) -> {
-            fixPlayer(profile, state, file.toPath());
+            fixPlayer(profile, state, file.toPath(), regionStorageInfo);
             progress.incAtomic(maxProgress);
         });
 
         progress.progressStage(Component.translatable("message.bclib.datafixer.progress.level"));
-        fixLevel(profile, state, dir);
+        fixLevel(profile, state, dir, regionStorageInfo);
         progress.incAtomic(maxProgress);
 
         progress.progressStage(Component.translatable("message.bclib.datafixer.progress.worlddata"));
@@ -338,7 +347,7 @@ public class DataFixerAPI {
 
         progress.progressStage(Component.translatable("message.bclib.datafixer.progress.regions"));
         regions.parallelStream().forEach((file) -> {
-            fixRegion(profile, state, file);
+            fixRegion(profile, state, file, regionStorageInfo);
             progress.incAtomic(maxProgress);
         });
 
@@ -354,7 +363,12 @@ public class DataFixerAPI {
         return state;
     }
 
-    private static void fixLevel(MigrationProfile profile, State state, File levelBaseDir) {
+    private static void fixLevel(
+            MigrationProfile profile,
+            State state,
+            File levelBaseDir,
+            RegionStorageInfo regionStorageInfo
+    ) {
         try {
             LOGGER.info("Inspecting level.dat in " + levelBaseDir);
 
@@ -386,7 +400,7 @@ public class DataFixerAPI {
         }
     }
 
-    private static void fixPlayer(MigrationProfile data, State state, Path file) {
+    private static void fixPlayer(MigrationProfile data, State state, Path file, RegionStorageInfo regionStorageInfo) {
         try {
             LOGGER.info("Inspecting " + file);
 
@@ -446,12 +460,12 @@ public class DataFixerAPI {
         return _changed;
     }
 
-    private static void fixRegion(MigrationProfile data, State state, File file) {
+    private static void fixRegion(MigrationProfile data, State state, File file, RegionStorageInfo regionStorageInfo) {
         try {
             Path path = file.toPath();
             LOGGER.info("Inspecting " + path);
             boolean[] changed = new boolean[1];
-            RegionFile region = new RegionFile(path, path.getParent(), true);
+            RegionFile region = new RegionFile(regionStorageInfo, path, path.getParent(), true);
 
             for (int x = 0; x < 32; x++) {
                 for (int z = 0; z < 32; z++) {

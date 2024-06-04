@@ -1,18 +1,23 @@
 package org.betterx.worlds.together.tag.v3;
 
+import org.betterx.bclib.BCLib;
 import org.betterx.worlds.together.levelgen.WorldGenUtil;
-import org.betterx.worlds.together.mixin.common.DiggerItemAccessor;
 import org.betterx.worlds.together.world.event.WorldEventsImpl;
 
 import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.tags.TagKey;
 import net.minecraft.tags.TagLoader;
+import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.Tool;
 import net.minecraft.world.level.block.Block;
 
 import com.google.common.collect.Maps;
@@ -118,9 +123,35 @@ public class TagManager {
 
 
     public static boolean isToolWithMineableTag(ItemStack stack, TagKey<Block> tag) {
-        if (stack.getItem() instanceof DiggerItemAccessor dig) {
-            return dig.bclib_getBlockTag() == tag;
+        if (stack.getItem() instanceof DiggerItem dig) {
+            Tool tool = dig.components().get(DataComponents.TOOL);
+            if (tool != null) {
+                for (var rule : tool.rules()) {
+                    if (
+                            rule.correctForDrops().orElse(false)
+                                    && rule.blocks().unwrapKey().map(key -> key == tag).orElse(false)
+                    ) {
+                        return true;
+                    }
+                }
+            }
         }
         return false;
+    }
+
+    final static private ResourceLocation NO_TAG = BCLib.makeID("no_tag");
+
+    public static <T> StreamCodec<RegistryFriendlyByteBuf, TagKey<T>> streamCodec(ResourceKey<Registry<T>> registry) {
+        return new StreamCodec<RegistryFriendlyByteBuf, TagKey<T>>() {
+
+            public TagKey<T> decode(RegistryFriendlyByteBuf registryFriendlyByteBuf) {
+                ResourceLocation location = ResourceLocation.STREAM_CODEC.decode(registryFriendlyByteBuf);
+                return TagKey.create(registry, location.equals(NO_TAG) ? null : location);
+            }
+
+            public void encode(RegistryFriendlyByteBuf registryFriendlyByteBuf, TagKey<T> tag) {
+                ResourceLocation.STREAM_CODEC.encode(registryFriendlyByteBuf, tag == null ? NO_TAG : tag.location());
+            }
+        };
     }
 }

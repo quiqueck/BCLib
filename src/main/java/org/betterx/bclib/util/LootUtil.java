@@ -7,7 +7,7 @@ import org.betterx.bclib.items.tool.BaseShearsItem;
 import org.betterx.worlds.together.tag.v3.CommonItemTags;
 import org.betterx.worlds.together.tag.v3.ToolTags;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
@@ -33,7 +33,7 @@ public class LootUtil {
             BlockState state,
             LootParams.Builder builder
     ) {
-        ResourceLocation tableID = block.getLootTable();
+        ResourceKey<LootTable> tableID = block.getLootTable();
         if (tableID == BuiltInLootTables.EMPTY) {
             return Optional.empty();
         }
@@ -41,7 +41,7 @@ public class LootUtil {
         final LootParams ctx = builder.withParameter(LootContextParams.BLOCK_STATE, state)
                                       .create(LootContextParamSets.BLOCK);
         final ServerLevel level = ctx.getLevel();
-        final LootTable table = level.getServer().getLootData().getLootTable(tableID);
+        final LootTable table = level.getServer().reloadableRegistries().getLootTable(tableID);
 
         if (table == LootTable.EMPTY) return Optional.empty();
         return Optional.of(table.getRandomItems(ctx));

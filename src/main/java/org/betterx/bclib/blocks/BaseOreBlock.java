@@ -4,20 +4,19 @@ import org.betterx.bclib.behaviours.BehaviourBuilders;
 import org.betterx.bclib.behaviours.interfaces.BehaviourOre;
 import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.TagProvider;
+import org.betterx.bclib.util.LegacyTiers;
 import org.betterx.bclib.util.LootUtil;
 import org.betterx.bclib.util.MHelper;
-import org.betterx.worlds.together.tag.v3.MineableTags;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TieredItem;
-import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ItemLike;
@@ -37,12 +36,44 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
     private final Supplier<Item> dropItem;
     private final int minCount;
     private final int maxCount;
-    private final int miningLevel;
+    private final TagKey<Block> miningTag;
 
     public BaseOreBlock(Supplier<Item> drop, int minCount, int maxCount, int experience) {
-        this(drop, minCount, maxCount, experience, 0);
+        this(drop, minCount, maxCount, experience, null);
     }
 
+    public BaseOreBlock(Supplier<Item> drop, int minCount, int maxCount, int experience, TagKey<Block> miningTag) {
+        this(
+                BehaviourBuilders
+                        .createStone(MapColor.SAND)
+                        .requiresCorrectToolForDrops()
+                        .destroyTime(3F)
+                        .explosionResistance(9F)
+                        .sound(SoundType.STONE),
+                drop, minCount, maxCount, experience, miningTag
+        );
+    }
+
+    public BaseOreBlock(Properties properties, Supplier<Item> drop, int minCount, int maxCount, int experience) {
+        this(properties, drop, minCount, maxCount, experience, null);
+    }
+
+    public BaseOreBlock(
+            Properties properties,
+            Supplier<Item> drop,
+            int minCount,
+            int maxCount,
+            int experience,
+            TagKey<Block> miningTag
+    ) {
+        super(UniformInt.of(experience > 0 ? 1 : 0, experience), properties);
+        this.dropItem = drop;
+        this.minCount = minCount;
+        this.maxCount = maxCount;
+        this.miningTag = miningTag;
+    }
+
+    @Deprecated(forRemoval = true)
     public BaseOreBlock(Supplier<Item> drop, int minCount, int maxCount, int experience, int miningLevel) {
         this(
                 BehaviourBuilders
@@ -55,10 +86,7 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
         );
     }
 
-    public BaseOreBlock(Properties properties, Supplier<Item> drop, int minCount, int maxCount, int experience) {
-        this(properties, drop, minCount, maxCount, experience, 0);
-    }
-
+    @Deprecated(forRemoval = true)
     public BaseOreBlock(
             Properties properties,
             Supplier<Item> drop,
@@ -67,11 +95,10 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
             int experience,
             int miningLevel
     ) {
-        super(UniformInt.of(experience > 0 ? 1 : 0, experience), properties);
-        this.dropItem = drop;
-        this.minCount = minCount;
-        this.maxCount = maxCount;
-        this.miningLevel = miningLevel;
+        this(properties, drop, minCount, maxCount, experience, LegacyTiers
+                .forLevel(miningLevel)
+                .map(t -> t.toolRequirementTag)
+                .orElse(null));
     }
 
     @Override
@@ -85,7 +112,7 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
                                 dropItem.get(),
                                 maxCount,
                                 minCount,
-                                miningLevel,
+                                miningTag,
                                 state,
                                 builder
                         )
@@ -97,25 +124,27 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
             Item dropItem,
             int maxCount,
             int minCount,
-            int miningLevel,
+            TagKey<Block> miningTag,
             BlockState state,
             LootParams.Builder builder
     ) {
         ItemStack tool = builder.getParameter(LootContextParams.TOOL);
         if (tool != null && tool.isCorrectToolForDrops(state) && dropItem != null) {
-            boolean canMine = miningLevel == 0;
+            boolean canMine = miningTag == null;
             if (tool.getItem() instanceof TieredItem tired) {
-                canMine = tired.getTier().getLevel() >= miningLevel;
+                canMine = tool.isCorrectToolForDrops(state);
+                //canMine = tired.getTier().getLevel() >= miningLevel;
             }
             if (canMine) {
-                if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool) > 0) {
+                if (EnchantmentHelper.getItemEnchantmentLevel(new Holder.Direct(Enchantments.SILK_TOUCH), tool) > 0) {
                     return Collections.singletonList(new ItemStack(block));
                 }
                 int count;
-                int enchantment = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, tool);
+                int enchantment = EnchantmentHelper.getItemEnchantmentLevel(new Holder.Direct(Enchantments.FORTUNE), tool);
                 if (enchantment > 0) {
                     int min = Mth.clamp(minCount + enchantment, minCount, maxCount);
-                    int max = maxCount + (enchantment / Enchantments.BLOCK_FORTUNE.getMaxLevel());
+                    //int max = maxCount + (enchantment / Enchantments.FORTUNE.getMaxLevel());
+                    int max = maxCount + (enchantment / 2);
                     if (min == max) {
                         return Collections.singletonList(new ItemStack(dropItem, max));
                     }
@@ -136,14 +165,8 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
 
     @Override
     public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-        if (this.miningLevel == Tiers.STONE.getLevel()) {
-            blockTags.add(BlockTags.NEEDS_STONE_TOOL);
-        } else if (this.miningLevel == Tiers.IRON.getLevel()) {
-            blockTags.add(BlockTags.NEEDS_IRON_TOOL);
-        } else if (this.miningLevel == Tiers.DIAMOND.getLevel()) {
-            blockTags.add(BlockTags.NEEDS_DIAMOND_TOOL);
-        } else if (this.miningLevel == Tiers.NETHERITE.getLevel()) {
-            blockTags.add(MineableTags.NEEDS_NETHERITE_TOOL);
+        if (this.miningTag != null) {
+            blockTags.add(this.miningTag);
         }
     }
 }

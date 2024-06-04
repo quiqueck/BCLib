@@ -9,21 +9,23 @@ import org.betterx.bclib.items.complex.EquipmentSlot;
 import net.minecraft.advancements.*;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.storage.loot.LootTable;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -77,7 +79,7 @@ public class AdvancementManager {
         }
 
 
-        public RewardsBuilder addLootTable(ResourceLocation resourceLocation) {
+        public RewardsBuilder addLootTable(ResourceKey<LootTable> resourceLocation) {
             builder.addLootTable(resourceLocation);
             return this;
         }
@@ -114,13 +116,14 @@ public class AdvancementManager {
         private final AdvancementType type;
         private boolean canBuild = true;
 
+        @SuppressWarnings("removal")
         private Builder(ResourceLocation id, AdvancementType type) {
             ResourceLocation ID;
             if (type == AdvancementType.RECIPE_DECORATIONS) {
-                ID = new ResourceLocation(id.getNamespace(), "recipes/decorations/" + id.getPath());
+                ID = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "recipes/decorations/" + id.getPath());
                 builder.parent(RECIPES_ROOT); //will be root by default
             } else if (type == AdvancementType.RECIPE_TOOL) {
-                ID = new ResourceLocation(id.getNamespace(), "recipes/tools/" + id.getPath());
+                ID = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "recipes/tools/" + id.getPath());
                 builder.parent(RECIPES_ROOT); //will be root by default
             } else {
                 ID = id;
@@ -187,7 +190,7 @@ public class AdvancementManager {
             return b;
         }
 
-        public static <C extends Container, T extends RecipeHolder<Recipe<C>>> Builder createRecipe(
+        public static <C extends RecipeInput, T extends RecipeHolder<Recipe<C>>> Builder createRecipe(
                 T recipe,
                 AdvancementType type
         ) {
@@ -299,12 +302,12 @@ public class AdvancementManager {
                     PlayerTrigger
                             .TriggerInstance
                             .located(
-                                    LocationPredicate.Builder.inStructure(structure)
+                                    LocationPredicate.Builder.inStructure(new Holder.Direct(structure))
                             )
             );
         }
 
-        public <C extends Container, T extends Recipe<C>> Builder addRecipeUnlockCriterion(
+        public <C extends RecipeInput, T extends Recipe<C>> Builder addRecipeUnlockCriterion(
                 String name,
                 RecipeHolder<T> recipe
         ) {
@@ -376,7 +379,7 @@ public class AdvancementManager {
             for (ResourceKey<Biome> resourceKey : list) {
                 addCriterion(
                         resourceKey.location().toString(),
-                        PlayerTrigger.TriggerInstance.located(LocationPredicate.Builder.inBiome(resourceKey))
+                        PlayerTrigger.TriggerInstance.located(LocationPredicate.Builder.inBiome(new Holder.Direct(resourceKey)))
                 );
             }
             return this;

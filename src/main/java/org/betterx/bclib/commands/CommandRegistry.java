@@ -43,7 +43,6 @@ public class CommandRegistry {
 
         bnContext = PlaceCommand.register(bnContext, commandBuildContext);
         bnContext = PrintInfo.register(bnContext);
-        bnContext = DumpDatapack.register(bnContext);
 
         dispatcher.register(
                 bnContext

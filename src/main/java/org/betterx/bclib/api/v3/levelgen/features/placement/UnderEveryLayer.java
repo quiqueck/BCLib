@@ -3,6 +3,7 @@ package org.betterx.bclib.api.v3.levelgen.features.placement;
 import org.betterx.bclib.util.BlocksHelper;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -20,7 +21,7 @@ public class UnderEveryLayer
         extends PlacementModifier {
     private static final UnderEveryLayer INSTANCE = new UnderEveryLayer(Optional.empty(), Optional.empty());
     private static final UnderEveryLayer INSTANCE_MIN_4 = new UnderEveryLayer(Optional.of(4), Optional.empty());
-    public static final Codec<UnderEveryLayer> CODEC = RecordCodecBuilder.create(instance -> instance
+    public static final MapCodec<UnderEveryLayer> CODEC = RecordCodecBuilder.mapCodec(instance -> instance
             .group(
                     Codec.INT.optionalFieldOf("min").forGetter(o -> o.minHeight),
                     Codec.INT.optionalFieldOf("max").forGetter(o -> o.maxHeight)

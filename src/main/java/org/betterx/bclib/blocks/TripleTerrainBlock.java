@@ -4,18 +4,19 @@ import org.betterx.bclib.blocks.BlockProperties.TripleShape;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
+import org.betterx.bclib.interfaces.BlockModelProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.MultiVariant;
 import net.minecraft.client.renderer.block.model.Variant;
 import net.minecraft.client.resources.model.BlockModelRotation;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -68,17 +69,16 @@ public class TripleTerrainBlock extends BaseTerrainBlock {
     }
 
     @Override
-    public InteractionResult use(
+    public InteractionResult useWithoutItem(
             BlockState state,
             Level world,
             BlockPos pos,
             Player player,
-            InteractionHand hand,
             BlockHitResult hit
     ) {
         TripleShape shape = state.getValue(SHAPE);
         if (shape == TripleShape.BOTTOM) {
-            return super.use(state, world, pos, player, hand, hit);
+            return super.useWithoutItem(state, world, pos, player, hit);
         }
         return InteractionResult.FAIL;
     }
@@ -131,7 +131,7 @@ public class TripleTerrainBlock extends BaseTerrainBlock {
         String path = blockId.getPath();
         Optional<String> pattern;
         if (isMiddle(blockState)) {
-            ResourceLocation topId = new ResourceLocation(blockId.getNamespace(), path + "_top");
+            ResourceLocation topId = ResourceLocation.fromNamespaceAndPath(blockId.getNamespace(), path + "_top");
             pattern = PatternsHelper.createBlockSimple(topId);
         } else {
             Map<String, String> textures = Maps.newHashMap();
@@ -146,34 +146,34 @@ public class TripleTerrainBlock extends BaseTerrainBlock {
     @Override
     @Environment(EnvType.CLIENT)
     public UnbakedModel getModelVariant(
-            ResourceLocation stateId,
+            ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ResourceLocation, UnbakedModel> modelCache
+            Map<ModelResourceLocation, UnbakedModel> modelCache
     ) {
         boolean isMiddle = isMiddle(blockState);
         String middle = isMiddle ? "_middle" : "";
-        ResourceLocation modelId = new ResourceLocation(stateId.getNamespace(), "block/" + stateId.getPath() + middle);
+        ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, middle);
         registerBlockModel(stateId, modelId, blockState, modelCache);
         if (isMiddle) {
             List<Variant> variants = Lists.newArrayList();
             for (BlockModelRotation rotation : BlockModelRotation.values()) {
-                variants.add(new Variant(modelId, rotation.getRotation(), false, 1));
+                variants.add(new Variant(modelId.id(), rotation.getRotation(), false, 1));
             }
             return new MultiVariant(variants);
         } else if (blockState.getValue(SHAPE) == TripleShape.TOP) {
             return new MultiVariant(Lists.newArrayList(
                     new Variant(
-                            modelId,
+                            modelId.id(),
                             BlockModelRotation.X180_Y0.getRotation(),
                             false,
                             1
                     ),
-                    new Variant(modelId, BlockModelRotation.X180_Y90.getRotation(), false, 1),
-                    new Variant(modelId, BlockModelRotation.X180_Y180.getRotation(), false, 1),
-                    new Variant(modelId, BlockModelRotation.X180_Y270.getRotation(), false, 1)
+                    new Variant(modelId.id(), BlockModelRotation.X180_Y90.getRotation(), false, 1),
+                    new Variant(modelId.id(), BlockModelRotation.X180_Y180.getRotation(), false, 1),
+                    new Variant(modelId.id(), BlockModelRotation.X180_Y270.getRotation(), false, 1)
             ));
         }
-        return ModelsHelper.createRandomTopModel(modelId);
+        return ModelsHelper.createRandomTopModel(modelId.id());
     }
 
     protected boolean isMiddle(BlockState blockState) {

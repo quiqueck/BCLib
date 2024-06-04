@@ -15,10 +15,10 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 
 public class WelcomeScreen extends BCLibLayoutScreen {
-    static final ResourceLocation BETTERX_LOCATION = new ResourceLocation(BCLib.MOD_ID, "betterx.png");
-    static final ResourceLocation BACKGROUND = new ResourceLocation(BCLib.MOD_ID, "header.png");
-    static final ResourceLocation ICON_BETTERNETHER = new ResourceLocation(BCLib.MOD_ID, "icon_betternether.png");
-    static final ResourceLocation ICON_BETTEREND = new ResourceLocation(BCLib.MOD_ID, "icon_betterend.png");
+    static final ResourceLocation BETTERX_LOCATION = ResourceLocation.fromNamespaceAndPath(BCLib.MOD_ID, "betterx.png");
+    static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(BCLib.MOD_ID, "header.png");
+    static final ResourceLocation ICON_BETTERNETHER = ResourceLocation.fromNamespaceAndPath(BCLib.MOD_ID, "icon_betternether.png");
+    static final ResourceLocation ICON_BETTEREND = ResourceLocation.fromNamespaceAndPath(BCLib.MOD_ID, "icon_betterend.png");
 
     public WelcomeScreen(Runnable parent) {
         super(parent, translatable("bclib.welcome.title"));

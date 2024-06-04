@@ -1,7 +1,7 @@
 package org.betterx.bclib.api.v2.levelgen.structures;
 
 import com.mojang.datafixers.util.Either;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -15,14 +15,16 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.pools.SinglePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElementType;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
+import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 public class SingleEndPoolElement extends SinglePoolElement {
-    public static final Codec<SingleEndPoolElement> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    public static final MapCodec<SingleEndPoolElement> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             SingleEndPoolElement.templateCodec(),
             SingleEndPoolElement.processorsCodec(),
             SingleEndPoolElement.projectionCodec()
@@ -33,7 +35,16 @@ public class SingleEndPoolElement extends SinglePoolElement {
             Holder<StructureProcessorList> holder,
             StructureTemplatePool.Projection projection
     ) {
-        super(either, holder, projection);
+        this(either, holder, projection, Optional.empty());
+    }
+
+    public SingleEndPoolElement(
+            Either<ResourceLocation, StructureTemplate> either,
+            Holder<StructureProcessorList> holder,
+            StructureTemplatePool.Projection projection,
+            Optional<LiquidSettings> liquidSettings
+    ) {
+        super(either, holder, projection, liquidSettings);
     }
 
     public static Function<StructureTemplatePool.Projection, SingleEndPoolElement> end(
@@ -58,6 +69,7 @@ public class SingleEndPoolElement extends SinglePoolElement {
             Rotation rotation,
             BoundingBox boundingBox,
             RandomSource randomSource,
+            LiquidSettings liquidSettings,
             boolean bl
     ) {
         //in the end, we don't want to generate anything below y=5
@@ -76,6 +88,7 @@ public class SingleEndPoolElement extends SinglePoolElement {
                 rotation,
                 boundingBox,
                 randomSource,
+                liquidSettings,
                 bl
         );
     }

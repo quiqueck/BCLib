@@ -14,7 +14,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagEntry;
 import net.minecraft.tags.TagKey;
 import net.minecraft.tags.TagLoader;
-import net.minecraft.tags.TagManager;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
@@ -38,7 +37,7 @@ public class TagRegistry<T> {
         RegistryBacked(DefaultedRegistry<T> registry) {
             super(
                     registry.key(),
-                    TagManager.getTagDir(registry.key()),
+                    Registries.tagsDirPath(registry.key()),
                     (T element) -> {
                         ResourceLocation id = registry.getKey(element);
                         if (id != registry.getDefaultKey()) {
@@ -213,7 +212,7 @@ public class TagRegistry<T> {
      * @return the corresponding TagKey {@link TagKey<T>}.
      */
     public TagKey<T> makeTag(String modId, String name) {
-        return makeTag(new ResourceLocation(modId, name));
+        return makeTag(ResourceLocation.fromNamespaceAndPath(modId, name));
     }
 
     /**
@@ -240,7 +239,7 @@ public class TagRegistry<T> {
      * @see <a href="https://fabricmc.net/wiki/tutorial:tags">Fabric Wiki (Tags)</a>
      */
     public TagKey<T> makeCommonTag(String name) {
-        return creatTagKey(new ResourceLocation("c", name));
+        return creatTagKey(ResourceLocation.fromNamespaceAndPath("c", name));
     }
 
     public TagKey<T> makeTogetherTag(String name) {

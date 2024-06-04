@@ -4,7 +4,9 @@ import org.betterx.bclib.BCLib;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 
+import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,27 +24,46 @@ public interface BlockModelProvider extends ItemModelProvider {
         Optional<String> pattern = PatternsHelper.createBlockSimple(resourceLocation);
         return ModelsHelper.fromPattern(pattern);
     }
+    static ModelResourceLocation remapModelResourceLocation(
+            ModelResourceLocation stateId,
+            BlockState blockState
+    ) {
+        return remapModelResourceLocation(stateId, blockState, "");
+    }
+
+    static ModelResourceLocation remapModelResourceLocation(
+            ModelResourceLocation stateId,
+            BlockState blockState,
+            String pathAddOn
+    ) {
+        return BlockModelShaper.stateToModelLocation(
+                ResourceLocation.fromNamespaceAndPath(stateId.id().getNamespace(), "block/" + stateId
+                        .id()
+                        .getPath() + pathAddOn),
+                blockState
+        );
+    }
 
     @Environment(EnvType.CLIENT)
     default UnbakedModel getModelVariant(
-            ResourceLocation stateId,
+            ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ResourceLocation, UnbakedModel> modelCache
+            Map<ModelResourceLocation, UnbakedModel> modelCache
     ) {
-        ResourceLocation modelId = new ResourceLocation(stateId.getNamespace(), "block/" + stateId.getPath());
+        ModelResourceLocation modelId = remapModelResourceLocation(stateId, blockState);
         registerBlockModel(stateId, modelId, blockState, modelCache);
-        return ModelsHelper.createBlockSimple(modelId);
+        return ModelsHelper.createBlockSimple(modelId.id());
     }
 
     @Environment(EnvType.CLIENT)
     default void registerBlockModel(
-            ResourceLocation stateId,
-            ResourceLocation modelId,
+            ModelResourceLocation stateId,
+            ModelResourceLocation modelId,
             BlockState blockState,
-            Map<ResourceLocation, UnbakedModel> modelCache
+            Map<ModelResourceLocation, UnbakedModel> modelCache
     ) {
         if (!modelCache.containsKey(modelId)) {
-            BlockModel model = getBlockModel(stateId, blockState);
+            BlockModel model = getBlockModel(stateId.id(), blockState);
             if (model != null) {
                 model.name = modelId.toString();
                 modelCache.put(modelId, model);

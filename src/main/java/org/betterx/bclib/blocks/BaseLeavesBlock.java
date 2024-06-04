@@ -9,6 +9,7 @@ import org.betterx.bclib.items.tool.BaseShearsItem;
 import org.betterx.bclib.util.MHelper;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -96,12 +97,12 @@ public class BaseLeavesBlock extends LeavesBlock implements BlockModelProvider, 
         ItemStack tool = builder.getParameter(LootContextParams.TOOL);
         if (tool != null) {
             if (tool != null && BaseShearsItem.isShear(tool) || EnchantmentHelper.getItemEnchantmentLevel(
-                    Enchantments.SILK_TOUCH,
+                    new Holder.Direct(Enchantments.SILK_TOUCH),
                     tool
             ) > 0) {
                 return Collections.singletonList(new ItemStack(leaveBlock));
             }
-            int fortune = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, tool);
+            int fortune = EnchantmentHelper.getItemEnchantmentLevel(new Holder.Direct(Enchantments.FORTUNE), tool);
             if (MHelper.RANDOM.nextInt(fortuneRate) <= fortune) {
                 return Lists.newArrayList(new ItemStack(sapling));
             }

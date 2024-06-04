@@ -21,13 +21,13 @@ import com.google.common.collect.Maps;
 import java.util.Map;
 
 public class CustomModelBakery {
-    private final Map<ResourceLocation, UnbakedModel> models = Maps.newConcurrentMap();
+    private final Map<ModelResourceLocation, UnbakedModel> models = Maps.newConcurrentMap();
 
-    public UnbakedModel getBlockModel(ResourceLocation location) {
+    public UnbakedModel getBlockModel(ModelResourceLocation location) {
         return models.get(location);
     }
 
-    public UnbakedModel getItemModel(ResourceLocation location) {
+    public UnbakedModel getItemModel(ModelResourceLocation location) {
         return models.get(location);
     }
 
@@ -37,14 +37,14 @@ public class CustomModelBakery {
                                .filter(block -> block instanceof BlockModelProvider)
                                .forEach(block -> {
                                    ResourceLocation blockID = BuiltInRegistries.BLOCK.getKey(block);
-                                   ResourceLocation storageID = new ResourceLocation(
+                                   ResourceLocation storageID = ResourceLocation.fromNamespaceAndPath(
                                            blockID.getNamespace(),
                                            "blockstates/" + blockID.getPath() + ".json"
                                    );
                                    if (resourceManager.getResource(storageID).isEmpty()) {
                                        addBlockModel(blockID, block);
                                    }
-                                   storageID = new ResourceLocation(
+                                   storageID = ResourceLocation.fromNamespaceAndPath(
                                            blockID.getNamespace(),
                                            "models/item/" + blockID.getPath() + ".json"
                                    );
@@ -58,7 +58,7 @@ public class CustomModelBakery {
                               .filter(item -> item instanceof ItemModelProvider || RecordItemModelProvider.has(item))
                               .forEach(item -> {
                                   ResourceLocation registryID = BuiltInRegistries.ITEM.getKey(item);
-                                  ResourceLocation storageID = new ResourceLocation(
+                                  ResourceLocation storageID = ResourceLocation.fromNamespaceAndPath(
                                           registryID.getNamespace(),
                                           "models/item/" + registryID.getPath() + ".json"
                                   );
@@ -77,17 +77,17 @@ public class CustomModelBakery {
         ImmutableList<BlockState> states = block.getStateDefinition().getPossibleStates();
         BlockState defaultState = block.defaultBlockState();
 
-        ResourceLocation defaultStateID = BlockModelShaper.stateToModelLocation(blockID, defaultState);
+        ModelResourceLocation defaultStateID = BlockModelShaper.stateToModelLocation(blockID, defaultState);
         UnbakedModel defaultModel = provider.getModelVariant(defaultStateID, defaultState, models);
 
         if (defaultModel instanceof MultiPart) {
             states.forEach(blockState -> {
-                ResourceLocation stateID = BlockModelShaper.stateToModelLocation(blockID, blockState);
+                ModelResourceLocation stateID = BlockModelShaper.stateToModelLocation(blockID, blockState);
                 models.put(stateID, defaultModel);
             });
         } else {
             states.forEach(blockState -> {
-                ResourceLocation stateID = BlockModelShaper.stateToModelLocation(blockID, blockState);
+                ModelResourceLocation stateID = BlockModelShaper.stateToModelLocation(blockID, blockState);
                 UnbakedModel model = stateID.equals(defaultStateID)
                         ? defaultModel
                         : provider.getModelVariant(stateID, blockState, models);
@@ -98,14 +98,13 @@ public class CustomModelBakery {
 
     private void addItemModel(ResourceLocation itemID, ItemModelProvider provider) {
         ModelResourceLocation modelLocation = new ModelResourceLocation(
-                itemID.getNamespace(),
-                itemID.getPath(),
+                ResourceLocation.fromNamespaceAndPath(itemID.getNamespace(), itemID.getPath()),
                 "inventory"
         );
         if (models.containsKey(modelLocation)) {
             return;
         }
-        BlockModel model = provider.getItemModel(modelLocation);
+        BlockModel model = provider.getItemModel(modelLocation.id());
         models.put(modelLocation, model);
     }
 }

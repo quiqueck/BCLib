@@ -2,7 +2,7 @@ package org.betterx.bclib.api.v3.levelgen.features.placement;
 
 import org.betterx.bclib.BCLib;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -78,13 +78,13 @@ public class PlacementModifiers {
     );
 
 
-    private static <P extends PlacementModifier> PlacementModifierType<P> register(String path, Codec<P> codec) {
+    private static <P extends PlacementModifier> PlacementModifierType<P> register(String path, MapCodec<P> codec) {
         return register(BCLib.makeID(path), codec);
     }
 
     public static <P extends PlacementModifier> PlacementModifierType<P> register(
             ResourceLocation location,
-            Codec<P> codec
+            MapCodec<P> codec
     ) {
         return Registry.register(BuiltInRegistries.PLACEMENT_MODIFIER_TYPE, location, () -> codec);
     }

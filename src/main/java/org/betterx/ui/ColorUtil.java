@@ -306,9 +306,9 @@ public class ColorUtil {
         }
         ResourceLocation texture;
         if (item instanceof BlockItem) {
-            texture = new ResourceLocation(id.getNamespace(), "textures/block/" + id.getPath() + ".png");
+            texture = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "textures/block/" + id.getPath() + ".png");
         } else {
-            texture = new ResourceLocation(id.getNamespace(), "textures/item/" + id.getPath() + ".png");
+            texture = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "textures/item/" + id.getPath() + ".png");
         }
         NativeImage image = loadImage(texture, 16, 16);
         List<Integer> colors = new ArrayList<>();

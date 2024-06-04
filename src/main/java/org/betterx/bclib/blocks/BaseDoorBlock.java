@@ -14,6 +14,7 @@ import org.betterx.bclib.interfaces.TagProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -87,9 +88,9 @@ public abstract class BaseDoorBlock extends DoorBlock implements RenderLayerProv
     @Override
     @Environment(EnvType.CLIENT)
     public UnbakedModel getModelVariant(
-            ResourceLocation stateId,
+            ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ResourceLocation, UnbakedModel> modelCache
+            Map<ModelResourceLocation, UnbakedModel> modelCache
     ) {
         Direction facing = blockState.getValue(FACING);
         DoorType doorType = getDoorType(blockState);
@@ -129,12 +130,9 @@ public abstract class BaseDoorBlock extends DoorBlock implements RenderLayerProv
                 }
                 break;
         }
-        ResourceLocation modelId = new ResourceLocation(
-                stateId.getNamespace(),
-                "block/" + stateId.getPath() + "_" + doorType
-        );
+        ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, "_" + doorType);
         registerBlockModel(stateId, modelId, blockState, modelCache);
-        return ModelsHelper.createMultiVariant(modelId, rotation.getRotation(), false);
+        return ModelsHelper.createMultiVariant(modelId.id(), rotation.getRotation(), false);
     }
 
     protected DoorType getDoorType(BlockState blockState) {

@@ -4,12 +4,15 @@ import org.betterx.bclib.blocks.BaseAnvilBlock;
 import org.betterx.bclib.blocks.LeveledAnvilBlock;
 import org.betterx.bclib.interfaces.AnvilScreenHandlerExtended;
 import org.betterx.bclib.recipes.AnvilRecipe;
+import org.betterx.bclib.recipes.AnvilRecipeInput;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
@@ -52,6 +55,11 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu implements AnvilSc
         super(menuType, i, inventory, containerLevelAccess);
     }
 
+    @Unique
+    private AnvilRecipeInput bcl_AnvilRecipeInput(TagKey<Item> allowedTools) {
+        return new AnvilRecipeInput(this.inputSlots.getItem(0), this.inputSlots.getItem(1), allowedTools);
+    }
+
     @Inject(method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/inventory/ContainerLevelAccess;)V", at = @At("TAIL"))
     public void be_initAnvilLevel(int syncId, Inventory inventory, ContainerLevelAccess context, CallbackInfo info) {
         this.bcl_anvilLevel = addDataSlot(DataSlot.standalone());
@@ -72,7 +80,8 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu implements AnvilSc
     @Inject(method = "mayPickup", at = @At("HEAD"), cancellable = true)
     protected void bcl_canTakeOutput(Player player, boolean present, CallbackInfoReturnable<Boolean> info) {
         if (bcl_currentRecipe != null) {
-            info.setReturnValue(bcl_currentRecipe.value().checkHammerDurability(inputSlots, player));
+            AnvilRecipeInput recipeInput = this.bcl_AnvilRecipeInput(bcl_currentRecipe.value().getAllowedTools());
+            info.setReturnValue(bcl_currentRecipe.value().checkHammerDurability(recipeInput, player));
         }
     }
 
@@ -92,11 +101,11 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu implements AnvilSc
     @Inject(method = "onTake", at = @At("HEAD"), cancellable = true)
     protected void bcl_onTakeAnvilOutput(Player player, ItemStack stack, CallbackInfo info) {
         if (bcl_currentRecipe != null) {
-            final int ingredientSlot = AnvilRecipe.getIngredientSlot(inputSlots);
-
-            inputSlots.getItem(ingredientSlot).shrink(bcl_currentRecipe.value().getInputCount());
-            stack = bcl_currentRecipe.value().craft(inputSlots, player);
+            AnvilRecipeInput recipeInput = this.bcl_AnvilRecipeInput(bcl_currentRecipe.value().getAllowedTools());
+            recipeInput.getIngredient().shrink(bcl_currentRecipe.value().getInputCount());
+            stack = bcl_currentRecipe.value().craft(recipeInput, player);
             slotsChanged(inputSlots);
+
             access.execute((level, blockPos) -> {
                 final BlockState anvilState = level.getBlockState(blockPos);
                 final Block anvilBlock = anvilState.getBlock();
@@ -117,8 +126,9 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu implements AnvilSc
 
     @Inject(method = "createResult", at = @At("HEAD"), cancellable = true)
     public void bcl_updateOutput(CallbackInfo info) {
+        AnvilRecipeInput recipeInput = this.bcl_AnvilRecipeInput(null);
         RecipeManager recipeManager = this.player.level().getRecipeManager();
-        bcl_recipes = recipeManager.getRecipesFor(AnvilRecipe.TYPE, inputSlots, player.level());
+        bcl_recipes = recipeManager.getRecipesFor(AnvilRecipe.TYPE, recipeInput, player.level());
         if (!bcl_recipes.isEmpty()) {
             int anvilLevel = this.bcl_anvilLevel.get();
             bcl_recipes = bcl_recipes.stream()
@@ -159,7 +169,8 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu implements AnvilSc
     @Unique
     private void bcl_updateResult() {
         if (bcl_currentRecipe == null) return;
-        resultSlots.setItem(0, bcl_currentRecipe.value().assemble(inputSlots, this.player.level().registryAccess()));
+        AnvilRecipeInput recipeInput = this.bcl_AnvilRecipeInput(bcl_currentRecipe.value().getAllowedTools());
+        resultSlots.setItem(0, bcl_currentRecipe.value().assemble(recipeInput, this.player.level().registryAccess()));
         broadcastChanges();
     }
 

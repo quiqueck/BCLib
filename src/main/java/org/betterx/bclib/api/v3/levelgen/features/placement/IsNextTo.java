@@ -1,6 +1,6 @@
 package org.betterx.bclib.api.v3.levelgen.features.placement;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
@@ -15,7 +15,7 @@ import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 public class IsNextTo extends PlacementFilter {
-    public static final Codec<IsNextTo> CODEC = RecordCodecBuilder.create((instance) -> instance
+    public static final MapCodec<IsNextTo> CODEC = RecordCodecBuilder.mapCodec((instance) -> instance
             .group(
                     BlockPredicate.CODEC
                             .fieldOf("predicate")

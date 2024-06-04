@@ -2,7 +2,7 @@ package org.betterx.bclib.api.v2.levelgen.structures;
 
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeBuilder;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -28,7 +28,7 @@ public abstract class BCLStructure<S extends Structure> {
     }
 
     public interface StructureCodecProvider<S extends Structure> {
-        Codec<S> getCodec();
+        MapCodec<S> getCodec();
     }
 
     public interface StructureBuilderWithContext<S extends Structure> extends StructureBuilder<S> {
@@ -49,7 +49,7 @@ public abstract class BCLStructure<S extends Structure> {
                 @NotNull ResourceLocation id,
                 @NotNull GenerationStep.Decoration step,
                 @NotNull StructurePlacement placement,
-                @NotNull Codec<S> codec,
+                @NotNull MapCodec<S> codec,
                 @NotNull TagKey<Biome> biomeTag,
                 @NotNull StructureBuilder<S> structureBuilder,
                 @NotNull TerrainAdjustment terrainAdjustment
@@ -174,13 +174,13 @@ public abstract class BCLStructure<S extends Structure> {
 
     private static <S extends Structure> StructureType<S> registerStructureType(
             ResourceLocation id,
-            Codec<S> codec
+            MapCodec<S> codec
     ) {
         final ResourceKey<StructureType<?>> key = ResourceKey.create(Registries.STRUCTURE_TYPE, id);
         return (StructureType<S>) Registry.register(
                 BuiltInRegistries.STRUCTURE_TYPE,
                 key,
-                () -> (Codec<Structure>) codec
+                () -> (MapCodec<Structure>) codec
         );
     }
 

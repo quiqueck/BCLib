@@ -6,12 +6,8 @@ import org.betterx.bclib.util.BlocksHelper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.SpawnPlacements.SpawnPredicate;
-import net.minecraft.world.entity.SpawnPlacements.Type;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.phys.AABB;
@@ -314,10 +310,10 @@ public class SpawnRuleBuilder<M extends Mob> {
     /**
      * Finalize spawning rule creation.
      *
-     * @param spawnType     {@link Type} of spawn.
+     * @param spawnType     {@link SpawnPlacementType} of spawn.
      * @param heightmapType {@link Types} heightmap type.
      */
-    public void build(Type spawnType, Types heightmapType) {
+    public void build(SpawnPlacementType spawnType, Types heightmapType) {
         final List<SpawnRuleEntry> rulesCopy = Lists.newArrayList(this.rules);
         Collections.sort(rulesCopy);
 
@@ -348,7 +344,7 @@ public class SpawnRuleBuilder<M extends Mob> {
      * @param heightmapType {@link Types} heightmap type.
      */
     public void buildNoRestrictions(Types heightmapType) {
-        build(Type.NO_RESTRICTIONS, heightmapType);
+        build(SpawnPlacementTypes.NO_RESTRICTIONS, heightmapType);
     }
 
     /**
@@ -357,7 +353,7 @@ public class SpawnRuleBuilder<M extends Mob> {
      * @param heightmapType {@link Types} heightmap type.
      */
     public void buildOnGround(Types heightmapType) {
-        build(Type.ON_GROUND, heightmapType);
+        build(SpawnPlacementTypes.ON_GROUND, heightmapType);
     }
 
     /**
@@ -366,7 +362,7 @@ public class SpawnRuleBuilder<M extends Mob> {
      * @param heightmapType {@link Types} heightmap type.
      */
     public void buildInWater(Types heightmapType) {
-        build(Type.IN_WATER, heightmapType);
+        build(SpawnPlacementTypes.IN_WATER, heightmapType);
     }
 
     /**
@@ -375,7 +371,7 @@ public class SpawnRuleBuilder<M extends Mob> {
      * @param heightmapType {@link Types} heightmap type.
      */
     public void buildInLava(Types heightmapType) {
-        build(Type.IN_LAVA, heightmapType);
+        build(SpawnPlacementTypes.IN_LAVA, heightmapType);
     }
 
     /**

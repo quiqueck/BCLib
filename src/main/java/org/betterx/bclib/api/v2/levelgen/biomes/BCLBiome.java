@@ -5,6 +5,7 @@ import org.betterx.worlds.together.world.event.WorldBootstrap;
 
 import com.mojang.datafixers.Products;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
@@ -41,7 +42,7 @@ import org.jetbrains.annotations.Nullable;
  * all default settings for {@link BCLBiome} as well as additional Data for your specific subclass.
  */
 public class BCLBiome implements BiomeData {
-    public static final Codec<BCLBiome> CODEC = RecordCodecBuilder.create(instance -> codecWithSettings(instance).apply(
+    public static final MapCodec<BCLBiome> CODEC = RecordCodecBuilder.mapCodec(instance -> codecWithSettings(instance).apply(
             instance,
             BCLBiome::new
     ));

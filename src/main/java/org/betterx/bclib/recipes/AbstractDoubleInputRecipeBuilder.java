@@ -5,13 +5,13 @@ import org.betterx.bclib.util.RecipeHelper;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.ItemLike;
 
-public abstract class AbstractDoubleInputRecipeBuilder<T extends AbstractDoubleInputRecipeBuilder, R extends Recipe<? extends Container>> extends AbstractSingleInputRecipeBuilder<T, R> {
+public abstract class AbstractDoubleInputRecipeBuilder<T extends AbstractDoubleInputRecipeBuilder, R extends Recipe<? extends RecipeInput>> extends AbstractSingleInputRecipeBuilder<T, R> {
     protected Ingredient secondaryInput;
 
     protected AbstractDoubleInputRecipeBuilder(

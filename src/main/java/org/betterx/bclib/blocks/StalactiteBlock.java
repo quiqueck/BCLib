@@ -5,10 +5,12 @@ import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.client.render.BCLRenderLayer;
+import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
@@ -224,19 +226,17 @@ public abstract class StalactiteBlock extends BaseBlockNotFull implements Simple
     @Override
     @Environment(EnvType.CLIENT)
     public UnbakedModel getModelVariant(
-            ResourceLocation stateId,
+            ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ResourceLocation, UnbakedModel> modelCache
+            Map<ModelResourceLocation, UnbakedModel> modelCache
     ) {
         BlockModelRotation rotation = blockState.getValue(IS_FLOOR)
                 ? BlockModelRotation.X0_Y0
                 : BlockModelRotation.X180_Y0;
-        ResourceLocation modelId = new ResourceLocation(
-                stateId.getNamespace(),
-                stateId.getPath() + "_" + blockState.getValue(SIZE)
-        );
+        ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, "_" + blockState.getValue(SIZE));
+
         registerBlockModel(modelId, modelId, blockState, modelCache);
-        return ModelsHelper.createMultiVariant(modelId, rotation.getRotation(), false);
+        return ModelsHelper.createMultiVariant(modelId.id(), rotation.getRotation(), false);
     }
 
     @Override

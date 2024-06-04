@@ -1,6 +1,6 @@
 package org.betterx.bclib.api.v3.levelgen.features.placement;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.ExtraCodecs;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class ForAll extends PlacementModifier {
-    public static final Codec<ForAll> CODEC = RecordCodecBuilder.create(instance -> instance
+    public static final MapCodec<ForAll> CODEC = RecordCodecBuilder.mapCodec(instance -> instance
             .group(
                     ExtraCodecs.nonEmptyList(PlacementModifier.CODEC.listOf())
                                .fieldOf("modifiers")

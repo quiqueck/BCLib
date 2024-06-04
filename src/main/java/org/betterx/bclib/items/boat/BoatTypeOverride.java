@@ -41,7 +41,7 @@ public final class BoatTypeOverride {
     }
 
     BoatTypeOverride(String modID, String name, Block planks, boolean isRaft) {
-        this.id = new ResourceLocation(modID, name);
+        this.id = ResourceLocation.fromNamespaceAndPath(modID, name);
         this.name = name;
         this.planks = planks;
         int nr = Objects.hash(name);
@@ -111,18 +111,18 @@ public final class BoatTypeOverride {
     }
 
     private static ModelLayerLocation createBoatModelName(String modID, String name) {
-        return new ModelLayerLocation(new ResourceLocation(modID, "boat/" + name), DEFAULT_LAYER);
+        return new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(modID, "boat/" + name), DEFAULT_LAYER);
     }
 
     private static ModelLayerLocation createChestBoatModelName(String modID, String name) {
-        return new ModelLayerLocation(new ResourceLocation(modID, "chest_boat/" + name), DEFAULT_LAYER);
+        return new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(modID, "chest_boat/" + name), DEFAULT_LAYER);
     }
 
     private static ResourceLocation getTextureLocation(String modID, String name, boolean chest) {
         if (chest) {
-            return new ResourceLocation(modID, "textures/entity/chest_boat/" + name + ".png");
+            return ResourceLocation.fromNamespaceAndPath(modID, "textures/entity/chest_boat/" + name + ".png");
         }
-        return new ResourceLocation(modID, "textures/entity/boat/" + name + ".png");
+        return ResourceLocation.fromNamespaceAndPath(modID, "textures/entity/boat/" + name + ".png");
     }
 
     public static BoatTypeOverride create(String modID, String name, Block planks) {

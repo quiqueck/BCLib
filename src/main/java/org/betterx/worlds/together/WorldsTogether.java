@@ -27,6 +27,6 @@ public class WorldsTogether {
     }
 
     public static ResourceLocation makeID(String s) {
-        return new ResourceLocation(MOD_ID, s);
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, s);
     }
 }

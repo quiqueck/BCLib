@@ -2,6 +2,7 @@ package org.betterx.bclib.api.v3.datagen;
 
 import org.betterx.bclib.BCLib;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.recipes.RecipeOutput;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -9,6 +10,7 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,8 +20,12 @@ public class RecipeDataProvider extends FabricRecipeProvider {
     @Nullable
     protected final List<String> modIDs;
 
-    public RecipeDataProvider(@Nullable List<String> modIDs, FabricDataOutput output) {
-        super(output);
+    public RecipeDataProvider(
+            @Nullable List<String> modIDs,
+            FabricDataOutput output,
+            CompletableFuture<HolderLookup.Provider> registriesFuture
+    ) {
+        super(output, registriesFuture);
         this.modIDs = modIDs;
     }
 

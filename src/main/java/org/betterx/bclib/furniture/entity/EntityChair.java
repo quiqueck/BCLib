@@ -7,6 +7,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerEntity;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.*;
@@ -14,8 +16,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-
-import org.joml.Vector3f;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 import org.jetbrains.annotations.Nullable;
@@ -25,13 +26,13 @@ public class EntityChair extends Entity {
         super(type, world);
     }
 
-    @Override
-    protected void defineSynchedData() {
-
-    }
-
     protected int getMaxPassengers() {
         return 1;
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+
     }
 
     @Override
@@ -90,8 +91,8 @@ public class EntityChair extends Entity {
     }
 
     @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return new ClientboundAddEntityPacket(this);
+    public Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity serverEntity) {
+        return new ClientboundAddEntityPacket(this, serverEntity);
     }
 
     @Override
@@ -113,14 +114,10 @@ public class EntityChair extends Entity {
         //Do nothing. Should not be pushable
     }
 
-    @Override
-    protected Vector3f getPassengerAttachmentPoint(Entity entity, EntityDimensions entityDimensions, float f) {
-        return new Vector3f(0.0f, 0.0f, 0.0f);
-    }
 
     @Override
-    protected float ridingOffset(Entity entity) {
-        return 0.0f;
+    protected Vec3 getPassengerAttachmentPoint(Entity entity, EntityDimensions entityDimensions, float f) {
+        return Vec3.ZERO;
     }
 
     @Override

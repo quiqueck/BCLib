@@ -18,7 +18,7 @@ public abstract class ComplexMaterialEntry {
     }
 
     public ResourceLocation getLocation(String modID, String baseName) {
-        return new ResourceLocation(modID, getName(baseName));
+        return ResourceLocation.fromNamespaceAndPath(modID, getName(baseName));
     }
 
     public String getSuffix() {

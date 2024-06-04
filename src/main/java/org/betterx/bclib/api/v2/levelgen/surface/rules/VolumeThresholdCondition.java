@@ -4,6 +4,7 @@ import org.betterx.bclib.mixin.common.SurfaceRulesContextAccessor;
 import org.betterx.bclib.noise.OpenSimplexNoise;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.util.RandomSource;
@@ -18,7 +19,7 @@ import java.util.Map;
 
 public class VolumeThresholdCondition extends VolumeNoiseCondition {
     private static final Map<Long, VolumeThresholdCondition.Context> NOISES = Maps.newHashMap();
-    public static final Codec<VolumeThresholdCondition> CODEC = RecordCodecBuilder.create(instance -> instance
+    public static final MapCodec<VolumeThresholdCondition> CODEC = RecordCodecBuilder.mapCodec(instance -> instance
             .group(
                     Codec.LONG.fieldOf("seed").forGetter(p -> p.noiseContext.seed),
                     Codec.DOUBLE.fieldOf("threshold").orElse(0.0).forGetter(p -> p.threshold),

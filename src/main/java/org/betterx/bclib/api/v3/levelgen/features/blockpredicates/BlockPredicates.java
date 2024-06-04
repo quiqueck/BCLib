@@ -3,7 +3,7 @@ package org.betterx.bclib.api.v3.levelgen.features.blockpredicates;
 import org.betterx.bclib.BCLib;
 import org.betterx.worlds.together.tag.v3.CommonBlockTags;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -39,7 +39,10 @@ public class BlockPredicates {
             IsFullShape.CODEC
     );
 
-    public static <P extends BlockPredicate> BlockPredicateType<P> register(ResourceLocation location, Codec<P> codec) {
+    public static <P extends BlockPredicate> BlockPredicateType<P> register(
+            ResourceLocation location,
+            MapCodec<P> codec
+    ) {
         return Registry.register(BuiltInRegistries.BLOCK_PREDICATE_TYPE, location, () -> codec);
     }
 

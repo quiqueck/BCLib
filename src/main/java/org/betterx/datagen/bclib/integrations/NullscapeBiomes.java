@@ -11,7 +11,7 @@ public class NullscapeBiomes {
     public static void ensureStaticallyLoaded() {
         TagManager.BIOMES.addOptional(
                 CommonBiomeTags.IS_SMALL_END_ISLAND,
-                ResourceKey.create(Registries.BIOME, new ResourceLocation("nullscape", "void_barrens"))
+                ResourceKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath("nullscape", "void_barrens"))
         );
     }
 }

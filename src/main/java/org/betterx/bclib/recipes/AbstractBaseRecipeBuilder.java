@@ -3,6 +3,7 @@ package org.betterx.bclib.recipes;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v3.datagen.DatapackRecipeBuilder;
 import org.betterx.bclib.api.v3.datagen.RecipeDataProvider;
+import org.betterx.bclib.util.BCLDataComponents;
 import org.betterx.bclib.util.RecipeHelper;
 
 import net.minecraft.advancements.Criterion;
@@ -17,13 +18,18 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 
 import java.util.Arrays;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public abstract class AbstractBaseRecipeBuilder<T extends AbstractBaseRecipeBuilder> implements DatapackRecipeBuilder {
+    interface RecipeOutputConsumer extends Consumer<CompoundTag> {
+    }
+
     protected final ResourceLocation id;
     protected final ItemStack output;
     protected String group;
@@ -31,6 +37,7 @@ public abstract class AbstractBaseRecipeBuilder<T extends AbstractBaseRecipeBuil
     protected RecipeCategory category;
 
     protected boolean alright;
+    protected RecipeOutputConsumer outputTagConsumer;
 
     protected AbstractBaseRecipeBuilder(ResourceLocation id, ItemStack output) {
         this.id = id;
@@ -59,7 +66,16 @@ public abstract class AbstractBaseRecipeBuilder<T extends AbstractBaseRecipeBuil
     }
 
     protected T setOutputTag(CompoundTag tag) {
-        this.output.setTag(tag);
+        this.outputTagConsumer = (itemTag) -> {
+            for (String k : tag.getAllKeys()) {
+                itemTag.put(k, tag.get(k));
+            }
+        };
+        return (T) this;
+    }
+
+    protected T setOutputTag(RecipeOutputConsumer consumer) {
+        this.outputTagConsumer = consumer;
         return (T) this;
     }
 
@@ -163,6 +179,7 @@ public abstract class AbstractBaseRecipeBuilder<T extends AbstractBaseRecipeBuil
     public final void build(RecipeOutput cc) {
         if (!checkRecipe()) return;
         buildRecipe(cc);
+        CustomData.update(BCLDataComponents.ANVIL_ENTITY_DATA, this.output, this.outputTagConsumer);
     }
 
     @Override

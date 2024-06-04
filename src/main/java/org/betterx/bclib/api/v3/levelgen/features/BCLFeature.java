@@ -51,8 +51,7 @@ public class BCLFeature<F extends Feature<FC>, FC extends FeatureConfiguration> 
 
     public static final Feature<TemplateFeatureConfig> TEMPLATE = register(
             BCLib.makeID("template"),
-            new TemplateFeature(
-                    TemplateFeatureConfig.CODEC)
+            new TemplateFeature<>(TemplateFeatureConfig.CODEC)
     );
 
     public static final Feature<NoneFeatureConfiguration> MARK_POSTPROCESSING = register(

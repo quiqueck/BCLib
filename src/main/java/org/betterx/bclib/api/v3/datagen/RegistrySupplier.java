@@ -23,7 +23,8 @@ public abstract class RegistrySupplier {
     public final Semaphore MAIN_LOCK = new Semaphore(1);
 
     final List<RegistrySupplier.RegistryInfo<?>> allRegistries;
-    @Nullable List<String> defaultModIDs;
+    @Nullable
+    List<String> defaultModIDs;
 
     protected RegistrySupplier(
             @Nullable List<String> defaultModIDs

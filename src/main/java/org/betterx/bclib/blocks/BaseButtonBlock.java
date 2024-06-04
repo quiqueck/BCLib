@@ -13,6 +13,7 @@ import org.betterx.bclib.interfaces.TagProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -77,12 +78,12 @@ public abstract class BaseButtonBlock extends ButtonBlock implements BlockModelP
     @Override
     @Environment(EnvType.CLIENT)
     public UnbakedModel getModelVariant(
-            ResourceLocation stateId,
+            ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ResourceLocation, UnbakedModel> modelCache
+            Map<ModelResourceLocation, UnbakedModel> modelCache
     ) {
         String powered = blockState.getValue(POWERED) ? "_powered" : "";
-        ResourceLocation modelId = new ResourceLocation(stateId.getNamespace(), "block/" + stateId.getPath() + powered);
+        ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, powered);
         registerBlockModel(stateId, modelId, blockState, modelCache);
         AttachFace face = blockState.getValue(FACE);
         boolean isCeiling = face == AttachFace.CEILING;
@@ -118,7 +119,7 @@ public abstract class BaseButtonBlock extends ButtonBlock implements BlockModelP
                 break;
         }
         BlockModelRotation rotation = BlockModelRotation.by(x, y);
-        return ModelsHelper.createMultiVariant(modelId, rotation.getRotation(), face == AttachFace.WALL);
+        return ModelsHelper.createMultiVariant(modelId.id(), rotation.getRotation(), face == AttachFace.WALL);
     }
 
     @Override

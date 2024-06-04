@@ -19,6 +19,6 @@ public class CustomModelData {
 
     public static boolean isTransparentEmissive(ResourceLocation rawLocation) {
         String name = rawLocation.getPath().replace("materialmaps/block/", "").replace(".json", "");
-        return TRANSPARENT_EMISSION.contains(new ResourceLocation(rawLocation.getNamespace(), name));
+        return TRANSPARENT_EMISSION.contains(ResourceLocation.fromNamespaceAndPath(rawLocation.getNamespace(), name));
     }
 }

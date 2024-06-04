@@ -11,6 +11,7 @@ import org.betterx.worlds.together.tag.v3.TagManager;
 import org.betterx.worlds.together.world.event.WorldBootstrap;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
@@ -117,14 +118,14 @@ public class BiomeAPI {
     }
 
     public static class BiomeType {
-        public static final Codec<BiomeType> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance
+        public static final MapCodec<BiomeType> DIRECT_CODEC = RecordCodecBuilder.mapCodec(instance -> instance
                 .group(
                         Codec.STRING.fieldOf("name")
                                     .orElse("undefined")
                                     .forGetter(o -> o.name)
 
                 ).apply(instance, BiomeType::create));
-        public static final Codec<BiomeType> CODEC = RecordCodecBuilder.create(instance -> instance
+        public static final MapCodec<BiomeType> CODEC = RecordCodecBuilder.mapCodec(instance -> instance
                 .group(
                         Codec.STRING.fieldOf("name")
                                     .orElse("undefined")

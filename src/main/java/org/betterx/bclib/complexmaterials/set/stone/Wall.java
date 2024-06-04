@@ -38,7 +38,7 @@ public class Wall extends AbstractWall<StoneComplexMaterial> {
 
         BCLRecipeBuilder
                 .stonecutting(
-                        new ResourceLocation(id.getNamespace(), "stonecutter_" + id.getPath()),
+                        ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "stonecutter_" + id.getPath()),
                         parentMaterial.getBlock(suffix)
                 )
                 .setPrimaryInputAndUnlock(parentMaterial.getBlock(getSourceBlockSlot()))

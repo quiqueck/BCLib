@@ -1,11 +1,13 @@
 package org.betterx.bclib.particles;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
@@ -13,43 +15,48 @@ import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 public class BCLParticleType {
 
     public static <T extends ParticleOptions> ParticleType<T> deserializer(
-            ParticleOptions.Deserializer<T> factory,
-            Codec<T> codec
+            MapCodec<T> codec,
+            StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec
     ) {
-        return deserializer(false, factory, codec);
+        return deserializer(false, codec, streamCodec);
     }
 
     public static <T extends ParticleOptions> ParticleType<T> deserializer(
             boolean overrideLimiter,
-            ParticleOptions.Deserializer<T> factory,
-            Codec<T> codec
+            MapCodec<T> codec,
+            StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec
     ) {
-        return new ParticleType<T>(overrideLimiter, factory) {
+        return new ParticleType<T>(overrideLimiter) {
             @Override
-            public Codec<T> codec() {
+            public MapCodec<T> codec() {
                 return codec;
+            }
+
+            @Override
+            public StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec() {
+                return streamCodec;
             }
         };
     }
 
     public static <T extends ParticleOptions> ParticleType<T> register(
             ResourceLocation location,
-            ParticleOptions.Deserializer<T> factory,
-            Codec<T> codec
+            MapCodec<T> codec,
+            StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec
     ) {
-        return register(location, false, factory, codec);
+        return register(location, false, codec, streamCodec);
     }
 
     public static <T extends ParticleOptions> ParticleType<T> register(
             ResourceLocation location,
             boolean overrideLimiter,
-            ParticleOptions.Deserializer<T> factory,
-            Codec<T> codec
+            MapCodec<T> codec,
+            StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec
     ) {
         return Registry.register(
                 BuiltInRegistries.PARTICLE_TYPE,
                 location,
-                deserializer(overrideLimiter, factory, codec)
+                deserializer(overrideLimiter, codec, streamCodec)
         );
     }
 

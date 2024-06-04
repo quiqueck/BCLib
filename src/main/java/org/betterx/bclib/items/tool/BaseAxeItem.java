@@ -13,7 +13,11 @@ import net.fabricmc.api.Environment;
 
 public class BaseAxeItem extends AxeItem implements ItemModelProvider {
     public BaseAxeItem(Tier material, float attackDamage, float attackSpeed, Properties settings) {
-        super(material, attackDamage, attackSpeed, settings);
+        this(material, settings.attributes(AxeItem.createAttributes(material, attackDamage, attackSpeed)));
+    }
+
+    public BaseAxeItem(Tier material, Properties settings) {
+        super(material, settings);
     }
 
     @Override

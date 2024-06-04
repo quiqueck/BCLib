@@ -15,13 +15,13 @@ import java.util.stream.Stream;
 import org.jetbrains.annotations.Nullable;
 
 public class FullReferenceHolder<T> implements Holder<T> {
-    private Set<TagKey<T>> tags = Set.of();
+    final private Set<TagKey<T>> tags = Set.of();
     @Nullable
-    private ResourceKey<T> key;
+    final private ResourceKey<T> key;
     @Nullable
-    private T value;
+    final private T value;
 
-    private ResourceKey<Registry<T>> owner;
+    final private ResourceKey<Registry<T>> owner;
 
     private FullReferenceHolder(
             ResourceKey<Registry<T>> owner,
@@ -38,7 +38,7 @@ public class FullReferenceHolder<T> implements Holder<T> {
             ResourceKey<T> resourceKey,
             @Nullable T object
     ) {
-        return new FullReferenceHolder(owner, resourceKey, object);
+        return new FullReferenceHolder<>(owner, resourceKey, object);
     }
 
     public static <T> FullReferenceHolder<T> create(
@@ -46,7 +46,7 @@ public class FullReferenceHolder<T> implements Holder<T> {
             ResourceLocation id,
             @Nullable T object
     ) {
-        return new FullReferenceHolder(owner, ResourceKey.create(owner, id), object);
+        return new FullReferenceHolder<>(owner, ResourceKey.create(owner, id), object);
     }
 
 
@@ -80,6 +80,14 @@ public class FullReferenceHolder<T> implements Holder<T> {
     @Override
     public boolean is(TagKey<T> tagKey) {
         return this.tags.contains(tagKey);
+    }
+
+    @Override
+    public boolean is(Holder<T> holder) {
+        boolean ok = this.value != null || this.key != null;
+        if (this.value != null) ok = ok && this.value.equals(holder.value());
+        if (this.key != null) ok = ok && holder.is(this.key);
+        return ok;
     }
 
     @Override

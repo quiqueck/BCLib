@@ -180,7 +180,7 @@ public class StructureNBT {
                                     }
                                 })
                                 .filter(s -> s.endsWith(".nbt"))
-                                .map(s -> new ResourceLocation(
+                                .map(s -> ResourceLocation.fromNamespaceAndPath(
                                         ns,
                                         (nm.isEmpty() ? "" : (nm + "/")) + s.substring(0, s.length() - 4)
                                 ))

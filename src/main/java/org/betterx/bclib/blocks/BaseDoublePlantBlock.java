@@ -8,6 +8,7 @@ import org.betterx.bclib.util.LootUtil;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -115,8 +116,9 @@ public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements R
     @Override
     public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
         ItemStack tool = builder.getParameter(LootContextParams.TOOL);
+
         if (LootUtil.isCorrectTool(this, state, tool) || EnchantmentHelper.getItemEnchantmentLevel(
-                Enchantments.SILK_TOUCH,
+                new Holder.Direct(Enchantments.SILK_TOUCH),
                 tool
         ) > 0) {
             return Lists.newArrayList(new ItemStack(this));

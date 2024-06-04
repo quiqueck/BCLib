@@ -3,6 +3,7 @@ package org.betterx.bclib.api.v3.levelgen.features.placement;
 import org.betterx.bclib.BCLib;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -14,7 +15,7 @@ import java.util.stream.Stream;
 
 public class Debug extends PlacementModifier {
     public static final Debug INSTANCE = new Debug("Placing at {}");
-    public static final Codec<Debug> CODEC = RecordCodecBuilder.create((instance) -> instance
+    public static final MapCodec<Debug> CODEC = RecordCodecBuilder.mapCodec((instance) -> instance
             .group(
                     Codec.STRING
                             .fieldOf("caption")

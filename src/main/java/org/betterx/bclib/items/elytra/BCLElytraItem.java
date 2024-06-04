@@ -22,7 +22,8 @@ public interface BCLElytraItem extends FabricElytraItem {
 
         if (!entity.level().isClientSide && nextRoll % 10 == 0) {
             if ((nextRoll / 10) % 2 == 0) {
-                chestStack.hurtAndBreak(1, entity, (e) -> BCLElytraUtils.onBreak.accept(e, chestStack));
+                BCLElytraUtils.onBreak.accept(entity, chestStack);
+                return;
             }
 
             entity.gameEvent(GameEvent.ELYTRA_GLIDE);

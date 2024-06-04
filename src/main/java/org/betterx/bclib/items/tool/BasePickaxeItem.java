@@ -13,7 +13,11 @@ import net.fabricmc.api.Environment;
 
 public class BasePickaxeItem extends PickaxeItem implements ItemModelProvider {
     public BasePickaxeItem(Tier material, int attackDamage, float attackSpeed, Properties settings) {
-        super(material, attackDamage, attackSpeed, settings);
+        this(material, settings.attributes(PickaxeItem.createAttributes(material, attackDamage, attackSpeed)));
+    }
+
+    public BasePickaxeItem(Tier material, Properties settings) {
+        super(material, settings);
     }
 
     @Override

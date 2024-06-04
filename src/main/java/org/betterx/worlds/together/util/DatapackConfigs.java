@@ -54,7 +54,7 @@ public class DatapackConfigs {
             DatapackConfigReloadPrepare prepare,
             DatapackConfigReloadHandler handler
     ) {
-        final ResourceLocation handlerID = new ResourceLocation(
+        final ResourceLocation handlerID = ResourceLocation.fromNamespaceAndPath(
                 modID,
                 "config_manager_" + fileName.replaceAll("/", "_").replaceAll(".", "_")
         );

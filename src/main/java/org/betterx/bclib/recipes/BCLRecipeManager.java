@@ -8,9 +8,9 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.ItemLike;
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public class BCLRecipeManager {
-    public static <C extends Container, S extends RecipeSerializer<T>, T extends Recipe<C>> S registerSerializer(
+    public static <C extends RecipeInput, S extends RecipeSerializer<T>, T extends Recipe<C>> S registerSerializer(
             String modID,
             String id,
             S serializer
@@ -33,8 +33,8 @@ public class BCLRecipeManager {
         return Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, modID + ":" + id, serializer);
     }
 
-    public static <C extends Container, T extends Recipe<C>> RecipeType<T> registerType(String modID, String type) {
-        ResourceLocation recipeTypeId = new ResourceLocation(modID, type);
+    public static <C extends RecipeInput, T extends Recipe<C>> RecipeType<T> registerType(String modID, String type) {
+        ResourceLocation recipeTypeId = ResourceLocation.fromNamespaceAndPath(modID, type);
         return Registry.register(BuiltInRegistries.RECIPE_TYPE, recipeTypeId, new RecipeType<T>() {
             public String toString() {
                 return type;

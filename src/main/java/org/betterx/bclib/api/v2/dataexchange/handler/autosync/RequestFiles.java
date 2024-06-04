@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 public class RequestFiles extends DataHandler.FromClient {
     public static final DataHandlerDescriptor DESCRIPTOR = new DataHandlerDescriptor(
-            new ResourceLocation(
+            ResourceLocation.fromNamespaceAndPath(
                     BCLib.MOD_ID,
                     "request_files"
             ),

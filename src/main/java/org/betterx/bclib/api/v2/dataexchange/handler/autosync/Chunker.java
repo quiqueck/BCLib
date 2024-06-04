@@ -192,7 +192,7 @@ public class Chunker extends DataHandler.FromServer {
     private static final int MAX_PAYLOAD_SIZE = MAX_PACKET_SIZE - HEADER_SIZE;
 
     public static final DataHandlerDescriptor DESCRIPTOR = new DataHandlerDescriptor(
-            new ResourceLocation(
+            ResourceLocation.fromNamespaceAndPath(
                     BCLib.MOD_ID,
                     "chunker"
             ),
@@ -256,7 +256,7 @@ public class Chunker extends DataHandler.FromServer {
             chunkCount = buf.readInt();
             final String namespace = readString(buf);
             final String path = readString(buf);
-            ResourceLocation ident = new ResourceLocation(namespace, path);
+            ResourceLocation ident = ResourceLocation.fromNamespaceAndPath(namespace, path);
             BCLib.LOGGER.info("Receiving " + chunkCount + " + Packet-Chunks for " + ident);
 
             receiver = PacketChunkReceiver.getOrCreate(uuid, chunkCount, ident);

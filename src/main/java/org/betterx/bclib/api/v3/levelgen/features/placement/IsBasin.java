@@ -1,6 +1,6 @@
 package org.betterx.bclib.api.v3.levelgen.features.placement;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -13,7 +13,7 @@ import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import java.util.Optional;
 
 public class IsBasin extends PlacementFilter {
-    public static final Codec<IsBasin> CODEC = RecordCodecBuilder.create((instance) -> instance
+    public static final MapCodec<IsBasin> CODEC = RecordCodecBuilder.mapCodec((instance) -> instance
             .group(
                     BlockPredicate.CODEC
                             .fieldOf("predicate")

@@ -2,7 +2,7 @@ package org.betterx.bclib.api.v2.levelgen.structures;
 
 import org.betterx.bclib.BCLib;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -16,7 +16,7 @@ public class BCLStructurePoolElementTypes {
 
     public static <P extends StructurePoolElement> StructurePoolElementType<P> register(
             ResourceLocation id,
-            Codec<P> codec
+            MapCodec<P> codec
     ) {
         return Registry.register(BuiltInRegistries.STRUCTURE_POOL_ELEMENT, id, () -> codec);
     }

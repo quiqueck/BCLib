@@ -8,6 +8,7 @@ import org.betterx.bclib.items.BaseSpawnEggItem;
 import org.betterx.bclib.items.ModelProviderItem;
 import org.betterx.bclib.models.RecordItemModelProvider;
 import org.betterx.bclib.recipes.SmithingTemplates;
+import org.betterx.worlds.together.tag.v3.CommonItemTags;
 import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.core.Direction;
@@ -15,9 +16,8 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -33,15 +33,15 @@ public class ItemRegistry extends BaseRegistry<Item> {
         super(config);
     }
 
-    public Item registerDisc(ResourceLocation itemId, int power, SoundEvent sound, int lengthInSeconds) {
-        RecordItem item = BaseDiscItem.create(power, sound, BehaviourBuilders.createDisc(), lengthInSeconds);
+    public Item registerDisc(ResourceLocation itemId, int power, ResourceKey<JukeboxSong> sound, int lengthInSeconds) {
+        Item item = BaseDiscItem.create(power, sound, BehaviourBuilders.createDisc(), lengthInSeconds);
         if (item != null) {
             RecordItemModelProvider.add(item);
             if (!config.getBoolean("musicDiscs", itemId.getPath(), true)) {
                 return item;
             }
             register(itemId, item);
-            TagManager.ITEMS.add(ItemTags.MUSIC_DISCS, item);
+            TagManager.ITEMS.add(CommonItemTags.MUSIC_DISCS, item);
         }
         return item;
     }
@@ -56,7 +56,7 @@ public class ItemRegistry extends BaseRegistry<Item> {
                 .setBaseSlotEmptyIcons(baseSlotEmptyIcons)
                 .setAdditionalSlotEmptyIcons(additionalSlotEmptyIcons)
                 .build();
-        register(new ResourceLocation(id.getNamespace(), id.getPath() + "_smithing_template"), item);
+        register(ResourceLocation.fromNamespaceAndPath(id.getNamespace(), id.getPath() + "_smithing_template"), item);
         return item;
     }
 
@@ -94,7 +94,7 @@ public class ItemRegistry extends BaseRegistry<Item> {
         DefaultDispenseItemBehavior behavior = new DefaultDispenseItemBehavior() {
             public ItemStack execute(BlockSource pointer, ItemStack stack) {
                 Direction direction = pointer.state().getValue(DispenserBlock.FACING);
-                EntityType<?> entityType = ((SpawnEggItem) stack.getItem()).getType(stack.getTag());
+                EntityType<?> entityType = ((SpawnEggItem) stack.getItem()).getType(stack);
                 entityType.spawn(
                         pointer.level(),
                         stack,
@@ -113,7 +113,7 @@ public class ItemRegistry extends BaseRegistry<Item> {
     }
 
     public Item registerFood(ResourceLocation itemId, int hunger, float saturation, MobEffectInstance... effects) {
-        FoodProperties.Builder builder = new FoodProperties.Builder().nutrition(hunger).saturationMod(saturation);
+        FoodProperties.Builder builder = new FoodProperties.Builder().nutrition(hunger).saturationModifier(saturation);
         for (MobEffectInstance effect : effects) {
             builder.effect(effect, 1F);
         }
@@ -129,7 +129,7 @@ public class ItemRegistry extends BaseRegistry<Item> {
     }
 
     public Item registerDrink(ResourceLocation itemId, int hunger, float saturation) {
-        FoodProperties.Builder builder = new FoodProperties.Builder().nutrition(hunger).saturationMod(saturation);
+        FoodProperties.Builder builder = new FoodProperties.Builder().nutrition(hunger).saturationModifier(saturation);
         return registerDrink(itemId, builder.build());
     }
 

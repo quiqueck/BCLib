@@ -4,7 +4,6 @@
   "package": "org.betterx.worlds.together.mixin.common",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "DiggerItemAccessor",
     "MainMixin",
     "MinecraftServerMixin",
     "TagLoaderMixin",

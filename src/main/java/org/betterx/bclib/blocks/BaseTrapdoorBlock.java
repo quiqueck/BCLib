@@ -16,6 +16,7 @@ import org.betterx.bclib.interfaces.TagProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
@@ -78,11 +79,11 @@ public abstract class BaseTrapdoorBlock extends TrapDoorBlock implements RenderL
     @Override
     @Environment(EnvType.CLIENT)
     public UnbakedModel getModelVariant(
-            ResourceLocation stateId,
+            ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ResourceLocation, UnbakedModel> modelCache
+            Map<ModelResourceLocation, UnbakedModel> modelCache
     ) {
-        ResourceLocation modelId = new ResourceLocation(stateId.getNamespace(), "block/" + stateId.getPath());
+        ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState);
         registerBlockModel(stateId, modelId, blockState, modelCache);
         boolean isTop = blockState.getValue(HALF) == Half.TOP;
         boolean isOpen = blockState.getValue(OPEN);
@@ -105,7 +106,7 @@ public abstract class BaseTrapdoorBlock extends TrapDoorBlock implements RenderL
                 break;
         }
         BlockModelRotation rotation = BlockModelRotation.by(x, y);
-        return ModelsHelper.createMultiVariant(modelId, rotation.getRotation(), false);
+        return ModelsHelper.createMultiVariant(modelId.id(), rotation.getRotation(), false);
     }
 
     @Override

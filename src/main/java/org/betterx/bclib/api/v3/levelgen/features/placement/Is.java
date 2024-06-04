@@ -1,6 +1,6 @@
 package org.betterx.bclib.api.v3.levelgen.features.placement;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -15,7 +15,7 @@ import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import java.util.Optional;
 
 public class Is extends PlacementFilter {
-    public static final Codec<Is> CODEC = RecordCodecBuilder.create((instance) -> instance
+    public static final MapCodec<Is> CODEC = RecordCodecBuilder.mapCodec((instance) -> instance
             .group(
                     BlockPredicate.CODEC
                             .fieldOf("predicate")

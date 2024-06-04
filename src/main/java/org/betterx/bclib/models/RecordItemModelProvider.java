@@ -4,7 +4,6 @@ import org.betterx.bclib.interfaces.ItemModelProvider;
 
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.RecordItem;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +29,7 @@ public class RecordItemModelProvider {
     private static final Map<Item, ItemModelProvider> PROIVDER_MAPPPING = new HashMap<>();
 
     @ApiStatus.Internal
-    public static void add(RecordItem record) {
+    public static void add(Item record) {
         if (record != null) {
             PROIVDER_MAPPPING.put(record, DEFAULT_PROVIDER);
         }

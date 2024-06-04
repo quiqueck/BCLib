@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 import org.jetbrains.annotations.Nullable;
 
 public class MainScreen extends LayoutScreenWithIcon {
-    static final ResourceLocation BCLIB_LOGO_LOCATION = new ResourceLocation(BCLib.MOD_ID, "icon.png");
+    static final ResourceLocation BCLIB_LOGO_LOCATION = ResourceLocation.fromNamespaceAndPath(BCLib.MOD_ID, "icon.png");
 
     public MainScreen(@Nullable Screen parent) {
         super(parent, BCLIB_LOGO_LOCATION, Component.translatable("title.bclib.modmenu.main"), 10, 10, 20);

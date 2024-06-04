@@ -7,6 +7,7 @@ import org.betterx.bclib.util.LootUtil;
 import org.betterx.bclib.util.MHelper;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -67,7 +68,7 @@ public class BaseCropBlock extends BasePlantBlock implements SurvivesOnBlocks {
         }
         ItemStack tool = builder.getParameter(LootContextParams.TOOL);
         if (LootUtil.isCorrectTool(this, state, tool)) {
-            int enchantment = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, tool);
+            int enchantment = EnchantmentHelper.getItemEnchantmentLevel(new Holder.Direct(Enchantments.FORTUNE), tool);
             if (enchantment > 0) {
                 int countSeeds = MHelper.randRange(Mth.clamp(1 + enchantment, 1, 3), 3, MHelper.RANDOM_SOURCE);
                 int countDrops = MHelper.randRange(Mth.clamp(1 + enchantment, 1, 2), 2, MHelper.RANDOM_SOURCE);

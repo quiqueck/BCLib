@@ -5,6 +5,7 @@ import org.betterx.bclib.mixin.common.SurfaceRulesContextAccessor;
 import org.betterx.bclib.noise.Noises;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -16,7 +17,7 @@ import net.minecraft.world.level.levelgen.SurfaceRules;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
 public class RoughNoiseCondition implements SurfaceRules.ConditionSource {
-    public static final Codec<RoughNoiseCondition> CODEC = RecordCodecBuilder.create(instance -> instance
+    public static final MapCodec<RoughNoiseCondition> CODEC = RecordCodecBuilder.mapCodec(instance -> instance
             .group(
                     ResourceKey.codec(Registries.NOISE).fieldOf("noise").forGetter(o -> o.noise),
                     Codec.DOUBLE.fieldOf("min_threshold").forGetter(o -> o.minThreshold),

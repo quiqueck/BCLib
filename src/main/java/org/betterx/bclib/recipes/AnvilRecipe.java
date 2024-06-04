@@ -4,22 +4,26 @@ import org.betterx.bclib.BCLib;
 import org.betterx.bclib.interfaces.UnknownReceipBookCategory;
 import org.betterx.bclib.util.ItemUtil;
 import org.betterx.worlds.together.tag.v3.CommonItemTags;
+import org.betterx.worlds.together.tag.v3.TagManager;
 import org.betterx.worlds.together.world.event.WorldBootstrap;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
-import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -35,9 +39,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import java.util.Objects;
-import org.jetbrains.annotations.NotNull;
 
-public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory {
+public class AnvilRecipe implements Recipe<AnvilRecipeInput>, UnknownReceipBookCategory {
     public final static String GROUP = "smithing";
     public final static RecipeType<AnvilRecipe> TYPE = BCLRecipeManager.registerType(BCLib.MOD_ID, GROUP);
     public final static Serializer SERIALIZER = BCLRecipeManager.registerSerializer(
@@ -55,7 +58,7 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
     private final Ingredient input;
     private final ItemStack output;
     private final int damage;
-    private final int toolLevel;
+    private final TagKey<Item> allowedTools;
     private final int anvilLevel;
     private final int inputCount;
 
@@ -63,13 +66,13 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
             Ingredient input,
             ItemStack output,
             int inputCount,
-            int toolLevel,
+            TagKey<Item> allowedTools,
             int anvilLevel,
             int damage
     ) {
         this.input = input;
         this.output = output;
-        this.toolLevel = toolLevel;
+        this.allowedTools = allowedTools;
         this.anvilLevel = anvilLevel;
         this.inputCount = inputCount;
         this.damage = damage;
@@ -85,17 +88,17 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
     }
 
     @Override
-    public ItemStack getResultItem(RegistryAccess acc) {
+    public ItemStack getResultItem(HolderLookup.Provider provider) {
         return this.output;
     }
 
     @Override
-    public boolean matches(@NotNull Container craftingInventory, @NotNull Level world) {
+    public boolean matches(AnvilRecipeInput craftingInventory, Level level) {
         return this.matches(craftingInventory);
     }
 
     @Override
-    public ItemStack assemble(@NotNull Container craftingInventory, RegistryAccess acc) {
+    public ItemStack assemble(AnvilRecipeInput recipeInput, HolderLookup.Provider provider) {
         return this.output.copy();
     }
 
@@ -117,33 +120,27 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
         return Math.abs(getHammerSlot(c) - 1);
     }
 
-    public ItemStack getHammer(Container c) {
-        ItemStack h = c.getItem(1);
-        if (!h.isEmpty() && h.is(CommonItemTags.HAMMERS)) return h;
-        h = c.getItem(0);
-        if (!h.isEmpty() && h.is(CommonItemTags.HAMMERS)) return h;
-        return null;
+    public ItemStack getHammer(AnvilRecipeInput c) {
+        return c.hasHammer() ? c.getHammer() : null;
     }
 
-    public ItemStack getIngredient(Container c) {
-        ItemStack i = c.getItem(0);
-        if (i.is(CommonItemTags.HAMMERS)) i = c.getItem(1);
-        return i;
+    public ItemStack getIngredient(AnvilRecipeInput c) {
+        return c.hasIngerdient() ? c.getIngredient() : null;
     }
 
-    public ItemStack craft(Container craftingInventory, Player player) {
+    public ItemStack craft(AnvilRecipeInput craftingInventory, Player player) {
         if (!player.isCreative()) {
             if (!checkHammerDurability(craftingInventory, player)) return ItemStack.EMPTY;
             ItemStack hammer = getHammer(craftingInventory);
             if (hammer != null) {
-                hammer.hurtAndBreak(this.damage, player, entity -> entity.broadcastBreakEvent((InteractionHand) null));
+                hammer.hurtAndBreak(this.damage, player, EquipmentSlot.OFFHAND);
                 return ItemStack.EMPTY;
             }
         }
         return this.assemble(craftingInventory, Minecraft.getInstance().level.registryAccess());
     }
 
-    public boolean checkHammerDurability(Container craftingInventory, Player player) {
+    public boolean checkHammerDurability(AnvilRecipeInput craftingInventory, Player player) {
         if (player.isCreative()) return true;
         ItemStack hammer = getHammer(craftingInventory);
         if (hammer != null) {
@@ -153,15 +150,15 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
         return true;
     }
 
-    public boolean matches(Container craftingInventory) {
+    public boolean matches(AnvilRecipeInput craftingInventory) {
         ItemStack hammer = getHammer(craftingInventory);
         if (hammer == null) {
             return false;
         }
         ItemStack material = getIngredient(craftingInventory);
         int materialCount = material.getCount();
-        int level = ((TieredItem) hammer.getItem()).getTier().getLevel();
-        return this.input.test(getIngredient(craftingInventory)) && materialCount >= this.inputCount && level >= this.toolLevel;
+
+        return this.input.test(getIngredient(craftingInventory)) && materialCount >= this.inputCount && hammer.is(allowedTools);
     }
 
     public int getDamage() {
@@ -170,6 +167,10 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
 
     public int getInputCount() {
         return this.inputCount;
+    }
+
+    public TagKey<Item> getAllowedTools() {
+        return this.allowedTools;
     }
 
     public Ingredient getMainIngredient() {
@@ -182,7 +183,7 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
 
     public boolean canUse(Item tool) {
         if (tool instanceof TieredItem ti) {
-            return ti.getTier().getLevel() >= toolLevel;
+            return ti.builtInRegistryHolder().is(allowedTools);
         }
         return false;
     }
@@ -225,12 +226,15 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AnvilRecipe that = (AnvilRecipe) o;
-        return damage == that.damage && toolLevel == that.toolLevel && input.equals(that.input) && output.equals(that.output);
+        return damage == that.damage &&
+                ((allowedTools != null && allowedTools.equals(that.allowedTools)) || (allowedTools == null && that.allowedTools == null)) &&
+                input.equals(that.input) &&
+                output.equals(that.output);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(input, output, damage, toolLevel);
+        return Objects.hash(input, output, damage, allowedTools);
     }
 
     @Override
@@ -239,7 +243,7 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
         sb.append("input=").append(input);
         sb.append(", output=").append(output);
         sb.append(", damage=").append(damage);
-        sb.append(", toolLevel=").append(toolLevel);
+        sb.append(", allowedTools=").append(allowedTools);
         sb.append(", anvilLevel=").append(anvilLevel);
         sb.append(", inputCount=").append(inputCount);
         sb.append('}');
@@ -248,7 +252,7 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
 
     public static class Builder extends AbstractSingleInputRecipeBuilder<Builder, AnvilRecipe> {
         private int inputCount;
-        private int toolLevel;
+        private TagKey<Item> allowedTools;
         private int anvilLevel;
         private int damage;
 
@@ -256,7 +260,7 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
             super(id, output);
 
             this.inputCount = 1;
-            this.toolLevel = 1;
+            this.allowedTools = null;
             this.anvilLevel = 1;
             this.damage = 1;
         }
@@ -302,9 +306,9 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
             return this;
         }
 
-
-        public Builder setToolLevel(int level) {
-            this.toolLevel = level;
+        @Deprecated(forRemoval = true)
+        public Builder setAllowedTools(TagKey<Item> items) {
+            this.allowedTools = items;
             return this;
         }
 
@@ -338,44 +342,52 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
         @Override
         protected AnvilRecipe createRecipe(ResourceLocation id) {
             checkRecipe();
-            return new AnvilRecipe(primaryInput, output, inputCount, toolLevel, anvilLevel, damage);
+            return new AnvilRecipe(primaryInput, output, inputCount, this.allowedTools, anvilLevel, damage);
         }
     }
 
     public static class Serializer implements RecipeSerializer<AnvilRecipe> {
-        public static Codec<AnvilRecipe> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+        public static MapCodec<AnvilRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Ingredient.CODEC_NONEMPTY.fieldOf("input").forGetter(recipe -> recipe.input),
                 ItemUtil.CODEC_ITEM_STACK_WITH_NBT.fieldOf("result").forGetter(recipe -> recipe.output),
                 Codec.INT.optionalFieldOf("inputCount", 1).forGetter(recipe -> recipe.inputCount),
-                Codec.INT.optionalFieldOf("toolLevel", 1).forGetter(recipe -> recipe.toolLevel),
+                TagKey
+                        .codec(Registries.ITEM)
+                        .optionalFieldOf("allowedTools", null)
+                        .forGetter(recipe -> recipe.allowedTools),
                 Codec.INT.optionalFieldOf("anvilLevel", 1).forGetter(recipe -> recipe.anvilLevel),
                 Codec.INT.optionalFieldOf("damage", 1).forGetter(recipe -> recipe.damage)
         ).apply(instance, AnvilRecipe::new));
+        public static final StreamCodec<RegistryFriendlyByteBuf, AnvilRecipe> STREAM_CODEC = StreamCodec.of(AnvilRecipe.Serializer::toNetwork, AnvilRecipe.Serializer::fromNetwork);
+        public static final StreamCodec<RegistryFriendlyByteBuf, TagKey<Item>> ITEM_TAG_STREAM_CODEC = TagManager.streamCodec(Registries.ITEM);
 
         @Override
-        public Codec<AnvilRecipe> codec() {
+        public MapCodec<AnvilRecipe> codec() {
             return CODEC;
         }
 
-
         @Override
-        public AnvilRecipe fromNetwork(FriendlyByteBuf packetBuffer) {
-            Ingredient input = Ingredient.fromNetwork(packetBuffer);
-            ItemStack output = packetBuffer.readItem();
+        public StreamCodec<RegistryFriendlyByteBuf, AnvilRecipe> streamCodec() {
+            return STREAM_CODEC;
+        }
+
+
+        public static AnvilRecipe fromNetwork(RegistryFriendlyByteBuf packetBuffer) {
+            Ingredient input = Ingredient.CONTENTS_STREAM_CODEC.decode(packetBuffer);
+            ItemStack output = ItemStack.STREAM_CODEC.decode(packetBuffer);
             int inputCount = packetBuffer.readVarInt();
-            int toolLevel = packetBuffer.readVarInt();
+            TagKey<Item> allowedTools = ITEM_TAG_STREAM_CODEC.decode(packetBuffer);
             int anvilLevel = packetBuffer.readVarInt();
             int damage = packetBuffer.readVarInt();
 
-            return new AnvilRecipe(input, output, inputCount, toolLevel, anvilLevel, damage);
+            return new AnvilRecipe(input, output, inputCount, allowedTools, anvilLevel, damage);
         }
 
-        @Override
-        public void toNetwork(FriendlyByteBuf packetBuffer, AnvilRecipe recipe) {
-            recipe.input.toNetwork(packetBuffer);
-            packetBuffer.writeItem(recipe.output);
+        public static void toNetwork(RegistryFriendlyByteBuf packetBuffer, AnvilRecipe recipe) {
+            Ingredient.CONTENTS_STREAM_CODEC.encode(packetBuffer, recipe.input);
+            ItemStack.STREAM_CODEC.encode(packetBuffer, recipe.output);
             packetBuffer.writeVarInt(recipe.inputCount);
-            packetBuffer.writeVarInt(recipe.toolLevel);
+            ITEM_TAG_STREAM_CODEC.encode(packetBuffer, recipe.allowedTools);
             packetBuffer.writeVarInt(recipe.anvilLevel);
             packetBuffer.writeVarInt(recipe.damage);
         }

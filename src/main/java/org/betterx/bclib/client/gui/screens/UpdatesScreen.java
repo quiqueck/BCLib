@@ -28,7 +28,7 @@ import net.fabricmc.loader.api.metadata.CustomValue;
 @Environment(EnvType.CLIENT)
 public class UpdatesScreen extends BCLibLayoutScreen {
     public static final String DONATION_URL = "https://www.buymeacoffee.com/quiqueck";
-    static final ResourceLocation UPDATE_LOGO_LOCATION = new ResourceLocation(BCLib.MOD_ID, "icon_updater.png");
+    static final ResourceLocation UPDATE_LOGO_LOCATION = ResourceLocation.fromNamespaceAndPath(BCLib.MOD_ID, "icon_updater.png");
 
     public UpdatesScreen(Runnable onClose) {
         super(onClose, Component.translatable("bclib.updates.title"), 10, 10, 10);
@@ -58,7 +58,7 @@ public class UpdatesScreen extends BCLibLayoutScreen {
                 CustomValue.CvObject obj = element.getAsObject();
                 if (obj != null) {
                     CustomValue icon = obj.get("updater_icon");
-                    return new ResourceLocation(modID, icon.getAsString());
+                    return ResourceLocation.fromNamespaceAndPath(modID, icon.getAsString());
                 }
             }
         }

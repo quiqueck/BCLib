@@ -13,7 +13,11 @@ import net.fabricmc.api.Environment;
 
 public class BaseHoeItem extends HoeItem implements ItemModelProvider {
     public BaseHoeItem(Tier material, int attackDamage, float attackSpeed, Properties settings) {
-        super(material, attackDamage, attackSpeed, settings);
+        this(material, settings.attributes(HoeItem.createAttributes(material, attackDamage, attackSpeed)));
+    }
+
+    public BaseHoeItem(Tier material, Properties settings) {
+        super(material, settings);
     }
 
     @Override

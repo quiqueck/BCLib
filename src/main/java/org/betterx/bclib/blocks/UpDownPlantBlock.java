@@ -9,6 +9,7 @@ import org.betterx.bclib.util.LootUtil;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -86,7 +87,7 @@ public abstract class UpDownPlantBlock extends BaseBlockNotFull implements Rende
     public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
         ItemStack tool = builder.getParameter(LootContextParams.TOOL);
         if (LootUtil.isCorrectTool(this, state, tool) || EnchantmentHelper.getItemEnchantmentLevel(
-                Enchantments.SILK_TOUCH,
+                new Holder.Direct(Enchantments.SILK_TOUCH),
                 tool
         ) > 0) {
             return Lists.newArrayList(new ItemStack(this));

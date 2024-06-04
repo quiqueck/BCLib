@@ -30,7 +30,7 @@ public class ConnectorArgument extends ResourceLocationArgument {
         try {
             pool = context.getArgument(PlaceCommand.POOL, ResourceKey.class).location();
         } catch (Throwable t) {
-            pool = new ResourceLocation("-", "");
+            pool = ResourceLocation.fromNamespaceAndPath("-", "");
         }
         return SharedSuggestionProvider.suggest(getStrings(
                 pool.getNamespace(),

@@ -91,10 +91,9 @@ public class OBJBlockModel implements UnbakedModel, BakedModel {
     @Nullable
     @Override
     public BakedModel bake(
-            ModelBaker modelBakery,
+            ModelBaker modelBaker,
             Function<Material, TextureAtlasSprite> textureGetter,
-            ModelState modelState,
-            ResourceLocation resourceLocation
+            ModelState modelState
     ) {
         for (int i = 0; i < sprites.length; i++) {
             sprites[i] = textureGetter.apply(materials.get(i));

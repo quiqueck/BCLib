@@ -5,14 +5,14 @@ import org.betterx.bclib.mixin.common.SurfaceRulesContextAccessor;
 import org.betterx.bclib.util.MHelper;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 
 public class NetherNoiseCondition implements NumericProvider {
-    public static final Codec<NetherNoiseCondition> CODEC = Codec.BYTE.fieldOf("nether_noise")
-                                                                      .xmap(
-                                                                              (obj) -> (NetherNoiseCondition) Conditions.NETHER_NOISE,
-                                                                              obj -> (byte) 0
-                                                                      )
-                                                                      .codec();
+    public static final MapCodec<NetherNoiseCondition> CODEC = Codec.BYTE.fieldOf("nether_noise")
+                                                                         .xmap(
+                                                                                 (obj) -> (NetherNoiseCondition) Conditions.NETHER_NOISE,
+                                                                                 obj -> (byte) 0
+                                                                         );
 
 
     NetherNoiseCondition() {
@@ -20,7 +20,7 @@ public class NetherNoiseCondition implements NumericProvider {
 
 
     @Override
-    public Codec<? extends NumericProvider> pcodec() {
+    public MapCodec<? extends NumericProvider> pcodec() {
         return CODEC;
     }
 

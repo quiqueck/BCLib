@@ -1,13 +1,13 @@
 package org.betterx.bclib.api.v2.levelgen.structures;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 
 public class BCLStructureBuilder<S extends Structure> extends BCLBaseStructureBuilder<S, BCLStructureBuilder<S>> {
-    private Codec<S> codec;
+    private MapCodec<S> codec;
 
     private BCLStructureBuilder(
             ResourceLocation structureID,
@@ -42,13 +42,13 @@ public class BCLStructureBuilder<S extends Structure> extends BCLBaseStructureBu
         return new BCLStructureBuilder<>(structureID, structureBuilder);
     }
 
-    public BCLStructureBuilder<S> codec(Codec<S> value) {
+    public BCLStructureBuilder<S> codec(MapCodec<S> value) {
         this.codec = value;
         return this;
     }
 
     @Override
-    protected Codec<S> getCodec() {
+    protected MapCodec<S> getCodec() {
         return codec;
     }
 

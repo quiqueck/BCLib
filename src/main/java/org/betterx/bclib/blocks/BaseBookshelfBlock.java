@@ -8,6 +8,7 @@ import org.betterx.bclib.interfaces.TagProvider;
 import org.betterx.worlds.together.tag.v3.CommonBlockTags;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -42,7 +43,7 @@ public abstract class BaseBookshelfBlock extends BaseBlock implements TagProvide
     public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
         ItemStack tool = builder.getParameter(LootContextParams.TOOL);
         if (tool != null) {
-            int silk = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool);
+            int silk = EnchantmentHelper.getItemEnchantmentLevel(new Holder.Direct(Enchantments.SILK_TOUCH), tool);
             if (silk > 0) {
                 return Collections.singletonList(new ItemStack(this));
             }
@@ -59,7 +60,7 @@ public abstract class BaseBookshelfBlock extends BaseBlock implements TagProvide
 
     protected ResourceLocation replacePath(ResourceLocation blockId) {
         String newPath = blockId.getPath().replace("_bookshelf", "");
-        return new ResourceLocation(blockId.getNamespace(), newPath);
+        return ResourceLocation.fromNamespaceAndPath(blockId.getNamespace(), newPath);
     }
 
     @Override

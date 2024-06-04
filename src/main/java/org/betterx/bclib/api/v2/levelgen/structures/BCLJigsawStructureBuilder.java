@@ -1,6 +1,6 @@
 package org.betterx.bclib.api.v2.levelgen.structures;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -79,7 +79,7 @@ public class BCLJigsawStructureBuilder extends BCLBaseStructureBuilder<JigsawStr
     }
 
     @Override
-    protected Codec<JigsawStructure> getCodec() {
+    protected MapCodec<JigsawStructure> getCodec() {
         return JigsawStructure.CODEC;
     }
 
@@ -100,7 +100,9 @@ public class BCLJigsawStructureBuilder extends BCLBaseStructureBuilder<JigsawStr
                     useExpansionHack,
                     projectStartToHeightmap,
                     maxDistanceFromCenter,
-                    aliasBindings == null ? List.of() : aliasBindings
+                    aliasBindings == null ? List.of() : aliasBindings,
+                    JigsawStructure.DEFAULT_DIMENSION_PADDING,
+                    JigsawStructure.DEFAULT_LIQUID_SETTINGS
             );
         };
 

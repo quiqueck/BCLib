@@ -1,6 +1,7 @@
 package org.betterx.bclib.api.v3.levelgen.features.placement;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.ExtraCodecs;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class Stencil extends PlacementModifier {
-    public static final Codec<Stencil> CODEC;
+    public static final MapCodec<Stencil> CODEC;
     private static final Boolean[] BN_STENCIL;
     private final List<Boolean> stencil;
     private static final Stencil DEFAULT;
@@ -328,7 +329,7 @@ public class Stencil extends PlacementModifier {
 
         DEFAULT = new Stencil(BN_STENCIL, 1);
         DEFAULT4 = new Stencil(BN_STENCIL, 4);
-        CODEC = RecordCodecBuilder.create((instance) -> instance
+        CODEC = RecordCodecBuilder.mapCodec((instance) -> instance
                 .group(
                         ExtraCodecs.nonEmptyList(Codec.BOOL.listOf())
                                    .fieldOf("structures")

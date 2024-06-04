@@ -124,7 +124,7 @@ class ProgressLogoRender extends CustomRenderComponent<ProgressLogoRender> {
 
 public class ProgressScreen extends LayoutScreen implements ProgressListener, AtomicProgressListener {
 
-    static final ResourceLocation BCLIB_LOGO_PIXELATED_LOCATION = new ResourceLocation(
+    static final ResourceLocation BCLIB_LOGO_PIXELATED_LOCATION = ResourceLocation.fromNamespaceAndPath(
             BCLib.MOD_ID,
             "iconpixelated.png"
     );

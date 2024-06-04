@@ -1,6 +1,6 @@
 package org.betterx.bclib.api.v3.levelgen.features.placement;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 
 public class Offset extends PlacementModifier {
     private static final Map<Direction, Offset> DIRECTIONS = Maps.newHashMap();
-    public static final Codec<Offset> CODEC = RecordCodecBuilder.create((instance) -> instance
+    public static final MapCodec<Offset> CODEC = RecordCodecBuilder.mapCodec((instance) -> instance
             .group(
                     Vec3i.CODEC
                             .fieldOf("blocks")

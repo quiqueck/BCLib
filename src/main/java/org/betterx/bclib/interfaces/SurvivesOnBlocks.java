@@ -1,5 +1,6 @@
 package org.betterx.bclib.interfaces;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -19,7 +20,7 @@ public interface SurvivesOnBlocks extends SurvivesOnSpecialGround {
                 .filter(block -> block != Blocks.AIR && block != null)
                 .map(block -> {
                     ItemStack stack = new ItemStack(block);
-                    if (stack.hasCustomHoverName()) return stack.getHoverName().getString();
+                    if (stack.has(DataComponents.CUSTOM_NAME)) return stack.getHoverName().getString();
                     else return block.getName().getString();
                 })
                 .sorted(Comparator.naturalOrder())

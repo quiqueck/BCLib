@@ -2,9 +2,8 @@ package org.betterx.worlds.together.mixin.client;
 
 import org.betterx.worlds.together.world.event.WorldBootstrap;
 
-import com.mojang.serialization.Dynamic;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.GenericDirtMessageScreen;
+import net.minecraft.client.gui.screens.GenericMessageScreen;
 import net.minecraft.client.gui.screens.worldselection.WorldOpenFlows;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.storage.LevelStorageSource;
@@ -27,15 +26,6 @@ public abstract class WorldOpenFlowsMixin {
 
 
     @Shadow
-    protected abstract void loadLevel(
-            LevelStorageSource.LevelStorageAccess levelStorageAccess,
-            Dynamic<?> dynamic,
-            boolean bl,
-            boolean bl2,
-            Runnable runnable
-    );
-
-    @Shadow
     @Final
     private Minecraft minecraft;
 
@@ -44,18 +34,18 @@ public abstract class WorldOpenFlowsMixin {
     protected abstract LevelStorageSource.LevelStorageAccess createWorldAccess(String string);
 
     @Shadow
-    protected abstract void checkForBackupAndLoad(
+    protected abstract void openWorldLoadLevelData(
             LevelStorageSource.LevelStorageAccess levelStorageAccess,
             Runnable runnable
     );
 
     @Inject(
-            method = "checkForBackupAndLoad(Ljava/lang/String;Ljava/lang/Runnable;)V",
+            method = "openWorld(Ljava/lang/String;Ljava/lang/Runnable;)V",
             cancellable = true,
             at = @At("HEAD")
     )
     private void wt_callFixerOnLoad(String levelID, Runnable screenRunner, CallbackInfo ci) {
-        this.minecraft.forceSetScreen(new GenericDirtMessageScreen(Component.translatable("selectWorld.data_read")));
+        this.minecraft.forceSetScreen(new GenericMessageScreen(Component.translatable("selectWorld.data_read")));
 
 
         WorldBootstrap.InGUI.setupLoadedWorld(levelID, this.levelSource);
@@ -66,7 +56,7 @@ public abstract class WorldOpenFlowsMixin {
             if (levelStorageAccess == null) {
                 return;
             }
-            this.checkForBackupAndLoad(levelStorageAccess, screenRunner);
+            this.openWorldLoadLevelData(levelStorageAccess, screenRunner);
         })) {
             //cancel call when fix-screen is presented
             ci.cancel();

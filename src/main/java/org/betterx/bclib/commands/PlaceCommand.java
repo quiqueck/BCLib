@@ -355,7 +355,10 @@ class PlaceCommandBuilder {
         );
         ResourceLocation connector = ResourceLocationArgument.getId(ctx, CONNECTOR_NAME);
         if (connector.getNamespace().equals("-")) {
-            connector = new ResourceLocation(pool.key().location().getNamespace(), connector.getPath());
+            connector = ResourceLocation.fromNamespaceAndPath(pool
+                    .key()
+                    .location()
+                    .getNamespace(), connector.getPath());
         }
         BlockState replaceWith = hasReplaceArg
                 ? BlockStateArgument.getBlock(ctx, REPLACE_WITH).getState()
@@ -412,7 +415,7 @@ class PlaceCommandBuilder {
         if (level.getBlockEntity(pos) instanceof SpawnerBlockEntity entity) {
             CompoundTag tag = TagParser.parseTag(
                     "{SpawnData:{entity:{id:wither_skeleton,PersistenceRequired:1,HandItems:[{Count:1,id:netherite_sword},{Count:1,id:shield}],ArmorItems:[{Count:1,id:netherite_boots,tag:{Enchantments:[{id:protection,lvl:1}]}},{Count:1,id:netherite_leggings,tag:{Enchantments:[{id:protection,lvl:1}]}},{Count:1,id:netherite_chestplate,tag:{Enchantments:[{id:protection,lvl:1},{id:thorns,lvl:3}]}},{Count:1,id:netherite_helmet,tag:{Enchantments:[{id:protection,lvl:1}]}}],HandDropChances:[0.0f,0.0f],ArmorDropChances:[0.0f,0.0f,0.0f,0.0f]}, custom_spawn_rules:{sky_light_limit:{max_inclusive:13},block_light_limit:{max_inclusive:11}}},SpawnRange:4,SpawnCount:8,MaxNearbyEntities:18,Delay:499,MinSpawnDelay:300,MaxSpawnDelay:1600,RequiredPlayerRange:20}");
-            entity.load(tag);
+            entity.loadCustomOnly(tag, ctx.getSource().registryAccess());
         }
 
         return Command.SINGLE_SUCCESS;
@@ -463,7 +466,7 @@ public class PlaceCommand {
     private static void removeLootTableSeed(Level level, BoundingBox bb) {
         BlocksHelper.forAllInBounds(bb, (bp) -> {
             if (level.getBlockEntity(bp) instanceof RandomizableContainerBlockEntity rnd) {
-                rnd.setLootTable(rnd.lootTable, 0);
+                rnd.setLootTable(rnd.getLootTable(), 0);
             }
         });
     }

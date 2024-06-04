@@ -27,7 +27,7 @@ public class WeatheredBlock extends SimpleMaterialSlot<StoneComplexMaterial> {
     @Override
     protected @Nullable void makeRecipe(ComplexMaterial parentMaterial, ResourceLocation id) {
         BCLRecipeBuilder.crafting(
-                                new ResourceLocation(id.getNamespace(), id.getPath() + "_from_moss"),
+                                ResourceLocation.fromNamespaceAndPath(id.getNamespace(), id.getPath() + "_from_moss"),
                                 parentMaterial.getBlock(suffix)
                         )
                         .shapeless()
@@ -36,7 +36,7 @@ public class WeatheredBlock extends SimpleMaterialSlot<StoneComplexMaterial> {
                         .build();
 
         BCLRecipeBuilder.crafting(
-                                new ResourceLocation(id.getNamespace(), id.getPath() + "_from_vine"),
+                                ResourceLocation.fromNamespaceAndPath(id.getNamespace(), id.getPath() + "_from_vine"),
                                 parentMaterial.getBlock(suffix)
                         )
                         .shapeless()

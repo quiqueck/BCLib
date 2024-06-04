@@ -49,7 +49,7 @@ public abstract class HumanoidArmorRenderer implements ArmorRenderer {
             renderModel(
                     pose, buffer, light, model,
                     getTextureForSlot(slot, usesInnerModel(slot)),
-                    1.0f, 1.0f, 1.0f
+                    0xFFFFFFFF
             );
 
             if (stack.hasFoil()) {
@@ -70,10 +70,10 @@ public abstract class HumanoidArmorRenderer implements ArmorRenderer {
             PoseStack pose, MultiBufferSource buffer,
             int light,
             HumanoidModel<LivingEntity> humanoidModel, ResourceLocation texture,
-            float r, float g, float b
+            int color
     ) {
         VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.armorCutoutNoCull(texture));
-        humanoidModel.renderToBuffer(pose, vertexConsumer, light, OverlayTexture.NO_OVERLAY, r, g, b, 1.0f);
+        humanoidModel.renderToBuffer(pose, vertexConsumer, light, OverlayTexture.NO_OVERLAY, color);
     }
 
     protected void renderGlint(
@@ -83,8 +83,7 @@ public abstract class HumanoidArmorRenderer implements ArmorRenderer {
             HumanoidModel<LivingEntity> humanoidModel
     ) {
         humanoidModel.renderToBuffer(
-                pose, buffer.getBuffer(RenderType.armorEntityGlint()), light, OverlayTexture.NO_OVERLAY,
-                1.0f, 1.0f, 1.0f, 1.0f
+                pose, buffer.getBuffer(RenderType.armorEntityGlint()), light, OverlayTexture.NO_OVERLAY
         );
     }
 

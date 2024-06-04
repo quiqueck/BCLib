@@ -126,10 +126,12 @@ public class StructureWorld {
 
             map.forEach((element) -> {
                 CompoundTag block = (CompoundTag) element;
-                BlockPos pos = NbtUtils.readBlockPos(block.getCompound("pos"));
-                int stateID = block.getInt("state");
-                BlockState state = stateID < states.length ? states[stateID] : Block.stateById(stateID);
-                blocks.put(pos, state);
+                BlockPos pos = NbtUtils.readBlockPos(block, "pos").orElse(null);
+                if (pos != null) {
+                    int stateID = block.getInt("state");
+                    BlockState state = stateID < states.length ? states[stateID] : Block.stateById(stateID);
+                    blocks.put(pos, state);
+                }
             });
         }
 

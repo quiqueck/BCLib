@@ -9,16 +9,16 @@ import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.ItemLike;
 
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractSingleInputRecipeBuilder<T extends AbstractSingleInputRecipeBuilder, R extends Recipe<? extends Container>> extends AbstractSimpleRecipeBuilder<T> {
+public abstract class AbstractSingleInputRecipeBuilder<T extends AbstractSingleInputRecipeBuilder, R extends Recipe<? extends RecipeInput>> extends AbstractSimpleRecipeBuilder<T> {
     protected final Advancement.Builder advancement;
 
 
@@ -61,6 +61,8 @@ public abstract class AbstractSingleInputRecipeBuilder<T extends AbstractSingleI
 
     protected abstract RecipeSerializer<R> getSerializer();
 
+
+    @SuppressWarnings("removal")
     protected void setupAdvancementForResult() {
         advancement
                 .parent(RecipeBuilder.ROOT_RECIPE_ADVANCEMENT)//automatically at root level

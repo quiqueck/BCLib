@@ -11,16 +11,11 @@ import org.betterx.bclib.registry.BaseBlockEntityRenders;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.client.WorldsTogetherClient;
 
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.client.resources.model.UnbakedModel;
-import net.minecraft.resources.ResourceLocation;
-
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.model.*;
 
-import org.jetbrains.annotations.Nullable;
-
-public class BCLibClient implements ClientModInitializer, ModelResourceProvider, ModelVariantProvider {
+public class BCLibClient implements ClientModInitializer
+        //, ModelLoadingPlugin, ModelResourceProvider, ModelVariantProvider
+{
     private static CustomModelBakery modelBakery;
 
     public static CustomModelBakery lazyModelbakery() {
@@ -39,8 +34,8 @@ public class BCLibClient implements ClientModInitializer, ModelResourceProvider,
         BaseBlockEntityRenders.register();
         DataExchangeAPI.prepareClientside();
         PostInitAPI.postInit(true);
-        ModelLoadingRegistry.INSTANCE.registerResourceProvider(rm -> this);
-        ModelLoadingRegistry.INSTANCE.registerVariantProvider(rm -> this);
+//        ModelLoadingRegistry.INSTANCE.registerResourceProvider(rm -> this);
+//        ModelLoadingRegistry.INSTANCE.registerVariantProvider(rm -> this);
 
         WorldsTogether.SURPRESS_EXPERIMENTAL_DIALOG = Configs.CLIENT_CONFIG.suppressExperimentalDialog();
 
@@ -48,23 +43,28 @@ public class BCLibClient implements ClientModInitializer, ModelResourceProvider,
         AtlasSetManager.addSource(AtlasSetManager.VANILLA_BLOCKS, new SpriteLister("blocks"));
     }
 
-    @Override
-    public @Nullable UnbakedModel loadModelResource(
-            ResourceLocation resourceId,
-            ModelProviderContext context
-    ) throws ModelProviderException {
-        return modelBakery.getBlockModel(resourceId);
-    }
+//    @Override
+//    public void onInitializeModelLoader(Context pluginContext) {
+//
+//    }
 
-    @Override
-    public @Nullable UnbakedModel loadModelVariant(
-            ModelResourceLocation modelId,
-            ModelProviderContext context
-    ) throws ModelProviderException {
-        return modelId.getVariant().equals("inventory")
-                ? modelBakery.getItemModel(modelId)
-                : modelBakery.getBlockModel(modelId);
-    }
+//    @Override
+//    public @Nullable UnbakedModel loadModelResource(
+//            ResourceLocation resourceId,
+//            ModelProviderContext context
+//    ) throws ModelProviderException {
+//        return modelBakery.getBlockModel(resourceId);
+//    }
+//
+//    @Override
+//    public @Nullable UnbakedModel loadModelVariant(
+//            ModelResourceLocation modelId,
+//            ModelProviderContext context
+//    ) throws ModelProviderException {
+//        return modelId.getVariant().equals("inventory")
+//                ? modelBakery.getItemModel(modelId)
+//                : modelBakery.getBlockModel(modelId);
+//    }
 
 
 }

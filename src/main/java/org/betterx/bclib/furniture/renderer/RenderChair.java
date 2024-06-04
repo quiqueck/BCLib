@@ -11,7 +11,7 @@ import net.fabricmc.api.Environment;
 
 @Environment(value = EnvType.CLIENT)
 public class RenderChair extends EntityRenderer<EntityChair> {
-    private static final ResourceLocation TEXTURE = new ResourceLocation("minecraft:textures/block/stone.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.withDefaultNamespace("textures/block/stone.png");
 
     public RenderChair(EntityRendererProvider.Context context) {
         super(context);

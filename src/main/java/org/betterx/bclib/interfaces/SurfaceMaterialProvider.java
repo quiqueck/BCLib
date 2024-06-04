@@ -3,11 +3,12 @@ package org.betterx.bclib.interfaces;
 import org.betterx.bclib.api.v2.levelgen.surface.SurfaceRuleBuilder;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.level.block.state.BlockState;
 
 public interface SurfaceMaterialProvider {
-    public static final Codec<SurfaceMaterialProvider> CODEC = RecordCodecBuilder.create(instance -> instance
+    MapCodec<SurfaceMaterialProvider> CODEC = RecordCodecBuilder.mapCodec(instance -> instance
             .group(
                     BlockState.CODEC.fieldOf("top").forGetter(o -> o.getTopMaterial()),
                     BlockState.CODEC.fieldOf("under").forGetter(o -> o.getUnderMaterial()),

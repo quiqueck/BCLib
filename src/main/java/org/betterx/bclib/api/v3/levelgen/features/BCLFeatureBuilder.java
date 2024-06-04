@@ -915,7 +915,7 @@ public abstract class BCLFeatureBuilder<F extends Feature<FC>, FC extends Featur
         public RandomPatchConfiguration createConfiguration() {
             BCLInlinePlacedBuilder<Feature<SimpleBlockConfiguration>, SimpleBlockConfiguration> blockFeature = BCLFeatureBuilder
                     .start(
-                            new ResourceLocation(featureID.getNamespace(), "tmp_" + featureID.getPath()),
+                            ResourceLocation.fromNamespaceAndPath(featureID.getNamespace(), "tmp_" + featureID.getPath()),
                             Feature.SIMPLE_BLOCK
                     )
                     .configuration(new SimpleBlockConfiguration(new WeightedStateProvider(stateBuilder.build())))

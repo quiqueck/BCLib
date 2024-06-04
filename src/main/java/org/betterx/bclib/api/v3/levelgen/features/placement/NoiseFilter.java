@@ -3,6 +3,7 @@ package org.betterx.bclib.api.v3.levelgen.features.placement;
 import org.betterx.bclib.noise.Noises;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -14,7 +15,7 @@ import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
 public class NoiseFilter extends PlacementFilter {
-    public static final Codec<NoiseFilter> CODEC = RecordCodecBuilder.create(instance -> instance
+    public static final MapCodec<NoiseFilter> CODEC = RecordCodecBuilder.mapCodec(instance -> instance
             .group(
                     ResourceKey.codec(Registries.NOISE).fieldOf("noise").forGetter(o -> o.noise),
                     Codec.DOUBLE.fieldOf("min_noise_level").forGetter(o -> o.minNoiseLevel),

@@ -1,6 +1,6 @@
 package org.betterx.bclib.api.v3.levelgen.features.placement;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.placement.PlacementContext;
@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 public class All extends PlacementModifier {
     private static final All INSTANCE = new All();
-    public static final Codec<All> CODEC = Codec.unit(All::new);
+    public static final MapCodec<All> CODEC = MapCodec.unit(All::new);
 
     @Override
     public Stream<BlockPos> getPositions(

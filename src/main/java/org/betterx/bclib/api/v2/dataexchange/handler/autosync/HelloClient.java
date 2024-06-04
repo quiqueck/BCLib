@@ -48,7 +48,7 @@ public class HelloClient extends DataHandler.FromServer {
     }
 
     public static final DataHandlerDescriptor DESCRIPTOR = new DataHandlerDescriptor(
-            new ResourceLocation(
+            ResourceLocation.fromNamespaceAndPath(
                     BCLib.MOD_ID,
                     "hello_client"
             ),

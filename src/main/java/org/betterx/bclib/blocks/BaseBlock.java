@@ -33,8 +33,13 @@ public class BaseBlock extends Block implements BlockModelProvider {
      * @param settings The properties of the Block.
      */
     public BaseBlock(Properties settings) {
-        super(settings);
+        this(settings, true);
     }
+
+    protected BaseBlock(Properties settings, boolean emptyLootTable) {
+        super(emptyLootTable ? settings.noLootTable() : settings);
+    }
+
 
     /**
      * {@inheritDoc}
@@ -42,7 +47,6 @@ public class BaseBlock extends Block implements BlockModelProvider {
      * This implementation will drop the Block itself
      */
     @Override
-    @SuppressWarnings("deprecation")
     public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
         return Collections.singletonList(new ItemStack(this));
     }

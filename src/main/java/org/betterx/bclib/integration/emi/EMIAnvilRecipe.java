@@ -29,7 +29,7 @@ package org.betterx.bclib.integration.emi;
 //    private final EmiRecipeCategory category;
 //
 //    public EMIAnvilRecipe(AnvilRecipe recipe, Item hammer) {
-//        this.id = new ResourceLocation(
+//        this.id = ResourceLocation.fromNamespaceAndPath(
 //                "emi",
 //                recipe.getId().getNamespace() + "/" + recipe.getId().getPath() + "/anvil/" + hammer.getDescriptionId()
 //        );

@@ -15,6 +15,7 @@ import org.betterx.bclib.interfaces.TagProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -68,20 +69,17 @@ public abstract class BaseSlabBlock extends SlabBlock implements BlockModelProvi
     @Override
     @Environment(EnvType.CLIENT)
     public UnbakedModel getModelVariant(
-            ResourceLocation stateId,
+            ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ResourceLocation, UnbakedModel> modelCache
+            Map<ModelResourceLocation, UnbakedModel> modelCache
     ) {
         SlabType type = blockState.getValue(TYPE);
-        ResourceLocation modelId = new ResourceLocation(
-                stateId.getNamespace(),
-                "block/" + stateId.getPath() + "_" + type
-        );
+        ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, "_" + type);
         registerBlockModel(stateId, modelId, blockState, modelCache);
         if (type == SlabType.TOP) {
-            return ModelsHelper.createMultiVariant(modelId, BlockModelRotation.X180_Y0.getRotation(), true);
+            return ModelsHelper.createMultiVariant(modelId.id(), BlockModelRotation.X180_Y0.getRotation(), true);
         }
-        return ModelsHelper.createBlockSimple(modelId);
+        return ModelsHelper.createBlockSimple(modelId.id());
     }
 
     @Override

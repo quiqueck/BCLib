@@ -3,7 +3,7 @@ package org.betterx.bclib.api.v2.levelgen.surface.rules;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.interfaces.NumericProvider;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -71,11 +71,11 @@ public class Conditions {
 
     public static final NumericProvider NETHER_NOISE = new NetherNoiseCondition();
 
-    public static void register(ResourceLocation location, Codec<? extends SurfaceRules.ConditionSource> codec) {
+    public static void register(ResourceLocation location, MapCodec<? extends SurfaceRules.ConditionSource> codec) {
         Registry.register(BuiltInRegistries.MATERIAL_CONDITION, location, codec);
     }
 
-    public static void registerNumeric(ResourceLocation location, Codec<? extends NumericProvider> codec) {
+    public static void registerNumeric(ResourceLocation location, MapCodec<? extends NumericProvider> codec) {
         Registry.register(NumericProvider.NUMERIC_PROVIDER, location, codec);
     }
 

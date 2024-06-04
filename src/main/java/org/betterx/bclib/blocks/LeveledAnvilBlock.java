@@ -1,10 +1,11 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.util.LegacyTiers;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.MapColor;
@@ -22,7 +23,7 @@ public class LeveledAnvilBlock extends BaseAnvilBlock {
     public static int getAnvilCraftingLevel(Block anvil) {
         if (anvil instanceof LeveledAnvilBlock l) return l.getCraftingLevel();
         if (anvil == Blocks.ANVIL || anvil == Blocks.CHIPPED_ANVIL || anvil == Blocks.DAMAGED_ANVIL)
-            return Tiers.IRON.getLevel() - 1;
+            return LegacyTiers.IRON.level - 1;
         return 0;
     }
 
