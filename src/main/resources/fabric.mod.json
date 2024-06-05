@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "bclib",
-  "version": "20.30.2",
+  "version": "21.0.0",
   "name": "BCLib",
   "description": "A library for BetterX team mods",
   "authors": [
@@ -44,16 +44,14 @@
   ],
   "depends": {
     "fabricloader": ">=0.15.0",
-    "fabric": ">=0.90.0",
+    "fabric": ">=0.99.4",
     "minecraft": [
       "1.21-beta.2"
     ],
-    "wunderlib": "20.30.x"
+    "wunderlib": "21.0.x"
   },
   "breaks": {
-    "wunderlib": "<20.30.0",
-    "emi": "<1.0.0",
-    "fabric-api": "0.86.0"
+    "wunderlib": "<21.0.0"
   },
   "custom": {
     "bclib": {
