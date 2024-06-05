@@ -67,29 +67,26 @@ public class HelloServer extends DataHandler.FromClient<HelloServer.HelloServerP
             super(DESCRIPTOR);
             this.version = version;
         }
-    }
 
-    static class HelloServerPacketHandler extends DataHandlerDescriptor.PacketHandler<HelloServerPayload> {
-        @Override
-        public void write(HelloServerPayload payload, FriendlyByteBuf buf) {
+        protected HelloServerPayload(FriendlyByteBuf buf) {
+            super(DESCRIPTOR);
+            this.version = ModUtil.convertModVersion(buf.readInt());
+        }
+
+        public void write(FriendlyByteBuf buf) {
             BCLib.LOGGER.info("Sending hello to server.");
-            buf.writeInt(ModUtil.convertModVersion(payload.version));
-        }
-
-        @Override
-        public HelloServerPayload read(FriendlyByteBuf buf) {
-            String v = ModUtil.convertModVersion(buf.readInt());
-            return new HelloServerPayload(v);
+            buf.writeInt(ModUtil.convertModVersion(this.version));
         }
     }
 
-    public static final DataHandlerDescriptor DESCRIPTOR = new DataHandlerDescriptor(
+
+    public static final DataHandlerDescriptor<HelloServerPayload> DESCRIPTOR = new DataHandlerDescriptor<>(
             DataHandlerDescriptor.Direction.CLIENT_TO_SERVER,
             ResourceLocation.fromNamespaceAndPath(
                     BCLib.MOD_ID,
                     "hello_server"
             ),
-            new HelloServerPacketHandler(),
+            HelloServerPayload::new,
             HelloServer::new,
             true,
             false

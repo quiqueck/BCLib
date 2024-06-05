@@ -325,7 +325,7 @@ public class DataFixerAPI {
         progress.incAtomic(maxProgress);
 
         progress.progressStage(Component.translatable("message.bclib.datafixer.progress.players"));
-        RegionStorageInfo regionStorageInfo = new RegionStorageInfo(levelID, ResourceKey.create(Registries.DIMENSION, BCLib.makeID("WORLD_FIXER")), "mca");
+        RegionStorageInfo regionStorageInfo = new RegionStorageInfo(levelID, ResourceKey.create(Registries.DIMENSION, BCLib.makeID("world_fixer")), "mca");
         players.parallelStream().forEach((file) -> {
             fixPlayer(profile, state, file.toPath(), regionStorageInfo);
             progress.incAtomic(maxProgress);

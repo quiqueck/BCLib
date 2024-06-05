@@ -36,7 +36,8 @@ public class ConnectorClientside extends Connector {
         }
         this.client = client;
         for (DataHandlerDescriptor<?> desc : getDescriptors()) {
-            ClientPlayNetworking.registerReceiver(desc.IDENTIFIER, (p, c) -> desc.PACKET_HANDLER.receiveFromServer(desc, p, c));
+            if (desc.DIRECTION == DataHandlerDescriptor.Direction.SERVER_TO_CLIENT)
+                ClientPlayNetworking.registerReceiver(desc.IDENTIFIER, desc::receiveFromServer);
         }
     }
 

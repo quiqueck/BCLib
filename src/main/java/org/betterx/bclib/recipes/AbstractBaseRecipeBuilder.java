@@ -179,7 +179,8 @@ public abstract class AbstractBaseRecipeBuilder<T extends AbstractBaseRecipeBuil
     public final void build(RecipeOutput cc) {
         if (!checkRecipe()) return;
         buildRecipe(cc);
-        CustomData.update(BCLDataComponents.ANVIL_ENTITY_DATA, this.output, this.outputTagConsumer);
+        if (this.outputTagConsumer != null)
+            CustomData.update(BCLDataComponents.ANVIL_ENTITY_DATA, this.output, this.outputTagConsumer);
     }
 
     @Override

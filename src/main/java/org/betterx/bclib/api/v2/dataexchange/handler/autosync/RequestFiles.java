@@ -16,15 +16,54 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class RequestFiles extends DataHandler.FromClient {
-    public static final DataHandlerDescriptor DESCRIPTOR = new DataHandlerDescriptor(
+public class RequestFiles extends DataHandler.FromClient<RequestFiles.RequestFilesPayload> {
+    public static class RequestFilesPayload extends DataHandlerDescriptor.PacketPayload<RequestFilesPayload> {
+        public final String token;
+        List<AutoSyncID> files;
+
+        protected RequestFilesPayload(String token, List<AutoSyncID> files) {
+            super(DESCRIPTOR);
+            this.token = token;
+            this.files = files;
+        }
+
+        RequestFilesPayload(FriendlyByteBuf buf) {
+            super(DESCRIPTOR);
+
+            this.token = readString(buf);
+            int count = buf.readInt();
+            this.files = new ArrayList<>(count);
+
+            if (Configs.MAIN_CONFIG.verboseLogging())
+                BCLib.LOGGER.info("Client requested " + count + " Files:");
+            for (int i = 0; i < count; i++) {
+                AutoSyncID asid = AutoSyncID.deserializeData(buf);
+                files.add(asid);
+                if (Configs.MAIN_CONFIG.verboseLogging())
+                    BCLib.LOGGER.info("	- " + asid);
+            }
+        }
+
+        protected void write(FriendlyByteBuf buf) {
+            writeString(buf, this.token);
+            buf.writeInt(files.size());
+            for (AutoSyncID a : files) {
+                a.serializeData(buf);
+            }
+        }
+    }
+
+    public static final DataHandlerDescriptor<RequestFilesPayload> DESCRIPTOR = new DataHandlerDescriptor<>(
+            DataHandlerDescriptor.Direction.CLIENT_TO_SERVER,
             ResourceLocation.fromNamespaceAndPath(
                     BCLib.MOD_ID,
                     "request_files"
             ),
+            RequestFilesPayload::new,
             RequestFiles::new,
             false,
             false
@@ -38,7 +77,7 @@ public class RequestFiles extends DataHandler.FromClient {
     }
 
     public RequestFiles(List<AutoSyncID> files) {
-        super(DESCRIPTOR.IDENTIFIER);
+        super(DESCRIPTOR.IDENTIFIER.id());
         this.files = files;
     }
 
@@ -54,35 +93,21 @@ public class RequestFiles extends DataHandler.FromClient {
 
     @Environment(EnvType.CLIENT)
     @Override
-    protected void serializeDataOnClient(FriendlyByteBuf buf) {
+    protected RequestFilesPayload serializeDataOnClient() {
         newToken();
-        writeString(buf, currentToken);
-
-        buf.writeInt(files.size());
-
-        for (AutoSyncID a : files) {
-            a.serializeData(buf);
-        }
+        return new RequestFilesPayload(currentToken, files);
     }
 
     String receivedToken = "";
 
     @Override
-    protected void deserializeIncomingDataOnServer(FriendlyByteBuf buf, Player player, PacketSender responseSender) {
-        receivedToken = readString(buf);
-        int size = buf.readInt();
-        files = new ArrayList<>(size);
-
-        if (Configs.MAIN_CONFIG.verboseLogging())
-            BCLib.LOGGER.info("Client requested " + size + " Files:");
-        for (int i = 0; i < size; i++) {
-            AutoSyncID asid = AutoSyncID.deserializeData(buf);
-            files.add(asid);
-            if (Configs.MAIN_CONFIG.verboseLogging())
-                BCLib.LOGGER.info("	- " + asid);
-        }
-
-
+    protected void deserializeIncomingDataOnServer(
+            RequestFilesPayload payload,
+            Player player,
+            PacketSender responseSender
+    ) {
+        receivedToken = payload.token;
+        files = payload.files;
     }
 
     @Override
@@ -93,8 +118,8 @@ public class RequestFiles extends DataHandler.FromClient {
         }
 
         List<AutoFileSyncEntry> syncEntries = files.stream()
-                                                   .map(asid -> AutoFileSyncEntry.findMatching(asid))
-                                                   .filter(e -> e != null)
+                                                   .map(AutoFileSyncEntry::findMatching)
+                                                   .filter(Objects::nonNull)
                                                    .collect(Collectors.toList());
 
         reply(new SendFiles(syncEntries, receivedToken), server);

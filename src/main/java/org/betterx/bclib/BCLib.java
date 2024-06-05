@@ -1,7 +1,10 @@
 package org.betterx.bclib;
 
 import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
-import org.betterx.bclib.api.v2.dataexchange.handler.autosync.*;
+import org.betterx.bclib.api.v2.dataexchange.handler.autosync.HelloClient;
+import org.betterx.bclib.api.v2.dataexchange.handler.autosync.HelloServer;
+import org.betterx.bclib.api.v2.dataexchange.handler.autosync.RequestFiles;
+import org.betterx.bclib.api.v2.dataexchange.handler.autosync.SendFiles;
 import org.betterx.bclib.api.v2.levelgen.LevelGenEvents;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
 import org.betterx.bclib.api.v2.levelgen.structures.BCLStructurePoolElementTypes;
@@ -25,6 +28,7 @@ import org.betterx.bclib.recipes.CraftingRecipes;
 import org.betterx.bclib.registry.BaseBlockEntities;
 import org.betterx.bclib.registry.BaseRegistry;
 import org.betterx.bclib.registry.BlockRegistry;
+import org.betterx.bclib.util.BCLDataComponents;
 import org.betterx.datagen.bclib.tests.TestStructure;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.util.Logger;
@@ -67,6 +71,7 @@ public class BCLib implements ModInitializer {
         WorldsTogether.onInitialize();
         BCLibArguments.register();
         LevelGenEvents.register();
+        BCLDataComponents.ensureStaticInitialization();
         BlockPredicates.ensureStaticInitialization();
         BCLBiomeRegistry.register();
         BaseRegistry.register();
@@ -93,8 +98,7 @@ public class BCLib implements ModInitializer {
                         HelloClient.DESCRIPTOR,
                         HelloServer.DESCRIPTOR,
                         RequestFiles.DESCRIPTOR,
-                        SendFiles.DESCRIPTOR,
-                        Chunker.DESCRIPTOR
+                        SendFiles.DESCRIPTOR
                 )
         );
 

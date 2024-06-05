@@ -22,7 +22,7 @@ public abstract class BaseDataHandler<T extends CustomPacketPayload> {
     @NotNull
     private final ResourceLocation identifier;
 
-    protected BaseDataHandler(ResourceLocation identifier, boolean originatesOnServer) {
+    protected BaseDataHandler(@NotNull ResourceLocation identifier, boolean originatesOnServer) {
         this.originatesOnServer = originatesOnServer;
         this.identifier = identifier;
     }
@@ -31,7 +31,7 @@ public abstract class BaseDataHandler<T extends CustomPacketPayload> {
         return originatesOnServer;
     }
 
-    final public ResourceLocation getIdentifier() {
+    final public @NotNull ResourceLocation getIdentifier() {
         return identifier;
     }
 

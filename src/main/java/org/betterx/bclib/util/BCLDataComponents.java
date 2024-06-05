@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.component.CustomData;
 
 import java.util.function.UnaryOperator;
+import org.jetbrains.annotations.ApiStatus;
 
 public class BCLDataComponents {
     public static final DataComponentType<CustomData> ANVIL_ENTITY_DATA = register(
@@ -27,5 +28,9 @@ public class BCLDataComponents {
                 id,
                 builder.apply(DataComponentType.builder()).build()
         );
+    }
+
+    @ApiStatus.Internal
+    public static void ensureStaticInitialization() {
     }
 }

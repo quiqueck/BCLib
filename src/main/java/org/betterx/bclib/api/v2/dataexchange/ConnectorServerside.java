@@ -31,11 +31,12 @@ public class ConnectorServerside extends Connector {
         }
         this.server = server;
         for (DataHandlerDescriptor<?> desc : getDescriptors()) {
-            ServerPlayNetworking.registerReceiver(
-                    handler,
-                    desc.IDENTIFIER,
-                    (p, c) -> desc.PACKET_HANDLER.receiveFromClient(desc, p, c)
-            );
+            if (desc.DIRECTION == DataHandlerDescriptor.Direction.CLIENT_TO_SERVER)
+                ServerPlayNetworking.registerReceiver(
+                        handler,
+                        desc.IDENTIFIER,
+                        desc::receiveFromClient
+                );
         }
     }
 

@@ -25,12 +25,86 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SendFiles extends DataHandler.FromServer {
-    public static final DataHandlerDescriptor DESCRIPTOR = new DataHandlerDescriptor(
+public class SendFiles extends DataHandler.FromServer<SendFiles.SendFilesPayload> {
+    public static class SendFilesPayload extends DataHandlerDescriptor.PacketPayload<SendFilesPayload> {
+        public final String token;
+        public final List<AutoFileSyncEntry> files;
+        public final List<Pair<AutoFileSyncEntry, byte[]>> incomingFiles;
+
+        protected SendFilesPayload(String token, List<AutoFileSyncEntry> files) {
+            super(DESCRIPTOR);
+            this.token = token;
+            this.files = files;
+            this.incomingFiles = null;
+        }
+
+        SendFilesPayload(FriendlyByteBuf buf) {
+            super(DESCRIPTOR);
+            this.files = null;
+            this.token = readString(buf);
+            if (!token.equals(RequestFiles.currentToken)) {
+                RequestFiles.newToken();
+                BCLib.LOGGER.error("Unrequested File Transfer!");
+                this.incomingFiles = new ArrayList<>(0);
+                return;
+            }
+            RequestFiles.newToken();
+
+            if (Configs.CLIENT_CONFIG.isAcceptingConfigs() || Configs.CLIENT_CONFIG.isAcceptingFiles() || Configs.CLIENT_CONFIG.isAcceptingMods()) {
+                int size = buf.readInt();
+                this.incomingFiles = new ArrayList<>(size);
+                if (Configs.MAIN_CONFIG.verboseLogging())
+                    BCLib.LOGGER.info("Server sent " + size + " Files:");
+                for (int i = 0; i < size; i++) {
+                    Triple<AutoFileSyncEntry, byte[], AutoSyncID> p = AutoFileSyncEntry.deserializeContent(buf);
+                    if (p.first != null) {
+                        final String type;
+                        if (p.first.isConfigFile() && Configs.CLIENT_CONFIG.isAcceptingConfigs()) {
+                            this.incomingFiles.add(p);
+                            type = "Accepted Config ";
+                        } else if (p.first instanceof AutoFileSyncEntry.ForModFileRequest && Configs.CLIENT_CONFIG.isAcceptingMods()) {
+                            this.incomingFiles.add(p);
+                            type = "Accepted Mod ";
+                        } else if (Configs.CLIENT_CONFIG.isAcceptingFiles()) {
+                            this.incomingFiles.add(p);
+                            type = "Accepted File ";
+                        } else {
+                            type = "Ignoring ";
+                        }
+                        if (Configs.MAIN_CONFIG.verboseLogging())
+                            BCLib.LOGGER.info("	- " + type + p.first + " (" + PathUtil.humanReadableFileSize(p.second.length) + ")");
+                    } else {
+                        if (Configs.MAIN_CONFIG.verboseLogging())
+                            BCLib.LOGGER.error("   - Failed to receive File " + p.third + ", possibly sent from a Mod that is not installed on the client.");
+                    }
+                }
+            } else {
+                this.incomingFiles = List.of();
+            }
+        }
+
+        protected void write(FriendlyByteBuf buf) {
+            writeString(buf, this.token);
+            buf.writeInt(this.files.size());
+
+            if (Configs.MAIN_CONFIG.verboseLogging())
+                BCLib.LOGGER.info("Sending " + this.files.size() + " Files to Client:");
+
+            for (AutoFileSyncEntry entry : this.files) {
+                int length = entry.serializeContent(buf);
+                if (Configs.MAIN_CONFIG.verboseLogging())
+                    BCLib.LOGGER.info("	- " + entry + " (" + PathUtil.humanReadableFileSize(length) + ")");
+            }
+        }
+    }
+
+    public static final DataHandlerDescriptor<SendFilesPayload> DESCRIPTOR = new DataHandlerDescriptor<>(
+            DataHandlerDescriptor.Direction.SERVER_TO_CLIENT,
             ResourceLocation.fromNamespaceAndPath(
                     BCLib.MOD_ID,
                     "send_files"
             ),
+            SendFilesPayload::new,
             SendFiles::new,
             false,
             false
@@ -44,7 +118,7 @@ public class SendFiles extends DataHandler.FromServer {
     }
 
     public SendFiles(List<AutoFileSyncEntry> files, String token) {
-        super(DESCRIPTOR.IDENTIFIER);
+        super(DESCRIPTOR.IDENTIFIER.id());
         this.files = files;
         this.token = token;
     }
@@ -60,10 +134,11 @@ public class SendFiles extends DataHandler.FromServer {
     }
 
     @Override
-    protected void serializeDataOnServer(FriendlyByteBuf buf) {
+    protected SendFilesPayload serializeDataOnServer() {
         List<AutoFileSyncEntry> existingFiles = files.stream()
                                                      .filter(e -> e != null && e.fileName != null && e.fileName.exists())
                                                      .collect(Collectors.toList());
+
 		/*
 		//this will try to send a file that was not registered or requested by the client
 		existingFiles.add(new AutoFileSyncEntry("none", new File("D:\\MinecraftPlugins\\BetterNether\\run\\server.properties"),true,(a, b, content) -> {
@@ -78,61 +153,16 @@ public class SendFiles extends DataHandler.FromServer {
 		existingFiles.add(new AutoFileSyncEntry.ForDirectFileRequest(DataExchange.SYNC_FOLDER.folderID, new File("../breakout.json"), DataExchange.SYNC_FOLDER.mapAbsolute("../breakout.json").toFile()));*/
 
 
-        writeString(buf, token);
-        buf.writeInt(existingFiles.size());
-
-        if (Configs.MAIN_CONFIG.verboseLogging())
-            BCLib.LOGGER.info("Sending " + existingFiles.size() + " Files to Client:");
-        for (AutoFileSyncEntry entry : existingFiles) {
-            int length = entry.serializeContent(buf);
-            if (Configs.MAIN_CONFIG.verboseLogging())
-                BCLib.LOGGER.info("	- " + entry + " (" + PathUtil.humanReadableFileSize(length) + ")");
-        }
+        return new SendFilesPayload(token, existingFiles);
     }
 
     private List<Pair<AutoFileSyncEntry, byte[]>> receivedFiles;
 
     @Environment(EnvType.CLIENT)
     @Override
-    protected void deserializeIncomingDataOnClient(FriendlyByteBuf buf, PacketSender responseSender) {
-        if (Configs.CLIENT_CONFIG.isAcceptingConfigs() || Configs.CLIENT_CONFIG.isAcceptingFiles() || Configs.CLIENT_CONFIG.isAcceptingMods()) {
-            token = readString(buf);
-            if (!token.equals(RequestFiles.currentToken)) {
-                RequestFiles.newToken();
-                BCLib.LOGGER.error("Unrequested File Transfer!");
-                receivedFiles = new ArrayList<>(0);
-                return;
-            }
-            RequestFiles.newToken();
-
-            int size = buf.readInt();
-            receivedFiles = new ArrayList<>(size);
-            if (Configs.MAIN_CONFIG.verboseLogging())
-                BCLib.LOGGER.info("Server sent " + size + " Files:");
-            for (int i = 0; i < size; i++) {
-                Triple<AutoFileSyncEntry, byte[], AutoSyncID> p = AutoFileSyncEntry.deserializeContent(buf);
-                if (p.first != null) {
-                    final String type;
-                    if (p.first.isConfigFile() && Configs.CLIENT_CONFIG.isAcceptingConfigs()) {
-                        receivedFiles.add(p);
-                        type = "Accepted Config ";
-                    } else if (p.first instanceof AutoFileSyncEntry.ForModFileRequest && Configs.CLIENT_CONFIG.isAcceptingMods()) {
-                        receivedFiles.add(p);
-                        type = "Accepted Mod ";
-                    } else if (Configs.CLIENT_CONFIG.isAcceptingFiles()) {
-                        receivedFiles.add(p);
-                        type = "Accepted File ";
-                    } else {
-                        type = "Ignoring ";
-                    }
-                    if (Configs.MAIN_CONFIG.verboseLogging())
-                        BCLib.LOGGER.info("	- " + type + p.first + " (" + PathUtil.humanReadableFileSize(p.second.length) + ")");
-                } else {
-                    if (Configs.MAIN_CONFIG.verboseLogging())
-                        BCLib.LOGGER.error("   - Failed to receive File " + p.third + ", possibly sent from a Mod that is not installed on the client.");
-                }
-            }
-        }
+    protected void deserializeIncomingDataOnClient(SendFilesPayload payload, PacketSender responseSender) {
+        this.token = payload.token;
+        this.receivedFiles = payload.incomingFiles;
     }
 
     @Environment(EnvType.CLIENT)

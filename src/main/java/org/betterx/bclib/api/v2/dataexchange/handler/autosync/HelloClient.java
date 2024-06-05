@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
  * For Details refer to {@link HelloServer}
  */
 public class HelloClient extends DataHandler.FromServer<HelloClient.HelloClientPayload> {
-    public static class HelloClientPayload extends DataHandlerDescriptor.PacketPayload<HelloServer.HelloServerPayload> {
+    public static class HelloClientPayload extends DataHandlerDescriptor.PacketPayload<HelloClientPayload> {
         public final String version;
         public final boolean offersModInfo;
         public final List<AutoFileSyncEntry> existingAutoSyncFiles;
@@ -119,18 +119,16 @@ public class HelloClient extends DataHandler.FromServer<HelloClient.HelloClientP
 
             this.offersModInfo = buf.readBoolean();
         }
-    }
 
-    static class HelloClientPacketHandler extends DataHandlerDescriptor.PacketHandler<HelloClientPayload> {
         @Override
-        public void write(HelloClientPayload payload, FriendlyByteBuf buf) {
-            BCLib.LOGGER.info("Sending Hello to Client. (server=" + payload.version + ")");
+        protected void write(FriendlyByteBuf buf) {
+            BCLib.LOGGER.info("Sending Hello to Client. (server=" + this.version + ")");
 
-            buf.writeInt(ModUtil.convertModVersion(payload.version));
+            buf.writeInt(ModUtil.convertModVersion(this.version));
 
             //write Plugin Versions
-            buf.writeInt(payload.mods.size());
-            for (Entry<String, OfferedModInfo> mod : payload.mods.entrySet()) {
+            buf.writeInt(this.mods.size());
+            for (Entry<String, OfferedModInfo> mod : this.mods.entrySet()) {
                 writeString(buf, mod.getKey());
                 buf.writeInt(ModUtil.convertModVersion(mod.getValue().version));
                 buf.writeInt(mod.getValue().size);
@@ -142,26 +140,22 @@ public class HelloClient extends DataHandler.FromServer<HelloClient.HelloClientP
             }
 
             //send config Data
-            buf.writeInt(payload.existingAutoSyncFiles.size());
-            for (AutoFileSyncEntry entry : payload.existingAutoSyncFiles) {
+            buf.writeInt(this.existingAutoSyncFiles.size());
+            for (AutoFileSyncEntry entry : this.existingAutoSyncFiles) {
                 entry.serialize(buf);
                 if (Configs.MAIN_CONFIG.verboseLogging())
                     BCLib.LOGGER.info("	- Offering " + (entry.isConfigFile() ? "Config " : "File ") + entry);
             }
 
-            buf.writeInt(payload.syncFolderDescriptions.size());
-            payload.syncFolderDescriptions.forEach(desc -> {
+            buf.writeInt(this.syncFolderDescriptions.size());
+            this.syncFolderDescriptions.forEach(desc -> {
                 if (Configs.MAIN_CONFIG.verboseLogging())
                     BCLib.LOGGER.info("	- Offering Folder " + desc.localFolder + " (allowDelete=" + desc.removeAdditionalFiles + ")");
                 desc.serialize(buf);
             });
         }
-
-        @Override
-        public HelloClientPayload read(FriendlyByteBuf buf) {
-            return new HelloClientPayload(buf);
-        }
     }
+
 
     public record OfferedModInfo(String version, int size, boolean canDownload) {
     }
@@ -172,13 +166,13 @@ public class HelloClient extends DataHandler.FromServer<HelloClient.HelloClientP
     public static class ServerModMap extends HashMap<String, OfferedModInfo> implements IServerModMap {
     }
 
-    public static final DataHandlerDescriptor DESCRIPTOR = new DataHandlerDescriptor(
+    public static final DataHandlerDescriptor<HelloClientPayload> DESCRIPTOR = new DataHandlerDescriptor<>(
             DataHandlerDescriptor.Direction.SERVER_TO_CLIENT,
             ResourceLocation.fromNamespaceAndPath(
                     BCLib.MOD_ID,
                     "hello_client"
             ),
-            new HelloClientPacketHandler(),
+            HelloClientPayload::new,
             HelloClient::new,
             false,
             false
