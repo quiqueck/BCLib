@@ -64,8 +64,8 @@ public class BCLibClient implements ClientModInitializer, ModelResourceProvider,
             ModelProviderContext context
     ) throws ModelProviderException {
         return modelId.getVariant().equals("inventory")
-                ? modelBakery.getItemModel(modelId)
-                : modelBakery.getBlockModel(modelId);
+                ? lazyModelbakery().getItemModel(modelId)
+                : lazyModelbakery().getBlockModel(modelId);
     }
 
 
