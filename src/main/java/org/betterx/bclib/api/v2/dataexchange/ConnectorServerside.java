@@ -3,9 +3,7 @@ package org.betterx.bclib.api.v2.dataexchange;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.dataexchange.handler.DataExchange;
 
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -32,28 +30,19 @@ public class ConnectorServerside extends Connector {
             BCLib.LOGGER.warning("Server changed!");
         }
         this.server = server;
-        for (DataHandlerDescriptor desc : getDescriptors()) {
+        for (DataHandlerDescriptor<?> desc : getDescriptors()) {
             ServerPlayNetworking.registerReceiver(
                     handler,
                     desc.IDENTIFIER,
-                    (_server, _player, _handler, _buf, _responseSender) -> {
-                        receiveFromClient(
-                                desc,
-                                _server,
-                                _player,
-                                _handler,
-                                _buf,
-                                _responseSender
-                        );
-                    }
+                    (p, c) -> desc.PACKET_HANDLER.receiveFromClient(desc, p, c)
             );
         }
     }
 
     public void onPlayReady(ServerGamePacketListenerImpl handler, PacketSender sender, MinecraftServer server) {
-        for (DataHandlerDescriptor desc : getDescriptors()) {
+        for (DataHandlerDescriptor<?> desc : getDescriptors()) {
             if (desc.sendOnJoin) {
-                BaseDataHandler h = desc.JOIN_INSTANCE.get();
+                BaseDataHandler<?> h = desc.JOIN_INSTANCE.get();
                 if (h.getOriginatesOnServer()) {
                     h.sendToClient(server, handler.player);
                 }
@@ -62,24 +51,12 @@ public class ConnectorServerside extends Connector {
     }
 
     public void onPlayDisconnect(ServerGamePacketListenerImpl handler, MinecraftServer server) {
-        for (DataHandlerDescriptor desc : getDescriptors()) {
-            ServerPlayNetworking.unregisterReceiver(handler, desc.IDENTIFIER);
+        for (DataHandlerDescriptor<?> desc : getDescriptors()) {
+            ServerPlayNetworking.unregisterReceiver(handler, desc.IDENTIFIER.id());
         }
     }
 
-    void receiveFromClient(
-            DataHandlerDescriptor desc,
-            MinecraftServer server,
-            ServerPlayer player,
-            ServerGamePacketListenerImpl handler,
-            FriendlyByteBuf buf,
-            PacketSender responseSender
-    ) {
-        BaseDataHandler h = desc.INSTANCE.get();
-        h.receiveFromClient(server, player, handler, buf, responseSender);
-    }
-
-    public void sendToClient(BaseDataHandler h) {
+    public void sendToClient(BaseDataHandler<?> h) {
         if (server == null) {
             throw new RuntimeException("[internal error] Server not initialized yet!");
         }

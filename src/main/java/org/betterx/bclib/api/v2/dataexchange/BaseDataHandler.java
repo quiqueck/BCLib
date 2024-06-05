@@ -3,6 +3,7 @@ package org.betterx.bclib.api.v2.dataexchange;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BaseDataHandler {
+public abstract class BaseDataHandler<T extends CustomPacketPayload> {
     private final boolean originatesOnServer;
     @NotNull
     private final ResourceLocation identifier;
@@ -38,7 +39,7 @@ public abstract class BaseDataHandler {
     abstract void receiveFromServer(
             Minecraft client,
             ClientPacketListener handler,
-            FriendlyByteBuf buf,
+            T payload,
             PacketSender responseSender
     );
 
@@ -48,13 +49,13 @@ public abstract class BaseDataHandler {
             MinecraftServer server,
             ServerPlayer player,
             ServerGamePacketListenerImpl handler,
-            FriendlyByteBuf buf,
+            T payload,
             PacketSender responseSender
     ) {
         lastMessageSender = player;
     }
 
-    final protected boolean reply(BaseDataHandler message, MinecraftServer server) {
+    final protected <M extends CustomPacketPayload> boolean reply(BaseDataHandler<M> message, MinecraftServer server) {
         if (lastMessageSender == null) return false;
         message.sendToClient(server, lastMessageSender);
         return true;
@@ -101,7 +102,7 @@ public abstract class BaseDataHandler {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof BaseDataHandler)) return false;
-        BaseDataHandler that = (BaseDataHandler) o;
+        BaseDataHandler<?> that = (BaseDataHandler<?>) o;
         return originatesOnServer == that.originatesOnServer && identifier.equals(that.identifier);
     }
 

@@ -59,12 +59,37 @@ import java.io.File;
  * 	</tr>
  * </table>
  */
-public class HelloServer extends DataHandler.FromClient {
+public class HelloServer extends DataHandler.FromClient<HelloServer.HelloServerPayload> {
+    public static class HelloServerPayload extends DataHandlerDescriptor.PacketPayload<HelloServerPayload> {
+        public final String version;
+
+        protected HelloServerPayload(String version) {
+            super(DESCRIPTOR);
+            this.version = version;
+        }
+    }
+
+    static class HelloServerPacketHandler extends DataHandlerDescriptor.PacketHandler<HelloServerPayload> {
+        @Override
+        public void write(HelloServerPayload payload, FriendlyByteBuf buf) {
+            BCLib.LOGGER.info("Sending hello to server.");
+            buf.writeInt(ModUtil.convertModVersion(payload.version));
+        }
+
+        @Override
+        public HelloServerPayload read(FriendlyByteBuf buf) {
+            String v = ModUtil.convertModVersion(buf.readInt());
+            return new HelloServerPayload(v);
+        }
+    }
+
     public static final DataHandlerDescriptor DESCRIPTOR = new DataHandlerDescriptor(
+            DataHandlerDescriptor.Direction.CLIENT_TO_SERVER,
             ResourceLocation.fromNamespaceAndPath(
                     BCLib.MOD_ID,
                     "hello_server"
             ),
+            new HelloServerPacketHandler(),
             HelloServer::new,
             true,
             false
@@ -73,7 +98,7 @@ public class HelloServer extends DataHandler.FromClient {
     protected String bclibVersion = "0.0.0";
 
     public HelloServer() {
-        super(DESCRIPTOR.IDENTIFIER);
+        super(DESCRIPTOR.IDENTIFIER.id());
     }
 
     @Environment(EnvType.CLIENT)
@@ -89,14 +114,17 @@ public class HelloServer extends DataHandler.FromClient {
 
     @Environment(EnvType.CLIENT)
     @Override
-    protected void serializeDataOnClient(FriendlyByteBuf buf) {
-        BCLib.LOGGER.info("Sending hello to server.");
-        buf.writeInt(ModUtil.convertModVersion(HelloClient.getBCLibVersion()));
+    protected HelloServerPayload serializeDataOnClient() {
+        return new HelloServerPayload(HelloClient.getBCLibVersion());
     }
 
     @Override
-    protected void deserializeIncomingDataOnServer(FriendlyByteBuf buf, Player player, PacketSender responseSender) {
-        bclibVersion = ModUtil.convertModVersion(buf.readInt());
+    protected void deserializeIncomingDataOnServer(
+            HelloServerPayload payload,
+            Player player,
+            PacketSender responseSender
+    ) {
+        bclibVersion = payload.version;
     }
 
     @Override

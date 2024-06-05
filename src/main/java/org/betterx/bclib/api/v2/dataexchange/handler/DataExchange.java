@@ -99,7 +99,7 @@ abstract public class DataExchange {
     public static void sendOnEnter() {
         getInstance().descriptors.forEach((desc) -> {
             if (desc.sendBeforeEnter) {
-                BaseDataHandler h = desc.JOIN_INSTANCE.get();
+                BaseDataHandler<?> h = (BaseDataHandler<?>) desc.JOIN_INSTANCE.get();
                 if (!h.getOriginatesOnServer()) {
                     getInstance().client.sendToServer(h);
                 }

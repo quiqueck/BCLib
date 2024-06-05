@@ -37,7 +37,132 @@ import java.util.stream.Collectors;
  * <p>
  * For Details refer to {@link HelloServer}
  */
-public class HelloClient extends DataHandler.FromServer {
+public class HelloClient extends DataHandler.FromServer<HelloClient.HelloClientPayload> {
+    public static class HelloClientPayload extends DataHandlerDescriptor.PacketPayload<HelloServer.HelloServerPayload> {
+        public final String version;
+        public final boolean offersModInfo;
+        public final List<AutoFileSyncEntry> existingAutoSyncFiles;
+        public final List<AutoSync.AutoSyncTriple> autoSyncFiles;
+        public final ServerModMap mods;
+        public final List<SyncFolderDescriptor> syncFolderDescriptions;
+
+        protected HelloClientPayload(
+                String version,
+                boolean offersModInfo,
+                List<String> mods,
+                List<AutoFileSyncEntry> existingAutoSyncFiles,
+                List<SyncFolderDescriptor> syncFolderDescriptions
+        ) {
+            super(DESCRIPTOR);
+            this.version = version;
+            this.offersModInfo = offersModInfo;
+            this.existingAutoSyncFiles = existingAutoSyncFiles;
+            this.autoSyncFiles = null;
+            this.syncFolderDescriptions = syncFolderDescriptions;
+
+            this.mods = new ServerModMap();
+            for (String modID : mods) {
+                final String ver = ModUtil.getModVersion(modID);
+                int size = 0;
+
+                final ModInfo mi = ModUtil.getModInfo(modID);
+                if (mi != null) {
+                    try {
+                        size = (int) Files.size(mi.jarPath);
+                    } catch (IOException e) {
+                        BCLib.LOGGER.error("Unable to get File Size: " + e.getMessage());
+                    }
+                }
+                final boolean canDownload = size > 0 && Configs.SERVER_CONFIG.isOfferingMods() && (Configs.SERVER_CONFIG.isOfferingAllMods() || mods.contains(
+                        modID));
+                this.mods.put(modID, new OfferedModInfo(ver, size, canDownload));
+            }
+        }
+
+        protected HelloClientPayload(FriendlyByteBuf buf) {
+            super(DESCRIPTOR);
+            this.version = ModUtil.convertModVersion(buf.readInt());
+
+            //read Plugin Versions
+            this.mods = new ServerModMap();
+            int count = buf.readInt();
+            for (int i = 0; i < count; i++) {
+                final String id = readString(buf);
+                final String version = ModUtil.convertModVersion(buf.readInt());
+                final int size;
+                final boolean canDownload;
+                //since v0.4.1 we also send the size of the mod-File
+                size = buf.readInt();
+                canDownload = buf.readBoolean();
+                this.mods.put(id, new OfferedModInfo(version, size, canDownload));
+            }
+
+            //read config Data
+            count = buf.readInt();
+            this.existingAutoSyncFiles = null;
+            this.autoSyncFiles = new ArrayList<>(count);
+            for (int i = 0; i < count; i++) {
+                //System.out.println("Deserializing ");
+                AutoSync.AutoSyncTriple t = AutoFileSyncEntry.deserializeAndMatch(buf);
+                this.autoSyncFiles.add(t);
+                //System.out.println(t.first);
+            }
+
+
+            this.syncFolderDescriptions = new ArrayList<>(1);
+            //since v0.4.1 we also send the sync folders
+            final int folderCount = buf.readInt();
+            for (int i = 0; i < folderCount; i++) {
+                SyncFolderDescriptor desc = SyncFolderDescriptor.deserialize(buf);
+                this.syncFolderDescriptions.add(desc);
+            }
+
+            this.offersModInfo = buf.readBoolean();
+        }
+    }
+
+    static class HelloClientPacketHandler extends DataHandlerDescriptor.PacketHandler<HelloClientPayload> {
+        @Override
+        public void write(HelloClientPayload payload, FriendlyByteBuf buf) {
+            BCLib.LOGGER.info("Sending Hello to Client. (server=" + payload.version + ")");
+
+            buf.writeInt(ModUtil.convertModVersion(payload.version));
+
+            //write Plugin Versions
+            buf.writeInt(payload.mods.size());
+            for (Entry<String, OfferedModInfo> mod : payload.mods.entrySet()) {
+                writeString(buf, mod.getKey());
+                buf.writeInt(ModUtil.convertModVersion(mod.getValue().version));
+                buf.writeInt(mod.getValue().size);
+                buf.writeBoolean(mod.getValue().canDownload);
+
+                if (Configs.MAIN_CONFIG.verboseLogging())
+                    BCLib.LOGGER.info("	- Listing Mod " + mod.getKey() + " v" + mod.getValue().version + " (size: " + PathUtil.humanReadableFileSize(
+                            mod.getValue().size) + ", download=" + mod.getValue().canDownload + ")");
+            }
+
+            //send config Data
+            buf.writeInt(payload.existingAutoSyncFiles.size());
+            for (AutoFileSyncEntry entry : payload.existingAutoSyncFiles) {
+                entry.serialize(buf);
+                if (Configs.MAIN_CONFIG.verboseLogging())
+                    BCLib.LOGGER.info("	- Offering " + (entry.isConfigFile() ? "Config " : "File ") + entry);
+            }
+
+            buf.writeInt(payload.syncFolderDescriptions.size());
+            payload.syncFolderDescriptions.forEach(desc -> {
+                if (Configs.MAIN_CONFIG.verboseLogging())
+                    BCLib.LOGGER.info("	- Offering Folder " + desc.localFolder + " (allowDelete=" + desc.removeAdditionalFiles + ")");
+                desc.serialize(buf);
+            });
+        }
+
+        @Override
+        public HelloClientPayload read(FriendlyByteBuf buf) {
+            return new HelloClientPayload(buf);
+        }
+    }
+
     public record OfferedModInfo(String version, int size, boolean canDownload) {
     }
 
@@ -48,17 +173,19 @@ public class HelloClient extends DataHandler.FromServer {
     }
 
     public static final DataHandlerDescriptor DESCRIPTOR = new DataHandlerDescriptor(
+            DataHandlerDescriptor.Direction.SERVER_TO_CLIENT,
             ResourceLocation.fromNamespaceAndPath(
                     BCLib.MOD_ID,
                     "hello_client"
             ),
+            new HelloClientPacketHandler(),
             HelloClient::new,
             false,
             false
     );
 
     public HelloClient() {
-        super(DESCRIPTOR.IDENTIFIER);
+        super(DESCRIPTOR.IDENTIFIER.id());
     }
 
     static String getBCLibVersion() {
@@ -77,15 +204,11 @@ public class HelloClient extends DataHandler.FromServer {
     }
 
     @Override
-    protected void serializeDataOnServer(FriendlyByteBuf buf) {
-        final String vbclib = getBCLibVersion();
-        BCLib.LOGGER.info("Sending Hello to Client. (server=" + vbclib + ")");
-
-        //write BCLibVersion (=protocol version)
-        buf.writeInt(ModUtil.convertModVersion(vbclib));
+    protected HelloClientPayload serializeDataOnServer() {
+        List<String> mods;
 
         if (Configs.SERVER_CONFIG.isOfferingMods() || Configs.SERVER_CONFIG.isOfferingInfosForMods()) {
-            List<String> mods = DataExchangeAPI.registeredMods();
+            mods = DataExchangeAPI.registeredMods();
             final List<String> inmods = mods;
             if (Configs.SERVER_CONFIG.isOfferingAllMods() || Configs.SERVER_CONFIG.isOfferingInfosForMods()) {
                 mods = new ArrayList<>(inmods.size());
@@ -105,72 +228,33 @@ public class HelloClient extends DataHandler.FromServer {
                     .stream()
                     .filter(entry -> !Configs.SERVER_CONFIG.get(ServerConfig.EXCLUDED_MODS).contains(entry))
                     .collect(Collectors.toList());
-
-            //write Plugin Versions
-            buf.writeInt(mods.size());
-            for (String modID : mods) {
-                final String ver = ModUtil.getModVersion(modID);
-                int size = 0;
-
-                final ModInfo mi = ModUtil.getModInfo(modID);
-                if (mi != null) {
-                    try {
-                        size = (int) Files.size(mi.jarPath);
-                    } catch (IOException e) {
-                        BCLib.LOGGER.error("Unable to get File Size: " + e.getMessage());
-                    }
-                }
-
-
-                writeString(buf, modID);
-                buf.writeInt(ModUtil.convertModVersion(ver));
-                buf.writeInt(size);
-                final boolean canDownload = size > 0 && Configs.SERVER_CONFIG.isOfferingMods() && (Configs.SERVER_CONFIG.isOfferingAllMods() || inmods.contains(
-                        modID));
-                buf.writeBoolean(canDownload);
-
-                if (Configs.MAIN_CONFIG.verboseLogging())
-                    BCLib.LOGGER.info("	- Listing Mod " + modID + " v" + ver + " (size: " + PathUtil.humanReadableFileSize(
-                            size) + ", download=" + canDownload + ")");
-            }
         } else {
             BCLib.LOGGER.info("Server will not list Mods.");
-            buf.writeInt(0);
+            mods = List.of();
         }
 
+        final List<AutoFileSyncEntry> existingAutoSyncFiles;
         if (Configs.SERVER_CONFIG.isOfferingFiles() || Configs.SERVER_CONFIG.isOfferingConfigs()) {
             //do only include files that exist on the server
-            final List<AutoFileSyncEntry> existingAutoSyncFiles = AutoSync.getAutoSyncFiles()
-                                                                          .stream()
-                                                                          .filter(e -> e.fileName.exists())
-                                                                          .filter(e -> (e.isConfigFile() && Configs.SERVER_CONFIG.isOfferingConfigs()) || (e instanceof AutoFileSyncEntry.ForDirectFileRequest && Configs.SERVER_CONFIG.isOfferingFiles()))
-                                                                          .collect(Collectors.toList());
-
-            //send config Data
-            buf.writeInt(existingAutoSyncFiles.size());
-            for (AutoFileSyncEntry entry : existingAutoSyncFiles) {
-                entry.serialize(buf);
-                if (Configs.MAIN_CONFIG.verboseLogging())
-                    BCLib.LOGGER.info("	- Offering " + (entry.isConfigFile() ? "Config " : "File ") + entry);
-            }
+            existingAutoSyncFiles = AutoSync.getAutoSyncFiles()
+                                            .stream()
+                                            .filter(e -> e.fileName.exists())
+                                            .filter(e -> (e.isConfigFile() && Configs.SERVER_CONFIG.isOfferingConfigs()) || (e instanceof AutoFileSyncEntry.ForDirectFileRequest && Configs.SERVER_CONFIG.isOfferingFiles()))
+                                            .collect(Collectors.toList());
         } else {
             BCLib.LOGGER.info("Server will neither offer Files nor Configs.");
-            buf.writeInt(0);
+            existingAutoSyncFiles = List.of();
         }
 
+        final List<SyncFolderDescriptor> syncFolderDescriptions;
         if (Configs.SERVER_CONFIG.isOfferingFiles()) {
-            buf.writeInt(AutoSync.syncFolderDescriptions.size());
-            AutoSync.syncFolderDescriptions.forEach(desc -> {
-                if (Configs.MAIN_CONFIG.verboseLogging())
-                    BCLib.LOGGER.info("	- Offering Folder " + desc.localFolder + " (allowDelete=" + desc.removeAdditionalFiles + ")");
-                desc.serialize(buf);
-            });
+            syncFolderDescriptions = AutoSync.syncFolderDescriptions;
         } else {
             BCLib.LOGGER.info("Server will not offer Sync Folders.");
-            buf.writeInt(0);
+            syncFolderDescriptions = List.of();
         }
 
-        buf.writeBoolean(Configs.SERVER_CONFIG.isOfferingInfosForMods());
+        return new HelloClientPayload(getBCLibVersion(), Configs.SERVER_CONFIG.isOfferingInfosForMods(), mods, existingAutoSyncFiles, syncFolderDescriptions);
     }
 
     String bclibVersion = "0.0.0";
@@ -183,44 +267,12 @@ public class HelloClient extends DataHandler.FromServer {
 
     @Environment(EnvType.CLIENT)
     @Override
-    protected void deserializeIncomingDataOnClient(FriendlyByteBuf buf, PacketSender responseSender) {
-        //read BCLibVersion (=protocol version)
-        bclibVersion = ModUtil.convertModVersion(buf.readInt());
-
-        //read Plugin Versions
-        modVersion = new ServerModMap();
-        int count = buf.readInt();
-        for (int i = 0; i < count; i++) {
-            final String id = readString(buf);
-            final String version = ModUtil.convertModVersion(buf.readInt());
-            final int size;
-            final boolean canDownload;
-            //since v0.4.1 we also send the size of the mod-File
-            size = buf.readInt();
-            canDownload = buf.readBoolean();
-            modVersion.put(id, new OfferedModInfo(version, size, canDownload));
-        }
-
-        //read config Data
-        count = buf.readInt();
-        autoSyncedFiles = new ArrayList<>(count);
-        for (int i = 0; i < count; i++) {
-            //System.out.println("Deserializing ");
-            AutoSync.AutoSyncTriple t = AutoFileSyncEntry.deserializeAndMatch(buf);
-            autoSyncedFiles.add(t);
-            //System.out.println(t.first);
-        }
-
-
-        autoSynFolders = new ArrayList<>(1);
-        //since v0.4.1 we also send the sync folders
-        final int folderCount = buf.readInt();
-        for (int i = 0; i < folderCount; i++) {
-            SyncFolderDescriptor desc = SyncFolderDescriptor.deserialize(buf);
-            autoSynFolders.add(desc);
-        }
-
-        serverPublishedModInfo = buf.readBoolean();
+    protected void deserializeIncomingDataOnClient(HelloClientPayload payload, PacketSender responseSender) {
+        bclibVersion = payload.version;
+        modVersion = payload.mods;
+        autoSyncedFiles = payload.autoSyncFiles;
+        autoSynFolders = payload.syncFolderDescriptions;
+        serverPublishedModInfo = payload.offersModInfo;
     }
 
     @Environment(EnvType.CLIENT)

@@ -5,12 +5,12 @@ import org.betterx.bclib.api.v2.dataexchange.handler.DataExchange;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
-import net.minecraft.network.FriendlyByteBuf;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
+
 
 /**
  * This is an internal class that handles a Clienetside players Connection to a Server
@@ -35,15 +35,13 @@ public class ConnectorClientside extends Connector {
             BCLib.LOGGER.warning("Client changed!");
         }
         this.client = client;
-        for (DataHandlerDescriptor desc : getDescriptors()) {
-            ClientPlayNetworking.registerReceiver(desc.IDENTIFIER, (_client, _handler, _buf, _responseSender) -> {
-                receiveFromServer(desc, _client, _handler, _buf, _responseSender);
-            });
+        for (DataHandlerDescriptor<?> desc : getDescriptors()) {
+            ClientPlayNetworking.registerReceiver(desc.IDENTIFIER, (p, c) -> desc.PACKET_HANDLER.receiveFromServer(desc, p, c));
         }
     }
 
     public void onPlayReady(ClientPacketListener handler, PacketSender sender, Minecraft client) {
-        for (DataHandlerDescriptor desc : getDescriptors()) {
+        for (DataHandlerDescriptor<?> desc : getDescriptors()) {
             if (desc.sendOnJoin) {
                 BaseDataHandler h = desc.JOIN_INSTANCE.get();
                 if (!h.getOriginatesOnServer()) {
@@ -54,20 +52,9 @@ public class ConnectorClientside extends Connector {
     }
 
     public void onPlayDisconnect(ClientPacketListener handler, Minecraft client) {
-        for (DataHandlerDescriptor desc : getDescriptors()) {
-            ClientPlayNetworking.unregisterReceiver(desc.IDENTIFIER);
+        for (DataHandlerDescriptor<?> desc : getDescriptors()) {
+            ClientPlayNetworking.unregisterReceiver(desc.IDENTIFIER.id());
         }
-    }
-
-    void receiveFromServer(
-            DataHandlerDescriptor desc,
-            Minecraft client,
-            ClientPacketListener handler,
-            FriendlyByteBuf buf,
-            PacketSender responseSender
-    ) {
-        BaseDataHandler h = desc.INSTANCE.get();
-        h.receiveFromServer(client, handler, buf, responseSender);
     }
 
     public void sendToServer(BaseDataHandler h) {
