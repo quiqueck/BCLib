@@ -46,7 +46,7 @@
     "fabricloader": ">=0.15.0",
     "fabric": ">=0.99.4",
     "minecraft": [
-      "1.21-beta.2"
+      "1.21-beta.3"
     ],
     "wunderlib": "21.0.x"
   },
