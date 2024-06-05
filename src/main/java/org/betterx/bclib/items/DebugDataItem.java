@@ -34,6 +34,7 @@ import net.minecraft.world.level.block.JigsawBlock;
 import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
+import net.minecraft.world.level.storage.loot.LootTable;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -220,7 +221,7 @@ public class DebugDataItem extends Item implements ItemModelProvider, AirSelecti
         return AirSelectionItem.super.useOnAir(level, player, interactionHand);
     }
 
-    public static DebugDataItem forLootTable(ResourceLocation table, Item icon) {
+    public static DebugDataItem forLootTable(ResourceKey<LootTable> table, Item icon) {
         ResourceLocation iconId = BuiltInRegistries.ITEM.getKey(icon);
         return new DebugDataItem(
                 (player, entity, ctx) -> {

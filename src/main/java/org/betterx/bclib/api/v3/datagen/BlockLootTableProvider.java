@@ -37,7 +37,7 @@ public class BlockLootTableProvider extends SimpleFabricLootTableProvider {
                 if (id != null && modIDs.contains(id.getNamespace())) {
                     LootTable.Builder builder = LootTable.lootTable();
                     dropper.getDroppedItemsBCL(builder);
-                    biConsumer.accept(ResourceKey.create(Registries.LOOT_TABLE, id.withPrefix("blocks/")), builder);
+                    biConsumer.accept(ResourceKey.create(Registries.LOOT_TABLE, id.withPrefix("block/")), builder);
                 }
             }
         }
