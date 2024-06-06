@@ -28,6 +28,7 @@ import net.minecraft.world.level.block.DispenserBlock;
 
 import java.util.List;
 
+@Deprecated(forRemoval = true)
 public class ItemRegistry extends BaseRegistry<Item> {
     public ItemRegistry(PathConfig config) {
         super(config);

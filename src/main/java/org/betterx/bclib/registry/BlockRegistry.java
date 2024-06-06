@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.Block;
 
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 
+@Deprecated(forRemoval = true)
 public class BlockRegistry extends BaseRegistry<Block> {
     public BlockRegistry(PathConfig config) {
         super(config);
@@ -32,7 +33,6 @@ public class BlockRegistry extends BaseRegistry<Block> {
             item = ((CustomItemProvider) block).getCustomItem(id, makeItemSettings());
         } else {
             item = new BlockItem(block, makeItemSettings());
-
         }
         registerBlockItem(id, item);
         if (block.defaultBlockState().ignitedByLava()

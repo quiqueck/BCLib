@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import org.jetbrains.annotations.ApiStatus;
 
+@Deprecated(forRemoval = true)
 public abstract class BaseRegistry<T> {
     private static final List<BaseRegistry<?>> REGISTRIES = Lists.newArrayList();
     private static final Map<String, List<Item>> MOD_BLOCK_ITEMS = Maps.newHashMap();

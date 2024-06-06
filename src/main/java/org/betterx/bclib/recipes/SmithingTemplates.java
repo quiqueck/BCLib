@@ -10,6 +10,7 @@ import org.spongepowered.include.com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
+@Deprecated(forRemoval = true)
 public class SmithingTemplates {
     public static final ChatFormatting TITLE_FORMAT = ChatFormatting.GRAY;
     public static final ChatFormatting DESCRIPTION_FORMAT = ChatFormatting.BLUE;
