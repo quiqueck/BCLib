@@ -330,7 +330,7 @@ public class AnvilRecipe implements Recipe<AnvilRecipeInput>, UnknownReceipBookC
         @Override
         protected boolean checkRecipe() {
             if (inputCount <= 0) {
-                BCLib.LOGGER.warning(
+                BCLib.LOGGER.warn(
                         "Number of input items for Recipe must be positive. Recipe {} will be ignored!",
                         id
                 );

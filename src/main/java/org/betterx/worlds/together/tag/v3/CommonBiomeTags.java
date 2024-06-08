@@ -4,6 +4,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 
+@Deprecated(forRemoval = true)
 public class CommonBiomeTags {
     public static final TagKey<Biome> IS_END_CENTER = TagManager.BIOMES.makeCommonTag("is_end_center");
     public static final TagKey<Biome> IS_END_HIGHLAND = TagManager.BIOMES.makeCommonTag("is_end_highland");

@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.function.Function;
 import org.jetbrains.annotations.ApiStatus;
 
+@Deprecated(forRemoval = true)
 public class TagManager {
     private static final Map<String, TagRegistry<?>> TYPES = Maps.newHashMap();
 

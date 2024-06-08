@@ -216,7 +216,7 @@ public class BiomeAPI {
                     : KNOWN_TYPES.get(parentOrNull);
             if (known != null) {
                 if (known.parentOrNull != parent) {
-                    BCLib.LOGGER.warning("BiomeType " + name + " was deserialized with parent " + parent + " but already has " + known.parentOrNull);
+                    BCLib.LOGGER.warn("BiomeType " + name + " was deserialized with parent " + parent + " but already has " + known.parentOrNull);
                 }
                 return known;
             }
@@ -826,7 +826,7 @@ public class BiomeAPI {
         if (biomes instanceof PalettedContainer<Holder<Biome>> palette) {
             palette.set((pos.getX() & 15) >> 2, (pos.getY() & 15) >> 2, (pos.getZ() & 15) >> 2, biome);
         } else {
-            BCLib.LOGGER.warning("Unable to change Biome at " + pos);
+            BCLib.LOGGER.warn("Unable to change Biome at " + pos);
         }
     }
 

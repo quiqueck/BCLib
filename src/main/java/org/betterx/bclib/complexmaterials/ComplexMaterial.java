@@ -4,9 +4,9 @@ import org.betterx.bclib.complexmaterials.entry.BlockEntry;
 import org.betterx.bclib.complexmaterials.entry.ItemEntry;
 import org.betterx.bclib.complexmaterials.entry.MaterialSlot;
 import org.betterx.bclib.complexmaterials.entry.RecipeEntry;
-import org.betterx.bclib.registry.BlockRegistry;
-import org.betterx.bclib.registry.ItemRegistry;
-import org.betterx.worlds.together.tag.v3.TagManager;
+import org.betterx.wover.block.api.BlockRegistry;
+import org.betterx.wover.core.api.ModCore;
+import org.betterx.wover.item.api.ItemRegistry;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -42,12 +42,12 @@ public abstract class ComplexMaterial {
     private final Map<String, Item> items = Maps.newHashMap();
 
     protected final String baseName;
-    protected final String modID;
+    public final ModCore C;
     protected final String receipGroupPrefix;
 
-    public ComplexMaterial(String modID, String baseName, String receipGroupPrefix) {
+    public ComplexMaterial(ModCore modID, String baseName, String receipGroupPrefix) {
         this.baseName = baseName;
-        this.modID = modID;
+        this.C = modID;
         this.receipGroupPrefix = receipGroupPrefix;
         MATERIALS.add(this);
     }
@@ -113,7 +113,7 @@ public abstract class ComplexMaterial {
     }
 
     /**
-     * Adds custom block tag for this {@link ComplexMaterial}, tag can be created with {@link TagManager} or you can use one of already created tags.
+     * Adds custom block tag for this {@link ComplexMaterial}.
      *
      * @param tag {@link TagKey} for {@link Block}
      */
@@ -123,7 +123,7 @@ public abstract class ComplexMaterial {
     }
 
     /**
-     * Adds custom item tag for this {@link ComplexMaterial}, tag can be created with {@link TagManager} or you can use one of already created tags.
+     * Adds custom item tag for this {@link ComplexMaterial}.
      *
      * @param tag {@link TagKey} for {@link Item}
      */
@@ -304,7 +304,7 @@ public abstract class ComplexMaterial {
      * @return {@link Item.Properties}
      */
     protected Item.Properties getItemSettings(ItemRegistry registry) {
-        return registry.makeItemSettings();
+        return registry.createDefaultItemSettings();
     }
 
     private Collection<BlockEntry> getBlockEntries() {
@@ -341,15 +341,6 @@ public abstract class ComplexMaterial {
      */
     public String getBaseName() {
         return baseName;
-    }
-
-    /**
-     * Get mod ID for this {@link ComplexMaterial}.
-     *
-     * @return {@link String} mod ID.
-     */
-    public String getModID() {
-        return modID;
     }
 
     /**

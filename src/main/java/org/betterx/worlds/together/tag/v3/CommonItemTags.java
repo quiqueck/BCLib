@@ -5,6 +5,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 
+@Deprecated(forRemoval = true)
 public class CommonItemTags {
     public final static TagKey<Item> HAMMERS = TagManager.ITEMS.makeCommonTag("hammers");
     public static final TagKey<Item> BARREL = TagManager.ITEMS.makeCommonTag("barrel");

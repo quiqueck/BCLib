@@ -4,6 +4,7 @@ import org.betterx.bclib.BCLib;
 import org.betterx.bclib.behaviours.BehaviourBuilders;
 import org.betterx.bclib.complexmaterials.entry.SlotMap;
 import org.betterx.bclib.complexmaterials.set.stone.StoneSlots;
+import org.betterx.wover.core.api.ModCore;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
@@ -16,13 +17,13 @@ public class StoneComplexMaterial extends ComplexMaterialSet<StoneComplexMateria
     public final Block sourceBlock;
 
     protected StoneComplexMaterial(
-            String modID,
+            ModCore modCore,
             String baseName,
             String receipGroupPrefix,
             Block sourceBlock,
             MapColor color
     ) {
-        super(modID, baseName, receipGroupPrefix);
+        super(modCore, baseName, receipGroupPrefix);
         this.color = color;
         this.sourceBlock = sourceBlock;
     }

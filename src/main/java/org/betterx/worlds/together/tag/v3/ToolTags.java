@@ -3,7 +3,7 @@ package org.betterx.worlds.together.tag.v3;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
-
+@Deprecated(forRemoval = true)
 public class ToolTags {
     public static final TagKey<Item> FABRIC_AXES = TagManager.ITEMS.makeTag("fabric", "axes");
     public static final TagKey<Item> FABRIC_HOES = TagManager.ITEMS.makeTag("fabric", "hoes");

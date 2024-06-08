@@ -293,7 +293,7 @@ public class InternalBiomeAPI {
                             }
                         });
             } else {
-                BCLib.LOGGER.warning("No valid Biome Registry available!");
+                BCLib.LOGGER.warn("No valid Biome Registry available!");
             }
         });
 

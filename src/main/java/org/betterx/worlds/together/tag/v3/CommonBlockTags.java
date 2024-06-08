@@ -5,6 +5,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
+@Deprecated(forRemoval = true)
 public class CommonBlockTags {
     public static final TagKey<Block> BARREL = TagManager.BLOCKS.makeCommonTag("barrel");
     public static final TagKey<Block> BOOKSHELVES = TagManager.BLOCKS.makeCommonTag("bookshelves");

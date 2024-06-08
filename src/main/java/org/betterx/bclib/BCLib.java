@@ -31,8 +31,9 @@ import org.betterx.bclib.registry.BlockRegistry;
 import org.betterx.bclib.util.BCLDataComponents;
 import org.betterx.datagen.bclib.tests.TestStructure;
 import org.betterx.worlds.together.WorldsTogether;
-import org.betterx.worlds.together.util.Logger;
 import org.betterx.worlds.together.world.WorldConfig;
+import org.betterx.wover.core.api.Logger;
+import org.betterx.wover.core.api.ModCore;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -53,8 +54,9 @@ import net.fabricmc.loader.api.FabricLoader;
 import java.util.List;
 
 public class BCLib implements ModInitializer {
-    public static final String MOD_ID = "bclib";
-    public static final Logger LOGGER = new Logger(MOD_ID);
+    public static final ModCore C = ModCore.create("bclib");
+    public static final String MOD_ID = C.namespace;
+    public static final Logger LOGGER = C.LOG;
 
     public static final boolean RUNS_NULLSCAPE = FabricLoader.getInstance()
                                                              .getModContainer("nullscape")

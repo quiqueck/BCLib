@@ -196,7 +196,7 @@ public class AlloyingRecipe implements Recipe<AlloyingRecipeInput>, UnknownRecei
         @Override
         protected boolean checkRecipe() {
             if (smeltTime < 0) {
-                BCLib.LOGGER.warning("Semelt-time for recipe {} most be positive!", id);
+                BCLib.LOGGER.warn("Semelt-time for recipe {} most be positive!", id);
                 return false;
             }
             return super.checkRecipe();

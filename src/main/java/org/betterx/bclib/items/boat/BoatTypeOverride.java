@@ -1,6 +1,7 @@
 package org.betterx.bclib.items.boat;
 
 import org.betterx.bclib.BCLib;
+import org.betterx.wover.core.api.ModCore;
 
 import net.minecraft.client.model.*;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -36,18 +37,18 @@ public final class BoatTypeOverride {
     private BoatItem boat, chestBoat;
     public final boolean isRaft;
 
-    BoatTypeOverride(String modID, String name, Block planks) {
-        this(modID, name, planks, false);
+    BoatTypeOverride(ModCore modCore, String name, Block planks) {
+        this(modCore, name, planks, false);
     }
 
-    BoatTypeOverride(String modID, String name, Block planks, boolean isRaft) {
-        this.id = ResourceLocation.fromNamespaceAndPath(modID, name);
+    BoatTypeOverride(ModCore modCore, String name, Block planks, boolean isRaft) {
+        this.id = modCore.mk(name);
         this.name = name;
         this.planks = planks;
         int nr = Objects.hash(name);
         if (nr >= 0 && nr <= 1000) nr += 1000;
         while (byId(nr) != null) {
-            BCLib.LOGGER.warning("Boat Type Ordinal " + nr + " is already used, searching for another one");
+            BCLib.LOGGER.warn("Boat Type Ordinal " + nr + " is already used, searching for another one");
             nr++;
             if (nr >= 0 && nr <= 1000) nr += 1000;
         }
@@ -56,8 +57,8 @@ public final class BoatTypeOverride {
         if (BCLib.isClient()) {
             this.boatModelName = createBoatModelName(id.getNamespace(), id.getPath());
             this.chestBoatModelName = createChestBoatModelName(id.getNamespace(), id.getPath());
-            this.boatTexture = getTextureLocation(modID, name, false);
-            this.chestBoatTexture = getTextureLocation(modID, name, true);
+            this.boatTexture = getTextureLocation(modCore.namespace, name, false);
+            this.chestBoatTexture = getTextureLocation(modCore.namespace, name, true);
         } else {
             this.boatModelName = null;
             this.chestBoatModelName = null;
@@ -125,12 +126,12 @@ public final class BoatTypeOverride {
         return ResourceLocation.fromNamespaceAndPath(modID, "textures/entity/boat/" + name + ".png");
     }
 
-    public static BoatTypeOverride create(String modID, String name, Block planks) {
-        return create(modID, name, planks, false);
+    public static BoatTypeOverride create(ModCore modCore, String name, Block planks) {
+        return create(modCore, name, planks, false);
     }
 
-    public static BoatTypeOverride create(String modID, String name, Block planks, boolean isRaft) {
-        BoatTypeOverride t = new BoatTypeOverride(modID, name, planks, isRaft);
+    public static BoatTypeOverride create(ModCore modCore, String name, Block planks, boolean isRaft) {
+        BoatTypeOverride t = new BoatTypeOverride(modCore, name, planks, isRaft);
 
         return t;
     }

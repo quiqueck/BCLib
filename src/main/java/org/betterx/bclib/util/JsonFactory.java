@@ -32,7 +32,7 @@ public class JsonFactory {
                 return jsonObject != null ? jsonObject : new JsonObject();
             }
         } catch (Exception ex) {
-            BCLib.LOGGER.catching(ex);
+            BCLib.LOGGER.error("", ex);
         }
         return new JsonObject();
     }
@@ -79,7 +79,7 @@ public class JsonFactory {
             try (Reader reader = new FileReader(jsonFile, StandardCharsets.UTF_8)) {
                 return loadJson(reader);
             } catch (Exception ex) {
-                BCLib.LOGGER.catching(ex);
+                BCLib.LOGGER.warn("", ex);
             }
         }
         return null;
@@ -95,7 +95,7 @@ public class JsonFactory {
             writer.write(json);
             writer.flush();
         } catch (IOException ex) {
-            BCLib.LOGGER.catching(ex);
+            BCLib.LOGGER.warn("", ex);
         }
     }
 

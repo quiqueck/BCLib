@@ -68,7 +68,7 @@ public interface BlockModelProvider extends ItemModelProvider {
                 model.name = modelId.toString();
                 modelCache.put(modelId, model);
             } else {
-                BCLib.LOGGER.warning("Error loading model: {}", modelId);
+                BCLib.LOGGER.warn("Error loading model: {}", modelId);
             }
         }
     }

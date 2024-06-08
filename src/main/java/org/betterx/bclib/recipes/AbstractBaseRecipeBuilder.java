@@ -159,11 +159,11 @@ public abstract class AbstractBaseRecipeBuilder<T extends AbstractBaseRecipeBuil
 
     protected boolean checkRecipe() {
         if (output == null) {
-            BCLib.LOGGER.warning("Output for Recipe can't be 'null', recipe {} will be ignored!", id);
+            BCLib.LOGGER.warn("Output for Recipe can't be 'null', recipe {} will be ignored!", id);
             return false;
         }
         if (output.is(Items.AIR)) {
-            BCLib.LOGGER.warning("Unable to build Recipe " + id + ": Result is AIR");
+            BCLib.LOGGER.warn("Unable to build Recipe " + id + ": Result is AIR");
             return false;
         }
         if (!alright) {

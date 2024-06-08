@@ -1,6 +1,6 @@
 package org.betterx.bclib.api.v3.datagen;
 
-import org.betterx.worlds.together.util.Logger;
+import org.betterx.wover.core.api.Logger;
 
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Encoder;
@@ -120,12 +120,11 @@ public abstract class RegistriesDataProvider implements DataProvider {
             Encoder<E> encoder,
             E object
     ) {
-        Optional<JsonElement> optional = encoder.encodeStart(dynamicOps, object)
-                                                .resultOrPartial(string -> this.LOGGER.error(
-                                                        "Couldn't serialize element {}: {}",
-                                                        path,
-                                                        string
-                                                ));
+        Optional<JsonElement> optional = encoder
+                .encodeStart(dynamicOps, object)
+                .resultOrPartial(string -> this.LOGGER.error(
+                        "Couldn't serialize element " + path + ": " + string
+                ));
         if (optional.isPresent()) {
             return DataProvider.saveStable(cachedOutput, optional.get(), path);
         }

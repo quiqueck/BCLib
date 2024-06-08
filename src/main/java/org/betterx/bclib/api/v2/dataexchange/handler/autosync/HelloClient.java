@@ -295,7 +295,7 @@ public class HelloClient extends DataHandler.FromServer<HelloClient.HelloClientP
                     .filter(desc::discardChildElements)
                     .forEach(subFile -> {
                         if (Configs.MAIN_CONFIG.verboseLogging())
-                            BCLib.LOGGER.warning("	   * " + subFile.relPath + " (REJECTED)");
+                            BCLib.LOGGER.warn("	   * " + subFile.relPath + " (REJECTED)");
                     });
 
 
@@ -569,7 +569,7 @@ public class HelloClient extends DataHandler.FromServer<HelloClient.HelloClientP
     }
 
     private void requestBCLibDownload() {
-        BCLib.LOGGER.warning("Starting download of BCLib");
+        BCLib.LOGGER.warn("Starting download of BCLib");
         requestFileDownloads(List.of(new AutoSyncID.ForModFileRequest(BCLib.MOD_ID, bclibVersion)));
     }
 

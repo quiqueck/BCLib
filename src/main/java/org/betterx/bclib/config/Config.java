@@ -109,7 +109,7 @@ public abstract class Config {
             entry.setValue(value);
             return true;
         } catch (NullPointerException ex) {
-            BCLib.LOGGER.catching(ex);
+            BCLib.LOGGER.warn("", ex);
         }
         return false;
     }
@@ -135,7 +135,7 @@ public abstract class Config {
             entry.setValue(value);
             return true;
         } catch (NullPointerException ex) {
-            BCLib.LOGGER.catching(ex);
+            BCLib.LOGGER.warn("", ex);
         }
         return false;
     }
@@ -151,7 +151,7 @@ public abstract class Config {
             entry.setValue(value);
             return true;
         } catch (NullPointerException | ClassCastException ex) {
-            BCLib.LOGGER.catching(ex);
+            BCLib.LOGGER.warn("", ex);
         }
         return false;
     }
@@ -177,7 +177,7 @@ public abstract class Config {
             entry.setValue(value);
             return true;
         } catch (NullPointerException ex) {
-            BCLib.LOGGER.catching(ex);
+            BCLib.LOGGER.warn("", ex);
         }
         return false;
     }
@@ -204,7 +204,7 @@ public abstract class Config {
             entry.setValue(value);
             return true;
         } catch (NullPointerException ex) {
-            BCLib.LOGGER.catching(ex);
+            BCLib.LOGGER.warn("", ex);
         }
         return false;
     }
@@ -233,7 +233,7 @@ public abstract class Config {
             entry.setValue(value);
             return true;
         } catch (NullPointerException ex) {
-            BCLib.LOGGER.catching(ex);
+            BCLib.LOGGER.warn("", ex);
         }
         return false;
     }

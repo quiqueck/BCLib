@@ -1,0 +1,18 @@
+ext.knownWoverModules = [
+        'wover-common-api',
+        'wover-core-api',
+        'wover-math-api',
+        'wover-event-api',
+        'wover-surface-api',
+        'wover-ui-api',
+        'wover-datagen-api',
+        'wover-tag-api',
+        'wover-preset-api',
+        'wover-block-api',
+        'wover-item-api',
+        'wover-recipe-api',
+        'wover-feature-api',
+        'wover-structure-api',
+        'wover-biome-api',
+        'wover-generator-api',
+]

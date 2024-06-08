@@ -23,7 +23,7 @@ public class BlockRegistry extends BaseRegistry<Block> {
     @Override
     public Block register(ResourceLocation id, Block block) {
         if (!config.getBooleanRoot(id.getNamespace(), true)) {
-            BCLib.LOGGER.warning("Block " + id + " disabled");
+            BCLib.LOGGER.warn("Block " + id + " disabled");
             return block;
         }
         block = Registry.register(BuiltInRegistries.BLOCK, id, block);

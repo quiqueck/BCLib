@@ -1,6 +1,10 @@
 {
   "values": [
+    "minecraft:basalt",
+    "minecraft:magma_block",
     "#c:nether_stones",
-    "#c:netherrack"
+    "#c:netherrack",
+    "minecraft:red_sand",
+    "minecraft:sculk"
   ]
 }

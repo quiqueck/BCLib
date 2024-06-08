@@ -15,6 +15,6 @@ public class RecipeEntry extends ComplexMaterialEntry {
     }
 
     public void init(ComplexMaterial material) {
-        initFunction.accept(material, getLocation(material.getModID(), material.getBaseName()));
+        initFunction.accept(material, material.C.mk(getName(material.getBaseName())));
     }
 }

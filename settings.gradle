@@ -18,6 +18,7 @@ def allowLocalLibInConsoleMode = false
 
 //The path were to look for the local BCLib
 def WunderLibPath = '../WorldWeaver/WunderLib'
+def WoverPath = '../WorldWeaver'
 
 
 // #### Logic ####
@@ -29,6 +30,7 @@ def isIDE = properties.containsKey('android.injected.invoked.from.ide')
 println "IntelliJ: ${isIDE}"
 
 def WunderLibFolder = new File(WunderLibPath)
+def WoverFolder = new File(WoverPath)
 if (allowLocalLibUse && (isIDE || allowLocalLibInConsoleMode) && WunderLibFolder.exists()) {
     println "Using local WunderLib from '${WunderLibFolder}' in IntelliJ"
     println "If you do not want to load the local version of WunderLib"
@@ -43,4 +45,26 @@ if (allowLocalLibUse && (isIDE || allowLocalLibInConsoleMode) && WunderLibFolder
     include ':WunderLib'
     project(":WunderLib").projectDir = WunderLibFolder
     project(':WunderLib').buildFileName = './wunderlib-composit.gradle'
+}
+
+if (allowLocalLibUse && (isIDE || allowLocalLibInConsoleMode) && WoverFolder.exists()) {
+    println "!! Using local WorldWeaver from '${WoverFolder}'"
+
+    include ':WorldWeaver'
+    project(":WorldWeaver").projectDir = WoverFolder
+    project(':WorldWeaver').buildFileName = './build.composit.gradle'
+
+    def WoverModuleFile = new File("./wover-include.gradle")
+    apply from: WoverModuleFile
+    gradle.ext.set("knownWoverModules", ext.knownWoverModules)
+    ext.knownWoverModules.each { module ->
+        def fullName = ":WorldWeaver:${module}";
+        def path = WoverFolder.toPath().resolve(module).toFile();
+
+        include fullName
+        project(fullName).name = module
+
+        print(project(fullName).parent)
+        println "Including module ${module} from ${path}"
+    }
 }

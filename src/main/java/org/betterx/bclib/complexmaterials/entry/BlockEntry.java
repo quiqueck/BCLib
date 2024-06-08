@@ -1,10 +1,8 @@
 package org.betterx.bclib.complexmaterials.entry;
 
 import org.betterx.bclib.complexmaterials.ComplexMaterial;
-import org.betterx.bclib.registry.BlockRegistry;
-import org.betterx.worlds.together.tag.v3.TagManager;
+import org.betterx.wover.block.api.BlockRegistry;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -57,23 +55,16 @@ public class BlockEntry extends ComplexMaterialEntry {
     }
 
     public Block init(ComplexMaterial material, BlockBehaviour.Properties blockSettings, BlockRegistry registry) {
-        ResourceLocation location = getLocation(material.getModID(), material.getBaseName());
+        String location = getName(material.getBaseName());
         Block block = initFunction.apply(material, blockSettings);
         if (block == null) return null;
 
         if (!isPseudoEntry) {
             if (hasItem) {
-                registry.register(location, block);
-
+                registry.register(location, block, blockTags, itemTags);
             } else {
-                registry.registerBlockOnly(location, block);
+                registry.registerBlockOnly(location, block, blockTags);
             }
-        }
-        if (hasItem && itemTags != null) {
-            TagManager.ITEMS.add(block.asItem(), itemTags);
-        }
-        if (blockTags != null) {
-            TagManager.BLOCKS.add(block, blockTags);
         }
 
         return block;

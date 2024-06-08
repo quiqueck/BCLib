@@ -82,7 +82,7 @@ public class DataFixerAPI {
         try {
             levelStorageAccess = levelSource.createAccess(levelID);
         } catch (IOException e) {
-            BCLib.LOGGER.warning("Failed to read level {} data", levelID, e);
+            BCLib.LOGGER.warn("Failed to read level {} data", levelID, e);
             SystemToast.onWorldAccessFailure(Minecraft.getInstance(), levelID);
             Minecraft.getInstance().setScreen(null);
             return true;
@@ -93,7 +93,7 @@ public class DataFixerAPI {
         try {
             levelStorageAccess.close();
         } catch (IOException e) {
-            BCLib.LOGGER.warning("Failed to unlock access to level {}", levelID, e);
+            BCLib.LOGGER.warn("Failed to unlock access to level {}", levelID, e);
         }
 
         return returnValue;
@@ -263,7 +263,7 @@ public class DataFixerAPI {
                 showBackupWarning(levelID, runFixes);
                 return true;
             } else {
-                BCLib.LOGGER.warning("Applying Fixes on Level");
+                BCLib.LOGGER.warn("Applying Fixes on Level");
                 runFixes.accept(false, true);
             }
         }

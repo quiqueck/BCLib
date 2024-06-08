@@ -4,7 +4,8 @@ import org.betterx.bclib.BCLib;
 import org.betterx.bclib.complexmaterials.entry.SlotMap;
 import org.betterx.bclib.complexmaterials.set.wood.WoodSlots;
 import org.betterx.bclib.items.boat.BoatTypeOverride;
-import org.betterx.worlds.together.tag.v3.TagManager;
+import org.betterx.wover.core.api.ModCore;
+import org.betterx.wover.tag.api.TagManager;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
@@ -55,24 +56,24 @@ public class WoodenComplexMaterial extends ComplexMaterialSet<WoodenComplexMater
     public final BCLWoodTypeWrapper woodType;
 
     public WoodenComplexMaterial(
-            String modID,
+            ModCore modCore,
             String baseName,
             String receipGroupPrefix,
             MapColor woodColor,
             MapColor planksColor
     ) {
-        this(modID, baseName, receipGroupPrefix, woodColor, planksColor, null);
+        this(modCore, baseName, receipGroupPrefix, woodColor, planksColor, null);
     }
 
     public WoodenComplexMaterial(
-            String modID,
+            ModCore modCore,
             String baseName,
             String receipGroupPrefix,
             MapColor woodColor,
             MapColor planksColor,
             BoatTypeOverride boatType
     ) {
-        super(modID, baseName, receipGroupPrefix);
+        super(modCore, baseName, receipGroupPrefix);
         this.planksColor = planksColor;
         this.woodColor = woodColor;
         this.woodType = createWoodTypeBuilder().build();
@@ -80,7 +81,7 @@ public class WoodenComplexMaterial extends ComplexMaterialSet<WoodenComplexMater
     }
 
     protected BCLWoodTypeWrapper.Builder createWoodTypeBuilder() {
-        return BCLWoodTypeWrapper.create(getModID(), getBaseName()).setColor(planksColor);
+        return BCLWoodTypeWrapper.create(C, getBaseName()).setColor(planksColor);
     }
 
     @Override
@@ -96,8 +97,8 @@ public class WoodenComplexMaterial extends ComplexMaterialSet<WoodenComplexMater
 
     @Override
     protected void initTags() {
-        addBlockTag(TagManager.BLOCKS.makeTag(getModID(), getBaseName() + "_logs"));
-        addItemTag(TagManager.ITEMS.makeTag(getModID(), getBaseName() + "_logs"));
+        addBlockTag(TagManager.BLOCKS.makeTag(C, getBaseName() + "_logs"));
+        addItemTag(TagManager.ITEMS.makeTag(C, getBaseName() + "_logs"));
     }
 
     @Override
@@ -148,7 +149,7 @@ public class WoodenComplexMaterial extends ComplexMaterialSet<WoodenComplexMater
 
     protected BoatTypeOverride supplyBoatType() {
         return BoatTypeOverride.create(
-                getModID(),
+                C,
                 getBaseName(),
                 getBlock(WoodSlots.PLANKS)
         );

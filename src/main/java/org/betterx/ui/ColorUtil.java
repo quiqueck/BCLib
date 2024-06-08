@@ -237,7 +237,7 @@ public class ColorUtil {
                 shift -= 8;
             }
         } catch (NumberFormatException ex) {
-            BCLib.LOGGER.catching(ex);
+            BCLib.LOGGER.warn("", ex);
             return -1;
         }
 
@@ -340,8 +340,8 @@ public class ColorUtil {
             try {
                 return NativeImage.read(imgResource.get().open());
             } catch (IOException e) {
-                BCLib.LOGGER.warning("Can't load texture image: {}. Will be created empty image.", image);
-                BCLib.LOGGER.warning("Cause: {}.", e.getMessage());
+                BCLib.LOGGER.warn("Can't load texture image: {}. Will be created empty image.", image);
+                BCLib.LOGGER.warn("Cause: {}.", e.getMessage());
             }
         }
         return new NativeImage(w, h, false);

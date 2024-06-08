@@ -65,7 +65,7 @@ public class SmithingRecipeBuilder extends AbstractUnlockableRecipeBuilder<Smith
     @Override
     protected boolean checkRecipe() {
         if (addon == null || addon.isEmpty()) {
-            BCLib.LOGGER.warning(
+            BCLib.LOGGER.warn(
                     "Addon for Recipe can't be 'null', recipe {} will be ignored!",
                     id
             );
@@ -73,7 +73,7 @@ public class SmithingRecipeBuilder extends AbstractUnlockableRecipeBuilder<Smith
         }
 
         if (template == null) {
-            BCLib.LOGGER.warning(
+            BCLib.LOGGER.warn(
                     "Smithing Recipes need a template. Recipe {} will be ignored!",
                     id
             );

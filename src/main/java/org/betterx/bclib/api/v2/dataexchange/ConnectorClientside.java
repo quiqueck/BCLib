@@ -32,7 +32,7 @@ public class ConnectorClientside extends Connector {
 
     public void onPlayInit(ClientPacketListener handler, Minecraft client) {
         if (this.client != null && this.client != client) {
-            BCLib.LOGGER.warning("Client changed!");
+            BCLib.LOGGER.warn("Client changed!");
         }
         this.client = client;
         for (DataHandlerDescriptor<?> desc : getDescriptors()) {

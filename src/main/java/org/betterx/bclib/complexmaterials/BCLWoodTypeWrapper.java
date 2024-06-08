@@ -1,5 +1,7 @@
 package org.betterx.bclib.complexmaterials;
 
+import org.betterx.wover.core.api.ModCore;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.WoodType;
@@ -23,8 +25,8 @@ public final class BCLWoodTypeWrapper {
         this.flammable = flammable;
     }
 
-    public static Builder create(String modID, String string) {
-        return new Builder(ResourceLocation.fromNamespaceAndPath(modID, string));
+    public static Builder create(ModCore modCore, String string) {
+        return new Builder(modCore.mk(string));
     }
 
     public static Builder create(ResourceLocation id) {

@@ -201,7 +201,7 @@ public class MigrationProfile {
 
     final public void runPrePatches(File levelBaseDir) {
         if (didRunPrePatch) {
-            BCLib.LOGGER.warning("Already did run PrePatches for " + this.levelBaseDir + ".");
+            BCLib.LOGGER.warn("Already did run PrePatches for " + this.levelBaseDir + ".");
         }
         BCLib.LOGGER.info("Running Pre Patchers on " + levelBaseDir);
 

@@ -182,7 +182,7 @@ public class AutoSync {
         if (desc != null) {
             return desc.localFolder;
         } else {
-            BCLib.LOGGER.warning("Unknown Sync-Folder ID '" + folderID + "'");
+            BCLib.LOGGER.warn("Unknown Sync-Folder ID '" + folderID + "'");
             return null;
         }
     }
@@ -196,7 +196,7 @@ public class AutoSync {
                     removeAdditionalFiles
             );
             if (syncFolderDescriptions.contains(desc)) {
-                BCLib.LOGGER.warning("Tried to override Folder Sync '" + folderID + "' again.");
+                BCLib.LOGGER.warn("Tried to override Folder Sync '" + folderID + "' again.");
             } else {
                 syncFolderDescriptions.add(desc);
             }

@@ -197,7 +197,7 @@ public class PostInitAPI {
                 TagManager.ITEMS.add(block, CommonItemTags.COMPOSTABLE);
                 ComposterAPI.allowCompost(c.compostingChance(), item);
             } else if (BCLib.isDatagen() && Configs.MAIN_CONFIG.verboseLogging()) {
-                BCLib.LOGGER.warning("Block " + block + " has compostable behaviour but no item!");
+                BCLib.LOGGER.warn("Block " + block + " has compostable behaviour but no item!");
             }
         }
 

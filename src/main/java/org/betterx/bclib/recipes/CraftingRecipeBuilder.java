@@ -138,7 +138,7 @@ public class CraftingRecipeBuilder extends AbstractBaseRecipeBuilder<CraftingRec
 
     protected boolean checkShapeless() {
         if (materials.size() == 0) {
-            BCLib.LOGGER.warning("Recipe {} does not contain a material!", id);
+            BCLib.LOGGER.warn("Recipe {} does not contain a material!", id);
             return false;
         }
         return super.checkRecipe();
@@ -163,36 +163,36 @@ public class CraftingRecipeBuilder extends AbstractBaseRecipeBuilder<CraftingRec
 
     protected boolean checkShaped() {
         if (shape == null || shape.length == 0) {
-            BCLib.LOGGER.warning("Recipe {} does not contain a shape!", id);
+            BCLib.LOGGER.warn("Recipe {} does not contain a shape!", id);
             return false;
         }
         if (shape.length > 3) {
-            BCLib.LOGGER.warning("Recipe {} shape contains more than three lines!", id);
+            BCLib.LOGGER.warn("Recipe {} shape contains more than three lines!", id);
             return false;
         }
         int width = shape[0].length();
         if (width > 3) {
-            BCLib.LOGGER.warning("Recipe {} shape is wider than three!", id);
+            BCLib.LOGGER.warn("Recipe {} shape is wider than three!", id);
             return false;
         }
         String allLines = "";
         for (int i = 0; i < shape.length; i++) {
             if (shape[i].length() != width) {
-                BCLib.LOGGER.warning("All lines in the shape of Recipe {} should be the same length!", id);
+                BCLib.LOGGER.warn("All lines in the shape of Recipe {} should be the same length!", id);
                 return false;
             }
             allLines += shape[i];
         }
         allLines = allLines.replaceAll(" ", "");
         if (allLines.length() == 1) {
-            BCLib.LOGGER.warning("Recipe {} only takes in a single item and should be shapeless", id);
+            BCLib.LOGGER.warn("Recipe {} only takes in a single item and should be shapeless", id);
             return false;
         }
 
         for (int i = 0; i < allLines.length(); i++) {
             char c = allLines.charAt(i);
             if (!materials.containsKey(c)) {
-                BCLib.LOGGER.warning("Recipe {} is missing the material definition for '" + c + "'!", id);
+                BCLib.LOGGER.warn("Recipe {} is missing the material definition for '" + c + "'!", id);
                 return false;
             }
         }

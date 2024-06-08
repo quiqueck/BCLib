@@ -1,7 +1,5 @@
 package org.betterx.bclib.complexmaterials.entry;
 
-import net.minecraft.resources.ResourceLocation;
-
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,9 +15,9 @@ public abstract class ComplexMaterialEntry {
         return baseName + "_" + suffix;
     }
 
-    public ResourceLocation getLocation(String modID, String baseName) {
-        return ResourceLocation.fromNamespaceAndPath(modID, getName(baseName));
-    }
+//    public ResourceLocation getLocation(String modID, String baseName) {
+//        return ResourceLocation.fromNamespaceAndPath(modID, getName(baseName));
+//    }
 
     public String getSuffix() {
         return suffix;

@@ -50,7 +50,7 @@ public abstract class AbstractDoubleInputRecipeBuilder<T extends AbstractDoubleI
     @Override
     protected boolean checkRecipe() {
         if (secondaryInput == null) {
-            BCLib.LOGGER.warning(
+            BCLib.LOGGER.warn(
                     "Secondary input for Recipe can't be 'null', recipe {} will be ignored!",
                     id
             );

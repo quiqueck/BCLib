@@ -27,7 +27,7 @@ public class ConnectorServerside extends Connector {
 
     public void onPlayInit(ServerGamePacketListenerImpl handler, MinecraftServer server) {
         if (this.server != null && this.server != server) {
-            BCLib.LOGGER.warning("Server changed!");
+            BCLib.LOGGER.warn("Server changed!");
         }
         this.server = server;
         for (DataHandlerDescriptor<?> desc : getDescriptors()) {

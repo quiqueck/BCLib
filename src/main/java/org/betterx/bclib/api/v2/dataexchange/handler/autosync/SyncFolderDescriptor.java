@@ -156,7 +156,7 @@ public class SyncFolderDescriptor {
             );
             desc.fileCache = new ArrayList<>(count);
         } else {
-            BCLib.LOGGER.warning(BCLib.isClient()
+            BCLib.LOGGER.warn(BCLib.isClient()
                     ? "Client"
                     : "Server" + " does not know Sync-Folder ID '" + folderID + "'");
             desc = null;

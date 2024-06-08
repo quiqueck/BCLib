@@ -5,6 +5,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 
 
+@Deprecated(forRemoval = true)
 public class MineableTags {
     public static final TagKey<Block> AXE = BlockTags.MINEABLE_WITH_AXE;
     public static final TagKey<Block> HOE = BlockTags.MINEABLE_WITH_HOE;

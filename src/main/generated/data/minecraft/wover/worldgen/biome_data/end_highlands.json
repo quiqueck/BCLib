@@ -1,0 +1,6 @@
+{
+  "type": "wover:wover_data",
+  "biome": "minecraft:end_highlands",
+  "edgeSize": 4,
+  "genChance": 2.0
+}

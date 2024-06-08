@@ -25,6 +25,7 @@ repositories {
 }
 
 def local_wunderlib = findProject(':WunderLib') != null
+def local_wover = findProject(':WorldWeaver') != null
 
 loom {
     accessWidenerPath = file("src/main/resources/bclib.accesswidener")
@@ -39,6 +40,9 @@ loom {
 
             runDir "build/datagen"
         }
+    }
+    if (local_wover || local_wunderlib) {
+        enableTransitiveAccessWideners = true
     }
 }
 
@@ -74,6 +78,15 @@ dependencies {
         modApi "com.github.quiqueck:WunderLib:${project.wunderlib_version}"
         include "com.github.quiqueck:WunderLib:${project.wunderlib_version}"
     }
+
+    println "Using local WorldWeaver: ${local_wover}"
+    if (local_wover) {
+        implementation project(path: ":WorldWeaver", configuration: 'dev')
+
+        gradle.knownWoverModules.each {
+            implementation project(path: ":WorldWeaver:$it", configuration: 'dev')
+        }
+    }
 }
 
 processResources {
@@ -94,9 +107,39 @@ tasks.withType(JavaCompile) {
 }
 
 javadoc {
-    options.tags = ["reason"]
-    options.stylesheetFile = new File(projectDir, "javadoc.css");
+    options {
+        source = "17"
+        encoding = "UTF-8"
+        charSet = "UTF-8"
+        tags = ["reason"]
+        memberLevel = JavadocMemberLevel.PROTECTED
+        links("https://docs.oracle.com/en/java/javase/17/docs/api/")
+        // Disable the crazy super-strict doclint tool in Java 8
+        addStringOption("Xdoclint:none", "-quiet")
+        addStringOption("noqualifier", "net.minecraft.*:com.mojang.*:net.fabricmc.*")
+        addBooleanOption("-allow-script-in-comments", true)
+        tags(
+                'apiNote:a:API Note:',
+                'implSpec:a:Implementation Requirements:',
+                'implNote:a:Implementation Note:'
+        )
+        stylesheetFile = new File(projectDir, "javadoc.css")
+    };
 }
+
+subprojects { subproject ->
+    subproject.tasks.withType(Javadoc) { javadocTask ->
+        javadocTask.failOnError false
+        javadocTask.enabled = false
+    }
+
+    subproject.tasks.withType(Jar) { jarTask ->
+        if (jarTask.name == 'javadocJar') {
+            jarTask.enabled = false
+        }
+    }
+}
+
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
     archiveClassifier = 'javadoc'

@@ -63,7 +63,7 @@ public class CookingRecipeBuilder extends AbstractUnlockableRecipeBuilder<Cookin
     @Override
     protected boolean checkRecipe() {
         if (smelting == false && blasting == false && campfire == false && smoker == false) {
-            BCLib.LOGGER.warning(
+            BCLib.LOGGER.warn(
                     "No target (smelting, blasting, campfire or somer) for cooking recipe was selected. Recipe {} will be ignored!",
                     id
             );
@@ -71,7 +71,7 @@ public class CookingRecipeBuilder extends AbstractUnlockableRecipeBuilder<Cookin
         }
 
         if (cookingTime < 0) {
-            BCLib.LOGGER.warning(
+            BCLib.LOGGER.warn(
                     "cooking time must be positive. Recipe {} will be ignored!",
                     id
             );

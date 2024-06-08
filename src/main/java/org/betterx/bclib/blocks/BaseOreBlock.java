@@ -3,10 +3,11 @@ package org.betterx.bclib.blocks;
 import org.betterx.bclib.behaviours.BehaviourBuilders;
 import org.betterx.bclib.behaviours.interfaces.BehaviourOre;
 import org.betterx.bclib.interfaces.BlockModelProvider;
-import org.betterx.bclib.interfaces.TagProvider;
 import org.betterx.bclib.util.LegacyTiers;
 import org.betterx.bclib.util.LootUtil;
 import org.betterx.bclib.util.MHelper;
+import org.betterx.wover.block.api.BlockTagProvider;
+import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.core.Holder;
@@ -32,7 +33,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvider, TagProvider, BehaviourOre {
+public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvider, BlockTagProvider, BehaviourOre {
     private final Supplier<Item> dropItem;
     private final int minCount;
     private final int maxCount;
@@ -163,10 +164,11 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
         return getBlockModel(resourceLocation, defaultBlockState());
     }
 
+
     @Override
-    public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
+    public void registerItemTags(ResourceLocation location, TagBootstrapContext<Block> context) {
         if (this.miningTag != null) {
-            blockTags.add(this.miningTag);
+            context.add(this.miningTag, this);
         }
     }
 }

@@ -140,7 +140,7 @@ public class VersionChecker implements Runnable {
                 }
             }
         } else {
-            BCLib.LOGGER.warning("No valid Version Info");
+            BCLib.LOGGER.warn("No valid Version Info");
         }
     }
 

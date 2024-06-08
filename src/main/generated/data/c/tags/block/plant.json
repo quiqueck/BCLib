@@ -37,6 +37,7 @@
     "minecraft:pumpkin_stem",
     "minecraft:red_tulip",
     "minecraft:rose_bush",
+    "#c:saplings",
     "minecraft:short_grass",
     "minecraft:small_dripleaf",
     "minecraft:spore_blossom",
@@ -49,7 +50,6 @@
     "minecraft:vine",
     "minecraft:wheat",
     "minecraft:white_tulip",
-    "minecraft:wither_rose",
-    "#c:saplings"
+    "minecraft:wither_rose"
   ]
 }

@@ -31,7 +31,7 @@ public class FileContentWrapper {
             try {
                 this.outputStream.close();
             } catch (IOException e) {
-                BCLib.LOGGER.debug(e);
+                BCLib.LOGGER.debug("", e);
             }
         }
         this.outputStream = null;

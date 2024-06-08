@@ -261,7 +261,7 @@ public class BCLBiomeRegistry {
                         .event(oBCLBiomeRegistry.get())
                         .register((rawId, loc, biome) -> BCLBiomeRegistry.onBiomeLoad(registry, rawId, loc, biome));
             } else {
-                BCLib.LOGGER.warning("No valid BCLBiome Registry available!");
+                BCLib.LOGGER.warn("No valid BCLBiome Registry available!");
             }
         });
     }

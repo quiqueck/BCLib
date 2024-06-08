@@ -6,7 +6,6 @@
   "mixins": [
     "MainMixin",
     "MinecraftServerMixin",
-    "TagLoaderMixin",
     "WorldLoaderMixin",
     "WorldStem_Mixin"
   ],

@@ -6,6 +6,7 @@ import net.minecraft.world.level.block.Block;
 
 import java.util.List;
 
+@Deprecated(forRemoval = true)
 public interface TagProvider {
     void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags);
 }

@@ -28,6 +28,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
+@Deprecated(forRemoval = true)
 public class TagRegistry<T> {
     boolean isFrozen = false;
 
