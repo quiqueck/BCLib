@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.function.Function;
 import org.jetbrains.annotations.NotNull;
 
+@Deprecated(forRemoval = true)
 public abstract class EquipmentSet {
     public static class AttackDamage {
         public static SetValues WOOD_LEVEL = EquipmentSet.SetValues
