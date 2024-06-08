@@ -1,10 +1,10 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.blocks.BlockProperties.TripleShape;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.wover.block.api.BlockProperties.TripleShape;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.MultiVariant;

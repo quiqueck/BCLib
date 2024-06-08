@@ -1,8 +1,8 @@
 package org.betterx.bclib.api.v2.levelgen.features.config;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.blocks.BlockProperties;
 import org.betterx.bclib.util.BlocksHelper;
+import org.betterx.wover.block.api.BlockProperties;
 
 import com.mojang.datafixers.util.Function15;
 import com.mojang.serialization.Codec;

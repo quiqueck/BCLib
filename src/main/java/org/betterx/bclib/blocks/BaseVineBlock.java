@@ -2,11 +2,11 @@ package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.behaviours.BehaviourBuilders;
 import org.betterx.bclib.behaviours.interfaces.BehaviourVine;
-import org.betterx.bclib.blocks.BlockProperties.TripleShape;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.util.BlocksHelper;
 import org.betterx.bclib.util.LootUtil;
+import org.betterx.wover.block.api.BlockProperties.TripleShape;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

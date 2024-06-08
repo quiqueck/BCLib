@@ -12,9 +12,9 @@ import org.betterx.bclib.api.v3.levelgen.features.features.PillarFeature;
 import org.betterx.bclib.api.v3.levelgen.features.features.PlaceBlockFeature;
 import org.betterx.bclib.api.v3.levelgen.features.features.SequenceFeature;
 import org.betterx.bclib.api.v3.levelgen.features.features.TemplateFeature;
-import org.betterx.bclib.blocks.BlockProperties;
 import org.betterx.bclib.util.FullReferenceHolder;
 import org.betterx.bclib.util.Triple;
+import org.betterx.wover.block.api.BlockProperties;
 
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
