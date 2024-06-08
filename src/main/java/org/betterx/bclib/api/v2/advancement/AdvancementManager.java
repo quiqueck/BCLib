@@ -293,16 +293,16 @@ public class AdvancementManager {
         }
 
         public Builder addAtStructureCriterion(String name, BCLStructure<?> structure) {
-            return addAtStructureCriterion(name, structure.structureKey);
+            return addAtStructureCriterion(name, new Holder.Direct(structure.structureKey));
         }
 
-        public Builder addAtStructureCriterion(String name, ResourceKey<Structure> structure) {
+        public Builder addAtStructureCriterion(String name, Holder<Structure> structure) {
             return addCriterion(
                     name,
                     PlayerTrigger
                             .TriggerInstance
                             .located(
-                                    LocationPredicate.Builder.inStructure(new Holder.Direct(structure))
+                                    LocationPredicate.Builder.inStructure(structure)
                             )
             );
         }
@@ -375,11 +375,11 @@ public class AdvancementManager {
             );
         }
 
-        public Builder addVisitBiomesCriterion(List<ResourceKey<Biome>> list) {
-            for (ResourceKey<Biome> resourceKey : list) {
+        public Builder addVisitBiomesCriterion(List<Holder<Biome>> list) {
+            for (Holder<Biome> holder : list) {
                 addCriterion(
-                        resourceKey.location().toString(),
-                        PlayerTrigger.TriggerInstance.located(LocationPredicate.Builder.inBiome(new Holder.Direct(resourceKey)))
+                        holder.unwrapKey().orElseThrow().location().toString(),
+                        PlayerTrigger.TriggerInstance.located(LocationPredicate.Builder.inBiome(holder))
                 );
             }
             return this;
