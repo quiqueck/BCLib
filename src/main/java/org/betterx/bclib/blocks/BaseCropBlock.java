@@ -3,18 +3,15 @@ package org.betterx.bclib.blocks;
 import org.betterx.bclib.behaviours.BehaviourBuilders;
 import org.betterx.bclib.interfaces.SurvivesOnBlocks;
 import org.betterx.bclib.util.BlocksHelper;
-import org.betterx.bclib.util.LootUtil;
-import org.betterx.bclib.util.MHelper;
+import org.betterx.wover.loot.api.BlockLootProvider;
+import org.betterx.wover.loot.api.LootLookupProvider;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -24,17 +21,16 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import com.google.common.collect.Lists;
-
-import java.util.Collections;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class BaseCropBlock extends BasePlantBlock implements SurvivesOnBlocks {
+public class BaseCropBlock extends BasePlantBlock implements SurvivesOnBlocks, BlockLootProvider {
     public static final IntegerProperty AGE = IntegerProperty.create("age", 0, 3);
     private static final VoxelShape SHAPE = box(2, 0, 2, 14, 14, 14);
 
@@ -59,25 +55,6 @@ public class BaseCropBlock extends BasePlantBlock implements SurvivesOnBlocks {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> stateManager) {
         stateManager.add(AGE);
-    }
-
-    @Override
-    public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
-        if (state.getValue(AGE) < 3) {
-            return Collections.singletonList(new ItemStack(this));
-        }
-        ItemStack tool = builder.getParameter(LootContextParams.TOOL);
-        if (LootUtil.isCorrectTool(this, state, tool)) {
-            int enchantment = EnchantmentHelper.getItemEnchantmentLevel(new Holder.Direct(Enchantments.FORTUNE), tool);
-            if (enchantment > 0) {
-                int countSeeds = MHelper.randRange(Mth.clamp(1 + enchantment, 1, 3), 3, MHelper.RANDOM_SOURCE);
-                int countDrops = MHelper.randRange(Mth.clamp(1 + enchantment, 1, 2), 2, MHelper.RANDOM_SOURCE);
-                return Lists.newArrayList(new ItemStack(this, countSeeds), new ItemStack(drop, countDrops));
-            }
-        }
-        int countSeeds = MHelper.randRange(1, 3, MHelper.RANDOM_SOURCE);
-        int countDrops = MHelper.randRange(1, 2, MHelper.RANDOM_SOURCE);
-        return Lists.newArrayList(new ItemStack(this, countSeeds), new ItemStack(drop, countDrops));
     }
 
     @Override
@@ -120,5 +97,20 @@ public class BaseCropBlock extends BasePlantBlock implements SurvivesOnBlocks {
     @Override
     public boolean isTerrain(BlockState state) {
         return SurvivesOnBlocks.super.isTerrain(state);
+    }
+
+    @Override
+    public @Nullable LootTable.Builder registerBlockLoot(
+            @NotNull ResourceLocation location,
+            @NotNull LootLookupProvider provider,
+            @NotNull ResourceKey<LootTable> tableKey
+    ) {
+        return provider.dropPlant(this,
+                drop, UniformGenerator.between(1, 2),
+                this, UniformGenerator.between(1, 3),
+                0.571f, 3,
+                AGE, 3
+        );
+
     }
 }

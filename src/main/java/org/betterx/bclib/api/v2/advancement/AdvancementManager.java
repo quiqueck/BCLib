@@ -292,8 +292,9 @@ public class AdvancementManager {
             return this;
         }
 
+        @Deprecated(forRemoval = true)
         public Builder addAtStructureCriterion(String name, BCLStructure<?> structure) {
-            return addAtStructureCriterion(name, new Holder.Direct(structure.structureKey));
+            throw new UnsupportedOperationException("No longer supported");
         }
 
         public Builder addAtStructureCriterion(String name, Holder<Structure> structure) {

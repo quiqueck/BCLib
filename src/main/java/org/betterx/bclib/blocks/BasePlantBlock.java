@@ -5,19 +5,18 @@ import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
-import org.betterx.bclib.util.LootUtil;
+import org.betterx.wover.loot.api.BlockLootProvider;
+import org.betterx.wover.loot.api.LootLookupProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -25,8 +24,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -34,13 +32,11 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import com.google.common.collect.Lists;
-
-import java.util.List;
 import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderLayerProvider, BonemealableBlock {
+public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderLayerProvider, BonemealableBlock, BlockLootProvider {
     private static final VoxelShape SHAPE = box(4, 0, 4, 12, 14, 12);
 
     protected BasePlantBlock(Properties settings) {
@@ -78,19 +74,6 @@ public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderL
             return Blocks.AIR.defaultBlockState();
         } else {
             return state;
-        }
-    }
-
-    @Override
-    public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
-        ItemStack tool = builder.getParameter(LootContextParams.TOOL);
-        if (LootUtil.isCorrectTool(this, state, tool) || EnchantmentHelper.getItemEnchantmentLevel(
-                new Holder.Direct(Enchantments.SILK_TOUCH),
-                tool
-        ) > 0) {
-            return Lists.newArrayList(new ItemStack(this));
-        } else {
-            return Lists.newArrayList();
         }
     }
 
@@ -133,5 +116,15 @@ public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderL
     public BlockModel getBlockModel(ResourceLocation resourceLocation, BlockState blockState) {
         Optional<String> pattern = PatternsHelper.createJson(BasePatterns.BLOCK_CROSS, resourceLocation);
         return ModelsHelper.fromPattern(pattern);
+    }
+
+    @Override
+    @Nullable
+    public LootTable.Builder registerBlockLoot(
+            @NotNull ResourceLocation location,
+            @NotNull LootLookupProvider provider,
+            @NotNull ResourceKey<LootTable> tableKey
+    ) {
+        return provider.dropWithSilkTouchOrShears(this);
     }
 }

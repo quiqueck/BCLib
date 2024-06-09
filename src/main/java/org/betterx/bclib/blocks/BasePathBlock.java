@@ -5,23 +5,21 @@ import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.wover.loot.api.BlockLootProvider;
+import org.betterx.wover.loot.api.LootLookupProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -30,34 +28,23 @@ import net.fabricmc.api.Environment;
 
 import com.google.common.collect.Maps;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BasePathBlock extends BaseBlockNotFull {
+public abstract class BasePathBlock extends BaseBlockNotFull implements BlockLootProvider {
     private static final VoxelShape SHAPE = box(0, 0, 0, 16, 15, 16);
 
     private Block baseBlock;
 
     public BasePathBlock(Block source) {
         super(Properties.ofFullCopy(source).isValidSpawn((state, world, pos, type) -> false));
-        this.baseBlock = Blocks.DIRT;
-        if (source instanceof BaseTerrainBlock) {
-            BaseTerrainBlock terrain = (BaseTerrainBlock) source;
+        this.baseBlock = source;
+        if (source instanceof BaseTerrainBlock terrain) {
             this.baseBlock = terrain.getBaseBlock();
             terrain.setPathBlock(this);
         }
-    }
-
-    @Override
-    public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
-        ItemStack tool = builder.getParameter(LootContextParams.TOOL);
-        if (tool != null && EnchantmentHelper.getItemEnchantmentLevel(new Holder.Direct(Enchantments.SILK_TOUCH), tool) > 0) {
-            return Collections.singletonList(new ItemStack(this));
-        }
-        return Collections.singletonList(new ItemStack(Blocks.END_STONE));
     }
 
     @Override
@@ -103,6 +90,15 @@ public abstract class BasePathBlock extends BaseBlockNotFull {
         ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState);
         registerBlockModel(stateId, modelId, blockState, modelCache);
         return ModelsHelper.createRandomTopModel(modelId.id());
+    }
+
+    @Override
+    public LootTable.Builder registerBlockLoot(
+            @NotNull ResourceLocation location,
+            @NotNull LootLookupProvider provider,
+            @NotNull ResourceKey<LootTable> tableKey
+    ) {
+        return provider.dropWithSilkTouch(this, this.baseBlock, ConstantValue.exactly(1));
     }
 
     public static class Stone extends BasePathBlock implements BehaviourStone {

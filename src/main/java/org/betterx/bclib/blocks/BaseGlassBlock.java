@@ -3,26 +3,25 @@ package org.betterx.bclib.blocks;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.interfaces.tools.AddMineablePickaxe;
+import org.betterx.wover.loot.api.BlockLootProvider;
+import org.betterx.wover.loot.api.LootLookupProvider;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.LootTable;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import java.util.Collections;
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class BaseGlassBlock extends BaseBlockNotFull implements AddMineablePickaxe, RenderLayerProvider {
+public class BaseGlassBlock extends BaseBlockNotFull implements AddMineablePickaxe, RenderLayerProvider, BlockLootProvider {
     public BaseGlassBlock(Block block) {
         this(block, 0.3f);
     }
@@ -51,16 +50,16 @@ public class BaseGlassBlock extends BaseBlockNotFull implements AddMineablePicka
     }
 
     @Override
-    public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
-        ItemStack tool = builder.getParameter(LootContextParams.TOOL);
-        if (tool != null && EnchantmentHelper.getItemEnchantmentLevel(new Holder.Direct(Enchantments.SILK_TOUCH), tool) > 0) {
-            return Collections.singletonList(new ItemStack(this));
-        }
-        return Collections.emptyList();
+    public BCLRenderLayer getRenderLayer() {
+        return BCLRenderLayer.TRANSLUCENT;
     }
 
     @Override
-    public BCLRenderLayer getRenderLayer() {
-        return BCLRenderLayer.TRANSLUCENT;
+    public @Nullable LootTable.Builder registerBlockLoot(
+            @NotNull ResourceLocation location,
+            @NotNull LootLookupProvider provider,
+            @NotNull ResourceKey<LootTable> tableKey
+    ) {
+        return provider.dropWithSilkTouch(this);
     }
 }

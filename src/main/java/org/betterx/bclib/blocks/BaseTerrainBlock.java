@@ -7,14 +7,16 @@ import org.betterx.bclib.client.sound.BlockSounds;
 import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.worlds.together.tag.v3.MineableTags;
 import org.betterx.worlds.together.tag.v3.TagManager;
+import org.betterx.wover.loot.api.BlockLootProvider;
+import org.betterx.wover.loot.api.LootLookupProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,9 +25,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
@@ -34,8 +33,8 @@ import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.lighting.LightEngine;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.phys.BlockHitResult;
 
 import net.fabricmc.api.EnvType;
@@ -43,14 +42,13 @@ import net.fabricmc.api.Environment;
 
 import com.google.common.collect.Maps;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("deprecation")
-public class BaseTerrainBlock extends BaseBlock {
+public class BaseTerrainBlock extends BaseBlock implements BlockLootProvider {
     private final Block baseBlock;
     private Block pathBlock;
 
@@ -92,15 +90,6 @@ public class BaseTerrainBlock extends BaseBlock {
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.FAIL;
-    }
-
-    @Override
-    public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
-        ItemStack tool = builder.getParameter(LootContextParams.TOOL);
-        if (tool != null && EnchantmentHelper.getItemEnchantmentLevel(new Holder.Direct(Enchantments.SILK_TOUCH), tool) > 0) {
-            return Collections.singletonList(new ItemStack(this));
-        }
-        return Collections.singletonList(new ItemStack(getBaseBlock()));
     }
 
     @Override
@@ -162,5 +151,14 @@ public class BaseTerrainBlock extends BaseBlock {
         ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState);
         registerBlockModel(stateId, modelId, blockState, modelCache);
         return ModelsHelper.createRandomTopModel(modelId.id());
+    }
+
+    @Override
+    public LootTable.Builder registerBlockLoot(
+            @NotNull ResourceLocation location,
+            @NotNull LootLookupProvider provider,
+            @NotNull ResourceKey<LootTable> tableKey
+    ) {
+        return provider.dropWithSilkTouch(this, getBaseBlock(), ConstantValue.exactly(1));
     }
 }

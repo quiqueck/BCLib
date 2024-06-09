@@ -4,51 +4,36 @@ import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
-import org.betterx.bclib.interfaces.TagProvider;
-import org.betterx.worlds.together.tag.v3.CommonBlockTags;
+import org.betterx.wover.block.api.BlockTagProvider;
+import org.betterx.wover.loot.api.BlockLootProvider;
+import org.betterx.wover.loot.api.LootLookupProvider;
+import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
+import org.betterx.wover.tag.api.predefined.CommonBlockTags;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseBookshelfBlock extends BaseBlock implements TagProvider {
+public abstract class BaseBookshelfBlock extends BaseBlock implements BlockTagProvider, BlockLootProvider {
     protected BaseBookshelfBlock(Block source) {
         this(Properties.ofFullCopy(source));
     }
 
     protected BaseBookshelfBlock(BlockBehaviour.Properties properties) {
         super(properties);
-    }
-
-    @Override
-    public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
-        ItemStack tool = builder.getParameter(LootContextParams.TOOL);
-        if (tool != null) {
-            int silk = EnchantmentHelper.getItemEnchantmentLevel(new Holder.Direct(Enchantments.SILK_TOUCH), tool);
-            if (silk > 0) {
-                return Collections.singletonList(new ItemStack(this));
-            }
-        }
-        return Collections.singletonList(new ItemStack(Items.BOOK, 3));
     }
 
     @Override
@@ -64,8 +49,17 @@ public abstract class BaseBookshelfBlock extends BaseBlock implements TagProvide
     }
 
     @Override
-    public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-        blockTags.add(CommonBlockTags.BOOKSHELVES);
+    public void registerItemTags(ResourceLocation location, TagBootstrapContext<Block> context) {
+        context.add(this, CommonBlockTags.BOOKSHELVES);
+    }
+
+    @Override
+    public @Nullable LootTable.Builder registerBlockLoot(
+            @NotNull ResourceLocation location,
+            @NotNull LootLookupProvider provider,
+            @NotNull ResourceKey<LootTable> tableKey
+    ) {
+        return provider.dropWithSilkTouch(this, Items.BOOK, ConstantValue.exactly(3));
     }
 
     public static class Wood extends BaseBookshelfBlock implements BehaviourWood {
