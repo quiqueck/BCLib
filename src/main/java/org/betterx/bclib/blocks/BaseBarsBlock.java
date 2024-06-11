@@ -84,7 +84,7 @@ public abstract class BaseBarsBlock extends IronBarsBlock implements BlockModelP
     public UnbakedModel getModelVariant(
             ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ModelResourceLocation, UnbakedModel> modelCache
+            Map<ResourceLocation, UnbakedModel> modelCache
     ) {
         ModelResourceLocation postId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, "_post");
         ModelResourceLocation sideId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, "_side");

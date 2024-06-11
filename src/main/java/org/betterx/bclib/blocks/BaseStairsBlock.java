@@ -73,7 +73,7 @@ public abstract class BaseStairsBlock extends StairBlock implements BlockModelPr
     public UnbakedModel getModelVariant(
             ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ModelResourceLocation, UnbakedModel> modelCache
+            Map<ResourceLocation, UnbakedModel> modelCache
     ) {
         String state;
         StairsShape shape = blockState.getValue(SHAPE);

@@ -68,7 +68,7 @@ public abstract class BasePressurePlateBlock extends PressurePlateBlock implemen
     public UnbakedModel getModelVariant(
             ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ModelResourceLocation, UnbakedModel> modelCache
+            Map<ResourceLocation, UnbakedModel> modelCache
     ) {
         String state = blockState.getValue(POWERED) ? "_down" : "_up";
         ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, state);

@@ -55,7 +55,7 @@ public abstract class BaseChainBlock extends ChainBlock implements BlockModelPro
     public UnbakedModel getModelVariant(
             ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ModelResourceLocation, UnbakedModel> modelCache
+            Map<ResourceLocation, UnbakedModel> modelCache
     ) {
         Direction.Axis axis = blockState.getValue(AXIS);
         ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState);

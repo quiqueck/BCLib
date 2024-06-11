@@ -90,7 +90,7 @@ public abstract class BaseDoorBlock extends DoorBlock implements RenderLayerProv
     public UnbakedModel getModelVariant(
             ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ModelResourceLocation, UnbakedModel> modelCache
+            Map<ResourceLocation, UnbakedModel> modelCache
     ) {
         Direction facing = blockState.getValue(FACING);
         DoorType doorType = getDoorType(blockState);

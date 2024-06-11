@@ -52,7 +52,7 @@ public abstract class BaseRotatedPillarBlock extends RotatedPillarBlock implemen
     public UnbakedModel getModelVariant(
             ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ModelResourceLocation, UnbakedModel> modelCache
+            Map<ResourceLocation, UnbakedModel> modelCache
     ) {
         ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState);
         registerBlockModel(stateId, modelId, blockState, modelCache);

@@ -228,7 +228,7 @@ public abstract class StalactiteBlock extends BaseBlockNotFull implements Simple
     public UnbakedModel getModelVariant(
             ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ModelResourceLocation, UnbakedModel> modelCache
+            Map<ResourceLocation, UnbakedModel> modelCache
     ) {
         BlockModelRotation rotation = blockState.getValue(IS_FLOOR)
                 ? BlockModelRotation.X0_Y0

@@ -68,7 +68,7 @@ public abstract class BaseFenceBlock extends FenceBlock implements BlockModelPro
     public UnbakedModel getModelVariant(
             ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ModelResourceLocation, UnbakedModel> modelCache
+            Map<ResourceLocation, UnbakedModel> modelCache
     ) {
         ModelResourceLocation postId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, "_post");
         ModelResourceLocation sideId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, "_side");

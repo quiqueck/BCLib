@@ -80,7 +80,7 @@ public abstract class BaseButtonBlock extends ButtonBlock implements BlockModelP
     public UnbakedModel getModelVariant(
             ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ModelResourceLocation, UnbakedModel> modelCache
+            Map<ResourceLocation, UnbakedModel> modelCache
     ) {
         String powered = blockState.getValue(POWERED) ? "_powered" : "";
         ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, powered);

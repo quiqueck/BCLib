@@ -71,7 +71,7 @@ public abstract class BaseSlabBlock extends SlabBlock implements BlockModelProvi
     public UnbakedModel getModelVariant(
             ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ModelResourceLocation, UnbakedModel> modelCache
+            Map<ResourceLocation, UnbakedModel> modelCache
     ) {
         SlabType type = blockState.getValue(TYPE);
         ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, "_" + type);

@@ -74,7 +74,7 @@ public abstract class BaseGateBlock extends FenceGateBlock implements BlockModel
     public UnbakedModel getModelVariant(
             ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ModelResourceLocation, UnbakedModel> modelCache
+            Map<ResourceLocation, UnbakedModel> modelCache
     ) {
         boolean inWall = blockState.getValue(IN_WALL);
         boolean isOpen = blockState.getValue(OPEN);

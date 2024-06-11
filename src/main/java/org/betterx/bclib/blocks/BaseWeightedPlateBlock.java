@@ -63,7 +63,7 @@ public class BaseWeightedPlateBlock extends WeightedPressurePlateBlock implement
     public UnbakedModel getModelVariant(
             ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ModelResourceLocation, UnbakedModel> modelCache
+            Map<ResourceLocation, UnbakedModel> modelCache
     ) {
         String state = blockState.getValue(POWER) > 0 ? "_down" : "_up";
         ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, state);

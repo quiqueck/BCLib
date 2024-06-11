@@ -96,7 +96,7 @@ public abstract class BaseFurnaceBlock extends FurnaceBlock implements BlockMode
     public UnbakedModel getModelVariant(
             ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ModelResourceLocation, UnbakedModel> modelCache
+            Map<ResourceLocation, UnbakedModel> modelCache
     ) {
         String lit = blockState.getValue(LIT) ? "_lit" : "";
         ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, lit);

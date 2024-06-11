@@ -48,7 +48,7 @@ public interface BlockModelProvider extends ItemModelProvider {
     default UnbakedModel getModelVariant(
             ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ModelResourceLocation, UnbakedModel> modelCache
+            Map<ResourceLocation, UnbakedModel> modelCache
     ) {
         ModelResourceLocation modelId = remapModelResourceLocation(stateId, blockState);
         registerBlockModel(stateId, modelId, blockState, modelCache);
@@ -60,13 +60,13 @@ public interface BlockModelProvider extends ItemModelProvider {
             ModelResourceLocation stateId,
             ModelResourceLocation modelId,
             BlockState blockState,
-            Map<ModelResourceLocation, UnbakedModel> modelCache
+            Map<ResourceLocation, UnbakedModel> modelCache
     ) {
-        if (!modelCache.containsKey(modelId)) {
+        if (!modelCache.containsKey(modelId.id())) {
             BlockModel model = getBlockModel(stateId.id(), blockState);
             if (model != null) {
                 model.name = modelId.toString();
-                modelCache.put(modelId, model);
+                modelCache.put(modelId.id(), model);
             } else {
                 BCLib.LOGGER.warn("Error loading model: {}", modelId);
             }

@@ -148,7 +148,7 @@ public class TripleTerrainBlock extends BaseTerrainBlock {
     public UnbakedModel getModelVariant(
             ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ModelResourceLocation, UnbakedModel> modelCache
+            Map<ResourceLocation, UnbakedModel> modelCache
     ) {
         boolean isMiddle = isMiddle(blockState);
         String middle = isMiddle ? "_middle" : "";

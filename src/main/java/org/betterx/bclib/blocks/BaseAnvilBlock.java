@@ -94,7 +94,7 @@ public abstract class BaseAnvilBlock extends AnvilBlock implements AddMineablePi
     public UnbakedModel getModelVariant(
             ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ModelResourceLocation, UnbakedModel> modelCache
+            Map<ResourceLocation, UnbakedModel> modelCache
     ) {
         int destruction = blockState.getValue(DESTRUCTION);
         ModelResourceLocation modelLocation = BlockModelProvider.remapModelResourceLocation(stateId, blockState, "_top_" + destruction);

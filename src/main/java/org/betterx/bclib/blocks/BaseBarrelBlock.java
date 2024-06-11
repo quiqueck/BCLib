@@ -116,7 +116,7 @@ public abstract class BaseBarrelBlock extends BarrelBlock implements BlockModelP
     public UnbakedModel getModelVariant(
             ModelResourceLocation stateId,
             BlockState blockState,
-            Map<ModelResourceLocation, UnbakedModel> modelCache
+            Map<ResourceLocation, UnbakedModel> modelCache
     ) {
         String open = blockState.getValue(OPEN) ? "_open" : "";
         ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, open);
