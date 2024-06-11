@@ -5,7 +5,7 @@ import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
-import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.bclib.interfaces.TagProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseFenceBlock extends FenceBlock implements BlockModelProvider, TagProvider, DropSelfLootProvider<BaseFenceBlock> {
+public abstract class BaseFenceBlock extends FenceBlock implements RuntimeBlockModelProvider, TagProvider, DropSelfLootProvider<BaseFenceBlock> {
     private final Block parent;
 
     protected BaseFenceBlock(Block source) {
@@ -70,8 +70,8 @@ public abstract class BaseFenceBlock extends FenceBlock implements BlockModelPro
             BlockState blockState,
             Map<ResourceLocation, UnbakedModel> modelCache
     ) {
-        ModelResourceLocation postId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, "_post");
-        ModelResourceLocation sideId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, "_side");
+        ModelResourceLocation postId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState, "_post");
+        ModelResourceLocation sideId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState, "_side");
         registerBlockModel(postId, postId, blockState, modelCache);
         registerBlockModel(sideId, sideId, blockState, modelCache);
 

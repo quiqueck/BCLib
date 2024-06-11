@@ -1,29 +1,21 @@
 package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
-import org.betterx.bclib.client.models.BasePatterns;
-import org.betterx.bclib.client.models.ModelsHelper;
-import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.wover.block.api.BlockTagProvider;
+import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 import org.betterx.wover.loot.api.BlockLootProvider;
 import org.betterx.wover.loot.api.LootLookupProvider;
 import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
 import org.betterx.wover.tag.api.predefined.CommonBlockTags;
 
-import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
-import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,10 +29,8 @@ public abstract class BaseBookshelfBlock extends BaseBlock implements BlockTagPr
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
-    public @Nullable BlockModel getBlockModel(ResourceLocation blockId, BlockState blockState) {
-        Optional<String> pattern = PatternsHelper.createJson(BasePatterns.BLOCK_BOOKSHELF, replacePath(blockId));
-        return ModelsHelper.fromPattern(pattern);
+    public void provideBlockModels(WoverBlockModelGenerators generators) {
+        generators.createBookshelf(this, this);
     }
 
     protected ResourceLocation replacePath(ResourceLocation blockId) {
@@ -49,7 +39,7 @@ public abstract class BaseBookshelfBlock extends BaseBlock implements BlockTagPr
     }
 
     @Override
-    public void registerItemTags(ResourceLocation location, TagBootstrapContext<Block> context) {
+    public void registerBlockTags(ResourceLocation location, TagBootstrapContext<Block> context) {
         context.add(this, CommonBlockTags.BOOKSHELVES);
     }
 
@@ -73,18 +63,16 @@ public abstract class BaseBookshelfBlock extends BaseBlock implements BlockTagPr
     }
 
     public static class VanillaWood extends Wood {
+        private final Block parent;
+
         public VanillaWood(Block source) {
             super(source);
+            this.parent = source;
         }
 
         @Override
-        @Environment(EnvType.CLIENT)
-        public @Nullable BlockModel getBlockModel(ResourceLocation blockId, BlockState blockState) {
-            Optional<String> pattern = PatternsHelper.createJson(
-                    BasePatterns.VANILLA_WOOD_BOOKSHELF,
-                    replacePath(blockId)
-            );
-            return ModelsHelper.fromPattern(pattern);
+        public void provideBlockModels(WoverBlockModelGenerators generators) {
+            generators.createBookshelf(this, parent);
         }
     }
 

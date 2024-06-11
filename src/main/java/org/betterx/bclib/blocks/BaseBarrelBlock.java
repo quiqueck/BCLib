@@ -6,7 +6,7 @@ import org.betterx.bclib.blockentities.BaseBarrelBlockEntity;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
-import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.bclib.interfaces.TagProvider;
 import org.betterx.bclib.registry.BaseBlockEntities;
 import org.betterx.worlds.together.tag.v3.CommonBlockTags;
@@ -44,7 +44,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseBarrelBlock extends BarrelBlock implements BlockModelProvider, TagProvider, DropSelfLootProvider<BaseBarrelBlock> {
+public abstract class BaseBarrelBlock extends BarrelBlock implements RuntimeBlockModelProvider, TagProvider, DropSelfLootProvider<BaseBarrelBlock> {
     BaseBarrelBlock(Block source) {
         this(Properties.ofFullCopy(source).noOcclusion());
     }
@@ -119,7 +119,7 @@ public abstract class BaseBarrelBlock extends BarrelBlock implements BlockModelP
             Map<ResourceLocation, UnbakedModel> modelCache
     ) {
         String open = blockState.getValue(OPEN) ? "_open" : "";
-        ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, open);
+        ModelResourceLocation modelId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState, open);
         registerBlockModel(stateId, modelId, blockState, modelCache);
         Direction facing = blockState.getValue(FACING);
         BlockModelRotation rotation = BlockModelRotation.X0_Y0;

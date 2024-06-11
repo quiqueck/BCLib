@@ -1,8 +1,8 @@
 package org.betterx.bclib.items;
 
 import org.betterx.bclib.blocks.BaseAnvilBlock;
-import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.ItemModelProvider;
+import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.bclib.util.BCLDataComponents;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -51,7 +51,7 @@ public class BaseAnvilItem extends BlockItem implements ItemModelProvider {
                                        .setValue(BaseAnvilBlock.DESTRUCTION, destructionValue);
             }
         }
-        
+
         return blockState;
     }
 
@@ -81,6 +81,6 @@ public class BaseAnvilItem extends BlockItem implements ItemModelProvider {
     public BlockModel getItemModel(ResourceLocation resourceLocation) {
         Block anvilBlock = getBlock();
         ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(anvilBlock);
-        return ((BlockModelProvider) anvilBlock).getBlockModel(blockId, anvilBlock.defaultBlockState());
+        return ((RuntimeBlockModelProvider) anvilBlock).getBlockModel(blockId, anvilBlock.defaultBlockState());
     }
 }

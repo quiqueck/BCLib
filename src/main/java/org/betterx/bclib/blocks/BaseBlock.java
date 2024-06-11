@@ -3,19 +3,23 @@ package org.betterx.bclib.blocks;
 import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
 import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
-import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.wover.block.api.model.BlockModelProvider;
+import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
+import org.betterx.wover.loot.api.BlockLootProvider;
+import org.betterx.wover.loot.api.LootLookupProvider;
 
-import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.data.models.model.TexturedModel;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.LootTable;
 
-import java.util.Collections;
-import java.util.List;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import java.util.function.Consumer;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Base class for a default Block.
@@ -26,7 +30,7 @@ import java.util.function.Consumer;
  * 	 <li>Automatically create an Item-Model from the Block-Model</li>
  * </ul>
  */
-public class BaseBlock extends Block implements BlockModelProvider {
+public class BaseBlock extends Block implements BlockLootProvider, BlockModelProvider {
     /**
      * Creates a new Block with the passed properties
      *
@@ -40,26 +44,15 @@ public class BaseBlock extends Block implements BlockModelProvider {
         super(emptyLootTable ? settings.noLootTable() : settings);
     }
 
-
-    /**
-     * {@inheritDoc}
-     * <p>
-     * This implementation will drop the Block itself
-     */
-    @Override
-    public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
-        return Collections.singletonList(new ItemStack(this));
-    }
-
-    /**
-     * {@inheritDoc}
-     * <p>
-     * This implementation will load the Block-Model and return it as the Item-Model
-     */
-    @Override
-    public BlockModel getItemModel(ResourceLocation blockId) {
-        return getBlockModel(blockId, defaultBlockState());
-    }
+//    /**
+//     * {@inheritDoc}
+//     * <p>
+//     * This implementation will load the Block-Model and return it as the Item-Model
+//     */
+//    @Override
+//    public BlockModel getItemModel(ResourceLocation blockId) {
+//        return getBlockModel(blockId, defaultBlockState());
+//    }
 
     /**
      * This method is used internally.
@@ -79,6 +72,21 @@ public class BaseBlock extends Block implements BlockModelProvider {
     ) {
         customizeProperties.accept(settings);
         return settings;
+    }
+
+    @Override
+    @Environment(EnvType.CLIENT)
+    public void provideBlockModels(WoverBlockModelGenerators generators) {
+        generators.modelFor(TexturedModel.CUBE.get(this)).createFullBlock(this);
+    }
+
+    @Override
+    public LootTable.Builder registerBlockLoot(
+            @NotNull ResourceLocation location,
+            @NotNull LootLookupProvider provider,
+            @NotNull ResourceKey<LootTable> tableKey
+    ) {
+        return provider.drop(this);
     }
 
     public static class Wood extends BaseBlock implements BehaviourWood {

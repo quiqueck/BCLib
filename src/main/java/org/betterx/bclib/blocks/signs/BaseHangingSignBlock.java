@@ -5,8 +5,8 @@ import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
 import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.complexmaterials.BCLWoodTypeWrapper;
-import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.CustomItemProvider;
+import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.bclib.interfaces.TagProvider;
 
 import net.minecraft.resources.ResourceLocation;
@@ -27,7 +27,7 @@ import net.minecraft.world.level.material.MapColor;
 import java.util.List;
 import java.util.function.Supplier;
 
-public abstract class BaseHangingSignBlock extends CeilingHangingSignBlock implements BlockModelProvider, CustomItemProvider, TagProvider {
+public abstract class BaseHangingSignBlock extends CeilingHangingSignBlock implements RuntimeBlockModelProvider, CustomItemProvider, TagProvider {
     protected final Supplier<BaseWallHangingSignBlock> wallSign;
     private BlockItem customItem;
     private BaseWallHangingSignBlock wallSignBlock;

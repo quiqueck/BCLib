@@ -4,7 +4,7 @@ import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.client.sound.BlockSounds;
-import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.worlds.together.tag.v3.MineableTags;
 import org.betterx.worlds.together.tag.v3.TagManager;
 import org.betterx.wover.loot.api.BlockLootProvider;
@@ -48,7 +48,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("deprecation")
-public class BaseTerrainBlock extends BaseBlock implements BlockLootProvider {
+public class BaseTerrainBlock extends BaseBlock implements BlockLootProvider, RuntimeBlockModelProvider {
     private final Block baseBlock;
     private Block pathBlock;
 
@@ -148,7 +148,7 @@ public class BaseTerrainBlock extends BaseBlock implements BlockLootProvider {
             BlockState blockState,
             Map<ResourceLocation, UnbakedModel> modelCache
     ) {
-        ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState);
+        ModelResourceLocation modelId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState);
         registerBlockModel(stateId, modelId, blockState, modelCache);
         return ModelsHelper.createRandomTopModel(modelId.id());
     }

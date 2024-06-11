@@ -5,8 +5,8 @@ import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.client.render.BCLRenderLayer;
-import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
+import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseBarsBlock extends IronBarsBlock implements BlockModelProvider, RenderLayerProvider, BehaviourMetal {
+public abstract class BaseBarsBlock extends IronBarsBlock implements RuntimeBlockModelProvider, RenderLayerProvider, BehaviourMetal {
     public BaseBarsBlock(Block source) {
         this(Properties.ofFullCopy(source).strength(5.0F, 6.0F).noOcclusion());
     }
@@ -86,8 +86,8 @@ public abstract class BaseBarsBlock extends IronBarsBlock implements BlockModelP
             BlockState blockState,
             Map<ResourceLocation, UnbakedModel> modelCache
     ) {
-        ModelResourceLocation postId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, "_post");
-        ModelResourceLocation sideId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, "_side");
+        ModelResourceLocation postId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState, "_post");
+        ModelResourceLocation sideId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState, "_side");
         registerBlockModel(postId, postId, blockState, modelCache);
         registerBlockModel(sideId, sideId, blockState, modelCache);
 

@@ -5,8 +5,8 @@ import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.client.render.BCLRenderLayer;
-import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
+import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
@@ -49,7 +49,7 @@ import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("deprecation")
-public abstract class StalactiteBlock extends BaseBlockNotFull implements SimpleWaterloggedBlock, LiquidBlockContainer, RenderLayerProvider {
+public abstract class StalactiteBlock extends BaseBlockNotFull implements SimpleWaterloggedBlock, LiquidBlockContainer, RenderLayerProvider, RuntimeBlockModelProvider {
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final BooleanProperty IS_FLOOR = BlockProperties.IS_FLOOR;
     public static final IntegerProperty SIZE = BlockProperties.SIZE;
@@ -233,7 +233,7 @@ public abstract class StalactiteBlock extends BaseBlockNotFull implements Simple
         BlockModelRotation rotation = blockState.getValue(IS_FLOOR)
                 ? BlockModelRotation.X0_Y0
                 : BlockModelRotation.X180_Y0;
-        ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, "_" + blockState.getValue(SIZE));
+        ModelResourceLocation modelId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState, "_" + blockState.getValue(SIZE));
 
         registerBlockModel(modelId, modelId, blockState, modelCache);
         return ModelsHelper.createMultiVariant(modelId.id(), rotation.getRotation(), false);

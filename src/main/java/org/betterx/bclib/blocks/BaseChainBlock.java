@@ -6,8 +6,8 @@ import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.client.render.BCLRenderLayer;
-import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
+import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseChainBlock extends ChainBlock implements BlockModelProvider, RenderLayerProvider, DropSelfLootProvider<BaseChainBlock> {
+public abstract class BaseChainBlock extends ChainBlock implements RuntimeBlockModelProvider, RenderLayerProvider, DropSelfLootProvider<BaseChainBlock> {
     public BaseChainBlock(MapColor color) {
         this(Properties.ofFullCopy(Blocks.CHAIN).mapColor(color));
     }
@@ -58,7 +58,7 @@ public abstract class BaseChainBlock extends ChainBlock implements BlockModelPro
             Map<ResourceLocation, UnbakedModel> modelCache
     ) {
         Direction.Axis axis = blockState.getValue(AXIS);
-        ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState);
+        ModelResourceLocation modelId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState);
         registerBlockModel(stateId, modelId, blockState, modelCache);
         return ModelsHelper.createRotatedModel(modelId.id(), axis);
     }

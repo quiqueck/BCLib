@@ -6,8 +6,8 @@ import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.client.render.BCLRenderLayer;
-import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
+import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.bclib.registry.BaseBlockEntities;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseFurnaceBlock extends FurnaceBlock implements BlockModelProvider, RenderLayerProvider {
+public abstract class BaseFurnaceBlock extends FurnaceBlock implements RuntimeBlockModelProvider, RenderLayerProvider {
     public BaseFurnaceBlock(Block source) {
         this(Properties.ofFullCopy(source).lightLevel(state -> state.getValue(LIT) ? 13 : 0));
     }
@@ -99,7 +99,7 @@ public abstract class BaseFurnaceBlock extends FurnaceBlock implements BlockMode
             Map<ResourceLocation, UnbakedModel> modelCache
     ) {
         String lit = blockState.getValue(LIT) ? "_lit" : "";
-        ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, lit);
+        ModelResourceLocation modelId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState, lit);
         registerBlockModel(stateId, modelId, blockState, modelCache);
         return ModelsHelper.createFacingModel(modelId.id(), blockState.getValue(FACING), false, true);
     }

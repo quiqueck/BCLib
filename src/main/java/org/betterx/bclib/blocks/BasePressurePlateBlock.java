@@ -8,7 +8,7 @@ import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
-import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.bclib.interfaces.TagProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BasePressurePlateBlock extends PressurePlateBlock implements BlockModelProvider, TagProvider, DropSelfLootProvider<BasePressurePlateBlock> {
+public abstract class BasePressurePlateBlock extends PressurePlateBlock implements RuntimeBlockModelProvider, TagProvider, DropSelfLootProvider<BasePressurePlateBlock> {
     private final Block parent;
 
     protected BasePressurePlateBlock(Block source, BlockSetType type) {
@@ -71,7 +71,7 @@ public abstract class BasePressurePlateBlock extends PressurePlateBlock implemen
             Map<ResourceLocation, UnbakedModel> modelCache
     ) {
         String state = blockState.getValue(POWERED) ? "_down" : "_up";
-        ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, state);
+        ModelResourceLocation modelId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState, state);
         registerBlockModel(stateId, modelId, blockState, modelCache);
         return ModelsHelper.createBlockSimple(modelId.id());
     }

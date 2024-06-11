@@ -7,7 +7,7 @@ import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
-import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseRotatedPillarBlock extends RotatedPillarBlock implements BlockModelProvider, DropSelfLootProvider<BaseRotatedPillarBlock> {
+public abstract class BaseRotatedPillarBlock extends RotatedPillarBlock implements RuntimeBlockModelProvider, DropSelfLootProvider<BaseRotatedPillarBlock> {
     protected BaseRotatedPillarBlock(Properties settings) {
         super(settings);
     }
@@ -54,7 +54,7 @@ public abstract class BaseRotatedPillarBlock extends RotatedPillarBlock implemen
             BlockState blockState,
             Map<ResourceLocation, UnbakedModel> modelCache
     ) {
-        ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState);
+        ModelResourceLocation modelId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState);
         registerBlockModel(stateId, modelId, blockState, modelCache);
         return ModelsHelper.createRotatedModel(modelId.id(), blockState.getValue(AXIS));
     }

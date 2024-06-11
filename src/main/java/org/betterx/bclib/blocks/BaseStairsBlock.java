@@ -9,8 +9,8 @@ import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
-import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.CustomItemProvider;
+import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.bclib.interfaces.TagProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseStairsBlock extends StairBlock implements BlockModelProvider, CustomItemProvider, TagProvider, DropSelfLootProvider<BaseStairsBlock> {
+public abstract class BaseStairsBlock extends StairBlock implements RuntimeBlockModelProvider, CustomItemProvider, TagProvider, DropSelfLootProvider<BaseStairsBlock> {
 
 
     private final Block parent;
@@ -82,7 +82,7 @@ public abstract class BaseStairsBlock extends StairBlock implements BlockModelPr
             case OUTER_LEFT, OUTER_RIGHT -> "_outer";
             default -> "";
         };
-        ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, state);
+        ModelResourceLocation modelId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState, state);
         registerBlockModel(stateId, modelId, blockState, modelCache);
 
         boolean isTop = blockState.getValue(HALF) == Half.TOP;

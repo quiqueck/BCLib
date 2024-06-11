@@ -2,7 +2,7 @@ package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.behaviours.BehaviourBuilders;
 import org.betterx.bclib.behaviours.interfaces.BehaviourOre;
-import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.bclib.util.LegacyTiers;
 import org.betterx.wover.block.api.BlockTagProvider;
 import org.betterx.wover.loot.api.BlockLootProvider;
@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvider, BlockTagProvider, BehaviourOre, BlockLootProvider {
+public class BaseOreBlock extends DropExperienceBlock implements RuntimeBlockModelProvider, BlockTagProvider, BehaviourOre, BlockLootProvider {
     private final Supplier<Item> dropItem;
     private final int minCount;
     private final int maxCount;
@@ -102,7 +102,7 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
 
 
     @Override
-    public void registerItemTags(ResourceLocation location, TagBootstrapContext<Block> context) {
+    public void registerBlockTags(ResourceLocation location, TagBootstrapContext<Block> context) {
         if (this.miningTag != null) {
             context.add(this.miningTag, this);
         }

@@ -4,7 +4,7 @@ import org.betterx.bclib.api.v3.datagen.DropSelfLootProvider;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
-import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public class BaseWeightedPlateBlock extends WeightedPressurePlateBlock implements BlockModelProvider, DropSelfLootProvider<BaseWeightedPlateBlock> {
+public class BaseWeightedPlateBlock extends WeightedPressurePlateBlock implements RuntimeBlockModelProvider, DropSelfLootProvider<BaseWeightedPlateBlock> {
     private final Block parent;
 
     public BaseWeightedPlateBlock(Block source, BlockSetType type) {
@@ -66,7 +66,7 @@ public class BaseWeightedPlateBlock extends WeightedPressurePlateBlock implement
             Map<ResourceLocation, UnbakedModel> modelCache
     ) {
         String state = blockState.getValue(POWER) > 0 ? "_down" : "_up";
-        ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, state);
+        ModelResourceLocation modelId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState, state);
         registerBlockModel(stateId, modelId, blockState, modelCache);
         return ModelsHelper.createBlockSimple(modelId.id());
     }

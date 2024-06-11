@@ -5,8 +5,8 @@ import org.betterx.bclib.behaviours.BehaviourBuilders;
 import org.betterx.bclib.behaviours.interfaces.BehaviourExplosionResistant;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.complexmaterials.BCLWoodTypeWrapper;
-import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.CustomItemProvider;
+import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.bclib.interfaces.TagProvider;
 
 import net.minecraft.resources.ResourceLocation;
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 @SuppressWarnings("deprecation")
-public abstract class BaseSignBlock extends StandingSignBlock implements BlockModelProvider, CustomItemProvider, TagProvider, DropSelfLootProvider<BaseSignBlock>, BehaviourExplosionResistant {
+public abstract class BaseSignBlock extends StandingSignBlock implements RuntimeBlockModelProvider, CustomItemProvider, TagProvider, DropSelfLootProvider<BaseSignBlock>, BehaviourExplosionResistant {
     protected final Supplier<BaseWallSignBlock> wallSign;
     private BlockItem customItem;
     private BaseWallSignBlock wallSignBlock;

@@ -10,8 +10,8 @@ import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.client.render.BCLRenderLayer;
-import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
+import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.bclib.interfaces.TagProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -40,7 +40,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseTrapdoorBlock extends TrapDoorBlock implements RenderLayerProvider, BlockModelProvider, TagProvider, DropSelfLootProvider<BaseTrapdoorBlock> {
+public abstract class BaseTrapdoorBlock extends TrapDoorBlock implements RenderLayerProvider, RuntimeBlockModelProvider, TagProvider, DropSelfLootProvider<BaseTrapdoorBlock> {
     protected BaseTrapdoorBlock(BlockBehaviour.Properties properties, BlockSetType type) {
         super(type, properties);
     }
@@ -83,7 +83,7 @@ public abstract class BaseTrapdoorBlock extends TrapDoorBlock implements RenderL
             BlockState blockState,
             Map<ResourceLocation, UnbakedModel> modelCache
     ) {
-        ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState);
+        ModelResourceLocation modelId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState);
         registerBlockModel(stateId, modelId, blockState, modelCache);
         boolean isTop = blockState.getValue(HALF) == Half.TOP;
         boolean isOpen = blockState.getValue(OPEN);

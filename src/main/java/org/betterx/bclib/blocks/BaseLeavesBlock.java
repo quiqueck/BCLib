@@ -3,8 +3,8 @@ package org.betterx.bclib.blocks;
 import org.betterx.bclib.behaviours.BehaviourBuilders;
 import org.betterx.bclib.behaviours.interfaces.BehaviourLeaves;
 import org.betterx.bclib.client.render.BCLRenderLayer;
-import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
+import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.wover.loot.api.BlockLootProvider;
 import org.betterx.wover.loot.api.LootLookupProvider;
 
@@ -20,7 +20,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
 
-public class BaseLeavesBlock extends LeavesBlock implements BlockModelProvider, RenderLayerProvider, BehaviourLeaves, BlockLootProvider {
+public class BaseLeavesBlock extends LeavesBlock implements RuntimeBlockModelProvider, RenderLayerProvider, BehaviourLeaves, BlockLootProvider {
     protected final Block sapling;
 
     public BaseLeavesBlock(

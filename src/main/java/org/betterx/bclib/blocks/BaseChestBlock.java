@@ -5,7 +5,7 @@ import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
-import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.bclib.interfaces.TagProvider;
 import org.betterx.bclib.registry.BaseBlockEntities;
 import org.betterx.worlds.together.tag.v3.CommonBlockTags;
@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseChestBlock extends ChestBlock implements BlockModelProvider, TagProvider, DropSelfLootProvider<BaseChestBlock> {
+public abstract class BaseChestBlock extends ChestBlock implements RuntimeBlockModelProvider, TagProvider, DropSelfLootProvider<BaseChestBlock> {
     private final Block parent;
 
     protected BaseChestBlock(Block source) {

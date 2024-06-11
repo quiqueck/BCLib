@@ -9,8 +9,8 @@ import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
-import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.CustomItemProvider;
+import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.bclib.interfaces.TagProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -37,7 +37,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseSlabBlock extends SlabBlock implements BlockModelProvider, CustomItemProvider, TagProvider, DropSelfLootProvider<BaseSlabBlock> {
+public abstract class BaseSlabBlock extends SlabBlock implements RuntimeBlockModelProvider, CustomItemProvider, TagProvider, DropSelfLootProvider<BaseSlabBlock> {
     private final Block parent;
     public final boolean fireproof;
 
@@ -74,7 +74,7 @@ public abstract class BaseSlabBlock extends SlabBlock implements BlockModelProvi
             Map<ResourceLocation, UnbakedModel> modelCache
     ) {
         SlabType type = blockState.getValue(TYPE);
-        ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, "_" + type);
+        ModelResourceLocation modelId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState, "_" + type);
         registerBlockModel(stateId, modelId, blockState, modelCache);
         if (type == SlabType.TOP) {
             return ModelsHelper.createMultiVariant(modelId.id(), BlockModelRotation.X180_Y0.getRotation(), true);

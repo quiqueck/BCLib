@@ -5,30 +5,19 @@ import org.betterx.bclib.behaviours.BehaviourHelper;
 import org.betterx.bclib.behaviours.interfaces.BehaviourClimable;
 import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
-import org.betterx.bclib.client.models.BasePatterns;
-import org.betterx.bclib.client.models.ModelsHelper;
-import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.client.render.BCLRenderLayer;
-import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
+import org.betterx.wover.block.api.model.BlockModelProvider;
+import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 
-import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.client.resources.model.UnbakedModel;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LadderBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.BlockState;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import java.util.Map;
-import java.util.Optional;
-import org.jetbrains.annotations.Nullable;
-
-public abstract class BaseLadderBlock extends LadderBlock implements RenderLayerProvider, BlockModelProvider, BehaviourClimable, DropSelfLootProvider<BaseLadderBlock> {
+public abstract class BaseLadderBlock extends LadderBlock implements RenderLayerProvider, BehaviourClimable, DropSelfLootProvider<BaseLadderBlock>, BlockModelProvider {
     protected BaseLadderBlock(Block block) {
         this(Properties.ofFullCopy(block).noOcclusion());
     }
@@ -42,29 +31,10 @@ public abstract class BaseLadderBlock extends LadderBlock implements RenderLayer
         return BCLRenderLayer.CUTOUT;
     }
 
-    @Override
     @Environment(EnvType.CLIENT)
-    public BlockModel getItemModel(ResourceLocation blockId) {
-        return ModelsHelper.createBlockItem(blockId);
-    }
-
     @Override
-    @Environment(EnvType.CLIENT)
-    public @Nullable BlockModel getBlockModel(ResourceLocation blockId, BlockState blockState) {
-        Optional<String> pattern = PatternsHelper.createJson(BasePatterns.BLOCK_LADDER, blockId);
-        return ModelsHelper.fromPattern(pattern);
-    }
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public UnbakedModel getModelVariant(
-            ModelResourceLocation stateId,
-            BlockState blockState,
-            Map<ResourceLocation, UnbakedModel> modelCache
-    ) {
-        ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState);
-        registerBlockModel(stateId, modelId, blockState, modelCache);
-        return ModelsHelper.createFacingModel(modelId.id(), blockState.getValue(FACING), false, true);
+    public void provideBlockModels(WoverBlockModelGenerators generators) {
+        generators.createLadder(this);
     }
 
     public static class Wood extends BaseLadderBlock implements BehaviourWood {

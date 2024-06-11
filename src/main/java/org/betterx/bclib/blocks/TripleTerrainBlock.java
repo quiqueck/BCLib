@@ -3,7 +3,7 @@ package org.betterx.bclib.blocks;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
-import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.wover.block.api.BlockProperties.TripleShape;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -152,7 +152,7 @@ public class TripleTerrainBlock extends BaseTerrainBlock {
     ) {
         boolean isMiddle = isMiddle(blockState);
         String middle = isMiddle ? "_middle" : "";
-        ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, middle);
+        ModelResourceLocation modelId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState, middle);
         registerBlockModel(stateId, modelId, blockState, modelCache);
         if (isMiddle) {
             List<Variant> variants = Lists.newArrayList();

@@ -5,7 +5,7 @@ import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
-import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.bclib.interfaces.TagProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseGateBlock extends FenceGateBlock implements BlockModelProvider, TagProvider, DropSelfLootProvider<BaseGateBlock> {
+public abstract class BaseGateBlock extends FenceGateBlock implements RuntimeBlockModelProvider, TagProvider, DropSelfLootProvider<BaseGateBlock> {
     private final Block parent;
 
     protected BaseGateBlock(Block source, WoodType type) {
@@ -79,7 +79,7 @@ public abstract class BaseGateBlock extends FenceGateBlock implements BlockModel
         boolean inWall = blockState.getValue(IN_WALL);
         boolean isOpen = blockState.getValue(OPEN);
         String state = "" + (inWall ? "_wall" : "") + (isOpen ? "_open" : "_closed");
-        ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, state);
+        ModelResourceLocation modelId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState, state);
         registerBlockModel(stateId, modelId, blockState, modelCache);
         return ModelsHelper.createFacingModel(modelId.id(), blockState.getValue(FACING), true, false);
     }

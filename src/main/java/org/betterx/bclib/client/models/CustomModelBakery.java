@@ -1,7 +1,7 @@
 package org.betterx.bclib.client.models;
 
-import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.ItemModelProvider;
+import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.bclib.models.RecordItemModelProvider;
 
 import net.minecraft.client.renderer.block.BlockModelShaper;
@@ -53,7 +53,7 @@ public class CustomModelBakery {
     public void loadCustomModels(ResourceManager resourceManager) {
         BuiltInRegistries.BLOCK.stream()
                                .parallel()
-                               .filter(block -> block instanceof BlockModelProvider)
+                               .filter(block -> block instanceof RuntimeBlockModelProvider)
                                .forEach(block -> {
                                    ResourceLocation blockID = BuiltInRegistries.BLOCK.getKey(block);
                                    ResourceLocation storageID = ResourceLocation.fromNamespaceAndPath(
@@ -92,7 +92,7 @@ public class CustomModelBakery {
     }
 
     private void addBlockModel(ResourceLocation blockID, Block block) {
-        BlockModelProvider provider = (BlockModelProvider) block;
+        RuntimeBlockModelProvider provider = (RuntimeBlockModelProvider) block;
         ImmutableList<BlockState> states = block.getStateDefinition().getPossibleStates();
         BlockState defaultState = block.defaultBlockState();
 

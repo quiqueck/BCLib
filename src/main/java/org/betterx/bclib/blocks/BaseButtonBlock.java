@@ -8,7 +8,7 @@ import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
-import org.betterx.bclib.interfaces.BlockModelProvider;
+import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.bclib.interfaces.TagProvider;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseButtonBlock extends ButtonBlock implements BlockModelProvider, TagProvider, DropSelfLootProvider<BaseButtonBlock> {
+public abstract class BaseButtonBlock extends ButtonBlock implements RuntimeBlockModelProvider, TagProvider, DropSelfLootProvider<BaseButtonBlock> {
     private final Block parent;
 
     protected BaseButtonBlock(Block parent, Properties properties, BlockSetType type) {
@@ -83,7 +83,7 @@ public abstract class BaseButtonBlock extends ButtonBlock implements BlockModelP
             Map<ResourceLocation, UnbakedModel> modelCache
     ) {
         String powered = blockState.getValue(POWERED) ? "_powered" : "";
-        ModelResourceLocation modelId = BlockModelProvider.remapModelResourceLocation(stateId, blockState, powered);
+        ModelResourceLocation modelId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState, powered);
         registerBlockModel(stateId, modelId, blockState, modelCache);
         AttachFace face = blockState.getValue(FACE);
         boolean isCeiling = face == AttachFace.CEILING;
