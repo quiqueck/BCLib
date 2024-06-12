@@ -10,6 +10,7 @@ import org.betterx.wover.tag.api.event.context.ItemTagBootstrapContext;
 import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
 
 import net.minecraft.data.models.model.TextureMapping;
+import net.minecraft.data.models.model.TextureSlot;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CraftingTableBlock;
@@ -27,10 +28,21 @@ public abstract class BaseCraftingTableBlock extends CraftingTableBlock implemen
         super(properties);
     }
 
+    public static TextureMapping craftingTableTextureMapping(Block block, Block block2) {
+        return (new TextureMapping())
+                .put(TextureSlot.PARTICLE, TextureMapping.getBlockTexture(block, "_front"))
+                .put(TextureSlot.DOWN, TextureMapping.getBlockTexture(block2, "_bottom"))
+                .put(TextureSlot.UP, TextureMapping.getBlockTexture(block, "_top"))
+                .put(TextureSlot.NORTH, TextureMapping.getBlockTexture(block, "_front"))
+                .put(TextureSlot.EAST, TextureMapping.getBlockTexture(block, "_side"))
+                .put(TextureSlot.SOUTH, TextureMapping.getBlockTexture(block, "_side"))
+                .put(TextureSlot.WEST, TextureMapping.getBlockTexture(block, "_front"));
+    }
+
     @Environment(EnvType.CLIENT)
     @Override
     public void provideBlockModels(WoverBlockModelGenerators generators) {
-        generators.vanillaGenerator.createCraftingTableLike(this, this, TextureMapping::craftingTable);
+        generators.vanillaGenerator.createCraftingTableLike(this, this, BaseCraftingTableBlock::craftingTableTextureMapping);
     }
 
     @Override
