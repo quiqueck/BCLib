@@ -1,7 +1,6 @@
 package org.betterx.bclib.mixin.client;
 
 import org.betterx.bclib.interfaces.CustomColorProvider;
-import org.betterx.bclib.networking.VersionCheckerClient;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
@@ -17,8 +16,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.List;
-import java.util.function.Function;
 import org.jetbrains.annotations.Nullable;
 
 @Mixin(Minecraft.class)
@@ -35,14 +32,6 @@ public abstract class MinecraftMixin {
     @Shadow
     @Nullable
     public Screen screen;
-
-    @Inject(
-            method = "addInitialScreens",
-            at = @At("TAIL")
-    )
-    private void bclib_onScreenInit(List<Function<Runnable, Screen>> list, CallbackInfo ci) {
-        VersionCheckerClient.presentUpdateScreen(list);
-    }
 
     @Inject(method = "<init>*", at = @At("TAIL"))
     private void bclib_onMCInit(GameConfig args, CallbackInfo info) {

@@ -15,7 +15,6 @@ import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.interfaces.TagProvider;
 import org.betterx.bclib.interfaces.tools.*;
 import org.betterx.bclib.items.tool.*;
-import org.betterx.bclib.networking.VersionChecker;
 import org.betterx.bclib.registry.BaseBlockEntities;
 import org.betterx.worlds.together.tag.v3.*;
 
@@ -81,8 +80,6 @@ public class PostInitAPI {
         itemTags = null;
         InternalBiomeAPI.loadFabricAPIBiomes();
         Configs.BIOMES_CONFIG.saveChanges();
-
-        VersionChecker.startCheck(isClient);
     }
 
     @Environment(EnvType.CLIENT)

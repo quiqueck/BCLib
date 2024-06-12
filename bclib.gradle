@@ -66,6 +66,7 @@ dependencies {
     //make sure we are compatible to the old model API
 //    modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
     modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+    modLocalRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
 
 //    modCompileOnly "dev.emi:emi-fabric:${emi_version}:api"
 //    modLocalRuntime "dev.emi:emi-fabric:${emi_version}"

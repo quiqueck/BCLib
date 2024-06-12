@@ -5,52 +5,6 @@ import org.betterx.bclib.api.v2.dataexchange.handler.autosync.AutoSync;
 
 public class ClientConfig extends NamedPathConfig {
 
-    @ConfigUI(hide = true)
-    public static final ConfigToken<Boolean> DID_SHOW_WELCOME = ConfigToken.Boolean(
-            false,
-            "didShowWelcome",
-            "version"
-    );
-    public static final ConfigToken<Boolean> CHECK_VERSIONS = ConfigToken.Boolean(
-            true,
-            "check",
-            "version"
-    );
-    @ConfigUI(leftPadding = 8)
-    public static final ConfigToken<Boolean> SHOW_UPDATE_INFO = ConfigToken.Boolean(
-            true,
-            "showUpdateInfo",
-            "ui"
-    );
-
-    @ConfigUI(leftPadding = 8)
-    public static final ConfigToken<Boolean> PREFER_MODRINTH_FOR_UPDATES = ConfigToken.Boolean(
-            false,
-            "useModrinthForUpdates",
-            "ui"
-    );
-
-    @ConfigUI(hide = true)
-    public static final ConfigToken<Boolean> FORCE_BETTERX_PRESET = ConfigToken.Boolean(
-            true,
-            "forceBetterXPreset",
-            "ui"
-    );
-    @ConfigUI(topPadding = 12)
-    public static final ConfigToken<Boolean> SUPPRESS_EXPERIMENTAL_DIALOG = ConfigToken.Boolean(
-            false,
-            "suppressExperimentalDialogOnLoad",
-            "ui"
-    );
-
-
-    @ConfigUI(hide = true)
-    public static final ConfigToken<Boolean> NO_DONOR = ConfigToken.Boolean(
-            true,
-            "notTheDonorType",
-            "ui"
-    );
-
 
     @ConfigUI(topPadding = 12)
     public static final ConfigToken<Boolean> ENABLED = ConfigToken.Boolean(true, "enabled", AutoSync.SYNC_CATEGORY);
@@ -151,14 +105,6 @@ public class ClientConfig extends NamedPathConfig {
         return get(DISPLAY_MOD_INFO) /*&& isAllowingAutoSync()*/;
     }
 
-    public boolean suppressExperimentalDialog() {
-        return get(SUPPRESS_EXPERIMENTAL_DIALOG);
-    }
-
-    public void setSuppressExperimentalDialog(boolean newValue) {
-        set(ClientConfig.SUPPRESS_EXPERIMENTAL_DIALOG, newValue);
-    }
-
     public boolean netherThickFog() {
         return get(NETHER_THICK_FOG);
     }
@@ -167,48 +113,11 @@ public class ClientConfig extends NamedPathConfig {
         return get(CUSTOM_FOG_RENDERING);
     }
 
-    public boolean showUpdateInfo() {
-        return get(SHOW_UPDATE_INFO);
-    }
-
-    public boolean isDonor() {
-        return !get(NO_DONOR);
-    }
-
     public float fogDensity() {
         return get(FOG_DENSITY);
     }
 
-    public boolean checkVersions() {
-        return get(ClientConfig.CHECK_VERSIONS);
-    }
-
-
-    public void setCheckVersions(boolean newValue) {
-        set(ClientConfig.CHECK_VERSIONS, newValue);
-    }
-
-    public boolean didShowWelcomeScreen() {
-        return get(ClientConfig.DID_SHOW_WELCOME);
-    }
-
-    public void setDidShowWelcomeScreen() {
-        set(ClientConfig.DID_SHOW_WELCOME, true);
-    }
-
-    public boolean forceBetterXPreset() {
-        return get(FORCE_BETTERX_PRESET);
-    }
-
-    public void setForceBetterXPreset(boolean v) {
-        set(FORCE_BETTERX_PRESET, v);
-    }
-
     public boolean survivesOnHint() {
         return get(ClientConfig.SURVIES_ON_HINT);
-    }
-
-    public boolean preferModrinthForUpdates() {
-        return get(ClientConfig.PREFER_MODRINTH_FOR_UPDATES);
     }
 }

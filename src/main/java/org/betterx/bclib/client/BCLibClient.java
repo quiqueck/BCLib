@@ -6,9 +6,7 @@ import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
 import org.betterx.bclib.client.models.CustomModelBakery;
 import org.betterx.bclib.client.textures.AtlasSetManager;
 import org.betterx.bclib.client.textures.SpriteLister;
-import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.registry.BaseBlockEntityRenders;
-import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.client.WorldsTogetherClient;
 
 import net.minecraft.client.resources.model.UnbakedModel;
@@ -38,8 +36,6 @@ public class BCLibClient implements ClientModInitializer {
         DataExchangeAPI.prepareClientside();
         PostInitAPI.postInit(true);
         ModelLoadingPlugin.register(BCLibClient::onInitializeModelLoader);
-
-        WorldsTogether.SURPRESS_EXPERIMENTAL_DIALOG = Configs.CLIENT_CONFIG.suppressExperimentalDialog();
 
         AtlasSetManager.addSource(AtlasSetManager.VANILLA_BLOCKS, new SpriteLister("entity/chest"));
         AtlasSetManager.addSource(AtlasSetManager.VANILLA_BLOCKS, new SpriteLister("blocks"));

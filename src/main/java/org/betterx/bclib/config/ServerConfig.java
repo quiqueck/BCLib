@@ -54,11 +54,6 @@ public class ServerConfig extends NamedPathConfig {
             "excludeMods",
             AutoSync.SYNC_CATEGORY
     );
-    public static final ConfigToken<Boolean> FORCE_BETTERX_PRESET = ConfigToken.Boolean(
-            true,
-            "forceBetterXPreset",
-            AutoSync.SYNC_CATEGORY
-    );
 
 
     public ServerConfig() {
@@ -89,8 +84,5 @@ public class ServerConfig extends NamedPathConfig {
         return get(SEND_ALL_MOD_INFO) /*&& isAllowingAutoSync()*/;
     }
 
-    public boolean forceBetterXPreset() {
-        return get(FORCE_BETTERX_PRESET);
-    }
 
 }
