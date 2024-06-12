@@ -165,15 +165,6 @@ public class NamedPathConfig extends PathConfig {
         }
     }
 
-    public NamedPathConfig(String modID, String group, boolean autoSync, boolean diffContent) {
-        super(modID, group, autoSync, diffContent);
-        onInit();
-    }
-
-    public NamedPathConfig(String modID, String group, boolean autoSync) {
-        super(modID, group, autoSync);
-        onInit();
-    }
 
     public NamedPathConfig(String modID, String group) {
         super(modID, group);

@@ -7,8 +7,6 @@ import org.betterx.bclib.util.BlocksHelper;
 import org.betterx.bclib.util.MHelper;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.nbt.CompoundTag;
@@ -161,8 +159,6 @@ public class TestStructure extends Structure {
     }
 
     public static void registerBase() {
-        if (BCLib.ADD_TEST_DATA && BCLib.isDevEnvironment()) {
-            Registry.register(BuiltInRegistries.STRUCTURE_PIECE, TestStructurePiece.KEY, TestStructurePiece.INSTANCE);
-        }
+
     }
 }

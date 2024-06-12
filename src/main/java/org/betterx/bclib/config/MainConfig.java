@@ -29,7 +29,7 @@ public class MainConfig extends NamedPathConfig {
 
 
     public MainConfig() {
-        super(BCLib.MOD_ID, "main", true, true);
+        super(BCLib.MOD_ID, "main");
     }
 
     public boolean applyPatches() {

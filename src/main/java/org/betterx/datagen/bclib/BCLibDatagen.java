@@ -4,7 +4,6 @@ import org.betterx.bclib.BCLib;
 import org.betterx.datagen.bclib.advancement.BCLAdvancementDataProvider;
 import org.betterx.datagen.bclib.advancement.RecipeDataProvider;
 import org.betterx.datagen.bclib.integrations.NullscapeBiomes;
-import org.betterx.datagen.bclib.tests.TestWorldgenProvider;
 import org.betterx.datagen.bclib.worldgen.BiomeDatagenProvider;
 import org.betterx.wover.core.api.ModCore;
 import org.betterx.wover.datagen.api.PackBuilder;
@@ -33,12 +32,9 @@ public class BCLibDatagen extends WoverDataGenEntryPoint {
 
         globalPack.callOnInitializeDatapack((generator, pack, location) -> {
             if (location == null) {
-                if (BCLib.ADD_TEST_DATA) {
-                    pack.addProvider(TestWorldgenProvider::new);
-                    RecipeDataProvider.createTestRecipes();
-                } else {
-                    pack.addProvider(BiomeDatagenProvider::new);
-                }
+
+                pack.addProvider(BiomeDatagenProvider::new);
+
 
 //                pack.addProvider(BlockTagProvider::new);
 //                pack.addProvider(ItemTagProvider::new);

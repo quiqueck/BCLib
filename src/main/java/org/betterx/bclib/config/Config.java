@@ -1,75 +1,28 @@
 package org.betterx.bclib.config;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
-import org.betterx.bclib.api.v2.dataexchange.SyncFileHash;
-import org.betterx.bclib.api.v2.dataexchange.handler.autosync.AutoSyncID;
-import org.betterx.bclib.api.v2.dataexchange.handler.autosync.FileContentWrapper;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class Config {
-    protected final static Map<AutoSyncID, Config> AUTO_SYNC_CONFIGS = new HashMap<>();
     public static final String CONFIG_SYNC_PREFIX = "CONFIG_";
     protected final ConfigKeeper keeper;
-    protected final boolean autoSync;
     public final String configID;
 
     protected abstract void registerEntries();
 
+
     protected Config(String modID, String group) {
-        this(modID, group, true, false);
-    }
-
-    protected Config(String modID, String group, boolean autoSync) {
-        this(modID, group, autoSync, false);
-    }
-
-    protected Config(String modID, String group, boolean autoSync, boolean diffContent) {
         configID = modID + "." + group;
         this.keeper = new ConfigKeeper(modID, group);
         this.registerEntries();
-        this.autoSync = autoSync;
-
-        if (autoSync) {
-            final String uid = CONFIG_SYNC_PREFIX + configID;
-            final AutoSyncID aid = new AutoSyncID(BCLib.MOD_ID, uid);
-            if (diffContent)
-                DataExchangeAPI.addAutoSyncFile(aid.modID, aid.uniqueID, keeper.getConfigFile(), this::compareForSync);
-            else
-                DataExchangeAPI.addAutoSyncFile(aid.modID, aid.uniqueID, keeper.getConfigFile());
-
-            AUTO_SYNC_CONFIGS.put(aid, this);
-
-            BCLib.LOGGER.info("Added Config " + configID + " to auto sync (" + (diffContent
-                    ? "content diff"
-                    : "file hash") + ")");
-        }
-    }
-
-    private boolean compareForSync(SyncFileHash clientHash, SyncFileHash serverHash, FileContentWrapper content) {
-        //identical hashes => nothing to do
-        if (clientHash.equals(serverHash)) {
-            return false;
-        }
-
-        return keeper.compareAndUpdateForSync(content);
     }
 
     public void saveChanges() {
         this.keeper.save();
-    }
-
-    public static void reloadSyncedConfig(AutoSyncID aid, File file) {
-        Config cfg = AUTO_SYNC_CONFIGS.get(aid);
-        if (cfg != null) {
-            cfg.reload();
-        }
     }
 
     public void reload() {

@@ -4,14 +4,6 @@ import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
 public class PathConfig extends Config {
-    public PathConfig(String modID, String group, boolean autoSync, boolean diffContent) {
-        super(modID, group, autoSync, diffContent);
-    }
-
-    public PathConfig(String modID, String group, boolean autoSync) {
-        super(modID, group, autoSync);
-    }
-
     public PathConfig(String modID, String group) {
         super(modID, group);
     }
