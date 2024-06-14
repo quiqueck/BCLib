@@ -25,7 +25,7 @@ public class HangingSign extends MaterialSlot<WoodenComplexMaterial> {
     public void addBlockEntry(WoodenComplexMaterial parentMaterial, Consumer<BlockEntry> adder) {
         var signEntry = new BlockEntry(
                 suffix,
-                (complexMaterial, settings) -> new BaseHangingSignBlock.Wood(parentMaterial.woodType)
+                (complexMaterial, settings) -> new BaseHangingSignBlock.Wood(parentMaterial.getBlock(WoodSlots.PLANKS), parentMaterial.woodType)
         );
 
         var wallSignEntry = new BlockEntry(

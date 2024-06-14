@@ -5,9 +5,10 @@ import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
 import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.complexmaterials.BCLWoodTypeWrapper;
-import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.wover.block.api.BlockTagProvider;
 import org.betterx.wover.block.api.CustomBlockItemProvider;
+import org.betterx.wover.block.api.model.BlockModelProvider;
+import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 import org.betterx.wover.item.api.ItemTagProvider;
 import org.betterx.wover.tag.api.event.context.ItemTagBootstrapContext;
 import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
@@ -28,18 +29,26 @@ import net.minecraft.world.level.material.MapColor;
 
 import java.util.function.Supplier;
 
-public abstract class BaseHangingSignBlock extends CeilingHangingSignBlock implements RuntimeBlockModelProvider, CustomBlockItemProvider, BlockTagProvider, ItemTagProvider {
+public abstract class BaseHangingSignBlock extends CeilingHangingSignBlock implements BlockModelProvider, CustomBlockItemProvider, BlockTagProvider, ItemTagProvider {
     protected final Supplier<BaseWallHangingSignBlock> wallSign;
     private BlockItem customItem;
     private BaseWallHangingSignBlock wallSignBlock;
+    private final Block parent;
 
     @FunctionalInterface
     public interface WallSignProvider {
         BaseWallHangingSignBlock create(Properties properties, WoodType woodType);
     }
 
-    protected BaseHangingSignBlock(WoodType type, MapColor color, boolean flammable, WallSignProvider provider) {
+    protected BaseHangingSignBlock(
+            Block parent,
+            WoodType type,
+            MapColor color,
+            boolean flammable,
+            WallSignProvider provider
+    ) {
         super(type, BehaviourBuilders.createSign(color, flammable));
+        this.parent = parent;
         this.wallSign = () -> provider.create(BehaviourBuilders.createWallSign(color, this, flammable), type);
     }
 
@@ -73,49 +82,54 @@ public abstract class BaseHangingSignBlock extends CeilingHangingSignBlock imple
         context.add(this, ItemTags.HANGING_SIGNS);
     }
 
+    @Override
+    public void provideBlockModels(WoverBlockModelGenerators generators) {
+        generators.createHangingSign(parent, this, getWallSignBlock());
+    }
+
     public static class Wood extends BaseHangingSignBlock implements BehaviourWood {
-        public Wood(WoodType type) {
-            this(type, MapColor.WOOD, true);
+        public Wood(Block parent, WoodType type) {
+            this(parent, type, MapColor.WOOD, true);
         }
 
-        public Wood(BCLWoodTypeWrapper type) {
-            this(type.type, type.color, type.flammable);
+        public Wood(Block parent, BCLWoodTypeWrapper type) {
+            this(parent, type.type, type.color, type.flammable);
         }
 
-        public Wood(WoodType type, MapColor color, boolean flammable) {
-            super(type, color, flammable, BaseWallHangingSignBlock.Wood::new);
+        public Wood(Block parent, WoodType type, MapColor color, boolean flammable) {
+            super(parent, type, color, flammable, BaseWallHangingSignBlock.Wood::new);
         }
     }
 
     public static class Stone extends BaseHangingSignBlock implements BehaviourStone {
-        public Stone(WoodType type) {
-            this(type, MapColor.WOOD, true);
+        public Stone(Block parent, WoodType type) {
+            this(parent, type, MapColor.WOOD, true);
         }
 
-        public Stone(BCLWoodTypeWrapper type) {
-            this(type.type, type.color, type.flammable);
+        public Stone(Block parent, BCLWoodTypeWrapper type) {
+            this(parent, type.type, type.color, type.flammable);
         }
 
-        public Stone(WoodType type, MapColor color, boolean flammable) {
-            super(type, color, flammable, BaseWallHangingSignBlock.Stone::new);
+        public Stone(Block parent, WoodType type, MapColor color, boolean flammable) {
+            super(parent, type, color, flammable, BaseWallHangingSignBlock.Stone::new);
         }
     }
 
     public static class Metal extends BaseHangingSignBlock implements BehaviourMetal {
-        public Metal(WoodType type) {
-            this(type, MapColor.WOOD, true);
+        public Metal(Block parent, WoodType type) {
+            this(parent, type, MapColor.WOOD, true);
         }
 
-        public Metal(BCLWoodTypeWrapper type) {
-            this(type.type, type.color, type.flammable);
+        public Metal(Block parent, BCLWoodTypeWrapper type) {
+            this(parent, type.type, type.color, type.flammable);
         }
 
-        public Metal(WoodType type, MapColor color, boolean flammable) {
-            super(type, color, flammable, BaseWallHangingSignBlock.Stone::new);
+        public Metal(Block parent, WoodType type, MapColor color, boolean flammable) {
+            super(parent, type, color, flammable, BaseWallHangingSignBlock.Stone::new);
         }
     }
 
-    public static BaseHangingSignBlock from(WoodType type) {
-        return new BaseHangingSignBlock.Wood(type);
+    public static BaseHangingSignBlock from(Block parent, WoodType type) {
+        return new BaseHangingSignBlock.Wood(parent, type);
     }
 }

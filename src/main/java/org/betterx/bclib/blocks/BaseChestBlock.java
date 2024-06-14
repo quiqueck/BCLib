@@ -2,34 +2,24 @@ package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.api.v3.datagen.DropSelfLootProvider;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
-import org.betterx.bclib.client.models.BasePatterns;
-import org.betterx.bclib.client.models.ModelsHelper;
-import org.betterx.bclib.client.models.PatternsHelper;
-import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.bclib.registry.BaseBlockEntities;
 import org.betterx.wover.block.api.BlockTagProvider;
+import org.betterx.wover.block.api.model.BlockModelProvider;
+import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 import org.betterx.wover.item.api.ItemTagProvider;
 import org.betterx.wover.tag.api.event.context.ItemTagBootstrapContext;
 import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
 import org.betterx.wover.tag.api.predefined.CommonBlockTags;
 import org.betterx.wover.tag.api.predefined.CommonItemTags;
 
-import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
-import java.util.Optional;
-import org.jetbrains.annotations.Nullable;
-
-public abstract class BaseChestBlock extends ChestBlock implements RuntimeBlockModelProvider, BlockTagProvider, ItemTagProvider, DropSelfLootProvider<BaseChestBlock> {
+public abstract class BaseChestBlock extends ChestBlock implements BlockModelProvider, BlockTagProvider, ItemTagProvider, DropSelfLootProvider<BaseChestBlock> {
     private final Block parent;
 
     protected BaseChestBlock(Block source) {
@@ -43,19 +33,9 @@ public abstract class BaseChestBlock extends ChestBlock implements RuntimeBlockM
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
-    public BlockModel getItemModel(ResourceLocation blockId) {
-        Optional<String> pattern = PatternsHelper.createJson(BasePatterns.ITEM_CHEST, blockId);
-        return ModelsHelper.fromPattern(pattern);
+    public void provideBlockModels(WoverBlockModelGenerators generators) {
+        generators.modelFor(parent).createChest(this);
     }
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public @Nullable BlockModel getBlockModel(ResourceLocation resourceLocation, BlockState blockState) {
-        ResourceLocation parentId = BuiltInRegistries.BLOCK.getKey(parent);
-        return ModelsHelper.createBlockEmpty(parentId);
-    }
-
 
     @Override
     public void registerBlockTags(ResourceLocation location, TagBootstrapContext<Block> context) {
