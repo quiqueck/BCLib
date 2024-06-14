@@ -3,9 +3,10 @@ package org.betterx.bclib.complexmaterials.set.common;
 import org.betterx.bclib.complexmaterials.ComplexMaterial;
 import org.betterx.bclib.complexmaterials.entry.MaterialSlot;
 import org.betterx.bclib.complexmaterials.entry.SimpleMaterialSlot;
-import org.betterx.bclib.recipes.BCLRecipeBuilder;
+import org.betterx.wover.recipe.api.RecipeBuilder;
 
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 
 import org.jetbrains.annotations.Nullable;
@@ -21,15 +22,15 @@ public abstract class AbstractSlab<M extends ComplexMaterial> extends SimpleMate
 
 
     @Override
-    protected @Nullable void makeRecipe(ComplexMaterial parentMaterial, ResourceLocation id) {
-        BCLRecipeBuilder
+    protected @Nullable void makeRecipe(RecipeOutput context, ComplexMaterial parentMaterial, ResourceLocation id) {
+        RecipeBuilder
                 .crafting(id, parentMaterial.getBlock(suffix))
-                .setOutputCount(6)
-                .setShape("###")
+                .outputCount(6)
+                .shape("###")
                 .addMaterial('#', parentMaterial.getBlock(getSourceBlockSlot()))
-                .setGroup("slab")
-                .setCategory(RecipeCategory.BUILDING_BLOCKS)
-                .build();
+                .group("slab")
+                .category(RecipeCategory.BUILDING_BLOCKS)
+                .build(context);
     }
 
     @Nullable

@@ -1,20 +1,23 @@
 package org.betterx.bclib.complexmaterials.entry;
 
 import org.betterx.bclib.complexmaterials.ComplexMaterial;
+import org.betterx.bclib.interfaces.TriConsumer;
 
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.function.BiConsumer;
-
 public class RecipeEntry extends ComplexMaterialEntry {
-    final BiConsumer<ComplexMaterial, ResourceLocation> initFunction;
+    public interface RecipeConsumer extends TriConsumer<RecipeOutput, ComplexMaterial, ResourceLocation> {
+    }
 
-    public RecipeEntry(String suffix, BiConsumer<ComplexMaterial, ResourceLocation> initFunction) {
+    final RecipeConsumer initFunction;
+
+    public RecipeEntry(String suffix, RecipeConsumer initFunction) {
         super(suffix);
         this.initFunction = initFunction;
     }
 
-    public void init(ComplexMaterial material) {
-        initFunction.accept(material, material.C.mk(getName(material.getBaseName())));
+    public void init(RecipeOutput context, ComplexMaterial material) {
+        initFunction.accept(context, material, material.C.mk(getName(material.getBaseName())));
     }
 }

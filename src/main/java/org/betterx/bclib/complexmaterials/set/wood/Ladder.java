@@ -4,9 +4,12 @@ import org.betterx.bclib.blocks.BaseLadderBlock;
 import org.betterx.bclib.complexmaterials.ComplexMaterial;
 import org.betterx.bclib.complexmaterials.WoodenComplexMaterial;
 import org.betterx.bclib.complexmaterials.entry.SimpleMaterialSlot;
-import org.betterx.bclib.recipes.BCLRecipeBuilder;
+import org.betterx.wover.recipe.api.BaseRecipeBuilder;
+import org.betterx.wover.recipe.api.CraftingRecipeBuilder;
+import org.betterx.wover.recipe.api.RecipeBuilder;
 
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -27,15 +30,15 @@ public class Ladder extends SimpleMaterialSlot<WoodenComplexMaterial> {
     }
 
     @Override
-    protected void makeRecipe(ComplexMaterial parentMaterial, ResourceLocation id) {
-        BCLRecipeBuilder
-                .crafting(id, parentMaterial.getBlock(suffix))
-                .setOutputCount(3)
-                .setShape("I I", "I#I", "I I")
-                .addMaterial('#', parentMaterial.getBlock(WoodSlots.PLANKS))
-                .addMaterial('I', Items.STICK)
-                .setGroup("ladder")
-                .setCategory(RecipeCategory.DECORATIONS)
-                .build();
+    protected void makeRecipe(RecipeOutput context, ComplexMaterial parentMaterial, ResourceLocation id) {
+        CraftingRecipeBuilder craftingRecipeBuilder1 = RecipeBuilder
+                .crafting(id, parentMaterial.getBlock(suffix));
+        CraftingRecipeBuilder craftingRecipeBuilder2 = craftingRecipeBuilder1.outputCount(3);
+        CraftingRecipeBuilder craftingRecipeBuilder = craftingRecipeBuilder2.shape("I I", "I#I", "I I")
+                                                                            .addMaterial('#', parentMaterial.getBlock(WoodSlots.PLANKS))
+                                                                            .addMaterial('I', Items.STICK);
+        BaseRecipeBuilder<CraftingRecipeBuilder> craftingRecipeBuilderBaseRecipeBuilder = craftingRecipeBuilder.group("ladder");
+        craftingRecipeBuilderBaseRecipeBuilder.category(RecipeCategory.DECORATIONS)
+                                              .build(context);
     }
 }

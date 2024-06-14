@@ -5,9 +5,12 @@ import org.betterx.bclib.complexmaterials.WoodenComplexMaterial;
 import org.betterx.bclib.complexmaterials.entry.BlockEntry;
 import org.betterx.bclib.complexmaterials.entry.ItemEntry;
 import org.betterx.bclib.complexmaterials.entry.SimpleMaterialSlot;
-import org.betterx.bclib.recipes.BCLRecipeBuilder;
+import org.betterx.wover.recipe.api.BaseRecipeBuilder;
+import org.betterx.wover.recipe.api.CraftingRecipeBuilder;
+import org.betterx.wover.recipe.api.RecipeBuilder;
 
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -40,8 +43,8 @@ public class Boat extends SimpleMaterialSlot<WoodenComplexMaterial> {
     }
 
     @Override
-    protected @Nullable void makeRecipe(ComplexMaterial parentMaterial, ResourceLocation id) {
-        makeBoatRecipe(id, parentMaterial.getBlock(WoodSlots.PLANKS), parentMaterial.getItem(suffix));
+    protected @Nullable void makeRecipe(RecipeOutput context, ComplexMaterial parentMaterial, ResourceLocation id) {
+        makeBoatRecipe(context, id, parentMaterial.getBlock(WoodSlots.PLANKS), parentMaterial.getItem(suffix));
     }
 
     @Override
@@ -49,13 +52,13 @@ public class Boat extends SimpleMaterialSlot<WoodenComplexMaterial> {
         parentMaterial.initBoatType();
     }
 
-    public static void makeBoatRecipe(ResourceLocation id, Block planks, Item boat) {
-        BCLRecipeBuilder
-                .crafting(id, boat)
-                .setShape("# #", "###")
-                .addMaterial('#', planks)
-                .setGroup("boat")
-                .setCategory(RecipeCategory.TRANSPORTATION)
-                .build();
+    public static void makeBoatRecipe(RecipeOutput context, ResourceLocation id, Block planks, Item boat) {
+        CraftingRecipeBuilder craftingRecipeBuilder1 = RecipeBuilder
+                .crafting(id, boat);
+        CraftingRecipeBuilder craftingRecipeBuilder = craftingRecipeBuilder1.shape("# #", "###")
+                                                                            .addMaterial('#', planks);
+        BaseRecipeBuilder<CraftingRecipeBuilder> craftingRecipeBuilderBaseRecipeBuilder = craftingRecipeBuilder.group("boat");
+        craftingRecipeBuilderBaseRecipeBuilder.category(RecipeCategory.TRANSPORTATION)
+                                              .build(context);
     }
 }

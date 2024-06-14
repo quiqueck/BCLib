@@ -5,9 +5,12 @@ import org.betterx.bclib.complexmaterials.WoodenComplexMaterial;
 import org.betterx.bclib.complexmaterials.entry.BlockEntry;
 import org.betterx.bclib.complexmaterials.entry.SimpleMaterialSlot;
 import org.betterx.bclib.furniture.block.BaseBarStool;
-import org.betterx.bclib.recipes.BCLRecipeBuilder;
+import org.betterx.wover.recipe.api.BaseRecipeBuilder;
+import org.betterx.wover.recipe.api.CraftingRecipeBuilder;
+import org.betterx.wover.recipe.api.RecipeBuilder;
 
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.Items;
@@ -22,14 +25,14 @@ public class BarStool extends SimpleMaterialSlot<WoodenComplexMaterial> {
         super("bar_stool");
     }
 
-    public static void makeBarStoolRecipe(ResourceLocation id, Block barStool, Block planks) {
-        BCLRecipeBuilder.crafting(id, barStool)
-                        .setShape("##", "II", "II")
-                        .addMaterial('#', planks)
-                        .addMaterial('I', Items.STICK)
-                        .setGroup("bar_stool")
-                        .setCategory(RecipeCategory.DECORATIONS)
-                        .build();
+    public static void makeBarStoolRecipe(RecipeOutput context, ResourceLocation id, Block barStool, Block planks) {
+        CraftingRecipeBuilder craftingRecipeBuilder1 = RecipeBuilder.crafting(id, barStool);
+        CraftingRecipeBuilder craftingRecipeBuilder = craftingRecipeBuilder1.shape("##", "II", "II")
+                                                                            .addMaterial('#', planks)
+                                                                            .addMaterial('I', Items.STICK);
+        BaseRecipeBuilder<CraftingRecipeBuilder> craftingRecipeBuilderBaseRecipeBuilder = craftingRecipeBuilder.group("bar_stool");
+        craftingRecipeBuilderBaseRecipeBuilder.category(RecipeCategory.DECORATIONS)
+                                              .build(context);
     }
 
     @Override
@@ -45,7 +48,7 @@ public class BarStool extends SimpleMaterialSlot<WoodenComplexMaterial> {
     }
 
     @Override
-    protected @Nullable void makeRecipe(ComplexMaterial parentMaterial, ResourceLocation id) {
-        BarStool.makeBarStoolRecipe(id, parentMaterial.getBlock(suffix), parentMaterial.getBlock(WoodSlots.SLAB));
+    protected @Nullable void makeRecipe(RecipeOutput context, ComplexMaterial parentMaterial, ResourceLocation id) {
+        BarStool.makeBarStoolRecipe(context, id, parentMaterial.getBlock(suffix), parentMaterial.getBlock(WoodSlots.SLAB));
     }
 }

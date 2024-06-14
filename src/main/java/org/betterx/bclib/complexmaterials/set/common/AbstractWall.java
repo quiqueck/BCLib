@@ -4,8 +4,9 @@ import org.betterx.bclib.complexmaterials.ComplexMaterial;
 import org.betterx.bclib.complexmaterials.entry.MaterialSlot;
 import org.betterx.bclib.complexmaterials.entry.SimpleMaterialSlot;
 import org.betterx.bclib.complexmaterials.set.stone.StoneSlots;
-import org.betterx.bclib.recipes.BCLRecipeBuilder;
+import org.betterx.wover.recipe.api.RecipeBuilder;
 
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 
 import org.jetbrains.annotations.NotNull;
@@ -21,13 +22,13 @@ public abstract class AbstractWall<M extends ComplexMaterial> extends SimpleMate
     }
 
     @Override
-    protected @Nullable void makeRecipe(ComplexMaterial parentMaterial, ResourceLocation id) {
-        BCLRecipeBuilder.crafting(id, parentMaterial.getBlock(suffix))
-                        .setOutputCount(6)
-                        .setShape("###", "###")
-                        .addMaterial('#', parentMaterial.getBlock(StoneSlots.SOURCE))
-                        .setGroup("wall")
-                        .build();
+    protected @Nullable void makeRecipe(RecipeOutput context, ComplexMaterial parentMaterial, ResourceLocation id) {
+        RecipeBuilder.crafting(id, parentMaterial.getBlock(suffix))
+                     .outputCount(6)
+                     .shape("###", "###")
+                     .addMaterial('#', parentMaterial.getBlock(StoneSlots.SOURCE))
+                     .group("wall")
+                     .build(context);
     }
 
     @Nullable

@@ -5,9 +5,12 @@ import org.betterx.bclib.complexmaterials.ComplexMaterial;
 import org.betterx.bclib.complexmaterials.WoodenComplexMaterial;
 import org.betterx.bclib.complexmaterials.entry.BlockEntry;
 import org.betterx.bclib.complexmaterials.entry.SimpleMaterialSlot;
-import org.betterx.bclib.recipes.BCLRecipeBuilder;
+import org.betterx.wover.recipe.api.BaseRecipeBuilder;
+import org.betterx.wover.recipe.api.CraftingRecipeBuilder;
+import org.betterx.wover.recipe.api.RecipeBuilder;
 
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -44,13 +47,13 @@ public class Bark extends SimpleMaterialSlot<WoodenComplexMaterial> {
     }
 
     @Override
-    protected @Nullable void makeRecipe(ComplexMaterial material, ResourceLocation id) {
-        BCLRecipeBuilder
-                .crafting(id, material.getBlock(suffix))
-                .setShape("##", "##")
-                .addMaterial('#', material.getBlock(WoodSlots.LOG))
-                .setOutputCount(3)
-                .setCategory(RecipeCategory.BUILDING_BLOCKS)
-                .build();
+    protected @Nullable void makeRecipe(RecipeOutput context, ComplexMaterial material, ResourceLocation id) {
+        CraftingRecipeBuilder craftingRecipeBuilder1 = RecipeBuilder
+                .crafting(id, material.getBlock(suffix));
+        CraftingRecipeBuilder craftingRecipeBuilder = craftingRecipeBuilder1.shape("##", "##")
+                                                                            .addMaterial('#', material.getBlock(WoodSlots.LOG));
+        BaseRecipeBuilder<CraftingRecipeBuilder> craftingRecipeBuilderBaseRecipeBuilder = craftingRecipeBuilder.outputCount(3);
+        craftingRecipeBuilderBaseRecipeBuilder.category(RecipeCategory.BUILDING_BLOCKS)
+                                              .build(context);
     }
 }

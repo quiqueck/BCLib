@@ -5,8 +5,9 @@ import org.betterx.bclib.complexmaterials.ComplexMaterial;
 import org.betterx.bclib.complexmaterials.StoneComplexMaterial;
 import org.betterx.bclib.complexmaterials.entry.MaterialSlot;
 import org.betterx.bclib.complexmaterials.set.common.AbstractSlab;
-import org.betterx.bclib.recipes.BCLRecipeBuilder;
+import org.betterx.wover.recipe.api.RecipeBuilder;
 
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -35,18 +36,18 @@ public class Slab extends AbstractSlab<StoneComplexMaterial> {
     }
 
     @Override
-    protected @Nullable void makeRecipe(ComplexMaterial parentMaterial, ResourceLocation id) {
-        super.makeRecipe(parentMaterial, id);
+    protected @Nullable void makeRecipe(RecipeOutput context, ComplexMaterial parentMaterial, ResourceLocation id) {
+        super.makeRecipe(context, parentMaterial, id);
 
-        BCLRecipeBuilder
+        RecipeBuilder
                 .stonecutting(
                         ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "stonecutter_" + id.getPath()),
                         parentMaterial.getBlock(suffix)
                 )
-                .setPrimaryInputAndUnlock(parentMaterial.getBlock(getSourceBlockSlot()))
-                .setOutputCount(2)
-                .setGroup("slab")
-                .build();
+                .input(parentMaterial.getBlock(getSourceBlockSlot()))
+                .outputCount(2)
+                .group("slab")
+                .build(context);
     }
 
     @Nullable

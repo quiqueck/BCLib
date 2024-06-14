@@ -16,13 +16,16 @@ public class BCLRecipeBuilder {
         return AnvilRecipe.create(id, output);
     }
 
+    @Deprecated(forRemoval = true)
     public static CookingRecipeBuilder blasting(ResourceLocation id, ItemLike output) {
         return CookingRecipeBuilder.make(id, output).disableSmelter().enableBlastFurnace();
     }
 
+    @Deprecated(forRemoval = true)
     public static CraftingRecipeBuilder crafting(ResourceLocation id, ItemLike output) {
         return CraftingRecipeBuilder.make(id, output);
     }
+
 
     private static CraftingRecipeBuilder copySmithingTemplateBase(
             ResourceLocation id,
@@ -38,6 +41,7 @@ public class BCLRecipeBuilder {
                 .setShape("#S#", "#C#", "###");
     }
 
+    @Deprecated(forRemoval = true)
     public static CraftingRecipeBuilder copySmithingTemplate(
             ResourceLocation id,
             ItemLike output,
@@ -47,6 +51,7 @@ public class BCLRecipeBuilder {
                 .addMaterial('C', tagKey);
     }
 
+    @Deprecated(forRemoval = true)
     public static CraftingRecipeBuilder copySmithingTemplate(
             ResourceLocation id,
             ItemLike output,
@@ -56,6 +61,7 @@ public class BCLRecipeBuilder {
                 .addMaterial('C', ingredient);
     }
 
+    @Deprecated(forRemoval = true)
     public static CraftingRecipeBuilder copyCheapSmithingTemplate(
             ResourceLocation id,
             ItemLike output,
@@ -65,6 +71,7 @@ public class BCLRecipeBuilder {
                 .addMaterial('C', tagKey);
     }
 
+    @Deprecated(forRemoval = true)
     public static CraftingRecipeBuilder copyCheapSmithingTemplate(
             ResourceLocation id,
             ItemLike output,
@@ -74,14 +81,17 @@ public class BCLRecipeBuilder {
                 .addMaterial('C', ingredient);
     }
 
+    @Deprecated(forRemoval = true)
     public static CookingRecipeBuilder smelting(ResourceLocation id, ItemLike output) {
         return CookingRecipeBuilder.make(id, output);
     }
 
+    @Deprecated(forRemoval = true)
     public static SmithingRecipeBuilder smithing(ResourceLocation id, ItemLike output) {
         return SmithingRecipeBuilder.make(id, output);
     }
 
+    @Deprecated(forRemoval = true)
     public static StonecutterRecipeBuilder stonecutting(ResourceLocation id, ItemLike output) {
         return StonecutterRecipeBuilder.make(id, output);
     }

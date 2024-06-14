@@ -4,8 +4,9 @@ import org.betterx.bclib.blocks.BaseBlock;
 import org.betterx.bclib.complexmaterials.ComplexMaterial;
 import org.betterx.bclib.complexmaterials.StoneComplexMaterial;
 import org.betterx.bclib.complexmaterials.entry.SimpleMaterialSlot;
-import org.betterx.bclib.recipes.BCLRecipeBuilder;
+import org.betterx.wover.recipe.api.RecipeBuilder;
 
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -24,9 +25,9 @@ public class CrackedBlock extends SimpleMaterialSlot<StoneComplexMaterial> {
     }
 
     @Override
-    protected @Nullable void makeRecipe(ComplexMaterial parentMaterial, ResourceLocation id) {
-        BCLRecipeBuilder.smelting(id, parentMaterial.getBlock(suffix))
-                        .setPrimaryInputAndUnlock(parentMaterial.getBlock(StoneSlots.SOURCE))
-                        .build(false, false, false);
+    protected @Nullable void makeRecipe(RecipeOutput context, ComplexMaterial parentMaterial, ResourceLocation id) {
+        RecipeBuilder.smelting(id, parentMaterial.getBlock(suffix))
+                     .input(parentMaterial.getBlock(StoneSlots.SOURCE))
+                     .build(context);
     }
 }

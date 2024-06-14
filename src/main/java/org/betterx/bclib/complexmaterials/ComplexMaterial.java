@@ -8,6 +8,7 @@ import org.betterx.wover.block.api.BlockRegistry;
 import org.betterx.wover.core.api.ModCore;
 import org.betterx.wover.item.api.ItemRegistry;
 
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
@@ -76,13 +77,20 @@ public abstract class ComplexMaterial {
             items.put(entry.getSuffix(), item);
         });
 
-        initDefaultRecipes();
-        getRecipeEntries().forEach(entry -> {
-            entry.init(this);
-        });
-
         initFlammable(FlammableBlockRegistry.getDefaultInstance());
         return this;
+    }
+
+    private void provideRecipes(RecipeOutput context) {
+        initDefaultRecipes();
+
+        getRecipeEntries().forEach(entry -> {
+            entry.init(context, this);
+        });
+    }
+
+    public static void provideAllRecipes(RecipeOutput context, ModCore modCore) {
+        MATERIALS.stream().filter(m -> m.C == modCore).forEach(material -> material.provideRecipes(context));
     }
 
     /**

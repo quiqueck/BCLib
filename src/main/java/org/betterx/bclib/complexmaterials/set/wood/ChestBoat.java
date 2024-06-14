@@ -5,10 +5,13 @@ import org.betterx.bclib.complexmaterials.WoodenComplexMaterial;
 import org.betterx.bclib.complexmaterials.entry.BlockEntry;
 import org.betterx.bclib.complexmaterials.entry.ItemEntry;
 import org.betterx.bclib.complexmaterials.entry.SimpleMaterialSlot;
-import org.betterx.bclib.recipes.BCLRecipeBuilder;
 import org.betterx.worlds.together.tag.v3.CommonItemTags;
+import org.betterx.wover.recipe.api.BaseRecipeBuilder;
+import org.betterx.wover.recipe.api.CraftingRecipeBuilder;
+import org.betterx.wover.recipe.api.RecipeBuilder;
 
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -46,8 +49,8 @@ public class ChestBoat extends SimpleMaterialSlot<WoodenComplexMaterial> {
     }
 
     @Override
-    protected @Nullable void makeRecipe(ComplexMaterial parentMaterial, ResourceLocation id) {
-        makeChestBoatRecipe(id, parentMaterial.getItem(WoodSlots.BOAT), parentMaterial.getItem(WoodSlots.CHEST_BOAT));
+    protected @Nullable void makeRecipe(RecipeOutput context, ComplexMaterial parentMaterial, ResourceLocation id) {
+        makeChestBoatRecipe(context, id, parentMaterial.getItem(WoodSlots.BOAT), parentMaterial.getItem(WoodSlots.CHEST_BOAT));
     }
 
     @Override
@@ -55,14 +58,14 @@ public class ChestBoat extends SimpleMaterialSlot<WoodenComplexMaterial> {
         parentMaterial.initBoatType();
     }
 
-    public static void makeChestBoatRecipe(ResourceLocation id, Item boat, Item chestBoat) {
-        BCLRecipeBuilder
+    public static void makeChestBoatRecipe(RecipeOutput context, ResourceLocation id, Item boat, Item chestBoat) {
+        CraftingRecipeBuilder craftingRecipeBuilder = RecipeBuilder
                 .crafting(id, chestBoat)
                 .shapeless()
                 .addMaterial('C', CommonItemTags.CHEST)
-                .addMaterial('#', boat)
-                .setGroup("chest_boat")
-                .setCategory(RecipeCategory.TRANSPORTATION)
-                .build();
+                .addMaterial('#', boat);
+        BaseRecipeBuilder<CraftingRecipeBuilder> craftingRecipeBuilderBaseRecipeBuilder = craftingRecipeBuilder.group("chest_boat");
+        craftingRecipeBuilderBaseRecipeBuilder.category(RecipeCategory.TRANSPORTATION)
+                                              .build(context);
     }
 }

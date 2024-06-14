@@ -5,7 +5,7 @@ import org.betterx.bclib.complexmaterials.WoodenComplexMaterial;
 import org.betterx.bclib.complexmaterials.entry.BlockEntry;
 import org.betterx.bclib.complexmaterials.entry.MaterialSlot;
 import org.betterx.bclib.complexmaterials.entry.RecipeEntry;
-import org.betterx.bclib.recipes.BCLRecipeBuilder;
+import org.betterx.wover.recipe.api.RecipeBuilder;
 
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.world.item.Items;
@@ -47,16 +47,16 @@ public class Sign extends MaterialSlot<WoodenComplexMaterial> {
             WoodenComplexMaterial parentMaterial,
             Consumer<RecipeEntry> adder
     ) {
-        adder.accept(new RecipeEntry(suffix, (mat, id) ->
-                BCLRecipeBuilder
+        adder.accept(new RecipeEntry(suffix, (ctx, mat, id) ->
+                RecipeBuilder
                         .crafting(id, parentMaterial.getBlock(suffix))
-                        .setOutputCount(3)
-                        .setShape("###", "###", " I ")
+                        .outputCount(3)
+                        .shape("###", "###", " I ")
                         .addMaterial('#', parentMaterial.getBlock(WoodSlots.PLANKS))
                         .addMaterial('I', Items.STICK)
-                        .setGroup("sign")
-                        .setCategory(RecipeCategory.DECORATIONS)
-                        .build()
+                        .group("sign")
+                        .category(RecipeCategory.DECORATIONS)
+                        .build(ctx)
         ));
     }
 }

@@ -4,9 +4,12 @@ import org.betterx.bclib.blocks.BaseGateBlock;
 import org.betterx.bclib.complexmaterials.ComplexMaterial;
 import org.betterx.bclib.complexmaterials.WoodenComplexMaterial;
 import org.betterx.bclib.complexmaterials.entry.SimpleMaterialSlot;
-import org.betterx.bclib.recipes.BCLRecipeBuilder;
+import org.betterx.wover.recipe.api.BaseRecipeBuilder;
+import org.betterx.wover.recipe.api.CraftingRecipeBuilder;
+import org.betterx.wover.recipe.api.RecipeBuilder;
 
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -32,13 +35,13 @@ public class Gate extends SimpleMaterialSlot<WoodenComplexMaterial> {
 
 
     @Override
-    protected @Nullable void makeRecipe(ComplexMaterial parentMaterial, ResourceLocation id) {
-        BCLRecipeBuilder.crafting(id, parentMaterial.getBlock(suffix))
-                        .setShape("I#I", "I#I")
-                        .addMaterial('#', parentMaterial.getBlock(WoodSlots.PLANKS))
-                        .addMaterial('I', Items.STICK)
-                        .setGroup("gate")
-                        .setCategory(RecipeCategory.REDSTONE)
-                        .build();
+    protected @Nullable void makeRecipe(RecipeOutput context, ComplexMaterial parentMaterial, ResourceLocation id) {
+        CraftingRecipeBuilder craftingRecipeBuilder1 = RecipeBuilder.crafting(id, parentMaterial.getBlock(suffix));
+        CraftingRecipeBuilder craftingRecipeBuilder = craftingRecipeBuilder1.shape("I#I", "I#I")
+                                                                            .addMaterial('#', parentMaterial.getBlock(WoodSlots.PLANKS))
+                                                                            .addMaterial('I', Items.STICK);
+        BaseRecipeBuilder<CraftingRecipeBuilder> craftingRecipeBuilderBaseRecipeBuilder = craftingRecipeBuilder.group("gate");
+        craftingRecipeBuilderBaseRecipeBuilder.category(RecipeCategory.REDSTONE)
+                                              .build(context);
     }
 }

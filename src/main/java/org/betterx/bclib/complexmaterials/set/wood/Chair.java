@@ -5,9 +5,12 @@ import org.betterx.bclib.complexmaterials.WoodenComplexMaterial;
 import org.betterx.bclib.complexmaterials.entry.BlockEntry;
 import org.betterx.bclib.complexmaterials.entry.SimpleMaterialSlot;
 import org.betterx.bclib.furniture.block.BaseChair;
-import org.betterx.bclib.recipes.BCLRecipeBuilder;
+import org.betterx.wover.recipe.api.BaseRecipeBuilder;
+import org.betterx.wover.recipe.api.CraftingRecipeBuilder;
+import org.betterx.wover.recipe.api.RecipeBuilder;
 
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.Items;
@@ -22,14 +25,14 @@ public class Chair extends SimpleMaterialSlot<WoodenComplexMaterial> {
         super("chair");
     }
 
-    public static void makeChairRecipe(ResourceLocation id, Block chair, Block planks) {
-        BCLRecipeBuilder.crafting(id, chair)
-                        .setShape("I ", "##", "II")
-                        .addMaterial('#', planks)
-                        .addMaterial('I', Items.STICK)
-                        .setGroup("chair")
-                        .setCategory(RecipeCategory.DECORATIONS)
-                        .build();
+    public static void makeChairRecipe(RecipeOutput context, ResourceLocation id, Block chair, Block planks) {
+        CraftingRecipeBuilder craftingRecipeBuilder1 = RecipeBuilder.crafting(id, chair);
+        CraftingRecipeBuilder craftingRecipeBuilder = craftingRecipeBuilder1.shape("I ", "##", "II")
+                                                                            .addMaterial('#', planks)
+                                                                            .addMaterial('I', Items.STICK);
+        BaseRecipeBuilder<CraftingRecipeBuilder> craftingRecipeBuilderBaseRecipeBuilder = craftingRecipeBuilder.group("chair");
+        craftingRecipeBuilderBaseRecipeBuilder.category(RecipeCategory.DECORATIONS)
+                                              .build(context);
     }
 
     @Override
@@ -45,7 +48,7 @@ public class Chair extends SimpleMaterialSlot<WoodenComplexMaterial> {
     }
 
     @Override
-    protected @Nullable void makeRecipe(ComplexMaterial parentMaterial, ResourceLocation id) {
-        Chair.makeChairRecipe(id, parentMaterial.getBlock(suffix), parentMaterial.getBlock(WoodSlots.SLAB));
+    protected @Nullable void makeRecipe(RecipeOutput context, ComplexMaterial parentMaterial, ResourceLocation id) {
+        Chair.makeChairRecipe(context, id, parentMaterial.getBlock(suffix), parentMaterial.getBlock(WoodSlots.SLAB));
     }
 }
