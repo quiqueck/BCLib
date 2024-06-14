@@ -24,6 +24,10 @@ repositories {
     maven { url 'https://maven.terraformersmc.com' }
 }
 
+java {
+    withSourcesJar()
+}
+
 def local_wunderlib = findProject(':WunderLib') != null
 def local_wover = findProject(':WorldWeaver') != null
 
@@ -150,7 +154,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
 // if it is present.
 // If you remove this task, sources will not be generated.
-task sourcesJar(type: Jar, dependsOn: classes) {
+tasks.sourcesJar {
     archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }
