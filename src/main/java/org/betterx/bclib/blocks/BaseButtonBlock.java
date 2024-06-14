@@ -5,37 +5,21 @@ import org.betterx.bclib.behaviours.BehaviourHelper;
 import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
 import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
-import org.betterx.bclib.client.models.BasePatterns;
-import org.betterx.bclib.client.models.ModelsHelper;
-import org.betterx.bclib.client.models.PatternsHelper;
-import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
-import org.betterx.bclib.interfaces.TagProvider;
+import org.betterx.wover.block.api.BlockTagProvider;
+import org.betterx.wover.block.api.model.BlockModelProvider;
+import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
+import org.betterx.wover.item.api.ItemTagProvider;
+import org.betterx.wover.tag.api.event.context.ItemTagBootstrapContext;
+import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
 
-import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.resources.model.BlockModelRotation;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.client.resources.model.UnbakedModel;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ButtonBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import org.jetbrains.annotations.Nullable;
-
-public abstract class BaseButtonBlock extends ButtonBlock implements RuntimeBlockModelProvider, TagProvider, DropSelfLootProvider<BaseButtonBlock> {
+public abstract class BaseButtonBlock extends ButtonBlock implements BlockModelProvider, BlockTagProvider, ItemTagProvider, DropSelfLootProvider<BaseButtonBlock> {
     private final Block parent;
 
     protected BaseButtonBlock(Block parent, Properties properties, BlockSetType type) {
@@ -55,77 +39,18 @@ public abstract class BaseButtonBlock extends ButtonBlock implements RuntimeBloc
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
-    public BlockModel getItemModel(ResourceLocation blockId) {
-        ResourceLocation parentId = BuiltInRegistries.BLOCK.getKey(parent);
-        Optional<String> pattern = PatternsHelper.createJson(BasePatterns.ITEM_BUTTON, parentId);
-        return ModelsHelper.fromPattern(pattern);
+    public void provideBlockModels(WoverBlockModelGenerators generators) {
+        generators.modelFor(parent).createButton(this);
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
-    public @Nullable BlockModel getBlockModel(ResourceLocation resourceLocation, BlockState blockState) {
-        ResourceLocation parentId = BuiltInRegistries.BLOCK.getKey(parent);
-        Optional<String> pattern = blockState.getValue(POWERED)
-                ? PatternsHelper.createJson(
-                BasePatterns.BLOCK_BUTTON_PRESSED,
-                parentId
-        )
-                : PatternsHelper.createJson(BasePatterns.BLOCK_BUTTON, parentId);
-        return ModelsHelper.fromPattern(pattern);
+    public void registerBlockTags(ResourceLocation location, TagBootstrapContext<Block> context) {
+        context.add(this, BlockTags.BUTTONS);
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
-    public UnbakedModel getModelVariant(
-            ModelResourceLocation stateId,
-            BlockState blockState,
-            Map<ResourceLocation, UnbakedModel> modelCache
-    ) {
-        String powered = blockState.getValue(POWERED) ? "_powered" : "";
-        ModelResourceLocation modelId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState, powered);
-        registerBlockModel(stateId, modelId, blockState, modelCache);
-        AttachFace face = blockState.getValue(FACE);
-        boolean isCeiling = face == AttachFace.CEILING;
-        int x = 0, y = 0;
-        switch (face) {
-            case CEILING:
-                x = 180;
-                break;
-            case WALL:
-                x = 90;
-                break;
-            default:
-                break;
-        }
-        switch (blockState.getValue(FACING)) {
-            case NORTH:
-                if (isCeiling) {
-                    y = 180;
-                }
-                break;
-            case EAST:
-                y = isCeiling ? 270 : 90;
-                break;
-            case SOUTH:
-                if (!isCeiling) {
-                    y = 180;
-                }
-                break;
-            case WEST:
-                y = isCeiling ? 90 : 270;
-                break;
-            default:
-                break;
-        }
-        BlockModelRotation rotation = BlockModelRotation.by(x, y);
-        return ModelsHelper.createMultiVariant(modelId.id(), rotation.getRotation(), face == AttachFace.WALL);
-    }
-
-    @Override
-    public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-        blockTags.add(BlockTags.BUTTONS);
-        itemTags.add(ItemTags.BUTTONS);
+    public void registerItemTags(ResourceLocation location, ItemTagBootstrapContext context) {
+        context.add(this, ItemTags.BUTTONS);
     }
 
     public static class Metal extends BaseButtonBlock implements BehaviourMetal {
@@ -139,12 +64,14 @@ public abstract class BaseButtonBlock extends ButtonBlock implements RuntimeBloc
             super(source, Properties.ofFullCopy(source).noOcclusion(), type);
         }
 
+        @Override
+        public void registerBlockTags(ResourceLocation location, TagBootstrapContext<Block> context) {
+            context.add(this, BlockTags.BUTTONS, BlockTags.STONE_BUTTONS);
+        }
 
         @Override
-        public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-            super.addTags(blockTags, itemTags);
-            blockTags.add(BlockTags.STONE_BUTTONS);
-            itemTags.add(ItemTags.STONE_BUTTONS);
+        public void registerItemTags(ResourceLocation location, ItemTagBootstrapContext context) {
+            context.add(this, ItemTags.BUTTONS, ItemTags.STONE_BUTTONS);
         }
     }
 
@@ -153,11 +80,15 @@ public abstract class BaseButtonBlock extends ButtonBlock implements RuntimeBloc
             super(source, Properties.ofFullCopy(source).strength(0.5F, 0.5F).noOcclusion(), type);
         }
 
+
         @Override
-        public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-            super.addTags(blockTags, itemTags);
-            blockTags.add(BlockTags.WOODEN_BUTTONS);
-            itemTags.add(ItemTags.WOODEN_BUTTONS);
+        public void registerBlockTags(ResourceLocation location, TagBootstrapContext<Block> context) {
+            context.add(this, BlockTags.BUTTONS, BlockTags.WOODEN_BUTTONS);
+        }
+
+        @Override
+        public void registerItemTags(ResourceLocation location, ItemTagBootstrapContext context) {
+            context.add(this, ItemTags.BUTTONS, ItemTags.WOODEN_BUTTONS);
         }
     }
 

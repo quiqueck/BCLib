@@ -19,6 +19,7 @@ public class WorldsTogether {
         return FabricLoader.getInstance().isDevelopmentEnvironment();
     }
 
+    @SuppressWarnings("removal")
     public static void onInitialize() {
         TagManager.ensureStaticallyLoaded();
         WorldConfig.registerModCache(WorldsTogether.MOD_ID);

@@ -67,38 +67,6 @@ public abstract class BaseAnvilBlock extends AnvilBlock implements AddMineablePi
         generators.vanillaGenerator.createAnvil(this);
     }
 
-//    @Override
-//    @Environment(EnvType.CLIENT)
-//    public BlockModel getItemModel(ResourceLocation blockId) {
-//        return getBlockModel(blockId, defaultBlockState());
-//    }
-//
-//    @Override
-//    @Environment(EnvType.CLIENT)
-//    public @Nullable BlockModel getBlockModel(ResourceLocation blockId, BlockState blockState) {
-//        int destruction = blockState.getValue(DESTRUCTION);
-//        String name = blockId.getPath();
-//        Map<String, String> textures = Maps.newHashMap();
-//        textures.put("%modid%", blockId.getNamespace());
-//        textures.put("%anvil%", name);
-//        textures.put("%top%", name + "_top_" + destruction);
-//        Optional<String> pattern = PatternsHelper.createJson(BasePatterns.BLOCK_ANVIL, textures);
-//        return ModelsHelper.fromPattern(pattern);
-//    }
-//
-//    @Override
-//    @Environment(EnvType.CLIENT)
-//    public UnbakedModel getModelVariant(
-//            ModelResourceLocation stateId,
-//            BlockState blockState,
-//            Map<ResourceLocation, UnbakedModel> modelCache
-//    ) {
-//        int destruction = blockState.getValue(DESTRUCTION);
-//        ModelResourceLocation modelLocation = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState, "_top_" + destruction);
-//        registerBlockModel(stateId, modelLocation, blockState, modelCache);
-//        return ModelsHelper.createFacingModel(modelLocation.id(), blockState.getValue(FACING), false, false);
-//    }
-
     @Override
     public BlockItem getCustomBlockItem(ResourceLocation blockID, Item.Properties settings) {
         return new BaseAnvilItem(this, settings);

@@ -3,17 +3,17 @@ package org.betterx.bclib.blocks;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.PatternsHelper;
-import org.betterx.bclib.interfaces.TagProvider;
+import org.betterx.wover.block.api.BlockTagProvider;
+import org.betterx.wover.item.api.ItemTagProvider;
+import org.betterx.wover.tag.api.event.context.ItemTagBootstrapContext;
+import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
-import java.util.List;
 import java.util.Optional;
 
 public abstract class BaseBarkBlock extends BaseRotatedPillarBlock {
@@ -32,7 +32,7 @@ public abstract class BaseBarkBlock extends BaseRotatedPillarBlock {
         return ResourceLocation.fromNamespaceAndPath(blockId.getNamespace(), newPath);
     }
 
-    public static class Wood extends BaseBarkBlock implements BehaviourWood, TagProvider {
+    public static class Wood extends BaseBarkBlock implements BehaviourWood, BlockTagProvider, ItemTagProvider {
         private final boolean flammable;
 
         public Wood(Properties settings, boolean flammable) {
@@ -41,13 +41,18 @@ public abstract class BaseBarkBlock extends BaseRotatedPillarBlock {
         }
 
         @Override
-        public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-            blockTags.add(BlockTags.LOGS);
-            itemTags.add(ItemTags.LOGS);
-
+        public void registerBlockTags(ResourceLocation location, TagBootstrapContext<Block> context) {
+            context.add(BlockTags.LOGS, this);
             if (flammable) {
-                blockTags.add(BlockTags.LOGS_THAT_BURN);
-                itemTags.add(ItemTags.LOGS_THAT_BURN);
+                context.add(BlockTags.LOGS_THAT_BURN, this);
+            }
+        }
+
+        @Override
+        public void registerItemTags(ResourceLocation location, ItemTagBootstrapContext context) {
+            context.add(ItemTags.LOGS, this);
+            if (flammable) {
+                context.add(ItemTags.LOGS_THAT_BURN, this);
             }
         }
     }

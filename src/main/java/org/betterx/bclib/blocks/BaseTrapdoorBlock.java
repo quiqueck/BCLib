@@ -12,7 +12,10 @@ import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
-import org.betterx.bclib.interfaces.TagProvider;
+import org.betterx.wover.block.api.BlockTagProvider;
+import org.betterx.wover.item.api.ItemTagProvider;
+import org.betterx.wover.tag.api.event.context.ItemTagBootstrapContext;
+import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
@@ -21,8 +24,6 @@ import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.TrapDoorBlock;
@@ -35,12 +36,11 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseTrapdoorBlock extends TrapDoorBlock implements RenderLayerProvider, RuntimeBlockModelProvider, TagProvider, DropSelfLootProvider<BaseTrapdoorBlock> {
+public abstract class BaseTrapdoorBlock extends TrapDoorBlock implements RenderLayerProvider, RuntimeBlockModelProvider, BlockTagProvider, ItemTagProvider, DropSelfLootProvider<BaseTrapdoorBlock> {
     protected BaseTrapdoorBlock(BlockBehaviour.Properties properties, BlockSetType type) {
         super(type, properties);
     }
@@ -110,9 +110,13 @@ public abstract class BaseTrapdoorBlock extends TrapDoorBlock implements RenderL
     }
 
     @Override
-    public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-        blockTags.add(BlockTags.TRAPDOORS);
-        itemTags.add(ItemTags.TRAPDOORS);
+    public void registerBlockTags(ResourceLocation location, TagBootstrapContext<Block> context) {
+        context.add(this, BlockTags.TRAPDOORS);
+    }
+
+    @Override
+    public void registerItemTags(ResourceLocation location, ItemTagBootstrapContext context) {
+        context.add(this, ItemTags.TRAPDOORS);
     }
 
     public static class Wood extends BaseTrapdoorBlock implements BehaviourWood {
@@ -125,10 +129,13 @@ public abstract class BaseTrapdoorBlock extends TrapDoorBlock implements RenderL
         }
 
         @Override
-        public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-            super.addTags(blockTags, itemTags);
-            blockTags.add(BlockTags.WOODEN_TRAPDOORS);
-            itemTags.add(ItemTags.WOODEN_TRAPDOORS);
+        public void registerBlockTags(ResourceLocation location, TagBootstrapContext<Block> context) {
+            context.add(this, BlockTags.TRAPDOORS, BlockTags.WOODEN_TRAPDOORS);
+        }
+
+        @Override
+        public void registerItemTags(ResourceLocation location, ItemTagBootstrapContext context) {
+            context.add(this, ItemTags.TRAPDOORS, ItemTags.WOODEN_TRAPDOORS);
         }
     }
 

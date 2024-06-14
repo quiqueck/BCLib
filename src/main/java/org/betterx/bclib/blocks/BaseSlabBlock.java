@@ -9,9 +9,12 @@ import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
-import org.betterx.bclib.interfaces.CustomItemProvider;
 import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
-import org.betterx.bclib.interfaces.TagProvider;
+import org.betterx.wover.block.api.BlockTagProvider;
+import org.betterx.wover.block.api.CustomBlockItemProvider;
+import org.betterx.wover.item.api.ItemTagProvider;
+import org.betterx.wover.tag.api.event.context.ItemTagBootstrapContext;
+import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
@@ -21,7 +24,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -32,12 +34,11 @@ import net.minecraft.world.level.block.state.properties.SlabType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseSlabBlock extends SlabBlock implements RuntimeBlockModelProvider, CustomItemProvider, TagProvider, DropSelfLootProvider<BaseSlabBlock> {
+public abstract class BaseSlabBlock extends SlabBlock implements RuntimeBlockModelProvider, CustomBlockItemProvider, BlockTagProvider, ItemTagProvider, DropSelfLootProvider<BaseSlabBlock> {
     private final Block parent;
     public final boolean fireproof;
 
@@ -83,13 +84,17 @@ public abstract class BaseSlabBlock extends SlabBlock implements RuntimeBlockMod
     }
 
     @Override
-    public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-        blockTags.add(BlockTags.SLABS);
-        itemTags.add(ItemTags.SLABS);
+    public void registerBlockTags(ResourceLocation location, TagBootstrapContext<Block> context) {
+        context.add(BlockTags.SLABS, this);
     }
 
     @Override
-    public BlockItem getCustomItem(ResourceLocation blockID, Item.Properties settings) {
+    public void registerItemTags(ResourceLocation location, ItemTagBootstrapContext context) {
+        context.add(ItemTags.SLABS, this);
+    }
+
+    @Override
+    public BlockItem getCustomBlockItem(ResourceLocation blockID, Item.Properties settings) {
         if (fireproof) settings = settings.fireResistant();
         return new BlockItem(this, settings);
     }
@@ -124,10 +129,13 @@ public abstract class BaseSlabBlock extends SlabBlock implements RuntimeBlockMod
         }
 
         @Override
-        public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-            super.addTags(blockTags, itemTags);
-            blockTags.add(BlockTags.WOODEN_SLABS);
-            itemTags.add(ItemTags.WOODEN_SLABS);
+        public void registerBlockTags(ResourceLocation location, TagBootstrapContext<Block> context) {
+            context.add(this, BlockTags.SLABS, BlockTags.WOODEN_SLABS);
+        }
+
+        @Override
+        public void registerItemTags(ResourceLocation location, ItemTagBootstrapContext context) {
+            context.add(this, ItemTags.SLABS, ItemTags.WOODEN_SLABS);
         }
     }
 

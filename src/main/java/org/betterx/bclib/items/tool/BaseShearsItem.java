@@ -1,9 +1,9 @@
 package org.betterx.bclib.items.tool;
 
 
-import org.betterx.worlds.together.tag.v3.CommonItemTags;
-import org.betterx.worlds.together.tag.v3.MineableTags;
 import org.betterx.worlds.together.tag.v3.TagManager;
+import org.betterx.wover.tag.api.predefined.CommonItemTags;
+import org.betterx.wover.tag.api.predefined.MineableTags;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;

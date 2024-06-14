@@ -2,81 +2,29 @@ package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.api.v3.datagen.DropSelfLootProvider;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
-import org.betterx.bclib.client.models.BasePatterns;
-import org.betterx.bclib.client.models.ModelsHelper;
-import org.betterx.bclib.client.models.PatternsHelper;
-import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
-import org.betterx.bclib.interfaces.TagProvider;
-import org.betterx.worlds.together.tag.v3.CommonBlockTags;
-import org.betterx.worlds.together.tag.v3.CommonPoiTags;
+import org.betterx.wover.block.api.BlockTagProvider;
+import org.betterx.wover.block.api.model.BlockModelProvider;
+import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
+import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
+import org.betterx.wover.tag.api.predefined.CommonBlockTags;
 
-import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ComposterBlock;
-import net.minecraft.world.level.block.state.BlockState;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import org.jetbrains.annotations.Nullable;
-
-public abstract class BaseComposterBlock extends ComposterBlock implements RuntimeBlockModelProvider, TagProvider, DropSelfLootProvider<BaseComposterBlock> {
+public abstract class BaseComposterBlock extends ComposterBlock implements BlockModelProvider, BlockTagProvider, DropSelfLootProvider<BaseComposterBlock> {
     protected BaseComposterBlock(Block source) {
         super(Properties.ofFullCopy(source));
     }
 
-
     @Override
-    @Environment(EnvType.CLIENT)
-    public BlockModel getItemModel(ResourceLocation resourceLocation) {
-        return getBlockModel(resourceLocation, defaultBlockState());
+    public void provideBlockModels(WoverBlockModelGenerators generators) {
+        generators.createComposter(this);
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
-    public @Nullable BlockModel getBlockModel(ResourceLocation blockId, BlockState blockState) {
-        Optional<String> pattern = PatternsHelper.createJson(BasePatterns.BLOCK_COMPOSTER, blockId);
-        return ModelsHelper.fromPattern(pattern);
-    }
-
-    @Override
-    public UnbakedModel getModelVariant(
-            ModelResourceLocation stateId,
-            BlockState blockState,
-            Map<ResourceLocation, UnbakedModel> modelCache
-    ) {
-        ModelResourceLocation modelId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState);
-        registerBlockModel(stateId, modelId, blockState, modelCache);
-
-        ModelsHelper.MultiPartBuilder builder = ModelsHelper.MultiPartBuilder.create(stateDefinition);
-        LEVEL.getPossibleValues().forEach(level -> {
-            if (level > 0) {
-                ResourceLocation contentId;
-                if (level > 7) {
-                    contentId = ResourceLocation.withDefaultNamespace("block/composter_contents_ready");
-                } else {
-                    contentId = ResourceLocation.withDefaultNamespace("block/composter_contents" + level);
-                }
-                builder.part(contentId).setCondition(state -> state.getValue(LEVEL).equals(level)).add();
-            }
-        });
-        builder.part(modelId.id()).add();
-
-        return builder.build();
-    }
-
-    @Override
-    public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-        blockTags.add(CommonBlockTags.COMPOSTER);
-        blockTags.add(CommonPoiTags.FARMER_WORKSTATION);
+    public void registerBlockTags(ResourceLocation location, TagBootstrapContext<Block> context) {
+        context.add(this, CommonBlockTags.COMPOSTER, org.betterx.wover.tag.api.predefined.CommonPoiTags.FARMER_WORKSTATION);
     }
 
     public static class Wood extends BaseComposterBlock implements BehaviourWood {
@@ -85,9 +33,8 @@ public abstract class BaseComposterBlock extends ComposterBlock implements Runti
         }
 
         @Override
-        public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-            super.addTags(blockTags, itemTags);
-            blockTags.add(CommonBlockTags.WOODEN_COMPOSTER);
+        public void registerBlockTags(ResourceLocation location, TagBootstrapContext<Block> context) {
+            context.add(this, CommonBlockTags.COMPOSTER, CommonBlockTags.WOODEN_COMPOSTER, org.betterx.wover.tag.api.predefined.CommonPoiTags.FARMER_WORKSTATION);
         }
     }
 

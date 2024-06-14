@@ -5,14 +5,16 @@ import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
 import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.complexmaterials.BCLWoodTypeWrapper;
-import org.betterx.bclib.interfaces.CustomItemProvider;
 import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
-import org.betterx.bclib.interfaces.TagProvider;
+import org.betterx.wover.block.api.BlockTagProvider;
+import org.betterx.wover.block.api.CustomBlockItemProvider;
+import org.betterx.wover.item.api.ItemTagProvider;
+import org.betterx.wover.tag.api.event.context.ItemTagBootstrapContext;
+import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.HangingSignItem;
 import net.minecraft.world.item.Item;
@@ -24,10 +26,9 @@ import net.minecraft.world.level.block.state.properties.RotationSegment;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.MapColor;
 
-import java.util.List;
 import java.util.function.Supplier;
 
-public abstract class BaseHangingSignBlock extends CeilingHangingSignBlock implements RuntimeBlockModelProvider, CustomItemProvider, TagProvider {
+public abstract class BaseHangingSignBlock extends CeilingHangingSignBlock implements RuntimeBlockModelProvider, CustomBlockItemProvider, BlockTagProvider, ItemTagProvider {
     protected final Supplier<BaseWallHangingSignBlock> wallSign;
     private BlockItem customItem;
     private BaseWallHangingSignBlock wallSignBlock;
@@ -55,7 +56,7 @@ public abstract class BaseHangingSignBlock extends CeilingHangingSignBlock imple
     }
 
     @Override
-    public BlockItem getCustomItem(ResourceLocation blockID, Item.Properties settings) {
+    public BlockItem getCustomBlockItem(ResourceLocation blockID, Item.Properties settings) {
         if (customItem == null) {
             customItem = new HangingSignItem(this, getWallSignBlock(), settings.stacksTo(16));
         }
@@ -63,9 +64,13 @@ public abstract class BaseHangingSignBlock extends CeilingHangingSignBlock imple
     }
 
     @Override
-    public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-        blockTags.add(BlockTags.CEILING_HANGING_SIGNS);
-        itemTags.add(ItemTags.HANGING_SIGNS);
+    public void registerBlockTags(ResourceLocation location, TagBootstrapContext<Block> context) {
+        context.add(this, BlockTags.CEILING_HANGING_SIGNS);
+    }
+
+    @Override
+    public void registerItemTags(ResourceLocation location, ItemTagBootstrapContext context) {
+        context.add(this, ItemTags.HANGING_SIGNS);
     }
 
     public static class Wood extends BaseHangingSignBlock implements BehaviourWood {

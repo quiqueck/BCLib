@@ -16,7 +16,11 @@ import org.betterx.bclib.interfaces.TagProvider;
 import org.betterx.bclib.interfaces.tools.*;
 import org.betterx.bclib.items.tool.*;
 import org.betterx.bclib.registry.BaseBlockEntities;
-import org.betterx.worlds.together.tag.v3.*;
+import org.betterx.worlds.together.tag.v3.TagManager;
+import org.betterx.wover.tag.api.predefined.CommonBlockTags;
+import org.betterx.wover.tag.api.predefined.CommonItemTags;
+import org.betterx.wover.tag.api.predefined.MineableTags;
+import org.betterx.wover.tag.api.predefined.ToolTags;
 
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.dispenser.ShearsDispenseItemBehavior;
@@ -167,7 +171,7 @@ public class PostInitAPI {
                         && !TagManager.BLOCKS.contains(BlockTags.FENCE_GATES, block)
                         && !TagManager.BLOCKS.contains(BlockTags.ALL_HANGING_SIGNS, block)
                         && !TagManager.BLOCKS.contains(CommonBlockTags.WORKBENCHES, block)
-                        && !TagManager.BLOCKS.contains(CommonBlockTags.BOOKSHELVES, block)
+                        && !TagManager.BLOCKS.contains(org.betterx.wover.tag.api.predefined.CommonBlockTags.BOOKSHELVES, block)
                 ) {
                     TagManager.BLOCKS.add(block, MineableTags.AXE);
                 }

@@ -6,7 +6,10 @@ import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
-import org.betterx.bclib.interfaces.TagProvider;
+import org.betterx.wover.block.api.BlockTagProvider;
+import org.betterx.wover.item.api.ItemTagProvider;
+import org.betterx.wover.tag.api.event.context.ItemTagBootstrapContext;
+import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
@@ -16,8 +19,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -26,12 +27,11 @@ import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseFenceBlock extends FenceBlock implements RuntimeBlockModelProvider, TagProvider, DropSelfLootProvider<BaseFenceBlock> {
+public abstract class BaseFenceBlock extends FenceBlock implements RuntimeBlockModelProvider, BlockTagProvider, ItemTagProvider, DropSelfLootProvider<BaseFenceBlock> {
     private final Block parent;
 
     protected BaseFenceBlock(Block source) {
@@ -98,9 +98,13 @@ public abstract class BaseFenceBlock extends FenceBlock implements RuntimeBlockM
     }
 
     @Override
-    public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-        blockTags.add(BlockTags.FENCES);
-        itemTags.add(ItemTags.FENCES);
+    public void registerBlockTags(ResourceLocation location, TagBootstrapContext<Block> context) {
+        context.add(this, BlockTags.FENCES);
+    }
+
+    @Override
+    public void registerItemTags(ResourceLocation location, ItemTagBootstrapContext context) {
+        context.add(this, ItemTags.FENCES);
     }
 
     public static class Wood extends BaseFenceBlock implements BehaviourWood {
@@ -109,10 +113,13 @@ public abstract class BaseFenceBlock extends FenceBlock implements RuntimeBlockM
         }
 
         @Override
-        public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-            super.addTags(blockTags, itemTags);
-            blockTags.add(BlockTags.WOODEN_FENCES);
-            itemTags.add(ItemTags.WOODEN_FENCES);
+        public void registerBlockTags(ResourceLocation location, TagBootstrapContext<Block> context) {
+            context.add(this, BlockTags.FENCES, BlockTags.WOODEN_FENCES);
+        }
+
+        @Override
+        public void registerItemTags(ResourceLocation location, ItemTagBootstrapContext context) {
+            context.add(this, ItemTags.FENCES, ItemTags.WOODEN_FENCES);
         }
     }
 

@@ -3,18 +3,16 @@ package org.betterx.bclib.blocks.signs;
 import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
 import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
-import org.betterx.bclib.interfaces.TagProvider;
+import org.betterx.wover.block.api.BlockTagProvider;
+import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.WallHangingSignBlock;
 import net.minecraft.world.level.block.state.properties.WoodType;
 
-import java.util.List;
-
-public abstract class BaseWallHangingSignBlock extends WallHangingSignBlock implements TagProvider {
+public abstract class BaseWallHangingSignBlock extends WallHangingSignBlock implements BlockTagProvider {
     protected BaseWallHangingSignBlock(
             Properties properties,
             WoodType woodType
@@ -23,8 +21,8 @@ public abstract class BaseWallHangingSignBlock extends WallHangingSignBlock impl
     }
 
     @Override
-    public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-        blockTags.add(BlockTags.WALL_HANGING_SIGNS);
+    public void registerBlockTags(ResourceLocation location, TagBootstrapContext<Block> context) {
+        context.add(this, BlockTags.WALL_HANGING_SIGNS);
     }
 
     public static class Wood extends BaseWallHangingSignBlock implements BehaviourWood {

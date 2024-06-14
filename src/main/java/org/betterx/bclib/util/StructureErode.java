@@ -1,7 +1,7 @@
 package org.betterx.bclib.util;
 
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
-import org.betterx.worlds.together.tag.v3.CommonBlockTags;
+import org.betterx.wover.tag.api.predefined.CommonBlockTags;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
@@ -239,7 +239,7 @@ public class StructureErode {
     }
 
     private static boolean ignore(BlockState state, WorldGenLevel world, BlockPos pos) {
-        if (state.is(CommonBlockTags.GEN_END_STONES) || state.is(BlockTags.NYLIUM)) {
+        if (state.is(CommonBlockTags.END_STONES) || state.is(BlockTags.NYLIUM)) {
             return true;
         }
 
@@ -250,7 +250,7 @@ public class StructureErode {
 
     private static boolean isTerrainNear(WorldGenLevel world, BlockPos pos) {
         for (Direction dir : BlocksHelper.DIRECTIONS) {
-            if (world.getBlockState(pos.relative(dir)).is(CommonBlockTags.GEN_END_STONES)) {
+            if (world.getBlockState(pos.relative(dir)).is(CommonBlockTags.END_STONES)) {
                 return true;
             }
         }

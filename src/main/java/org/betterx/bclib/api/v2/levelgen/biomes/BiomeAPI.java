@@ -6,9 +6,9 @@ import org.betterx.bclib.interfaces.SurfaceMaterialProvider;
 import org.betterx.bclib.mixin.common.BiomeGenerationSettingsAccessor;
 import org.betterx.bclib.mixin.common.MobSpawnSettingsAccessor;
 import org.betterx.bclib.util.CollectionsUtil;
-import org.betterx.worlds.together.tag.v3.CommonBiomeTags;
 import org.betterx.worlds.together.tag.v3.TagManager;
 import org.betterx.worlds.together.world.event.WorldBootstrap;
+import org.betterx.wover.tag.api.predefined.CommonBiomeTags;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;

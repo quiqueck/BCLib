@@ -8,8 +8,8 @@ import org.betterx.bclib.items.BaseSpawnEggItem;
 import org.betterx.bclib.items.ModelProviderItem;
 import org.betterx.bclib.models.RecordItemModelProvider;
 import org.betterx.bclib.recipes.SmithingTemplates;
-import org.betterx.worlds.together.tag.v3.CommonItemTags;
 import org.betterx.worlds.together.tag.v3.TagManager;
+import org.betterx.wover.tag.api.predefined.CommonItemTags;
 
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;

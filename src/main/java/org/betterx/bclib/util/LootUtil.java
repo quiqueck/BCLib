@@ -4,8 +4,8 @@ import org.betterx.bclib.BCLib;
 import org.betterx.bclib.interfaces.LootPoolAccessor;
 import org.betterx.bclib.interfaces.tools.*;
 import org.betterx.bclib.items.tool.BaseShearsItem;
-import org.betterx.worlds.together.tag.v3.CommonItemTags;
-import org.betterx.worlds.together.tag.v3.ToolTags;
+import org.betterx.wover.tag.api.predefined.CommonItemTags;
+import org.betterx.wover.tag.api.predefined.ToolTags;
 
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;

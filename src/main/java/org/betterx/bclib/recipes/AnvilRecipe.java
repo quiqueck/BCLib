@@ -3,9 +3,9 @@ package org.betterx.bclib.recipes;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.interfaces.UnknownReceipBookCategory;
 import org.betterx.bclib.util.ItemUtil;
-import org.betterx.worlds.together.tag.v3.CommonItemTags;
-import org.betterx.worlds.together.tag.v3.TagManager;
 import org.betterx.worlds.together.world.event.WorldBootstrap;
+import org.betterx.wover.tag.api.TagManager;
+import org.betterx.wover.tag.api.predefined.CommonItemTags;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;

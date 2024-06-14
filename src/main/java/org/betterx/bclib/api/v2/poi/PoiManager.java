@@ -1,7 +1,6 @@
 package org.betterx.bclib.api.v2.poi;
 
 import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
-import org.betterx.worlds.together.tag.v3.CommonPoiTags;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -51,8 +50,8 @@ public class PoiManager {
 
     @ApiStatus.Internal
     public static void registerAll() {
-        PoiManager.setTag(PoiTypes.FISHERMAN, CommonPoiTags.FISHERMAN_WORKSTATION);
-        PoiManager.setTag(PoiTypes.FARMER, CommonPoiTags.FARMER_WORKSTATION);
+        PoiManager.setTag(PoiTypes.FISHERMAN, org.betterx.wover.tag.api.predefined.CommonPoiTags.FISHERMAN_WORKSTATION);
+        PoiManager.setTag(PoiTypes.FARMER, org.betterx.wover.tag.api.predefined.CommonPoiTags.FARMER_WORKSTATION);
     }
 
 

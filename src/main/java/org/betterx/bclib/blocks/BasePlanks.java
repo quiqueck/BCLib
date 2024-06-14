@@ -1,17 +1,17 @@
 package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
-import org.betterx.bclib.interfaces.TagProvider;
+import org.betterx.wover.block.api.BlockTagProvider;
+import org.betterx.wover.item.api.ItemTagProvider;
+import org.betterx.wover.tag.api.event.context.ItemTagBootstrapContext;
+import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
-import java.util.List;
-
-public abstract class BasePlanks extends BaseBlock implements TagProvider {
+public abstract class BasePlanks extends BaseBlock implements BlockTagProvider, ItemTagProvider {
     /**
      * Creates a new Block with the passed properties
      *
@@ -22,9 +22,13 @@ public abstract class BasePlanks extends BaseBlock implements TagProvider {
     }
 
     @Override
-    public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-        blockTags.add(BlockTags.PLANKS);
-        itemTags.add(ItemTags.PLANKS);
+    public void registerBlockTags(ResourceLocation location, TagBootstrapContext<Block> context) {
+        context.add(BlockTags.PLANKS, this);
+    }
+
+    @Override
+    public void registerItemTags(ResourceLocation location, ItemTagBootstrapContext context) {
+        context.add(ItemTags.PLANKS, this);
     }
 
     public static class Wood extends BasePlanks implements BehaviourWood {

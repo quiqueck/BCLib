@@ -3,30 +3,24 @@ package org.betterx.bclib.blocks;
 import org.betterx.bclib.api.v3.datagen.DropSelfLootProvider;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.blockentities.BaseBarrelBlockEntity;
-import org.betterx.bclib.client.models.BasePatterns;
-import org.betterx.bclib.client.models.ModelsHelper;
-import org.betterx.bclib.client.models.PatternsHelper;
-import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
-import org.betterx.bclib.interfaces.TagProvider;
 import org.betterx.bclib.registry.BaseBlockEntities;
-import org.betterx.worlds.together.tag.v3.CommonBlockTags;
-import org.betterx.worlds.together.tag.v3.CommonItemTags;
+import org.betterx.wover.block.api.BlockTagProvider;
+import org.betterx.wover.block.api.model.BlockModelProvider;
+import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
+import org.betterx.wover.item.api.ItemTagProvider;
+import org.betterx.wover.tag.api.event.context.ItemTagBootstrapContext;
+import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
+import org.betterx.wover.tag.api.predefined.CommonBlockTags;
+import org.betterx.wover.tag.api.predefined.CommonItemTags;
 
-import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.resources.model.BlockModelRotation;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
-import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BarrelBlock;
 import net.minecraft.world.level.block.Block;
@@ -36,15 +30,9 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import org.jetbrains.annotations.Nullable;
-
-public abstract class BaseBarrelBlock extends BarrelBlock implements RuntimeBlockModelProvider, TagProvider, DropSelfLootProvider<BaseBarrelBlock> {
+public abstract class BaseBarrelBlock extends BarrelBlock implements BlockModelProvider, BlockTagProvider, ItemTagProvider, DropSelfLootProvider<BaseBarrelBlock> {
     BaseBarrelBlock(Block source) {
         this(Properties.ofFullCopy(source).noOcclusion());
     }
@@ -89,66 +77,23 @@ public abstract class BaseBarrelBlock extends BarrelBlock implements RuntimeBloc
     }
 
     @Override
-    public RenderShape getRenderShape(BlockState state) {
+    public @NotNull RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
-    public BlockModel getItemModel(ResourceLocation blockId) {
-        return getBlockModel(blockId, defaultBlockState());
+    public void provideBlockModels(WoverBlockModelGenerators generators) {
+        generators.createBarrel(this);
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
-    public @Nullable BlockModel getBlockModel(ResourceLocation blockId, BlockState blockState) {
-        Optional<String> pattern;
-        if (blockState.getValue(OPEN)) {
-            pattern = PatternsHelper.createJson(BasePatterns.BLOCK_BARREL_OPEN, blockId);
-        } else {
-            pattern = PatternsHelper.createJson(BasePatterns.BLOCK_BOTTOM_TOP, blockId);
-        }
-        return ModelsHelper.fromPattern(pattern);
+    public void registerBlockTags(ResourceLocation location, TagBootstrapContext<Block> context) {
+        context.add(CommonBlockTags.BARREL, this);
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
-    public UnbakedModel getModelVariant(
-            ModelResourceLocation stateId,
-            BlockState blockState,
-            Map<ResourceLocation, UnbakedModel> modelCache
-    ) {
-        String open = blockState.getValue(OPEN) ? "_open" : "";
-        ModelResourceLocation modelId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState, open);
-        registerBlockModel(stateId, modelId, blockState, modelCache);
-        Direction facing = blockState.getValue(FACING);
-        BlockModelRotation rotation = BlockModelRotation.X0_Y0;
-        switch (facing) {
-            case NORTH:
-                rotation = BlockModelRotation.X90_Y0;
-                break;
-            case EAST:
-                rotation = BlockModelRotation.X90_Y90;
-                break;
-            case SOUTH:
-                rotation = BlockModelRotation.X90_Y180;
-                break;
-            case WEST:
-                rotation = BlockModelRotation.X90_Y270;
-                break;
-            case DOWN:
-                rotation = BlockModelRotation.X180_Y0;
-                break;
-            default:
-                break;
-        }
-        return ModelsHelper.createMultiVariant(modelId.id(), rotation.getRotation(), false);
-    }
-
-    @Override
-    public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-        blockTags.add(CommonBlockTags.BARREL);
-        itemTags.add(CommonItemTags.BARREL);
+    public void registerItemTags(ResourceLocation location, ItemTagBootstrapContext context) {
+        context.add(CommonItemTags.BARREL, this);
     }
 
     public static class Wood extends BaseBarrelBlock implements BehaviourWood {
@@ -161,10 +106,13 @@ public abstract class BaseBarrelBlock extends BarrelBlock implements RuntimeBloc
         }
 
         @Override
-        public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-            super.addTags(blockTags, itemTags);
-            blockTags.add(CommonBlockTags.WOODEN_BARREL);
-            itemTags.add(CommonItemTags.WOODEN_BARREL);
+        public void registerBlockTags(ResourceLocation location, TagBootstrapContext<Block> context) {
+            context.add(this, CommonBlockTags.BARREL, CommonBlockTags.WOODEN_BARREL);
+        }
+
+        @Override
+        public void registerItemTags(ResourceLocation location, ItemTagBootstrapContext context) {
+            context.add(this, CommonItemTags.BARREL, CommonItemTags.WOODEN_BARREL);
         }
     }
 

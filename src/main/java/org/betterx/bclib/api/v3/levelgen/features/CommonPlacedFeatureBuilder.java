@@ -3,7 +3,7 @@ package org.betterx.bclib.api.v3.levelgen.features;
 import org.betterx.bclib.api.v3.levelgen.features.blockpredicates.BlockPredicates;
 import org.betterx.bclib.api.v3.levelgen.features.config.PlaceFacingBlockConfig;
 import org.betterx.bclib.api.v3.levelgen.features.placement.*;
-import org.betterx.worlds.together.tag.v3.CommonBlockTags;
+import org.betterx.wover.tag.api.predefined.CommonBlockTags;
 
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;

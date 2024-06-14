@@ -1,7 +1,5 @@
 package org.betterx.bclib.mixin.common;
 
-import org.betterx.worlds.together.tag.v3.CommonBlockTags;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -25,7 +23,9 @@ public abstract class EnchantingTableBlockMixin extends Block {
             BlockPos delta,
             CallbackInfoReturnable<Boolean> info
     ) {
-        if (level.getBlockState(tablePos.offset(delta)).is(CommonBlockTags.BOOKSHELVES)
+        if (level
+                .getBlockState(tablePos.offset(delta))
+                .is(org.betterx.wover.tag.api.predefined.CommonBlockTags.BOOKSHELVES)
                 && level.isEmptyBlock(tablePos.offset(delta.getX() / 2, delta.getY(), delta.getZ() / 2))) {
             info.setReturnValue(true);
         }

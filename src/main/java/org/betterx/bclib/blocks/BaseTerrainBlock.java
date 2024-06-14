@@ -5,10 +5,10 @@ import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.client.sound.BlockSounds;
 import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
-import org.betterx.worlds.together.tag.v3.MineableTags;
-import org.betterx.worlds.together.tag.v3.TagManager;
 import org.betterx.wover.loot.api.BlockLootProvider;
 import org.betterx.wover.loot.api.LootLookupProvider;
+import org.betterx.wover.tag.api.TagManager;
+import org.betterx.wover.tag.api.predefined.MineableTags;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;

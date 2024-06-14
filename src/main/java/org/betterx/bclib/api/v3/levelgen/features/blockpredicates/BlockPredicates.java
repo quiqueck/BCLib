@@ -1,7 +1,7 @@
 package org.betterx.bclib.api.v3.levelgen.features.blockpredicates;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.worlds.together.tag.v3.CommonBlockTags;
+import org.betterx.wover.tag.api.predefined.CommonBlockTags;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;

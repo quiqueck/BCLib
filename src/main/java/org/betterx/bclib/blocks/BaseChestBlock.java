@@ -6,17 +6,18 @@ import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
-import org.betterx.bclib.interfaces.TagProvider;
 import org.betterx.bclib.registry.BaseBlockEntities;
-import org.betterx.worlds.together.tag.v3.CommonBlockTags;
-import org.betterx.worlds.together.tag.v3.CommonItemTags;
+import org.betterx.wover.block.api.BlockTagProvider;
+import org.betterx.wover.item.api.ItemTagProvider;
+import org.betterx.wover.tag.api.event.context.ItemTagBootstrapContext;
+import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
+import org.betterx.wover.tag.api.predefined.CommonBlockTags;
+import org.betterx.wover.tag.api.predefined.CommonItemTags;
 
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -25,11 +26,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import java.util.List;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseChestBlock extends ChestBlock implements RuntimeBlockModelProvider, TagProvider, DropSelfLootProvider<BaseChestBlock> {
+public abstract class BaseChestBlock extends ChestBlock implements RuntimeBlockModelProvider, BlockTagProvider, ItemTagProvider, DropSelfLootProvider<BaseChestBlock> {
     private final Block parent;
 
     protected BaseChestBlock(Block source) {
@@ -56,10 +56,15 @@ public abstract class BaseChestBlock extends ChestBlock implements RuntimeBlockM
         return ModelsHelper.createBlockEmpty(parentId);
     }
 
+
     @Override
-    public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-        blockTags.add(CommonBlockTags.CHEST);
-        itemTags.add(CommonItemTags.CHEST);
+    public void registerBlockTags(ResourceLocation location, TagBootstrapContext<Block> context) {
+        context.add(this, CommonBlockTags.CHEST);
+    }
+
+    @Override
+    public void registerItemTags(ResourceLocation location, ItemTagBootstrapContext context) {
+        context.add(this, CommonItemTags.CHEST);
     }
 
     public static class Wood extends BaseChestBlock implements BehaviourWood {
@@ -68,10 +73,13 @@ public abstract class BaseChestBlock extends ChestBlock implements RuntimeBlockM
         }
 
         @Override
-        public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-            super.addTags(blockTags, itemTags);
-            blockTags.add(CommonBlockTags.WOODEN_CHEST);
-            itemTags.add(CommonItemTags.WOODEN_CHEST);
+        public void registerBlockTags(ResourceLocation location, TagBootstrapContext<Block> context) {
+            context.add(this, CommonBlockTags.CHEST, CommonBlockTags.WOODEN_CHEST);
+        }
+
+        @Override
+        public void registerItemTags(ResourceLocation location, ItemTagBootstrapContext context) {
+            context.add(this, CommonItemTags.CHEST, CommonItemTags.WOODEN_CHEST);
         }
     }
 
