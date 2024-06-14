@@ -19,6 +19,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 public abstract class BaseButtonBlock extends ButtonBlock implements BlockModelProvider, BlockTagProvider, ItemTagProvider, DropSelfLootProvider<BaseButtonBlock> {
     private final Block parent;
 
@@ -39,6 +42,7 @@ public abstract class BaseButtonBlock extends ButtonBlock implements BlockModelP
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public void provideBlockModels(WoverBlockModelGenerators generators) {
         generators.modelFor(parent).createButton(this);
     }

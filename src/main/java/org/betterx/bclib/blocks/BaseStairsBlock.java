@@ -22,6 +22,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.StairBlock;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 public abstract class BaseStairsBlock extends StairBlock implements BlockModelProvider, CustomBlockItemProvider, BlockTagProvider, ItemTagProvider, DropSelfLootProvider<BaseStairsBlock> {
     private final Block parent;
     public final boolean fireproof;
@@ -35,6 +38,7 @@ public abstract class BaseStairsBlock extends StairBlock implements BlockModelPr
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public void provideBlockModels(WoverBlockModelGenerators generators) {
         if (createModel)
             generators.modelFor(parent).createStairs(this);

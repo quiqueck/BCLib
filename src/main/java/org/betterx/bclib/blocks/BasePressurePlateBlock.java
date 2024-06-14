@@ -19,6 +19,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 public abstract class BasePressurePlateBlock extends PressurePlateBlock implements BlockModelProvider, BlockTagProvider, DropSelfLootProvider<BasePressurePlateBlock> {
     private final Block parent;
 
@@ -31,6 +34,7 @@ public abstract class BasePressurePlateBlock extends PressurePlateBlock implemen
 
 
     @Override
+    @Environment(EnvType.CLIENT)
     public void provideBlockModels(WoverBlockModelGenerators generators) {
         generators.modelFor(parent).createPressurePlate(this);
     }

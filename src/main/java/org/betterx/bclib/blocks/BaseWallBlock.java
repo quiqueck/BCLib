@@ -13,6 +13,9 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.WallBlock;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 public abstract class BaseWallBlock extends WallBlock implements DropSelfLootProvider<BaseWallBlock>, BlockModelProvider, BlockTagProvider {
     private final Block parent;
 
@@ -27,6 +30,7 @@ public abstract class BaseWallBlock extends WallBlock implements DropSelfLootPro
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public void provideBlockModels(WoverBlockModelGenerators generators) {
         generators.modelFor(parent).createWall(this);
     }
