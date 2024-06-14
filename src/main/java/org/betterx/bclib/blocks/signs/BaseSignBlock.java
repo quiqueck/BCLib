@@ -5,9 +5,10 @@ import org.betterx.bclib.behaviours.BehaviourBuilders;
 import org.betterx.bclib.behaviours.interfaces.BehaviourExplosionResistant;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.complexmaterials.BCLWoodTypeWrapper;
-import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.wover.block.api.BlockTagProvider;
 import org.betterx.wover.block.api.CustomBlockItemProvider;
+import org.betterx.wover.block.api.model.BlockModelProvider;
+import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 import org.betterx.wover.item.api.ItemTagProvider;
 import org.betterx.wover.tag.api.event.context.ItemTagBootstrapContext;
 import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
@@ -28,19 +29,20 @@ import net.minecraft.world.level.material.MapColor;
 import java.util.function.Supplier;
 
 @SuppressWarnings("deprecation")
-public abstract class BaseSignBlock extends StandingSignBlock implements RuntimeBlockModelProvider, CustomBlockItemProvider, BlockTagProvider, ItemTagProvider, DropSelfLootProvider<BaseSignBlock>, BehaviourExplosionResistant {
+public abstract class BaseSignBlock extends StandingSignBlock implements BlockModelProvider, CustomBlockItemProvider, BlockTagProvider, ItemTagProvider, DropSelfLootProvider<BaseSignBlock>, BehaviourExplosionResistant {
     protected final Supplier<BaseWallSignBlock> wallSign;
     private BlockItem customItem;
     private BaseWallSignBlock wallSignBlock;
-
+    private final Block parent;
 
     @FunctionalInterface
     public interface WallSignProvider {
         BaseWallSignBlock create(Properties properties, WoodType woodType);
     }
 
-    protected BaseSignBlock(WoodType type, MapColor color, boolean flammable, WallSignProvider provider) {
+    protected BaseSignBlock(Block parent, WoodType type, MapColor color, boolean flammable, WallSignProvider provider) {
         super(type, BehaviourBuilders.createSign(color, flammable));
+        this.parent = parent;
         this.wallSign = () -> provider.create(BehaviourBuilders.createWallSign(color, this, flammable), type);
     }
 
@@ -75,21 +77,27 @@ public abstract class BaseSignBlock extends StandingSignBlock implements Runtime
         context.add(this, ItemTags.SIGNS);
     }
 
+    @Override
+    public void provideBlockModels(WoverBlockModelGenerators generators) {
+        final BaseWallSignBlock wallSignBlock = this.getWallSignBlock();
+        generators.modelFor(this.parent).createSign(this, wallSignBlock);
+    }
+
     public static class Wood extends BaseSignBlock implements BehaviourWood {
-        public Wood(WoodType type) {
-            this(type, MapColor.WOOD, true);
+        public Wood(Block parent, WoodType type) {
+            this(parent, type, MapColor.WOOD, true);
         }
 
-        public Wood(BCLWoodTypeWrapper type) {
-            this(type.type, type.color, type.flammable);
+        public Wood(Block parent, BCLWoodTypeWrapper type) {
+            this(parent, type.type, type.color, type.flammable);
         }
 
-        public Wood(WoodType type, MapColor color, boolean flammable) {
-            super(type, color, flammable, BaseWallSignBlock.Wood::new);
+        public Wood(Block parent, WoodType type, MapColor color, boolean flammable) {
+            super(parent, type, color, flammable, BaseWallSignBlock.Wood::new);
         }
     }
 
-    public static BaseSignBlock from(BCLWoodTypeWrapper type) {
-        return new BaseSignBlock.Wood(type);
+    public static BaseSignBlock from(Block parent, BCLWoodTypeWrapper type) {
+        return new BaseSignBlock.Wood(parent, type);
     }
 }
