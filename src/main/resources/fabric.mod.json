@@ -48,10 +48,12 @@
     "minecraft": [
       "1.21.0"
     ],
-    "wunderlib": "21.0.x"
+    "wunderlib": "21.0.x",
+    "wover": "21.0.x"
   },
   "breaks": {
-    "wunderlib": "<21.0.0"
+    "wunderlib": "<21.0.0",
+    "wover": "<21.0.1"
   },
   "custom": {
     "wover": {

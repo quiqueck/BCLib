@@ -113,5 +113,13 @@
   "tooltip.bclib.place_underwater": "Survives under water",
   "tooltip.bclib.place_underwater_depth": "min. depth: %d",
   "tooltip.bclib.pottable_on": "Pottable on: %s",
-  "warning.config.bclib.client.ui.forceBetterXPreset": "MOST LIKELY YOU WILL WANT TO KEEP THIS OPTION ENABLED.\n"
+  "warning.config.bclib.client.ui.forceBetterXPreset": "MOST LIKELY YOU WILL WANT TO KEEP THIS OPTION ENABLED.\n",
+  "title.config.group.bclib.patches": "Patches & Fixes",
+  "title.config.bclib.main.patches.apply_patches": "Apply Patches",
+  "title.config.bclib.client.ui.survives_on_hint": "Show 'Survives On' hint as Tooltip",
+  "title.config.bclib.client.rendering.custom_fog_rendering": "Custom Fog Rendering",
+  "title.config.bclib.client.rendering.nether_thick_fog": "Render Fog in Nether denser",
+  "title.config.bclib.client.rendering.fog_density": "Overall Fog Density",
+  "description.config.bclib.main.patches.apply_patches": "Sometimes the internal data of our Mods needs to change, making older wolrds incompatible. Whith this option enabled, the Guardian will automatically apply the necessary changes to your world. This will ensure that your world will load correctly, but may also change some of the world's data.",
+  "description.config.client.main.ui.survives_on_hint": "When hovering over compatible Blocks and Items in your inventory, a hint will be displayed showing you where this block can be placed."
 }

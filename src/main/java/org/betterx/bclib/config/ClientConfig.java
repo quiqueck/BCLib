@@ -1,55 +1,53 @@
 package org.betterx.bclib.config;
 
+import de.ambertation.wunderlib.configs.ConfigFile;
 import org.betterx.bclib.BCLib;
+import org.betterx.wover.config.api.MainConfig;
 
-public class ClientConfig extends NamedPathConfig {
-    @ConfigUI(topPadding = 12)
-    public static final ConfigToken<Boolean> CUSTOM_FOG_RENDERING = ConfigToken.Boolean(
-            true,
-            "customFogRendering",
-            "rendering"
-    );
-    @ConfigUI(leftPadding = 8)
-    public static final ConfigToken<Boolean> NETHER_THICK_FOG = DependendConfigToken.Boolean(
-            true,
-            "netherThickFog",
-            "rendering",
-            (config) -> config.get(CUSTOM_FOG_RENDERING)
-    );
+public class ClientConfig extends ConfigFile {
 
-    @ConfigUI(leftPadding = 8, minValue = 0, maxValue = 2)
-    public static final ConfigToken<Float> FOG_DENSITY = DependendConfigToken.Float(
-            1.0f,
-            "FogDensity",
-            "rendering",
-            (config) -> config.get(CUSTOM_FOG_RENDERING)
-    );
+    public final BooleanValue customFogRendering = new BooleanValue(
+            MainConfig.RENDERING_GROUP.title(),
+            "custom_fog_rendering",
+            true
+    ).setGroup(MainConfig.RENDERING_GROUP);
 
-    @ConfigUI(topPadding = 12)
-    public static final ConfigToken<Boolean> SURVIES_ON_HINT = ConfigToken.Boolean(
-            true,
+    public final BooleanValue thickFogNether = new BooleanValue(
+            MainConfig.RENDERING_GROUP.title(),
+            "nether_thick_fog",
+            true
+    ).setGroup(MainConfig.RENDERING_GROUP).setDependency(customFogRendering);
+
+    public final FloatValue fogDensity = new FloatValue(
+            MainConfig.RENDERING_GROUP.title(),
+            "fog_density",
+            1.0f
+    ).setGroup(MainConfig.RENDERING_GROUP).setDependency(customFogRendering).min(0.0f).max(2.0f);
+
+
+    public final BooleanValue survivesOnHint = new BooleanValue(
+            MainConfig.UI_GROUP.title(),
             "survives_on_hint",
-            Configs.MAIN_INFO_CATEGORY
-    );
-
+            true
+    ).setGroup(MainConfig.UI_GROUP);
 
     public ClientConfig() {
-        super(BCLib.MOD_ID, "client");
+        super(BCLib.C, "client");
     }
 
     public boolean netherThickFog() {
-        return get(NETHER_THICK_FOG);
+        return thickFogNether.get();
     }
 
     public boolean renderCustomFog() {
-        return get(CUSTOM_FOG_RENDERING);
+        return customFogRendering.get();
     }
 
     public float fogDensity() {
-        return get(FOG_DENSITY);
+        return fogDensity.get();
     }
 
     public boolean survivesOnHint() {
-        return get(ClientConfig.SURVIES_ON_HINT);
+        return survivesOnHint.get();
     }
 }

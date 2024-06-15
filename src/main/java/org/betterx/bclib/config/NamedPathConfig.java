@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
 
+@Deprecated(forRemoval = true)
 public class NamedPathConfig extends PathConfig {
     public static class ConfigTokenDescription<T> {
         public final ConfigToken<T> token;

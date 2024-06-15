@@ -113,5 +113,13 @@
   "tooltip.bclib.place_underwater": "Lebt unter Wasser",
   "tooltip.bclib.place_underwater_depth": "min. Tiefe: %d",
   "tooltip.bclib.pottable_on": "Eintopfen auf: %s",
-  "warning.config.bclib.client.ui.forceBetterXPreset": "IN DEN MEISTEN FÄLLEN SOLLTE DIESE OPTION AKTIVIERT BLEIBEN.\n"
+  "warning.config.bclib.client.ui.forceBetterXPreset": "IN DEN MEISTEN FÄLLEN SOLLTE DIESE OPTION AKTIVIERT BLEIBEN.\n",
+  "title.config.group.bclib.patches": "Patches & Fixes",
+  "title.config.bclib.main.patches.apply_patches": "Patches anwenden",
+  "title.config.bclib.client.ui.survives_on_hint": "'Überlebt auf' Hinweis als Tooltip anzeigen",
+  "title.config.bclib.client.rendering.custom_fog_rendering": "Benutzerdefinierte Nebeldarstellung",
+  "title.config.bclib.client.rendering.nether_thick_fog": "Dichteren Nebel im Nether darstellen",
+  "title.config.bclib.client.rendering.fog_density": "Gesamte Nebeldichte",
+  "description.config.bclib.main.patches.apply_patches": "Manchmal müssen die internen Daten unserer Mods geändert werden, wodurch ältere Welten inkompatibel werden. Wenn diese Option aktiviert ist, wird der Guardian automatisch die notwendigen Änderungen an deiner Welt vornehmen. Dies stellt sicher, dass deine Welt korrekt geladen wird, kann aber auch einige der Weltdaten ändern.",
+  "description.config.client.main.ui.survives_on_hint": "Wenn du in deinem Inventar über kompatible Blöcke und Gegenstände schwebst, wird ein Hinweis angezeigt, der dir zeigt, wo dieser Block platziert werden kann."
 }

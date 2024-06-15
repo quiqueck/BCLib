@@ -3,6 +3,7 @@ package org.betterx.bclib.config;
 import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
+@Deprecated(forRemoval = true)
 public class PathConfig extends Config {
     public PathConfig(String modID, String group) {
         super(modID, group);
