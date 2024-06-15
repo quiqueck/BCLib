@@ -5,6 +5,8 @@ import org.betterx.datagen.bclib.advancement.BCLAdvancementDataProvider;
 import org.betterx.datagen.bclib.advancement.RecipeDataProvider;
 import org.betterx.datagen.bclib.integrations.NullscapeBiomes;
 import org.betterx.datagen.bclib.worldgen.BiomeDatagenProvider;
+import org.betterx.datagen.bclib.worldgen.BlockTagProvider;
+import org.betterx.datagen.bclib.worldgen.ItemTagProvider;
 import org.betterx.wover.core.api.ModCore;
 import org.betterx.wover.datagen.api.PackBuilder;
 import org.betterx.wover.datagen.api.WoverDataGenEntryPoint;
@@ -19,9 +21,11 @@ public class BCLibDatagen extends WoverDataGenEntryPoint {
         BCLib.LOGGER.info("Bootstrap onInitializeDataGenerator");
         NullscapeBiomes.ensureStaticallyLoaded();
 
-        globalPack.addProvider(org.betterx.wover.tag.datagen.BlockTagProvider::new);
-        globalPack.addProvider(org.betterx.wover.tag.datagen.ItemTagProvider::new);
+        //globalPack.addProvider((mc) -> new org.betterx.wover.tag.datagen.BlockTagProvider(Wover.C));
+        //globalPack.addProvider((mc) -> new org.betterx.wover.tag.datagen.ItemTagProvider(Wover.C));
         globalPack.addProvider(BiomeTagProvider::new);
+        globalPack.addProvider(BlockTagProvider::new);
+        globalPack.addProvider(ItemTagProvider::new);
 
 //        globalPack.addRegistryProvider(WorldPresetProvider::new);
 //        globalPack.addRegistryProvider(NoiseGeneratorSettingsProvider::new);

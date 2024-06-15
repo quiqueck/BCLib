@@ -18,7 +18,6 @@ import org.betterx.bclib.recipes.AnvilRecipe;
 import org.betterx.bclib.registry.BaseBlockEntities;
 import org.betterx.bclib.registry.BaseRegistry;
 import org.betterx.bclib.util.BCLDataComponents;
-import org.betterx.datagen.bclib.tests.TestStructure;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.world.WorldConfig;
 import org.betterx.wover.core.api.Logger;
@@ -64,10 +63,7 @@ public class BCLib implements ModInitializer {
         CommandRegistry.register();
         BCLBlockTags.ensureStaticallyLoaded();
         PoiManager.registerAll();
-        if (isDevEnvironment()) {
-            TestStructure.registerBase();
-        }
-
+        
         BCLibPatch.register();
         TemplatePiece.ensureStaticInitialization();
         PlacementModifiers.ensureStaticInitialization();
