@@ -26,7 +26,6 @@ public abstract class CreateWorldScreen_Mixin {
     //this is called when a new world is first created
     @Inject(method = "createNewWorldDirectory", at = @At("RETURN"))
     void wt_createNewWorld(CallbackInfoReturnable<Optional<LevelStorageSource.LevelStorageAccess>> cir) {
-        WorldBootstrap.Helpers.onRegistryReady(this.getUiState().getSettings().worldgenLoadContext());
         WorldBootstrap.InGUI.setupNewWorld(cir.getReturnValue());
     }
 }

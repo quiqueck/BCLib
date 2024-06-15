@@ -9,6 +9,8 @@ import org.betterx.bclib.api.v2.poi.PoiManager;
 import org.betterx.worlds.together.tag.v3.TagManager;
 import org.betterx.worlds.together.world.WorldConfig;
 import org.betterx.worlds.together.world.event.WorldEvents;
+import org.betterx.wover.events.api.WorldLifecycle;
+import org.betterx.wover.events.api.types.OnRegistryReady;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
@@ -34,7 +36,7 @@ public class LevelGenEvents {
         WorldEvents.BEFORE_WORLD_LOAD.on(LevelGenEvents::beforeWorldLoad);
 
         WorldEvents.ON_WORLD_LOAD.on(LevelGenEvents::onWorldLoad);
-        WorldEvents.WORLD_REGISTRY_READY.on(LevelGenEvents::worldRegistryReady);
+        WorldLifecycle.WORLD_REGISTRY_READY.subscribe(LevelGenEvents::worldRegistryReady);
         WorldEvents.ON_FINALIZE_LEVEL_STEM.on(LevelGenEvents::finalizeStem);
         WorldEvents.ON_FINALIZED_WORLD_LOAD.on(LevelGenEvents::finalizedWorldLoad);
 
@@ -62,9 +64,9 @@ public class LevelGenEvents {
         WorldConfig.setDataDir(dataPath.toFile());
         return DataFixerAPI.fixData(storageAccess, allDone != null && BCLib.isClient(), allDone);
     }
-
-    private static void worldRegistryReady(RegistryAccess a) {
-        InternalBiomeAPI.initRegistry(a);
+    
+    private static void worldRegistryReady(RegistryAccess registryAccess, OnRegistryReady.Stage stage) {
+        InternalBiomeAPI.initRegistry(registryAccess);
     }
 
     private static void beforeWorldLoad(

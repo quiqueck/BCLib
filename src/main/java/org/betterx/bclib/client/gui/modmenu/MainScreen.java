@@ -104,10 +104,6 @@ public class MainScreen extends LayoutScreenWithIcon {
 
         VerticalStack content = new VerticalStack(fit(), fit()).setDebugName("content");
 
-        Configs.GENERATOR_CONFIG.getAllOptions()
-                                .stream()
-                                .filter(o -> !o.hidden)
-                                .forEach(o -> addRow(content, Configs.GENERATOR_CONFIG, o));
         content.addSpacer(12);
         Configs.MAIN_CONFIG.getAllOptions()
                            .stream()
@@ -125,7 +121,6 @@ public class MainScreen extends LayoutScreenWithIcon {
         grid.addSpacer(8);
         grid.addButton(fit(), fit(), CommonComponents.GUI_DONE).onPress((button) -> {
             Configs.CLIENT_CONFIG.saveChanges();
-            Configs.GENERATOR_CONFIG.saveChanges();
             Configs.MAIN_CONFIG.saveChanges();
             onClose();
         }).alignRight();

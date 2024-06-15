@@ -2,7 +2,6 @@ package org.betterx.bclib.api.v2.dataexchange;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.dataexchange.handler.DataExchange;
-import org.betterx.bclib.config.Configs;
 import org.betterx.worlds.together.util.ModUtil;
 
 import net.fabricmc.api.EnvType;
@@ -49,8 +48,7 @@ public class DataExchangeAPI extends DataExchange {
         if (ModUtil.getModInfo(modID, false) != null && !"0.0.0".equals(ModUtil.getModVersion(modID))) {
             registerMod(modID);
         } else {
-            if (Configs.MAIN_CONFIG.verboseLogging())
-                BCLib.LOGGER.info("Mod Dependency '" + modID + "' not found. This is probably OK.");
+            BCLib.LOGGER.verbose("Mod Dependency '" + modID + "' not found. This is probably OK.");
         }
     }
 

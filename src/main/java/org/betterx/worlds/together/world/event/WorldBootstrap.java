@@ -1,16 +1,13 @@
 package org.betterx.worlds.together.world.event;
 
-import org.betterx.bclib.config.Configs;
+import org.betterx.bclib.BCLib;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.world.WorldConfig;
+import org.betterx.wover.state.api.WorldState;
 
-import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.dimension.LevelStem;
-import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.level.storage.LevelStorageSource;
 
@@ -21,20 +18,19 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 public class WorldBootstrap {
-    private static RegistryAccess LAST_REGISTRY_ACCESS = null;
-
     public static RegistryAccess getLastRegistryAccess() {
-        return LAST_REGISTRY_ACCESS;
+        return WorldState.allStageRegistryAccess();
+        //return LAST_REGISTRY_ACCESS;
     }
 
     private static byte WARN_COUNT_GLOBAL_REGISTRY = 0;
 
     public static RegistryAccess getLastRegistryAccessOrElseBuiltin() {
-        if (WARN_COUNT_GLOBAL_REGISTRY < 10 && LAST_REGISTRY_ACCESS == null && Configs.MAIN_CONFIG.verboseLogging()) {
-            WorldsTogether.LOGGER.error("Tried to read from global registry!");
+        if (WARN_COUNT_GLOBAL_REGISTRY < 10 && getLastRegistryAccess() == null) {
+            BCLib.LOGGER.verboseWarning("Tried to read from global registry!");
             WARN_COUNT_GLOBAL_REGISTRY++;
         }
-        return LAST_REGISTRY_ACCESS;
+        return getLastRegistryAccess();
     }
 
 
@@ -50,34 +46,9 @@ public class WorldBootstrap {
         private static void initializeWorldConfig(File levelBaseDir, boolean newWorld) {
             WorldConfig.load(new File(levelBaseDir, "data"));
         }
-
-        public static void onRegistryReady(RegistryAccess a) {
-            if (a != LAST_REGISTRY_ACCESS) {
-                LAST_REGISTRY_ACCESS = a;
-                WorldEventsImpl.WORLD_REGISTRY_READY.emit(e -> e.initRegistry(a));
-            }
-        }
-
-
-        private static Holder<WorldPreset> presetFromDatapack(Holder<WorldPreset> currentPreset) {
-            if (currentPreset != null && LAST_REGISTRY_ACCESS != null) {
-                Optional<ResourceKey<WorldPreset>> presetKey = currentPreset.unwrapKey();
-                if (presetKey.isPresent()) {
-                    Optional<Holder.Reference<WorldPreset>> newPreset = LAST_REGISTRY_ACCESS
-                            .registryOrThrow(Registries.WORLD_PRESET)
-                            .getHolder(presetKey.get());
-                    currentPreset = newPreset.orElse(null);
-                }
-            }
-            return currentPreset;
-        }
     }
 
     public static class DedicatedServer {
-        public static void registryReady(RegistryAccess acc) {
-            Helpers.onRegistryReady(acc);
-        }
-
         public static void setupWorld(LevelStorageSource.LevelStorageAccess levelStorageAccess) {
             if (levelStorageAccess != null && levelStorageAccess.hasWorldData()) {
                 File levelDat = levelStorageAccess.getLevelPath(LevelResource.LEVEL_DATA_FILE).toFile();
@@ -110,11 +81,6 @@ public class WorldBootstrap {
     }
 
     public static class InGUI {
-
-        public static void registryReady(RegistryAccess access) {
-            Helpers.onRegistryReady(access);
-        }
-
         public static void setupNewWorld(
                 Optional<LevelStorageSource.LevelStorageAccess> levelStorageAccess
         ) {

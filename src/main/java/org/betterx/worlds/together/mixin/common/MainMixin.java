@@ -26,7 +26,6 @@ abstract public class MainMixin {
 
     @ModifyArg(method = "main", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess;saveDataTag(Lnet/minecraft/core/RegistryAccess;Lnet/minecraft/world/level/storage/WorldData;)V"))
     private static RegistryAccess bcl_onCreate(RegistryAccess registryAccess) {
-        WorldBootstrap.DedicatedServer.registryReady(registryAccess);
         WorldBootstrap.DedicatedServer.setupWorld(bcl_levelStorageAccess);
 
         return registryAccess;

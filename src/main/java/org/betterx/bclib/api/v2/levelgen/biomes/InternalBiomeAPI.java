@@ -1,7 +1,6 @@
 package org.betterx.bclib.api.v2.levelgen.biomes;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.config.Configs;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
@@ -160,9 +159,8 @@ public class InternalBiomeAPI {
     }
 
     public static void applyModifications(BiomeSource source, ResourceKey<LevelStem> dimension) {
-        if (Configs.MAIN_CONFIG.verboseLogging())
-            BCLib.LOGGER.info("\nApply Modifications for " + dimension.location() + source.toString()
-                                                                                          .replace("\n", "\n    "));
+        BCLib.LOGGER.verbose("\nApply Modifications for " + dimension.location() + source.toString()
+                                                                                         .replace("\n", "\n    "));
 
         final Set<Holder<Biome>> biomes = source.possibleBiomes();
         List<BiConsumer<ResourceLocation, Holder<Biome>>> modifications = MODIFICATIONS.get(dimension);

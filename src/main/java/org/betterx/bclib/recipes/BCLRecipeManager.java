@@ -1,7 +1,6 @@
 package org.betterx.bclib.recipes;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.config.Configs;
 import org.betterx.worlds.together.util.DatapackConfigs;
 
 import net.minecraft.core.Registry;
@@ -76,9 +75,8 @@ public class BCLRecipeManager {
                 .runForResources(manager, BCLib.MOD_ID, "recipes.json", BCLRecipeManager::processRecipeConfig);
 
         for (ResourceLocation id : disabledRecipes) {
-            if (Configs.MAIN_CONFIG.verboseLogging()) {
-                BCLib.LOGGER.info("Disabling Recipe: {}", id);
-            }
+            BCLib.LOGGER.verbose("Disabling Recipe: {}", id);
+
             map.remove(id);
         }
     }

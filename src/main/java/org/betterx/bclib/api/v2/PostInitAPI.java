@@ -6,7 +6,6 @@ import org.betterx.bclib.behaviours.interfaces.BehaviourCompostable;
 import org.betterx.bclib.blocks.BaseChestBlock;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.client.render.BaseChestBlockEntityRenderer;
-import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.interfaces.PostInitable;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.interfaces.TagProvider;
@@ -70,7 +69,6 @@ public class PostInitAPI {
         blockTags = null;
         itemTags = null;
         InternalBiomeAPI.loadFabricAPIBiomes();
-        Configs.BIOMES_CONFIG.saveChanges();
     }
 
     @Environment(EnvType.CLIENT)
@@ -121,8 +119,8 @@ public class PostInitAPI {
         if (block instanceof BehaviourCompostable c) {
             if (item != null && item != Items.AIR) {
                 ComposterAPI.allowCompost(c.compostingChance(), item);
-            } else if (BCLib.isDatagen() && Configs.MAIN_CONFIG.verboseLogging()) {
-                BCLib.LOGGER.warn("Block " + block + " has compostable behaviour but no item!");
+            } else if (BCLib.isDatagen()) {
+                BCLib.LOGGER.verbose("Block " + block + " has compostable behaviour but no item!");
             }
         }
     }
