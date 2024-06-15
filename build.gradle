@@ -99,6 +99,7 @@ modrinth {
     dependencies {
         required.project "fabric-api"
         optional.project "modmenu"
+        required.project 'worldweaver'
     }
     debugMode = false
 }
@@ -131,10 +132,11 @@ curseforge {
             latestVersion = "[$v]"
         }
         addGameVersion 'Fabric'
-        addGameVersion 'Java 17'
+        addGameVersion 'Java 21'
         relations {
             requiredDependency 'fabric-api'
             optionalDependency 'modmenu'
+            requiredDependency 'worldweaver'
         }
         mainArtifact(remapJar) {
             displayName = "$project.archives_base_name-$project.version $latestVersion"
