@@ -54,10 +54,11 @@
     "wunderlib": "<21.0.0"
   },
   "custom": {
-    "bclib": {
+    "wover": {
+      "updater_icon": "icon_updater.png",
       "downloads": {
         "modrinth": "https://modrinth.com/mod/bclib",
-        "curseforge": "https://www.curseforge.com/minecraft/mc-mods/bclib"
+        "curseforge": "https://legacy.curseforge.com/minecraft/mc-mods/bclib"
       }
     },
     "modmenu": {
