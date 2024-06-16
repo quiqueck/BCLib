@@ -6,10 +6,8 @@ import net.minecraft.world.item.JukeboxSong;
 
 public class BaseDiscItem {
     public static Item create(
-            int comparatorOutput,
             ResourceKey<JukeboxSong> sound,
-            Item.Properties settings,
-            int lengthInSeconds
+            Item.Properties settings
     ) {
         return new Item(settings.jukeboxPlayable(sound));
         //return new RecordItem(comparatorOutput, sound, settings, lengthInSeconds);

@@ -35,7 +35,7 @@ public class ItemRegistry extends BaseRegistry<Item> {
     }
 
     public Item registerDisc(ResourceLocation itemId, int power, ResourceKey<JukeboxSong> sound, int lengthInSeconds) {
-        Item item = BaseDiscItem.create(power, sound, BehaviourBuilders.createDisc(), lengthInSeconds);
+        Item item = BaseDiscItem.create(sound, BehaviourBuilders.createDisc());
         if (item != null) {
             RecordItemModelProvider.add(item);
             if (!config.getBoolean("musicDiscs", itemId.getPath(), true)) {
