@@ -1,10 +1,13 @@
 package org.betterx.bclib.interfaces;
 
 import org.betterx.bclib.api.v2.levelgen.surface.SurfaceRuleBuilder;
+import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 public interface SurfaceMaterialProvider {
@@ -56,4 +59,10 @@ public interface SurfaceMaterialProvider {
 
     boolean generateFloorRule();
     SurfaceRuleBuilder surface();
+
+    default void addBiomeSurfaceToEndGroup(TagBootstrapContext<Block> context, TagKey<Block> groundTag) {
+        context.add(groundTag, this.getTopMaterial().getBlock());
+        context.add(groundTag, this.getAltTopMaterial().getBlock());
+        context.add(groundTag, this.getUnderMaterial().getBlock());
+    }
 }
