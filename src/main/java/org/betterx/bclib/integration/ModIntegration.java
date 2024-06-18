@@ -2,6 +2,7 @@ package org.betterx.bclib.integration;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.worlds.together.tag.v3.TagManager;
+import org.betterx.wover.core.api.ModCore;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -16,25 +17,23 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
-import net.fabricmc.loader.api.FabricLoader;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public abstract class ModIntegration {
-    private final String modID;
+    private final ModCore C;
 
     public void init() {
     }
 
-    public ModIntegration(String modID) {
-        this.modID = modID;
+    public ModIntegration(ModCore modCore) {
+        this.C = modCore;
     }
 
     public ResourceLocation getID(String name) {
-        return ResourceLocation.fromNamespaceAndPath(modID, name);
+        return C.mk(name);
     }
 
     public ResourceKey<PlacedFeature> getFeatureKey(String name) {
@@ -58,7 +57,7 @@ public abstract class ModIntegration {
     }
 
     public boolean modIsInstalled() {
-        return FabricLoader.getInstance().isModLoaded(modID);
+        return C.isLoaded();
     }
 
 
