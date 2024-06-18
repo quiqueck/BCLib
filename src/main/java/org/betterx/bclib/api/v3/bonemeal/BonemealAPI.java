@@ -2,6 +2,8 @@ package org.betterx.bclib.api.v3.bonemeal;
 
 import org.betterx.bclib.api.v3.levelgen.features.BCLConfigureFeature;
 import org.betterx.bclib.api.v3.tag.BCLBlockTags;
+import org.betterx.wover.feature.api.configured.ConfiguredFeatureKey;
+import org.betterx.wover.state.api.WorldState;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -58,6 +60,19 @@ public class BonemealAPI {
             @NotNull BCLConfigureFeature<?, ?> spreadableFeature
     ) {
         featureSpreaders.put(target, new FeatureSpreader(target, () -> spreadableFeature.configuredFeature));
+    }
+
+    /**
+     * Bonemeal can be used to spread vegetation to neighbouring blocks.
+     *
+     * @param target            The block-type
+     * @param spreadableFeature the feature to place
+     */
+    public void addSpreadableFeatures(
+            Block target,
+            @NotNull ConfiguredFeatureKey<?> spreadableFeature
+    ) {
+        featureSpreaders.put(target, new FeatureSpreader(target, () -> spreadableFeature.getHolder(WorldState.allStageRegistryAccess())));
     }
 
     /**
