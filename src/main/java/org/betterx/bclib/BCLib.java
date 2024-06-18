@@ -2,13 +2,8 @@ package org.betterx.bclib;
 
 import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
 import org.betterx.bclib.api.v2.levelgen.LevelGenEvents;
-import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
-import org.betterx.bclib.api.v2.levelgen.structures.BCLStructurePoolElementTypes;
 import org.betterx.bclib.api.v2.levelgen.structures.TemplatePiece;
-import org.betterx.bclib.api.v2.levelgen.surface.rules.Conditions;
 import org.betterx.bclib.api.v2.poi.PoiManager;
-import org.betterx.bclib.api.v3.levelgen.features.blockpredicates.BlockPredicates;
-import org.betterx.bclib.api.v3.levelgen.features.placement.PlacementModifiers;
 import org.betterx.bclib.api.v3.tag.BCLBlockTags;
 import org.betterx.bclib.commands.CommandRegistry;
 import org.betterx.bclib.commands.arguments.BCLibArguments;
@@ -50,23 +45,18 @@ public class BCLib implements ModInitializer {
         BCLibArguments.register();
         LevelGenEvents.register();
         BCLDataComponents.ensureStaticInitialization();
-        BlockPredicates.ensureStaticInitialization();
-        BCLBiomeRegistry.register();
         BaseRegistry.register();
         BaseBlockEntities.register();
-        BCLStructurePoolElementTypes.ensureStaticallyLoaded();
         WorldConfig.registerModCache(MOD_ID);
         DataExchangeAPI.registerMod(MOD_ID);
         AnvilRecipe.register();
         AlloyingRecipe.register();
-        Conditions.registerAll();
         CommandRegistry.register();
         BCLBlockTags.ensureStaticallyLoaded();
         PoiManager.registerAll();
-        
+
         BCLibPatch.register();
         TemplatePiece.ensureStaticInitialization();
-        PlacementModifiers.ensureStaticInitialization();
         Configs.save();
         VersionChecker.registerMod(C);
 

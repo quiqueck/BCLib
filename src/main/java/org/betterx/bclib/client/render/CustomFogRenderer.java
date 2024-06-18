@@ -1,15 +1,15 @@
 package org.betterx.bclib.client.render;
 
-import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
-import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.util.BackgroundInfo;
 import org.betterx.bclib.util.MHelper;
+import org.betterx.wover.biome.api.data.BiomeData;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Camera;
 import net.minecraft.core.BlockPos.MutableBlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -116,17 +116,15 @@ public class CustomFogRenderer {
     }
 
     private static boolean shouldIgnore(Level level, int x, int y, int z) {
-        Biome biome = level.getBiome(MUT_POS.set(x, y, z)).value();
-        return BCLBiomeRegistry.isEmptyBiome(BiomeAPI.getRenderBiome(biome));
+        Holder<Biome> biome = level.getBiome(MUT_POS.set(x, y, z));
+        return BiomeAPI.getRenderBiome(biome) != null;
     }
 
     private static float getFogDensityI(Level level, int x, int y, int z) {
-        Biome biome = level.getBiome(MUT_POS.set(x, y, z)).value();
-        BCLBiome renderBiome = BiomeAPI.getRenderBiome(biome);
-        if (renderBiome == null) {
-            return BCLBiomeRegistry.EMPTY_BIOME.settings.getFogDensity();
-        }
-        return renderBiome.settings.getFogDensity();
+        Holder<Biome> biome = level.getBiome(MUT_POS.set(x, y, z));
+        BiomeData renderBiome = BiomeAPI.getRenderBiome(biome);
+        if (renderBiome == null) return 1.0f;
+        return renderBiome.fogDensity;
     }
 
     private static float getFogDensity(Level level, double x, double y, double z) {

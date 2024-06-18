@@ -1,6 +1,7 @@
 package org.betterx.datagen.bclib.worldgen;
 
 import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v3.tag.BCLBlockTags;
 import org.betterx.bclib.behaviours.interfaces.*;
 import org.betterx.bclib.blocks.BaseBarrelBlock;
 import org.betterx.bclib.blocks.BaseChestBlock;
@@ -19,6 +20,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 
 import net.fabricmc.fabric.api.registry.FuelRegistry;
 
@@ -138,5 +140,10 @@ public class BlockTagProvider extends WoverTagProvider.ForBlocks {
                 .forMod(modCore)
                 .allBlocks()
                 .forEach(block -> processBlockCommon(context, block));
+
+        context.add(BCLBlockTags.BONEMEAL_SOURCE_NETHERRACK, Blocks.WARPED_NYLIUM, Blocks.CRIMSON_NYLIUM);
+        context.add(BCLBlockTags.BONEMEAL_TARGET_NETHERRACK, Blocks.NETHERRACK);
+        context.add(BCLBlockTags.BONEMEAL_TARGET_END_STONE, Blocks.END_STONE);
+        context.add(BCLBlockTags.BONEMEAL_TARGET_OBSIDIAN, Blocks.OBSIDIAN);
     }
 }

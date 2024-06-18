@@ -1,6 +1,6 @@
 package org.betterx.bclib.api.v3.bonemeal;
 
-import org.betterx.bclib.api.v3.levelgen.features.BCLConfigureFeature;
+import org.betterx.wover.feature.api.FeatureUtils;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -19,7 +19,8 @@ import org.jetbrains.annotations.Nullable;
 //adapted from NyliumBlock
 public interface BonemealNyliumLike extends BonemealableBlock {
     Block getHostBlock(); //this
-    @Nullable Holder<? extends ConfiguredFeature<?, ? extends Feature<?>>> getCoverFeature();
+    @Nullable
+    Holder<? extends ConfiguredFeature<?, ? extends Feature<?>>> getCoverFeature();
 
     default boolean isValidBonemealTarget(
             LevelReader blockGetter,
@@ -48,7 +49,7 @@ public interface BonemealNyliumLike extends BonemealableBlock {
         if (currentState.is(getHostBlock())) {
             Holder<? extends ConfiguredFeature<?, ?>> feature = getCoverFeature();
             if (feature != null) {
-                BCLConfigureFeature.placeInWorld(feature, serverLevel, blockPos.above(), randomSource);
+                FeatureUtils.placeInWorld(feature.value(), serverLevel, blockPos.above(), randomSource, false);
             }
         }
     }

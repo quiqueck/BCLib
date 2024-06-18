@@ -1,25 +1,34 @@
 package org.betterx.bclib.interfaces;
 
-import org.betterx.bclib.api.v2.levelgen.surface.SurfaceRuleBuilder;
+import org.betterx.wover.biome.api.data.BiomeData;
+import org.betterx.wover.biome.api.data.BiomeDataRegistry;
+import org.betterx.wover.state.api.WorldState;
+import org.betterx.wover.surface.api.SurfaceRuleBuilder;
 import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+
+import java.util.Optional;
 
 public interface SurfaceMaterialProvider {
     MapCodec<SurfaceMaterialProvider> CODEC = RecordCodecBuilder.mapCodec(instance -> instance
             .group(
-                    BlockState.CODEC.fieldOf("top").forGetter(o -> o.getTopMaterial()),
-                    BlockState.CODEC.fieldOf("under").forGetter(o -> o.getUnderMaterial()),
-                    BlockState.CODEC.fieldOf("alt").forGetter(o -> o.getAltTopMaterial()),
-                    Codec.BOOL.fieldOf("floor_rule").forGetter(o -> o.generateFloorRule())
+                    BlockState.CODEC.fieldOf("top").forGetter(SurfaceMaterialProvider::getTopMaterial),
+                    BlockState.CODEC.fieldOf("under").forGetter(SurfaceMaterialProvider::getUnderMaterial),
+                    BlockState.CODEC.fieldOf("alt").forGetter(SurfaceMaterialProvider::getAltTopMaterial),
+                    Codec.BOOL.fieldOf("floor_rule").forGetter(SurfaceMaterialProvider::generateFloorRule)
             ).apply(instance, SurfaceMaterialProvider::create));
 
-    public static SurfaceMaterialProvider create(
+    static SurfaceMaterialProvider create(
             BlockState top,
             BlockState under,
             BlockState alt,
@@ -64,5 +73,24 @@ public interface SurfaceMaterialProvider {
         context.add(groundTag, this.getTopMaterial().getBlock());
         context.add(groundTag, this.getAltTopMaterial().getBlock());
         context.add(groundTag, this.getUnderMaterial().getBlock());
+    }
+
+    static Optional<SurfaceMaterialProvider> findSurfaceMaterialProvider(WorldGenLevel world, BlockPos pos) {
+        return findSurfaceMaterialProvider(world.getBiome(pos));
+    }
+
+
+    static Optional<SurfaceMaterialProvider> findSurfaceMaterialProvider(Holder<Biome> biome) {
+        BiomeData data = WorldState
+                .registryAccess()
+                .registry(BiomeDataRegistry.BIOME_DATA_REGISTRY)
+                .orElseThrow()
+                .get(biome.unwrapKey().orElseThrow().location());
+
+        if (data instanceof SurfaceMaterialProvider smp) {
+            return Optional.of(smp);
+        }
+
+        return Optional.empty();
     }
 }

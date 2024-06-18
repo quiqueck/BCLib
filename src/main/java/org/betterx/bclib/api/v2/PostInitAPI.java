@@ -1,7 +1,6 @@
 package org.betterx.bclib.api.v2;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
 import org.betterx.bclib.behaviours.interfaces.BehaviourCompostable;
 import org.betterx.bclib.blocks.BaseChestBlock;
 import org.betterx.bclib.client.render.BCLRenderLayer;
@@ -68,7 +67,6 @@ public class PostInitAPI {
         }
         blockTags = null;
         itemTags = null;
-        InternalBiomeAPI.loadFabricAPIBiomes();
     }
 
     @Environment(EnvType.CLIENT)

@@ -1,6 +1,6 @@
 package org.betterx.bclib.util;
 
-import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
+import org.betterx.bclib.interfaces.SurfaceMaterialProvider;
 import org.betterx.wover.tag.api.predefined.CommonBlockTags;
 
 import net.minecraft.core.BlockPos;
@@ -263,7 +263,10 @@ public class StructureErode {
             mut.setX(x);
             for (int z = bounds.minZ(); z <= bounds.maxZ(); z++) {
                 mut.setZ(z);
-                BlockState top = BiomeAPI.findTopMaterial(world.getBiome(mut)).orElse(defaultBlock);
+                BlockState top = SurfaceMaterialProvider
+                        .findSurfaceMaterialProvider(world.getBiome(mut))
+                        .map(p -> p.getTopMaterial())
+                        .orElse(defaultBlock);
                 if (top == null) continue;
                 for (int y = bounds.maxY(); y >= bounds.minY(); y--) {
                     mut.setY(y);

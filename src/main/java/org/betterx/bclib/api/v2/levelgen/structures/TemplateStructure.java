@@ -30,6 +30,21 @@ import java.util.function.BiPredicate;
 public abstract class TemplateStructure extends Structure {
     protected final List<Config> configs;
 
+    public static boolean isValidBiome(Structure.GenerationContext context, int yPos) {
+        BlockPos blockPos = context.chunkPos().getMiddleBlockPosition(yPos);
+        return context.validBiome().test(
+                context
+                        .chunkGenerator()
+                        .getBiomeSource()
+                        .getNoiseBiome(
+                                QuartPos.fromBlock(blockPos.getX()),
+                                QuartPos.fromBlock(blockPos.getY()),
+                                QuartPos.fromBlock(blockPos.getZ()),
+                                context.randomState().sampler()
+                        )
+        );
+    }
+
     public static <T extends TemplateStructure> Codec<T> simpleTemplateCodec(BiFunction<StructureSettings, List<Config>, T> instancer) {
         return RecordCodecBuilder.create((instance) -> instance
                 .group(
@@ -177,7 +192,7 @@ public abstract class TemplateStructure extends Structure {
                 );
 
         if (y >= maxHeight || y < seaLevel) return Optional.empty();
-        if (!BCLStructure.isValidBiome(ctx, y)) return Optional.empty();
+        if (!isValidBiome(ctx, y)) return Optional.empty();
 
         int baseCount = noiseColumns
                 .stream()

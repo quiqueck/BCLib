@@ -89,11 +89,6 @@ public class TagManager {
      */
     @ApiStatus.Internal
     public static void ensureStaticallyLoaded() {
-        CommonItemTags.prepareTags();
-        CommonBlockTags.prepareTags();
-        CommonBiomeTags.prepareTags();
-        MineableTags.prepareTags();
-        ToolTags.prepareTags();
     }
 
 

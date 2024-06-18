@@ -1,6 +1,6 @@
 package org.betterx.bclib.api.v2.poi;
 
-import org.betterx.bclib.api.v2.levelgen.biomes.InternalBiomeAPI;
+import org.betterx.wover.state.api.WorldState;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -79,7 +79,7 @@ public class PoiManager {
             if ((Object) type.value() instanceof PoiTypeExtension ex) {
                 TagKey<Block> tag = ex.bcl_getTag();
                 if (tag != null) {
-                    var registry = InternalBiomeAPI.worldRegistryAccess().registryOrThrow(tag.registry());
+                    var registry = WorldState.registryAccess().registryOrThrow(tag.registry());
                     for (var block : registry.getTagOrEmpty(tag)) {
                         for (var state : block.value().getStateDefinition().getPossibleStates()) {
                             PoiTypes.TYPE_BY_STATE.put(state, type);

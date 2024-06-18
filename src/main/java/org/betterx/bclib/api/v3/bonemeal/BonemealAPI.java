@@ -1,6 +1,5 @@
 package org.betterx.bclib.api.v3.bonemeal;
 
-import org.betterx.bclib.api.v3.levelgen.features.BCLConfigureFeature;
 import org.betterx.bclib.api.v3.tag.BCLBlockTags;
 import org.betterx.wover.feature.api.configured.ConfiguredFeatureKey;
 import org.betterx.wover.state.api.WorldState;
@@ -44,26 +43,6 @@ public class BonemealAPI {
 
     /**
      * Bonemeal can be used to spread vegetation to neighbouring blocks.
-     * <p>
-     * This method allows you to register a block (the type that was clicked with bonemeal) with
-     * a {@link BCLConfigureFeature} that will be placed on the bonemeald block
-     * <p>
-     * You can achieve the same behaviour by implementing {@link BonemealNyliumLike} on your custom
-     * BlockClass. This is mainly intended for vanilla Blocks where you need to add bonemeal
-     * behaviour
-     *
-     * @param target            The block-type
-     * @param spreadableFeature the feature to place
-     */
-    public void addSpreadableFeatures(
-            Block target,
-            @NotNull BCLConfigureFeature<?, ?> spreadableFeature
-    ) {
-        featureSpreaders.put(target, new FeatureSpreader(target, () -> spreadableFeature.configuredFeature));
-    }
-
-    /**
-     * Bonemeal can be used to spread vegetation to neighbouring blocks.
      *
      * @param target            The block-type
      * @param spreadableFeature the feature to place
@@ -79,7 +58,7 @@ public class BonemealAPI {
      * Bonemeal can be used to spread vegetation to neighbouring blocks.
      * <p>
      * This method allows you to register a block (the type that was clicked with bonemeal) with
-     * a {@link BCLConfigureFeature} that will be placed on the bonemeald block
+     * a ConfigureFeature that will be placed on the bonemeald block
      * <p>
      * You can achieve the same behaviour by implementing {@link BonemealNyliumLike} on your custom
      * BlockClass. This is mainly intended for vanilla Blocks where you need to add bonemeal

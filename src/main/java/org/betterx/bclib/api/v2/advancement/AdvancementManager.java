@@ -1,10 +1,10 @@
 package org.betterx.bclib.api.v2.advancement;
 
-import org.betterx.bclib.api.v2.levelgen.structures.BCLStructure;
 import org.betterx.bclib.complexmaterials.WoodenComplexMaterial;
 import org.betterx.bclib.complexmaterials.set.wood.WoodSlots;
-import org.betterx.bclib.items.complex.EquipmentSet;
-import org.betterx.bclib.items.complex.EquipmentSlot;
+import org.betterx.wover.complex.api.equipment.ArmorSlot;
+import org.betterx.wover.complex.api.equipment.EquipmentSet;
+import org.betterx.wover.complex.api.equipment.ToolSlot;
 
 import net.minecraft.advancements.*;
 import net.minecraft.advancements.critereon.*;
@@ -292,11 +292,6 @@ public class AdvancementManager {
             return this;
         }
 
-        @Deprecated(forRemoval = true)
-        public Builder addAtStructureCriterion(String name, BCLStructure<?> structure) {
-            throw new UnsupportedOperationException("No longer supported");
-        }
-
         public Builder addAtStructureCriterion(String name, Holder<Structure> structure) {
             return addCriterion(
                     name,
@@ -345,26 +340,33 @@ public class AdvancementManager {
 
         //
 
-        public Builder addEquipmentSetSlotCriterion(EquipmentSet set, EquipmentSlot slot) {
+        public Builder addEquipmentSetSlotCriterion(EquipmentSet set, ArmorSlot slot) {
             return addInventoryChangedCriterion(
                     set.baseName + "_" + slot,
-                    set.getSlot(slot)
+                    set.get(slot)
+            );
+        }
+
+        public Builder addEquipmentSetSlotCriterion(EquipmentSet set, ToolSlot slot) {
+            return addInventoryChangedCriterion(
+                    set.baseName + "_" + slot,
+                    set.get(slot)
             );
         }
 
         public Builder addArmorSetCriterion(EquipmentSet set) {
-            return addEquipmentSetSlotCriterion(set, EquipmentSet.HELMET_SLOT)
-                    .addEquipmentSetSlotCriterion(set, EquipmentSet.CHESTPLATE_SLOT)
-                    .addEquipmentSetSlotCriterion(set, EquipmentSet.LEGGINGS_SLOT)
-                    .addEquipmentSetSlotCriterion(set, EquipmentSet.BOOTS_SLOT);
+            return addEquipmentSetSlotCriterion(set, ArmorSlot.HELMET_SLOT)
+                    .addEquipmentSetSlotCriterion(set, ArmorSlot.CHESTPLATE_SLOT)
+                    .addEquipmentSetSlotCriterion(set, ArmorSlot.LEGGINGS_SLOT)
+                    .addEquipmentSetSlotCriterion(set, ArmorSlot.BOOTS_SLOT);
         }
 
         public Builder addToolSetCriterion(EquipmentSet set) {
-            return addEquipmentSetSlotCriterion(set, EquipmentSet.PICKAXE_SLOT)
-                    .addEquipmentSetSlotCriterion(set, EquipmentSet.AXE_SLOT)
-                    .addEquipmentSetSlotCriterion(set, EquipmentSet.SHOVEL_SLOT)
-                    .addEquipmentSetSlotCriterion(set, EquipmentSet.SWORD_SLOT)
-                    .addEquipmentSetSlotCriterion(set, EquipmentSet.HOE_SLOT);
+            return addEquipmentSetSlotCriterion(set, ToolSlot.PICKAXE_SLOT)
+                    .addEquipmentSetSlotCriterion(set, ToolSlot.AXE_SLOT)
+                    .addEquipmentSetSlotCriterion(set, ToolSlot.SHOVEL_SLOT)
+                    .addEquipmentSetSlotCriterion(set, ToolSlot.SWORD_SLOT)
+                    .addEquipmentSetSlotCriterion(set, ToolSlot.HOE_SLOT);
         }
 
         public Builder addWoodCriterion(WoodenComplexMaterial mat) {
