@@ -1,9 +1,9 @@
 package org.betterx.bclib.client.render;
 
-import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.util.BackgroundInfo;
 import org.betterx.bclib.util.MHelper;
+import org.betterx.wover.biome.api.BiomeManager;
 import org.betterx.wover.biome.api.data.BiomeData;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -117,12 +117,12 @@ public class CustomFogRenderer {
 
     private static boolean shouldIgnore(Level level, int x, int y, int z) {
         Holder<Biome> biome = level.getBiome(MUT_POS.set(x, y, z));
-        return BiomeAPI.getRenderBiome(biome) != null;
+        return BiomeManager.biomeDataForHolder(biome) != null;
     }
 
     private static float getFogDensityI(Level level, int x, int y, int z) {
         Holder<Biome> biome = level.getBiome(MUT_POS.set(x, y, z));
-        BiomeData renderBiome = BiomeAPI.getRenderBiome(biome);
+        BiomeData renderBiome = BiomeManager.biomeDataForHolder(biome);
         if (renderBiome == null) return 1.0f;
         return renderBiome.fogDensity;
     }
