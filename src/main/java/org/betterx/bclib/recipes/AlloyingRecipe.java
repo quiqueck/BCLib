@@ -4,6 +4,8 @@ import org.betterx.bclib.BCLib;
 import org.betterx.bclib.interfaces.AlloyingRecipeWorkstation;
 import org.betterx.bclib.interfaces.UnknownReceipBookCategory;
 import org.betterx.bclib.util.ItemUtil;
+import org.betterx.wover.recipe.api.BaseRecipeBuilder;
+import org.betterx.wover.recipe.api.BaseUnlockableRecipeBuilder;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -30,6 +32,7 @@ import net.fabricmc.api.Environment;
 import java.util.List;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class AlloyingRecipe implements Recipe<AlloyingRecipeInput>, UnknownReceipBookCategory {
     public final static String GROUP = "alloying";
@@ -141,25 +144,34 @@ public class AlloyingRecipe implements Recipe<AlloyingRecipeInput>, UnknownRecei
         return AlloyingRecipeWorkstation.getWorkstationIcon();
     }
 
-    public static class Builder extends AbstractDoubleInputRecipeBuilder<Builder, AlloyingRecipe> {
-        private Builder(ResourceLocation id, ItemLike output) {
+    public interface Builder extends BaseRecipeBuilder<Builder>, BaseUnlockableRecipeBuilder<Builder> {
+        Builder group(@Nullable String group);
+        Builder outputCount(int count);
+
+        Builder setInput(ItemLike primaryInput, ItemLike secondaryInput);
+        Builder setInput(TagKey<Item> primaryInput, TagKey<Item> secondaryInput);
+        Builder setExperience(float amount);
+        Builder setSmeltTime(int time);
+
+        static Builder create(ResourceLocation id, ItemLike output) {
+            return new BuilderImpl(id, output);
+        }
+    }
+
+    public static class BuilderImpl extends BCLBaseRecipeBuilder<Builder, AlloyingRecipe> implements Builder {
+        protected Ingredient primaryInput;
+        protected Ingredient secondaryInput;
+
+        private BuilderImpl(ResourceLocation id, ItemLike output) {
             super(id, output);
             this.experience = 0.0F;
             this.smeltTime = 350;
         }
 
-        static Builder create(ResourceLocation id, ItemLike output) {
-            return new Builder(id, output);
-        }
 
         private float experience;
         private int smeltTime;
 
-
-        @Override
-        public Builder setOutputCount(int count) {
-            return super.setOutputCount(count);
-        }
 
         @Override
         public Builder setOutputTag(CompoundTag tag) {
@@ -189,27 +201,17 @@ public class AlloyingRecipe implements Recipe<AlloyingRecipeInput>, UnknownRecei
         }
 
         @Override
-        public Builder setGroup(String group) {
-            return super.setGroup(group);
-        }
+        protected void validate() {
+            super.validate();
 
-        @Override
-        protected boolean checkRecipe() {
             if (smeltTime < 0) {
-                BCLib.LOGGER.warn("Semelt-time for recipe {} most be positive!", id);
-                return false;
+                throwIllegalStateException("Smelt-time for recipe {} most be positive!");
             }
-            return super.checkRecipe();
-        }
-
-        @Override
-        protected RecipeSerializer<AlloyingRecipe> getSerializer() {
-            return SERIALIZER;
         }
 
         @Override
         protected AlloyingRecipe createRecipe(ResourceLocation id) {
-            checkRecipe();
+
             return new AlloyingRecipe(
                     group == null ? "" : group,
                     primaryInput,
@@ -244,7 +246,7 @@ public class AlloyingRecipe implements Recipe<AlloyingRecipeInput>, UnknownRecei
 
         @Override
         public StreamCodec<RegistryFriendlyByteBuf, AlloyingRecipe> streamCodec() {
-            return null;
+            return STREAM_CODEC;
         }
 
         public static @NotNull AlloyingRecipe fromNetwork(RegistryFriendlyByteBuf packetBuffer) {

@@ -4,6 +4,8 @@ import org.betterx.bclib.BCLib;
 import org.betterx.bclib.interfaces.UnknownReceipBookCategory;
 import org.betterx.bclib.util.ItemUtil;
 import org.betterx.worlds.together.world.event.WorldBootstrap;
+import org.betterx.wover.recipe.api.BaseRecipeBuilder;
+import org.betterx.wover.recipe.api.BaseUnlockableRecipeBuilder;
 import org.betterx.wover.tag.api.TagManager;
 import org.betterx.wover.tag.api.predefined.CommonItemTags;
 
@@ -17,7 +19,6 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
@@ -39,6 +40,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
 
 public class AnvilRecipe implements Recipe<AnvilRecipeInput>, UnknownReceipBookCategory {
     public final static String GROUP = "smithing";
@@ -79,11 +81,11 @@ public class AnvilRecipe implements Recipe<AnvilRecipeInput>, UnknownReceipBookC
     }
 
     static Builder create(ResourceLocation id, ItemLike output) {
-        return new Builder(id, output);
+        return new BuilderImpl(id, output);
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public @NotNull RecipeSerializer<?> getSerializer() {
         return SERIALIZER;
     }
 
@@ -250,63 +252,40 @@ public class AnvilRecipe implements Recipe<AnvilRecipeInput>, UnknownReceipBookC
         return sb.toString();
     }
 
-    public static class Builder extends AbstractSingleInputRecipeBuilder<Builder, AnvilRecipe> {
-        private int inputCount;
+    public interface Builder extends BaseRecipeBuilder<AnvilRecipe.Builder>, BaseUnlockableRecipeBuilder<AnvilRecipe.Builder> {
+        Builder setInputCount(int ct);
+        Builder setAllowedTools(TagKey<Item> items);
+
+        Builder setAnvilLevel(int level);
+        Builder setDamage(int damage);
+
+        Builder setPrimaryInput(ItemLike... inputs);
+        Builder setPrimaryInput(TagKey<Item> input);
+        Builder setPrimaryInputAndUnlock(TagKey<Item> input);
+        Builder setPrimaryInputAndUnlock(ItemLike... inputs);
+    }
+
+    public static class BuilderImpl extends BCLBaseRecipeBuilder<Builder, AnvilRecipe> implements Builder {
         private TagKey<Item> allowedTools;
         private int anvilLevel;
         private int damage;
+        private int inputCount;
 
-        protected Builder(ResourceLocation id, ItemLike output) {
+        protected BuilderImpl(ResourceLocation id, ItemLike output) {
             super(id, output);
 
-            this.inputCount = 1;
             this.allowedTools = null;
             this.anvilLevel = 1;
             this.damage = 1;
+            this.inputCount = 1;
         }
 
-        @Override
-        protected Builder setOutputTag(CompoundTag tag) {
-            return super.setOutputTag(tag);
-        }
-
-        @Override
-        protected Builder setOutputCount(int count) {
-            return super.setOutputCount(count);
-        }
-
-        /**
-         * @param inputItems
-         * @return
-         * @deprecated Use {@link #setPrimaryInput(ItemLike...)} instead
-         */
-        @Deprecated(forRemoval = true)
-        public Builder setInput(ItemLike... inputItems) {
-            return super.setPrimaryInput(inputItems);
-        }
-
-        /**
-         * @param inputTag
-         * @return
-         * @deprecated Use {@link #setPrimaryInput(TagKey)} instead
-         */
-        @Deprecated(forRemoval = true)
-        public Builder setInput(TagKey<Item> inputTag) {
-            return super.setPrimaryInput(inputTag);
-        }
-
-        @Deprecated(forRemoval = true)
-        public Builder setInput(Ingredient ingredient) {
-            this.primaryInput = ingredient;
+        public Builder setInputCount(int ct) {
+            this.inputCount = ct;
             return this;
         }
 
-        public Builder setInputCount(int count) {
-            this.inputCount = count;
-            return this;
-        }
 
-        @Deprecated(forRemoval = true)
         public Builder setAllowedTools(TagKey<Item> items) {
             this.allowedTools = items;
             return this;
@@ -323,25 +302,17 @@ public class AnvilRecipe implements Recipe<AnvilRecipeInput>, UnknownReceipBookC
         }
 
         @Override
-        protected RecipeSerializer<AnvilRecipe> getSerializer() {
-            return SERIALIZER;
-        }
-
-        @Override
-        protected boolean checkRecipe() {
+        protected void validate() {
+            super.validate();
             if (inputCount <= 0) {
-                BCLib.LOGGER.warn(
-                        "Number of input items for Recipe must be positive. Recipe {} will be ignored!",
-                        id
+                throwIllegalStateException(
+                        "Number of input items for Recipe must be positive. Recipe {} will be ignored!"
                 );
-                return false;
             }
-            return super.checkRecipe();
         }
 
         @Override
         protected AnvilRecipe createRecipe(ResourceLocation id) {
-            checkRecipe();
             return new AnvilRecipe(primaryInput, output, inputCount, this.allowedTools, anvilLevel, damage);
         }
     }
