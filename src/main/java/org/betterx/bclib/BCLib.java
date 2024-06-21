@@ -11,7 +11,6 @@ import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.recipes.AlloyingRecipe;
 import org.betterx.bclib.recipes.AnvilRecipe;
 import org.betterx.bclib.registry.BaseBlockEntities;
-import org.betterx.bclib.registry.BaseRegistry;
 import org.betterx.bclib.util.BCLDataComponents;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.world.WorldConfig;
@@ -45,7 +44,6 @@ public class BCLib implements ModInitializer {
         BCLibArguments.register();
         LevelGenEvents.register();
         BCLDataComponents.ensureStaticInitialization();
-        BaseRegistry.register();
         BaseBlockEntities.register();
         WorldConfig.registerModCache(MOD_ID);
         DataExchangeAPI.registerMod(MOD_ID);
