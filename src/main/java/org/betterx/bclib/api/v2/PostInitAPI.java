@@ -7,9 +7,7 @@ import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.client.render.BaseChestBlockEntityRenderer;
 import org.betterx.bclib.interfaces.PostInitable;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
-import org.betterx.bclib.interfaces.TagProvider;
 import org.betterx.bclib.items.tool.BaseShearsItem;
-import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.dispenser.ShearsDispenseItemBehavior;
@@ -83,16 +81,6 @@ public class PostInitAPI {
     }
 
     private static void processItemCommon(Item item) {
-        if (item instanceof TagProvider provider) {
-            try {
-                provider.addTags(null, itemTags);
-            } catch (NullPointerException ex) {
-                BCLib.LOGGER.error(item + " probably tried to access blockTags.", ex);
-            }
-            itemTags.forEach(tag -> TagManager.ITEMS.add(tag, item));
-            itemTags.clear();
-        }
-
         if (item instanceof BaseShearsItem) {
             DispenserBlock.registerBehavior(item.asItem(), new ShearsDispenseItemBehavior());
         }
@@ -103,15 +91,6 @@ public class PostInitAPI {
         final Item item = block.asItem();
         if (block instanceof PostInitable) {
             ((PostInitable) block).postInit();
-        }
-
-        if (block instanceof TagProvider) {
-            ((TagProvider) block).addTags(blockTags, itemTags);
-            blockTags.forEach(tag -> TagManager.BLOCKS.add(tag, block));
-            if (item != null && item != Items.AIR)
-                itemTags.forEach(tag -> TagManager.ITEMS.add(tag, item));
-            blockTags.clear();
-            itemTags.clear();
         }
 
         if (block instanceof BehaviourCompostable c) {

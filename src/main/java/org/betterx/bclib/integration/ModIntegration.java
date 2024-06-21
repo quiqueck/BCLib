@@ -1,8 +1,8 @@
 package org.betterx.bclib.integration;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.worlds.together.tag.v3.TagManager;
 import org.betterx.wover.core.api.ModCore;
+import org.betterx.wover.tag.api.TagManager;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -191,12 +191,10 @@ public abstract class ModIntegration {
     }
 
     public TagKey<Item> getItemTag(String name) {
-        ResourceLocation id = getID(name);
-        return TagManager.ITEMS.makeTag(id);
+        return TagManager.ITEMS.makeTag(C, name);
     }
 
     public TagKey<Block> getBlockTag(String name) {
-        ResourceLocation id = getID(name);
-        return TagManager.BLOCKS.makeTag(id);
+        return TagManager.BLOCKS.makeTag(C, name);
     }
 }

@@ -1,6 +1,5 @@
 package org.betterx.worlds.together;
 
-import org.betterx.worlds.together.tag.v3.TagManager;
 import org.betterx.worlds.together.util.Logger;
 import org.betterx.worlds.together.world.WorldConfig;
 
@@ -21,7 +20,6 @@ public class WorldsTogether {
 
     @SuppressWarnings("removal")
     public static void onInitialize() {
-        TagManager.ensureStaticallyLoaded();
         WorldConfig.registerModCache(WorldsTogether.MOD_ID);
     }
 

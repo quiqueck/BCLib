@@ -3,7 +3,6 @@ package org.betterx.datagen.bclib;
 import org.betterx.bclib.BCLib;
 import org.betterx.datagen.bclib.advancement.BCLAdvancementDataProvider;
 import org.betterx.datagen.bclib.advancement.RecipeDataProvider;
-import org.betterx.datagen.bclib.integrations.NullscapeBiomes;
 import org.betterx.datagen.bclib.worldgen.BlockTagProvider;
 import org.betterx.datagen.bclib.worldgen.ItemTagProvider;
 import org.betterx.wover.core.api.ModCore;
@@ -18,8 +17,6 @@ public class BCLibDatagen extends WoverDataGenEntryPoint {
     @Override
     protected void onInitializeProviders(PackBuilder globalPack) {
         BCLib.LOGGER.info("Bootstrap onInitializeDataGenerator");
-        NullscapeBiomes.ensureStaticallyLoaded();
-
         globalPack.addProvider(BiomeTagProvider::new);
         globalPack.addProvider(BlockTagProvider::new);
         globalPack.addProvider(BiomeTagProvider::new);

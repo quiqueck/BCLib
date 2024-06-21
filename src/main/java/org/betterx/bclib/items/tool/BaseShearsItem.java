@@ -1,7 +1,7 @@
 package org.betterx.bclib.items.tool;
 
 
-import org.betterx.worlds.together.tag.v3.TagManager;
+import org.betterx.wover.tag.api.TagManager;
 import org.betterx.wover.tag.api.predefined.CommonItemTags;
 import org.betterx.wover.tag.api.predefined.MineableTags;
 
