@@ -78,7 +78,7 @@ public class BonemealAPI {
      * Bonemeal can be used to spread for example Nylium to Netherrack.
      * <p>
      * In this example, Netherrack is the target block which will get replaced by one of the source blocks (like
-     * Warped or Crimson Nylium. You can register Tag-Combinations to easily add your own behaviour for custom
+     * Warped or Crimson Nylium). You can register Tag-Combinations to easily add your own behaviour for custom
      * blocks.
      * <p>
      * When a Block with the Target-Tag

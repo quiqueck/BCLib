@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.block.model.multipart.Condition;
 import net.minecraft.client.renderer.block.model.multipart.MultiPart;
 import net.minecraft.client.renderer.block.model.multipart.Selector;
 import net.minecraft.client.resources.model.BlockModelRotation;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
@@ -117,6 +118,11 @@ public class ModelsHelper {
 
         public ModelPart part(ResourceLocation modelId) {
             ModelPart part = new ModelPart(modelId);
+            return part;
+        }
+
+        public ModelPart part(ModelResourceLocation modelId) {
+            ModelPart part = new ModelPart(modelId.id());
             return part;
         }
 

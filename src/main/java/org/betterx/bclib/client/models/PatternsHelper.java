@@ -6,6 +6,8 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 
 import com.google.common.collect.Maps;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -44,6 +46,11 @@ public class PatternsHelper {
 
     public static Optional<String> createBlockColored(ResourceLocation blockId) {
         return createJson(BasePatterns.BLOCK_COLORED, blockId);
+    }
+
+    public static Optional<JsonObject> getJsonObject(ResourceLocation patternId, ResourceLocation blockId) {
+        Optional<String> json = createJson(patternId, blockId);
+        return json.map(s -> new Gson().fromJson(s, JsonObject.class));
     }
 
     public static Optional<String> createJson(ResourceLocation patternId, ResourceLocation blockId) {
