@@ -19,7 +19,6 @@ public class BCLibDatagen extends WoverDataGenEntryPoint {
         BCLib.LOGGER.info("Bootstrap onInitializeDataGenerator");
         globalPack.addProvider(BiomeTagProvider::new);
         globalPack.addProvider(BlockTagProvider::new);
-        globalPack.addProvider(BiomeTagProvider::new);
         globalPack.addProvider(ItemTagProvider::new);
 
         globalPack.callOnInitializeDatapack((generator, pack, location) -> {
