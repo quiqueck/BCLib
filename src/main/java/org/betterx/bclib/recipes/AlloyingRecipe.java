@@ -159,11 +159,8 @@ public class AlloyingRecipe implements Recipe<AlloyingRecipeInput>, UnknownRecei
     }
 
     public static class BuilderImpl extends BCLBaseRecipeBuilder<Builder, AlloyingRecipe> implements Builder {
-        protected Ingredient primaryInput;
-        protected Ingredient secondaryInput;
-
         private BuilderImpl(ResourceLocation id, ItemLike output) {
-            super(id, output);
+            super(id, output, true);
             this.experience = 0.0F;
             this.smeltTime = 350;
         }

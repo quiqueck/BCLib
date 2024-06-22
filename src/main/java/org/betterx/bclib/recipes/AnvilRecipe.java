@@ -272,7 +272,7 @@ public class AnvilRecipe implements Recipe<AnvilRecipeInput>, UnknownReceipBookC
         private int inputCount;
 
         protected BuilderImpl(ResourceLocation id, ItemLike output) {
-            super(id, output);
+            super(id, output, false);
 
             this.allowedTools = null;
             this.anvilLevel = 1;

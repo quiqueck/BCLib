@@ -33,16 +33,21 @@ public abstract class BCLBaseRecipeBuilder<I extends BaseRecipeBuilder<I>, R ext
     protected Ingredient secondaryInput;
     protected RecipeOutputConsumer outputTagConsumer;
 
+    private final boolean dualInput;
+
     protected BCLBaseRecipeBuilder(
             @NotNull ResourceLocation id,
-            @NotNull ItemLike output
+            @NotNull ItemLike output,
+            boolean dualInput
     ) {
-        this(id, new ItemStack(output, 1));
+        this(id, new ItemStack(output, 1), dualInput);
     }
 
-    protected BCLBaseRecipeBuilder(@NotNull ResourceLocation id, @NotNull ItemStack output) {
+    protected BCLBaseRecipeBuilder(@NotNull ResourceLocation id, @NotNull ItemStack output, boolean dualInput) {
         super(id, output);
         this.advancement = Advancement.Builder.advancement();
+        this.dualInput = dualInput;
+        this.group("");
     }
 
     @Override
@@ -53,7 +58,7 @@ public abstract class BCLBaseRecipeBuilder<I extends BaseRecipeBuilder<I>, R ext
                     "Primary input for Recipe can't be 'null', recipe {} will be ignored!"
             );
         }
-        if (secondaryInput == null) {
+        if (secondaryInput == null && this.dualInput) {
             throwIllegalStateException(
                     "Secondary input for Recipe can't be 'null', recipe {} will be ignored!"
             );

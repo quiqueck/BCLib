@@ -28,6 +28,10 @@ public abstract class ModIntegration {
     public void init() {
     }
 
+    public void initDatagen() {
+
+    }
+
     public ModIntegration(ModCore modCore) {
         this.C = modCore;
     }

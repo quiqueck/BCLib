@@ -1,6 +1,7 @@
 package org.betterx.bclib.api.v2;
 
 import org.betterx.bclib.integration.ModIntegration;
+import org.betterx.wover.core.api.ModCore;
 
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -41,6 +42,12 @@ public class ModIntegrationAPI {
                 integration.init();
             }
         });
+
+        if (ModCore.isDatagen()) {
+            INTEGRATIONS.forEach(integration -> {
+                integration.initDatagen();
+            });
+        }
     }
 
     public static boolean hasCanvas() {
