@@ -1,34 +1,20 @@
 package org.betterx.bclib.util;
 
 import org.betterx.bclib.BCLib;
+import org.betterx.wover.enchantment.api.EnchantmentManager;
 
-import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.component.CustomData;
 
-import java.util.function.UnaryOperator;
 import org.jetbrains.annotations.ApiStatus;
 
 public class BCLDataComponents {
-    public static final DataComponentType<CustomData> ANVIL_ENTITY_DATA = register(
+    public static final DataComponentType<CustomData> ANVIL_ENTITY_DATA = EnchantmentManager.registerDataComponent(
             BCLib.makeID("anvil_entity_data"),
             (DataComponentType.Builder<CustomData> builder) -> builder
                     .persistent(CustomData.CODEC)
                     .networkSynchronized(CustomData.STREAM_CODEC)
     );
-
-    public static <T> DataComponentType register(
-            ResourceLocation id,
-            UnaryOperator<DataComponentType.Builder<T>> builder
-    ) {
-        return Registry.register(
-                BuiltInRegistries.DATA_COMPONENT_TYPE,
-                id,
-                builder.apply(DataComponentType.builder()).build()
-        );
-    }
 
     @ApiStatus.Internal
     public static void ensureStaticInitialization() {
