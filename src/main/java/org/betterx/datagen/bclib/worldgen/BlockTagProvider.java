@@ -134,12 +134,16 @@ public class BlockTagProvider extends WoverTagProvider.ForBlocks {
         }
     }
 
-    @Override
-    protected void prepareTags(TagBootstrapContext<Block> context) {
+    public static void processCommonBlockTags(TagBootstrapContext<Block> context, ModCore modCore) {
         BlockRegistry
                 .forMod(modCore)
                 .allBlocks()
                 .forEach(block -> processBlockCommon(context, block));
+    }
+
+    @Override
+    protected void prepareTags(TagBootstrapContext<Block> context) {
+        processCommonBlockTags(context, modCore);
 
         context.add(BCLBlockTags.BONEMEAL_SOURCE_NETHERRACK, Blocks.WARPED_NYLIUM, Blocks.CRIMSON_NYLIUM);
         context.add(BCLBlockTags.BONEMEAL_TARGET_NETHERRACK, Blocks.NETHERRACK);

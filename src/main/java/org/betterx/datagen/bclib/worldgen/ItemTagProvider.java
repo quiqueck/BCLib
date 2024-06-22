@@ -61,8 +61,7 @@ public class ItemTagProvider extends WoverTagProvider.ForItems {
         }
     }
 
-    @Override
-    protected void prepareTags(ItemTagBootstrapContext context) {
+    public static void processBlockItemCommon(TagBootstrapContext<Item> context, ModCore modCore) {
         ItemRegistry.forMod(modCore)
                     .allItems()
                     .forEach(item -> processItemCommon(context, item));
@@ -71,5 +70,11 @@ public class ItemTagProvider extends WoverTagProvider.ForItems {
         BlockRegistry.forMod(modCore)
                      .allBlocks()
                      .forEach(block -> processBlockItemCommon(context, block));
+    }
+
+
+    @Override
+    protected void prepareTags(ItemTagBootstrapContext context) {
+        processBlockItemCommon(context, modCore);
     }
 }
