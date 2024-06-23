@@ -27,7 +27,7 @@ public class StructureHelper {
     public static StructureTemplate readStructure(ResourceLocation resource) {
         String ns = resource.getNamespace();
         String nm = resource.getPath();
-        return readStructure("/data/" + ns + "/structures/" + nm + ".nbt");
+        return readStructure("/data/" + ns + "/structure/" + nm + ".nbt");
     }
 
     public static StructureTemplate readStructure(File datapack, String path) {

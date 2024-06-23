@@ -114,7 +114,7 @@ public class StructureNBT {
     }
 
     private static String getStructurePath(ResourceLocation resource) {
-        return "data/" + resource.getNamespace() + "/structures/" + resource.getPath();
+        return "data/" + resource.getNamespace() + "/structure/" + resource.getPath();
     }
 
     private static StructureTemplate _readStructureFromJar(ResourceLocation resource) {
