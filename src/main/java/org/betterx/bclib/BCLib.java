@@ -56,6 +56,7 @@ public class BCLib implements ModInitializer {
         BCLibPatch.register();
         TemplatePiece.ensureStaticInitialization();
         Configs.save();
+        
         VersionChecker.registerMod(C);
 
         if (isDatagen()) {

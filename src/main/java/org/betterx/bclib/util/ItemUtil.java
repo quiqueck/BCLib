@@ -35,7 +35,7 @@ public class ItemUtil {
                     }
                     return false;
                 });
-        if (components.isEmpty()) return null;
+        if (components.isEmpty()) return DataComponentMap.EMPTY;
         return components;
     }
 
@@ -49,7 +49,7 @@ public class ItemUtil {
                                       .forGetter(o -> getter.apply(o).getItemHolder()),
                 Codec.INT.optionalFieldOf("count", 1)
                          .forGetter(o -> getter.apply(o).getCount()),
-                DataComponentMap.CODEC.optionalFieldOf("nbt", null)
+                DataComponentMap.CODEC.optionalFieldOf("nbt", DataComponentMap.EMPTY)
                                       .forGetter(o -> getComponents(getter.apply(o)))
         ).apply(instance, (item, count, nbt) -> {
             var stack = new ItemStack(item, count);
