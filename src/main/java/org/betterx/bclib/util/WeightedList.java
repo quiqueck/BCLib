@@ -72,10 +72,11 @@ public class WeightedList<T> {
      * @param value
      * @param weight
      */
-    public void add(T value, float weight) {
+    public WeightedList<T> add(T value, float weight) {
         maxWeight += weight;
         weights.add(maxWeight);
         values.add(value);
+        return this;
     }
 
     /**

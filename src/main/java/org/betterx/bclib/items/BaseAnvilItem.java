@@ -2,13 +2,9 @@ package org.betterx.bclib.items;
 
 import org.betterx.bclib.blocks.BaseAnvilBlock;
 import org.betterx.bclib.interfaces.ItemModelProvider;
-import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.bclib.util.BCLDataComponents;
 
-import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -17,9 +13,6 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 
 import java.util.List;
 import java.util.Locale;
@@ -74,13 +67,5 @@ public class BaseAnvilItem extends BlockItem implements ItemModelProvider {
             String percents = String.format(Locale.ROOT, "%.0f%%", damage);
             list.add(Component.translatable("message.bclib.anvil_damage").append(": " + percents));
         }
-    }
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public BlockModel getItemModel(ResourceLocation resourceLocation) {
-        Block anvilBlock = getBlock();
-        ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(anvilBlock);
-        return ((RuntimeBlockModelProvider) anvilBlock).getBlockModel(blockId, anvilBlock.defaultBlockState());
     }
 }

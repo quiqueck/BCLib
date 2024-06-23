@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Optional;
+import org.jetbrains.annotations.Nullable;
 
 public interface SurfaceMaterialProvider {
     MapCodec<SurfaceMaterialProvider> CODEC = RecordCodecBuilder.mapCodec(instance -> instance
@@ -80,15 +81,17 @@ public interface SurfaceMaterialProvider {
     }
 
 
-    static Optional<SurfaceMaterialProvider> findSurfaceMaterialProvider(Holder<Biome> biome) {
-        BiomeData data = WorldState
-                .registryAccess()
-                .registry(BiomeDataRegistry.BIOME_DATA_REGISTRY)
-                .orElseThrow()
-                .get(biome.unwrapKey().orElseThrow().location());
+    static Optional<SurfaceMaterialProvider> findSurfaceMaterialProvider(@Nullable Holder<Biome> biome) {
+        if (biome != null) {
+            BiomeData data = WorldState
+                    .registryAccess()
+                    .registry(BiomeDataRegistry.BIOME_DATA_REGISTRY)
+                    .orElseThrow()
+                    .get(biome.unwrapKey().orElseThrow().location());
 
-        if (data instanceof SurfaceMaterialProvider smp) {
-            return Optional.of(smp);
+            if (data instanceof SurfaceMaterialProvider smp) {
+                return Optional.of(smp);
+            }
         }
 
         return Optional.empty();
