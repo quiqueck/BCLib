@@ -53,7 +53,7 @@
   },
   "breaks": {
     "wunderlib": "<21.0.0",
-    "wover": "<21.0.1"
+    "wover": "<21.0.2"
   },
   "custom": {
     "wover": {
