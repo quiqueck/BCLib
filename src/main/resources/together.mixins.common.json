@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "org.betterx.worlds.together.mixin.common",
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_21",
   "mixins": [
     "MainMixin",
     "MinecraftServerMixin"

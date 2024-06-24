@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "org.betterx.worlds.together.mixin.client",
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_21",
   "client": [
     "CreateWorldScreen_Mixin",
     "WorldOpenFlowsMixin"
