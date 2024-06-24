@@ -5,6 +5,8 @@ import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.client.sound.BlockSounds;
 import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
+import org.betterx.wover.block.api.model.BlockModelProvider;
+import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 import org.betterx.wover.loot.api.BlockLootProvider;
 import org.betterx.wover.loot.api.LootLookupProvider;
 import org.betterx.wover.tag.api.TagManager;
@@ -48,7 +50,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("deprecation")
-public class BaseTerrainBlock extends BaseBlock implements BlockLootProvider, RuntimeBlockModelProvider {
+public class BaseTerrainBlock extends BaseBlock implements BlockLootProvider, RuntimeBlockModelProvider, BlockModelProvider {
     private final Block baseBlock;
     private Block pathBlock;
 
@@ -151,6 +153,11 @@ public class BaseTerrainBlock extends BaseBlock implements BlockLootProvider, Ru
         ModelResourceLocation modelId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState);
         registerBlockModel(stateId, modelId, blockState, modelCache);
         return ModelsHelper.createRandomTopModel(modelId.id());
+    }
+
+    @Override
+    public void provideBlockModels(WoverBlockModelGenerators generators) {
+        generators.createBlockTopSideBottom(getBaseBlock(), this, true);
     }
 
     @Override
