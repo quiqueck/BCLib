@@ -4,7 +4,9 @@ import org.betterx.bclib.behaviours.BehaviourHelper;
 import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
 import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
+import org.betterx.bclib.client.models.BCLModels;
 import org.betterx.bclib.util.BlocksHelper;
+import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -21,24 +23,33 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import java.util.Collections;
-import java.util.List;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class BaseChair extends AbstractChair {
     private static final VoxelShape SHAPE_BOTTOM = box(3, 0, 3, 13, 16, 13);
     private static final VoxelShape SHAPE_TOP = box(3, 0, 3, 13, 6, 13);
     private static final VoxelShape COLLIDER = box(3, 0, 3, 13, 10, 13);
     public static final BooleanProperty TOP = BooleanProperty.create("top");
+    public final Block clothMaterial;
 
-    public BaseChair(Block block) {
-        super(block, 10);
+    public BaseChair(Block baseMaterial, Block clothMaterial) {
+        super(baseMaterial, 10);
+        this.clothMaterial = Objects.requireNonNull(clothMaterial, "Chair cloth material cannot be null (" + baseMaterial.getDescriptionId() + ")");
         this.registerDefaultState(getStateDefinition().any().setValue(FACING, Direction.NORTH).setValue(TOP, false));
+    }
+
+    @Deprecated(forRemoval = true)
+    public BaseChair(Block baseMaterial) {
+        this(baseMaterial, Blocks.RED_WOOL);
     }
 
     @Override
@@ -47,12 +58,17 @@ public abstract class BaseChair extends AbstractChair {
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext ePos) {
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext ePos) {
         return state.getValue(TOP) ? SHAPE_TOP : SHAPE_BOTTOM;
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext ePos) {
+    public @NotNull VoxelShape getCollisionShape(
+            BlockState state,
+            BlockGetter view,
+            BlockPos pos,
+            CollisionContext ePos
+    ) {
         return state.getValue(TOP) ? Shapes.empty() : COLLIDER;
     }
 
@@ -87,15 +103,7 @@ public abstract class BaseChair extends AbstractChair {
     }
 
     @Override
-    public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
-        if (!state.getValue(TOP))
-            return Collections.singletonList(new ItemStack(this.asItem()));
-        else
-            return Collections.emptyList();
-    }
-
-    @Override
-    public InteractionResult useWithoutItem(
+    public @NotNull InteractionResult useWithoutItem(
             BlockState state,
             Level world,
             BlockPos pos,
@@ -110,7 +118,7 @@ public abstract class BaseChair extends AbstractChair {
     }
 
     @Override
-    public BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
+    public @NotNull BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
         if (player.isCreative() && state.getValue(TOP) && world.getBlockState(pos.below()).getBlock() == this) {
             world.setBlockAndUpdate(pos.below(), Blocks.AIR.defaultBlockState());
         }
@@ -118,24 +126,50 @@ public abstract class BaseChair extends AbstractChair {
     }
 
     public static class Wood extends BaseChair implements BehaviourWood {
-        public Wood(Block block) {
-            super(block);
+        @Deprecated(forRemoval = true)
+        public Wood(Block baseMaterial) {
+            super(baseMaterial, Blocks.RED_WOOL);
+        }
+
+        public Wood(Block baseMaterial, Block clothMaterial) {
+            super(baseMaterial, clothMaterial);
         }
     }
 
     public static class Stone extends BaseChair implements BehaviourStone {
-        public Stone(Block block) {
-            super(block);
+        @Deprecated(forRemoval = true)
+        public Stone(Block baseMaterial) {
+            super(baseMaterial, Blocks.RED_WOOL);
+        }
+
+        public Stone(Block baseMaterial, Block clothMaterial) {
+            super(baseMaterial, clothMaterial);
         }
     }
 
     public static class Metal extends BaseChair implements BehaviourMetal {
-        public Metal(Block block) {
-            super(block);
+        @Deprecated(forRemoval = true)
+        public Metal(Block baseMaterial) {
+            super(baseMaterial, Blocks.RED_WOOL);
+        }
+
+        public Metal(Block baseMaterial, Block clothMaterial) {
+            super(baseMaterial, clothMaterial);
         }
     }
 
+    @Deprecated(forRemoval = true)
     public static BaseChair from(Block source) {
         return BehaviourHelper.from(source, Wood::new, Stone::new, Metal::new);
+    }
+
+    public static BaseChair from(Block baseMaterial, Block clothMaterial) {
+        return BehaviourHelper.from(baseMaterial, (b) -> new BaseChair.Wood(b, clothMaterial), (b) -> new BaseChair.Stone(b, clothMaterial), (b) -> new BaseChair.Metal(b, clothMaterial));
+    }
+
+    @Override
+    @Environment(EnvType.CLIENT)
+    public void provideBlockModels(WoverBlockModelGenerators generators) {
+        BCLModels.createChairBlockModel(generators, this, this.baseMaterial, this.clothMaterial);
     }
 }

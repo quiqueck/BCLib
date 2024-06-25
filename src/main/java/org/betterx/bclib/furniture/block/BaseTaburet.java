@@ -4,6 +4,8 @@ import org.betterx.bclib.behaviours.BehaviourHelper;
 import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
 import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
+import org.betterx.bclib.client.models.BCLModels;
+import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
@@ -11,6 +13,11 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+import org.jetbrains.annotations.NotNull;
 
 public abstract class BaseTaburet extends AbstractChair {
     private static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 10, 14);
@@ -20,7 +27,7 @@ public abstract class BaseTaburet extends AbstractChair {
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext ePos) {
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext ePos) {
         return SHAPE;
     }
 
@@ -44,5 +51,11 @@ public abstract class BaseTaburet extends AbstractChair {
 
     public static BaseTaburet from(Block source) {
         return BehaviourHelper.from(source, Wood::new, Stone::new, Metal::new);
+    }
+
+    @Override
+    @Environment(EnvType.CLIENT)
+    public void provideBlockModels(WoverBlockModelGenerators generators) {
+        BCLModels.createTaburetBlockModel(generators, this, this.baseMaterial);
     }
 }

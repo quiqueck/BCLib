@@ -44,7 +44,7 @@ public class Taburet extends SimpleMaterialSlot<WoodenComplexMaterial> {
     protected @NotNull Block createBlock(
             WoodenComplexMaterial parentMaterial, BlockBehaviour.Properties settings
     ) {
-        return new BaseTaburet.Wood(parentMaterial.getBlock(WoodSlots.SLAB));
+        return new BaseTaburet.Wood(parentMaterial.getBlock(WoodSlots.PLANKS));
     }
 
     @Override

@@ -44,7 +44,7 @@ public class Chair extends SimpleMaterialSlot<WoodenComplexMaterial> {
     protected @NotNull Block createBlock(
             WoodenComplexMaterial parentMaterial, BlockBehaviour.Properties settings
     ) {
-        return new BaseChair.Wood(parentMaterial.getBlock(WoodSlots.SLAB));
+        return new BaseChair.Wood(parentMaterial.getBlock(WoodSlots.PLANKS), parentMaterial.furnitureCloth());
     }
 
     @Override

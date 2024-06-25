@@ -54,6 +54,7 @@ public class WoodenComplexMaterial extends ComplexMaterialSet<WoodenComplexMater
     protected BoatTypeOverride boatType;
 
     public final BCLWoodTypeWrapper woodType;
+    protected Block clothMaterial;
 
     public WoodenComplexMaterial(
             ModCore modCore,
@@ -62,9 +63,13 @@ public class WoodenComplexMaterial extends ComplexMaterialSet<WoodenComplexMater
             MapColor woodColor,
             MapColor planksColor
     ) {
-        this(modCore, baseName, receipGroupPrefix, woodColor, planksColor, null);
+        super(modCore, baseName, receipGroupPrefix);
+        this.planksColor = planksColor;
+        this.woodColor = woodColor;
+        this.woodType = createWoodTypeBuilder().build();
     }
 
+    @Deprecated(forRemoval = true)
     public WoodenComplexMaterial(
             ModCore modCore,
             String baseName,
@@ -73,11 +78,26 @@ public class WoodenComplexMaterial extends ComplexMaterialSet<WoodenComplexMater
             MapColor planksColor,
             BoatTypeOverride boatType
     ) {
-        super(modCore, baseName, receipGroupPrefix);
-        this.planksColor = planksColor;
-        this.woodColor = woodColor;
-        this.woodType = createWoodTypeBuilder().build();
+        this(modCore, baseName, receipGroupPrefix, woodColor, planksColor);
+        this.setBoatType(boatType);
+    }
+
+    public <W extends WoodenComplexMaterial> W setBoatType(BoatTypeOverride boatType) {
         this.boatType = boatType;
+        return (W) this;
+    }
+
+    public <W extends WoodenComplexMaterial> W setFurnitureCloth(Block clothMaterial) {
+        this.clothMaterial = clothMaterial;
+        return (W) this;
+    }
+
+    public Block furnitureCloth() {
+        return clothMaterial;
+    }
+
+    public Block furnitureFrame() {
+        return getBlock(WoodSlots.PLANKS);
     }
 
     protected BCLWoodTypeWrapper.Builder createWoodTypeBuilder() {
