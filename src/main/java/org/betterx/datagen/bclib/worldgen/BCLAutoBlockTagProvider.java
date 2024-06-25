@@ -2,12 +2,8 @@ package org.betterx.datagen.bclib.worldgen;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.behaviours.interfaces.*;
-import org.betterx.bclib.blocks.BaseBarrelBlock;
-import org.betterx.bclib.blocks.BaseChestBlock;
-import org.betterx.bclib.blocks.BaseFurnaceBlock;
 import org.betterx.bclib.interfaces.Fuel;
 import org.betterx.bclib.interfaces.tools.*;
-import org.betterx.bclib.registry.BaseBlockEntities;
 import org.betterx.wover.block.api.BlockRegistry;
 import org.betterx.wover.core.api.ModCore;
 import org.betterx.wover.datagen.api.WoverAutoProvider;
@@ -29,13 +25,6 @@ public class BCLAutoBlockTagProvider extends WoverTagProvider.ForBlocks implemen
     }
 
     private static void processBlockCommon(TagBootstrapContext<Block> context, Block block) {
-        if (block instanceof BaseChestBlock) {
-            BaseBlockEntities.CHEST.registerBlock(block);
-        } else if (block instanceof BaseBarrelBlock) {
-            BaseBlockEntities.BARREL.registerBlock(block);
-        } else if (block instanceof BaseFurnaceBlock) {
-            BaseBlockEntities.FURNACE.registerBlock(block);
-        }
         if (!(block instanceof PreventMineableAdd)) {
             if (block instanceof AddMineableShears) {
                 context.add(block, MineableTags.SHEARS);

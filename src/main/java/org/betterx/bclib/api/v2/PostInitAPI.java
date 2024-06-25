@@ -2,12 +2,15 @@ package org.betterx.bclib.api.v2;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.behaviours.interfaces.BehaviourCompostable;
+import org.betterx.bclib.blocks.BaseBarrelBlock;
 import org.betterx.bclib.blocks.BaseChestBlock;
+import org.betterx.bclib.blocks.BaseFurnaceBlock;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.client.render.BaseChestBlockEntityRenderer;
 import org.betterx.bclib.interfaces.PostInitable;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.items.tool.BaseShearsItem;
+import org.betterx.bclib.registry.BaseBlockEntities;
 
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.dispenser.ShearsDispenseItemBehavior;
@@ -87,7 +90,6 @@ public class PostInitAPI {
     }
 
     private static void processBlockCommon(Block block) {
-        //TODO: Some of this only needs to run on DataGen, add a special PostDataGenAPI for that
         final Item item = block.asItem();
         if (block instanceof PostInitable) {
             ((PostInitable) block).postInit();
@@ -99,6 +101,14 @@ public class PostInitAPI {
             } else if (BCLib.isDatagen()) {
                 BCLib.LOGGER.verbose("Block " + block + " has compostable behaviour but no item!");
             }
+        }
+
+        if (block instanceof BaseChestBlock) {
+            BaseBlockEntities.CHEST.registerBlock(block);
+        } else if (block instanceof BaseBarrelBlock) {
+            BaseBlockEntities.BARREL.registerBlock(block);
+        } else if (block instanceof BaseFurnaceBlock) {
+            BaseBlockEntities.FURNACE.registerBlock(block);
         }
     }
 }
