@@ -55,8 +55,8 @@ public abstract class BaseDoorBlock extends DoorBlock implements RenderLayerProv
 
     @Override
     @Environment(EnvType.CLIENT)
-    public void provideBlockModels(WoverBlockModelGenerators generators) {
-        generators.vanillaGenerator.createDoor(this);
+    public void provideBlockModels(WoverBlockModelGenerators generator) {
+        generator.vanillaGenerator.createDoor(this);
     }
 
     @Override

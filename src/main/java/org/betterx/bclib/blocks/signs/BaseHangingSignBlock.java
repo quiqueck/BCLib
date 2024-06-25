@@ -83,8 +83,8 @@ public abstract class BaseHangingSignBlock extends CeilingHangingSignBlock imple
     }
 
     @Override
-    public void provideBlockModels(WoverBlockModelGenerators generators) {
-        generators.createHangingSign(parent, this, getWallSignBlock());
+    public void provideBlockModels(WoverBlockModelGenerators generator) {
+        generator.createHangingSign(parent, this, getWallSignBlock());
     }
 
     public static class Wood extends BaseHangingSignBlock implements BehaviourWood {

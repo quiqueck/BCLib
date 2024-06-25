@@ -37,6 +37,7 @@ public class BCLModels {
             Optional.empty(),
             TextureSlot.TEXTURE
     );
+
     public static final ModelTemplate CHAIR_MODEL_TEMPLATE_TOP = new ModelTemplate(
             Optional.empty(),
             Optional.of("_top"),
@@ -46,6 +47,13 @@ public class BCLModels {
     public static final ResourceLocation TABURET_MODEL_LOCATION = BCLib.C.mk("block/taburet");
     public static final ModelTemplate TABURET_MODEL_TEMPLATE = new ModelTemplate(
             Optional.of(TABURET_MODEL_LOCATION),
+            Optional.empty(),
+            TextureSlot.TEXTURE
+    );
+
+    public static final ResourceLocation CHEST_MODEL_LOCATION = BCLib.C.mk("block/chest_item");
+    public static final ModelTemplate CHEST_ITEM_MODEL_TEMPLATE = new ModelTemplate(
+            Optional.of(CHEST_MODEL_LOCATION),
             Optional.empty(),
             TextureSlot.TEXTURE
     );
@@ -100,7 +108,8 @@ public class BCLModels {
                 TextureMapping.getBlockTexture(woodType)
         );
         ResourceLocation modelLocation = CHAIR_MODEL_TEMPLATE.create(block, mapping, generators.vanillaGenerator.modelOutput);
-        ResourceLocation topLocation = CHAIR_MODEL_TEMPLATE_TOP.create(block, mapping, generators.vanillaGenerator.modelOutput);
+        ResourceLocation topLocation = generators.particleOnlyModel(woodType);//CHAIR_MODEL_TEMPLATE_TOP.create(block, mapping, generators.vanillaGenerator.modelOutput);
+
 
         var blockStateGenerator = MultiVariantGenerator
                 .multiVariant(block)

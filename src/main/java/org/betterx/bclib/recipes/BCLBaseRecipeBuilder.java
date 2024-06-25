@@ -81,6 +81,7 @@ public abstract class BCLBaseRecipeBuilder<I extends BaseRecipeBuilder<I>, R ext
 
     protected abstract R createRecipe(ResourceLocation id);
 
+    @SuppressWarnings("removal")
     protected void setupAdvancementForResult() {
         advancement
                 .parent(RecipeBuilder.ROOT_RECIPE_ADVANCEMENT)//automatically at root level

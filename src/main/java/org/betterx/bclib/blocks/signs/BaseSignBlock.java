@@ -78,9 +78,9 @@ public abstract class BaseSignBlock extends StandingSignBlock implements BlockMo
     }
 
     @Override
-    public void provideBlockModels(WoverBlockModelGenerators generators) {
+    public void provideBlockModels(WoverBlockModelGenerators generator) {
         final BaseWallSignBlock wallSignBlock = this.getWallSignBlock();
-        generators.modelFor(this.parent).createSign(this, wallSignBlock);
+        generator.createSign(this.parent, this, wallSignBlock);
     }
 
     public static class Wood extends BaseSignBlock implements BehaviourWood {

@@ -22,8 +22,8 @@ public abstract class BaseComposterBlock extends ComposterBlock implements Block
 
     @Override
     @Environment(EnvType.CLIENT)
-    public void provideBlockModels(WoverBlockModelGenerators generators) {
-        generators.createComposter(this);
+    public void provideBlockModels(WoverBlockModelGenerators generator) {
+        generator.createComposter(this);
     }
 
     @Override

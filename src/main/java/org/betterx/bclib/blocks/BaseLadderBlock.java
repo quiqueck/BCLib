@@ -33,8 +33,8 @@ public abstract class BaseLadderBlock extends LadderBlock implements RenderLayer
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void provideBlockModels(WoverBlockModelGenerators generators) {
-        generators.createLadder(this);
+    public void provideBlockModels(WoverBlockModelGenerators generator) {
+        generator.createLadder(this);
     }
 
     public static class Wood extends BaseLadderBlock implements BehaviourWood {

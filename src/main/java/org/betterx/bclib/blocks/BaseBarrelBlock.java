@@ -86,8 +86,8 @@ public abstract class BaseBarrelBlock extends BarrelBlock implements BlockModelP
 
     @Override
     @Environment(EnvType.CLIENT)
-    public void provideBlockModels(WoverBlockModelGenerators generators) {
-        generators.createBarrel(this);
+    public void provideBlockModels(WoverBlockModelGenerators generator) {
+        generator.createBarrel(this);
     }
 
     @Override

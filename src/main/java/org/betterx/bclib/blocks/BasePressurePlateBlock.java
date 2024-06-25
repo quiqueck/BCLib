@@ -35,8 +35,8 @@ public abstract class BasePressurePlateBlock extends PressurePlateBlock implemen
 
     @Override
     @Environment(EnvType.CLIENT)
-    public void provideBlockModels(WoverBlockModelGenerators generators) {
-        generators.modelFor(parent).createPressurePlate(this);
+    public void provideBlockModels(WoverBlockModelGenerators generator) {
+        generator.createPressurePlate(parent, this);
     }
 
     @Override

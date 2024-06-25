@@ -39,9 +39,9 @@ public abstract class BaseStairsBlock extends StairBlock implements BlockModelPr
 
     @Override
     @Environment(EnvType.CLIENT)
-    public void provideBlockModels(WoverBlockModelGenerators generators) {
+    public void provideBlockModels(WoverBlockModelGenerators generator) {
         if (createModel)
-            generators.modelFor(parent).createStairs(this);
+            generator.modelFor(parent).createStairs(this);
     }
 
     @Override

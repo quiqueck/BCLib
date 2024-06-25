@@ -2,6 +2,7 @@ package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.api.v3.datagen.DropSelfLootProvider;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
+import org.betterx.bclib.client.models.BCLModels;
 import org.betterx.bclib.registry.BaseBlockEntities;
 import org.betterx.wover.block.api.BlockTagProvider;
 import org.betterx.wover.block.api.model.BlockModelProvider;
@@ -13,6 +14,9 @@ import org.betterx.wover.tag.api.predefined.CommonBlockTags;
 import org.betterx.wover.tag.api.predefined.CommonItemTags;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.models.model.TextureMapping;
+import net.minecraft.data.models.model.TextureSlot;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ChestBlock;
@@ -33,8 +37,15 @@ public abstract class BaseChestBlock extends ChestBlock implements BlockModelPro
     }
 
     @Override
-    public void provideBlockModels(WoverBlockModelGenerators generators) {
-        generators.modelFor(parent).createChest(this);
+    public void provideBlockModels(WoverBlockModelGenerators generator) {
+        generator.createChest(parent, this);
+
+        generator.createItemModel(
+                this,
+                BCLModels.CHEST_ITEM_MODEL_TEMPLATE,
+                new TextureMapping()
+                        .put(TextureSlot.TEXTURE, BuiltInRegistries.BLOCK.getKey(this).withPrefix("entity/chest/"))
+        );
     }
 
     @Override

@@ -156,8 +156,8 @@ public class BaseTerrainBlock extends BaseBlock implements BlockLootProvider, Ru
     }
 
     @Override
-    public void provideBlockModels(WoverBlockModelGenerators generators) {
-        generators.createBlockTopSideBottom(getBaseBlock(), this, true);
+    public void provideBlockModels(WoverBlockModelGenerators generator) {
+        generator.createBlockTopSideBottom(getBaseBlock(), this, true);
     }
 
     @Override

@@ -169,7 +169,7 @@ public abstract class BaseChair extends AbstractChair {
 
     @Override
     @Environment(EnvType.CLIENT)
-    public void provideBlockModels(WoverBlockModelGenerators generators) {
-        BCLModels.createChairBlockModel(generators, this, this.baseMaterial, this.clothMaterial);
+    public void provideBlockModels(WoverBlockModelGenerators generator) {
+        BCLModels.createChairBlockModel(generator, this, this.baseMaterial, this.clothMaterial);
     }
 }

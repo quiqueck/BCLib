@@ -43,8 +43,8 @@ public abstract class BaseButtonBlock extends ButtonBlock implements BlockModelP
 
     @Override
     @Environment(EnvType.CLIENT)
-    public void provideBlockModels(WoverBlockModelGenerators generators) {
-        generators.modelFor(parent).createButton(this);
+    public void provideBlockModels(WoverBlockModelGenerators generator) {
+        generator.createButton(parent, this);
     }
 
     @Override

@@ -8,7 +8,6 @@ import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 import org.betterx.wover.loot.api.BlockLootProvider;
 import org.betterx.wover.loot.api.LootLookupProvider;
 
-import net.minecraft.data.models.model.TexturedModel;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
@@ -76,8 +75,8 @@ public class BaseBlock extends Block implements BlockLootProvider, BlockModelPro
 
     @Override
     @Environment(EnvType.CLIENT)
-    public void provideBlockModels(WoverBlockModelGenerators generators) {
-        generators.modelFor(TexturedModel.CUBE.get(this)).createFullBlock(this);
+    public void provideBlockModels(WoverBlockModelGenerators generator) {
+        generator.createCubeModel(this);
     }
 
     @Override

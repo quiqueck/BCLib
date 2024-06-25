@@ -168,7 +168,7 @@ public abstract class AbstractChair extends BaseBlockNotFull implements BlockMod
 
     @Override
     @Environment(EnvType.CLIENT)
-    public void provideBlockModels(WoverBlockModelGenerators generators) {
+    public void provideBlockModels(WoverBlockModelGenerators generator) {
 
     }
 }

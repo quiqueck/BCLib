@@ -63,8 +63,8 @@ public abstract class BaseAnvilBlock extends AnvilBlock implements AddMineablePi
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void provideBlockModels(WoverBlockModelGenerators generators) {
-        generators.vanillaGenerator.createAnvil(this);
+    public void provideBlockModels(WoverBlockModelGenerators generator) {
+        generator.vanillaGenerator.createAnvil(this);
     }
 
     @Override

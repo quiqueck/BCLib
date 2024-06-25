@@ -6,6 +6,8 @@ import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.util.BlocksHelper;
 import org.betterx.wover.block.api.BlockProperties.TripleShape;
+import org.betterx.wover.block.api.model.BlockModelProvider;
+import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 import org.betterx.wover.loot.api.BlockLootProvider;
 import org.betterx.wover.loot.api.LootLookupProvider;
 
@@ -37,7 +39,7 @@ import java.util.function.Function;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("deprecation")
-public class BaseVineBlock extends BaseBlockNotFull implements RenderLayerProvider, BonemealableBlock, BehaviourVine, BlockLootProvider {
+public class BaseVineBlock extends BaseBlockNotFull implements RenderLayerProvider, BonemealableBlock, BehaviourVine, BlockLootProvider, BlockModelProvider {
     public static final EnumProperty<TripleShape> SHAPE = BlockProperties.TRIPLE_SHAPE;
     private static final VoxelShape VOXEL_SHAPE = box(2, 0, 2, 14, 16, 14);
 
@@ -152,5 +154,11 @@ public class BaseVineBlock extends BaseBlockNotFull implements RenderLayerProvid
             @NotNull ResourceKey<LootTable> tableKey
     ) {
         return provider.dropWithSilkTouch(this);
+    }
+
+    @Override
+    public void provideBlockModels(WoverBlockModelGenerators generator) {
+        generator.createCubeModel(this);
+        generator.createFlatItem(this);
     }
 }

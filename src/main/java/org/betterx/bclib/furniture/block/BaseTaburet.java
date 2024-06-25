@@ -55,7 +55,7 @@ public abstract class BaseTaburet extends AbstractChair {
 
     @Override
     @Environment(EnvType.CLIENT)
-    public void provideBlockModels(WoverBlockModelGenerators generators) {
-        BCLModels.createTaburetBlockModel(generators, this, this.baseMaterial);
+    public void provideBlockModels(WoverBlockModelGenerators generator) {
+        BCLModels.createTaburetBlockModel(generator, this, this.baseMaterial);
     }
 }

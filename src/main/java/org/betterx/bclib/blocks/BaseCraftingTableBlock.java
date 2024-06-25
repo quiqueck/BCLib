@@ -41,8 +41,8 @@ public abstract class BaseCraftingTableBlock extends CraftingTableBlock implemen
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void provideBlockModels(WoverBlockModelGenerators generators) {
-        generators.vanillaGenerator.createCraftingTableLike(this, this, BaseCraftingTableBlock::craftingTableTextureMapping);
+    public void provideBlockModels(WoverBlockModelGenerators generator) {
+        generator.vanillaGenerator.createCraftingTableLike(this, this, BaseCraftingTableBlock::craftingTableTextureMapping);
     }
 
     @Override
