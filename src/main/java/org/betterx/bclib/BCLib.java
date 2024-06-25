@@ -12,10 +12,13 @@ import org.betterx.bclib.recipes.AlloyingRecipe;
 import org.betterx.bclib.recipes.AnvilRecipe;
 import org.betterx.bclib.registry.BaseBlockEntities;
 import org.betterx.bclib.util.BCLDataComponents;
+import org.betterx.datagen.bclib.worldgen.BCLAutoBlockTagProvider;
+import org.betterx.datagen.bclib.worldgen.BCLAutoItemTagProvider;
 import org.betterx.worlds.together.WorldsTogether;
 import org.betterx.worlds.together.world.WorldConfig;
 import org.betterx.wover.core.api.Logger;
 import org.betterx.wover.core.api.ModCore;
+import org.betterx.wover.datagen.api.WoverDataGenEntryPoint;
 import org.betterx.wover.ui.api.VersionChecker;
 
 import net.minecraft.resources.ResourceLocation;
@@ -56,11 +59,14 @@ public class BCLib implements ModInitializer {
         BCLibPatch.register();
         TemplatePiece.ensureStaticInitialization();
         Configs.save();
-        
+
         VersionChecker.registerMod(C);
 
         if (isDatagen()) {
+            WoverDataGenEntryPoint.registerAutoProvider(BCLAutoBlockTagProvider::new);
+            WoverDataGenEntryPoint.registerAutoProvider(BCLAutoItemTagProvider::new);
             onDatagen();
+
         }
     }
 

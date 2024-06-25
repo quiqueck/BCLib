@@ -1,5 +1,6 @@
 package org.betterx.datagen.bclib.worldgen;
 
+import org.betterx.bclib.BCLib;
 import org.betterx.bclib.behaviours.interfaces.BehaviourCompostable;
 import org.betterx.bclib.behaviours.interfaces.BehaviourLeaves;
 import org.betterx.bclib.behaviours.interfaces.BehaviourSaplingLike;
@@ -7,6 +8,7 @@ import org.betterx.bclib.behaviours.interfaces.BehaviourSeedLike;
 import org.betterx.bclib.items.tool.*;
 import org.betterx.wover.block.api.BlockRegistry;
 import org.betterx.wover.core.api.ModCore;
+import org.betterx.wover.datagen.api.WoverAutoProvider;
 import org.betterx.wover.datagen.api.WoverTagProvider;
 import org.betterx.wover.item.api.ItemRegistry;
 import org.betterx.wover.tag.api.event.context.ItemTagBootstrapContext;
@@ -19,8 +21,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 
-public class ItemTagProvider extends WoverTagProvider.ForItems {
-    public ItemTagProvider(ModCore modCore) {
+public class BCLAutoItemTagProvider extends WoverTagProvider.ForItems implements WoverAutoProvider {
+    public BCLAutoItemTagProvider(ModCore modCore) {
         super(modCore);
     }
 
@@ -61,7 +63,8 @@ public class ItemTagProvider extends WoverTagProvider.ForItems {
         }
     }
 
-    public static void processBlockItemCommon(TagBootstrapContext<Item> context, ModCore modCore) {
+    private static void processBlockItemCommon(TagBootstrapContext<Item> context, ModCore modCore) {
+        BCLib.C.LOG.debug("Processing Items for " + modCore.namespace);
         ItemRegistry.forMod(modCore)
                     .allItems()
                     .forEach(item -> processItemCommon(context, item));
@@ -74,7 +77,7 @@ public class ItemTagProvider extends WoverTagProvider.ForItems {
 
 
     @Override
-    protected void prepareTags(ItemTagBootstrapContext context) {
+    public void prepareTags(ItemTagBootstrapContext context) {
         processBlockItemCommon(context, modCore);
     }
 }
