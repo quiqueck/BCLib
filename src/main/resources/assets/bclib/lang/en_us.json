@@ -121,5 +121,6 @@
   "title.config.bclib.client.rendering.nether_thick_fog": "Render Fog in Nether denser",
   "title.config.bclib.client.rendering.fog_density": "Overall Fog Density",
   "description.config.bclib.main.patches.apply_patches": "Sometimes the internal data of our Mods needs to change, making older wolrds incompatible. Whith this option enabled, the Guardian will automatically apply the necessary changes to your world. This will ensure that your world will load correctly, but may also change some of the world's data.",
-  "description.config.client.main.ui.survives_on_hint": "When hovering over compatible Blocks and Items in your inventory, a hint will be displayed showing you where this block can be placed."
+  "description.config.client.main.ui.survives_on_hint": "When hovering over compatible Blocks and Items in your inventory, a hint will be displayed showing you where this block can be placed.",
+  "commands.place.tag.invalid": "Invalid Tag"
 }

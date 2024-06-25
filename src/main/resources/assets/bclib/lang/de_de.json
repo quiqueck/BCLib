@@ -121,5 +121,6 @@
   "title.config.bclib.client.rendering.nether_thick_fog": "Dichteren Nebel im Nether darstellen",
   "title.config.bclib.client.rendering.fog_density": "Gesamte Nebeldichte",
   "description.config.bclib.main.patches.apply_patches": "Manchmal müssen die internen Daten unserer Mods geändert werden, wodurch ältere Welten inkompatibel werden. Wenn diese Option aktiviert ist, wird der Guardian automatisch die notwendigen Änderungen an deiner Welt vornehmen. Dies stellt sicher, dass deine Welt korrekt geladen wird, kann aber auch einige der Weltdaten ändern.",
-  "description.config.client.main.ui.survives_on_hint": "Wenn du in deinem Inventar über kompatible Blöcke und Gegenstände schwebst, wird ein Hinweis angezeigt, der dir zeigt, wo dieser Block platziert werden kann."
+  "description.config.client.main.ui.survives_on_hint": "Wenn du in deinem Inventar über kompatible Blöcke und Gegenstände schwebst, wird ein Hinweis angezeigt, der dir zeigt, wo dieser Block platziert werden kann.",
+  "commands.place.tag.invalid": "Ungültiger Tag"
 }

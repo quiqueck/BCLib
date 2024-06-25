@@ -8,19 +8,23 @@ import org.betterx.bclib.commands.arguments.Float3ArgumentType;
 import org.betterx.bclib.commands.arguments.PlacementDirections;
 import org.betterx.bclib.commands.arguments.TemplatePlacementArgument;
 import org.betterx.bclib.util.BlocksHelper;
+import org.betterx.wover.state.api.WorldState;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ResourceKeyArgument;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.commands.arguments.ResourceOrTagKeyArgument;
 import net.minecraft.commands.arguments.blocks.BlockInput;
 import net.minecraft.commands.arguments.blocks.BlockStateArgument;
 import net.minecraft.commands.arguments.blocks.BlockStateParser;
@@ -42,15 +46,19 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.world.level.block.state.properties.BedPart;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.StructureMode;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 class PlaceCommandBuilder {
     public static final String PATH = "path";
@@ -68,6 +76,7 @@ class PlaceCommandBuilder {
     public static final String REPLACE_WITH = "replace_with";
     public static final String ROLLABLE = "rollable";
     public static final String REPLACE_FROM_WORLD = "fromWorld";
+    public static final String BLOCKS = "blocks";
 
     public void register(
             CommandBuildContext ctx,
@@ -157,6 +166,32 @@ class PlaceCommandBuilder {
                 )
         );
 
+        final var blocksTree = Commands
+                .literal(BLOCKS)
+                .then(
+                        Commands.literal("location")
+                                .then(Commands.argument("namespace", StringArgumentType.string())
+                                              .then(
+                                                      Commands
+                                                              .argument("path", StringArgumentType.string())
+                                                              .then(
+                                                                      pos.get()
+                                                                         .executes(this::placeBlocksMatchingLocation)
+                                                              )
+                                              )
+                                )
+                )
+                .then(
+                        Commands.literal("tag")
+                                .then(Commands
+                                        .argument("structure", ResourceOrTagKeyArgument.resourceOrTagKey(Registries.BIOME))
+                                        .then(
+                                                pos.get()
+                                                   .executes(this::placeBlocksMatchingTag)
+                                        )
+                                )
+                );
+
 
 //        final var testSpaner = Commands.literal("spawner")
 //                                       .then(pos.get().executes(cc -> placeSpawner(cc)));
@@ -165,8 +200,129 @@ class PlaceCommandBuilder {
                 .then(nbtTree)
                 .then(emptyTree)
                 .then(jigsawTree)
+                .then(blocksTree)
         ;
     }
+
+    private int placeBlocksMatchingLocation(CommandContext<CommandSourceStack> cc) {
+        final String namespace = StringArgumentType.getString(cc, "namespace");
+        final String path = StringArgumentType.getString(cc, "path");
+        return placeMatchingBlocks(
+                cc,
+                (blocks) -> blocks.holders().filter((holder) -> {
+                    final var okey = holder.unwrapKey();
+                    if (okey.isPresent()) {
+                        var key = okey.get().location();
+                        return (namespace.trim().equals("*") || key
+                                .getNamespace()
+                                .contains(namespace)) && (path.trim().equals("*") || key.getPath().contains(path));
+                    }
+                    return false;
+                }).map(h -> (Holder<Block>) h)
+        );
+    }
+
+    private static final DynamicCommandExceptionType ERROR_PLACE_TAG_INVALID = new DynamicCommandExceptionType(object -> Component.translatableEscape("commands.place.tag.invalid", object));
+
+    private int placeBlocksMatchingTag(CommandContext<CommandSourceStack> cc) {
+        final ResourceOrTagKeyArgument.Result<Block> tagResult;
+        try {
+            tagResult = ResourceOrTagKeyArgument.getResourceOrTagKey(cc, "tag", Registries.BLOCK, ERROR_PLACE_TAG_INVALID);
+
+            final var tag = tagResult.unwrap().right().orElse(null);
+            if (tag == null) return -1;
+            return placeMatchingBlocks(
+                    cc,
+                    (blocks) -> {
+                        List<Holder<Block>> blockHolders = new LinkedList<>();
+                        for (Holder<Block> bl : blocks.getTagOrEmpty(tag)) {
+                            blockHolders.add(bl);
+                        }
+                        return blockHolders.stream();
+                    }
+            );
+        } catch (CommandSyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private int placeMatchingBlocks(
+            CommandContext<CommandSourceStack> cc,
+            Function<Registry<Block>, Stream<Holder<Block>>> blockSupplier
+    ) {
+        try {
+            final BlockPos pos = BlockPosArgument.getLoadedBlockPos(cc, POS);
+            final int LENGTH = 16;
+            final int HEIGHT = 16;
+
+            final var blocks = WorldState.registryAccess().registry(Registries.BLOCK).orElse(null);
+            final List<Holder<Block>> blockHolders = new LinkedList<>();
+            blockSupplier.apply(blocks).forEach(blockHolders::add);
+            final ServerLevel world = cc.getSource().getLevel();
+            final ServerPlayer player = cc.getSource().getPlayerOrException();
+            if (blocks == null) return -1;
+
+            int x = pos.getX();
+            int y = pos.getY();
+            int z = pos.getZ();
+            for (Holder<Block> entry : blockHolders) {
+                final ResourceLocation key = entry.unwrapKey().orElseThrow().location();
+
+                final Block block = entry.value();
+
+                BlockPos test = new BlockPos(x, y, z);
+
+                while (!world.isEmptyBlock(test)) {
+                    x++;
+                    if (x - pos.getX() > LENGTH) {
+                        x = pos.getX();
+                        y++;
+                        if (y - pos.getY() > HEIGHT) {
+                            y = pos.getY();
+                            z += 4;
+                        }
+                    }
+                    test = new BlockPos(x, y, z);
+                }
+                place(world, player, block, block.defaultBlockState(), test);
+            }
+
+        } catch (CommandSyntaxException e) {
+            throw new RuntimeException(e);
+        }
+        return 0;
+    }
+
+    private static void place(ServerLevel world, ServerPlayer player, Block bl, BlockState state, BlockPos blockPos) {
+        if (bl instanceof LiquidBlock) {
+        } else if (bl instanceof DoorBlock) {
+            BlocksHelper.setWithoutUpdate(
+                    world,
+                    blockPos,
+                    state.setValue(DoorBlock.HALF, DoubleBlockHalf.LOWER)
+            );
+            BlocksHelper.setWithoutUpdate(
+                    world,
+                    blockPos.above(),
+                    state.setValue(DoorBlock.HALF, DoubleBlockHalf.UPPER)
+            );
+        } else if (bl instanceof BedBlock) {
+            BlocksHelper.setWithoutUpdate(
+                    world,
+                    blockPos,
+                    state.setValue(BedBlock.PART, BedPart.FOOT)
+            );
+            BlocksHelper.setWithoutUpdate(
+                    world,
+                    blockPos.relative(state.getValue(BedBlock.FACING)),
+                    state.setValue(BedBlock.PART, BedPart.HEAD)
+            );
+        } else {
+            BlocksHelper.setWithoutUpdate(world, blockPos, state);
+        }
+
+    }
+
 
     private <T> RequiredArgumentBuilder<CommandSourceStack, T> addOptionalsAndExecute(
             CommandBuildContext commandBuildContext,
