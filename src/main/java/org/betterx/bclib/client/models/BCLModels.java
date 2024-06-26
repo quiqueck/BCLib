@@ -23,6 +23,9 @@ import org.jetbrains.annotations.NotNull;
 public class BCLModels {
     public static final TextureSlot CLOTH = TextureSlot.create("cloth");
     public static final TextureSlot TEXTURE1 = TextureSlot.create("texture1");
+    public static final TextureSlot GLOW = TextureSlot.create("glow");
+    public static final TextureSlot METAL = TextureSlot.create("metal");
+    public static final TextureSlot GLASS = TextureSlot.create("glass");
 
     public static final ResourceLocation BAR_STOOL_MODEL_LOCATION = BCLib.C.mk("block/bar_stool");
     public static final ModelTemplate BAR_STOOL_MODEL_TEMPLATE = new ModelTemplate(
@@ -56,6 +59,44 @@ public class BCLModels {
             Optional.of(CHEST_MODEL_LOCATION),
             Optional.empty(),
             TextureSlot.TEXTURE
+    );
+
+    public static final ResourceLocation PATH_MODEL_LOCATION = BCLib.C.mk("block/path");
+    public static final ModelTemplate PATH_MODEL_TEMPLATE = new ModelTemplate(
+            Optional.of(PATH_MODEL_LOCATION),
+            Optional.empty(),
+            TextureSlot.TOP, TextureSlot.BOTTOM, TextureSlot.SIDE
+    );
+
+    public static final ResourceLocation LADDER_MODEL_LOCATION = BCLib.C.mk("block/ladder");
+    public static final ModelTemplate LADDER_MODEL_TEMPLATE = new ModelTemplate(
+            Optional.of(LADDER_MODEL_LOCATION),
+            Optional.empty(),
+            TextureSlot.TEXTURE
+    );
+
+    public static final ModelTemplate BULB_LANTERN_FLOOR_MODEL_TEMPLATE = new ModelTemplate(
+            Optional.of(BCLib.C.mk("block/bulb_lantern_floor")),
+            Optional.empty(),
+            GLOW, METAL
+    );
+
+    public static final ModelTemplate BULB_LANTERN_CEIL_MODEL_TEMPLATE = new ModelTemplate(
+            Optional.of(BCLib.C.mk("block/bulb_lantern_ceil")),
+            Optional.empty(),
+            GLOW, METAL
+    );
+
+    public static final ModelTemplate STONE_LANTERN_FLOOR_MODEL_TEMPLATE = new ModelTemplate(
+            Optional.of(BCLib.C.mk("block/stone_lantern_floor")),
+            Optional.empty(),
+            TextureSlot.TOP, TextureSlot.BOTTOM, TextureSlot.SIDE, GLASS
+    );
+
+    public static final ModelTemplate STONE_LANTERN_CEIL_MODEL_TEMPLATE = new ModelTemplate(
+            Optional.of(BCLib.C.mk("block/stone_lantern_ceil")),
+            Optional.empty(),
+            TextureSlot.TOP, TextureSlot.BOTTOM, TextureSlot.SIDE, GLASS
     );
 
     public static void createBarStoolBlockModel(
