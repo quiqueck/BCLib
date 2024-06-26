@@ -28,75 +28,81 @@ public class BCLModels {
     public static final TextureSlot GLASS = TextureSlot.create("glass");
 
     public static final ResourceLocation BAR_STOOL_MODEL_LOCATION = BCLib.C.mk("block/bar_stool");
-    public static final ModelTemplate BAR_STOOL_MODEL_TEMPLATE = new ModelTemplate(
+    public static final ModelTemplate BAR_STOOL = new ModelTemplate(
             Optional.of(BAR_STOOL_MODEL_LOCATION),
             Optional.empty(),
             TextureSlot.TEXTURE, CLOTH
     );
 
     public static final ResourceLocation CHAIR_MODEL_LOCATION = BCLib.C.mk("block/chair");
-    public static final ModelTemplate CHAIR_MODEL_TEMPLATE = new ModelTemplate(
+    public static final ModelTemplate CHAIR = new ModelTemplate(
             Optional.of(CHAIR_MODEL_LOCATION),
             Optional.empty(),
             TextureSlot.TEXTURE
     );
 
-    public static final ModelTemplate CHAIR_MODEL_TEMPLATE_TOP = new ModelTemplate(
+    public static final ModelTemplate CHAIR_TOP = new ModelTemplate(
             Optional.empty(),
             Optional.of("_top"),
             TextureSlot.PARTICLE
     );
 
     public static final ResourceLocation TABURET_MODEL_LOCATION = BCLib.C.mk("block/taburet");
-    public static final ModelTemplate TABURET_MODEL_TEMPLATE = new ModelTemplate(
+    public static final ModelTemplate TABURET = new ModelTemplate(
             Optional.of(TABURET_MODEL_LOCATION),
             Optional.empty(),
             TextureSlot.TEXTURE
     );
 
     public static final ResourceLocation CHEST_MODEL_LOCATION = BCLib.C.mk("block/chest_item");
-    public static final ModelTemplate CHEST_ITEM_MODEL_TEMPLATE = new ModelTemplate(
+    public static final ModelTemplate CHEST_ITEM = new ModelTemplate(
             Optional.of(CHEST_MODEL_LOCATION),
             Optional.empty(),
             TextureSlot.TEXTURE
     );
 
     public static final ResourceLocation PATH_MODEL_LOCATION = BCLib.C.mk("block/path");
-    public static final ModelTemplate PATH_MODEL_TEMPLATE = new ModelTemplate(
+    public static final ModelTemplate PATH = new ModelTemplate(
             Optional.of(PATH_MODEL_LOCATION),
             Optional.empty(),
             TextureSlot.TOP, TextureSlot.BOTTOM, TextureSlot.SIDE
     );
 
     public static final ResourceLocation LADDER_MODEL_LOCATION = BCLib.C.mk("block/ladder");
-    public static final ModelTemplate LADDER_MODEL_TEMPLATE = new ModelTemplate(
+    public static final ModelTemplate LADDER = new ModelTemplate(
             Optional.of(LADDER_MODEL_LOCATION),
             Optional.empty(),
             TextureSlot.TEXTURE
     );
 
-    public static final ModelTemplate BULB_LANTERN_FLOOR_MODEL_TEMPLATE = new ModelTemplate(
+    public static final ModelTemplate BULB_LANTERN_FLOOR = new ModelTemplate(
             Optional.of(BCLib.C.mk("block/bulb_lantern_floor")),
             Optional.empty(),
             GLOW, METAL
     );
 
-    public static final ModelTemplate BULB_LANTERN_CEIL_MODEL_TEMPLATE = new ModelTemplate(
+    public static final ModelTemplate BULB_LANTERN_CEIL = new ModelTemplate(
             Optional.of(BCLib.C.mk("block/bulb_lantern_ceil")),
             Optional.empty(),
             GLOW, METAL
     );
 
-    public static final ModelTemplate STONE_LANTERN_FLOOR_MODEL_TEMPLATE = new ModelTemplate(
+    public static final ModelTemplate STONE_LANTERN_FLOOR = new ModelTemplate(
             Optional.of(BCLib.C.mk("block/stone_lantern_floor")),
             Optional.empty(),
             TextureSlot.TOP, TextureSlot.BOTTOM, TextureSlot.SIDE, GLASS
     );
 
-    public static final ModelTemplate STONE_LANTERN_CEIL_MODEL_TEMPLATE = new ModelTemplate(
+    public static final ModelTemplate STONE_LANTERN_CEIL = new ModelTemplate(
             Optional.of(BCLib.C.mk("block/stone_lantern_ceil")),
             Optional.empty(),
             TextureSlot.TOP, TextureSlot.BOTTOM, TextureSlot.SIDE, GLASS
+    );
+
+    public static final ModelTemplate CROSS_SHADED = new ModelTemplate(
+            Optional.of(BCLib.C.mk("block/cross_shaded")),
+            Optional.empty(),
+            TextureSlot.CROSS
     );
 
     public static void createBarStoolBlockModel(
@@ -111,7 +117,7 @@ public class BCLModels {
                 CLOTH,
                 TextureMapping.getBlockTexture(clothType)
         );
-        ResourceLocation modelLocation = BAR_STOOL_MODEL_TEMPLATE.create(block, mapping, generators.vanillaGenerator.modelOutput);
+        ResourceLocation modelLocation = BAR_STOOL.create(block, mapping, generators.vanillaGenerator.modelOutput);
 
         var blockStateGenerator = MultiVariantGenerator
                 .multiVariant(block)
@@ -128,7 +134,7 @@ public class BCLModels {
                 TextureSlot.TEXTURE,
                 TextureMapping.getBlockTexture(woodType)
         );
-        ResourceLocation modelLocation = TABURET_MODEL_TEMPLATE.create(block, mapping, generators.vanillaGenerator.modelOutput);
+        ResourceLocation modelLocation = TABURET.create(block, mapping, generators.vanillaGenerator.modelOutput);
 
         var blockStateGenerator = MultiVariantGenerator
                 .multiVariant(block)
@@ -148,8 +154,8 @@ public class BCLModels {
                 TextureSlot.PARTICLE,
                 TextureMapping.getBlockTexture(woodType)
         );
-        ResourceLocation modelLocation = CHAIR_MODEL_TEMPLATE.create(block, mapping, generators.vanillaGenerator.modelOutput);
-        ResourceLocation topLocation = generators.particleOnlyModel(woodType);//CHAIR_MODEL_TEMPLATE_TOP.create(block, mapping, generators.vanillaGenerator.modelOutput);
+        ResourceLocation modelLocation = CHAIR.create(block, mapping, generators.vanillaGenerator.modelOutput);
+        ResourceLocation topLocation = generators.particleOnlyModel(woodType);//CHAIR_TOP.create(block, mapping, generators.vanillaGenerator.modelOutput);
 
 
         var blockStateGenerator = MultiVariantGenerator

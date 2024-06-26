@@ -62,7 +62,7 @@ public abstract class BasePathBlock extends BaseBlockNotFull implements BlockLoo
                 .put(TextureSlot.SIDE, side)
                 .put(TextureSlot.TOP, TextureMapping.getBlockTexture(this, "_top"))
                 .put(TextureSlot.BOTTOM, TextureMapping.getBlockTexture(baseBlock));
-        var location = BCLModels.PATH_MODEL_TEMPLATE.create(this, mapping, generator.modelOutput());
+        var location = BCLModels.PATH.create(this, mapping, generator.modelOutput());
 
         generator.acceptBlockState(generator.randomTopModelVariant(this, location));
 

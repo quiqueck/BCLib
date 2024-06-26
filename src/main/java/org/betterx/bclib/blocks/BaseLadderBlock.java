@@ -43,7 +43,7 @@ public abstract class BaseLadderBlock extends LadderBlock implements RenderLayer
     public void provideBlockModels(WoverBlockModelGenerators generator) {
         var mapping = new TextureMapping()
                 .put(TextureSlot.TEXTURE, TextureMapping.getBlockTexture(this));
-        var location = BCLModels.LADDER_MODEL_TEMPLATE.create(this, mapping, generator.modelOutput());
+        var location = BCLModels.LADDER.create(this, mapping, generator.modelOutput());
 
         generator.acceptBlockState(MultiVariantGenerator
                 .multiVariant(this, Variant.variant().with(VariantProperties.MODEL, location))

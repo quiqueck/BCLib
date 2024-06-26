@@ -1,20 +1,22 @@
 package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
-import org.betterx.bclib.client.models.BasePatterns;
-import org.betterx.bclib.client.models.ModelsHelper;
-import org.betterx.bclib.client.models.PatternsHelper;
+import org.betterx.bclib.client.models.BCLModels;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
-import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
+import org.betterx.wover.block.api.BlockProperties;
+import org.betterx.wover.block.api.model.BlockModelProvider;
+import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 
-import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.resources.model.BlockModelRotation;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.data.models.blockstates.MultiVariantGenerator;
+import net.minecraft.data.models.blockstates.PropertyDispatch;
+import net.minecraft.data.models.blockstates.Variant;
+import net.minecraft.data.models.blockstates.VariantProperties;
+import net.minecraft.data.models.model.TextureMapping;
+import net.minecraft.data.models.model.TextureSlot;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -41,15 +43,10 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
-import java.util.Map;
-import java.util.Optional;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("deprecation")
-public abstract class StalactiteBlock extends BaseBlockNotFull implements SimpleWaterloggedBlock, LiquidBlockContainer, RenderLayerProvider, RuntimeBlockModelProvider {
+public abstract class StalactiteBlock extends BaseBlockNotFull implements SimpleWaterloggedBlock, LiquidBlockContainer, RenderLayerProvider, BlockModelProvider {
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final BooleanProperty IS_FLOOR = BlockProperties.IS_FLOOR;
     public static final IntegerProperty SIZE = BlockProperties.SIZE;
@@ -73,7 +70,7 @@ public abstract class StalactiteBlock extends BaseBlockNotFull implements Simple
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext ePos) {
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext ePos) {
         return SHAPES[state.getValue(SIZE)];
     }
 
@@ -184,7 +181,7 @@ public abstract class StalactiteBlock extends BaseBlockNotFull implements Simple
     }
 
     @Override
-    public BlockState updateShape(
+    public @NotNull BlockState updateShape(
             BlockState state,
             Direction facing,
             BlockState neighborState,
@@ -217,26 +214,19 @@ public abstract class StalactiteBlock extends BaseBlockNotFull implements Simple
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
-    public @Nullable BlockModel getBlockModel(ResourceLocation resourceLocation, BlockState blockState) {
-        Optional<String> pattern = PatternsHelper.createJson(BasePatterns.BLOCK_CROSS_SHADED, resourceLocation);
-        return ModelsHelper.fromPattern(pattern);
-    }
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public UnbakedModel getModelVariant(
-            ModelResourceLocation stateId,
-            BlockState blockState,
-            Map<ResourceLocation, UnbakedModel> modelCache
-    ) {
-        BlockModelRotation rotation = blockState.getValue(IS_FLOOR)
-                ? BlockModelRotation.X0_Y0
-                : BlockModelRotation.X180_Y0;
-        ModelResourceLocation modelId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState, "_" + blockState.getValue(SIZE));
-
-        registerBlockModel(modelId, modelId, blockState, modelCache);
-        return ModelsHelper.createMultiVariant(modelId.id(), rotation.getRotation(), false);
+    public void provideBlockModels(WoverBlockModelGenerators generator) {
+        final ResourceLocation id = TextureMapping.getBlockTexture(this);
+        final var props = PropertyDispatch.properties(IS_FLOOR, SIZE);
+        for (int size = 0; size <= 7; size++) {
+            final TextureMapping mapping = new TextureMapping().put(TextureSlot.CROSS, id.withSuffix("_" + size));
+            final ResourceLocation model = BCLModels.CROSS_SHADED.createWithSuffix(this, "_" + size, mapping, generator.modelOutput());
+            props.select(true, size, Variant.variant().with(VariantProperties.MODEL, model));
+            props.select(false, size, Variant.variant()
+                                             .with(VariantProperties.MODEL, model)
+                                             .with(VariantProperties.X_ROT, VariantProperties.Rotation.R180));
+        }
+        generator.acceptBlockState(MultiVariantGenerator.multiVariant(this).with(props));
+        generator.createFlatItem(this, id.withSuffix("_0"));
     }
 
     @Override
@@ -250,7 +240,7 @@ public abstract class StalactiteBlock extends BaseBlockNotFull implements Simple
     }
 
     @Override
-    public FluidState getFluidState(BlockState state) {
+    public @NotNull FluidState getFluidState(BlockState state) {
         return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : Fluids.EMPTY.defaultFluidState();
     }
 
