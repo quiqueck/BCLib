@@ -28,20 +28,17 @@ import net.fabricmc.api.Environment;
 public abstract class BaseStairsBlock extends StairBlock implements BlockModelProvider, CustomBlockItemProvider, BlockTagProvider, ItemTagProvider, DropSelfLootProvider<BaseStairsBlock> {
     private final Block parent;
     public final boolean fireproof;
-    public final boolean createModel;
 
-    protected BaseStairsBlock(Block source, boolean fireproof, boolean createModel) {
+    protected BaseStairsBlock(Block source, boolean fireproof) {
         super(source.defaultBlockState(), Properties.ofFullCopy(source));
         this.parent = source;
         this.fireproof = fireproof;
-        this.createModel = createModel;
     }
 
     @Override
     @Environment(EnvType.CLIENT)
     public void provideBlockModels(WoverBlockModelGenerators generator) {
-        if (createModel)
-            generator.modelFor(parent).createStairs(this);
+        generator.createStairs(parent, this);
     }
 
     @Override
@@ -66,11 +63,7 @@ public abstract class BaseStairsBlock extends StairBlock implements BlockModelPr
         }
 
         public Stone(Block source, boolean fireproof) {
-            this(source, fireproof, true);
-        }
-
-        public Stone(Block source, boolean fireproof, boolean createModel) {
-            super(source, fireproof, createModel);
+            super(source, fireproof);
         }
     }
 
@@ -80,11 +73,7 @@ public abstract class BaseStairsBlock extends StairBlock implements BlockModelPr
         }
 
         public Metal(Block source, boolean fireproof) {
-            this(source, fireproof, true);
-        }
-
-        public Metal(Block source, boolean fireproof, boolean createModel) {
-            super(source, fireproof, createModel);
+            super(source, fireproof);
         }
     }
 
@@ -94,12 +83,9 @@ public abstract class BaseStairsBlock extends StairBlock implements BlockModelPr
         }
 
         public Wood(Block source, boolean fireproof) {
-            this(source, fireproof, true);
+            super(source, fireproof);
         }
 
-        public Wood(Block source, boolean fireproof, boolean createModel) {
-            super(source, fireproof, createModel);
-        }
 
         @Override
         public void registerBlockTags(ResourceLocation location, TagBootstrapContext<Block> context) {
@@ -118,25 +104,18 @@ public abstract class BaseStairsBlock extends StairBlock implements BlockModelPr
         }
 
         public Obsidian(Block source, boolean fireproof) {
-            this(source, fireproof, true);
+            super(source, fireproof);
         }
 
-        public Obsidian(Block source, boolean fireproof, boolean createModel) {
-            super(source, fireproof, createModel);
-        }
     }
 
     public static BaseStairsBlock from(Block source, boolean flammable) {
-        return from(source, flammable, true);
-    }
-
-    public static BaseStairsBlock from(Block source, boolean flammable, boolean createModel) {
         return BehaviourHelper.from(
                 source,
-                (block) -> new Wood(block, flammable, createModel),
-                (block) -> new Stone(block, !flammable, createModel),
-                (block) -> new Metal(block, !flammable, createModel),
-                (block) -> new Obsidian(block, !flammable, createModel),
+                (block) -> new Wood(block, flammable),
+                (block) -> new Stone(block, !flammable),
+                (block) -> new Metal(block, !flammable),
+                (block) -> new Obsidian(block, !flammable),
                 null
         );
 

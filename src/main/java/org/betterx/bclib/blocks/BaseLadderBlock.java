@@ -5,11 +5,18 @@ import org.betterx.bclib.behaviours.BehaviourHelper;
 import org.betterx.bclib.behaviours.interfaces.BehaviourClimable;
 import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
+import org.betterx.bclib.client.models.BCLModels;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.wover.block.api.model.BlockModelProvider;
 import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 
+import net.minecraft.data.models.BlockModelGenerators;
+import net.minecraft.data.models.blockstates.MultiVariantGenerator;
+import net.minecraft.data.models.blockstates.Variant;
+import net.minecraft.data.models.blockstates.VariantProperties;
+import net.minecraft.data.models.model.TextureMapping;
+import net.minecraft.data.models.model.TextureSlot;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LadderBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -34,7 +41,15 @@ public abstract class BaseLadderBlock extends LadderBlock implements RenderLayer
     @Environment(EnvType.CLIENT)
     @Override
     public void provideBlockModels(WoverBlockModelGenerators generator) {
-        generator.createLadder(this);
+        var mapping = new TextureMapping()
+                .put(TextureSlot.TEXTURE, TextureMapping.getBlockTexture(this));
+        var location = BCLModels.LADDER_MODEL_TEMPLATE.create(this, mapping, generator.modelOutput());
+
+        generator.acceptBlockState(MultiVariantGenerator
+                .multiVariant(this, Variant.variant().with(VariantProperties.MODEL, location))
+                .with(BlockModelGenerators.createHorizontalFacingDispatch()));
+
+        generator.createFlatItem(this);
     }
 
     public static class Wood extends BaseLadderBlock implements BehaviourWood {

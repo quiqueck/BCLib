@@ -1,18 +1,15 @@
 package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
-import org.betterx.bclib.client.models.BasePatterns;
-import org.betterx.bclib.client.models.ModelsHelper;
-import org.betterx.bclib.client.models.PatternsHelper;
-import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
+import org.betterx.bclib.client.models.BCLModels;
+import org.betterx.wover.block.api.model.BlockModelProvider;
+import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 import org.betterx.wover.loot.api.BlockLootProvider;
 import org.betterx.wover.loot.api.LootLookupProvider;
 
-import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.models.model.TextureMapping;
+import net.minecraft.data.models.model.TextureSlot;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.BlockGetter;
@@ -23,17 +20,9 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
-import com.google.common.collect.Maps;
-
-import java.util.Map;
-import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public abstract class BasePathBlock extends BaseBlockNotFull implements BlockLootProvider, RuntimeBlockModelProvider {
+public abstract class BasePathBlock extends BaseBlockNotFull implements BlockLootProvider, BlockModelProvider {
     private static final VoxelShape SHAPE = box(0, 0, 0, 16, 15, 16);
 
     private Block baseBlock;
@@ -48,48 +37,35 @@ public abstract class BasePathBlock extends BaseBlockNotFull implements BlockLoo
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext ePos) {
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext ePos) {
         return SHAPE;
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public VoxelShape getCollisionShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext ePos) {
-        return SHAPE;
-    }
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public BlockModel getItemModel(ResourceLocation blockId) {
-        return getBlockModel(blockId, defaultBlockState());
-    }
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public @Nullable BlockModel getBlockModel(ResourceLocation blockId, BlockState blockState) {
-        String name = blockId.getPath();
-        ResourceLocation bottomId = BuiltInRegistries.BLOCK.getKey(baseBlock);
-        String bottom = bottomId.getNamespace() + ":block/" + bottomId.getPath();
-        Map<String, String> textures = Maps.newHashMap();
-        textures.put("%modid%", blockId.getNamespace());
-        textures.put("%top%", name + "_top");
-        textures.put("%side%", name.replace("_path", "") + "_side");
-        textures.put("%bottom%", bottom);
-        Optional<String> pattern = PatternsHelper.createJson(BasePatterns.BLOCK_PATH, textures);
-        return ModelsHelper.fromPattern(pattern);
-    }
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public UnbakedModel getModelVariant(
-            ModelResourceLocation stateId,
-            BlockState blockState,
-            Map<ResourceLocation, UnbakedModel> modelCache
+    public @NotNull VoxelShape getCollisionShape(
+            BlockState state,
+            BlockGetter view,
+            BlockPos pos,
+            CollisionContext ePos
     ) {
-        ModelResourceLocation modelId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState);
-        registerBlockModel(stateId, modelId, blockState, modelCache);
-        return ModelsHelper.createRandomTopModel(modelId.id());
+        return SHAPE;
+    }
+
+    @Override
+    public void provideBlockModels(WoverBlockModelGenerators generator) {
+        var side = TextureMapping.getBlockTexture(this, "_side");
+        side = ResourceLocation.fromNamespaceAndPath(side.getNamespace(), side
+                .getPath()
+                .replace("_path", ""));
+
+        var mapping = new TextureMapping()
+                .put(TextureSlot.SIDE, side)
+                .put(TextureSlot.TOP, TextureMapping.getBlockTexture(this, "_top"))
+                .put(TextureSlot.BOTTOM, TextureMapping.getBlockTexture(baseBlock));
+        var location = BCLModels.PATH_MODEL_TEMPLATE.create(this, mapping, generator.modelOutput());
+
+        generator.acceptBlockState(generator.randomTopModelVariant(this, location));
+
     }
 
     @Override
