@@ -106,6 +106,7 @@ public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderL
     @Environment(EnvType.CLIENT)
     public void provideBlockModels(WoverBlockModelGenerators generator) {
         generator.vanillaGenerator.createCrossBlock(this, BlockModelGenerators.TintState.NOT_TINTED);
+        generator.createFlatItem(this);
     }
 
     @Override

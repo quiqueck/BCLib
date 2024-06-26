@@ -218,15 +218,16 @@ public abstract class StalactiteBlock extends BaseBlockNotFull implements Simple
         final ResourceLocation id = TextureMapping.getBlockTexture(this);
         final var props = PropertyDispatch.properties(IS_FLOOR, SIZE);
         for (int size = 0; size <= 7; size++) {
-            final TextureMapping mapping = new TextureMapping().put(TextureSlot.CROSS, id.withSuffix("_" + size));
-            final ResourceLocation model = BCLModels.CROSS_SHADED.createWithSuffix(this, "_" + size, mapping, generator.modelOutput());
+            final String suffix = "_" + size;
+            final TextureMapping mapping = new TextureMapping().put(TextureSlot.CROSS, id.withSuffix(suffix));
+            final ResourceLocation model = BCLModels.CROSS_SHADED.createWithSuffix(this, suffix, mapping, generator.modelOutput());
             props.select(true, size, Variant.variant().with(VariantProperties.MODEL, model));
             props.select(false, size, Variant.variant()
                                              .with(VariantProperties.MODEL, model)
                                              .with(VariantProperties.X_ROT, VariantProperties.Rotation.R180));
         }
         generator.acceptBlockState(MultiVariantGenerator.multiVariant(this).with(props));
-        generator.createFlatItem(this, id.withSuffix("_0"));
+        generator.createFlatItem(this, TextureMapping.getItemTexture(this.asItem()));
     }
 
     @Override
