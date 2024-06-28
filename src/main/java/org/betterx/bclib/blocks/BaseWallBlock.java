@@ -32,7 +32,7 @@ public abstract class BaseWallBlock extends WallBlock implements DropSelfLootPro
     @Override
     @Environment(EnvType.CLIENT)
     public void provideBlockModels(WoverBlockModelGenerators generator) {
-        generator.modelFor(parent).createWall(this);
+        generator.createWall(parent, this);
     }
 
     public static class Stone extends BaseWallBlock implements BehaviourStone {
