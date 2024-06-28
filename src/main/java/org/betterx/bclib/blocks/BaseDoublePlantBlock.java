@@ -40,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements RenderLayerProvider, BonemealableBlock, BlockLootProvider, BlockModelProvider {
     private static final VoxelShape SHAPE = box(4, 2, 4, 12, 16, 12);
-    public static final IntegerProperty ROTATION = BlockProperties.ROTATION;
+    public static final IntegerProperty ROTATION = org.betterx.wover.block.api.BlockProperties.ROTATION;
     public static final BooleanProperty TOP = BooleanProperty.create("top");
 
     public BaseDoublePlantBlock() {

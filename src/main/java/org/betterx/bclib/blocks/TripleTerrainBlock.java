@@ -42,7 +42,7 @@ import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
 public class TripleTerrainBlock extends BaseTerrainBlock implements RuntimeBlockModelProvider {
-    public static final EnumProperty<TripleShape> SHAPE = BlockProperties.TRIPLE_SHAPE;
+    public static final EnumProperty<TripleShape> SHAPE = org.betterx.wover.block.api.BlockProperties.TRIPLE_SHAPE;
 
     public TripleTerrainBlock(Block baseBlock) {
         super(baseBlock, baseBlock.defaultMapColor());

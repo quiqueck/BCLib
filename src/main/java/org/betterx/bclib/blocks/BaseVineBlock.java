@@ -40,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("deprecation")
 public class BaseVineBlock extends BaseBlockNotFull implements RenderLayerProvider, BonemealableBlock, BehaviourVine, BlockLootProvider, BlockModelProvider {
-    public static final EnumProperty<TripleShape> SHAPE = BlockProperties.TRIPLE_SHAPE;
+    public static final EnumProperty<TripleShape> SHAPE = org.betterx.wover.block.api.BlockProperties.TRIPLE_SHAPE;
     private static final VoxelShape VOXEL_SHAPE = box(2, 0, 2, 14, 16, 14);
 
     public BaseVineBlock() {

@@ -17,7 +17,6 @@ public class BlockProperties {
     public static final BooleanProperty SMALL = org.betterx.wover.block.api.BlockProperties.SMALL;
 
     public static final IntegerProperty DEFAULT_ANVIL_DURABILITY = org.betterx.wover.block.api.BlockProperties.DEFAULT_ANVIL_DURABILITY;
-    public static final IntegerProperty DESTRUCTION = org.betterx.wover.block.api.BlockProperties.DESTRUCTION;
     public static final IntegerProperty ROTATION = org.betterx.wover.block.api.BlockProperties.ROTATION;
     public static final IntegerProperty FULLNESS = org.betterx.wover.block.api.BlockProperties.FULLNESS;
     public static final IntegerProperty COLOR = org.betterx.wover.block.api.BlockProperties.COLOR;
