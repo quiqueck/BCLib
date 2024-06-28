@@ -26,6 +26,7 @@ public class BCLModels {
     public static final TextureSlot GLOW = TextureSlot.create("glow");
     public static final TextureSlot METAL = TextureSlot.create("metal");
     public static final TextureSlot GLASS = TextureSlot.create("glass");
+    public static final TextureSlot PANEL = TextureSlot.create("panel");
 
     public static final ResourceLocation BAR_STOOL_MODEL_LOCATION = BCLib.C.mk("block/bar_stool");
     public static final ModelTemplate BAR_STOOL = new ModelTemplate(
@@ -103,6 +104,12 @@ public class BCLModels {
             Optional.of(BCLib.C.mk("block/cross_shaded")),
             Optional.empty(),
             TextureSlot.CROSS
+    );
+
+    public static final ModelTemplate ANVIL = new ModelTemplate(
+            Optional.of(BCLib.C.mk("block/anvil")),
+            Optional.empty(),
+            TextureSlot.FRONT, TextureSlot.BACK, TextureSlot.TOP, TextureSlot.BOTTOM, PANEL
     );
 
     public static void createBarStoolBlockModel(
