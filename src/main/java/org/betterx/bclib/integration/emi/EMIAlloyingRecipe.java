@@ -11,7 +11,7 @@ import dev.emi.emi.api.EmiRegistry;
 
 public class EMIAlloyingRecipe extends EMIAbstractAlloyingRecipe<AlloyingRecipeInput, AlloyingRecipe> {
     public EMIAlloyingRecipe(RecipeHolder<AlloyingRecipe> recipe) {
-        super(recipe, 1, false);
+        super(recipe, recipe.id(), 1, false);
     }
 
     @Override

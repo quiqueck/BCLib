@@ -27,9 +27,14 @@ public abstract class EMIAbstractAlloyingRecipe<C extends RecipeInput, T extends
     private final int fuelMultiplier;
     private final boolean infiniBurn;
 
-    public EMIAbstractAlloyingRecipe(RecipeHolder<T> recipe, int fuelMultiplier, boolean infiniBurn) {
+    public EMIAbstractAlloyingRecipe(
+            RecipeHolder<T> recipe,
+            ResourceLocation id,
+            int fuelMultiplier,
+            boolean infiniBurn
+    ) {
         this.recipe = recipe.value();
-        this.id = recipe.id();
+        this.id = id;
         this.input = List.of(
                 EmiIngredient.of(this.recipe.getIngredients().get(0)),
                 this.recipe.getIngredients().size() > 1
