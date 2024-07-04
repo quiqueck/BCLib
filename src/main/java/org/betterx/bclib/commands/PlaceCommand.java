@@ -184,7 +184,7 @@ class PlaceCommandBuilder {
                 .then(
                         Commands.literal("tag")
                                 .then(Commands
-                                        .argument("structure", ResourceOrTagKeyArgument.resourceOrTagKey(Registries.BIOME))
+                                        .argument("blocktag", ResourceOrTagKeyArgument.resourceOrTagKey(Registries.BLOCK))
                                         .then(
                                                 pos.get()
                                                    .executes(this::placeBlocksMatchingTag)
@@ -227,7 +227,7 @@ class PlaceCommandBuilder {
     private int placeBlocksMatchingTag(CommandContext<CommandSourceStack> cc) {
         final ResourceOrTagKeyArgument.Result<Block> tagResult;
         try {
-            tagResult = ResourceOrTagKeyArgument.getResourceOrTagKey(cc, "tag", Registries.BLOCK, ERROR_PLACE_TAG_INVALID);
+            tagResult = ResourceOrTagKeyArgument.getResourceOrTagKey(cc, "blocktag", Registries.BLOCK, ERROR_PLACE_TAG_INVALID);
 
             final var tag = tagResult.unwrap().right().orElse(null);
             if (tag == null) return -1;
