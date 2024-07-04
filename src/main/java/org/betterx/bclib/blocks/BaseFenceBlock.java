@@ -7,6 +7,8 @@ import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.wover.block.api.BlockTagProvider;
+import org.betterx.wover.block.api.model.BlockModelProvider;
+import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 import org.betterx.wover.item.api.ItemTagProvider;
 import org.betterx.wover.tag.api.event.context.ItemTagBootstrapContext;
 import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
@@ -31,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseFenceBlock extends FenceBlock implements RuntimeBlockModelProvider, BlockTagProvider, ItemTagProvider, DropSelfLootProvider<BaseFenceBlock> {
+public abstract class BaseFenceBlock extends FenceBlock implements RuntimeBlockModelProvider, BlockModelProvider, BlockTagProvider, ItemTagProvider, DropSelfLootProvider<BaseFenceBlock> {
     private final Block parent;
 
     protected BaseFenceBlock(Block source) {
@@ -95,6 +97,12 @@ public abstract class BaseFenceBlock extends FenceBlock implements RuntimeBlockM
         builder.part(postId.id()).add();
 
         return builder.build();
+    }
+
+    @Override
+    @Environment(EnvType.CLIENT)
+    public void provideBlockModels(WoverBlockModelGenerators generator) {
+        generator.createFence(parent, this);
     }
 
     @Override
