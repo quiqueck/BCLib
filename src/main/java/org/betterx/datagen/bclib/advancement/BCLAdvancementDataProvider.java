@@ -2,7 +2,6 @@ package org.betterx.datagen.bclib.advancement;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v3.datagen.AdvancementDataProvider;
-import org.betterx.worlds.together.WorldsTogether;
 
 import net.minecraft.core.HolderLookup;
 
@@ -16,7 +15,7 @@ public class BCLAdvancementDataProvider extends AdvancementDataProvider {
             FabricDataOutput output,
             CompletableFuture<HolderLookup.Provider> registryLookup
     ) {
-        super(List.of(BCLib.MOD_ID, WorldsTogether.MOD_ID), output, registryLookup);
+        super(List.of(BCLib.MOD_ID), output, registryLookup);
     }
 
     @Override

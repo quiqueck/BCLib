@@ -3,9 +3,9 @@ package org.betterx.bclib.recipes;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.interfaces.UnknownReceipBookCategory;
 import org.betterx.bclib.util.ItemUtil;
-import org.betterx.worlds.together.world.event.WorldBootstrap;
 import org.betterx.wover.recipe.api.BaseRecipeBuilder;
 import org.betterx.wover.recipe.api.BaseUnlockableRecipeBuilder;
+import org.betterx.wover.state.api.WorldState;
 import org.betterx.wover.tag.api.TagManager;
 import org.betterx.wover.tag.api.predefined.CommonItemTags;
 
@@ -105,8 +105,8 @@ public class AnvilRecipe implements Recipe<AnvilRecipeInput>, UnknownReceipBookC
     }
 
     public static Iterable<Holder<Item>> getAllHammers() {
-        Registry<Item> registry = WorldBootstrap.getLastRegistryAccessOrElseBuiltin()
-                                                .registryOrThrow(CommonItemTags.HAMMERS.registry());
+        Registry<Item> registry = WorldState.allStageRegistryAccess()
+                                            .registryOrThrow(CommonItemTags.HAMMERS.registry());
         return registry.getTagOrEmpty(CommonItemTags.HAMMERS);
     }
 

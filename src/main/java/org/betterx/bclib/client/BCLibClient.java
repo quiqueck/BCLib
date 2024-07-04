@@ -7,7 +7,6 @@ import org.betterx.bclib.client.models.CustomModelBakery;
 import org.betterx.bclib.client.textures.AtlasSetManager;
 import org.betterx.bclib.client.textures.SpriteLister;
 import org.betterx.bclib.registry.BaseBlockEntityRenders;
-import org.betterx.worlds.together.client.WorldsTogetherClient;
 
 import net.minecraft.client.resources.model.UnbakedModel;
 
@@ -30,7 +29,6 @@ public class BCLibClient implements ClientModInitializer {
     public void onInitializeClient() {
         modelBakery = new CustomModelBakery();
 
-        WorldsTogetherClient.onInitializeClient();
         ModIntegrationAPI.registerAll();
         BaseBlockEntityRenders.register();
         DataExchangeAPI.prepareClientside();

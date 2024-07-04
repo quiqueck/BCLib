@@ -1,6 +1,5 @@
 package org.betterx.bclib;
 
-import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
 import org.betterx.bclib.api.v2.levelgen.LevelGenEvents;
 import org.betterx.bclib.api.v2.levelgen.structures.TemplatePiece;
 import org.betterx.bclib.api.v2.poi.PoiManager;
@@ -14,11 +13,10 @@ import org.betterx.bclib.registry.BaseBlockEntities;
 import org.betterx.bclib.util.BCLDataComponents;
 import org.betterx.datagen.bclib.worldgen.BCLAutoBlockTagProvider;
 import org.betterx.datagen.bclib.worldgen.BCLAutoItemTagProvider;
-import org.betterx.worlds.together.WorldsTogether;
-import org.betterx.worlds.together.world.WorldConfig;
 import org.betterx.wover.core.api.Logger;
 import org.betterx.wover.core.api.ModCore;
 import org.betterx.wover.datagen.api.WoverDataGenEntryPoint;
+import org.betterx.wover.state.api.WorldConfig;
 import org.betterx.wover.ui.api.VersionChecker;
 
 import net.minecraft.resources.ResourceLocation;
@@ -43,13 +41,11 @@ public class BCLib implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        WorldsTogether.onInitialize();
         BCLibArguments.register();
         LevelGenEvents.register();
         BCLDataComponents.ensureStaticInitialization();
         BaseBlockEntities.register();
-        WorldConfig.registerModCache(MOD_ID);
-        DataExchangeAPI.registerMod(MOD_ID);
+        WorldConfig.registerMod(C);
         AnvilRecipe.register();
         AlloyingRecipe.register();
         CommandRegistry.register();
