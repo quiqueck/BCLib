@@ -26,6 +26,9 @@ import net.minecraft.world.level.block.state.properties.RotationSegment;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.MapColor;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import java.util.function.Supplier;
 
 @SuppressWarnings("deprecation")
@@ -78,6 +81,7 @@ public abstract class BaseSignBlock extends StandingSignBlock implements BlockMo
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public void provideBlockModels(WoverBlockModelGenerators generator) {
         final BaseWallSignBlock wallSignBlock = this.getWallSignBlock();
         generator.createSign(this.parent, this, wallSignBlock);

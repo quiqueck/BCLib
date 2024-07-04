@@ -27,6 +27,9 @@ import net.minecraft.world.level.block.state.properties.RotationSegment;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.MapColor;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import java.util.function.Supplier;
 
 public abstract class BaseHangingSignBlock extends CeilingHangingSignBlock implements BlockModelProvider, CustomBlockItemProvider, BlockTagProvider, ItemTagProvider {
@@ -83,6 +86,7 @@ public abstract class BaseHangingSignBlock extends CeilingHangingSignBlock imple
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public void provideBlockModels(WoverBlockModelGenerators generator) {
         generator.createHangingSign(parent, this, getWallSignBlock());
     }

@@ -31,6 +31,9 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.phys.BlockHitResult;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("deprecation")
@@ -107,6 +110,7 @@ public class BaseTerrainBlock extends BaseBlock implements BlockLootProvider, Bl
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public void provideBlockModels(WoverBlockModelGenerators generator) {
         generator.createBlockTopSideBottom(getBaseBlock(), this, true);
     }
