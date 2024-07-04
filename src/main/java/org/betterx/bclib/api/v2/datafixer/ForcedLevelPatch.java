@@ -1,7 +1,9 @@
 package org.betterx.bclib.api.v2.datafixer;
 
+import de.ambertation.wunderlib.utils.Version;
 import org.betterx.bclib.interfaces.PatchBiFunction;
 import org.betterx.bclib.interfaces.PatchFunction;
+import org.betterx.wover.core.api.ModCore;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -16,13 +18,13 @@ import org.jetbrains.annotations.NotNull;
  * A Patch for level.dat that is always executed no matter what Patchlevel is set in a world.
  */
 public abstract class ForcedLevelPatch extends Patch {
-    protected ForcedLevelPatch(@NotNull String modID, String version) {
-        super(modID, version, true);
+    protected ForcedLevelPatch(@NotNull ModCore modCore, Version version) {
+        super(modCore, version, true);
     }
 
     @Override
     public final Map<String, String> getIDReplacements() {
-        return new HashMap<String, String>();
+        return new HashMap<>();
     }
 
     @Override

@@ -1,10 +1,11 @@
 package org.betterx.bclib.api.v2.datafixer;
 
+import de.ambertation.wunderlib.utils.Version;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.interfaces.PatchBiFunction;
 import org.betterx.bclib.interfaces.PatchFunction;
-import org.betterx.worlds.together.util.ModUtil;
-import org.betterx.worlds.together.world.WorldConfig;
+import org.betterx.wover.core.api.ModCore;
+import org.betterx.wover.state.api.WorldConfig;
 
 import net.minecraft.nbt.*;
 
@@ -16,12 +17,12 @@ import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 public class MigrationProfile {
-    final Set<String> mods;
+    final Set<ModCore> mods;
     final Map<String, String> idReplacements;
     final List<PatchFunction<CompoundTag, Boolean>> levelPatchers;
     final List<PatchBiFunction<ListTag, ListTag, Boolean>> statePatchers;
     final List<Patch> worldDataPatchers;
-    final Map<String, List<String>> worldDataIDPaths;
+    final Map<ModCore, List<String>> worldDataIDPaths;
 
     private final CompoundTag config;
     private CompoundTag level;
@@ -35,24 +36,24 @@ public class MigrationProfile {
 
         this.mods = Collections.unmodifiableSet(Patch.getALL()
                                                      .stream()
-                                                     .map(p -> p.modID)
+                                                     .map(p -> p.modCore)
                                                      .collect(Collectors.toSet()));
 
         HashMap<String, String> replacements = new HashMap<String, String>();
         List<PatchFunction<CompoundTag, Boolean>> levelPatches = new LinkedList<>();
         List<Patch> worldDataPatches = new LinkedList<>();
         List<PatchBiFunction<ListTag, ListTag, Boolean>> statePatches = new LinkedList<>();
-        HashMap<String, List<String>> worldDataIDPaths = new HashMap<>();
-        for (String modID : mods) {
+        HashMap<ModCore, List<String>> worldDataIDPaths = new HashMap<>();
+        for (ModCore modCore : mods) {
 
             Patch.getALL()
                  .stream()
-                 .filter(p -> p.modID.equals(modID))
+                 .filter(p -> p.modCore.equals(modCore))
                  .forEach(patch -> {
                      List<String> paths = patch.getWorldDataIDPaths();
-                     if (paths != null) worldDataIDPaths.put(modID, paths);
+                     if (paths != null) worldDataIDPaths.put(modCore, paths);
 
-                     if (applyAll || currentPatchLevel(modID) < patch.level || patch.alwaysApply) {
+                     if (applyAll || currentPatchLevel(modCore) < patch.level || patch.alwaysApply) {
                          replacements.putAll(patch.getIDReplacements());
                          if (patch.getLevelDatPatcher() != null)
                              levelPatches.add(patch.getLevelDatPatcher());
@@ -226,25 +227,25 @@ public class MigrationProfile {
     }
 
     final public void markApplied() {
-        for (String modID : mods) {
+        for (ModCore modCore : mods) {
             DataFixerAPI.LOGGER.info(
                     "Updating Patch-Level for '{}' from {} to {}",
-                    modID,
-                    ModUtil.convertModVersion(currentPatchLevel(modID)),
-                    ModUtil.convertModVersion(Patch.maxPatchLevel(modID))
+                    modCore,
+                    Version.fromInt(currentPatchLevel(modCore)).toString(),
+                    Version.fromInt(Patch.maxPatchLevel(modCore)).toString()
             );
             if (config != null)
-                config.putString(modID, Patch.maxPatchVersion(modID));
+                config.putString(modCore.modId, Patch.maxPatchVersion(modCore).toString());
         }
     }
 
-    public String currentPatchVersion(@NotNull String modID) {
-        if (config == null || !config.contains(modID)) return "0.0.0";
-        return config.getString(modID);
+    public Version currentPatchVersion(@NotNull ModCore modCore) {
+        if (config == null || !config.contains(modCore.modId)) return Version.ZERO;
+        return new Version(config.getString(modCore.modId));
     }
 
-    public int currentPatchLevel(@NotNull String modID) {
-        return ModUtil.convertModVersion(currentPatchVersion(modID));
+    public int currentPatchLevel(@NotNull ModCore modCore) {
+        return currentPatchVersion(modCore).toInt();
     }
 
     public boolean hasAnyFixes() {
@@ -270,7 +271,7 @@ public class MigrationProfile {
         final String replace = idReplacements.get(val);
 
         if (replace != null) {
-            DataFixerAPI.LOGGER.warning("Replacing ID '{}' with '{}'.", val, replace);
+            DataFixerAPI.LOGGER.warn("Replacing ID '{}' with '{}'.", val, replace);
             tag.putString(key, replace);
             return true;
         }
@@ -346,14 +347,14 @@ public class MigrationProfile {
 
     public void patchWorldData() throws PatchDidiFailException {
         for (Patch patch : worldDataPatchers) {
-            CompoundTag root = WorldConfig.getRootTag(patch.modID);
+            CompoundTag root = WorldConfig.getRootTag(patch.modCore);
             boolean changed = patch.getWorldDataPatcher().apply(root, this);
             if (changed) {
-                WorldConfig.saveFile(patch.modID);
+                WorldConfig.saveFile(patch.modCore);
             }
         }
 
-        for (Map.Entry<String, List<String>> entry : worldDataIDPaths.entrySet()) {
+        for (Map.Entry<ModCore, List<String>> entry : worldDataIDPaths.entrySet()) {
             CompoundTag root = WorldConfig.getRootTag(entry.getKey());
             boolean[] changed = {false};
             entry.getValue().forEach(path -> {

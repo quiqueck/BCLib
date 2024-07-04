@@ -1,5 +1,6 @@
 package org.betterx.bclib;
 
+import de.ambertation.wunderlib.utils.Version;
 import org.betterx.bclib.api.v2.datafixer.DataFixerAPI;
 import org.betterx.bclib.api.v2.datafixer.Patch;
 
@@ -13,7 +14,7 @@ public final class BCLibPatch {
 
 class SignPatch extends Patch {
     public SignPatch() {
-        super(BCLib.MOD_ID, "3.0.11");
+        super(BCLib.C, new Version(3, 0, 11));
     }
 
     @Override
