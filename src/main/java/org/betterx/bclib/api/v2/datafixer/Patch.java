@@ -156,7 +156,7 @@ public abstract class Patch {
 
     /**
      * Return a {@link PatchFunction} that is called with the content from the
-     * {@link org.betterx.worlds.together.world.WorldConfig} for this Mod.
+     * {@link org.betterx.wover.state.api.WorldConfig} for this Mod.
      * The function needs to return {@code true}, if changes were made to the data.
      * If an error occurs, the method should throw a {@link PatchDidiFailException}
      * <p>
@@ -209,7 +209,7 @@ public abstract class Patch {
     }
 
     /**
-     * Returns a list of paths where your mod stores IDs in your {@link org.betterx.worlds.together.world.WorldConfig}-File.
+     * Returns a list of paths where your mod stores IDs in your {@link org.betterx.wover.state.api.WorldConfig}-File.
      * <p>
      * {@link DataFixerAPI} will use information from the latest patch that returns a non-null-result. This list is used
      * to automatically fix changed IDs from all active patches (see {@link Patch#getIDReplacements()}
@@ -236,7 +236,7 @@ public abstract class Patch {
      * if the leaf-entry is a {@link net.minecraft.nbt.ListTag}, it is handle the same as a child <i>items</i> entry
      * of a {@link CompoundTag}.
      *
-     * @return {@code null} if nothing changes or a list of Paths in your {@link org.betterx.worlds.together.world.WorldConfig}-File.
+     * @return {@code null} if nothing changes or a list of Paths in your {@link org.betterx.wover.state.api.WorldConfig}-File.
      * Paths are dot-seperated (see {@link org.betterx.wover.state.api.WorldConfig#getCompoundTag(ModCore, String)}).
      */
     public List<String> getWorldDataIDPaths() {
