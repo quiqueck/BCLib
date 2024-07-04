@@ -6,21 +6,23 @@ import org.betterx.bclib.behaviours.BehaviourHelper;
 import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
 import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
-import org.betterx.bclib.client.models.BasePatterns;
-import org.betterx.bclib.client.models.ModelsHelper;
-import org.betterx.bclib.client.models.PatternsHelper;
+import org.betterx.bclib.client.models.BCLModels;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
-import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.wover.block.api.BlockTagProvider;
+import org.betterx.wover.block.api.model.BlockModelProvider;
+import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 import org.betterx.wover.item.api.ItemTagProvider;
 import org.betterx.wover.tag.api.event.context.ItemTagBootstrapContext;
 import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
 
-import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.resources.model.BlockModelRotation;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.core.Direction;
+import net.minecraft.data.models.blockstates.MultiVariantGenerator;
+import net.minecraft.data.models.blockstates.PropertyDispatch;
+import net.minecraft.data.models.blockstates.Variant;
+import net.minecraft.data.models.blockstates.VariantProperties;
+import net.minecraft.data.models.model.TextureMapping;
+import net.minecraft.data.models.model.TextureSlot;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
@@ -28,19 +30,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.Half;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import org.jetbrains.annotations.Nullable;
-
-public abstract class BaseTrapdoorBlock extends TrapDoorBlock implements RenderLayerProvider, RuntimeBlockModelProvider, BlockTagProvider, ItemTagProvider, DropSelfLootProvider<BaseTrapdoorBlock> {
+public abstract class BaseTrapdoorBlock extends TrapDoorBlock implements RenderLayerProvider, BlockModelProvider, BlockTagProvider, ItemTagProvider, DropSelfLootProvider<BaseTrapdoorBlock> {
     protected BaseTrapdoorBlock(BlockBehaviour.Properties properties, BlockSetType type) {
         super(type, properties);
     }
@@ -51,63 +44,6 @@ public abstract class BaseTrapdoorBlock extends TrapDoorBlock implements RenderL
         return BCLRenderLayer.CUTOUT;
     }
 
-    @Override
-    @Environment(EnvType.CLIENT)
-    public BlockModel getItemModel(ResourceLocation resourceLocation) {
-        return getBlockModel(resourceLocation, defaultBlockState());
-    }
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public @Nullable BlockModel getBlockModel(ResourceLocation resourceLocation, BlockState blockState) {
-        String name = resourceLocation.getPath();
-        Optional<String> pattern = PatternsHelper.createJson(
-                BasePatterns.BLOCK_TRAPDOOR,
-                new HashMap<String, String>() {
-                    private static final long serialVersionUID = 1L;
-
-                    {
-                        put("%modid%", resourceLocation.getNamespace());
-                        put("%texture%", name);
-                        put("%side%", name.replace("trapdoor", "door_side"));
-                    }
-                }
-        );
-        return ModelsHelper.fromPattern(pattern);
-    }
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public UnbakedModel getModelVariant(
-            ModelResourceLocation stateId,
-            BlockState blockState,
-            Map<ResourceLocation, UnbakedModel> modelCache
-    ) {
-        ModelResourceLocation modelId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState);
-        registerBlockModel(stateId, modelId, blockState, modelCache);
-        boolean isTop = blockState.getValue(HALF) == Half.TOP;
-        boolean isOpen = blockState.getValue(OPEN);
-        int y = 0;
-        int x = (isTop && isOpen) ? 270 : isTop ? 180 : isOpen ? 90 : 0;
-        switch (blockState.getValue(FACING)) {
-            case EAST:
-                y = (isTop && isOpen) ? 270 : 90;
-                break;
-            case NORTH:
-                if (isTop && isOpen) y = 180;
-                break;
-            case SOUTH:
-                y = (isTop && isOpen) ? 0 : 180;
-                break;
-            case WEST:
-                y = (isTop && isOpen) ? 90 : 270;
-                break;
-            default:
-                break;
-        }
-        BlockModelRotation rotation = BlockModelRotation.by(x, y);
-        return ModelsHelper.createMultiVariant(modelId.id(), rotation.getRotation(), false);
-    }
 
     @Override
     public void registerBlockTags(ResourceLocation location, TagBootstrapContext<Block> context) {
@@ -117,6 +53,69 @@ public abstract class BaseTrapdoorBlock extends TrapDoorBlock implements RenderL
     @Override
     public void registerItemTags(ResourceLocation location, ItemTagBootstrapContext context) {
         context.add(this, ItemTags.TRAPDOORS);
+    }
+
+    private VariantProperties.Rotation xRotationForState(boolean isTop, boolean isOpen, Direction dir) {
+        return (isTop && isOpen)
+                ? VariantProperties.Rotation.R270
+                : isTop
+                        ? VariantProperties.Rotation.R180
+                        : isOpen ? VariantProperties.Rotation.R90 : VariantProperties.Rotation.R0;
+    }
+
+    private VariantProperties.Rotation yRotationForState(boolean isTop, boolean isOpen, Direction dir) {
+        VariantProperties.Rotation y = VariantProperties.Rotation.R0;
+        switch (dir) {
+            case EAST:
+                y = (isTop && isOpen) ? VariantProperties.Rotation.R270 : VariantProperties.Rotation.R90;
+                break;
+            case NORTH:
+                if (isTop && isOpen) y = VariantProperties.Rotation.R180;
+                break;
+            case SOUTH:
+                y = (isTop && isOpen) ? VariantProperties.Rotation.R0 : VariantProperties.Rotation.R180;
+                break;
+            case WEST:
+                y = (isTop && isOpen) ? VariantProperties.Rotation.R90 : VariantProperties.Rotation.R270;
+                break;
+            default:
+                break;
+        }
+        return y;
+    }
+
+    @Override
+    public void provideBlockModels(WoverBlockModelGenerators generator) {
+        final var id = TextureMapping.getBlockTexture(this);
+        final var mapping = new TextureMapping()
+                .put(TextureSlot.TEXTURE, id)
+                .put(TextureSlot.SIDE, ResourceLocation.fromNamespaceAndPath(id.getNamespace(), id
+                        .getPath()
+                        .replace("_trapdoor", "")).withSuffix("_door_side")
+                );
+
+        final var model = BCLModels.TRAPDOOR.create(this, mapping, generator.modelOutput());
+
+        final var props = PropertyDispatch.properties(HALF, OPEN, FACING);
+        final Direction[] directions = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
+        final boolean[] open = {true, false};
+        final Half[] halfs = {Half.TOP, Half.BOTTOM};
+        for (Direction dir : directions) {
+            for (Half half : halfs) {
+                for (boolean isOpen : open) {
+                    props.select(half, isOpen, dir, Variant
+                            .variant()
+                            .with(VariantProperties.MODEL, model)
+                            .with(VariantProperties.X_ROT, xRotationForState(half == Half.TOP, isOpen, dir))
+                            .with(VariantProperties.Y_ROT, yRotationForState(half == Half.TOP, isOpen, dir))
+                    );
+                }
+            }
+        }
+
+        generator.acceptBlockState(MultiVariantGenerator
+                .multiVariant(this)
+                .with(props));
     }
 
     public static class Wood extends BaseTrapdoorBlock implements BehaviourWood {

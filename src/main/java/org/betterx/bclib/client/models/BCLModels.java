@@ -112,6 +112,12 @@ public class BCLModels {
             TextureSlot.FRONT, TextureSlot.BACK, TextureSlot.TOP, TextureSlot.BOTTOM, PANEL
     );
 
+    public static final ModelTemplate TRAPDOOR = new ModelTemplate(
+            Optional.of(BCLib.C.mk("block/sided_trapdoor")),
+            Optional.empty(),
+            TextureSlot.TEXTURE, TextureSlot.SIDE
+    );
+
     public static void createBarStoolBlockModel(
             WoverBlockModelGenerators generators,
             Block block,
