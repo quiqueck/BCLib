@@ -5,6 +5,7 @@ import org.betterx.wover.tag.api.predefined.CommonBlockTags;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -43,6 +44,7 @@ public class CommandRegistry {
 
         bnContext = PlaceCommand.register(bnContext, commandBuildContext);
         bnContext = PrintInfo.register(bnContext);
+        bnContext = DumpMap.register(bnContext);
 
         dispatcher.register(
                 bnContext
@@ -52,7 +54,10 @@ public class CommandRegistry {
                         )
                         .then(Commands.literal("debug_ore")
                                       .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
-                                      .executes(CommandRegistry::revealOre)
+                                      .then(Commands
+                                              .argument("rings", IntegerArgumentType.integer(0, 8))
+                                              .executes(ctx -> CommandRegistry.revealOre(ctx, IntegerArgumentType.getInteger(ctx, "rings"))))
+                                      .executes((cc) -> CommandRegistry.revealOre(cc, 0))
                         )
                         .then(Commands.literal("sliceZ")
                                       .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
@@ -97,53 +102,60 @@ public class CommandRegistry {
             Blocks.LIGHT_BLUE_CONCRETE.defaultBlockState()
     };
 
-    private static int revealOre(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+    private static int revealOre(CommandContext<CommandSourceStack> ctx, int chunks) throws CommandSyntaxException {
         final CommandSourceStack source = ctx.getSource();
         final ServerLevel level = source.getLevel();
-        final Vec3 pos = source.getPosition();
+        final Vec3 spos = source.getPosition();
 
         MutableBlockPos bp = new MutableBlockPos();
         BlockState state;
         BlockState fillState;
         final BlockState AIR = Blocks.AIR.defaultBlockState();
 
-        for (int y = 1; y < level.getHeight(); y++) {
-            bp.setY(y);
-            for (int x = -64; x < 64; x++) {
-                bp.setX((int) pos.x + x);
-                for (int z = -64; z < 64; z++) {
-                    bp.setZ((int) pos.z + z);
-                    if (y == 1) {
-                        Holder<Biome> b = level.getBiome(bp);
-                        fillState = biomeMap.computeIfAbsent(b, (bb) -> {
-                            biomeMapIdx = (biomeMapIdx + 1) % states.length;
-                            return states[biomeMapIdx];
-                        });
-                    } else {
-                        fillState = AIR;
-                    }
+        for (int ox = -chunks; ox <= chunks; ox++) {
+            for (int oz = -chunks; oz <= chunks; oz++) {
+                final Vec3 pos = new Vec3(spos.x + ox * 64, spos.y, spos.z + oz * 64);
+                source.getPlayer().teleportTo(pos.x, pos.y, pos.z);
+                for (int y = 1; y < level.getHeight(); y++) {
+                    bp.setY(y);
+                    for (int x = -64; x < 64; x++) {
+                        bp.setX((int) pos.x + x);
+                        for (int z = -64; z < 64; z++) {
+                            bp.setZ((int) pos.z + z);
+                            if (y == 1) {
+                                Holder<Biome> b = level.getBiome(bp);
+                                fillState = biomeMap.computeIfAbsent(b, (bb) -> {
+                                    biomeMapIdx = (biomeMapIdx + 1) % states.length;
+                                    return states[biomeMapIdx];
+                                });
+                            } else {
+                                fillState = AIR;
+                            }
 
-                    state = level.getBlockState(bp);
-                    if (y == 1 || !state.is(Blocks.AIR)) {
-                        if (!(state.is(CommonBlockTags.NETHER_ORES)
-                                || state.is(CommonBlockTags.END_ORES)
-                                || state.is(BlockTags.COAL_ORES)
-                                || state.is(BlockTags.COPPER_ORES)
-                                || state.is(BlockTags.DIAMOND_ORES)
-                                || state.is(BlockTags.EMERALD_ORES)
-                                || state.is(BlockTags.GOLD_ORES)
-                                || state.is(BlockTags.IRON_ORES)
-                                || state.is(BlockTags.LAPIS_ORES)
-                                || state.is(BlockTags.REDSTONE_ORES)
-                                || state.is(Blocks.NETHER_QUARTZ_ORE)
-                                || state.is(Blocks.NETHER_GOLD_ORE)
-                                || state.is(Blocks.ANCIENT_DEBRIS))) {
-                            BlocksHelper.setWithoutUpdate(level, bp, fillState);
+                            state = level.getBlockState(bp);
+                            if (y == 1 || !state.is(Blocks.AIR)) {
+                                if (!(state.is(CommonBlockTags.NETHER_ORES)
+                                        || state.is(CommonBlockTags.END_ORES)
+                                        || state.is(BlockTags.COAL_ORES)
+                                        || state.is(BlockTags.COPPER_ORES)
+                                        || state.is(BlockTags.DIAMOND_ORES)
+                                        || state.is(BlockTags.EMERALD_ORES)
+                                        || state.is(BlockTags.GOLD_ORES)
+                                        || state.is(BlockTags.IRON_ORES)
+                                        || state.is(BlockTags.LAPIS_ORES)
+                                        || state.is(BlockTags.REDSTONE_ORES)
+                                        || state.is(Blocks.NETHER_QUARTZ_ORE)
+                                        || state.is(Blocks.NETHER_GOLD_ORE)
+                                        || state.is(Blocks.ANCIENT_DEBRIS))) {
+                                    BlocksHelper.setWithoutUpdate(level, bp, fillState);
+                                }
+                            }
                         }
                     }
                 }
             }
         }
+        source.getPlayer().teleportTo(spos.x, spos.y, spos.z);
         return Command.SINGLE_SUCCESS;
     }
 
