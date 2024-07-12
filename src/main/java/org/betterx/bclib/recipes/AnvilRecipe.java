@@ -158,9 +158,9 @@ public class AnvilRecipe implements Recipe<AnvilRecipeInput>, UnknownReceipBookC
             return false;
         }
         ItemStack material = getIngredient(craftingInventory);
-        int materialCount = material.getCount();
+        int materialCount = material == null ? 0 : material.getCount();
 
-        return this.input.test(getIngredient(craftingInventory)) && materialCount >= this.inputCount && hammer.is(allowedTools);
+        return this.input.test(material) && materialCount >= this.inputCount && hammer.is(allowedTools);
     }
 
     public int getDamage() {
