@@ -47,11 +47,11 @@
       "1.21.0"
     ],
     "wunderlib": "21.0.x",
-    "wover": "21.0.6"
+    "wover": "21.0.x"
   },
   "breaks": {
     "wunderlib": "<21.0.3",
-    "wover": "<21.0.6"
+    "wover": "<21.0.7"
   },
   "custom": {
     "wover": {
