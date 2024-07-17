@@ -6,11 +6,10 @@ import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.TagProvider;
 import org.betterx.bclib.util.LootUtil;
 import org.betterx.bclib.util.MHelper;
-import org.betterx.worlds.together.tag.v3.MineableTags;
 
+import net.fabricmc.fabric.api.mininglevel.v1.MiningLevelManager;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -40,7 +39,7 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
     private final int miningLevel;
 
     public BaseOreBlock(Supplier<Item> drop, int minCount, int maxCount, int experience) {
-        this(drop, minCount, maxCount, experience, 0);
+        this(drop, minCount, maxCount, experience, Tiers.STONE.getLevel());
     }
 
     public BaseOreBlock(Supplier<Item> drop, int minCount, int maxCount, int experience, int miningLevel) {
@@ -75,7 +74,6 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
         return LootUtil
                 .getDrops(this, state, builder)
@@ -85,8 +83,6 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
                                 dropItem.get(),
                                 maxCount,
                                 minCount,
-                                miningLevel,
-                                state,
                                 builder
                         )
                 );
@@ -97,36 +93,55 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
             Item dropItem,
             int maxCount,
             int minCount,
+            LootParams.Builder builder
+    ) {
+        if (dropItem == null) {
+            return Collections.emptyList();
+        }
+        ItemStack tool = builder.getParameter(LootContextParams.TOOL);
+        if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool) > 0) {
+            return Collections.singletonList(new ItemStack(block));
+        }
+        int count;
+        int enchantment = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, tool);
+        if (enchantment > 0) {
+            int min = Mth.clamp(minCount + enchantment, minCount, maxCount);
+            int max = maxCount + (enchantment / Enchantments.BLOCK_FORTUNE.getMaxLevel());
+            if (min == max) {
+                return Collections.singletonList(new ItemStack(dropItem, max));
+            }
+            count = MHelper.randRange(min, max, MHelper.RANDOM_SOURCE);
+        } else {
+            count = MHelper.randRange(minCount, maxCount, MHelper.RANDOM_SOURCE);
+        }
+        return Collections.singletonList(new ItemStack(dropItem, count));
+    }
+
+    /**
+     * @deprecated Use {@link #getDroppedItems(ItemLike, Item, int, int, Builder)} and block tags for the mining level instead.
+     */
+    @Deprecated(forRemoval = true)
+    public static List<ItemStack> getDroppedItems(
+            ItemLike block,
+            Item dropItem,
+            int maxCount,
+            int minCount,
             int miningLevel,
             BlockState state,
             LootParams.Builder builder
     ) {
         ItemStack tool = builder.getParameter(LootContextParams.TOOL);
-        if (tool != null && tool.isCorrectToolForDrops(state) && dropItem != null) {
-            boolean canMine = miningLevel == 0;
-            if (tool.getItem() instanceof TieredItem tired) {
-                canMine = tired.getTier().getLevel() >= miningLevel;
-            }
-            if (canMine) {
-                if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool) > 0) {
-                    return Collections.singletonList(new ItemStack(block));
-                }
-                int count;
-                int enchantment = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, tool);
-                if (enchantment > 0) {
-                    int min = Mth.clamp(minCount + enchantment, minCount, maxCount);
-                    int max = maxCount + (enchantment / Enchantments.BLOCK_FORTUNE.getMaxLevel());
-                    if (min == max) {
-                        return Collections.singletonList(new ItemStack(dropItem, max));
-                    }
-                    count = MHelper.randRange(min, max, MHelper.RANDOM_SOURCE);
-                } else {
-                    count = MHelper.randRange(minCount, maxCount, MHelper.RANDOM_SOURCE);
-                }
-                return Collections.singletonList(new ItemStack(dropItem, count));
-            }
+        if (!tool.isCorrectToolForDrops(state)) {
+            return Collections.emptyList();
         }
-        return Collections.emptyList();
+        boolean canMine = miningLevel == 0;
+        if (tool.getItem() instanceof TieredItem tired) {
+            canMine = tired.getTier().getLevel() >= miningLevel;
+        }
+        if (!canMine) {
+            return Collections.emptyList();
+        }
+        return getDroppedItems(block, dropItem, maxCount, minCount, builder);
     }
 
     @Override
@@ -136,14 +151,6 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
 
     @Override
     public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
-        if (this.miningLevel == Tiers.STONE.getLevel()) {
-            blockTags.add(BlockTags.NEEDS_STONE_TOOL);
-        } else if (this.miningLevel == Tiers.IRON.getLevel()) {
-            blockTags.add(BlockTags.NEEDS_IRON_TOOL);
-        } else if (this.miningLevel == Tiers.DIAMOND.getLevel()) {
-            blockTags.add(BlockTags.NEEDS_DIAMOND_TOOL);
-        } else if (this.miningLevel == Tiers.NETHERITE.getLevel()) {
-            blockTags.add(MineableTags.NEEDS_NETHERITE_TOOL);
-        }
+        blockTags.add(MiningLevelManager.getBlockTag(this.miningLevel));
     }
 }
