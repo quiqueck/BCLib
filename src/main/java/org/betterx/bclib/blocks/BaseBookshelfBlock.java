@@ -2,6 +2,7 @@ package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.wover.block.api.BlockTagProvider;
+import org.betterx.wover.block.api.model.BlockModelProvider;
 import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 import org.betterx.wover.loot.api.BlockLootProvider;
 import org.betterx.wover.loot.api.LootLookupProvider;
@@ -22,24 +23,28 @@ import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseBookshelfBlock extends BaseBlock implements BlockTagProvider, BlockLootProvider {
-    protected BaseBookshelfBlock(Block source) {
-        this(Properties.ofFullCopy(source));
+public abstract class BaseBookshelfBlock extends BaseBlock implements BlockTagProvider, BlockLootProvider, BlockModelProvider {
+    private final Block topBlock;
+
+    protected BaseBookshelfBlock(Block topBlock) {
+        this(topBlock, Properties.ofFullCopy(topBlock));
     }
 
-    protected BaseBookshelfBlock(BlockBehaviour.Properties properties) {
+    protected BaseBookshelfBlock(Block topBlock, BlockBehaviour.Properties properties) {
         super(properties);
+        this.topBlock = topBlock;
     }
+
+//    @Deprecated(forRemoval = true)
+//    protected BaseBookshelfBlock(BlockBehaviour.Properties properties) {
+//        super(properties);
+//        this.parent = this;
+//    }
 
     @Override
     @Environment(EnvType.CLIENT)
     public void provideBlockModels(WoverBlockModelGenerators generator) {
-        generator.createBookshelf(this, this);
-    }
-
-    protected ResourceLocation replacePath(ResourceLocation blockId) {
-        String newPath = blockId.getPath().replace("_bookshelf", "");
-        return ResourceLocation.fromNamespaceAndPath(blockId.getNamespace(), newPath);
+        generator.createBookshelf(this, this.topBlock);
     }
 
     @Override
@@ -57,31 +62,27 @@ public abstract class BaseBookshelfBlock extends BaseBlock implements BlockTagPr
     }
 
     public static class Wood extends BaseBookshelfBlock implements BehaviourWood {
-        public Wood(Block source) {
-            super(source);
+        public Wood(Block topBlock) {
+            super(topBlock);
         }
 
-        public Wood(Properties properties) {
-            super(properties);
+        public Wood(Block topBlock, Properties properties) {
+            super(topBlock, properties);
         }
+
+//        @Deprecated(forRemoval = true)
+//        public Wood(Properties properties) {
+//            super(properties);
+//        }
     }
 
     public static class VanillaWood extends Wood {
-        private final Block parent;
-
-        public VanillaWood(Block source) {
-            super(source);
-            this.parent = source;
-        }
-
-        @Override
-        @Environment(EnvType.CLIENT)
-        public void provideBlockModels(WoverBlockModelGenerators generator) {
-            generator.createBookshelf(this, parent);
+        public VanillaWood(Block topBlock) {
+            super(topBlock);
         }
     }
 
-    public static BaseBookshelfBlock from(Block source) {
-        return new BaseBookshelfBlock.Wood(source);
+    public static BaseBookshelfBlock from(Block topBlock) {
+        return new BaseBookshelfBlock.Wood(topBlock);
     }
 }
