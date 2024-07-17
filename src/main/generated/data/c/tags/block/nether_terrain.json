@@ -5,11 +5,23 @@
     "minecraft:glowstone",
     "minecraft:gravel",
     "minecraft:magma_block",
-    "#c:nether_mycelium",
-    "#c:nether_ores",
-    "#c:netherrack",
+    {
+      "id": "#c:nether_mycelium",
+      "required": false
+    },
+    {
+      "id": "#c:nether_ores",
+      "required": false
+    },
+    {
+      "id": "#c:netherrack",
+      "required": false
+    },
     "#minecraft:nylium",
     "minecraft:red_sand",
-    "#c:soul_ground"
+    {
+      "id": "#c:soul_ground",
+      "required": false
+    }
   ]
 }

@@ -3,6 +3,9 @@
     "#minecraft:dirt",
     "#minecraft:logs",
     "#minecraft:planks",
-    "#c:terrain"
+    {
+      "id": "#c:terrain",
+      "required": false
+    }
   ]
 }

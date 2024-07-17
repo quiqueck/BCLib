@@ -1,5 +1,8 @@
 {
   "values": [
-    "#c:needs_netherite_tool"
+    {
+      "id": "#c:needs_netherite_tool",
+      "required": false
+    }
   ]
 }

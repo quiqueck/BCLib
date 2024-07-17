@@ -1,5 +1,8 @@
 {
   "values": [
-    "#c:needs_gold_tool"
+    {
+      "id": "#c:needs_gold_tool",
+      "required": false
+    }
   ]
 }

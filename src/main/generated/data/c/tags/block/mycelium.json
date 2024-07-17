@@ -1,6 +1,9 @@
 {
   "values": [
     "minecraft:mycelium",
-    "#c:nether_mycelium"
+    {
+      "id": "#c:nether_mycelium",
+      "required": false
+    }
   ]
 }

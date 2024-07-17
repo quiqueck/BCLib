@@ -4,14 +4,23 @@
     "minecraft:bone_block",
     "minecraft:dirt",
     "#minecraft:dripstone_replaceable_blocks",
-    "#c:end_stones",
+    {
+      "id": "#c:end_stones",
+      "required": false
+    },
     "minecraft:farmland",
     "minecraft:glowstone",
     "minecraft:grass_block",
     "minecraft:gravel",
     "minecraft:magma_block",
-    "#c:mycelium",
-    "#c:nether_terrain",
+    {
+      "id": "#c:mycelium",
+      "required": false
+    },
+    {
+      "id": "#c:nether_terrain",
+      "required": false
+    },
     "#minecraft:nylium",
     "minecraft:red_sand",
     "minecraft:sand",
