@@ -36,7 +36,7 @@ public class BaseBlock extends Block implements BlockLootProvider, BlockModelPro
      * @param settings The properties of the Block.
      */
     public BaseBlock(Properties settings) {
-        this(settings, true);
+        this(settings, false);
     }
 
     protected BaseBlock(Properties settings, boolean emptyLootTable) {
