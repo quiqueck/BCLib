@@ -3,6 +3,7 @@ package org.betterx.bclib.recipes;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.interfaces.UnknownReceipBookCategory;
 import org.betterx.bclib.util.ItemUtil;
+import org.betterx.wover.item.api.ItemStackHelper;
 import org.betterx.wover.recipe.api.BaseRecipeBuilder;
 import org.betterx.wover.recipe.api.BaseUnlockableRecipeBuilder;
 import org.betterx.wover.state.api.WorldState;
@@ -73,11 +74,13 @@ public class AnvilRecipe implements Recipe<AnvilRecipeInput>, UnknownReceipBookC
             int damage
     ) {
         this.input = input;
-        this.output = output;
+        this.output = ItemStackHelper.callItemStackSetupIfPossible(output);
         this.allowedTools = allowedTools;
         this.anvilLevel = anvilLevel;
         this.inputCount = inputCount;
         this.damage = damage;
+
+
     }
 
     static Builder create(ResourceLocation id, ItemLike output) {

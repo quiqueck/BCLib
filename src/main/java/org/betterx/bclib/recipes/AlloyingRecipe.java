@@ -4,6 +4,7 @@ import org.betterx.bclib.BCLib;
 import org.betterx.bclib.interfaces.AlloyingRecipeWorkstation;
 import org.betterx.bclib.interfaces.UnknownReceipBookCategory;
 import org.betterx.bclib.util.ItemUtil;
+import org.betterx.wover.item.api.ItemStackHelper;
 import org.betterx.wover.recipe.api.BaseRecipeBuilder;
 import org.betterx.wover.recipe.api.BaseUnlockableRecipeBuilder;
 
@@ -79,7 +80,7 @@ public class AlloyingRecipe implements Recipe<AlloyingRecipeInput>, UnknownRecei
         this.group = group;
         this.primaryInput = primaryInput;
         this.secondaryInput = secondaryInput;
-        this.output = output;
+        this.output = ItemStackHelper.callItemStackSetupIfPossible(output);
         this.experience = experience;
         this.smeltTime = smeltTime;
         this.type = TYPE;
