@@ -4,15 +4,21 @@ import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.client.models.BasePatterns;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.wover.block.api.BlockTagProvider;
+import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 import org.betterx.wover.item.api.ItemTagProvider;
 import org.betterx.wover.tag.api.event.context.ItemTagBootstrapContext;
 import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
 
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.models.model.TextureMapping;
+import net.minecraft.data.models.model.TextureSlot;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.block.Block;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import java.util.Optional;
 
@@ -21,7 +27,6 @@ public abstract class BaseBarkBlock extends BaseRotatedPillarBlock {
         super(settings);
     }
 
-    @Override
     protected Optional<String> createBlockPattern(ResourceLocation blockId) {
         blockId = BuiltInRegistries.BLOCK.getKey(this);
         return PatternsHelper.createJson(BasePatterns.BLOCK_BASE, replacePath(blockId));
@@ -30,6 +35,19 @@ public abstract class BaseBarkBlock extends BaseRotatedPillarBlock {
     private ResourceLocation replacePath(ResourceLocation blockId) {
         String newPath = blockId.getPath().replace("_bark", "_log_side");
         return ResourceLocation.fromNamespaceAndPath(blockId.getNamespace(), newPath);
+    }
+
+    @Environment(EnvType.CLIENT)
+    @Override
+    public void provideBlockModels(WoverBlockModelGenerators generator) {
+        var res = TextureMapping.getBlockTexture(this);
+        var log = ResourceLocation.fromNamespaceAndPath(res.getNamespace(), res
+                .getPath()
+                .replace("_bark", "_log"));
+        generator.createRotatedPillar(this, new TextureMapping()
+                .put(TextureSlot.SIDE, log.withSuffix("_side"))
+                .put(TextureSlot.END, log.withSuffix("_top")));
+
     }
 
     public static class Wood extends BaseBarkBlock implements BehaviourWood, BlockTagProvider, ItemTagProvider {
