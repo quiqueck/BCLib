@@ -16,28 +16,28 @@ import net.minecraft.world.level.material.MapColor;
 
 
 public abstract class BaseStripableBarkBlock extends BaseBarkBlock implements AxeCanStrip {
-    private final Block stripedBlock;
+    private final Block strippedBlock;
 
-    protected BaseStripableBarkBlock(Block stripedBlock, Properties settings) {
+    protected BaseStripableBarkBlock(Block strippedBlock, Properties settings) {
         super(settings);
-        this.stripedBlock = stripedBlock;
+        this.strippedBlock = strippedBlock;
     }
 
 
     @Override
     public BlockState strippedState(BlockState state) {
-        return stripedBlock.defaultBlockState();
+        return strippedBlock.defaultBlockState();
     }
 
     public static class Wood extends BaseStripableBarkBlock implements BehaviourWood, BlockTagProvider, ItemTagProvider {
         private final boolean flammable;
 
-        public Wood(MapColor color, Block stripedBlock, boolean flammable) {
+        public Wood(MapColor color, Block strippedBlock, boolean flammable) {
             super(
-                    stripedBlock,
+                    strippedBlock,
                     (flammable
-                            ? Properties.ofFullCopy(stripedBlock).ignitedByLava()
-                            : Properties.ofFullCopy(stripedBlock)).mapColor(color)
+                            ? Properties.ofFullCopy(strippedBlock).ignitedByLava()
+                            : Properties.ofFullCopy(strippedBlock)).mapColor(color)
             );
             this.flammable = flammable;
         }

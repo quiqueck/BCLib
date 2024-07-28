@@ -16,27 +16,27 @@ import net.minecraft.world.level.material.MapColor;
 
 
 public abstract class BaseStripableLogBlock extends BaseRotatedPillarBlock implements AxeCanStrip {
-    private final Block striped;
+    private final Block stripped;
 
-    protected BaseStripableLogBlock(Block striped, Properties settings) {
+    protected BaseStripableLogBlock(Block stripped, Properties settings) {
         super(settings);
-        this.striped = striped;
+        this.stripped = stripped;
     }
 
     @Override
     public BlockState strippedState(BlockState state) {
-        return striped.defaultBlockState();
+        return stripped.defaultBlockState();
     }
 
     public static class Wood extends BaseStripableLogBlock implements BehaviourWood, BlockTagProvider, ItemTagProvider {
         private final boolean flammable;
 
-        public Wood(MapColor color, Block striped, boolean flammable) {
+        public Wood(MapColor color, Block stripped, boolean flammable) {
             super(
-                    striped,
+                    stripped,
                     (flammable
-                            ? Properties.ofFullCopy(striped).ignitedByLava()
-                            : Properties.ofFullCopy(striped)).mapColor(color)
+                            ? Properties.ofFullCopy(stripped).ignitedByLava()
+                            : Properties.ofFullCopy(stripped)).mapColor(color)
             );
             this.flammable = flammable;
         }
