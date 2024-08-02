@@ -94,11 +94,11 @@ public class BCLAutoBlockTagProvider extends WoverTagProvider.ForBlocks implemen
         }
 
         if (block instanceof BehaviourImmobile) {
-            context.add(block, CommonBlockTags.IMMOBILE);
+            context.add(block, CommonBlockTags.IMMOBILE, BlockTags.DRAGON_IMMUNE);
         }
 
         if (block instanceof BehaviourObsidian) {
-            context.add(block, CommonBlockTags.IS_OBSIDIAN);
+            context.add(block, CommonBlockTags.IS_OBSIDIAN, BlockTags.DRAGON_IMMUNE, BlockTags.NEEDS_DIAMOND_TOOL);
         }
 
         if (block instanceof BehaviourPortalFrame) {
