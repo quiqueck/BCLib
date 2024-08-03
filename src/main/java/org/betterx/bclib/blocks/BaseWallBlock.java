@@ -1,6 +1,7 @@
 package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.api.v3.datagen.DropSelfLootProvider;
+import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
 import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.wover.block.api.BlockTagProvider;
@@ -45,5 +46,20 @@ public abstract class BaseWallBlock extends WallBlock implements DropSelfLootPro
         public Wood(Block source) {
             super(source);
         }
+    }
+
+    public static class Metal extends BaseWallBlock implements BehaviourMetal {
+        public Metal(Block block) {
+            super(block);
+        }
+    }
+
+    public static BaseWallBlock from(Block source) {
+        if (source instanceof BehaviourWood)
+            return new BaseWallBlock.Wood(source);
+        if (source instanceof BehaviourMetal)
+            return new BaseWallBlock.Metal(source);
+
+        return new BaseWallBlock.Stone(source);
     }
 }
