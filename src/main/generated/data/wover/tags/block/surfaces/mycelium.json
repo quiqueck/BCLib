@@ -1,9 +1,0 @@
-{
-  "values": [
-    "minecraft:mycelium",
-    {
-      "id": "#wover:surfaces/nether/mycelium",
-      "required": false
-    }
-  ]
-}
