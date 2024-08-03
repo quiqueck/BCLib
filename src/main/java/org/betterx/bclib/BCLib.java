@@ -2,7 +2,6 @@ package org.betterx.bclib;
 
 import org.betterx.bclib.api.v2.levelgen.LevelGenEvents;
 import org.betterx.bclib.api.v2.levelgen.structures.TemplatePiece;
-import org.betterx.bclib.api.v2.poi.PoiManager;
 import org.betterx.bclib.api.v3.tag.BCLBlockTags;
 import org.betterx.bclib.commands.CommandRegistry;
 import org.betterx.bclib.commands.arguments.BCLibArguments;
@@ -50,7 +49,6 @@ public class BCLib implements ModInitializer {
         AlloyingRecipe.register();
         CommandRegistry.register();
         BCLBlockTags.ensureStaticallyLoaded();
-        PoiManager.registerAll();
 
         BCLibPatch.register();
         TemplatePiece.ensureStaticInitialization();

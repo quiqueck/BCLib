@@ -3,21 +3,16 @@ package org.betterx.bclib.api.v2.levelgen;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
 import org.betterx.bclib.api.v2.datafixer.DataFixerAPI;
-import org.betterx.bclib.api.v2.poi.PoiManager;
 import org.betterx.wover.core.api.ModCore;
 import org.betterx.wover.events.api.WorldLifecycle;
 import org.betterx.wover.events.api.client.ClientWorldLifecycle;
 import org.betterx.wover.events.api.types.client.BeforeClientLoadScreen;
 
 import net.minecraft.core.Holder;
-import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.server.RegistryLayer;
-import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.world.level.levelgen.WorldDimensions;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.storage.LevelStorageSource;
-import net.minecraft.world.level.storage.WorldData;
 
 public class LevelGenEvents {
     public static void setupWorld() {
@@ -25,7 +20,6 @@ public class LevelGenEvents {
     }
 
     public static void register() {
-        WorldLifecycle.BEFORE_CREATING_LEVELS.subscribe(LevelGenEvents::finalizedWorldLoad);
         WorldLifecycle.WORLD_FOLDER_READY.subscribe(LevelGenEvents::beforeWorldLoad);
         WorldLifecycle.CREATED_NEW_WORLD_FOLDER.subscribe(LevelGenEvents::afterWorldCreation, 10000);
 
@@ -67,14 +61,5 @@ public class LevelGenEvents {
 
     private static void beforeWorldLoad(LevelStorageSource.LevelStorageAccess levelStorageAccess) {
         setupWorld();
-    }
-
-    private static void finalizedWorldLoad(
-            LevelStorageSource.LevelStorageAccess levelStorageAccess,
-            PackRepository packRepository,
-            LayeredRegistryAccess<RegistryLayer> registryLayerLayeredRegistryAccess,
-            WorldData worldData
-    ) {
-        PoiManager.updateStates();
     }
 }
