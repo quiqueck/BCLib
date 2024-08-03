@@ -1,9 +1,9 @@
 {
   "values": [
-    "#c:is_end_barrens",
-    "#c:is_end_center",
-    "#c:is_end_highland",
-    "#c:is_end_midland",
-    "#c:is_small_end_island"
+    "#wover:is_end/barrens",
+    "#wover:is_end/center",
+    "#wover:is_end/highland",
+    "#wover:is_end/midland",
+    "#wover:is_end/small_island"
   ]
 }

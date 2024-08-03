@@ -1,8 +1,8 @@
 {
   "values": [
-    "#c:wooden_barrels",
-    "#c:wooden_chests",
-    "#c:wooden_composter",
-    "#c:workbench"
+    "#c:barrels/wooden",
+    "#c:chests/wooden",
+    "#wover:composters/wooden",
+    "#wover:workbench"
   ]
 }

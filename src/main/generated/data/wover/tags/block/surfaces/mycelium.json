@@ -2,7 +2,7 @@
   "values": [
     "minecraft:mycelium",
     {
-      "id": "#c:nether_mycelium",
+      "id": "#wover:surfaces/nether/mycelium",
       "required": false
     }
   ]

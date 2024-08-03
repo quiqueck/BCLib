@@ -4,7 +4,7 @@
     "#minecraft:logs",
     "#minecraft:planks",
     {
-      "id": "#c:terrain",
+      "id": "#wover:surfaces/terrain",
       "required": false
     }
   ]

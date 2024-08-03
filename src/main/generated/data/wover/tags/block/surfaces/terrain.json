@@ -4,26 +4,26 @@
     "minecraft:bone_block",
     "minecraft:dirt",
     "#minecraft:dripstone_replaceable_blocks",
-    {
-      "id": "#c:end_stones",
-      "required": false
-    },
     "minecraft:farmland",
     "minecraft:glowstone",
     "minecraft:grass_block",
     "minecraft:gravel",
     "minecraft:magma_block",
-    {
-      "id": "#c:mycelium",
-      "required": false
-    },
-    {
-      "id": "#c:nether_terrain",
-      "required": false
-    },
     "#minecraft:nylium",
     "minecraft:red_sand",
     "minecraft:sand",
-    "minecraft:sculk"
+    "minecraft:sculk",
+    {
+      "id": "#wover:surfaces/end_stones",
+      "required": false
+    },
+    {
+      "id": "#wover:surfaces/mycelium",
+      "required": false
+    },
+    {
+      "id": "#wover:surfaces/nether/terrain",
+      "required": false
+    }
   ]
 }

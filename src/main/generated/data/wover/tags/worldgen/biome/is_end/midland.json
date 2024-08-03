@@ -1,6 +1,6 @@
 {
   "values": [
     "minecraft:end_midlands",
-    "#c:is_end_land"
+    "#wover:is_end/land"
   ]
 }

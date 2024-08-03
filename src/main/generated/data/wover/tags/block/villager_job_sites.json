@@ -1,0 +1,56 @@
+{
+  "values": [
+    {
+      "id": "#wover:poi/workstation/armorer",
+      "required": false
+    },
+    {
+      "id": "#wover:poi/workstation/butcher",
+      "required": false
+    },
+    {
+      "id": "#wover:poi/workstation/cartographer",
+      "required": false
+    },
+    {
+      "id": "#wover:poi/workstation/cleric",
+      "required": false
+    },
+    {
+      "id": "#wover:poi/workstation/farmer",
+      "required": false
+    },
+    {
+      "id": "#wover:poi/workstation/fisherman",
+      "required": false
+    },
+    {
+      "id": "#wover:poi/workstation/fletcher",
+      "required": false
+    },
+    {
+      "id": "#wover:poi/workstation/leatherworker",
+      "required": false
+    },
+    {
+      "id": "#wover:poi/workstation/librarian",
+      "required": false
+    },
+    {
+      "id": "#wover:poi/workstation/mason",
+      "required": false
+    },
+    {
+      "id": "#wover:poi/workstation/shepherd",
+      "required": false
+    },
+    {
+      "id": "#wover:poi/workstation/toolsmith",
+      "required": false
+    },
+    {
+      "id": "#wover:poi/workstation/weaponsmith",
+      "required": false
+    }
+  ]
+}
