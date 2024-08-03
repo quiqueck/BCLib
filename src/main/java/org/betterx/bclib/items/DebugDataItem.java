@@ -41,6 +41,7 @@ import net.fabricmc.api.Environment;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Supplier;
 
 public class DebugDataItem extends Item implements ItemModelProvider, AirSelectionItem {
 
@@ -229,7 +230,7 @@ public class DebugDataItem extends Item implements ItemModelProvider, AirSelecti
                     tag.remove(RandomizableContainerBlockEntity.LOOT_TABLE_SEED_TAG);
                     tag.remove("Items");
 
-                    tag.putString(RandomizableContainerBlockEntity.LOOT_TABLE_TAG, table.toString());
+                    tag.putString(RandomizableContainerBlockEntity.LOOT_TABLE_TAG, table.location().toString());
 
                     entity.loadCustomOnly(tag, player.registryAccess());
                     message(player, "Did set Loot Table to " + table.toString());
@@ -240,12 +241,12 @@ public class DebugDataItem extends Item implements ItemModelProvider, AirSelecti
         );
     }
 
-    public static DebugDataItem forSpawner(CompoundTag tag, Item icon) {
+    public static DebugDataItem forSpawner(Supplier<CompoundTag> tag, Item icon) {
         ResourceLocation iconId = BuiltInRegistries.ITEM.getKey(icon);
         return new DebugDataItem(
                 (player, entity, ctx) -> {
                     if (entity instanceof SpawnerBlockEntity) {
-                        entity.loadCustomOnly(tag, player.registryAccess());
+                        entity.loadCustomOnly(tag.get(), player.registryAccess());
                         message(player, "Did set Data to " + tag.toString());
                         return InteractionResult.SUCCESS;
                     }
