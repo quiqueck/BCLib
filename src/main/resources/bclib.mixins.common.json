@@ -31,7 +31,7 @@
     "boat.ChestBoatMixin",
     "elytra.LivingEntityMixin",
     "shears.BeehiveBlockMixin",
-    "shears.ItemPredicateBuilderMixin",
+    "shears.MatchToolMixin",
     "shears.MushroomCowMixin",
     "shears.PumpkinBlockMixin",
     "shears.SheepMixin",
