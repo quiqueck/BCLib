@@ -27,6 +27,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -166,7 +167,7 @@ public abstract class AbstractVineBlock extends BaseBlockNotFull implements Rend
             @NotNull LootLookupProvider provider,
             @NotNull ResourceKey<LootTable> tableKey
     ) {
-        return provider.dropWithSilkTouchOrHoeOrShears(this);
+        return provider.dropWithSilkTouchOrHoeOrShears(this, UniformGenerator.between(1, 2));
     }
 
     @Override
