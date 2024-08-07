@@ -77,6 +77,10 @@ public class BCLAutoBlockTagProvider extends WoverTagProvider.ForBlocks implemen
             context.add(block, CommonBlockTags.PLANT);
         }
 
+        if (block instanceof BehaviourVine) {
+            context.add(block, CommonBlockTags.VINE);
+        }
+
         if (block instanceof BehaviourSeedLike) {
             context.add(block, CommonBlockTags.SEEDS);
         }
