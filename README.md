@@ -2,7 +2,7 @@
 
 # BCLib
 
-BCLib is a library mod for BetterX team mods, developed for Fabric, MC 1.19
+BCLib is a library mod for BetterX team mods, developed for Fabric, MC 1.21
 
 ## Importing:
 
@@ -11,14 +11,14 @@ You can easily include BCLib into your own mod by adding the following to your `
 ```
 repositories {
     ...
-    maven { url 'https://jitpack.io' } 
+    maven { url 'https://maven.ambertation.de/releases' }
 }
 ```
 
 ```
 dependencies {
     ...
-    modImplementation "com.github.quiqueck:BCLib:${project.bclib_version}"
+    modImplementation "org.betterx:bclib:${project.bclib_version}"
 }
 ```
 
