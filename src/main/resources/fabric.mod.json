@@ -44,13 +44,14 @@
     "fabricloader": ">=0.15.0",
     "fabric": ">=0.100.1",
     "minecraft": [
-      "1.21.0"
+      "1.21.0",
+      "1.21.1"
     ],
     "wunderlib": "21.0.x",
     "wover": "21.0.x"
   },
   "breaks": {
-    "wunderlib": "<21.0.6",
+    "wunderlib": "<21.0.8",
     "wover": "<21.0.12"
   },
   "custom": {
