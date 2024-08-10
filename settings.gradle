@@ -17,7 +17,7 @@ def allowLocalLibUse = true
 def allowLocalLibInConsoleMode = false
 
 //The path were to look for the local BCLib
-def WunderLibPath = '../WorldWeaver/WunderLib'
+def WunderLibPath = '../WunderLib'
 def WoverPath = '../WorldWeaver'
 
 
@@ -32,20 +32,17 @@ println "IntelliJ: ${isIDE}"
 def WunderLibFolder = new File(WunderLibPath)
 def WoverFolder = new File(WoverPath)
 if (allowLocalLibUse && (isIDE || allowLocalLibInConsoleMode) && WunderLibFolder.exists()) {
-    println "Using local WunderLib from '${WunderLibFolder}' in IntelliJ"
-    println "If you do not want to load the local version of WunderLib"
-    println "either rename the Folder containing WunderLib to something"
-    println "else, or set 'allowLocalLibUse' in settings.gradle"
-    println "to false."
-    println ""
-    println "If you receive version-errors when launching minecraft"
-    println "in IntelliJ, make sure you have set up gradle instead"
-    println "of IntelliJ to compile and run."
+    println "Using local WunderLib from '${WunderLibFolder}'"
 
-    include ':WunderLib'
-    project(":WunderLib").projectDir = WunderLibFolder
-    project(':WunderLib').buildFileName = './wunderlib-composit.gradle'
+    include ':wunderlib'
+    project(":wunderlib").projectDir = WunderLibFolder
+    project(':wunderlib').buildFileName = './wunderlib-composit.gradle'
 }
+
+def WoverModuleFile = new File("./wover-include.gradle")
+apply from: WoverModuleFile
+gradle.ext.set("knownWoverModules", ext.knownWoverModules)
+
 
 if (allowLocalLibUse && (isIDE || allowLocalLibInConsoleMode) && WoverFolder.exists()) {
     println "!! Using local WorldWeaver from '${WoverFolder}'"
@@ -54,9 +51,6 @@ if (allowLocalLibUse && (isIDE || allowLocalLibInConsoleMode) && WoverFolder.exi
     project(":WorldWeaver").projectDir = WoverFolder
     project(':WorldWeaver').buildFileName = './build.composit.gradle'
 
-    def WoverModuleFile = new File("./wover-include.gradle")
-    apply from: WoverModuleFile
-    gradle.ext.set("knownWoverModules", ext.knownWoverModules)
     ext.knownWoverModules.each { module ->
         def fullName = ":WorldWeaver:${module}";
         def path = WoverFolder.toPath().resolve(module).toFile();

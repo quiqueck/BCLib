@@ -15,4 +15,5 @@ ext.knownWoverModules = [
         'wover-structure-api',
         'wover-biome-api',
         'wover-generator-api',
+        'wunderlib'
 ]
