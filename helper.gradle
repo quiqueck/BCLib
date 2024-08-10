@@ -209,10 +209,11 @@ task nextVersion() {
         def rootFabricFile = rootProject.file("src/main/resources/fabric.mod.json")
         def rootFabricFileJson = slurper.parseText(rootFabricFile.text)
         allprojects.each { proj ->
-            if (proj.name == 'bclib-legacy') {
+            if (proj.path != ':') {
+                println "Ignoring ${proj}"
                 return
             }
-            println "Updating Verion in ${proj}"
+            println "Updating Version in ${proj}"
 
             def fabricFile = proj.file("src/main/resources/fabric.mod.json")
             def fabricJson = slurper.parseText(fabricFile.text)
