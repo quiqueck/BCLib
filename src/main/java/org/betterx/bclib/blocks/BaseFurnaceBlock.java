@@ -2,18 +2,22 @@ package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.blockentities.BaseFurnaceBlockEntity;
-import org.betterx.bclib.client.models.BasePatterns;
-import org.betterx.bclib.client.models.ModelsHelper;
-import org.betterx.bclib.client.models.PatternsHelper;
+import org.betterx.bclib.client.models.BCLModels;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
-import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.bclib.registry.BaseBlockEntities;
+import org.betterx.wover.block.api.model.BlockModelProvider;
+import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 
-import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.data.models.blockstates.MultiVariantGenerator;
+import net.minecraft.data.models.blockstates.PropertyDispatch;
+import net.minecraft.data.models.blockstates.Variant;
+import net.minecraft.data.models.blockstates.VariantProperties;
+import net.minecraft.data.models.model.ModelTemplates;
+import net.minecraft.data.models.model.TextureMapping;
+import net.minecraft.data.models.model.TextureSlot;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.MenuProvider;
@@ -35,14 +39,11 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseFurnaceBlock extends FurnaceBlock implements RuntimeBlockModelProvider, RenderLayerProvider {
+public abstract class BaseFurnaceBlock extends FurnaceBlock implements RenderLayerProvider, BlockModelProvider {
     public BaseFurnaceBlock(Block source) {
         this(Properties.ofFullCopy(source).lightLevel(state -> state.getValue(LIT) ? 13 : 0));
     }
@@ -65,43 +66,57 @@ public abstract class BaseFurnaceBlock extends FurnaceBlock implements RuntimeBl
         }
     }
 
-    @Override
     @Environment(EnvType.CLIENT)
-    public @Nullable BlockModel getBlockModel(ResourceLocation blockId, BlockState blockState) {
-        String blockName = blockId.getPath();
-        Map<String, String> textures = Maps.newHashMap();
-        textures.put("%modid%", blockId.getNamespace());
-        textures.put("%top%", blockName + "_top");
-        textures.put("%side%", blockName + "_side");
-        Optional<String> pattern;
-        if (blockState.getValue(LIT)) {
-            textures.put("%front%", blockName + "_front_on");
-            textures.put("%glow%", blockName + "_glow");
-            pattern = PatternsHelper.createJson(BasePatterns.BLOCK_FURNACE_LIT, textures);
-        } else {
-            textures.put("%front%", blockName + "_front");
-            pattern = PatternsHelper.createJson(BasePatterns.BLOCK_FURNACE, textures);
-        }
-        return ModelsHelper.fromPattern(pattern);
+    @Override
+    public void provideBlockModels(WoverBlockModelGenerators generator) {
+        final var baseTexture = TextureMapping.getBlockTexture(this);
+        TextureMapping mapping = new TextureMapping()
+                .put(TextureSlot.TOP, baseTexture.withSuffix("_top"))
+                .put(TextureSlot.SIDE, baseTexture.withSuffix("_side"))
+                .put(TextureSlot.FRONT, baseTexture.withSuffix("_front"))
+                .put(TextureSlot.BOTTOM, baseTexture.withSuffix("_top"));
+        final var furnaceModel = ModelTemplates.CUBE_ORIENTABLE_TOP_BOTTOM.create(this, mapping, generator.modelOutput());
+
+        TextureMapping mappingGlow = new TextureMapping()
+                .put(TextureSlot.TOP, baseTexture.withSuffix("_top"))
+                .put(TextureSlot.SIDE, baseTexture.withSuffix("_side"))
+                .put(TextureSlot.FRONT, baseTexture.withSuffix("_front_on"))
+                .put(TextureSlot.BOTTOM, baseTexture.withSuffix("_top"))
+                .put(BCLModels.GLOW, baseTexture.withSuffix("_glow"));
+        final var glowModel = BCLModels.FURNACE_GLOW.createWithSuffix(this, "_lit", mappingGlow, generator.modelOutput());
+
+        final var prop = PropertyDispatch.properties(LIT, FACING);
+        addRotationModels(prop, furnaceModel, false);
+        addRotationModels(prop, glowModel, true);
+
+        generator.acceptBlockState(MultiVariantGenerator.multiVariant(this).with(prop));
     }
 
-    @Override
     @Environment(EnvType.CLIENT)
-    public BlockModel getItemModel(ResourceLocation resourceLocation) {
-        return getBlockModel(resourceLocation, defaultBlockState());
-    }
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public UnbakedModel getModelVariant(
-            ModelResourceLocation stateId,
-            BlockState blockState,
-            Map<ResourceLocation, UnbakedModel> modelCache
+    private static void addRotationModels(
+            PropertyDispatch.C2<Boolean, Direction> prop,
+            ResourceLocation furnaceModel,
+            boolean lit
     ) {
-        String lit = blockState.getValue(LIT) ? "_lit" : "";
-        ModelResourceLocation modelId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState, lit);
-        registerBlockModel(stateId, modelId, blockState, modelCache);
-        return ModelsHelper.createFacingModel(modelId.id(), blockState.getValue(FACING), false, true);
+        prop.select(lit, Direction.EAST,
+                Variant.variant()
+                       .with(VariantProperties.MODEL, furnaceModel)
+                       .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90)
+        );
+        prop.select(lit, Direction.SOUTH,
+                Variant.variant()
+                       .with(VariantProperties.MODEL, furnaceModel)
+                       .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180)
+        );
+        prop.select(lit, Direction.WEST,
+                Variant.variant()
+                       .with(VariantProperties.MODEL, furnaceModel)
+                       .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270)
+        );
+        prop.select(lit, Direction.NORTH,
+                Variant.variant()
+                       .with(VariantProperties.MODEL, furnaceModel)
+        );
     }
 
     @Override

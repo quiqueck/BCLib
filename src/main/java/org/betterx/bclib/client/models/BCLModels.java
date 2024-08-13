@@ -118,6 +118,12 @@ public class BCLModels {
             TextureSlot.TEXTURE, TextureSlot.SIDE
     );
 
+    public static final ModelTemplate FURNACE_GLOW = new ModelTemplate(
+            Optional.of(BCLib.C.mk("block/furnace_glow")),
+            Optional.empty(),
+            TextureSlot.TOP, TextureSlot.SIDE, TextureSlot.FRONT, GLOW
+    );
+
     public static void createBarStoolBlockModel(
             WoverBlockModelGenerators generators,
             Block block,
