@@ -40,6 +40,7 @@ import net.minecraft.world.level.Level;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import java.util.List;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
@@ -108,6 +109,10 @@ public class AnvilRecipe implements Recipe<AnvilRecipeInput>, UnknownReceipBookC
     }
 
     public static Iterable<Holder<Item>> getAllHammers() {
+        if (WorldState.allStageRegistryAccess() == null) {
+            return List.of();
+        }
+
         Registry<Item> registry = WorldState.allStageRegistryAccess()
                                             .registryOrThrow(CommonItemTags.HAMMERS.registry());
         return registry.getTagOrEmpty(CommonItemTags.HAMMERS);
