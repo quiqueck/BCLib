@@ -1,5 +1,7 @@
 package org.betterx.bclib.blocks;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
 import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
@@ -53,6 +55,7 @@ public class BaseBlock extends Block implements BlockModelProvider {
      * This implementation will load the Block-Model and return it as the Item-Model
      */
     @Override
+    @Environment(EnvType.CLIENT)
     public BlockModel getItemModel(ResourceLocation blockId) {
         return getBlockModel(blockId, defaultBlockState());
     }
