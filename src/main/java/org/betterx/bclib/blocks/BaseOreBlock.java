@@ -1,5 +1,7 @@
 package org.betterx.bclib.blocks;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.betterx.bclib.behaviours.BehaviourBuilders;
 import org.betterx.bclib.behaviours.interfaces.BehaviourOre;
 import org.betterx.bclib.interfaces.BlockModelProvider;
@@ -145,6 +147,7 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public BlockModel getItemModel(ResourceLocation resourceLocation) {
         return getBlockModel(resourceLocation, defaultBlockState());
     }
