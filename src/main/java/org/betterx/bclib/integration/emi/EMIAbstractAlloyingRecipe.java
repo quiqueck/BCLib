@@ -1,6 +1,6 @@
 package org.betterx.bclib.integration.emi;
 
-import net.minecraft.client.Minecraft;
+/*import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -119,5 +119,5 @@ public abstract class EMIAbstractAlloyingRecipe<C extends RecipeInput, T extends
     public boolean supportsRecipeTree() {
         return true;
     }
-}
+}*/
 
