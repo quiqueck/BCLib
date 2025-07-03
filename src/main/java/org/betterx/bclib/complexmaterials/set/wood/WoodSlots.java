@@ -27,14 +27,14 @@ public class WoodSlots {
     public static final MaterialSlot<WoodenComplexMaterial> COMPOSTER = new Composter();
     public static final MaterialSlot<WoodenComplexMaterial> BOAT = new Boat();
     public static final MaterialSlot<WoodenComplexMaterial> CHEST_BOAT = new ChestBoat();
-
-    public static final String WALL_SIGN = Sign.WALL_SUFFFIX;
-    public static final String WALL_HANGING_SIGN = HangingSign.WALL_SUFFFIX;
-    public static final String SAPLING = AbstractSaplingSlot.SAPLING_SUFFIX;
     public static final MaterialSlot<WoodenComplexMaterial> TABURET = new Taburet();
     public static final MaterialSlot<WoodenComplexMaterial> CHAIR = new Chair();
     public static final MaterialSlot<WoodenComplexMaterial> BAR_STOOL = new BarStool();
     public static final MaterialSlot<WoodenComplexMaterial> WALL = new Wall();
+
+    public static final String WALL_SIGN = Sign.WALL_SUFFFIX;
+    public static final String WALL_HANGING_SIGN = HangingSign.WALL_SUFFFIX;
+    public static final String SAPLING = AbstractSaplingSlot.SAPLING_SUFFIX;
 }
 
 

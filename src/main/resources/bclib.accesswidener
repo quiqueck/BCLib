@@ -22,6 +22,7 @@ accessible class net/minecraft/world/item/crafting/Ingredient$TagValue
 accessible class net/minecraft/world/item/crafting/Ingredient$ItemValue
 
 #Methods
+accessible method net/minecraft/world/level/block/entity/BlockEntityType <init> (Lnet/minecraft/world/level/block/entity/BlockEntityType$BlockEntitySupplier;Ljava/util/Set;)V
 accessible method net/minecraft/world/level/storage/loot/LootPool <init> (Ljava/util/List;Ljava/util/List;Ljava/util/List;Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;)V
 accessible method net/minecraft/world/entity/ai/village/poi/PoiTypes register (Lnet/minecraft/core/Registry;Lnet/minecraft/resources/ResourceKey;Ljava/util/Set;II)Lnet/minecraft/world/entity/ai/village/poi/PoiType;
 accessible method net/minecraft/world/level/levelgen/SurfaceRules$SequenceRuleSource <init> (Ljava/util/List;)V

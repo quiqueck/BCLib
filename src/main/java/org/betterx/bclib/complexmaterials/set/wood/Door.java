@@ -9,7 +9,6 @@ import org.betterx.wover.recipe.api.CraftingRecipeBuilder;
 import org.betterx.wover.recipe.api.RecipeBuilder;
 
 import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -33,13 +32,21 @@ public class Door extends SimpleMaterialSlot<WoodenComplexMaterial> {
     }
 
     @Override
-    protected @Nullable void makeRecipe(RecipeOutput context, ComplexMaterial parentMaterial, ResourceLocation id) {
+    protected @Nullable void makeRecipe(
+            RecipeBuilder.Context context,
+            ComplexMaterial parentMaterial,
+            ResourceLocation id
+    ) {
         CraftingRecipeBuilder craftingRecipeBuilder1 = RecipeBuilder
                 .crafting(id, parentMaterial.getBlock(suffix));
         CraftingRecipeBuilder craftingRecipeBuilder2 = craftingRecipeBuilder1.outputCount(3);
         CraftingRecipeBuilder craftingRecipeBuilder = craftingRecipeBuilder2.shape("##", "##", "##")
-                                                                            .addMaterial('#', parentMaterial.getBlock(WoodSlots.PLANKS));
-        BaseRecipeBuilder<CraftingRecipeBuilder> craftingRecipeBuilderBaseRecipeBuilder = craftingRecipeBuilder.group("door");
+                                                                            .addMaterial(
+                                                                                    '#',
+                                                                                    parentMaterial.getBlock(WoodSlots.PLANKS)
+                                                                            );
+        BaseRecipeBuilder<CraftingRecipeBuilder> craftingRecipeBuilderBaseRecipeBuilder = craftingRecipeBuilder.group(
+                "door");
         craftingRecipeBuilderBaseRecipeBuilder.category(RecipeCategory.REDSTONE)
                                               .build(context);
     }

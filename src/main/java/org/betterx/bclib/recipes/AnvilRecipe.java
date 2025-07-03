@@ -114,7 +114,7 @@ public class AnvilRecipe implements Recipe<AnvilRecipeInput>, UnknownReceipBookC
         }
 
         Registry<Item> registry = WorldState.allStageRegistryAccess()
-                                            .registryOrThrow(CommonItemTags.HAMMERS.registry());
+                                            .lookupOrThrow(CommonItemTags.HAMMERS.registry());
         return registry.getTagOrEmpty(CommonItemTags.HAMMERS);
     }
 
@@ -171,7 +171,8 @@ public class AnvilRecipe implements Recipe<AnvilRecipeInput>, UnknownReceipBookC
         }
         int materialCount = material.getCount();
 
-        return this.input.test(getIngredient(craftingInventory)) && materialCount >= this.inputCount && hammer.is(allowedTools);
+        return this.input.test(getIngredient(craftingInventory)) && materialCount >= this.inputCount && hammer.is(
+                allowedTools);
     }
 
     public int getDamage() {
@@ -340,8 +341,12 @@ public class AnvilRecipe implements Recipe<AnvilRecipeInput>, UnknownReceipBookC
                 Codec.INT.optionalFieldOf("anvilLevel", 1).forGetter(recipe -> recipe.anvilLevel),
                 Codec.INT.optionalFieldOf("damage", 1).forGetter(recipe -> recipe.damage)
         ).apply(instance, AnvilRecipe::new));
-        public static final StreamCodec<RegistryFriendlyByteBuf, AnvilRecipe> STREAM_CODEC = StreamCodec.of(AnvilRecipe.Serializer::toNetwork, AnvilRecipe.Serializer::fromNetwork);
-        public static final StreamCodec<RegistryFriendlyByteBuf, TagKey<Item>> ITEM_TAG_STREAM_CODEC = TagManager.streamCodec(Registries.ITEM);
+        public static final StreamCodec<RegistryFriendlyByteBuf, AnvilRecipe> STREAM_CODEC = StreamCodec.of(
+                AnvilRecipe.Serializer::toNetwork,
+                AnvilRecipe.Serializer::fromNetwork
+        );
+        public static final StreamCodec<RegistryFriendlyByteBuf, TagKey<Item>> ITEM_TAG_STREAM_CODEC = TagManager.streamCodec(
+                Registries.ITEM);
 
         @Override
         public MapCodec<AnvilRecipe> codec() {

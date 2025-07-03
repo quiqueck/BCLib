@@ -9,7 +9,6 @@ import org.betterx.wover.recipe.api.CraftingRecipeBuilder;
 import org.betterx.wover.recipe.api.RecipeBuilder;
 
 import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -31,14 +30,22 @@ public class Fence extends SimpleMaterialSlot<WoodenComplexMaterial> {
     }
 
     @Override
-    protected @Nullable void makeRecipe(RecipeOutput context, ComplexMaterial parentMaterial, ResourceLocation id) {
+    protected @Nullable void makeRecipe(
+            RecipeBuilder.Context context,
+            ComplexMaterial parentMaterial,
+            ResourceLocation id
+    ) {
         CraftingRecipeBuilder craftingRecipeBuilder1 = RecipeBuilder
                 .crafting(id, parentMaterial.getBlock(suffix));
         CraftingRecipeBuilder craftingRecipeBuilder2 = craftingRecipeBuilder1.outputCount(3);
         CraftingRecipeBuilder craftingRecipeBuilder = craftingRecipeBuilder2.shape("#I#", "#I#")
-                                                                            .addMaterial('#', parentMaterial.getBlock(WoodSlots.PLANKS))
+                                                                            .addMaterial(
+                                                                                    '#',
+                                                                                    parentMaterial.getBlock(WoodSlots.PLANKS)
+                                                                            )
                                                                             .addMaterial('I', Items.STICK);
-        BaseRecipeBuilder<CraftingRecipeBuilder> craftingRecipeBuilderBaseRecipeBuilder = craftingRecipeBuilder.group("fence");
+        BaseRecipeBuilder<CraftingRecipeBuilder> craftingRecipeBuilderBaseRecipeBuilder = craftingRecipeBuilder.group(
+                "fence");
         craftingRecipeBuilderBaseRecipeBuilder.category(RecipeCategory.DECORATIONS)
                                               .build(context);
     }

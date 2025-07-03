@@ -30,7 +30,8 @@ public class Taburet extends SimpleMaterialSlot<WoodenComplexMaterial> {
         CraftingRecipeBuilder craftingRecipeBuilder = craftingRecipeBuilder1.shape("##", "II")
                                                                             .addMaterial('#', planks)
                                                                             .addMaterial('I', Items.STICK);
-        BaseRecipeBuilder<CraftingRecipeBuilder> craftingRecipeBuilderBaseRecipeBuilder = craftingRecipeBuilder.group("taburet");
+        BaseRecipeBuilder<CraftingRecipeBuilder> craftingRecipeBuilderBaseRecipeBuilder = craftingRecipeBuilder.group(
+                "taburet");
         craftingRecipeBuilderBaseRecipeBuilder.category(RecipeCategory.DECORATIONS)
                                               .build(context);
     }
@@ -48,7 +49,16 @@ public class Taburet extends SimpleMaterialSlot<WoodenComplexMaterial> {
     }
 
     @Override
-    protected @Nullable void makeRecipe(RecipeOutput context, ComplexMaterial parentMaterial, ResourceLocation id) {
-        Taburet.makeTaburetRecipe(context, id, parentMaterial.getBlock(suffix), parentMaterial.getBlock(WoodSlots.SLAB));
+    protected @Nullable void makeRecipe(
+            RecipeBuilder.Context context,
+            ComplexMaterial parentMaterial,
+            ResourceLocation id
+    ) {
+        Taburet.makeTaburetRecipe(
+                context,
+                id,
+                parentMaterial.getBlock(suffix),
+                parentMaterial.getBlock(WoodSlots.SLAB)
+        );
     }
 }

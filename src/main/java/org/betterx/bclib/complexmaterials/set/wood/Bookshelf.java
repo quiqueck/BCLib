@@ -9,7 +9,6 @@ import org.betterx.wover.recipe.api.CraftingRecipeBuilder;
 import org.betterx.wover.recipe.api.RecipeBuilder;
 
 import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -31,13 +30,21 @@ public class Bookshelf extends SimpleMaterialSlot<WoodenComplexMaterial> {
     }
 
     @Override
-    protected @Nullable void makeRecipe(RecipeOutput context, ComplexMaterial parentMaterial, ResourceLocation id) {
+    protected @Nullable void makeRecipe(
+            RecipeBuilder.Context context,
+            ComplexMaterial parentMaterial,
+            ResourceLocation id
+    ) {
         CraftingRecipeBuilder craftingRecipeBuilder1 = RecipeBuilder
                 .crafting(id, parentMaterial.getBlock(suffix));
         CraftingRecipeBuilder craftingRecipeBuilder = craftingRecipeBuilder1.shape("###", "PPP", "###")
-                                                                            .addMaterial('#', parentMaterial.getBlock(WoodSlots.PLANKS))
+                                                                            .addMaterial(
+                                                                                    '#',
+                                                                                    parentMaterial.getBlock(WoodSlots.PLANKS)
+                                                                            )
                                                                             .addMaterial('P', Items.BOOK);
-        BaseRecipeBuilder<CraftingRecipeBuilder> craftingRecipeBuilderBaseRecipeBuilder = craftingRecipeBuilder.group("bookshelf");
+        BaseRecipeBuilder<CraftingRecipeBuilder> craftingRecipeBuilderBaseRecipeBuilder = craftingRecipeBuilder.group(
+                "bookshelf");
         craftingRecipeBuilderBaseRecipeBuilder.category(RecipeCategory.BUILDING_BLOCKS)
                                               .build(context);
     }

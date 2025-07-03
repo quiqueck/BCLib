@@ -13,7 +13,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 
 import java.util.function.Consumer;
@@ -106,8 +105,8 @@ public class WoodenComplexMaterial extends ComplexMaterialSet<WoodenComplexMater
 
     @Override
     protected BlockBehaviour.Properties getBlockSettings() {
-        return FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)
-                                  .mapColor(planksColor);
+        return BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS)
+                                        .mapColor(planksColor);
     }
 
     @Override

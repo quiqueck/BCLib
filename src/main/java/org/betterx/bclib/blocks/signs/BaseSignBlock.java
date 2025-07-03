@@ -65,7 +65,7 @@ public abstract class BaseSignBlock extends StandingSignBlock implements BlockMo
     @Override
     public BlockItem getCustomBlockItem(ResourceLocation blockID, Item.Properties settings) {
         if (customItem == null) {
-            customItem = new SignItem(settings, this, getWallSignBlock());
+            customItem = new SignItem(this, getWallSignBlock(), settings);
         }
         return customItem;
     }

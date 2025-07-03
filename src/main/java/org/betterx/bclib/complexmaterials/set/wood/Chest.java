@@ -9,7 +9,6 @@ import org.betterx.wover.recipe.api.CraftingRecipeBuilder;
 import org.betterx.wover.recipe.api.RecipeBuilder;
 
 import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -30,12 +29,17 @@ public class Chest extends SimpleMaterialSlot<WoodenComplexMaterial> {
     }
 
     @Override
-    protected @Nullable void makeRecipe(RecipeOutput context, ComplexMaterial parentMaterial, ResourceLocation id) {
+    protected @Nullable void makeRecipe(
+            RecipeBuilder.Context context,
+            ComplexMaterial parentMaterial,
+            ResourceLocation id
+    ) {
         CraftingRecipeBuilder craftingRecipeBuilder = RecipeBuilder
                 .crafting(id, parentMaterial.getBlock(suffix))
                 .shape("###", "# #", "###")
                 .addMaterial('#', parentMaterial.getBlock(WoodSlots.PLANKS));
-        BaseRecipeBuilder<CraftingRecipeBuilder> craftingRecipeBuilderBaseRecipeBuilder = craftingRecipeBuilder.group("chest");
+        BaseRecipeBuilder<CraftingRecipeBuilder> craftingRecipeBuilderBaseRecipeBuilder = craftingRecipeBuilder.group(
+                "chest");
         craftingRecipeBuilderBaseRecipeBuilder.category(RecipeCategory.DECORATIONS)
                                               .build(context);
     }

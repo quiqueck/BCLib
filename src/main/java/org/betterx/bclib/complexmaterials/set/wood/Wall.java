@@ -7,7 +7,6 @@ import org.betterx.bclib.complexmaterials.entry.MaterialSlot;
 import org.betterx.bclib.complexmaterials.set.common.AbstractWall;
 import org.betterx.wover.recipe.api.RecipeBuilder;
 
-import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -22,7 +21,11 @@ public class Wall extends AbstractWall<WoodenComplexMaterial> {
     }
 
     @Override
-    protected @Nullable void makeRecipe(RecipeOutput context, ComplexMaterial parentMaterial, ResourceLocation id) {
+    protected @Nullable void makeRecipe(
+            RecipeBuilder.Context context,
+            ComplexMaterial parentMaterial,
+            ResourceLocation id
+    ) {
         RecipeBuilder.crafting(id, parentMaterial.getBlock(suffix))
                      .outputCount(6)
                      .shape("* *", "|||")

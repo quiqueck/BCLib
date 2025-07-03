@@ -10,7 +10,7 @@ import com.google.common.collect.Sets;
 
 import java.util.Collections;
 import java.util.Set;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 public class DynamicBlockEntityType<T extends BlockEntity> extends BlockEntityType<T> {
 
@@ -23,8 +23,7 @@ public class DynamicBlockEntityType<T extends BlockEntity> extends BlockEntityTy
     }
 
     @Override
-    @Nullable
-    public T create(BlockPos blockPos, BlockState blockState) {
+    public @NotNull T create(BlockPos blockPos, BlockState blockState) {
         return factory.create(blockPos, blockState);
     }
 

@@ -17,8 +17,6 @@ import org.betterx.wover.tag.api.predefined.CommonItemTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.models.model.TextureMapping;
-import net.minecraft.data.models.model.TextureSlot;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -41,12 +39,12 @@ public abstract class BaseChestBlock extends ChestBlock implements BlockModelPro
     private final Block parent;
 
     protected BaseChestBlock(Block source) {
-        super(Properties.ofFullCopy(source).noOcclusion(), () -> BaseBlockEntities.CHEST);
+        super(() -> BaseBlockEntities.CHEST, Properties.ofFullCopy(source).noOcclusion());
         this.parent = source;
     }
 
     @Override
-    public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
+    public @NotNull BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
         return BaseBlockEntities.CHEST.create(blockPos, blockState);
     }
 

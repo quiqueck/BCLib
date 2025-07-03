@@ -30,7 +30,8 @@ public class BarStool extends SimpleMaterialSlot<WoodenComplexMaterial> {
         CraftingRecipeBuilder craftingRecipeBuilder = craftingRecipeBuilder1.shape("##", "II", "II")
                                                                             .addMaterial('#', planks)
                                                                             .addMaterial('I', Items.STICK);
-        BaseRecipeBuilder<CraftingRecipeBuilder> craftingRecipeBuilderBaseRecipeBuilder = craftingRecipeBuilder.group("bar_stool");
+        BaseRecipeBuilder<CraftingRecipeBuilder> craftingRecipeBuilderBaseRecipeBuilder = craftingRecipeBuilder.group(
+                "bar_stool");
         craftingRecipeBuilderBaseRecipeBuilder.category(RecipeCategory.DECORATIONS)
                                               .build(context);
     }
@@ -48,7 +49,16 @@ public class BarStool extends SimpleMaterialSlot<WoodenComplexMaterial> {
     }
 
     @Override
-    protected @Nullable void makeRecipe(RecipeOutput context, ComplexMaterial parentMaterial, ResourceLocation id) {
-        BarStool.makeBarStoolRecipe(context, id, parentMaterial.getBlock(suffix), parentMaterial.getBlock(WoodSlots.SLAB));
+    protected @Nullable void makeRecipe(
+            RecipeBuilder.Context context,
+            ComplexMaterial parentMaterial,
+            ResourceLocation id
+    ) {
+        BarStool.makeBarStoolRecipe(
+                context,
+                id,
+                parentMaterial.getBlock(suffix),
+                parentMaterial.getBlock(WoodSlots.SLAB)
+        );
     }
 }

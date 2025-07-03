@@ -37,7 +37,7 @@ public class Noises {
             RandomSource randomSource,
             ResourceKey<NormalNoise.NoiseParameters> noise
     ) {
-        final Registry<NormalNoise.NoiseParameters> registry = registryAccess.registryOrThrow(Registries.NOISE);
+        final Registry<NormalNoise.NoiseParameters> registry = registryAccess.lookupOrThrow(Registries.NOISE);
         return noiseIntances.computeIfAbsent(noise, (key) -> createNoise(registry, randomSource, noise));
     }
 }

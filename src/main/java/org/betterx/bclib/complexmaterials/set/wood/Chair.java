@@ -30,7 +30,8 @@ public class Chair extends SimpleMaterialSlot<WoodenComplexMaterial> {
         CraftingRecipeBuilder craftingRecipeBuilder = craftingRecipeBuilder1.shape("I ", "##", "II")
                                                                             .addMaterial('#', planks)
                                                                             .addMaterial('I', Items.STICK);
-        BaseRecipeBuilder<CraftingRecipeBuilder> craftingRecipeBuilderBaseRecipeBuilder = craftingRecipeBuilder.group("chair");
+        BaseRecipeBuilder<CraftingRecipeBuilder> craftingRecipeBuilderBaseRecipeBuilder = craftingRecipeBuilder.group(
+                "chair");
         craftingRecipeBuilderBaseRecipeBuilder.category(RecipeCategory.DECORATIONS)
                                               .build(context);
     }
@@ -48,7 +49,11 @@ public class Chair extends SimpleMaterialSlot<WoodenComplexMaterial> {
     }
 
     @Override
-    protected @Nullable void makeRecipe(RecipeOutput context, ComplexMaterial parentMaterial, ResourceLocation id) {
+    protected @Nullable void makeRecipe(
+            RecipeBuilder.Context context,
+            ComplexMaterial parentMaterial,
+            ResourceLocation id
+    ) {
         Chair.makeChairRecipe(context, id, parentMaterial.getBlock(suffix), parentMaterial.getBlock(WoodSlots.SLAB));
     }
 }

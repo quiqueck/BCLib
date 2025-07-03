@@ -49,8 +49,17 @@ public class ChestBoat extends SimpleMaterialSlot<WoodenComplexMaterial> {
     }
 
     @Override
-    protected @Nullable void makeRecipe(RecipeOutput context, ComplexMaterial parentMaterial, ResourceLocation id) {
-        makeChestBoatRecipe(context, id, parentMaterial.getItem(WoodSlots.BOAT), parentMaterial.getItem(WoodSlots.CHEST_BOAT));
+    protected @Nullable void makeRecipe(
+            RecipeBuilder.Context context,
+            ComplexMaterial parentMaterial,
+            ResourceLocation id
+    ) {
+        makeChestBoatRecipe(
+                context,
+                id,
+                parentMaterial.getItem(WoodSlots.BOAT),
+                parentMaterial.getItem(WoodSlots.CHEST_BOAT)
+        );
     }
 
     @Override
@@ -64,7 +73,8 @@ public class ChestBoat extends SimpleMaterialSlot<WoodenComplexMaterial> {
                 .shapeless()
                 .addMaterial('C', CommonItemTags.CHEST)
                 .addMaterial('#', boat);
-        BaseRecipeBuilder<CraftingRecipeBuilder> craftingRecipeBuilderBaseRecipeBuilder = craftingRecipeBuilder.group("chest_boat");
+        BaseRecipeBuilder<CraftingRecipeBuilder> craftingRecipeBuilderBaseRecipeBuilder = craftingRecipeBuilder.group(
+                "chest_boat");
         craftingRecipeBuilderBaseRecipeBuilder.category(RecipeCategory.TRANSPORTATION)
                                               .build(context);
     }

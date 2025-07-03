@@ -3,8 +3,8 @@ package org.betterx.bclib.complexmaterials.set.wood;
 import org.betterx.bclib.complexmaterials.ComplexMaterial;
 import org.betterx.bclib.complexmaterials.WoodenComplexMaterial;
 import org.betterx.bclib.complexmaterials.entry.SimpleMaterialSlot;
+import org.betterx.wover.recipe.api.RecipeBuilder;
 
-import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -23,7 +23,11 @@ public abstract class AbstractSaplingSlot extends SimpleMaterialSlot<WoodenCompl
 
 
     @Override
-    protected @Nullable void makeRecipe(RecipeOutput context, ComplexMaterial parentMaterial, ResourceLocation id) {
+    protected @Nullable void makeRecipe(
+            RecipeBuilder.Context context,
+            ComplexMaterial parentMaterial,
+            ResourceLocation id
+    ) {
 
     }
 

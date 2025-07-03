@@ -43,7 +43,11 @@ public class Boat extends SimpleMaterialSlot<WoodenComplexMaterial> {
     }
 
     @Override
-    protected @Nullable void makeRecipe(RecipeOutput context, ComplexMaterial parentMaterial, ResourceLocation id) {
+    protected @Nullable void makeRecipe(
+            RecipeBuilder.Context context,
+            ComplexMaterial parentMaterial,
+            ResourceLocation id
+    ) {
         makeBoatRecipe(context, id, parentMaterial.getBlock(WoodSlots.PLANKS), parentMaterial.getItem(suffix));
     }
 
@@ -57,7 +61,8 @@ public class Boat extends SimpleMaterialSlot<WoodenComplexMaterial> {
                 .crafting(id, boat);
         CraftingRecipeBuilder craftingRecipeBuilder = craftingRecipeBuilder1.shape("# #", "###")
                                                                             .addMaterial('#', planks);
-        BaseRecipeBuilder<CraftingRecipeBuilder> craftingRecipeBuilderBaseRecipeBuilder = craftingRecipeBuilder.group("boat");
+        BaseRecipeBuilder<CraftingRecipeBuilder> craftingRecipeBuilderBaseRecipeBuilder = craftingRecipeBuilder.group(
+                "boat");
         craftingRecipeBuilderBaseRecipeBuilder.category(RecipeCategory.TRANSPORTATION)
                                               .build(context);
     }
