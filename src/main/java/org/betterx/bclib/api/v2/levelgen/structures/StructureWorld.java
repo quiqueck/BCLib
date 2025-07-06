@@ -1,5 +1,7 @@
 package org.betterx.bclib.api.v2.levelgen.structures;
 
+import org.betterx.bclib.util.NbtHelper;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -31,20 +33,21 @@ public class StructureWorld {
     }
 
     public StructureWorld(CompoundTag tag) {
-        minX = tag.getInt("minX");
-        maxX = tag.getInt("maxX");
-        minY = tag.getInt("minY");
-        maxY = tag.getInt("maxY");
-        minZ = tag.getInt("minZ");
-        maxZ = tag.getInt("maxZ");
+        minX = tag.getInt("minX").orElse(Integer.MAX_VALUE);
+        maxX = tag.getInt("maxX").orElse(Integer.MIN_VALUE);
+        minY = tag.getInt("minY").orElse(Integer.MAX_VALUE);
+        maxY = tag.getInt("maxY").orElse(Integer.MIN_VALUE);
+        minZ = tag.getInt("minZ").orElse(Integer.MAX_VALUE);
+        maxZ = tag.getInt("maxZ").orElse(Integer.MIN_VALUE);
 
-        ListTag map = tag.getList("parts", 10);
-        map.forEach((element) -> {
-            CompoundTag compound = (CompoundTag) element;
-            Part part = new Part(compound);
-            int x = compound.getInt("x");
-            int z = compound.getInt("z");
-            parts.put(new ChunkPos(x, z), part);
+        tag.getList("parts").ifPresent(map -> {
+            map.forEach((element) -> {
+                CompoundTag compound = (CompoundTag) element;
+                Part part = new Part(compound);
+                int x = compound.getInt("x").orElse(0);
+                int z = compound.getInt("z").orElse(0);
+                parts.put(new ChunkPos(x, z), part);
+            });
         });
     }
 
@@ -114,24 +117,28 @@ public class StructureWorld {
         }
 
         public Part(CompoundTag tag) {
-            ListTag map = tag.getList("blocks", 10);
-            ListTag map2 = tag.getList("states", 10);
-            BlockState[] states = new BlockState[map2.size()];
-            for (int i = 0; i < states.length; i++) {
-                states[i] = NbtUtils.readBlockState(
-                        BuiltInRegistries.BLOCK.asLookup(),
-                        (CompoundTag) map2.get(i)
+            ListTag states = tag.getList("states").orElse(new ListTag());
+            final BlockState[] blockStates = new BlockState[states.size()];
+            for (int i = 0; i < blockStates.length; i++) {
+                blockStates[i] = NbtUtils.readBlockState(
+                        BuiltInRegistries.BLOCK,
+                        (CompoundTag) states.get(i)
                 );
             }
 
-            map.forEach((element) -> {
-                CompoundTag block = (CompoundTag) element;
-                BlockPos pos = NbtUtils.readBlockPos(block, "pos").orElse(null);
-                if (pos != null) {
-                    int stateID = block.getInt("state");
-                    BlockState state = stateID < states.length ? states[stateID] : Block.stateById(stateID);
-                    blocks.put(pos, state);
-                }
+            tag.getList("blocks").ifPresent(blocks -> {
+                blocks.forEach((element) -> {
+                    CompoundTag block = (CompoundTag) element;
+                    BlockPos pos = NbtHelper.readBlockPos(block, "pos").orElse(null);
+                    if (pos != null) {
+                        block.getInt("state").ifPresent(stateID -> {
+                            BlockState state = stateID < blockStates.length
+                                    ? blockStates[stateID]
+                                    : Block.stateById(stateID);
+                            this.blocks.put(pos, state);
+                        });
+                    }
+                });
             });
         }
 
@@ -141,9 +148,7 @@ public class StructureWorld {
         }
 
         void placeChunk(ChunkAccess chunk) {
-            blocks.forEach((pos, state) -> {
-                chunk.setBlockState(pos, state, false);
-            });
+            blocks.forEach(chunk::setBlockState);
         }
 
         CompoundTag toNBT(int x, int z) {
@@ -167,7 +172,7 @@ public class StructureWorld {
                 }
 
                 CompoundTag block = new CompoundTag();
-                block.put("pos", NbtUtils.writeBlockPos(pos));
+                block.put("pos", NbtHelper.writeBlockPos(pos));
                 block.putInt("state", stateID);
                 map.add(block);
             });

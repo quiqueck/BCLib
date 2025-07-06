@@ -90,7 +90,7 @@ public class MigrationProfile {
                 boolean[] changed = {false};
                 int spawnerIdx = -1;
                 if (root.contains("palette")) {
-                    ListTag items = root.getList("palette", Tag.TAG_COMPOUND);
+                    ListTag items = root.getList("palette").orElse(new ListTag());
                     for (int idx = 0; idx < items.size(); idx++) {
                         final CompoundTag tag = (CompoundTag) items.get(idx);
                         if (tag.contains("Name") && tag.getString("Name").equals("minecraft:spawner"))
@@ -108,15 +108,16 @@ public class MigrationProfile {
                 }
 
                 if (spawnerIdx >= 0 && root.contains("blocks")) {
-                    ListTag items = root.getList("blocks", Tag.TAG_COMPOUND);
+                    ListTag items = root.getList("blocks").orElse(new ListTag());
                     for (int idx = 0; idx < items.size(); idx++) {
                         final CompoundTag blockTag = (CompoundTag) items.get(idx);
-                        if (blockTag.contains("state") && blockTag.getInt("state") == spawnerIdx && blockTag.contains(
+                        if (blockTag.contains("state") && blockTag.getInt("state")
+                                                                  .orElseThrow() == spawnerIdx && blockTag.contains(
                                 "nbt")) {
-                            CompoundTag nbt = blockTag.getCompound("nbt");
-                            if (nbt.contains("SpawnData")) {
-                                final CompoundTag entity = nbt.getCompound("SpawnData");
-                                if (!entity.contains("entity")) {
+                            CompoundTag nbt = blockTag.getCompound("nbt").orElse(null);
+                            if (nbt != null && nbt.contains("SpawnData")) {
+                                final CompoundTag entity = nbt.getCompound("SpawnData").orElse(null);
+                                if (entity != null && !entity.contains("entity")) {
                                     CompoundTag data = new CompoundTag();
                                     data.put("entity", entity);
                                     nbt.put("SpawnData", data);
@@ -124,12 +125,12 @@ public class MigrationProfile {
                                     changed[0] = true;
                                 }
                             }
-                            if (nbt.contains("SpawnPotentials")) {
-                                ListTag pots = nbt.getList("SpawnPotentials", Tag.TAG_COMPOUND);
+                            if (nbt != null && nbt.contains("SpawnPotentials")) {
+                                ListTag pots = nbt.getList("SpawnPotentials").orElse(new ListTag());
                                 for (Tag potItemIn : pots) {
                                     final CompoundTag potItem = (CompoundTag) potItemIn;
                                     if (potItem.contains("Weight")) {
-                                        int weight = potItem.getInt("Weight");
+                                        int weight = potItem.getInt("Weight").orElse(1);
                                         potItem.putInt("weight", weight);
                                         potItem.remove("Weight");
 
@@ -137,7 +138,7 @@ public class MigrationProfile {
                                     }
 
                                     if (potItem.contains("Entity")) {
-                                        CompoundTag entity = potItem.getCompound("Entity");
+                                        CompoundTag entity = potItem.getCompound("Entity").orElseThrow();
                                         CompoundTag data = new CompoundTag();
                                         data.put("entity", entity);
 
@@ -241,7 +242,7 @@ public class MigrationProfile {
 
     public Version currentPatchVersion(@NotNull ModCore modCore) {
         if (config == null || !config.contains(modCore.modId)) return Version.ZERO;
-        return new Version(config.getString(modCore.modId));
+        return new Version(config.getString(modCore.modId).orElse("0.0.0"));
     }
 
     public int currentPatchLevel(@NotNull ModCore modCore) {
@@ -267,7 +268,7 @@ public class MigrationProfile {
     public boolean replaceStringFromIDs(@NotNull CompoundTag tag, @NotNull String key) {
         if (!tag.contains(key)) return false;
 
-        final String val = tag.getString(key);
+        final String val = tag.getString(key).orElseThrow();
         final String replace = idReplacements.get(val);
 
         if (replace != null) {
@@ -293,13 +294,15 @@ public class MigrationProfile {
         boolean changed = false;
         for (int i = level; i < parts.length - 1; i++) {
             final String part = parts[i];
-            if (tag.contains(part)) {
-                final byte type = tag.getTagType(part);
-                if (type == Tag.TAG_LIST) {
-                    ListTag list = tag.getList(part, Tag.TAG_COMPOUND);
+            if (tag != null && tag.contains(part)) {
+                final var type = tag.get(part).getType();
+                if (type == TagTypes.getType(Tag.TAG_LIST)) {
+                    ListTag list = tag.getList(part).orElse(null);
+                    if (list == null) return false;
+
                     return replaceIDatPath(list, parts, i);
-                } else if (type == Tag.TAG_COMPOUND) {
-                    tag = tag.getCompound(part);
+                } else if (type == TagTypes.getType(Tag.TAG_COMPOUND)) {
+                    tag = tag.getCompound(part).orElse(null);
                 }
             } else {
                 return false;
@@ -308,9 +311,9 @@ public class MigrationProfile {
 
         if (tag != null && parts.length > 0) {
             final String key = parts[parts.length - 1];
-            final byte type = tag.getTagType(key);
-            if (type == Tag.TAG_LIST) {
-                final ListTag list = tag.getList(key, Tag.TAG_COMPOUND);
+            final var type = tag.get(key).getType();
+            if (type == TagTypes.getType(Tag.TAG_LIST)) {
+                final ListTag list = tag.getList(key).orElse(new ListTag());
                 final boolean[] _changed = {false};
                 if (list.size() == 0) {
                     _changed[0] = DataFixerAPI.fixStringIDList(tag, key, this);
@@ -318,10 +321,12 @@ public class MigrationProfile {
                     DataFixerAPI.fixItemArrayWithID(list, _changed, this, true);
                 }
                 return _changed[0];
-            } else if (type == Tag.TAG_STRING) {
+            } else if (type == TagTypes.getType(Tag.TAG_STRING)) {
                 return replaceStringFromIDs(tag, key);
-            } else if (type == Tag.TAG_COMPOUND) {
-                final CompoundTag cTag = tag.getCompound(key);
+            } else if (type == TagTypes.getType(Tag.TAG_COMPOUND)) {
+                final CompoundTag cTag = tag.getCompound(key).orElse(null);
+                if (cTag == null) return false;
+
                 boolean[] _changed = {false};
                 DataFixerAPI.fixID(cTag, _changed, this, true);
                 return _changed[0];

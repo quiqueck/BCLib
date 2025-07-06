@@ -306,15 +306,21 @@ public class ColorUtil {
         }
         ResourceLocation texture;
         if (item instanceof BlockItem) {
-            texture = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "textures/block/" + id.getPath() + ".png");
+            texture = ResourceLocation.fromNamespaceAndPath(
+                    id.getNamespace(),
+                    "textures/block/" + id.getPath() + ".png"
+            );
         } else {
-            texture = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "textures/item/" + id.getPath() + ".png");
+            texture = ResourceLocation.fromNamespaceAndPath(
+                    id.getNamespace(),
+                    "textures/item/" + id.getPath() + ".png"
+            );
         }
         NativeImage image = loadImage(texture, 16, 16);
         List<Integer> colors = new ArrayList<>();
         for (int i = 0; i < image.getWidth(); i++) {
             for (int j = 0; j < 16; j++) {
-                int col = image.getPixelRGBA(i, j);
+                int col = image.getPixel(i, j);
                 if (((col >> 24) & 255) > 0) {
                     colors.add(ABGRtoARGB(col));
                 }

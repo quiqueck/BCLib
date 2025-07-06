@@ -45,11 +45,11 @@ public abstract class ModIntegration {
     }
 
     public Block getBlock(String name) {
-        return BuiltInRegistries.BLOCK.get(getID(name));
+        return BuiltInRegistries.BLOCK.get(getID(name)).map(h -> h.value()).orElse(null);
     }
 
     public Item getItem(String name) {
-        return BuiltInRegistries.ITEM.get(getID(name));
+        return BuiltInRegistries.ITEM.get(getID(name)).map(h -> h.value()).orElse(null);
     }
 
     public BlockState getDefaultState(String name) {

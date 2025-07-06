@@ -18,6 +18,7 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
+import com.mojang.logging.LogUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -40,6 +41,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
@@ -51,6 +53,9 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.StructureMode;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
+import net.minecraft.world.level.storage.TagValueInput;
+
+import org.slf4j.Logger;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -61,6 +66,8 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 class PlaceCommandBuilder {
+    private static final Logger LOGGER = LogUtils.getLogger();
+
     public static final String PATH = "path";
     public static final String NBT = "nbt";
     public static final String EMPTY = "empty";
@@ -184,7 +191,10 @@ class PlaceCommandBuilder {
                 .then(
                         Commands.literal("tag")
                                 .then(Commands
-                                        .argument("blocktag", ResourceOrTagKeyArgument.resourceOrTagKey(Registries.BLOCK))
+                                        .argument(
+                                                "blocktag",
+                                                ResourceOrTagKeyArgument.resourceOrTagKey(Registries.BLOCK)
+                                        )
                                         .then(
                                                 pos.get()
                                                    .executes(this::placeBlocksMatchingTag)
@@ -209,25 +219,33 @@ class PlaceCommandBuilder {
         final String path = StringArgumentType.getString(cc, "path");
         return placeMatchingBlocks(
                 cc,
-                (blocks) -> blocks.holders().filter((holder) -> {
-                    final var okey = holder.unwrapKey();
-                    if (okey.isPresent()) {
-                        var key = okey.get().location();
-                        return (namespace.trim().equals("*") || key
+                (blocks) -> blocks
+                        .keySet()
+                        .stream()
+                        .filter((key) -> (namespace.trim().equals("*")
+                                || key
                                 .getNamespace()
-                                .contains(namespace)) && (path.trim().equals("*") || key.getPath().contains(path));
-                    }
-                    return false;
-                }).map(h -> (Holder<Block>) h)
+                                .contains(namespace)) && (path.trim().equals("*")
+                                || key.getPath()
+                                      .contains(path)))
+                        .map(key -> blocks.get(key).orElseThrow())
         );
     }
 
-    private static final DynamicCommandExceptionType ERROR_PLACE_TAG_INVALID = new DynamicCommandExceptionType(object -> Component.translatableEscape("commands.place.tag.invalid", object));
+    private static final DynamicCommandExceptionType ERROR_PLACE_TAG_INVALID = new DynamicCommandExceptionType(object -> Component.translatableEscape(
+            "commands.place.tag.invalid",
+            object
+    ));
 
     private int placeBlocksMatchingTag(CommandContext<CommandSourceStack> cc) {
         final ResourceOrTagKeyArgument.Result<Block> tagResult;
         try {
-            tagResult = ResourceOrTagKeyArgument.getResourceOrTagKey(cc, "blocktag", Registries.BLOCK, ERROR_PLACE_TAG_INVALID);
+            tagResult = ResourceOrTagKeyArgument.getResourceOrTagKey(
+                    cc,
+                    "blocktag",
+                    Registries.BLOCK,
+                    ERROR_PLACE_TAG_INVALID
+            );
 
             final var tag = tagResult.unwrap().right().orElse(null);
             if (tag == null) return -1;
@@ -255,7 +273,7 @@ class PlaceCommandBuilder {
             final int LENGTH = 16;
             final int HEIGHT = 16;
 
-            final var blocks = WorldState.registryAccess().registry(Registries.BLOCK).orElse(null);
+            final var blocks = WorldState.registryAccess().lookup(Registries.BLOCK).orElse(null);
             final List<Holder<Block>> blockHolders = new LinkedList<>();
             blockSupplier.apply(blocks).forEach(blockHolders::add);
             final ServerLevel world = cc.getSource().getLevel();
@@ -436,8 +454,10 @@ class PlaceCommandBuilder {
             }
             Bounds finalAll = all;
             ctx.getSource()
-               .sendSuccess(() -> Component.literal("Placed " + structures.size() + " NBTs: " + finalAll.toString())
-                                           .setStyle(Style.EMPTY.withColor(ChatFormatting.LIGHT_PURPLE)), true);
+               .sendSuccess(
+                       () -> Component.literal("Placed " + structures.size() + " NBTs: " + finalAll.toString())
+                                      .setStyle(Style.EMPTY.withColor(ChatFormatting.LIGHT_PURPLE)), true
+               );
 
 
             return 0;
@@ -511,10 +531,12 @@ class PlaceCommandBuilder {
         );
         ResourceLocation connector = ResourceLocationArgument.getId(ctx, CONNECTOR_NAME);
         if (connector.getNamespace().equals("-")) {
-            connector = ResourceLocation.fromNamespaceAndPath(pool
-                    .key()
-                    .location()
-                    .getNamespace(), connector.getPath());
+            connector = ResourceLocation.fromNamespaceAndPath(
+                    pool
+                            .key()
+                            .location()
+                            .getNamespace(), connector.getPath()
+            );
         }
         BlockState replaceWith = hasReplaceArg
                 ? BlockStateArgument.getBlock(ctx, REPLACE_WITH).getState()
@@ -569,9 +591,18 @@ class PlaceCommandBuilder {
         level.setBlock(pos, Blocks.SPAWNER.defaultBlockState(), BlocksHelper.SET_SILENT);
 
         if (level.getBlockEntity(pos) instanceof SpawnerBlockEntity entity) {
-            CompoundTag tag = TagParser.parseTag(
+            CompoundTag tag = TagParser.parseCompoundFully(
                     "{SpawnData:{entity:{id:wither_skeleton,PersistenceRequired:1,HandItems:[{Count:1,id:netherite_sword},{Count:1,id:shield}],ArmorItems:[{Count:1,id:netherite_boots,tag:{Enchantments:[{id:protection,lvl:1}]}},{Count:1,id:netherite_leggings,tag:{Enchantments:[{id:protection,lvl:1}]}},{Count:1,id:netherite_chestplate,tag:{Enchantments:[{id:protection,lvl:1},{id:thorns,lvl:3}]}},{Count:1,id:netherite_helmet,tag:{Enchantments:[{id:protection,lvl:1}]}}],HandDropChances:[0.0f,0.0f],ArmorDropChances:[0.0f,0.0f,0.0f,0.0f]}, custom_spawn_rules:{sky_light_limit:{max_inclusive:13},block_light_limit:{max_inclusive:11}}},SpawnRange:4,SpawnCount:8,MaxNearbyEntities:18,Delay:499,MinSpawnDelay:300,MaxSpawnDelay:1600,RequiredPlayerRange:20}");
-            entity.loadCustomOnly(tag, ctx.getSource().registryAccess());
+
+            try (ProblemReporter.ScopedCollector scopedCollector = new ProblemReporter.ScopedCollector(
+                    entity.problemPath(), LOGGER
+            )) {
+                entity.loadCustomOnly(TagValueInput.create(
+                        scopedCollector,
+                        ctx.getSource().registryAccess(),
+                        tag
+                ));
+            }
         }
 
         return Command.SINGLE_SUCCESS;
@@ -612,19 +643,23 @@ public class PlaceCommand {
     }
 
     private static void replaceAir(Level level, BoundingBox bb) {
-        BlocksHelper.forAllInBounds(bb, (bp) -> {
-            if (level.getBlockState(bp).is(Blocks.AIR)) {
-                level.setBlock(bp, Blocks.STRUCTURE_VOID.defaultBlockState(), BlocksHelper.SET_OBSERV);
-            }
-        });
+        BlocksHelper.forAllInBounds(
+                bb, (bp) -> {
+                    if (level.getBlockState(bp).is(Blocks.AIR)) {
+                        level.setBlock(bp, Blocks.STRUCTURE_VOID.defaultBlockState(), BlocksHelper.SET_OBSERV);
+                    }
+                }
+        );
     }
 
     private static void removeLootTableSeed(Level level, BoundingBox bb) {
-        BlocksHelper.forAllInBounds(bb, (bp) -> {
-            if (level.getBlockEntity(bp) instanceof RandomizableContainerBlockEntity rnd) {
-                rnd.setLootTable(rnd.getLootTable(), 0);
-            }
-        });
+        BlocksHelper.forAllInBounds(
+                bb, (bp) -> {
+                    if (level.getBlockEntity(bp) instanceof RandomizableContainerBlockEntity rnd) {
+                        rnd.setLootTable(rnd.getLootTable(), 0);
+                    }
+                }
+        );
     }
 
     static void fill(Level level, BoundingBox bb, BlockState blockState) {
@@ -681,7 +716,7 @@ public class PlaceCommand {
         if (stack.getLevel().getBlockEntity(commandBlockPos) instanceof CommandBlockEntity entity) {
             entity.setAutomatic(false);
             entity.setPowered(false);
-            entity.onlyOpCanSetNbt();
+            entity.getType().onlyOpCanSetNbt();
             entity.getCommandBlock().shouldInformAdmins();
             entity.getCommandBlock()
                   .setCommand(
@@ -740,8 +775,10 @@ public class PlaceCommand {
         if (blockInput != null) {
             bb = adapt(bbNBT, true, structureBlock);
             outline(stack.getLevel(), bb, blockInput.getState());
-            stack.sendSuccess(() -> Component.literal("Placed border: " + bb.toString())
-                                             .setStyle(Style.EMPTY.withColor(ChatFormatting.GREEN)), true);
+            stack.sendSuccess(
+                    () -> Component.literal("Placed border: " + bb.toString())
+                                   .setStyle(Style.EMPTY.withColor(ChatFormatting.GREEN)), true
+            );
         } else {
             bb = adapt(bbNBT, false, structureBlock);
         }
@@ -754,8 +791,10 @@ public class PlaceCommand {
         }
         removeLootTableSeed(stack.getLevel(), bbNBT);
 
-        stack.sendSuccess(() -> Component.literal("Placed NBT: " + bbNBT.toString())
-                                         .setStyle(Style.EMPTY.withColor(ChatFormatting.GREEN)), true);
+        stack.sendSuccess(
+                () -> Component.literal("Placed NBT: " + bbNBT.toString())
+                               .setStyle(Style.EMPTY.withColor(ChatFormatting.GREEN)), true
+        );
 
         if (structureBlock) {
             createControlBlocks(stack, location, bbNBT);

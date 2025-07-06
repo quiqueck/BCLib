@@ -233,12 +233,14 @@ public class DataFixerAPI {
                                  if (profile != null && showUI) {
                                      //something went wrong, show the user our error
                                      if (state.didFail || state.hasError()) {
-                                         showLevelFixErrorScreen(state, (markFixed) -> {
-                                             if (markFixed) {
-                                                 profile.markApplied();
-                                             }
-                                             onResume.accept(applyFixes);
-                                         });
+                                         showLevelFixErrorScreen(
+                                                 state, (markFixed) -> {
+                                                     if (markFixed) {
+                                                         profile.markApplied();
+                                                     }
+                                                     onResume.accept(applyFixes);
+                                                 }
+                                         );
                                      } else {
                                          onResume.accept(applyFixes);
                                      }
@@ -325,7 +327,11 @@ public class DataFixerAPI {
         progress.incAtomic(maxProgress);
 
         progress.progressStage(Component.translatable("message.bclib.datafixer.progress.players"));
-        RegionStorageInfo regionStorageInfo = new RegionStorageInfo(levelID, ResourceKey.create(Registries.DIMENSION, BCLib.makeID("world_fixer")), "mca");
+        RegionStorageInfo regionStorageInfo = new RegionStorageInfo(
+                levelID,
+                ResourceKey.create(Registries.DIMENSION, BCLib.makeID("world_fixer")),
+                "mca"
+        );
         players.parallelStream().forEach((file) -> {
             fixPlayer(profile, state, file.toPath(), regionStorageInfo);
             progress.incAtomic(maxProgress);
@@ -422,30 +428,38 @@ public class DataFixerAPI {
 
     private static void fixPlayerNbt(CompoundTag player, boolean[] changed, MigrationProfile data) {
         //Checking Inventory
-        ListTag inventory = player.getList("Inventory", Tag.TAG_COMPOUND);
-        fixItemArrayWithID(inventory, changed, data, true);
+        player
+                .getList("Inventory")
+                .ifPresent(inventory -> fixItemArrayWithID(inventory, changed, data, true));
+
 
         //Checking EnderChest
-        ListTag enderitems = player.getList("EnderItems", Tag.TAG_COMPOUND);
-        fixItemArrayWithID(enderitems, changed, data, true);
+        player
+                .getList("EnderItems")
+                .ifPresent(enderItems -> fixItemArrayWithID(enderItems, changed, data, true));
+
+        ;
 
         //Checking ReceipBook
         if (player.contains("recipeBook")) {
-            CompoundTag recipeBook = player.getCompound("recipeBook");
-            changed[0] |= fixStringIDList(recipeBook, "recipes", data);
-            changed[0] |= fixStringIDList(recipeBook, "toBeDisplayed", data);
+            player.getCompound("recipeBook").ifPresent(
+                    recipeBook -> {
+                        changed[0] |= fixStringIDList(recipeBook, "recipes", data);
+                        changed[0] |= fixStringIDList(recipeBook, "toBeDisplayed", data);
+                    }
+            );
         }
     }
 
     static boolean fixStringIDList(CompoundTag root, String name, MigrationProfile data) {
         boolean _changed = false;
         if (root.contains(name)) {
-            ListTag items = root.getList(name, Tag.TAG_STRING);
+            ListTag items = root.getList(name).orElse(new ListTag());
             ListTag newItems = new ListTag();
 
             for (Tag tag : items) {
                 final StringTag str = (StringTag) tag;
-                final String replace = data.replaceStringFromIDs(str.getAsString());
+                final String replace = data.replaceStringFromIDs(str.value());
                 if (replace != null) {
                     _changed = true;
                     newItems.add(StringTag.valueOf(replace));
@@ -480,39 +494,45 @@ public class DataFixerAPI {
                         input.close();
 
                         //Checking TileEntities
-                        ListTag tileEntities = root.getCompound("Level")
-                                                   .getList("TileEntities", Tag.TAG_COMPOUND);
-                        fixItemArrayWithID(tileEntities, changed, data, true);
+                        root.getCompound("Level")
+                            .flatMap(c -> c.getList("TileEntities"))
+                            .ifPresent(tileEntities ->
+                                    fixItemArrayWithID(tileEntities, changed, data, true));
 
                         //Checking Entities
-                        ListTag entities = root.getList("Entities", Tag.TAG_COMPOUND);
-                        fixItemArrayWithID(entities, changed, data, true);
+                        root.getList("Entities")
+                            .ifPresent(entities ->
+                                    fixItemArrayWithID(entities, changed, data, true)
+                            );
 
                         //Checking Block Palette
-                        ListTag sections = root.getCompound("Level")
-                                               .getList("Sections", Tag.TAG_COMPOUND);
+                        ListTag sections = root
+                                .getCompound("Level")
+                                .flatMap(c -> c.getList("Sections"))
+                                .orElse(new ListTag());
+
                         sections.forEach((tag) -> {
-                            ListTag palette = ((CompoundTag) tag).getList("Palette", Tag.TAG_COMPOUND);
+                            ListTag palette = ((CompoundTag) tag).getList("Palette").orElse(new ListTag());
                             palette.forEach((blockTag) -> {
                                 CompoundTag blockTagCompound = ((CompoundTag) blockTag);
                                 changed[0] |= data.replaceStringFromIDs(blockTagCompound, "Name");
                             });
 
-                            try {
-                                changed[0] |= data.patchBlockState(
-                                        palette,
-                                        ((CompoundTag) tag).getList(
-                                                "BlockStates",
-                                                Tag.TAG_LONG
-                                        )
-                                );
-                            } catch (PatchDidiFailException e) {
-                                BCLib.LOGGER.error("Failed fixing BlockState in " + pos);
-                                state.addError("Failed fixing BlockState in " + pos + " (" + e.getMessage() + ")");
-                                state.didFail = true;
-                                changed[0] = false;
-                                e.printStackTrace();
-                            }
+
+                            ((CompoundTag) tag).getList(
+                                    "BlockStates"
+                            ).ifPresent(blockStates -> {
+                                try {
+                                    changed[0] |= data.patchBlockState(palette, blockStates);
+                                } catch (PatchDidiFailException e) {
+                                    BCLib.LOGGER.error("Failed fixing BlockState in " + pos);
+                                    state.addError("Failed fixing BlockState in " + pos + " (" + e.getMessage() + ")");
+                                    state.didFail = true;
+                                    changed[0] = false;
+                                    e.printStackTrace();
+                                }
+                            });
+
                         });
 
                         if (changed[0]) {
@@ -559,12 +579,13 @@ public class DataFixerAPI {
             fixID(item, changed, data, recursive);
         }
 
-        if (recursive && tag.contains("Items")) {
-            fixItemArrayWithID(tag.getList("Items", Tag.TAG_COMPOUND), changed, data, true);
+        if (recursive) {
+            tag.getList("Items")
+               .ifPresent(items -> fixItemArrayWithID(items, changed, data, true));
         }
-        if (recursive && tag.contains("Inventory")) {
-            ListTag inventory = tag.getList("Inventory", Tag.TAG_COMPOUND);
-            fixItemArrayWithID(inventory, changed, data, true);
+        if (recursive) {
+            tag.getList("Inventory")
+               .ifPresent(inventory -> fixItemArrayWithID(inventory, changed, data, true));
         }
         if (tag.contains("tag")) {
             CompoundTag entityTag = (CompoundTag) tag.get("tag");

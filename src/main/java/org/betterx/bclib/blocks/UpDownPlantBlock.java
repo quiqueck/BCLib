@@ -98,7 +98,7 @@ public abstract class UpDownPlantBlock extends BaseBlockNotFull implements Rende
             ItemStack stack
     ) {
         super.playerDestroy(world, player, pos, state, blockEntity, stack);
-        world.neighborChanged(pos, Blocks.AIR, pos.below());
+        world.updateNeighborsAt(pos.below(), Blocks.AIR);
     }
 
     @Override

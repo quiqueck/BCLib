@@ -5,7 +5,6 @@ import org.betterx.bclib.behaviours.interfaces.BehaviourCompostable;
 import org.betterx.bclib.behaviours.interfaces.BehaviourLeaves;
 import org.betterx.bclib.behaviours.interfaces.BehaviourSaplingLike;
 import org.betterx.bclib.behaviours.interfaces.BehaviourSeedLike;
-import org.betterx.bclib.items.tool.*;
 import org.betterx.wover.block.api.BlockRegistry;
 import org.betterx.wover.core.api.ModCore;
 import org.betterx.wover.datagen.api.WoverAutoProvider;
@@ -14,7 +13,6 @@ import org.betterx.wover.item.api.ItemRegistry;
 import org.betterx.wover.tag.api.event.context.ItemTagBootstrapContext;
 import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
 import org.betterx.wover.tag.api.predefined.CommonItemTags;
-import org.betterx.wover.tag.api.predefined.ToolTags;
 
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
@@ -27,19 +25,7 @@ public class BCLAutoItemTagProvider extends WoverTagProvider.ForItems implements
     }
 
     private static void processItemCommon(TagBootstrapContext<Item> context, Item item) {
-        if (item instanceof BaseShovelItem) {
-            context.add(item, ToolTags.FABRIC_SHOVELS, ItemTags.SHOVELS);
-        } else if (item instanceof BaseSwordItem) {
-            context.add(item, ToolTags.FABRIC_SWORDS, ItemTags.SWORDS);
-        } else if (item instanceof BasePickaxeItem) {
-            context.add(item, ToolTags.FABRIC_PICKAXES, ItemTags.PICKAXES);
-        } else if (item instanceof BaseAxeItem) {
-            context.add(item, ToolTags.FABRIC_AXES, ItemTags.AXES);
-        } else if (item instanceof BaseHoeItem) {
-            context.add(item, ToolTags.FABRIC_HOES, ItemTags.HOES);
-        } else if (item instanceof BaseShearsItem) {
-            context.add(item, ToolTags.FABRIC_SHEARS, CommonItemTags.SHEARS);
-        }
+
     }
 
     private static void processBlockItemCommon(TagBootstrapContext<Item> context, Block block) {

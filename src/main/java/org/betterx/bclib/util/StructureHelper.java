@@ -69,7 +69,7 @@ public class StructureHelper {
         CompoundTag nbttagcompound = NbtIo.readCompressed(stream, NbtAccounter.unlimitedHeap());
 
         StructureTemplate template = new StructureTemplate();
-        template.load(BuiltInRegistries.BLOCK.asLookup(), nbttagcompound);
+        template.load(BuiltInRegistries.BLOCK, nbttagcompound);
 
         return template;
     }

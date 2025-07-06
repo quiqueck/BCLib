@@ -140,7 +140,7 @@ public class DataHandlerDescriptor<T extends DataHandlerDescriptor.PacketPayload
         BaseDataHandler<T> h = this.INSTANCE.get();
         //noinspection unchecked
         h.receiveFromClient(
-                context.player().server,
+                context.player().getServer(),
                 context.player(),
                 context.player().connection,
                 (T) payload,

@@ -91,7 +91,7 @@ public abstract class BCLBaseRecipeBuilder<I extends BaseRecipeBuilder<I>, R ext
     }
 
     protected ResourceLocation createAdvancementId() {
-        return key.withPrefix("recipes/" + category.getFolderName() + "/");
+        return key.location().withPrefix("recipes/" + category.getFolderName() + "/");
     }
 
     public I setPrimaryInput(ItemLike... inputs) {

@@ -12,7 +12,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.Slice;
 
 @Mixin(value = LivingEntity.class, priority = 199)
 public abstract class LivingEntityMixin {
@@ -21,11 +20,7 @@ public abstract class LivingEntityMixin {
     public abstract ItemStack getItemBySlot(EquipmentSlot equipmentSlot);
 
     @ModifyArg(
-            method = "travel",
-            slice = @Slice(
-                    from = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;isFallFlying()Z"),
-                    to = @At(value = "INVOKE:LAST", target = "Lnet/minecraft/world/entity/LivingEntity;setSharedFlag(IZ)V")
-            ),
+            method = "travelFallFlying",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;setDeltaMovement(Lnet/minecraft/world/phys/Vec3;)V")
     )
     public Vec3 be_travel(Vec3 moveDelta) {

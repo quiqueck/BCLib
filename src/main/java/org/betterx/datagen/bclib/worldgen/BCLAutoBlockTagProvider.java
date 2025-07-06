@@ -17,7 +17,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 
-import net.fabricmc.fabric.api.registry.FuelRegistry;
+import net.fabricmc.fabric.api.registry.FuelRegistryEvents;
+
 
 public class BCLAutoBlockTagProvider extends WoverTagProvider.ForBlocks implements WoverAutoProvider {
     public BCLAutoBlockTagProvider(ModCore modCore) {
@@ -114,7 +115,7 @@ public class BCLAutoBlockTagProvider extends WoverTagProvider.ForBlocks implemen
         }
 
         if (block instanceof Fuel fl) {
-            FuelRegistry.INSTANCE.add(block, fl.getFuelTime());
+            FuelRegistryEvents.BUILD.register((builder, fuelContext) -> builder.add(block, fl.getFuelTime()));
         }
 
         final ResourceLocation location = BuiltInRegistries.BLOCK.getKey(block);

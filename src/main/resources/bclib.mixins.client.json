@@ -9,14 +9,11 @@
     "BlockMixin",
     "ClientLevelMixin",
     "ClientPacketListenerMixin",
-    "ClientRecipeBookMixin",
     "DebugRendererMixin",
-    "FogRendererMixin",
     "LevelRendererAccessor",
     "LevelRendererMixin",
     "MinecraftMixin",
-    "ModelManagerMixin",
-    "boat.BoatRendererMixin"
+    "ModelManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

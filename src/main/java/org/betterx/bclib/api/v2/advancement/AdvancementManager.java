@@ -9,7 +9,6 @@ import org.betterx.wover.sets.api.blocks.WoodenBlockSet;
 
 import net.minecraft.advancements.*;
 import net.minecraft.advancements.critereon.*;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -193,20 +192,6 @@ public class AdvancementManager {
             b = displayBuilder.endDisplay();
             b.canBuild = canBuild;
             return b;
-        }
-
-        public static <C extends RecipeInput, T extends RecipeHolder<Recipe<C>>> Builder createRecipe(
-                T recipe,
-                AdvancementType type
-        ) {
-            Item item = recipe.value().getResultItem(Minecraft.getInstance().level.registryAccess()).getItem();
-            return create(item, type, displayBuilder -> displayBuilder.hideToast().hideFromChat())
-                    //.awardRecipe(item)
-                    .addRecipeUnlockCriterion("has_the_recipe", recipe)
-                    .startReward()
-                    .addRecipe(recipe.id())
-                    .endReward()
-                    .requirements(AdvancementRequirements.Strategy.OR);
         }
 
         public Builder parent(AdvancementHolder advancement) {

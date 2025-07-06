@@ -1,5 +1,6 @@
 package org.betterx.bclib.mixin.client;
 
+import de.ambertation.wunderlib.utils.ColorUtilARGB32;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.interfaces.AirSelectionItem;
 
@@ -11,7 +12,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.debug.DebugRenderer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.FastColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -60,10 +60,10 @@ public class DebugRendererMixin {
                         poseStack, consumer,
                         state.getShape(minecraft.level, pos, CollisionContext.of(camera.getEntity())),
                         pos.getX() - camPos.x(), pos.getY() - camPos.y(), pos.getZ() - camPos.z(),
-                        FastColor.ARGB32.red(color) / (float) 0xff,
-                        FastColor.ARGB32.green(color) / (float) 0xff,
-                        FastColor.ARGB32.blue(color) / (float) 0xff,
-                        FastColor.ARGB32.alpha(color) / (float) 0xff
+                        ColorUtilARGB32.red(color) / (float) 0xff,
+                        ColorUtilARGB32.green(color) / (float) 0xff,
+                        ColorUtilARGB32.blue(color) / (float) 0xff,
+                        ColorUtilARGB32.alpha(color) / (float) 0xff
                 );
             }
         }

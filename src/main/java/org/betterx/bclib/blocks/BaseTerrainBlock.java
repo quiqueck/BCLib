@@ -72,8 +72,10 @@ public class BaseTerrainBlock extends BaseBlock implements BlockLootProvider, Bl
             if (!level.isClientSide) {
                 level.setBlockAndUpdate(pos, pathBlock.defaultBlockState());
                 if (!player.isCreative()) {
-                    player.getMainHandItem().hurtAndBreak(1, (ServerLevel) level, (ServerPlayer) player, i -> {
-                    });
+                    player.getMainHandItem().hurtAndBreak(
+                            1, (ServerLevel) level, (ServerPlayer) player, i -> {
+                            }
+                    );
                 }
             }
             return InteractionResult.SUCCESS;
@@ -97,13 +99,10 @@ public class BaseTerrainBlock extends BaseBlock implements BlockLootProvider, Bl
             return false;
         } else {
             int i = LightEngine.getLightBlockInto(
-                    worldView,
                     state,
-                    pos,
                     blockState,
-                    blockPos,
                     Direction.UP,
-                    blockState.getLightBlock(worldView, blockPos)
+                    blockState.getLightBlock()
             );
             return i < 5;
         }

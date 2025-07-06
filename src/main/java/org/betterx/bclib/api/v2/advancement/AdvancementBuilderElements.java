@@ -2,6 +2,7 @@ package org.betterx.bclib.api.v2.advancement;
 
 import net.minecraft.advancements.AdvancementType;
 import net.minecraft.advancements.DisplayInfo;
+import net.minecraft.core.ClientAsset;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -37,7 +38,7 @@ class Display {
     DisplayInfo build() {
         return new DisplayInfo(
                 icon, title, description,
-                background == null ? Optional.empty() : Optional.of(background),
+                background == null ? Optional.empty() : Optional.of(new ClientAsset(background)),
                 frame, showToast, announceChat, hidden
         );
     }

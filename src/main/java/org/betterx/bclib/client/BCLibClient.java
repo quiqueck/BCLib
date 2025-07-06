@@ -5,8 +5,9 @@ import org.betterx.bclib.api.v2.PostInitAPI;
 import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
 import org.betterx.bclib.client.models.CustomModelBakery;
 import org.betterx.bclib.client.textures.AtlasSetManager;
-import org.betterx.bclib.client.textures.SpriteLister;
 import org.betterx.bclib.registry.BaseBlockEntityRenders;
+
+import net.minecraft.client.renderer.texture.atlas.sources.DirectoryLister;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
@@ -31,8 +32,8 @@ public class BCLibClient implements ClientModInitializer {
         PostInitAPI.postInit(true);
         ModelLoadingPlugin.register(BCLibClient::onInitializeModelLoader);
 
-        AtlasSetManager.addSource(AtlasSetManager.VANILLA_BLOCKS, new SpriteLister("entity/chest"));
-        AtlasSetManager.addSource(AtlasSetManager.VANILLA_BLOCKS, new SpriteLister("blocks"));
+        AtlasSetManager.addSource(AtlasSetManager.VANILLA_BLOCKS, new DirectoryLister("entity/chest", "entity/chest/"));
+        AtlasSetManager.addSource(AtlasSetManager.VANILLA_BLOCKS, new DirectoryLister("blocks", "blocks/"));
     }
 
 

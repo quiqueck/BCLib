@@ -22,11 +22,6 @@ import java.util.Optional;
 public class MatchToolMixin {
     @Unique
     private boolean bcl_isShears;
-    @Unique
-    private static final ItemPredicate BCL_SHEARS_PREDICATE = ItemPredicate.Builder
-            .item()
-            .of(CommonItemTags.SHEARS)
-            .build();
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void bcl_initShears(Optional<ItemPredicate> optional, CallbackInfo ci) {
@@ -43,8 +38,8 @@ public class MatchToolMixin {
     @Inject(method = "test(Lnet/minecraft/world/level/storage/loot/LootContext;)Z", at = @At("HEAD"), cancellable = true)
     private void bcl_isShears(LootContext lootContext, CallbackInfoReturnable<Boolean> cir) {
         if (bcl_isShears) {
-            ItemStack itemStack = lootContext.getParamOrNull(LootContextParams.TOOL);
-            cir.setReturnValue(itemStack != null && BCL_SHEARS_PREDICATE.test(itemStack));
+            ItemStack itemStack = lootContext.getOptionalParameter(LootContextParams.TOOL);
+            cir.setReturnValue(itemStack != null && itemStack.is(CommonItemTags.SHEARS));
         }
     }
 }
