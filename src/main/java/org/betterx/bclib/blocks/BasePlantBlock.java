@@ -45,22 +45,19 @@ public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderL
 
 
     @Override
-    @SuppressWarnings("deprecation")
-    public VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext ePos) {
-        Vec3 vec3d = state.getOffset(view, pos);
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext ePos) {
+        Vec3 vec3d = state.getOffset(pos);
         return SHAPE.move(vec3d.x, vec3d.y, vec3d.z);
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         BlockState down = level.getBlockState(pos.below());
         return isTerrain(down);
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    protected BlockState updateShape(
+    protected @NotNull BlockState updateShape(
             BlockState state,
             LevelReader level,
             ScheduledTickAccess scheduledTickAccess,
@@ -107,7 +104,7 @@ public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderL
     @Override
     @Environment(EnvType.CLIENT)
     public void provideBlockModels(WoverBlockModelGenerators generator) {
-        generator.vanillaGenerator.createCrossBlock(this, BlockModelGenerators.TintState.NOT_TINTED);
+        generator.vanillaGenerator.createCrossBlock(this, BlockModelGenerators.PlantType.NOT_TINTED);
         generator.createFlatItem(this);
     }
 

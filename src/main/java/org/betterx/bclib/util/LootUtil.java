@@ -3,18 +3,20 @@ package org.betterx.bclib.util;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.interfaces.LootPoolAccessor;
 import org.betterx.bclib.interfaces.tools.*;
-import org.betterx.bclib.items.tool.BaseShearsItem;
+import org.betterx.wover.tag.api.TagManager;
 import org.betterx.wover.tag.api.predefined.CommonItemTags;
+import org.betterx.wover.tag.api.predefined.MineableTags;
 import org.betterx.wover.tag.api.predefined.ToolTags;
 
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -33,8 +35,8 @@ public class LootUtil {
             BlockState state,
             LootParams.Builder builder
     ) {
-        ResourceKey<LootTable> tableID = block.getLootTable();
-        if (tableID == BuiltInLootTables.EMPTY) {
+        ResourceKey<LootTable> tableID = block.getLootTable().orElse(null);
+        if (tableID == null) {
             return Optional.empty();
         }
 
@@ -56,7 +58,7 @@ public class LootUtil {
                     f.setAccessible(true);
                     List<?> list = (List<?>) f.get(table);
                     if (list != null && list.size() > 0) {
-                        Object first = list.get(0);
+                        Object first = list.getFirst();
                         if (first != null && LootPool.class.isAssignableFrom(first.getClass())) {
                             pools = (List<LootPool>) list;
                             break;
@@ -79,6 +81,21 @@ public class LootUtil {
         return false;
     }
 
+    public static boolean isShear(ItemStack tool) {
+        return tool.is(Items.SHEARS) | tool.is(CommonItemTags.SHEARS) || TagManager.isToolWithMineableTag(
+                tool,
+                MineableTags.SHEARS
+        );
+    }
+
+    public static boolean isShear(ItemStack itemStack, Item item) {
+        if (item == Items.SHEARS) {
+            return itemStack.is(item) | itemStack.is(CommonItemTags.SHEARS);
+        } else {
+            return itemStack.is(item);
+        }
+    }
+
     public static boolean isCorrectTool(ItemLike block, BlockState state, ItemStack tool) {
         if (tool == null) return false;
         if (state != null && tool.isCorrectToolForDrops(state)) return true;
@@ -99,10 +116,10 @@ public class LootUtil {
             if (tool.is(ItemTags.SWORDS) || tool.is(ToolTags.FABRIC_SWORDS)) return true;
         }
         if (block instanceof AddMineableShears) {
-            if (BaseShearsItem.isShear(tool)) return true;
+            if (isShear(tool)) return true;
         }
         if (block instanceof AddMineableHammer) {
-            if (tool.is(CommonItemTags.HAMMERS)) return true;
+            return tool.is(CommonItemTags.HAMMERS);
         }
         return false;
     }

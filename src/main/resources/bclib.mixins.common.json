@@ -6,7 +6,6 @@
   "mixins": [
     "AnvilBlockMixin",
     "AnvilMenuMixin",
-    "BiomeGenerationSettingsAccessor",
     "BiomeMixin",
     "BoneMealItemMixin",
     "ChunkGeneratorMixin",

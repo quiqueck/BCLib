@@ -240,8 +240,8 @@ public abstract class TemplateStructure extends Structure {
     private boolean hasValidBiomeAtRandomHeight(GenerationContext ctx, int x, int z) {
         final int randomY = ctx.random()
                                .nextIntBetweenInclusive(
-                                       ctx.heightAccessor().getMinBuildHeight(),
-                                       ctx.heightAccessor().getMaxBuildHeight()
+                                       ctx.heightAccessor().getMinY(),
+                                       ctx.heightAccessor().getMaxY()
                                );
 
         Holder<Biome> holder = ctx.chunkGenerator()

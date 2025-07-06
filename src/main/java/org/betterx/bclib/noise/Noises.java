@@ -28,7 +28,7 @@ public class Noises {
             RandomSource randomSource,
             ResourceKey<NormalNoise.NoiseParameters> resourceKey
     ) {
-        Holder<NormalNoise.NoiseParameters> holder = registry.getHolderOrThrow(resourceKey);
+        Holder<NormalNoise.NoiseParameters> holder = registry.get(resourceKey).orElse(null);
         return NormalNoise.create(randomSource, holder.value());
     }
 

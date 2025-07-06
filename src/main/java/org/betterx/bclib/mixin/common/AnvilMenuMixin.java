@@ -7,6 +7,7 @@ import org.betterx.bclib.recipes.AnvilRecipe;
 import org.betterx.bclib.recipes.AnvilRecipeInput;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Inventory;
@@ -15,7 +16,6 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LevelEvent;
@@ -45,15 +45,16 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu implements AnvilSc
     @Unique
     private DataSlot bcl_anvilLevel;
 
-
     public AnvilMenuMixin(
             @Nullable MenuType<?> menuType,
             int i,
             Inventory inventory,
-            ContainerLevelAccess containerLevelAccess
+            ContainerLevelAccess containerLevelAccess,
+            ItemCombinerMenuSlotDefinition itemCombinerMenuSlotDefinition
     ) {
-        super(menuType, i, inventory, containerLevelAccess);
+        super(menuType, i, inventory, containerLevelAccess, itemCombinerMenuSlotDefinition);
     }
+
 
     @Unique
     private AnvilRecipeInput bcl_AnvilRecipeInput(TagKey<Item> allowedTools) {
@@ -128,22 +129,22 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu implements AnvilSc
 
     @Inject(method = "createResult", at = @At("HEAD"), cancellable = true)
     public void bcl_updateOutput(CallbackInfo info) {
-        AnvilRecipeInput recipeInput = this.bcl_AnvilRecipeInput(null);
-        RecipeManager recipeManager = this.player.level().getRecipeManager();
-        bcl_recipes = recipeManager.getRecipesFor(AnvilRecipe.TYPE, recipeInput, player.level());
-        if (!bcl_recipes.isEmpty()) {
-            int anvilLevel = this.bcl_anvilLevel.get();
-            bcl_recipes = bcl_recipes.stream()
-                                     .filter(recipe -> anvilLevel >= recipe.value().getAnvilLevel())
-                                     .collect(Collectors.toList());
+        if (this.player.level() instanceof ServerLevel level) {
+            bcl_recipes = level.recipeAccess().getAllOfType(AnvilRecipe.TYPE).stream().toList();
             if (!bcl_recipes.isEmpty()) {
-                if (bcl_currentRecipe == null || !bcl_recipes.contains(bcl_currentRecipe)) {
-                    bcl_currentRecipe = bcl_recipes.get(0);
+                int anvilLevel = this.bcl_anvilLevel.get();
+                bcl_recipes = bcl_recipes.stream()
+                                         .filter(recipe -> anvilLevel >= recipe.value().getAnvilLevel())
+                                         .collect(Collectors.toList());
+                if (!bcl_recipes.isEmpty()) {
+                    if (bcl_currentRecipe == null || !bcl_recipes.contains(bcl_currentRecipe)) {
+                        bcl_currentRecipe = bcl_recipes.stream().findFirst().orElse(null);
+                    }
+                    bcl_updateResult();
+                    info.cancel();
+                } else {
+                    bcl_currentRecipe = null;
                 }
-                bcl_updateResult();
-                info.cancel();
-            } else {
-                bcl_currentRecipe = null;
             }
         }
     }

@@ -27,7 +27,7 @@ public class BoneMealItemMixin {
 
         if (context.getPlayer().isCreative()) {
             if (BonemealAPI.INSTANCE.runSpreaders(context.getItemInHand(), level, blockPos, true)) {
-                info.setReturnValue(InteractionResult.sidedSuccess(level.isClientSide));
+                info.setReturnValue(level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER);
             }
 
             final BlockState blockState = level.getBlockState(blockPos);
@@ -36,7 +36,7 @@ public class BoneMealItemMixin {
                     && blockState.getBlock() instanceof FeatureSaplingBlock<?, ?>
             ) {
                 bblock.performBonemeal(server, context.getLevel().getRandom(), blockPos, blockState);
-                info.setReturnValue(InteractionResult.sidedSuccess(level.isClientSide));
+                info.setReturnValue(level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER);
             }
         }
     }

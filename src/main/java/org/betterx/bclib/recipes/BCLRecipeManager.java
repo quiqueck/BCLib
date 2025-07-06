@@ -12,11 +12,11 @@ import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.HashSet;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.List;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -77,7 +77,8 @@ public class BCLRecipeManager {
     }
 
     @ApiStatus.Internal
-    public static void removeDisabledRecipes(ResourceManager manager, Map<ResourceLocation, JsonElement> map) {
+    public static RecipeMap removeDisabledRecipes(ResourceManager manager, RecipeMap loadedRecipes) {
+        List<RecipeHolder<?>> recipeHolders = new LinkedList<>(loadedRecipes.values());
         clearRecipeConfig();
         DatapackConfigs
                 .instance()
@@ -86,7 +87,9 @@ public class BCLRecipeManager {
         for (ResourceLocation id : disabledRecipes) {
             BCLib.LOGGER.verbose("Disabling Recipe: {}", id);
 
-            map.remove(id);
+            recipeHolders.removeIf(holder -> holder.id().location().equals(id));
         }
+
+        return RecipeMap.create(recipeHolders);
     }
 }

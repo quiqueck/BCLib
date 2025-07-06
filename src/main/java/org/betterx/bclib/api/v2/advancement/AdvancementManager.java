@@ -1,16 +1,19 @@
 package org.betterx.bclib.api.v2.advancement;
 
-import org.betterx.bclib.complexmaterials.WoodenComplexMaterial;
-import org.betterx.bclib.complexmaterials.set.wood.WoodSlots;
+
 import org.betterx.wover.complex.api.equipment.ArmorSlot;
 import org.betterx.wover.complex.api.equipment.EquipmentSet;
 import org.betterx.wover.complex.api.equipment.ToolSlot;
+import org.betterx.wover.sets.api.blocks.SlotType;
+import org.betterx.wover.sets.api.blocks.WoodenBlockSet;
 
 import net.minecraft.advancements.*;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -85,7 +88,7 @@ public class AdvancementManager {
         }
 
 
-        public RewardsBuilder addRecipe(ResourceLocation resourceLocation) {
+        public RewardsBuilder addRecipe(ResourceKey<Recipe<?>> resourceLocation) {
             builder.addRecipe(resourceLocation);
             return this;
         }
@@ -157,8 +160,10 @@ public class AdvancementManager {
         }
 
         public static Builder create(ItemStack icon, AdvancementType type) {
-            return create(icon, type, (displayBuilder) -> {
-            });
+            return create(
+                    icon, type, (displayBuilder) -> {
+                    }
+            );
         }
 
         public static Builder create(Item icon, AdvancementType type, Consumer<DisplayBuilder> displayAdapter) {
@@ -260,7 +265,7 @@ public class AdvancementManager {
             for (ItemLike item : items) {
                 ResourceLocation id = BuiltInRegistries.ITEM.getKey(item.asItem());
                 if (id == null) continue;
-                rewardBuilder.addRecipe(id);
+                rewardBuilder.addRecipe(ResourceKey.create(Registries.RECIPE, id));
             }
             return rewardBuilder.endReward();
         }
@@ -322,17 +327,15 @@ public class AdvancementManager {
 
         public Builder addInventoryChangedAnyCriterion(String name, ItemLike... items) {
             final Criterion<InventoryChangeTrigger.TriggerInstance> t =
-                    InventoryChangeTrigger.TriggerInstance.hasItems(
-                            ItemPredicate.Builder.item().of(items)
-                    );
+                    InventoryChangeTrigger.TriggerInstance.hasItems(items);
 
             return addCriterion(name, t);
         }
 
-        public Builder addInventoryChangedCriterion(String name, TagKey<Item> tag) {
+        public Builder addInventoryChangedCriterion(HolderLookup<Item> itemLookup, String name, TagKey<Item> tag) {
             final Criterion<InventoryChangeTrigger.TriggerInstance> t =
                     InventoryChangeTrigger.TriggerInstance.hasItems(
-                            ItemPredicate.Builder.item().of(tag)
+                            ItemPredicate.Builder.item().of(itemLookup, tag)
                     );
 
             return addCriterion(name, t);
@@ -369,12 +372,12 @@ public class AdvancementManager {
                     .addEquipmentSetSlotCriterion(set, ToolSlot.HOE_SLOT);
         }
 
-        public Builder addWoodCriterion(WoodenComplexMaterial mat) {
+        public Builder addWoodCriterion(WoodenBlockSet<?> mat) {
             return addInventoryChangedAnyCriterion(
-                    "got_" + mat.getBaseName(),
-                    mat.getBlock(WoodSlots.LOG),
-                    mat.getBlock(WoodSlots.BARK),
-                    mat.getBlock(WoodSlots.PLANKS)
+                    "got_" + mat.baseName,
+                    mat.getBlock(SlotType.LOG),
+                    mat.getBlock(SlotType.BARK),
+                    mat.getBlock(SlotType.PLANKS)
             );
         }
 

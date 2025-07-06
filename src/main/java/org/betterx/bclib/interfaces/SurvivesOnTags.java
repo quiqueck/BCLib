@@ -1,5 +1,6 @@
 package org.betterx.bclib.interfaces;
 
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.TagKey;
@@ -10,6 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public interface SurvivesOnTags extends SurvivesOnSpecialGround {
@@ -19,10 +21,10 @@ public interface SurvivesOnTags extends SurvivesOnSpecialGround {
     default String getSurvivableBlocksString() {
         return getSurvivableTags()
                 .stream()
-                .map(tag -> BuiltInRegistries.BLOCK.getTag(tag))
-                .filter(named -> named.isPresent())
-                .map(named -> named.get())
-                .flatMap(named -> named.stream())
+                .map(BuiltInRegistries.BLOCK::get)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .flatMap(HolderSet.ListBacked::stream)
                 .filter(block -> block != Blocks.AIR && block != null)
                 .map(block -> {
                     ItemStack stack = new ItemStack(block.value());

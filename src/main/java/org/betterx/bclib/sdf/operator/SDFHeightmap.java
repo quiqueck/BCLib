@@ -27,10 +27,10 @@ public class SDFHeightmap extends SDFDisplacement {
             int z2 = z1 + 1;
             dx = dx - x1;
             dz = dz - z1;
-            float a = (map.getPixelRGBA(x1, z1) & 255) / 255F;
-            float b = (map.getPixelRGBA(x2, z1) & 255) / 255F;
-            float c = (map.getPixelRGBA(x1, z2) & 255) / 255F;
-            float d = (map.getPixelRGBA(x2, z2) & 255) / 255F;
+            float a = (map.getPixel(x1, z1) & 255) / 255F;
+            float b = (map.getPixel(x2, z1) & 255) / 255F;
+            float c = (map.getPixel(x1, z2) & 255) / 255F;
+            float d = (map.getPixel(x2, z2) & 255) / 255F;
             a = Mth.lerp(dx, a, b);
             b = Mth.lerp(dx, c, d);
             return -Mth.lerp(dz, a, b) * intensity;

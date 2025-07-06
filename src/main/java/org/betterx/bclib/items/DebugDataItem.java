@@ -8,6 +8,7 @@ import org.betterx.bclib.interfaces.ItemModelProvider;
 import org.betterx.bclib.util.BlocksHelper;
 import org.betterx.ui.ColorUtil;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.commands.arguments.blocks.BlockStateParser;
 import net.minecraft.core.BlockPos;
@@ -21,9 +22,10 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -34,17 +36,20 @@ import net.minecraft.world.level.block.JigsawBlock;
 import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
+import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.loot.LootTable;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
+import org.slf4j.Logger;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
 
 public class DebugDataItem extends Item implements ItemModelProvider, AirSelectionItem {
-
+    private static final Logger LOGGER = LogUtils.getLogger();
     public static final ResourceLocation DEFAULT_ICON = ResourceLocation.withDefaultNamespace("stick");
 
     public static InteractionResult fillStructureEntityBounds(
@@ -213,12 +218,18 @@ public class DebugDataItem extends Item implements ItemModelProvider, AirSelecti
     }
 
     @Override
-    public boolean canAttackBlock(BlockState blockState, Level level, BlockPos blockPos, Player player) {
+    public boolean canDestroyBlock(
+            ItemStack itemStack,
+            BlockState blockState,
+            Level level,
+            BlockPos blockPos,
+            LivingEntity livingEntity
+    ) {
         return true;
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
+    public InteractionResult use(Level level, Player player, InteractionHand interactionHand) {
         return AirSelectionItem.super.useOnAir(level, player, interactionHand);
     }
 
@@ -226,15 +237,19 @@ public class DebugDataItem extends Item implements ItemModelProvider, AirSelecti
         ResourceLocation iconId = BuiltInRegistries.ITEM.getKey(icon);
         return new DebugDataItem(
                 (player, entity, ctx) -> {
-                    CompoundTag tag = entity.saveWithoutMetadata(player.registryAccess());
-                    tag.remove(RandomizableContainerBlockEntity.LOOT_TABLE_SEED_TAG);
-                    tag.remove("Items");
+                    try (ProblemReporter.ScopedCollector scopedCollector = new ProblemReporter.ScopedCollector(
+                            entity.problemPath(), LOGGER
+                    )) {
+                        CompoundTag tag = entity.saveWithoutMetadata(player.registryAccess());
+                        tag.remove(RandomizableContainerBlockEntity.LOOT_TABLE_SEED_TAG);
+                        tag.remove("Items");
 
-                    tag.putString(RandomizableContainerBlockEntity.LOOT_TABLE_TAG, table.location().toString());
+                        tag.putString(RandomizableContainerBlockEntity.LOOT_TABLE_TAG, table.location().toString());
 
-                    entity.loadCustomOnly(tag, player.registryAccess());
-                    message(player, "Did set Loot Table to " + table.toString());
-                    return InteractionResult.SUCCESS;
+                        entity.loadCustomOnly(TagValueInput.create(scopedCollector, player.registryAccess(), tag));
+                        message(player, "Did set Loot Table to " + table.toString());
+                        return InteractionResult.SUCCESS;
+                    }
                 },
                 false,
                 iconId
@@ -246,9 +261,17 @@ public class DebugDataItem extends Item implements ItemModelProvider, AirSelecti
         return new DebugDataItem(
                 (player, entity, ctx) -> {
                     if (entity instanceof SpawnerBlockEntity) {
-                        entity.loadCustomOnly(tag.get(), player.registryAccess());
-                        message(player, "Did set Data to " + tag.toString());
-                        return InteractionResult.SUCCESS;
+                        try (ProblemReporter.ScopedCollector scopedCollector = new ProblemReporter.ScopedCollector(
+                                entity.problemPath(), LOGGER
+                        )) {
+                            entity.loadCustomOnly(TagValueInput.create(
+                                    scopedCollector,
+                                    player.registryAccess(),
+                                    tag.get()
+                            ));
+                            message(player, "Did set Data to " + tag.toString());
+                            return InteractionResult.SUCCESS;
+                        }
                     }
                     return InteractionResult.FAIL;
                 },

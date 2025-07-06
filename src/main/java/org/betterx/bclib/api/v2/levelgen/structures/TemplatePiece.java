@@ -96,15 +96,9 @@ public class TemplatePiece extends TemplateStructurePiece {
                 structureTemplateManager,
                 (ResourceLocation resourceLocation) -> makeSettings(compoundTag)
         );
-        if (compoundTag.contains("E"))
-            this.erosion = compoundTag.getInt("E");
-        else
-            this.erosion = 0;
+        this.erosion = compoundTag.getInt("E").orElse(0);
+        this.cover = compoundTag.getBoolean("C").orElse(true);
 
-        if (compoundTag.contains("C"))
-            this.cover = compoundTag.getBoolean("C");
-        else
-            this.cover = true;
     }
 
     private static BlockPos shiftPos(
@@ -119,9 +113,13 @@ public class TemplatePiece extends TemplateStructurePiece {
 
     private static StructurePlaceSettings makeSettings(CompoundTag compoundTag) {
         return makeSettings(
-                Rotation.valueOf(compoundTag.getString("R")),
-                Mirror.valueOf(compoundTag.getString("M")),
-                new BlockPos(compoundTag.getInt("RX"), compoundTag.getInt("RY"), compoundTag.getInt("RZ"))
+                Rotation.valueOf(compoundTag.getString("R").orElse(Rotation.NONE.name())),
+                Mirror.valueOf(compoundTag.getString("M").orElse(Mirror.NONE.name())),
+                new BlockPos(
+                        compoundTag.getInt("RX").orElse(0),
+                        compoundTag.getInt("RY").orElse(0),
+                        compoundTag.getInt("RZ").orElse(0)
+                )
         );
 
     }
@@ -188,11 +186,13 @@ public class TemplatePiece extends TemplateStructurePiece {
             }
         }
         super.postProcess(world, structureManager, chunkGenerator, random, boundingBox, chunkPos, blockPos);
-        BoundingBox bounds = BoundingBox.fromCorners(new Vec3i(
-                boundingBox.minX(),
-                this.boundingBox.minY(),
-                boundingBox.minZ()
-        ), new Vec3i(boundingBox.maxX(), this.boundingBox.maxY(), boundingBox.maxZ()));
+        BoundingBox bounds = BoundingBox.fromCorners(
+                new Vec3i(
+                        boundingBox.minX(),
+                        this.boundingBox.minY(),
+                        boundingBox.minZ()
+                ), new Vec3i(boundingBox.maxX(), this.boundingBox.maxY(), boundingBox.maxZ())
+        );
 
         if (erosion > 0) {
             int x1 = MHelper.min(bounds.maxX(), this.boundingBox.maxX());

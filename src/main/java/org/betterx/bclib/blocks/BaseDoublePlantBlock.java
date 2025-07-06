@@ -76,14 +76,12 @@ public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements R
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext ePos) {
-        Vec3 vec3d = state.getOffset(view, pos);
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext ePos) {
+        Vec3 vec3d = state.getOffset(pos);
         return SHAPE.move(vec3d.x, vec3d.y, vec3d.z);
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
         BlockState down = world.getBlockState(pos.below());
         BlockState up = world.getBlockState(pos.above());
@@ -99,8 +97,7 @@ public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements R
     protected abstract boolean isTerrain(BlockState state);
 
     @Override
-    @SuppressWarnings("deprecation")
-    protected BlockState updateShape(
+    protected @NotNull BlockState updateShape(
             BlockState state,
             LevelReader level,
             ScheduledTickAccess scheduledTickAccess,

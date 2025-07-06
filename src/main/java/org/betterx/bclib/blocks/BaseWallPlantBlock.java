@@ -12,6 +12,7 @@ import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -19,6 +20,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import java.util.EnumMap;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class BaseWallPlantBlock extends BasePlantBlock {
     private static final EnumMap<Direction, VoxelShape> SHAPES = Maps.newEnumMap(ImmutableMap.of(
@@ -40,7 +42,7 @@ public abstract class BaseWallPlantBlock extends BasePlantBlock {
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext ePos) {
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext ePos) {
         return SHAPES.get(state.getValue(FACING));
     }
 
@@ -75,7 +77,7 @@ public abstract class BaseWallPlantBlock extends BasePlantBlock {
     }
 
     @Override
-    protected BlockState updateShape(
+    protected @NotNull BlockState updateShape(
             BlockState state,
             LevelReader level,
             ScheduledTickAccess scheduledTickAccess,

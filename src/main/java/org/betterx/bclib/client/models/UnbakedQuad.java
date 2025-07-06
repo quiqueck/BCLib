@@ -8,7 +8,7 @@ import net.minecraft.core.Direction;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -46,7 +46,7 @@ public class UnbakedQuad {
     }
 
     public BakedQuad bake(TextureAtlasSprite[] sprites, ModelState modelState) {
-        Matrix4f matrix = modelState.getRotation().getMatrix();
+        Matrix4fc matrix = modelState.transformation().getMatrix();
         TextureAtlasSprite sprite = sprites[spriteIndex];
         int[] vertexData = new int[32];
         for (int i = 0; i < 4; i++) {
@@ -65,6 +65,6 @@ public class UnbakedQuad {
             vertexData[index | 5] = Float.floatToIntBits(sprite.getV(data[dataIndex]));   // V
         }
         // vertices, tint index, direction, sprite, shade
-        return new BakedQuad(vertexData, 0, dir, sprites[spriteIndex], useShading);
+        return new BakedQuad(vertexData, 0, dir, sprites[spriteIndex], useShading, 0);
     }
 }

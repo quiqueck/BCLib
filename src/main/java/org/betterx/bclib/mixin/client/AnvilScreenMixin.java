@@ -9,6 +9,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.screens.inventory.AnvilScreen;
 import net.minecraft.client.gui.screens.inventory.ItemCombinerScreen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -44,7 +45,19 @@ public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
     @Override
     public void renderErrorIcon(GuiGraphics guiGraphics, int i, int j) {
         if (this.bcl_hasRecipeError()) {
-            guiGraphics.blit(ANVIL_LOCATION, i + 65, j + 46, this.imageWidth, 0, 28, 21);
+            guiGraphics.blit(
+                    RenderPipelines.GUI_TEXTURED,
+                    ANVIL_LOCATION,
+                    i + 65,
+                    j + 46,
+                    0,
+                    this.imageWidth,
+                    0,
+                    28,
+                    21,
+                    256,
+                    256
+            );
         }
     }
 
@@ -68,15 +81,14 @@ public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
         bcl_buttons.forEach(this::addWidget);
     }
 
-    @Inject(method = "renderFg", at = @At("TAIL"))
+    @Inject(method = "renderLabels", at = @At("HEAD"))
     protected void be_renderForeground(
             GuiGraphics guiGraphics,
             int mouseX,
             int mouseY,
-            float delta,
             CallbackInfo info
     ) {
-        bcl_buttons.forEach(button -> button.render(guiGraphics, mouseX, mouseY, delta));
+        bcl_buttons.forEach(button -> button.render(guiGraphics, mouseX, mouseY, 0));
     }
 
     @Inject(method = "slotChanged", at = @At("HEAD"), cancellable = true)

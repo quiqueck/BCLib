@@ -200,7 +200,7 @@ public class BehaviourBuilders {
     }
 
     public static BlockBehaviour.Properties createWallSign(MapColor color, Block dropBlock, boolean flammable) {
-        return createSign(color, flammable).dropsLike(dropBlock);
+        return createSign(color, flammable).overrideLootTable(dropBlock.getLootTable());
     }
 
     public static BlockBehaviour.Properties createTrapDoor(MapColor color, boolean flammable) {

@@ -9,13 +9,14 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
-import java.util.List;
 import java.util.Locale;
+import java.util.function.Consumer;
 
 public class BaseAnvilItem extends BlockItem implements ItemModelProvider {
     public final static String DESTRUCTION = "destruction";
@@ -31,7 +32,8 @@ public class BaseAnvilItem extends BlockItem implements ItemModelProvider {
         CustomData anvilData = stack.getOrDefault(BCLDataComponents.ANVIL_ENTITY_DATA, CustomData.EMPTY);
 
         @SuppressWarnings("deprecation")
-        int destruction = anvilData.contains(DESTRUCTION) ? anvilData.getUnsafe().getInt(DESTRUCTION) : 0;
+
+        int destruction = anvilData.getUnsafe().getInt(DESTRUCTION).orElse(0);
         if (blockState != null) {
             BaseAnvilBlock block = (BaseAnvilBlock) blockState.getBlock();
             IntegerProperty durabilityProp = block.getDurabilityProp();
@@ -52,20 +54,21 @@ public class BaseAnvilItem extends BlockItem implements ItemModelProvider {
     public void appendHoverText(
             ItemStack itemStack,
             TooltipContext tooltipContext,
-            List<Component> list,
+            TooltipDisplay tooltipDisplay,
+            Consumer<Component> consumer,
             TooltipFlag tooltipFlag
     ) {
         CustomData anvilData = itemStack.getOrDefault(BCLDataComponents.ANVIL_ENTITY_DATA, CustomData.EMPTY);
         if (!anvilData.contains(DESTRUCTION)) return;
 
         @SuppressWarnings("deprecation")
-        int destruction = anvilData.getUnsafe().getInt(DESTRUCTION);
+        int destruction = anvilData.getUnsafe().getInt(DESTRUCTION).orElse(0);
         if (destruction > 0) {
             BaseAnvilBlock block = (BaseAnvilBlock) ((BaseAnvilItem) itemStack.getItem()).getBlock();
             int maxValue = block.getMaxDurability() * 3;
             float damage = maxValue - destruction;
             String percents = String.format(Locale.ROOT, "%.0f%%", damage);
-            list.add(Component.translatable("message.bclib.anvil_damage").append(": " + percents));
+            consumer.accept(Component.translatable("message.bclib.anvil_damage").append(": " + percents));
         }
     }
 }

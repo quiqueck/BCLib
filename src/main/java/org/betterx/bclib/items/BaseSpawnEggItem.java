@@ -17,8 +17,17 @@ import net.fabricmc.api.Environment;
 import java.util.Optional;
 
 public class BaseSpawnEggItem extends SpawnEggItem implements ItemModelProvider {
+    public BaseSpawnEggItem(EntityType<? extends Mob> type, Properties settings) {
+        super(type, settings);
+    }
+
+    /**
+     * @deprecated Use {@link #BaseSpawnEggItem(EntityType, Properties)} instead.
+     * This constructor is deprecated and will be removed in future versions.
+     */
+    @Deprecated(forRemoval = true)
     public BaseSpawnEggItem(EntityType<? extends Mob> type, int primaryColor, int secondaryColor, Properties settings) {
-        super(type, primaryColor, secondaryColor, settings);
+        this(type, settings);
     }
 
     @Override

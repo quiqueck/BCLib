@@ -4,9 +4,9 @@ import org.betterx.bclib.interfaces.SpawnRule;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.LevelAccessor;
 
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,7 @@ public class SpawnRuleEntry<M extends Mob> implements Comparable<SpawnRuleEntry>
     protected boolean canSpawn(
             EntityType<M> type,
             LevelAccessor world,
-            MobSpawnType spawnReason,
+            EntitySpawnReason spawnReason,
             BlockPos pos,
             RandomSource random
     ) {

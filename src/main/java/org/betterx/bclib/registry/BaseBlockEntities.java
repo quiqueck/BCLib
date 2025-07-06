@@ -5,20 +5,18 @@ import org.betterx.bclib.blockentities.BaseFurnaceBlockEntity;
 import org.betterx.bclib.blockentities.DynamicBlockEntityType;
 import org.betterx.bclib.blockentities.DynamicBlockEntityType.BlockEntitySupplier;
 import org.betterx.bclib.blocks.BaseFurnaceBlock;
-import org.betterx.bclib.blocks.signs.BaseSignBlock;
 import org.betterx.bclib.furniture.entity.EntityChair;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 
 public class BaseBlockEntities {
     public static final DynamicBlockEntityType<BaseFurnaceBlockEntity> FURNACE = registerBlockEntityType(
@@ -27,20 +25,21 @@ public class BaseBlockEntities {
     );
 
     public static final EntityType<EntityChair> CHAIR = registerEntity(
-            BCLib.makeID("chair"), FabricEntityTypeBuilder
-                    .create(MobCategory.MISC, EntityChair::new)
-                    .dimensions(EntityDimensions.fixed(0.5F, 0.8F))
+            BCLib.makeID("chair"), EntityType.Builder
+                    .of(EntityChair::new, MobCategory.MISC)
+                    .sized(0.5F, 0.8F)
                     .fireImmune()
-                    .disableSummon()
-                    .build()
+                    .noSummon()
     );
 
 
     public static <T extends Entity> EntityType<T> registerEntity(
             ResourceLocation id,
-            EntityType<T> entity
+            EntityType.Builder<T> entityBuilder
     ) {
-        Registry.register(BuiltInRegistries.ENTITY_TYPE, id, entity);
+        ResourceKey<EntityType<?>> key = ResourceKey.create(Registries.ENTITY_TYPE, id);
+        var entity = entityBuilder.build(key);
+        Registry.register(BuiltInRegistries.ENTITY_TYPE, key, entity);
         return entity;
     }
 
@@ -52,13 +51,6 @@ public class BaseBlockEntities {
     }
 
     public static void register() {
-    }
-
-    public static Block[] getSigns() {
-        return BuiltInRegistries.BLOCK
-                .stream()
-                .filter(block -> block instanceof BaseSignBlock)
-                .toArray(Block[]::new);
     }
 
     public static Block[] getFurnaces() {

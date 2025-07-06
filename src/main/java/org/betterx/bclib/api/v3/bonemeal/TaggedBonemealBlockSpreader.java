@@ -16,7 +16,7 @@ class TaggedBonemealBlockSpreader extends BlockSpreader {
     @Override
     public boolean canSpreadAt(BlockGetter blockGetter, BlockPos blockPos) {
         final BlockState aboveState = blockGetter.getBlockState(blockPos.above());
-        return aboveState.isAir() && aboveState.propagatesSkylightDown(blockGetter, blockPos);
+        return aboveState.isAir() && aboveState.propagatesSkylightDown();
     }
 
     @Override

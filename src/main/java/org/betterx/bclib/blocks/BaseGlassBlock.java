@@ -40,7 +40,7 @@ public class BaseGlassBlock extends BaseBlockNotFull implements AddMineablePicka
     }
 
     @Override
-    public boolean propagatesSkylightDown(BlockState state, BlockGetter view, BlockPos pos) {
+    protected boolean propagatesSkylightDown(BlockState blockState) {
         return true;
     }
 

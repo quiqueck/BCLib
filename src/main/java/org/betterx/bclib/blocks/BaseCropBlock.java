@@ -85,7 +85,7 @@ public class BaseCropBlock extends BasePlantBlock implements SurvivesOnBlocks, B
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext ePos) {
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext ePos) {
         return SHAPE;
     }
 
@@ -105,7 +105,8 @@ public class BaseCropBlock extends BasePlantBlock implements SurvivesOnBlocks, B
             @NotNull LootLookupProvider provider,
             @NotNull ResourceKey<LootTable> tableKey
     ) {
-        return provider.dropPlant(this,
+        return provider.dropPlant(
+                this,
                 drop, UniformGenerator.between(1, 2),
                 this, UniformGenerator.between(1, 3),
                 0.571f, 3,

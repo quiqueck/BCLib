@@ -1,6 +1,6 @@
 package org.betterx.bclib.mixin.common.shears;
 
-import org.betterx.bclib.items.tool.BaseShearsItem;
+import org.betterx.bclib.util.LootUtil;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -22,6 +22,6 @@ public class BeehiveBlockMixin {
             )
     )
     private boolean bclib_isShears(ItemStack instance, Item item, Operation<Boolean> original) {
-        return original.call(instance, item) || (item == Items.SHEARS && BaseShearsItem.isShear(instance));
+        return original.call(instance, item) || (item == Items.SHEARS && LootUtil.isShear(instance));
     }
 }

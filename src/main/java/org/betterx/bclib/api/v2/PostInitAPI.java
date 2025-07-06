@@ -6,17 +6,14 @@ import org.betterx.bclib.blocks.BaseFurnaceBlock;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.PostInitable;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
-import org.betterx.bclib.items.tool.BaseShearsItem;
 import org.betterx.bclib.registry.BaseBlockEntities;
 
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
-import net.minecraft.core.dispenser.ShearsDispenseItemBehavior;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.DispenserBlock;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -79,9 +76,6 @@ public class PostInitAPI {
     }
 
     private static void processItemCommon(Item item) {
-        if (item instanceof BaseShearsItem) {
-            DispenserBlock.registerBehavior(item.asItem(), new ShearsDispenseItemBehavior());
-        }
     }
 
     private static void processBlockCommon(Block block) {
