@@ -1,21 +1,20 @@
 package org.betterx.bclib.client.models;
 
 import org.betterx.bclib.BCLib;
+import static org.betterx.bclib.furniture.block.AbstractChair.FACING;
 import org.betterx.bclib.furniture.block.BaseChair;
 import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 
+import static net.minecraft.client.data.models.BlockModelGenerators.*;
+import net.minecraft.client.data.models.MultiVariant;
+import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
+import net.minecraft.client.data.models.blockstates.PropertyDispatch;
+import net.minecraft.client.data.models.model.ModelTemplate;
+import net.minecraft.client.data.models.model.TextureMapping;
+import net.minecraft.client.data.models.model.TextureSlot;
 import net.minecraft.core.Direction;
-import net.minecraft.data.models.blockstates.MultiVariantGenerator;
-import net.minecraft.data.models.blockstates.PropertyDispatch;
-import net.minecraft.data.models.blockstates.Variant;
-import net.minecraft.data.models.blockstates.VariantProperties;
-import net.minecraft.data.models.model.ModelTemplate;
-import net.minecraft.data.models.model.TextureMapping;
-import net.minecraft.data.models.model.TextureSlot;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
-
-import static org.betterx.bclib.furniture.block.AbstractChair.FACING;
 
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
@@ -139,7 +138,7 @@ public class BCLModels {
         ResourceLocation modelLocation = BAR_STOOL.create(block, mapping, generators.vanillaGenerator.modelOutput);
 
         var blockStateGenerator = MultiVariantGenerator
-                .multiVariant(block)
+                .dispatch(block)
                 .with(getChairFacingPropertyDispatch(modelLocation));
         generators.acceptBlockState(blockStateGenerator);
     }
@@ -156,7 +155,7 @@ public class BCLModels {
         ResourceLocation modelLocation = TABURET.create(block, mapping, generators.vanillaGenerator.modelOutput);
 
         var blockStateGenerator = MultiVariantGenerator
-                .multiVariant(block)
+                .dispatch(block)
                 .with(getChairFacingPropertyDispatch(modelLocation));
         generators.acceptBlockState(blockStateGenerator);
     }
@@ -177,92 +176,34 @@ public class BCLModels {
         ResourceLocation topLocation = generators.particleOnlyModel(woodType);//CHAIR_TOP.create(block, mapping, generators.vanillaGenerator.modelOutput);
 
 
+        var modelVariant = plainVariant(modelLocation);
+        var topVariant = plainVariant(topLocation);
+
         var blockStateGenerator = MultiVariantGenerator
-                .multiVariant(block)
+                .dispatch(block)
                 .with(
                         PropertyDispatch
-                                .properties(FACING, BaseChair.TOP)
-                                .select(
-                                        Direction.EAST,
-                                        false,
-                                        Variant.variant()
-                                               .with(VariantProperties.MODEL, modelLocation)
-                                               .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90)
-                                )
-                                .select(
-                                        Direction.SOUTH,
-                                        false,
-                                        Variant.variant()
-                                               .with(VariantProperties.MODEL, modelLocation)
-                                               .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180)
-                                )
-                                .select(
-                                        Direction.WEST,
-                                        false,
-                                        Variant.variant()
-                                               .with(VariantProperties.MODEL, modelLocation)
-                                               .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270)
-                                )
-                                .select(
-                                        Direction.NORTH,
-                                        false,
-                                        Variant.variant()
-                                               .with(VariantProperties.MODEL, modelLocation)
-                                )
-                                .select(
-                                        Direction.NORTH,
-                                        true,
-                                        Variant.variant()
-                                               .with(VariantProperties.MODEL, topLocation)
-                                )
-                                .select(
-                                        Direction.EAST,
-                                        true,
-                                        Variant.variant()
-                                               .with(VariantProperties.MODEL, topLocation)
-                                )
-                                .select(
-                                        Direction.SOUTH,
-                                        true,
-                                        Variant.variant()
-                                               .with(VariantProperties.MODEL, topLocation)
-                                )
-                                .select(
-                                        Direction.WEST,
-                                        true,
-                                        Variant.variant()
-                                               .with(VariantProperties.MODEL, topLocation)
-                                )
+                                .initial(FACING, BaseChair.TOP)
+                                .select(Direction.EAST, false, modelVariant.with(Y_ROT_90))
+                                .select(Direction.SOUTH, false, modelVariant.with(Y_ROT_180))
+                                .select(Direction.WEST, false, modelVariant.with(Y_ROT_270))
+                                .select(Direction.NORTH, false, modelVariant)
+                                .select(Direction.NORTH, true, topVariant)
+                                .select(Direction.EAST, true, topVariant)
+                                .select(Direction.SOUTH, true, topVariant)
+                                .select(Direction.WEST, true, topVariant)
                 );
         generators.acceptBlockState(blockStateGenerator);
     }
 
-    private static PropertyDispatch.@NotNull C1<Direction> getChairFacingPropertyDispatch(ResourceLocation modelLocation) {
+    private static PropertyDispatch.@NotNull C1<MultiVariant, Direction> getChairFacingPropertyDispatch(ResourceLocation modelLocation) {
+        var modelVariant = plainVariant(modelLocation);
         return PropertyDispatch
-                .property(FACING)
-                .select(
-                        Direction.NORTH,
-                        Variant.variant()
-                               .with(VariantProperties.MODEL, modelLocation)
-                               .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270)
-                )
-                .select(
-                        Direction.EAST,
-                        Variant.variant()
-                               .with(VariantProperties.MODEL, modelLocation)
-                )
-                .select(
-                        Direction.SOUTH,
-                        Variant.variant()
-                               .with(VariantProperties.MODEL, modelLocation)
-                               .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90)
-                )
-                .select(
-                        Direction.WEST,
-                        Variant.variant()
-                               .with(VariantProperties.MODEL, modelLocation)
-                               .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180)
-                );
+                .initial(FACING)
+                .select(Direction.NORTH, modelVariant.with(Y_ROT_270))
+                .select(Direction.EAST, modelVariant)
+                .select(Direction.SOUTH, modelVariant.with(Y_ROT_90))
+                .select(Direction.WEST, modelVariant.with(Y_ROT_180));
     }
 
 }

@@ -50,7 +50,6 @@ public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
 
     @Unique
     private boolean bcl_hasRecipeError() {
-        //TODO: 1.19.4 check error conditions
         return false;
     }
 

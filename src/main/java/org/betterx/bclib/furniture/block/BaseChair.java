@@ -13,14 +13,15 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -51,7 +52,10 @@ public abstract class BaseChair extends AbstractChair {
 
     public BaseChair(Block baseMaterial, Block clothMaterial) {
         super(baseMaterial, 10);
-        this.clothMaterial = Objects.requireNonNull(clothMaterial, "Chair cloth material cannot be null (" + baseMaterial.getDescriptionId() + ")");
+        this.clothMaterial = Objects.requireNonNull(
+                clothMaterial,
+                "Chair cloth material cannot be null (" + baseMaterial.getDescriptionId() + ")"
+        );
         this.registerDefaultState(getStateDefinition().any().setValue(FACING, Direction.NORTH).setValue(TOP, false));
     }
 
@@ -95,18 +99,20 @@ public abstract class BaseChair extends AbstractChair {
     }
 
     @Override
-    public BlockState updateShape(
+    protected BlockState updateShape(
             BlockState state,
-            Direction facing,
-            BlockState neighborState,
-            LevelAccessor world,
+            LevelReader level,
+            ScheduledTickAccess scheduledTickAccess,
             BlockPos pos,
-            BlockPos neighborPos
+            Direction neighborDirection,
+            BlockPos neighborPos,
+            BlockState neighborState,
+            RandomSource randomSource
     ) {
         if (state.getValue(TOP)) {
-            return world.getBlockState(pos.below()).getBlock() == this ? state : Blocks.AIR.defaultBlockState();
+            return level.getBlockState(pos.below()).getBlock() == this ? state : Blocks.AIR.defaultBlockState();
         } else {
-            return world.getBlockState(pos.above()).getBlock() == this ? state : Blocks.AIR.defaultBlockState();
+            return level.getBlockState(pos.above()).getBlock() == this ? state : Blocks.AIR.defaultBlockState();
         }
     }
 
@@ -172,7 +178,12 @@ public abstract class BaseChair extends AbstractChair {
     }
 
     public static BaseChair from(Block baseMaterial, Block clothMaterial) {
-        return BehaviourHelper.from(baseMaterial, (b) -> new BaseChair.Wood(b, clothMaterial), (b) -> new BaseChair.Stone(b, clothMaterial), (b) -> new BaseChair.Metal(b, clothMaterial));
+        return BehaviourHelper.from(
+                baseMaterial,
+                (b) -> new BaseChair.Wood(b, clothMaterial),
+                (b) -> new BaseChair.Stone(b, clothMaterial),
+                (b) -> new BaseChair.Metal(b, clothMaterial)
+        );
     }
 
     @Override

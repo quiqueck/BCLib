@@ -18,8 +18,8 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableBlock;
@@ -70,7 +70,7 @@ public abstract class AbstractVineBlock extends BaseBlockNotFull implements Rend
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext ePos) {
-        Vec3 vec3d = state.getOffset(view, pos);
+        Vec3 vec3d = state.getOffset(pos);
         return VOXEL_SHAPE.move(vec3d.x, vec3d.y, vec3d.z);
     }
 
@@ -89,19 +89,21 @@ public abstract class AbstractVineBlock extends BaseBlockNotFull implements Rend
     }
 
     @Override
-    final public BlockState updateShape(
+    protected BlockState updateShape(
             BlockState state,
-            Direction facing,
-            BlockState neighborState,
-            LevelAccessor world,
+            LevelReader level,
+            ScheduledTickAccess scheduledTickAccess,
             BlockPos pos,
-            BlockPos neighborPos
+            Direction neighborDirection,
+            BlockPos neighborPos,
+            BlockState neighborState,
+            RandomSource randomSource
     ) {
-        if (!canSurvive(state, world, pos)) {
+        if (!canSurvive(state, level, pos)) {
             return Blocks.AIR.defaultBlockState();
         } else {
-            if (world.getBlockState(pos.below()).getBlock() != this) return makeBottomState(state);
-            else if (world.getBlockState(pos.above()).getBlock() != this) return makeTopState(state);
+            if (level.getBlockState(pos.below()).getBlock() != this) return makeBottomState(state);
+            else if (level.getBlockState(pos.above()).getBlock() != this) return makeTopState(state);
             return makeMiddleState(state);
         }
     }

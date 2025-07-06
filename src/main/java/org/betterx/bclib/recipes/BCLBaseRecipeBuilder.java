@@ -3,13 +3,13 @@ package org.betterx.bclib.recipes;
 import org.betterx.bclib.util.BCLDataComponents;
 import org.betterx.wover.recipe.api.BaseRecipeBuilder;
 import org.betterx.wover.recipe.impl.BaseRecipeBuilderImpl;
+import org.betterx.wover.recipe.impl.CraftingRecipeBuilderImpl;
 
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.data.recipes.RecipeBuilder;
-import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -29,8 +29,8 @@ public abstract class BCLBaseRecipeBuilder<I extends BaseRecipeBuilder<I>, R ext
     }
 
     protected final Advancement.Builder advancement;
-    protected Ingredient primaryInput;
-    protected Ingredient secondaryInput;
+    protected CraftingRecipeBuilderImpl.IngredientFactory primaryInput;
+    protected CraftingRecipeBuilderImpl.IngredientFactory secondaryInput;
     protected RecipeOutputConsumer outputTagConsumer;
 
     private final boolean dualInput;
@@ -53,7 +53,7 @@ public abstract class BCLBaseRecipeBuilder<I extends BaseRecipeBuilder<I>, R ext
     @Override
     protected void validate() {
         super.validate();
-        if (primaryInput == null || primaryInput.isEmpty()) {
+        if (primaryInput == null) {
             throwIllegalStateException(
                     "Primary input for Recipe can't be 'null', recipe {} will be ignored!"
             );
@@ -66,7 +66,7 @@ public abstract class BCLBaseRecipeBuilder<I extends BaseRecipeBuilder<I>, R ext
     }
 
     @Override
-    public final void build(RecipeOutput ctx) {
+    public void build(org.betterx.wover.recipe.api.RecipeBuilder.Context ctx) {
         validate();
 
         setupAdvancementForResult();
@@ -75,32 +75,32 @@ public abstract class BCLBaseRecipeBuilder<I extends BaseRecipeBuilder<I>, R ext
         if (this.outputTagConsumer != null)
             CustomData.update(BCLDataComponents.ANVIL_ENTITY_DATA, this.output, this.outputTagConsumer);
 
-        final R recipe = createRecipe(id);
-        ctx.accept(id, recipe, advancementHolder);
+        final R recipe = createRecipe(ctx);
+        ctx.recipeOutput().accept(key, recipe, advancementHolder);
     }
 
-    protected abstract R createRecipe(ResourceLocation id);
+    protected abstract R createRecipe(org.betterx.wover.recipe.api.RecipeBuilder.Context ctx);
 
     @SuppressWarnings("removal")
     protected void setupAdvancementForResult() {
         advancement
                 .parent(RecipeBuilder.ROOT_RECIPE_ADVANCEMENT)//automatically at root level
-                .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id))
-                .rewards(net.minecraft.advancements.AdvancementRewards.Builder.recipe(id))
+                .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(key))
+                .rewards(net.minecraft.advancements.AdvancementRewards.Builder.recipe(key))
                 .requirements(AdvancementRequirements.Strategy.OR);
     }
 
     protected ResourceLocation createAdvancementId() {
-        return id.withPrefix("recipes/" + category.getFolderName() + "/");
+        return key.withPrefix("recipes/" + category.getFolderName() + "/");
     }
 
     public I setPrimaryInput(ItemLike... inputs) {
-        this.primaryInput = Ingredient.of(inputs);
+        this.primaryInput = provider -> Ingredient.of(inputs);
         return (I) this;
     }
 
     public I setPrimaryInput(TagKey<Item> input) {
-        this.primaryInput = Ingredient.of(input);
+        this.primaryInput = provider -> provider.tag(input);
         return (I) this;
     }
 
@@ -118,12 +118,12 @@ public abstract class BCLBaseRecipeBuilder<I extends BaseRecipeBuilder<I>, R ext
     }
 
     public I setSecondaryInput(ItemLike... inputs) {
-        this.secondaryInput = Ingredient.of(inputs);
+        this.secondaryInput = provider -> Ingredient.of(inputs);
         return (I) this;
     }
 
     public I setSecondaryInput(TagKey<Item> input) {
-        this.secondaryInput = Ingredient.of(input);
+        this.secondaryInput = provider -> provider.tag(input);
         return (I) this;
     }
 
@@ -142,7 +142,7 @@ public abstract class BCLBaseRecipeBuilder<I extends BaseRecipeBuilder<I>, R ext
 
     public I setOutputTag(CompoundTag tag) {
         this.outputTagConsumer = (itemTag) -> {
-            for (String k : tag.getAllKeys()) {
+            for (String k : tag.keySet()) {
                 itemTag.put(k, tag.get(k));
             }
         };

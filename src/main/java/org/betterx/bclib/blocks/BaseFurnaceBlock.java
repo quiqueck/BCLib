@@ -9,16 +9,17 @@ import org.betterx.bclib.registry.BaseBlockEntities;
 import org.betterx.wover.block.api.model.BlockModelProvider;
 import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 
+import static net.minecraft.client.data.models.BlockModelGenerators.*;
+import net.minecraft.client.data.models.MultiVariant;
+import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
+import net.minecraft.client.data.models.blockstates.PropertyDispatch;
+import net.minecraft.client.data.models.model.ModelTemplates;
+import net.minecraft.client.data.models.model.TextureMapping;
+import net.minecraft.client.data.models.model.TextureSlot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.data.models.blockstates.MultiVariantGenerator;
-import net.minecraft.data.models.blockstates.PropertyDispatch;
-import net.minecraft.data.models.blockstates.Variant;
-import net.minecraft.data.models.blockstates.VariantProperties;
-import net.minecraft.data.models.model.ModelTemplates;
-import net.minecraft.data.models.model.TextureMapping;
-import net.minecraft.data.models.model.TextureSlot;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
@@ -41,6 +42,7 @@ import net.fabricmc.api.Environment;
 import com.google.common.collect.Lists;
 
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseFurnaceBlock extends FurnaceBlock implements RenderLayerProvider, BlockModelProvider {
@@ -53,7 +55,7 @@ public abstract class BaseFurnaceBlock extends FurnaceBlock implements RenderLay
     }
 
     @Override
-    public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
+    public @NotNull BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
         return new BaseFurnaceBlockEntity(blockPos, blockState);
     }
 
@@ -75,7 +77,11 @@ public abstract class BaseFurnaceBlock extends FurnaceBlock implements RenderLay
                 .put(TextureSlot.SIDE, baseTexture.withSuffix("_side"))
                 .put(TextureSlot.FRONT, baseTexture.withSuffix("_front"))
                 .put(TextureSlot.BOTTOM, baseTexture.withSuffix("_top"));
-        final var furnaceModel = ModelTemplates.CUBE_ORIENTABLE_TOP_BOTTOM.create(this, mapping, generator.modelOutput());
+        final var furnaceModel = ModelTemplates.CUBE_ORIENTABLE_TOP_BOTTOM.create(
+                this,
+                mapping,
+                generator.modelOutput()
+        );
 
         TextureMapping mappingGlow = new TextureMapping()
                 .put(TextureSlot.TOP, baseTexture.withSuffix("_top"))
@@ -83,39 +89,42 @@ public abstract class BaseFurnaceBlock extends FurnaceBlock implements RenderLay
                 .put(TextureSlot.FRONT, baseTexture.withSuffix("_front_on"))
                 .put(TextureSlot.BOTTOM, baseTexture.withSuffix("_top"))
                 .put(BCLModels.GLOW, baseTexture.withSuffix("_glow"));
-        final var glowModel = BCLModels.FURNACE_GLOW.createWithSuffix(this, "_lit", mappingGlow, generator.modelOutput());
+        final var glowModel = BCLModels.FURNACE_GLOW.createWithSuffix(
+                this,
+                "_lit",
+                mappingGlow,
+                generator.modelOutput()
+        );
 
-        final var prop = PropertyDispatch.properties(LIT, FACING);
+        final var prop = PropertyDispatch.initial(LIT, FACING);
         addRotationModels(prop, furnaceModel, false);
         addRotationModels(prop, glowModel, true);
 
-        generator.acceptBlockState(MultiVariantGenerator.multiVariant(this).with(prop));
+        generator.acceptBlockState(MultiVariantGenerator.dispatch(this).with(prop));
     }
 
     @Environment(EnvType.CLIENT)
     private static void addRotationModels(
-            PropertyDispatch.C2<Boolean, Direction> prop,
+            PropertyDispatch.C2<MultiVariant, Boolean, Direction> prop,
             ResourceLocation furnaceModel,
             boolean lit
     ) {
-        prop.select(lit, Direction.EAST,
-                Variant.variant()
-                       .with(VariantProperties.MODEL, furnaceModel)
-                       .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90)
+        var modelVariant = plainVariant(furnaceModel);
+        prop.select(
+                lit, Direction.EAST,
+                modelVariant.with(Y_ROT_90)
         );
-        prop.select(lit, Direction.SOUTH,
-                Variant.variant()
-                       .with(VariantProperties.MODEL, furnaceModel)
-                       .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180)
+        prop.select(
+                lit, Direction.SOUTH,
+                modelVariant.with(Y_ROT_180)
         );
-        prop.select(lit, Direction.WEST,
-                Variant.variant()
-                       .with(VariantProperties.MODEL, furnaceModel)
-                       .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270)
+        prop.select(
+                lit, Direction.WEST,
+                modelVariant.with(Y_ROT_270)
         );
-        prop.select(lit, Direction.NORTH,
-                Variant.variant()
-                       .with(VariantProperties.MODEL, furnaceModel)
+        prop.select(
+                lit, Direction.NORTH,
+                modelVariant
         );
     }
 
@@ -125,12 +134,10 @@ public abstract class BaseFurnaceBlock extends FurnaceBlock implements RenderLay
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
+    public @NotNull List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
         List<ItemStack> drop = Lists.newArrayList(new ItemStack(this));
         BlockEntity blockEntity = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
-        if (blockEntity instanceof BaseFurnaceBlockEntity) {
-            BaseFurnaceBlockEntity entity = (BaseFurnaceBlockEntity) blockEntity;
+        if (blockEntity instanceof BaseFurnaceBlockEntity entity) {
             for (int i = 0; i < entity.getContainerSize(); i++) {
                 drop.add(entity.getItem(i));
             }
@@ -154,11 +161,22 @@ public abstract class BaseFurnaceBlock extends FurnaceBlock implements RenderLay
             BlockEntityType<T> blockEntityType,
             BlockEntityType<? extends AbstractFurnaceBlockEntity> blockEntityType2
     ) {
-        return level.isClientSide ? null : createTickerHelper(
-                blockEntityType,
-                blockEntityType2,
-                AbstractFurnaceBlockEntity::serverTick
-        );
+        if (level instanceof ServerLevel) {
+            return createTickerHelper(
+                    blockEntityType,
+                    blockEntityType2,
+                    (tickLevel, pos, state, furnaceBlockEntity) -> {
+                        if (tickLevel instanceof ServerLevel serverTickLevel) {
+                            AbstractFurnaceBlockEntity.serverTick(
+                                    serverTickLevel,
+                                    pos, state,
+                                    furnaceBlockEntity
+                            );
+                        }
+                    }
+            );
+        }
+        return null;
     }
 
     public static class Stone extends BaseFurnaceBlock implements BehaviourStone {

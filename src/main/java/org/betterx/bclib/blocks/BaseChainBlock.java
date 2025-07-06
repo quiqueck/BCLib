@@ -9,8 +9,8 @@ import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 
+import net.minecraft.client.data.models.MultiVariant;
 import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -52,15 +52,15 @@ public abstract class BaseChainBlock extends ChainBlock implements RuntimeBlockM
 
     @Override
     @Environment(EnvType.CLIENT)
-    public UnbakedModel getModelVariant(
-            ModelResourceLocation stateId,
+    public MultiVariant getModelVariant(
+            ResourceLocation stateId,
             BlockState blockState,
             Map<ResourceLocation, UnbakedModel> modelCache
     ) {
         Direction.Axis axis = blockState.getValue(AXIS);
-        ModelResourceLocation modelId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState);
+        ResourceLocation modelId = RuntimeBlockModelProvider.remapResourceLocation(stateId, blockState);
         registerBlockModel(stateId, modelId, blockState, modelCache);
-        return ModelsHelper.createRotatedModel(modelId.id(), axis);
+        return ModelsHelper.createRotatedModel(modelId, axis);
     }
 
     @Override

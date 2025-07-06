@@ -6,17 +6,17 @@ import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.wover.block.api.BlockProperties.TripleShape;
 
+import com.mojang.math.Quadrant;
+import net.minecraft.client.data.models.MultiVariant;
 import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.renderer.block.model.MultiVariant;
 import net.minecraft.client.renderer.block.model.Variant;
-import net.minecraft.client.resources.model.BlockModelRotation;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -36,9 +36,9 @@ import net.fabricmc.api.Environment;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class TripleTerrainBlock extends BaseTerrainBlock implements RuntimeBlockModelProvider {
@@ -69,7 +69,7 @@ public class TripleTerrainBlock extends BaseTerrainBlock implements RuntimeBlock
     }
 
     @Override
-    public InteractionResult useWithoutItem(
+    public @NotNull InteractionResult useWithoutItem(
             BlockState state,
             Level world,
             BlockPos pos,
@@ -145,35 +145,61 @@ public class TripleTerrainBlock extends BaseTerrainBlock implements RuntimeBlock
 
     @Override
     @Environment(EnvType.CLIENT)
-    public UnbakedModel getModelVariant(
-            ModelResourceLocation stateId,
+    public MultiVariant getModelVariant(
+            ResourceLocation stateId,
             BlockState blockState,
             Map<ResourceLocation, UnbakedModel> modelCache
     ) {
         boolean isMiddle = isMiddle(blockState);
         String middle = isMiddle ? "_middle" : "";
-        ModelResourceLocation modelId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState, middle);
+        ResourceLocation modelId = RuntimeBlockModelProvider.remapResourceLocation(
+                stateId,
+                blockState,
+                middle
+        );
         registerBlockModel(stateId, modelId, blockState, modelCache);
         if (isMiddle) {
-            List<Variant> variants = Lists.newArrayList();
-            for (BlockModelRotation rotation : BlockModelRotation.values()) {
-                variants.add(new Variant(modelId.id(), rotation.getRotation(), false, 1));
+            var quadrants = Lists.newArrayList(
+                    Quadrant.R0, Quadrant.R90, Quadrant.R180, Quadrant.R270
+            );
+            var variants = WeightedList.<Variant>builder();
+            for (var qX : quadrants) {
+                for (var qY : quadrants) {
+                    variants.add(new Variant(modelId, new Variant.SimpleModelState(qX, qY, false)), 1);
+                }
             }
-            return new MultiVariant(variants);
+            return new MultiVariant(variants.build());
         } else if (blockState.getValue(SHAPE) == TripleShape.TOP) {
-            return new MultiVariant(Lists.newArrayList(
-                    new Variant(
-                            modelId.id(),
-                            BlockModelRotation.X180_Y0.getRotation(),
-                            false,
-                            1
-                    ),
-                    new Variant(modelId.id(), BlockModelRotation.X180_Y90.getRotation(), false, 1),
-                    new Variant(modelId.id(), BlockModelRotation.X180_Y180.getRotation(), false, 1),
-                    new Variant(modelId.id(), BlockModelRotation.X180_Y270.getRotation(), false, 1)
-            ));
+            return new MultiVariant(
+                    WeightedList.<Variant>builder()
+                                .add(
+                                        new Variant(
+                                                modelId,
+                                                new Variant.SimpleModelState(Quadrant.R180, Quadrant.R0, false)
+                                        ), 1
+                                )
+                                .add(
+                                        new Variant(
+                                                modelId,
+                                                new Variant.SimpleModelState(Quadrant.R180, Quadrant.R90, false)
+                                        ), 1
+                                )
+                                .add(
+                                        new Variant(
+                                                modelId,
+                                                new Variant.SimpleModelState(Quadrant.R180, Quadrant.R180, false)
+                                        ), 1
+                                )
+                                .add(
+                                        new Variant(
+                                                modelId,
+                                                new Variant.SimpleModelState(Quadrant.R180, Quadrant.R270, false)
+                                        ), 1
+                                )
+                                .build()
+            );
         }
-        return ModelsHelper.createRandomTopModel(modelId.id());
+        return ModelsHelper.createRandomTopModel(modelId);
     }
 
     protected boolean isMiddle(BlockState blockState) {

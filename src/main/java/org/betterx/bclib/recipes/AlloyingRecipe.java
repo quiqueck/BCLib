@@ -3,7 +3,6 @@ package org.betterx.bclib.recipes;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.interfaces.AlloyingRecipeWorkstation;
 import org.betterx.bclib.interfaces.UnknownReceipBookCategory;
-import org.betterx.bclib.util.ItemUtil;
 import org.betterx.wover.item.api.ItemStackHelper;
 import org.betterx.wover.recipe.api.BaseRecipeBuilder;
 import org.betterx.wover.recipe.api.BaseUnlockableRecipeBuilder;
@@ -20,10 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 
@@ -34,9 +30,12 @@ import java.util.List;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
 
 public class AlloyingRecipe implements Recipe<AlloyingRecipeInput>, UnknownReceipBookCategory {
     public final static String GROUP = "alloying";
+
+    public static final RecipeBookCategory ALLOYING_CATEGORY = BCLRecipeManager.registerCategory(BCLib.C.mk("alloying"));
     public final static RecipeType<AlloyingRecipe> TYPE = BCLRecipeManager.registerType(BCLib.MOD_ID, GROUP);
     public final static Serializer SERIALIZER = BCLRecipeManager.registerSerializer(
             BCLib.MOD_ID,
@@ -44,13 +43,14 @@ public class AlloyingRecipe implements Recipe<AlloyingRecipeInput>, UnknownRecei
             new Serializer()
     );
 
-    protected final RecipeType<?> type;
+    protected final RecipeType<? extends Recipe<AlloyingRecipeInput>> type;
     protected final Ingredient primaryInput;
     protected final Ingredient secondaryInput;
     protected final ItemStack output;
     protected final String group;
     protected final float experience;
     protected final int smeltTime;
+    private PlacementInfo placementInfo;
 
     private AlloyingRecipe(
             List<Ingredient> inputs,
@@ -94,11 +94,11 @@ public class AlloyingRecipe implements Recipe<AlloyingRecipeInput>, UnknownRecei
         return this.smeltTime;
     }
 
-    @Override
-    public NonNullList<Ingredient> getIngredients() {
-        NonNullList<Ingredient> defaultedList = NonNullList.create();
-        defaultedList.add(primaryInput);
-        defaultedList.add(secondaryInput);
+    @VisibleForTesting
+    public List<Optional<Ingredient>> getIngredients() {
+        NonNullList<Optional<Ingredient>> defaultedList = NonNullList.create();
+        defaultedList.add(Optional.of(primaryInput));
+        defaultedList.add(Optional.of(secondaryInput));
 
         return defaultedList;
     }
@@ -110,34 +110,34 @@ public class AlloyingRecipe implements Recipe<AlloyingRecipeInput>, UnknownRecei
     }
 
     @Override
-    public ItemStack assemble(AlloyingRecipeInput recipeInput, HolderLookup.Provider provider) {
+    public @NotNull ItemStack assemble(AlloyingRecipeInput recipeInput, HolderLookup.Provider provider) {
         return this.output.copy();
     }
 
     @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return true;
-    }
-
-    @Override
-    public ItemStack getResultItem(HolderLookup.Provider provider) {
-        return this.output;
-    }
-
-    @Override
-    public RecipeSerializer<?> getSerializer() {
+    public @NotNull RecipeSerializer<? extends Recipe<AlloyingRecipeInput>> getSerializer() {
         return SERIALIZER;
     }
 
     @Override
-    public RecipeType<?> getType() {
+    public @NotNull RecipeType<? extends Recipe<AlloyingRecipeInput>> getType() {
         return this.type;
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
-    public String getGroup() {
-        return this.group;
+    public @NotNull PlacementInfo placementInfo() {
+        if (this.placementInfo == null) {
+            if (this.secondaryInput != null)
+                this.placementInfo = PlacementInfo.create(List.of(this.primaryInput, this.secondaryInput));
+            else this.placementInfo = PlacementInfo.create(List.of(this.primaryInput));
+        }
+
+        return this.placementInfo;
+    }
+
+    @Override
+    public @NotNull RecipeBookCategory recipeBookCategory() {
+        return ALLOYING_CATEGORY;
     }
 
     @Environment(EnvType.CLIENT)
@@ -208,12 +208,14 @@ public class AlloyingRecipe implements Recipe<AlloyingRecipeInput>, UnknownRecei
         }
 
         @Override
-        protected AlloyingRecipe createRecipe(ResourceLocation id) {
+        protected AlloyingRecipe createRecipe(
+                org.betterx.wover.recipe.api.RecipeBuilder.Context ctx
+        ) {
 
             return new AlloyingRecipe(
                     group == null ? "" : group,
-                    primaryInput,
-                    secondaryInput,
+                    primaryInput.createIngredient(ctx),
+                    secondaryInput.createIngredient(ctx),
                     output,
                     experience,
                     smeltTime
@@ -223,18 +225,21 @@ public class AlloyingRecipe implements Recipe<AlloyingRecipeInput>, UnknownRecei
 
     public static class Serializer implements RecipeSerializer<AlloyingRecipe> {
         public static final MapCodec<AlloyingRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                Codec.list(Ingredient.CODEC_NONEMPTY)
+                Codec.list(Ingredient.CODEC)
                      .fieldOf("ingredients")
                      .forGetter(recipe -> List.of(recipe.primaryInput, recipe.secondaryInput)),
                 Codec.STRING.lenientOptionalFieldOf("group")
                             .forGetter(recipe -> recipe.group == null || recipe.group.isEmpty()
                                     ? Optional.empty()
-                                    : Optional.ofNullable(recipe.group)),
+                                    : Optional.of(recipe.group)),
                 ItemUtil.CODEC_ITEM_STACK_WITH_NBT.fieldOf("result").forGetter(recipe -> recipe.output),
                 Codec.FLOAT.optionalFieldOf("experience", 0f).forGetter(recipe -> recipe.experience),
                 Codec.INT.optionalFieldOf("smelttime", 350).forGetter(recipe -> recipe.smeltTime)
         ).apply(instance, AlloyingRecipe::new));
-        public static final StreamCodec<RegistryFriendlyByteBuf, AlloyingRecipe> STREAM_CODEC = StreamCodec.of(AlloyingRecipe.Serializer::toNetwork, AlloyingRecipe.Serializer::fromNetwork);
+        public static final StreamCodec<RegistryFriendlyByteBuf, AlloyingRecipe> STREAM_CODEC = StreamCodec.of(
+                AlloyingRecipe.Serializer::toNetwork,
+                AlloyingRecipe.Serializer::fromNetwork
+        );
 
         @Override
         public @NotNull MapCodec<AlloyingRecipe> codec() {
@@ -243,7 +248,7 @@ public class AlloyingRecipe implements Recipe<AlloyingRecipeInput>, UnknownRecei
 
 
         @Override
-        public StreamCodec<RegistryFriendlyByteBuf, AlloyingRecipe> streamCodec() {
+        public @NotNull StreamCodec<RegistryFriendlyByteBuf, AlloyingRecipe> streamCodec() {
             return STREAM_CODEC;
         }
 

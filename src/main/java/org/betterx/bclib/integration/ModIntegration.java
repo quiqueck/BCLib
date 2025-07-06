@@ -66,12 +66,10 @@ public abstract class ModIntegration {
 
 
     public ConfiguredFeature<?, ?> getConfiguredFeature(String name) {
-        //TODO: 1.19.3 find how to change this without having features before a world gets loaded
         return null; //BuiltInRegistries.CONFIGURED_FEATURE.get(getID(name));
     }
 
     public Holder<Biome> getBiome(String name) {
-        //TODO: 1.19.3 find how to change this without having features before a world gets loaded
         return null; //BuiltInRegistries.BIOME.getHolder(getKey(name)).orElseThrow();
     }
 

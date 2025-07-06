@@ -2,17 +2,14 @@ package org.betterx.bclib.api.v2;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.behaviours.interfaces.BehaviourCompostable;
-import org.betterx.bclib.blocks.BaseBarrelBlock;
-import org.betterx.bclib.blocks.BaseChestBlock;
 import org.betterx.bclib.blocks.BaseFurnaceBlock;
 import org.betterx.bclib.client.render.BCLRenderLayer;
-import org.betterx.bclib.client.render.BaseChestBlockEntityRenderer;
 import org.betterx.bclib.interfaces.PostInitable;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.items.tool.BaseShearsItem;
 import org.betterx.bclib.registry.BaseBlockEntities;
 
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.dispenser.ShearsDispenseItemBehavior;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.TagKey;
@@ -23,7 +20,7 @@ import net.minecraft.world.level.block.DispenserBlock;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
 
 import com.google.common.collect.Lists;
 
@@ -74,13 +71,11 @@ public class PostInitAPI {
     private static void processBlockClient(Block block) {
         if (block instanceof RenderLayerProvider) {
             BCLRenderLayer layer = ((RenderLayerProvider) block).getRenderLayer();
-            if (layer == BCLRenderLayer.CUTOUT) BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout());
+            if (layer == BCLRenderLayer.CUTOUT) BlockRenderLayerMap.putBlock(block, ChunkSectionLayer.CUTOUT);
             else if (layer == BCLRenderLayer.TRANSLUCENT)
-                BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.translucent());
+                BlockRenderLayerMap.putBlock(block, ChunkSectionLayer.TRANSLUCENT);
         }
-        if (block instanceof BaseChestBlock) {
-            BaseChestBlockEntityRenderer.registerRenderLayer(block);
-        }
+
     }
 
     private static void processItemCommon(Item item) {
@@ -103,11 +98,7 @@ public class PostInitAPI {
             }
         }
 
-        if (block instanceof BaseChestBlock) {
-            BaseBlockEntities.CHEST.registerBlock(block);
-        } else if (block instanceof BaseBarrelBlock) {
-            BaseBlockEntities.BARREL.registerBlock(block);
-        } else if (block instanceof BaseFurnaceBlock) {
+        if (block instanceof BaseFurnaceBlock) {
             BaseBlockEntities.FURNACE.registerBlock(block);
         }
     }

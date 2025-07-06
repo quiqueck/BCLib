@@ -2,16 +2,12 @@ package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
 import org.betterx.bclib.client.models.BasePatterns;
-import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
-import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
+import org.betterx.wover.block.api.model.BlockModelProvider;
+import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 
-import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.resources.model.BlockModelRotation;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -27,11 +23,9 @@ import net.fabricmc.api.Environment;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseBarsBlock extends IronBarsBlock implements RuntimeBlockModelProvider, RenderLayerProvider, BehaviourMetal {
+public abstract class BaseBarsBlock extends IronBarsBlock implements RenderLayerProvider, BehaviourMetal, BlockModelProvider {
     public BaseBarsBlock(Block source) {
         this(Properties.ofFullCopy(source).strength(5.0F, 6.0F).noOcclusion());
     }
@@ -58,63 +52,77 @@ public abstract class BaseBarsBlock extends IronBarsBlock implements RuntimeBloc
         }
     }
 
-    @Override
     @Environment(EnvType.CLIENT)
-    public BlockModel getItemModel(ResourceLocation resourceLocation) {
-        return ModelsHelper.createBlockItem(resourceLocation);
+    @Override
+    public void provideBlockModels(WoverBlockModelGenerators generator) {
+        generator.createBars(this);
     }
 
-    @Override
-    @Environment(EnvType.CLIENT)
-    public @Nullable BlockModel getBlockModel(ResourceLocation blockId, BlockState blockState) {
-        ResourceLocation thisId = BuiltInRegistries.BLOCK.getKey(this);
-        String path = blockId.getPath();
-        Optional<String> pattern = Optional.empty();
-        if (path.endsWith("_post")) {
-            pattern = PatternsHelper.createJson(BasePatterns.BLOCK_BARS_POST, thisId);
-        }
-        if (path.endsWith("_side")) {
-            pattern = PatternsHelper.createJson(BasePatterns.BLOCK_BARS_SIDE, thisId);
-        }
-        return ModelsHelper.fromPattern(pattern);
-    }
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public UnbakedModel getModelVariant(
-            ModelResourceLocation stateId,
-            BlockState blockState,
-            Map<ResourceLocation, UnbakedModel> modelCache
-    ) {
-        ModelResourceLocation postId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState, "_post");
-        ModelResourceLocation sideId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState, "_side");
-        registerBlockModel(postId, postId, blockState, modelCache);
-        registerBlockModel(sideId, sideId, blockState, modelCache);
-
-        ModelsHelper.MultiPartBuilder builder = ModelsHelper.MultiPartBuilder.create(stateDefinition);
-        builder.part(postId.id())
-               .setCondition(state -> !state.getValue(NORTH) && !state.getValue(EAST) && !state.getValue(SOUTH) && !state
-                       .getValue(WEST))
-               .add();
-        builder.part(sideId.id()).setCondition(state -> state.getValue(NORTH)).setUVLock(true).add();
-        builder.part(sideId.id())
-               .setCondition(state -> state.getValue(EAST))
-               .setTransformation(BlockModelRotation.X0_Y90.getRotation())
-               .setUVLock(true)
-               .add();
-        builder.part(sideId.id())
-               .setCondition(state -> state.getValue(SOUTH))
-               .setTransformation(BlockModelRotation.X0_Y180.getRotation())
-               .setUVLock(true)
-               .add();
-        builder.part(sideId.id())
-               .setCondition(state -> state.getValue(WEST))
-               .setTransformation(BlockModelRotation.X0_Y270.getRotation())
-               .setUVLock(true)
-               .add();
-
-        return builder.build();
-    }
+//    @Override
+//    @Environment(EnvType.CLIENT)
+//    public BlockModel getItemModel(ResourceLocation resourceLocation) {
+//        return ModelsHelper.createBlockItem(resourceLocation);
+//    }
+//
+//    @Override
+//    @Environment(EnvType.CLIENT)
+//    public @Nullable BlockModel getBlockModel(ResourceLocation blockId, BlockState blockState) {
+//        ResourceLocation thisId = BuiltInRegistries.BLOCK.getKey(this);
+//        String path = blockId.getPath();
+//        Optional<String> pattern = Optional.empty();
+//        if (path.endsWith("_post")) {
+//            pattern = PatternsHelper.createJson(BasePatterns.BLOCK_BARS_POST, thisId);
+//        }
+//        if (path.endsWith("_side")) {
+//            pattern = PatternsHelper.createJson(BasePatterns.BLOCK_BARS_SIDE, thisId);
+//        }
+//        return ModelsHelper.fromPattern(pattern);
+//    }
+//
+//    @Environment(EnvType.CLIENT)
+//    @Override
+//    public MultiVariant getModelVariant(
+//            ResourceLocation stateId,
+//            BlockState blockState,
+//            Map<ResourceLocation, MultiVariant> modelCache
+//    ) {
+//        ResourceLocation postId = RuntimeBlockModelProvider.remapResourceLocation(
+//                stateId,
+//                blockState,
+//                "_post"
+//        );
+//        ResourceLocation sideId = RuntimeBlockModelProvider.remapResourceLocation(
+//                stateId,
+//                blockState,
+//                "_side"
+//        );
+//        registerBlockModel(postId, postId, blockState, modelCache);
+//        registerBlockModel(sideId, sideId, blockState, modelCache);
+//
+//        ModelsHelper.MultiPartBuilder builder = ModelsHelper.MultiPartBuilder.create(stateDefinition);
+//        builder.part(postId)
+//               .setCondition(state -> !state.getValue(NORTH) && !state.getValue(EAST) && !state.getValue(SOUTH) && !state
+//                       .getValue(WEST))
+//               .add();
+//        builder.part(sideId).setCondition(state -> state.getValue(NORTH)).setUVLock(true).add();
+//        builder.part(sideId)
+//               .setCondition(state -> state.getValue(EAST))
+//               .setTransformation(BlockModelRotation.X0_Y90.transformation())
+//               .setUVLock(true)
+//               .add();
+//        builder.part(sideId)
+//               .setCondition(state -> state.getValue(SOUTH))
+//               .setTransformation(BlockModelRotation.X0_Y180.transformation())
+//               .setUVLock(true)
+//               .add();
+//        builder.part(sideId)
+//               .setCondition(state -> state.getValue(WEST))
+//               .setTransformation(BlockModelRotation.X0_Y270.transformation())
+//               .setUVLock(true)
+//               .add();
+//
+//        return null; //builder.build();
+//    }
 
     @Environment(EnvType.CLIENT)
     public boolean skipRendering(BlockState state, BlockState stateFrom, Direction direction) {

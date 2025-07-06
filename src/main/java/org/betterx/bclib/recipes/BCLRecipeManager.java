@@ -8,10 +8,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeInput;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 
@@ -36,11 +33,21 @@ public class BCLRecipeManager {
 
     public static <C extends RecipeInput, T extends Recipe<C>> RecipeType<T> registerType(String modID, String type) {
         ResourceLocation recipeTypeId = ResourceLocation.fromNamespaceAndPath(modID, type);
-        return Registry.register(BuiltInRegistries.RECIPE_TYPE, recipeTypeId, new RecipeType<T>() {
-            public String toString() {
-                return type;
-            }
-        });
+        return Registry.register(
+                BuiltInRegistries.RECIPE_TYPE, recipeTypeId, new RecipeType<T>() {
+                    public String toString() {
+                        return type;
+                    }
+                }
+        );
+    }
+
+    public static RecipeBookCategory registerCategory(ResourceLocation location) {
+        return Registry.register(
+                BuiltInRegistries.RECIPE_BOOK_CATEGORY,
+                location,
+                new RecipeBookCategory()
+        );
     }
 
     public static boolean exists(ItemLike item) {

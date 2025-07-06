@@ -11,13 +11,10 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.state.BlockState;
@@ -40,14 +37,12 @@ public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements R
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext ePos) {
-        Vec3 vec3d = state.getOffset(view, pos);
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext ePos) {
+        Vec3 vec3d = state.getOffset(pos);
         return SHAPE.move(vec3d.x, vec3d.y, vec3d.z);
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
         BlockState down = world.getBlockState(pos.below());
         state = world.getBlockState(pos);
@@ -64,17 +59,18 @@ public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements R
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public @NotNull BlockState updateShape(
+    protected @NotNull BlockState updateShape(
             BlockState state,
-            Direction facing,
-            BlockState neighborState,
-            LevelAccessor world,
+            LevelReader level,
+            ScheduledTickAccess scheduledTickAccess,
             BlockPos pos,
-            BlockPos neighborPos
+            Direction neighborDirection,
+            BlockPos neighborPos,
+            BlockState neighborState,
+            RandomSource randomSource
     ) {
-        if (!canSurvive(state, world, pos)) {
-            world.scheduleTick(pos, this, 1);
+        if (!canSurvive(state, level, pos)) {
+            scheduledTickAccess.scheduleTick(pos, this, 1);
         }
 
         return state;
@@ -110,10 +106,10 @@ public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements R
 
     @Override
     public boolean canPlaceLiquid(
-            @Nullable Player player,
-            BlockGetter world,
-            BlockPos pos,
-            BlockState state,
+            @Nullable LivingEntity livingEntity,
+            BlockGetter blockGetter,
+            BlockPos blockPos,
+            BlockState blockState,
             Fluid fluid
     ) {
         return false;
@@ -125,8 +121,7 @@ public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements R
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public FluidState getFluidState(BlockState state) {
+    public @NotNull FluidState getFluidState(BlockState state) {
         return Fluids.WATER.getSource(false);
     }
 

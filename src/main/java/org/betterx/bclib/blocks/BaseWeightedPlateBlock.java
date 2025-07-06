@@ -6,8 +6,8 @@ import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 
+import net.minecraft.client.data.models.MultiVariant;
 import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -60,13 +60,17 @@ public class BaseWeightedPlateBlock extends WeightedPressurePlateBlock implement
 
     @Override
     @Environment(EnvType.CLIENT)
-    public UnbakedModel getModelVariant(
-            ModelResourceLocation stateId,
+    public MultiVariant getModelVariant(
+            ResourceLocation stateId,
             BlockState blockState,
             Map<ResourceLocation, UnbakedModel> modelCache
     ) {
         String state = blockState.getValue(POWER) > 0 ? "_down" : "_up";
-        ModelResourceLocation modelId = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState, state);
+        ResourceLocation modelId = RuntimeBlockModelProvider.remapResourceLocation(
+                stateId,
+                blockState,
+                state
+        );
         registerBlockModel(stateId, modelId, blockState, modelCache);
         return ModelsHelper.createBlockSimple(modelId.id());
     }

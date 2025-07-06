@@ -7,9 +7,9 @@ import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 import org.betterx.wover.loot.api.BlockLootProvider;
 import org.betterx.wover.loot.api.LootLookupProvider;
 
+import net.minecraft.client.data.models.model.TextureMapping;
+import net.minecraft.client.data.models.model.TextureSlot;
 import net.minecraft.core.BlockPos;
-import net.minecraft.data.models.model.TextureMapping;
-import net.minecraft.data.models.model.TextureSlot;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.BlockGetter;
@@ -58,9 +58,11 @@ public abstract class BasePathBlock extends BaseBlockNotFull implements BlockLoo
     @Environment(EnvType.CLIENT)
     public void provideBlockModels(WoverBlockModelGenerators generator) {
         var side = TextureMapping.getBlockTexture(this, "_side");
-        side = ResourceLocation.fromNamespaceAndPath(side.getNamespace(), side
-                .getPath()
-                .replace("_path", ""));
+        side = ResourceLocation.fromNamespaceAndPath(
+                side.getNamespace(), side
+                        .getPath()
+                        .replace("_path", "")
+        );
 
         var mapping = new TextureMapping()
                 .put(TextureSlot.SIDE, side)

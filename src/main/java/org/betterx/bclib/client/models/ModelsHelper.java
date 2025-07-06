@@ -1,16 +1,15 @@
 package org.betterx.bclib.client.models;
 
+import com.mojang.math.Quadrant;
 import com.mojang.math.Transformation;
+import net.minecraft.client.data.models.MultiVariant;
 import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.renderer.block.model.MultiVariant;
 import net.minecraft.client.renderer.block.model.Variant;
 import net.minecraft.client.renderer.block.model.multipart.Condition;
-import net.minecraft.client.renderer.block.model.multipart.MultiPart;
 import net.minecraft.client.renderer.block.model.multipart.Selector;
-import net.minecraft.client.resources.model.BlockModelRotation;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -50,15 +49,17 @@ public class ModelsHelper {
 
     public static MultiVariant createMultiVariant(
             ResourceLocation resourceLocation,
-            Transformation transform,
+            Quadrant rotX,
+            Quadrant rotY,
             boolean uvLock
     ) {
-        Variant variant = new Variant(resourceLocation, transform, uvLock, 1);
-        return new MultiVariant(Lists.newArrayList(variant));
+
+        Variant variant = new Variant(resourceLocation, new Variant.SimpleModelState(rotX, rotY, uvLock));
+        return new MultiVariant(WeightedList.<Variant>builder().add(variant).build());
     }
 
     public static MultiVariant createBlockSimple(ResourceLocation resourceLocation) {
-        return createMultiVariant(resourceLocation, Transformation.identity(), false);
+        return createMultiVariant(resourceLocation, Quadrant.R0, Quadrant.R0, false);
     }
 
     public static MultiVariant createFacingModel(
@@ -70,32 +71,74 @@ public class ModelsHelper {
         if (inverted) {
             facing = facing.getOpposite();
         }
-        BlockModelRotation rotation = BlockModelRotation.by(0, (int) facing.toYRot());
-        return createMultiVariant(resourceLocation, rotation.getRotation(), uvLock);
+        Quadrant qY;
+        switch (facing) {
+            case NORTH:
+                qY = Quadrant.R180;
+                break;
+            case SOUTH:
+                qY = Quadrant.R0;
+                break;
+            case WEST:
+                qY = Quadrant.R90;
+                break;
+            case EAST:
+                qY = Quadrant.R270;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid facing direction: " + facing);
+        }
+        return createMultiVariant(resourceLocation, Quadrant.R0, qY, uvLock);
     }
 
     public static MultiVariant createRotatedModel(ResourceLocation resourceLocation, Direction.Axis axis) {
-        BlockModelRotation rotation = BlockModelRotation.X0_Y0;
+        Quadrant qX, qY;
         switch (axis) {
             case X:
-                rotation = BlockModelRotation.X90_Y90;
+                qX = Quadrant.R90;
+                qY = Quadrant.R90;
                 break;
             case Z:
-                rotation = BlockModelRotation.X90_Y0;
+                qX = Quadrant.R90;
+                qY = Quadrant.R0;
                 break;
             default:
+                qX = Quadrant.R0;
+                qY = Quadrant.R0;
                 break;
         }
-        return createMultiVariant(resourceLocation, rotation.getRotation(), false);
+        return createMultiVariant(resourceLocation, qX, qY, false);
     }
 
     public static MultiVariant createRandomTopModel(ResourceLocation resourceLocation) {
-        return new MultiVariant(Lists.newArrayList(
-                new Variant(resourceLocation, Transformation.identity(), false, 1),
-                new Variant(resourceLocation, BlockModelRotation.X0_Y90.getRotation(), false, 1),
-                new Variant(resourceLocation, BlockModelRotation.X0_Y180.getRotation(), false, 1),
-                new Variant(resourceLocation, BlockModelRotation.X0_Y270.getRotation(), false, 1)
-        ));
+        return new MultiVariant(
+                WeightedList.<Variant>builder()
+                            .add(
+                                    new Variant(
+                                            resourceLocation,
+                                            new Variant.SimpleModelState(Quadrant.R0, Quadrant.R0, false)
+                                    ), 1
+                            )
+                            .add(
+                                    new Variant(
+                                            resourceLocation,
+                                            new Variant.SimpleModelState(Quadrant.R0, Quadrant.R90, false)
+                                    ), 1
+                            )
+                            .add(
+                                    new Variant(
+                                            resourceLocation,
+                                            new Variant.SimpleModelState(Quadrant.R0, Quadrant.R180, false)
+                                    ), 1
+                            )
+                            .add(
+                                    new Variant(
+                                            resourceLocation,
+                                            new Variant.SimpleModelState(Quadrant.R0, Quadrant.R270, false)
+                                    ), 1
+                            )
+                            .build()
+        );
     }
 
     public static class MultiPartBuilder {
@@ -103,9 +146,6 @@ public class ModelsHelper {
         //private final static MultiPartBuilder BUILDER = new MultiPartBuilder();
 
         public static MultiPartBuilder create(StateDefinition<Block, BlockState> stateDefinition) {
-            // BUILDER.stateDefinition = stateDefinition;
-            //BUILDER.modelParts.clear();
-            // return BUILDER;
             return new MultiPartBuilder(stateDefinition);
         }
 
@@ -118,11 +158,6 @@ public class ModelsHelper {
 
         public ModelPart part(ResourceLocation modelId) {
             ModelPart part = new ModelPart(modelId);
-            return part;
-        }
-
-        public ModelPart part(ModelResourceLocation modelId) {
-            ModelPart part = new ModelPart(modelId.id());
             return part;
         }
 

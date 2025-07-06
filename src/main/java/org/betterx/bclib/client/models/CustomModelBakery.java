@@ -4,11 +4,7 @@ import org.betterx.bclib.interfaces.ItemModelProvider;
 import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.bclib.models.RecordItemModelProvider;
 
-import net.minecraft.client.renderer.block.BlockModelShaper;
-import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.renderer.block.model.multipart.MultiPart;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.client.data.models.MultiVariant;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -25,18 +21,19 @@ import java.util.List;
 import java.util.Map;
 
 public class CustomModelBakery {
-    private record StateModelPair(BlockState state, UnbakedModel model) {
+    private record StateModelPair(BlockState state, MultiVariant model) {
     }
 
-    private final Map<ResourceLocation, UnbakedModel> models = Maps.newConcurrentMap();
+    private final Map<ResourceLocation, MultiVariant> models = Maps.newConcurrentMap();
+    private final Map<ResourceLocation, MultiVariant> itemModels = Maps.newConcurrentMap();
     private final Map<Block, List<StateModelPair>> blockModels = Maps.newConcurrentMap();
 
-    public UnbakedModel getBlockModel(ResourceLocation location) {
+    public MultiVariant getBlockModel(ResourceLocation location) {
         return models.get(location);
     }
 
-    public UnbakedModel getItemModel(ResourceLocation location) {
-        return models.get(location);
+    public MultiVariant getItemModel(ResourceLocation location) {
+        return itemModels.get(location);
     }
 
     public void registerBlockStateResolvers(ModelLoadingPlugin.Context pluginContext) {
@@ -44,7 +41,7 @@ public class CustomModelBakery {
             pluginContext.registerBlockStateResolver(
                     e.getKey(),
                     context -> {
-                        e.getValue().forEach(p -> context.setModel(p.state, p.model));
+                        e.getValue().forEach(p -> context.setModel(p.state, p.model.toUnbaked().asRoot()));
                     }
             );
         }
@@ -95,41 +92,27 @@ public class CustomModelBakery {
         RuntimeBlockModelProvider provider = (RuntimeBlockModelProvider) block;
         ImmutableList<BlockState> states = block.getStateDefinition().getPossibleStates();
         BlockState defaultState = block.defaultBlockState();
-
-        ModelResourceLocation defaultStateID = BlockModelShaper.stateToModelLocation(blockID, defaultState);
-        UnbakedModel defaultModel = provider.getModelVariant(defaultStateID, defaultState, models);
+        MultiVariant defaultModel = provider.getModelVariant(blockID, defaultState, models);
 
         List<StateModelPair> stateModels = new ArrayList<>(states.size());
-        if (defaultModel instanceof MultiPart) {
-            states.forEach(blockState -> {
-                ModelResourceLocation stateID = BlockModelShaper.stateToModelLocation(blockID, blockState);
-                models.put(stateID.id(), defaultModel);
-                stateModels.add(new StateModelPair(blockState, defaultModel));
-            });
-        } else {
-            states.forEach(blockState -> {
-                ModelResourceLocation stateID = BlockModelShaper.stateToModelLocation(blockID, blockState);
-                UnbakedModel model = stateID.equals(defaultStateID)
-                        ? defaultModel
-                        : provider.getModelVariant(stateID, blockState, models);
-                models.put(stateID.id(), model);
-                stateModels.add(new StateModelPair(blockState, model));
-            });
-        }
+
+        states.forEach(blockState -> {
+            MultiVariant model = provider.getModelVariant(blockID, blockState, models);
+            models.put(blockID, model);
+            stateModels.add(new StateModelPair(blockState, model));
+        });
+
         blockModels.put(block, stateModels);
     }
 
     private void addItemModel(ResourceLocation itemID, ItemModelProvider provider) {
-        ModelResourceLocation modelLocation = new ModelResourceLocation(
-                itemID,
-                "inventory"
-        );
-
-        if (!models.containsKey(modelLocation)) {
-            ResourceLocation itemModelLocation = itemID.withPrefix("item/");
-            BlockModel model = provider.getItemModel(modelLocation.id());
-            models.put(modelLocation.id(), model);
-            models.put(itemModelLocation, model);
-        }
+//        ResourceLocation modelLocation = itemID.withSuffix("inventory");
+//
+//        if (!models.containsKey(modelLocation)) {
+//            ResourceLocation itemModelLocation = itemID.withPrefix("item/");
+//            BlockModel model = provider.getItemModel(modelLocation);
+//            itemModels.put(modelLocation, model);
+//            itemModels.put(itemModelLocation, model);
+//        }
     }
 }

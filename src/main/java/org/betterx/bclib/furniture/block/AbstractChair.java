@@ -11,12 +11,12 @@ import org.betterx.wover.loot.api.BlockLootProvider;
 import org.betterx.wover.loot.api.LootLookupProvider;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -26,7 +26,7 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -40,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractChair extends BaseBlockNotFull implements BlockModelProvider, BlockLootProvider {
-    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
     public final Block baseMaterial;
     protected final float height;
 
@@ -65,20 +65,18 @@ public abstract class AbstractChair extends BaseBlockNotFull implements BlockMod
     }
 
     @Override
-    public @NotNull ItemInteractionResult useItemOn(
-            ItemStack itemStack,
+    protected InteractionResult useWithoutItem(
             BlockState state,
             Level world,
             BlockPos pos,
             Player player,
-            InteractionHand hand,
             BlockHitResult hit
     ) {
         if (world.isClientSide) {
-            return ItemInteractionResult.FAIL;
+            return InteractionResult.FAIL;
         } else {
             if (player.isPassenger() || player.isSpectator())
-                return ItemInteractionResult.FAIL;
+                return InteractionResult.FAIL;
 
 
             Optional<EntityChair> active = getEntity(world, pos);
@@ -89,7 +87,7 @@ public abstract class AbstractChair extends BaseBlockNotFull implements BlockMod
             } else {
                 entity = active.get();
                 if (entity.isVehicle())
-                    return ItemInteractionResult.FAIL;
+                    return InteractionResult.FAIL;
             }
 
             if (entity != null) {
@@ -97,10 +95,10 @@ public abstract class AbstractChair extends BaseBlockNotFull implements BlockMod
                 player.startRiding(entity, true);
                 player.setYBodyRot(yaw);
                 player.setYHeadRot(yaw);
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
 
-            return ItemInteractionResult.FAIL;
+            return InteractionResult.FAIL;
         }
     }
 
@@ -113,8 +111,8 @@ public abstract class AbstractChair extends BaseBlockNotFull implements BlockMod
         double pz = pos.getZ() + 0.5;
         float yaw = state.getValue(FACING).getOpposite().toYRot();
 
-        entity = BaseBlockEntities.CHAIR.create(world);
-        entity.moveTo(px, py, pz, yaw, 0);
+        entity = BaseBlockEntities.CHAIR.create(world, EntitySpawnReason.SPAWN_ITEM_USE);
+        entity.snapTo(px, py, pz, yaw, 0);
         entity.setNoGravity(true);
         entity.setSilent(true);
         entity.setInvisible(true);

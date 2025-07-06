@@ -11,16 +11,14 @@ import org.betterx.wover.block.api.CustomBlockItemProvider;
 import org.betterx.wover.block.api.model.BlockModelProvider;
 import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 
+import static net.minecraft.client.data.models.BlockModelGenerators.*;
+import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
+import net.minecraft.client.data.models.blockstates.PropertyDispatch;
+import net.minecraft.client.data.models.model.TextureMapping;
+import net.minecraft.client.data.models.model.TextureSlot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.data.models.blockstates.MultiVariantGenerator;
-import net.minecraft.data.models.blockstates.PropertyDispatch;
-import net.minecraft.data.models.blockstates.Variant;
-import net.minecraft.data.models.blockstates.VariantProperties;
-import net.minecraft.data.models.model.TextureMapping;
-import net.minecraft.data.models.model.TextureSlot;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -46,6 +44,7 @@ import com.google.common.collect.Lists;
 import java.util.Collections;
 import java.util.List;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class BaseAnvilBlock extends AnvilBlock implements AddMineablePickaxe, CustomBlockItemProvider, BlockModelProvider {
     public static final IntegerProperty DESTRUCTION = BlockProperties.DESTRUCTION;
@@ -69,39 +68,7 @@ public abstract class BaseAnvilBlock extends AnvilBlock implements AddMineablePi
         }
         builder.add(DESTRUCTION, durability);
     }
-
-    //    @Override
-//    @Environment(EnvType.CLIENT)
-//    public BlockModel getItemModel(ResourceLocation blockId) {
-//        return getBlockModel(blockId, defaultBlockState());
-//    }
-//
-//    @Override
-//    @Environment(EnvType.CLIENT)
-//    public @Nullable BlockModel getBlockModel(ResourceLocation blockId, BlockState blockState) {
-//        int destruction = blockState.getValue(DESTRUCTION);
-//        String name = blockId.getPath();
-//        Map<String, String> textures = Maps.newHashMap();
-//        textures.put("%modid%", blockId.getNamespace());
-//        textures.put("%anvil%", name);
-//        textures.put("%top%", name + "_top_" + destruction);
-//        Optional<String> pattern = PatternsHelper.createJson(BasePatterns.BLOCK_ANVIL, textures);
-//        return ModelsHelper.fromPattern(pattern);
-//    }
-//
-//    @Override
-//    @Environment(EnvType.CLIENT)
-//    public UnbakedModel getModelVariant(
-//            ModelResourceLocation stateId,
-//            BlockState blockState,
-//            Map<ResourceLocation, UnbakedModel> modelCache
-//    ) {
-//        int destruction = blockState.getValue(DESTRUCTION);
-//        ModelResourceLocation modelLocation = RuntimeBlockModelProvider.remapModelResourceLocation(stateId, blockState, "_top_" + destruction);
-//        registerBlockModel(stateId, modelLocation, blockState, modelCache);
-//        return ModelsHelper.createFacingModel(modelLocation.id(), blockState.getValue(FACING), false, false);
-//    }
-
+    
     @Environment(EnvType.CLIENT)
     @Override
     public void provideBlockModels(WoverBlockModelGenerators generator) {
@@ -112,33 +79,24 @@ public abstract class BaseAnvilBlock extends AnvilBlock implements AddMineablePi
                 .put(TextureSlot.BOTTOM, id.withSuffix("_bottom"))
                 .put(BCLModels.PANEL, id.withSuffix("_panel"));
 
-        final var prop = PropertyDispatch.properties(DESTRUCTION, FACING);
+        final var prop = PropertyDispatch.initial(DESTRUCTION, FACING);
 
         for (int d = 0; d < 3; d++) {
             mapping.put(TextureSlot.TOP, id.withSuffix("_top_" + d));
-            final ResourceLocation model = BCLModels.ANVIL.createWithSuffix(this, "_" + d, mapping, generator.modelOutput());
+            final ResourceLocation modelLocation = BCLModels.ANVIL.createWithSuffix(
+                    this,
+                    "_" + d,
+                    mapping,
+                    generator.modelOutput()
+            );
+            final var model = plainVariant(modelLocation);
 
-            prop.select(d, Direction.NORTH, Variant
-                    .variant()
-                    .with(VariantProperties.MODEL, model)
-            );
-            prop.select(d, Direction.EAST, Variant
-                    .variant()
-                    .with(VariantProperties.MODEL, model)
-                    .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90)
-            );
-            prop.select(d, Direction.SOUTH, Variant
-                    .variant()
-                    .with(VariantProperties.MODEL, model)
-                    .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180)
-            );
-            prop.select(d, Direction.WEST, Variant
-                    .variant()
-                    .with(VariantProperties.MODEL, model)
-                    .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270)
-            );
+            prop.select(d, Direction.NORTH, model);
+            prop.select(d, Direction.EAST, model.with(Y_ROT_90));
+            prop.select(d, Direction.SOUTH, model.with(Y_ROT_180));
+            prop.select(d, Direction.WEST, model.with(Y_ROT_270));
         }
-        generator.acceptBlockState(MultiVariantGenerator.multiVariant(this).with(prop));
+        generator.acceptBlockState(MultiVariantGenerator.dispatch(this).with(prop));
         generator.delegateItemModel(this, id.withSuffix("_0"));
     }
 
@@ -148,8 +106,7 @@ public abstract class BaseAnvilBlock extends AnvilBlock implements AddMineablePi
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
+    public @NotNull List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
         int destruction = state.getValue(DESTRUCTION);
         int durability = state.getValue(getDurabilityProp());
         int value = destruction * getMaxDurability() + durability;
@@ -157,9 +114,11 @@ public abstract class BaseAnvilBlock extends AnvilBlock implements AddMineablePi
         if (LootUtil.isCorrectTool(this, state, tool)) {
             ItemStack itemStack = new ItemStack(this);
 
-            CustomData.update(BCLDataComponents.ANVIL_ENTITY_DATA, itemStack, (compoundTag) -> {
-                compoundTag.putInt(BaseAnvilItem.DESTRUCTION, value);
-            });
+            CustomData.update(
+                    BCLDataComponents.ANVIL_ENTITY_DATA,
+                    itemStack,
+                    (compoundTag) -> compoundTag.putInt(BaseAnvilItem.DESTRUCTION, value)
+            );
 
             return Lists.newArrayList(itemStack);
         }
@@ -174,7 +133,7 @@ public abstract class BaseAnvilBlock extends AnvilBlock implements AddMineablePi
         return 5;
     }
 
-    public BlockState damageAnvilUse(BlockState state, RandomSource random) {
+    public BlockState damageAnvilUse(BlockState state) {
         IntegerProperty durability = getDurabilityProp();
         int value = state.getValue(durability);
         if (value < getMaxDurability()) {

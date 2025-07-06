@@ -64,10 +64,12 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu implements AnvilSc
     public void be_initAnvilLevel(int syncId, Inventory inventory, ContainerLevelAccess context, CallbackInfo info) {
         this.bcl_anvilLevel = addDataSlot(DataSlot.standalone());
         if (context != ContainerLevelAccess.NULL) {
-            int level = context.evaluate((world, blockPos) -> {
-                Block anvilBlock = world.getBlockState(blockPos).getBlock();
-                return LeveledAnvilBlock.getAnvilCraftingLevel(anvilBlock);
-            }, 0);
+            int level = context.evaluate(
+                    (world, blockPos) -> {
+                        Block anvilBlock = world.getBlockState(blockPos).getBlock();
+                        return LeveledAnvilBlock.getAnvilCraftingLevel(anvilBlock);
+                    }, 0
+            );
             bcl_anvilLevel.set(level);
         } else {
             bcl_anvilLevel.set(0);
@@ -91,7 +93,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu implements AnvilSc
         if (!player.getAbilities().instabuild
                 && blockState.getBlock() instanceof BaseAnvilBlock anvil
                 && player.getRandom().nextDouble() < 0.12) {
-            BlockState damaged = anvil.damageAnvilUse(blockState, player.getRandom());
+            BlockState damaged = anvil.damageAnvilUse(blockState);
             BaseAnvilBlock.destroyWhenNull(level, blockPos, damaged);
             ci.cancel();
         }
@@ -113,7 +115,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu implements AnvilSc
                     if (!player.getAbilities().instabuild
                             && anvilState.is(BlockTags.ANVIL)
                             && player.getRandom().nextDouble() < 0.1) {
-                        BlockState damagedState = anvil.damageAnvilUse(anvilState, player.getRandom());
+                        BlockState damagedState = anvil.damageAnvilUse(anvilState);
                         BaseAnvilBlock.destroyWhenNull(level, blockPos, damagedState);
                     } else {
                         level.levelEvent(LevelEvent.SOUND_ANVIL_USED, blockPos, 0);

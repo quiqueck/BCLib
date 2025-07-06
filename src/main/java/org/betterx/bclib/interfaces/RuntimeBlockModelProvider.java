@@ -1,13 +1,10 @@
 package org.betterx.bclib.interfaces;
 
-import org.betterx.bclib.BCLib;
 import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 
-import net.minecraft.client.renderer.block.BlockModelShaper;
+import net.minecraft.client.data.models.MultiVariant;
 import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -18,58 +15,56 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
+//TODO: @Deprecated(forRemoval = true)
 public interface RuntimeBlockModelProvider extends ItemModelProvider {
     @Environment(EnvType.CLIENT)
     default @Nullable BlockModel getBlockModel(ResourceLocation resourceLocation, BlockState blockState) {
         Optional<String> pattern = PatternsHelper.createBlockSimple(resourceLocation);
         return ModelsHelper.fromPattern(pattern);
     }
-    static ModelResourceLocation remapModelResourceLocation(
-            ModelResourceLocation stateId,
+    static ResourceLocation remapResourceLocation(
+            ResourceLocation stateId,
             BlockState blockState
     ) {
-        return remapModelResourceLocation(stateId, blockState, "");
+        return remapResourceLocation(stateId, blockState, "");
     }
 
-    static ModelResourceLocation remapModelResourceLocation(
-            ModelResourceLocation stateId,
+    static ResourceLocation remapResourceLocation(
+            ResourceLocation stateId,
             BlockState blockState,
             String pathAddOn
     ) {
-        return BlockModelShaper.stateToModelLocation(
-                ResourceLocation.fromNamespaceAndPath(stateId.id().getNamespace(), "block/" + stateId
-                        .id()
-                        .getPath() + pathAddOn),
-                blockState
+        return ResourceLocation.fromNamespaceAndPath(
+                stateId.getNamespace(),
+                "block/" + stateId.getPath() + pathAddOn
         );
     }
 
     @Environment(EnvType.CLIENT)
-    default UnbakedModel getModelVariant(
-            ModelResourceLocation stateId,
+    default MultiVariant getModelVariant(
+            ResourceLocation stateId,
             BlockState blockState,
-            Map<ResourceLocation, UnbakedModel> modelCache
+            Map<ResourceLocation, MultiVariant> modelCache
     ) {
-        ModelResourceLocation modelId = remapModelResourceLocation(stateId, blockState);
+        var modelId = remapResourceLocation(stateId, blockState);
         registerBlockModel(stateId, modelId, blockState, modelCache);
-        return ModelsHelper.createBlockSimple(modelId.id());
+        return ModelsHelper.createBlockSimple(modelId);
     }
 
     @Environment(EnvType.CLIENT)
     default void registerBlockModel(
-            ModelResourceLocation stateId,
-            ModelResourceLocation modelId,
+            ResourceLocation stateId,
+            ResourceLocation modelId,
             BlockState blockState,
-            Map<ResourceLocation, UnbakedModel> modelCache
+            Map<ResourceLocation, MultiVariant> modelCache
     ) {
-        if (!modelCache.containsKey(modelId.id())) {
-            BlockModel model = getBlockModel(stateId.id(), blockState);
-            if (model != null) {
-                model.name = modelId.toString();
-                modelCache.put(modelId.id(), model);
-            } else {
-                BCLib.LOGGER.warn("Error loading model: {}", modelId);
-            }
-        }
+//        if (!modelCache.containsKey(modelId)) {
+//            BlockModel model = getBlockModel(stateId, blockState);
+//            if (model != null) {
+//                modelCache.put(modelId, model);
+//            } else {
+//                BCLib.LOGGER.warn("Error loading model: {}", modelId);
+//            }
+//        }
     }
 }

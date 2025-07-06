@@ -12,13 +12,14 @@ import java.util.Collections;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
+//TODO: @Deprecated(forRemoval = true)
 public class DynamicBlockEntityType<T extends BlockEntity> extends BlockEntityType<T> {
 
     private final Set<Block> validBlocks = Sets.newHashSet();
     private final BlockEntitySupplier<? extends T> factory;
 
     public DynamicBlockEntityType(BlockEntitySupplier<? extends T> supplier) {
-        super(null, Collections.emptySet(), null);
+        super(null, Collections.emptySet());
         this.factory = supplier;
     }
 
@@ -32,6 +33,7 @@ public class DynamicBlockEntityType<T extends BlockEntity> extends BlockEntityTy
         return validBlocks.contains(blockState.getBlock());
     }
 
+    //TODO: @Deprecated(forRemoval = true)
     public void registerBlock(Block block) {
         validBlocks.add(block);
     }

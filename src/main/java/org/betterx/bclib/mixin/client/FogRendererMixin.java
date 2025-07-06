@@ -1,6 +1,5 @@
 package org.betterx.bclib.mixin.client;
 
-import org.betterx.bclib.client.render.CustomFogRenderer;
 import org.betterx.bclib.util.BackgroundInfo;
 
 import net.minecraft.client.Camera;
