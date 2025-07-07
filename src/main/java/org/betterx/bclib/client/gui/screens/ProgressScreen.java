@@ -7,11 +7,9 @@ import de.ambertation.wunderlib.ui.layout.values.Value;
 import de.ambertation.wunderlib.ui.vanilla.LayoutScreen;
 import org.betterx.bclib.BCLib;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ProgressListener;
@@ -52,13 +50,7 @@ class ProgressLogoRender extends CustomRenderComponent<ProgressLogoRender> {
         //time += 0.03;
         time += deltaTicks * 0.1;
 
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.enableBlend();
-        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0f);
-
         final int yBarLocal = (int) (transform.height * percentage);
-        final int yBar = yBarLocal;
 
         final float fScale = (float) (0.3 * ((Math.sin(time) + 1.0) * 0.5) + 0.7);
         int height = (int) (transform.height * fScale);
@@ -75,35 +67,36 @@ class ProgressLogoRender extends CustomRenderComponent<ProgressLogoRender> {
 
         if (yBarImage > 0) {
             final int uvTopLogo = (int) (relativeY * LOGO_SIZE);
-            guiGraphics.blit(BCLibLayoutScreen.BCLIB_LOGO_LOCATION,
-                    xOffset,
-                    yOffset,
-                    width,
-                    yBarImage,
-                    0, 0, LOGO_SIZE, uvTopLogo,
-                    LOGO_SIZE, LOGO_SIZE
+            guiGraphics.blit(
+                    RenderPipelines.GUI_TEXTURED,
+                    BCLibLayoutScreen.BCLIB_LOGO_LOCATION,
+                    xOffset, yOffset,
+                    0.0f, 0.0f,
+                    width, yBarImage,
+                    LOGO_SIZE, uvTopLogo,
+                    LOGO_SIZE, LOGO_SIZE,
+                    0xFFFFFFFF
             );
         }
 
         if (yBarImage < height) {
             final int uvTopPixelated = (int) (relativeY * PIXELATED_SIZE);
-            RenderSystem.setShaderTexture(0, ProgressScreen.BCLIB_LOGO_PIXELATED_LOCATION);
-            guiGraphics.blit(ProgressScreen.BCLIB_LOGO_PIXELATED_LOCATION,
-                    xOffset,
-                    yOffset + yBarImage,
-                    width,
-                    height - yBarImage,
-                    0, uvTopPixelated, PIXELATED_SIZE, PIXELATED_SIZE - uvTopPixelated,
-                    PIXELATED_SIZE, PIXELATED_SIZE
+            guiGraphics.blit(
+                    RenderPipelines.GUI_TEXTURED,
+                    ProgressScreen.BCLIB_LOGO_PIXELATED_LOCATION,
+                    xOffset, yOffset + yBarImage,
+                    0.0f, (float) uvTopPixelated,
+                    width, height - yBarImage,
+                    PIXELATED_SIZE, PIXELATED_SIZE - uvTopPixelated,
+                    PIXELATED_SIZE, PIXELATED_SIZE,
+                    0xFFFFFFFF
             );
         }
 
         if (percentage > 0 && percentage < 1.0) {
             guiGraphics.fill(
-                    0,
-                    yBar,
-                    transform.width,
-                    yBar + 1,
+                    0, yBarLocal,
+                    transform.width, yBarLocal + 1,
                     0x3FFFFFFF
             );
         }
