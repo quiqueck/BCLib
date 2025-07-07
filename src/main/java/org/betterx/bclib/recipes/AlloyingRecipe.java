@@ -87,7 +87,7 @@ public class AlloyingRecipe implements Recipe<AlloyingRecipeInput>, UnknownRecei
         this.type = TYPE;
     }
 
-    public float getExperience() {
+    public float experience() {
         return this.experience;
     }
 

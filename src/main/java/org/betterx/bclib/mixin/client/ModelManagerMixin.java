@@ -16,7 +16,7 @@ import java.util.concurrent.Executor;
 
 @Mixin(ModelManager.class)
 public class ModelManagerMixin {
-    @Inject(method = "reload", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/util/profiling/ProfilerFiller;startTick()V"))
+    @Inject(method = "reload", at = @At(value = "HEAD"))
     private void bclib_loadCustomModels(
             PreparableReloadListener.PreparationBarrier preparationBarrier,
             ResourceManager resourceManager,

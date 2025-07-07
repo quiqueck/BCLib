@@ -14,6 +14,7 @@ import net.fabricmc.api.Environment;
 import com.google.common.collect.Lists;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public interface SurvivesOnSpecialGround extends SurvivesOn {
     String getSurvivableBlocksString();
@@ -42,19 +43,20 @@ public interface SurvivesOnSpecialGround extends SurvivesOn {
     }
 
     @Environment(EnvType.CLIENT)
-    static void appendHoverText(SurvivesOnSpecialGround surv, List<Component> list) {
+    static void appendHoverText(SurvivesOnSpecialGround surv, Consumer<Component> consumer) {
         if (!Configs.CLIENT_CONFIG.survivesOnHint()) return;
         final int MAX_LINES = 7;
         final String description = surv.getSurvivableBlocksString();
         List<String> lines = splitLines(description);
         if (lines.size() == 1) {
-            list.add(Component.translatable(surv.prefixComponent(), lines.get(0)).withStyle(ChatFormatting.GREEN));
+            consumer.accept(Component.translatable(surv.prefixComponent(), lines.get(0))
+                                     .withStyle(ChatFormatting.GREEN));
         } else if (lines.size() > 1) {
-            list.add(Component.translatable(surv.prefixComponent(), "").withStyle(ChatFormatting.GREEN));
+            consumer.accept(Component.translatable(surv.prefixComponent(), "").withStyle(ChatFormatting.GREEN));
             for (int i = 0; i < Math.min(lines.size(), MAX_LINES); i++) {
                 String line = lines.get(i);
                 if (i == MAX_LINES - 1 && i < lines.size() - 1) line += " ...";
-                list.add(Component.literal("  " + line).withStyle(ChatFormatting.GREEN));
+                consumer.accept(Component.literal("  " + line).withStyle(ChatFormatting.GREEN));
             }
         }
     }

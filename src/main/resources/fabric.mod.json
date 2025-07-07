@@ -47,7 +47,7 @@
     "fabricloader": ">=0.16.0",
     "fabric-api": ">=0.120.0",
     "java": ">=21",
-    "minecraft": ["1.21.7"],
+    "minecraft": ["1.21.6", "1.21.7"],
     "wunderlib": "21.7.x",
     "wover": "21.7.x"
   },

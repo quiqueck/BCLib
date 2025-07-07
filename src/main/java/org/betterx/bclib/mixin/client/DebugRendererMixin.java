@@ -1,6 +1,5 @@
 package org.betterx.bclib.mixin.client;
 
-import de.ambertation.wunderlib.utils.ColorUtilARGB32;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.interfaces.AirSelectionItem;
 
@@ -10,6 +9,8 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.ShapeRenderer;
+import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.debug.DebugRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
@@ -34,6 +35,7 @@ public class DebugRendererMixin {
     @Inject(method = "render", at = @At("TAIL"))
     void bcl_render(
             PoseStack poseStack,
+            Frustum frustum,
             MultiBufferSource.BufferSource bufferSource,
             double camX,
             double camY,
@@ -56,14 +58,11 @@ public class DebugRendererMixin {
                 final Camera camera = minecraft.gameRenderer.getMainCamera();
                 final Vec3 camPos = camera.getPosition();
 
-                LevelRendererAccessor.bclib_renderShape(
+                ShapeRenderer.renderShape(
                         poseStack, consumer,
                         state.getShape(minecraft.level, pos, CollisionContext.of(camera.getEntity())),
                         pos.getX() - camPos.x(), pos.getY() - camPos.y(), pos.getZ() - camPos.z(),
-                        ColorUtilARGB32.red(color) / (float) 0xff,
-                        ColorUtilARGB32.green(color) / (float) 0xff,
-                        ColorUtilARGB32.blue(color) / (float) 0xff,
-                        ColorUtilARGB32.alpha(color) / (float) 0xff
+                        color
                 );
             }
         }

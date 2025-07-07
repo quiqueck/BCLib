@@ -6,6 +6,7 @@ import org.betterx.bclib.blocks.BaseFurnaceBlock;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.PostInitable;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
+import org.betterx.bclib.mixin.common.ItemAccessor;
 import org.betterx.bclib.registry.BaseBlockEntities;
 
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
@@ -76,6 +77,13 @@ public class PostInitAPI {
     }
 
     private static void processItemCommon(Item item) {
+        if (item == Items.POTION && item instanceof ItemAccessor itemAccessor) {
+            // Water Bottles are potions and they do not return an empty bottle in crafting Recipes
+            // We fix this, by adding the craftingRemainingItem
+            if (itemAccessor.bcl_craftingRemainingItem() == null || itemAccessor.bcl_craftingRemainingItem() == Items.AIR) {
+                itemAccessor.bcl_setCraftingRemainingItem(Items.GLASS_BOTTLE);
+            }
+        }
     }
 
     private static void processBlockCommon(Block block) {
