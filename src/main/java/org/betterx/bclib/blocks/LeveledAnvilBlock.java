@@ -8,15 +8,15 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
 import java.util.List;
 
 public class LeveledAnvilBlock extends BaseAnvilBlock {
     protected final int level;
 
-    public LeveledAnvilBlock(MapColor color, int level) {
-        super(color);
+    public LeveledAnvilBlock(BlockBehaviour.Properties properties, int level) {
+        super(properties);
         this.level = level;
     }
 
