@@ -1,6 +1,5 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.client.sound.BlockSounds;
 import org.betterx.wover.block.api.model.BlockModelProvider;
 import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 import org.betterx.wover.loot.api.BlockLootProvider;
@@ -24,9 +23,9 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SnowLayerBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.lighting.LightEngine;
-import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.phys.BlockHitResult;
@@ -41,13 +40,8 @@ public class BaseTerrainBlock extends BaseBlock implements BlockLootProvider, Bl
     private final Block baseBlock;
     private Block pathBlock;
 
-    public BaseTerrainBlock(Block baseBlock, MapColor color) {
-        super(Properties
-                .ofFullCopy(baseBlock)
-                .mapColor(color)
-                .sound(BlockSounds.TERRAIN_SOUND)
-                .randomTicks()
-        );
+    public BaseTerrainBlock(BlockBehaviour.Properties props, Block baseBlock) {
+        super(props);
         this.baseBlock = baseBlock;
     }
 
@@ -91,21 +85,7 @@ public class BaseTerrainBlock extends BaseBlock implements BlockLootProvider, Bl
     }
 
     public boolean canStay(BlockState state, LevelReader worldView, BlockPos pos) {
-        BlockPos blockPos = pos.above();
-        BlockState blockState = worldView.getBlockState(blockPos);
-        if (blockState.is(Blocks.SNOW) && blockState.getValue(SnowLayerBlock.LAYERS) == 1) {
-            return true;
-        } else if (blockState.getFluidState().getAmount() == 8) {
-            return false;
-        } else {
-            int i = LightEngine.getLightBlockInto(
-                    state,
-                    blockState,
-                    Direction.UP,
-                    blockState.getLightBlock()
-            );
-            return i < 5;
-        }
+        return willSurvive(state, worldView, pos);
     }
 
     @Override
@@ -121,5 +101,22 @@ public class BaseTerrainBlock extends BaseBlock implements BlockLootProvider, Bl
             @NotNull ResourceKey<LootTable> tableKey
     ) {
         return provider.dropWithSilkTouch(this, getBaseBlock(), ConstantValue.exactly(1));
+    }
+
+    public static boolean willSurvive(BlockState state, LevelReader worldView, BlockPos pos) {
+        BlockState blockState = worldView.getBlockState(pos.above());
+        if (blockState.is(Blocks.SNOW) && blockState.getValue(SnowLayerBlock.LAYERS) == 1) {
+            return true;
+        } else if (blockState.getFluidState().getAmount() == 8) {
+            return false;
+        } else {
+            int i = LightEngine.getLightBlockInto(
+                    state,
+                    blockState,
+                    Direction.UP,
+                    blockState.getLightBlock()
+            );
+            return i < 5;
+        }
     }
 }

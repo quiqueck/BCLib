@@ -1,13 +1,12 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.blockentities.BaseFurnaceBlockEntity;
 import org.betterx.bclib.client.models.BCLModels;
-import org.betterx.bclib.client.render.BCLRenderLayer;
-import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.registry.BaseBlockEntities;
-import org.betterx.wover.block.api.model.BlockModelProvider;
-import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
+import org.betterx.wover.block.api.client.trait.BlockModelTrait;
+import org.betterx.wover.block.api.client.trait.ClientBlockTraits;
+import org.betterx.wover.block.api.trait.BlockTraitLookup;
+import org.betterx.wover.sets.api.blocks.BlockSet;
 
 import static net.minecraft.client.data.models.BlockModelGenerators.*;
 import net.minecraft.client.data.models.MultiVariant;
@@ -25,7 +24,6 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FurnaceBlock;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -45,11 +43,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseFurnaceBlock extends FurnaceBlock implements RenderLayerProvider, BlockModelProvider {
-    public BaseFurnaceBlock(Block source) {
-        this(Properties.ofFullCopy(source).lightLevel(state -> state.getValue(LIT) ? 13 : 0));
-    }
-
+public class BaseFurnaceBlock extends FurnaceBlock {
     public BaseFurnaceBlock(BlockBehaviour.Properties properties) {
         super(properties);
     }
@@ -66,41 +60,6 @@ public abstract class BaseFurnaceBlock extends FurnaceBlock implements RenderLay
             player.openMenu((MenuProvider) blockEntity);
             player.awardStat(Stats.INTERACT_WITH_FURNACE);
         }
-    }
-
-    @Environment(EnvType.CLIENT)
-    @Override
-    public void provideBlockModels(WoverBlockModelGenerators generator) {
-        final var baseTexture = TextureMapping.getBlockTexture(this);
-        TextureMapping mapping = new TextureMapping()
-                .put(TextureSlot.TOP, baseTexture.withSuffix("_top"))
-                .put(TextureSlot.SIDE, baseTexture.withSuffix("_side"))
-                .put(TextureSlot.FRONT, baseTexture.withSuffix("_front"))
-                .put(TextureSlot.BOTTOM, baseTexture.withSuffix("_top"));
-        final var furnaceModel = ModelTemplates.CUBE_ORIENTABLE_TOP_BOTTOM.create(
-                this,
-                mapping,
-                generator.modelOutput()
-        );
-
-        TextureMapping mappingGlow = new TextureMapping()
-                .put(TextureSlot.TOP, baseTexture.withSuffix("_top"))
-                .put(TextureSlot.SIDE, baseTexture.withSuffix("_side"))
-                .put(TextureSlot.FRONT, baseTexture.withSuffix("_front_on"))
-                .put(TextureSlot.BOTTOM, baseTexture.withSuffix("_top"))
-                .put(BCLModels.GLOW, baseTexture.withSuffix("_glow"));
-        final var glowModel = BCLModels.FURNACE_GLOW.createWithSuffix(
-                this,
-                "_lit",
-                mappingGlow,
-                generator.modelOutput()
-        );
-
-        final var prop = PropertyDispatch.initial(LIT, FACING);
-        addRotationModels(prop, furnaceModel, false);
-        addRotationModels(prop, glowModel, true);
-
-        generator.acceptBlockState(MultiVariantGenerator.dispatch(this).with(prop));
     }
 
     @Environment(EnvType.CLIENT)
@@ -128,9 +87,41 @@ public abstract class BaseFurnaceBlock extends FurnaceBlock implements RenderLay
         );
     }
 
-    @Override
-    public BCLRenderLayer getRenderLayer() {
-        return BCLRenderLayer.CUTOUT;
+    @Environment(EnvType.CLIENT)
+    public static BlockModelTrait buildModel(BlockSet<?> set, BlockTraitLookup traitLookup) {
+        return ClientBlockTraits.MODEL.with(
+                (key, block, generator) -> {
+                    final var baseTexture = TextureMapping.getBlockTexture(block);
+                    TextureMapping mapping = new TextureMapping()
+                            .put(TextureSlot.TOP, baseTexture.withSuffix("_top"))
+                            .put(TextureSlot.SIDE, baseTexture.withSuffix("_side"))
+                            .put(TextureSlot.FRONT, baseTexture.withSuffix("_front"))
+                            .put(TextureSlot.BOTTOM, baseTexture.withSuffix("_top"));
+                    final var furnaceModel = ModelTemplates.CUBE_ORIENTABLE_TOP_BOTTOM.create(
+                            block,
+                            mapping,
+                            generator.modelOutput()
+                    );
+
+                    TextureMapping mappingGlow = new TextureMapping()
+                            .put(TextureSlot.TOP, baseTexture.withSuffix("_top"))
+                            .put(TextureSlot.SIDE, baseTexture.withSuffix("_side"))
+                            .put(TextureSlot.FRONT, baseTexture.withSuffix("_front_on"))
+                            .put(TextureSlot.BOTTOM, baseTexture.withSuffix("_top"))
+                            .put(BCLModels.GLOW, baseTexture.withSuffix("_glow"));
+                    final var glowModel = BCLModels.FURNACE_GLOW.createWithSuffix(
+                            block,
+                            "_lit",
+                            mappingGlow,
+                            generator.modelOutput()
+                    );
+
+                    final var prop = PropertyDispatch.initial(LIT, FACING);
+                    addRotationModels(prop, furnaceModel, false);
+                    addRotationModels(prop, glowModel, true);
+
+                    generator.acceptBlockState(MultiVariantGenerator.dispatch(block).with(prop));
+                });
     }
 
     @Override
@@ -177,15 +168,5 @@ public abstract class BaseFurnaceBlock extends FurnaceBlock implements RenderLay
             );
         }
         return null;
-    }
-
-    public static class Stone extends BaseFurnaceBlock implements BehaviourStone {
-        public Stone(Block source) {
-            super(source);
-        }
-
-        public Stone(BlockBehaviour.Properties properties) {
-            super(properties);
-        }
     }
 }

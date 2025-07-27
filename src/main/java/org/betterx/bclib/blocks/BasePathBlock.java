@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
@@ -30,7 +31,7 @@ public abstract class BasePathBlock extends BaseBlockNotFull implements BlockLoo
 
     private Block baseBlock;
 
-    public BasePathBlock(Block source) {
+    public BasePathBlock(BlockBehaviour.Properties props, Block source) {
         super(Properties.ofFullCopy(source).isValidSpawn((state, world, pos, type) -> false));
         this.baseBlock = source;
         if (source instanceof BaseTerrainBlock terrain) {
@@ -84,8 +85,8 @@ public abstract class BasePathBlock extends BaseBlockNotFull implements BlockLoo
     }
 
     public static class Stone extends BasePathBlock implements BehaviourStone {
-        public Stone(Block source) {
-            super(source);
+        public Stone(BlockBehaviour.Properties props, Block source) {
+            super(props, source);
         }
     }
 }
