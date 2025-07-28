@@ -1,23 +1,10 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
-import org.betterx.bclib.client.models.BCLModels;
-import org.betterx.bclib.client.render.BCLRenderLayer;
-import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.wover.block.api.BlockProperties;
-import org.betterx.wover.block.api.model.BlockModelProvider;
-import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 
-import net.minecraft.client.data.models.BlockModelGenerators;
-import static net.minecraft.client.data.models.BlockModelGenerators.X_ROT_180;
-import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
-import net.minecraft.client.data.models.blockstates.PropertyDispatch;
-import net.minecraft.client.data.models.model.TextureMapping;
-import net.minecraft.client.data.models.model.TextureSlot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -40,15 +27,12 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 
-//TODO: If we kee+ this, needs to be renamed to BaseStalactiteBlock or similar
-public abstract class StalactiteBlock extends BaseBlockNotFull implements SimpleWaterloggedBlock, LiquidBlockContainer, RenderLayerProvider, BlockModelProvider {
+//TODO: If we keep this, needs to be renamed to BaseStalactiteBlock or similar
+public class StalactiteBlock extends BaseBlockNotFull implements SimpleWaterloggedBlock, LiquidBlockContainer {
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final BooleanProperty IS_FLOOR = BlockProperties.IS_FLOOR;
     public static final IntegerProperty SIZE = BlockProperties.SIZE;
@@ -60,10 +44,12 @@ public abstract class StalactiteBlock extends BaseBlockNotFull implements Simple
 
     public StalactiteBlock(BlockBehaviour.Properties properties) {
         super(properties);
-        this.registerDefaultState(getStateDefinition().any()
-                                                      .setValue(SIZE, 0)
-                                                      .setValue(IS_FLOOR, true)
-                                                      .setValue(WATERLOGGED, false));
+        this.registerDefaultState(getStateDefinition()
+                .any()
+                .setValue(SIZE, 0)
+                .setValue(IS_FLOOR, true)
+                .setValue(WATERLOGGED, false)
+        );
     }
 
     @Override
@@ -218,29 +204,6 @@ public abstract class StalactiteBlock extends BaseBlockNotFull implements Simple
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
-    public void provideBlockModels(WoverBlockModelGenerators generator) {
-        final ResourceLocation id = TextureMapping.getBlockTexture(this);
-        final var props = PropertyDispatch.initial(IS_FLOOR, SIZE);
-        for (int size = 0; size <= 7; size++) {
-            final String suffix = "_" + size;
-            final TextureMapping mapping = new TextureMapping().put(TextureSlot.CROSS, id.withSuffix(suffix));
-            final ResourceLocation modelLocation = BCLModels.CROSS_SHADED.createWithSuffix(
-                    this,
-                    suffix,
-                    mapping,
-                    generator.modelOutput()
-            );
-            final var model = BlockModelGenerators.plainVariant(modelLocation);
-            props.select(true, size, model);
-            props.select(false, size, model.with(X_ROT_180));
-        }
-        generator.acceptBlockState(MultiVariantGenerator.dispatch(this).with(props));
-        generator.createFlatItem(this, TextureMapping.getItemTexture(this.asItem()));
-    }
-
-
-    @Override
     public boolean canPlaceLiquid(
             @Nullable LivingEntity livingEntity,
             BlockGetter blockGetter,
@@ -261,21 +224,6 @@ public abstract class StalactiteBlock extends BaseBlockNotFull implements Simple
         return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : Fluids.EMPTY.defaultFluidState();
     }
 
-    @Override
-    public BCLRenderLayer getRenderLayer() {
-        return BCLRenderLayer.CUTOUT;
-    }
-
-    public static class Stone extends StalactiteBlock implements BehaviourStone {
-
-        public Stone(Block source) {
-            super(source);
-        }
-
-        public Stone(Properties properties) {
-            super(properties);
-        }
-    }
 
     static {
         float end = 2F / 8F;

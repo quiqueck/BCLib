@@ -1,0 +1,100 @@
+package org.betterx.bclib.trait.block;
+
+import org.betterx.bclib.BCLib;
+import org.betterx.wover.block.api.BlockDefinition;
+import org.betterx.wover.block.api.client.trait.ClientBlockTraits;
+import org.betterx.wover.block.api.trait.*;
+import org.betterx.wover.block.impl.trait.BlockTraitImpl;
+
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.material.MapColor;
+
+import java.util.List;
+import org.jetbrains.annotations.Nullable;
+
+public class LeavesBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
+    private static final BlockTraitKey KEY = BlockTraitKey.ofUnique(BCLib.C, "leaves");
+
+    public static List<BlockTrait<?, ?>> withDefault() {
+        return withColor(MapColor.PLANT, 0, false, 0.0F, null);
+    }
+
+    public static List<BlockTrait<?, ?>> withColor(
+            MapColor color,
+            int lightLevel,
+            boolean wet,
+            @Nullable Block saplingBlock
+    ) {
+        return withColor(
+                color, lightLevel, wet, -1,
+                saplingBlock == null ? Blocks.OAK_SAPLING : saplingBlock
+        );
+    }
+
+    public static List<BlockTrait<?, ?>> withColor(
+            MapColor color,
+            float saplingDropChance,
+            @Nullable Block saplingBlock
+    ) {
+        return withColor(color, 0, false, saplingDropChance, saplingBlock);
+    }
+
+    public static List<BlockTrait<?, ?>> withColor(
+            MapColor color,
+            int lightLevel,
+            boolean wet,
+            float saplingDropChance,
+            @Nullable Block saplingBlock
+    ) {
+        return Combiner.of(
+                PlantBlockTrait.withColor(color),
+                new LeavesBlockTrait(lightLevel, wet),
+                BlockTraits.MINEABLE_WITH.needsShears(),
+                saplingDropChance < 0
+                        ? BlockTraits.LOOT_TABLE.dropLeaves(saplingBlock)
+                        : BlockTraits.LOOT_TABLE.dropLeaves(saplingDropChance, saplingBlock),
+                ClientBlockTraits.RENDER_LAYER.cutout(),
+                CompostableBlockTrait.withChance(0.3f),
+                BlockTraits.FLAMMABLE.withDefault(),
+                ClientBlockTraits.MODEL.with((key, block, generator) -> {
+                    generator.createCubeModel(block);
+                    generator.createFlatItem(block);
+                })
+        ).combine();
+    }
+
+    public final int lightLevel;
+    public final boolean wet;
+
+    private LeavesBlockTrait(int lightLevel, boolean wet) {
+        this.lightLevel = lightLevel;
+        this.wet = wet;
+    }
+
+    @Override
+    public BlockTraitKey key() {
+        return KEY;
+    }
+
+    @Override
+    public void configure(BlockDefinition<Block, ? extends BlockDefinition<Block, ?>> definition) {
+        super.configure(definition);
+
+        definition
+                .replaceable()
+                .strength(0.2f)
+                .isValidSpawn(Blocks::ocelotOrParrot)
+                .isSuffocating(Blocks::never)
+                .isViewBlocking(Blocks::never)
+                .isRedstoneConductor(Blocks::never)
+                .sound(wet ? SoundType.WET_GRASS : SoundType.GRASS)
+                .addTags(BlockTags.LEAVES);
+
+        if (lightLevel > 0) {
+            definition.lightLevel(state -> lightLevel);
+        }
+    }
+}

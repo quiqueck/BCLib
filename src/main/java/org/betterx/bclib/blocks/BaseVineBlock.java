@@ -16,19 +16,24 @@ import java.util.function.Function;
 public class BaseVineBlock extends AbstractVineBlock {
     public static final EnumProperty<TripleShape> SHAPE = BlockProperties.TRIPLE_SHAPE;
 
-    public BaseVineBlock() {
-        this(0, false);
+    public BaseVineBlock(BlockBehaviour.Properties props) {
+        this(props, 0, false);
     }
 
-    public BaseVineBlock(int light) {
-        this(light, false);
+    public BaseVineBlock(BlockBehaviour.Properties props, int light) {
+        this(props, light, false);
     }
 
-    public BaseVineBlock(int light, boolean onlyBottomIsLit) {
-        this(light, onlyBottomIsLit, p -> p);
+    public BaseVineBlock(BlockBehaviour.Properties props, int light, boolean onlyBottomIsLit) {
+        this(props, light, onlyBottomIsLit, p -> p);
     }
 
-    public BaseVineBlock(int light, boolean onlyBottomIsLit, Function<Properties, Properties> propMod) {
+    public BaseVineBlock(
+            BlockBehaviour.Properties props,
+            int light,
+            boolean onlyBottomIsLit,
+            Function<Properties, Properties> propMod
+    ) {
         this(
                 propMod.apply(BehaviourBuilders
                         .createPlant()
