@@ -71,38 +71,50 @@ public abstract class BaseAnvilBlock extends AnvilBlock implements AddMineablePi
         builder.add(DESTRUCTION, durability);
     }
 
-    @Environment(EnvType.CLIENT)
+    /**
+     * Kept in a separate class file (not just an @Environment(CLIENT) method) since
+     * BaseAnvilBlock is always loaded on the server; a lambda body's synthetic method does not
+     * inherit the annotation from its enclosing method, so leaving it here would strand vanilla
+     * client-only type references in a class file the server actually has to verify.
+     */
     public static BlockModelTrait buildModel(BlockSet<?> set, BlockTraitLookup traitLookup) {
-        return ClientBlockTraits.MODEL.with(
-                (key, block, generator) -> {
-                    final ResourceLocation id = TextureMapping.getBlockTexture(block);
-                    final TextureMapping mapping = new TextureMapping()
-                            .put(TextureSlot.FRONT, id.withSuffix("_front"))
-                            .put(TextureSlot.BACK, id.withSuffix("_back"))
-                            .put(TextureSlot.BOTTOM, id.withSuffix("_bottom"))
-                            .put(BCLModels.PANEL, id.withSuffix("_panel"));
+        return ClientModel.build();
+    }
 
-                    final var prop = PropertyDispatch.initial(DESTRUCTION, FACING);
+    @Environment(EnvType.CLIENT)
+    private static class ClientModel {
+        private static BlockModelTrait build() {
+            return ClientBlockTraits.MODEL.with(
+                    (key, block, generator) -> {
+                        final ResourceLocation id = TextureMapping.getBlockTexture(block);
+                        final TextureMapping mapping = new TextureMapping()
+                                .put(TextureSlot.FRONT, id.withSuffix("_front"))
+                                .put(TextureSlot.BACK, id.withSuffix("_back"))
+                                .put(TextureSlot.BOTTOM, id.withSuffix("_bottom"))
+                                .put(BCLModels.PANEL, id.withSuffix("_panel"));
 
-                    for (int d = 0; d < 3; d++) {
-                        mapping.put(TextureSlot.TOP, id.withSuffix("_top_" + d));
-                        final ResourceLocation modelLocation = BCLModels.ANVIL.createWithSuffix(
-                                block,
-                                "_" + d,
-                                mapping,
-                                generator.modelOutput()
-                        );
-                        final var model = plainVariant(modelLocation);
+                        final var prop = PropertyDispatch.initial(DESTRUCTION, FACING);
 
-                        prop.select(d, Direction.NORTH, model);
-                        prop.select(d, Direction.EAST, model.with(Y_ROT_90));
-                        prop.select(d, Direction.SOUTH, model.with(Y_ROT_180));
-                        prop.select(d, Direction.WEST, model.with(Y_ROT_270));
+                        for (int d = 0; d < 3; d++) {
+                            mapping.put(TextureSlot.TOP, id.withSuffix("_top_" + d));
+                            final ResourceLocation modelLocation = BCLModels.ANVIL.createWithSuffix(
+                                    block,
+                                    "_" + d,
+                                    mapping,
+                                    generator.modelOutput()
+                            );
+                            final var model = plainVariant(modelLocation);
+
+                            prop.select(d, Direction.NORTH, model);
+                            prop.select(d, Direction.EAST, model.with(Y_ROT_90));
+                            prop.select(d, Direction.SOUTH, model.with(Y_ROT_180));
+                            prop.select(d, Direction.WEST, model.with(Y_ROT_270));
+                        }
+                        generator.acceptBlockState(MultiVariantGenerator.dispatch(block).with(prop));
+                        generator.delegateItemModel(block, id.withSuffix("_0"));
                     }
-                    generator.acceptBlockState(MultiVariantGenerator.dispatch(block).with(prop));
-                    generator.delegateItemModel(block, id.withSuffix("_0"));
-                }
-        );
+            );
+        }
     }
 
 

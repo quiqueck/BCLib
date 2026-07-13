@@ -2,15 +2,20 @@ package org.betterx.bclib.trait.block;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.wover.block.api.BlockDefinition;
+import org.betterx.wover.block.api.client.trait.BlockModelTrait;
 import org.betterx.wover.block.api.client.trait.ClientBlockTraits;
 import org.betterx.wover.block.api.trait.*;
 import org.betterx.wover.block.impl.trait.BlockTraitImpl;
+import org.betterx.wover.core.api.ModCore;
 
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.MapColor;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import java.util.List;
 import org.jetbrains.annotations.Nullable;
@@ -59,11 +64,25 @@ public class LeavesBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
                 ClientBlockTraits.RENDER_LAYER.cutout(),
                 CompostableBlockTrait.withChance(0.3f),
                 BlockTraits.FLAMMABLE.withDefault(),
-                ClientBlockTraits.MODEL.with((key, block, generator) -> {
-                    generator.createCubeModel(block);
-                    generator.createFlatItem(block);
-                })
+                ModCore.isDatagen() ? ClientModel.build() : null
         ).combine();
+    }
+
+    /**
+     * Kept in a separate class file (not just an @Environment(CLIENT)-guarded expression):
+     * merely creating this lambda - even without ever invoking it - requires resolving the
+     * client-only WoverBlockModelGenerators parameter type at the invokedynamic bootstrap site,
+     * which throws immediately on a dedicated server. Gating with ModCore.isDatagen() keeps that
+     * bootstrap instruction from ever executing there. See PathBlockTrait for the same pattern.
+     */
+    @Environment(EnvType.CLIENT)
+    private static class ClientModel {
+        private static BlockModelTrait build() {
+            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+                generator.createCubeModel(block);
+                generator.createFlatItem(block);
+            });
+        }
     }
 
     public final int lightLevel;

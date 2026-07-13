@@ -87,41 +87,53 @@ public class BaseFurnaceBlock extends FurnaceBlock {
         );
     }
 
-    @Environment(EnvType.CLIENT)
+    /**
+     * Kept in a separate class file (not just an @Environment(CLIENT) method) since
+     * BaseFurnaceBlock is always loaded on the server; a lambda body's synthetic method does not
+     * inherit the annotation from its enclosing method, so leaving it here would strand vanilla
+     * client-only type references in a class file the server actually has to verify.
+     */
     public static BlockModelTrait buildModel(BlockSet<?> set, BlockTraitLookup traitLookup) {
-        return ClientBlockTraits.MODEL.with(
-                (key, block, generator) -> {
-                    final var baseTexture = TextureMapping.getBlockTexture(block);
-                    TextureMapping mapping = new TextureMapping()
-                            .put(TextureSlot.TOP, baseTexture.withSuffix("_top"))
-                            .put(TextureSlot.SIDE, baseTexture.withSuffix("_side"))
-                            .put(TextureSlot.FRONT, baseTexture.withSuffix("_front"))
-                            .put(TextureSlot.BOTTOM, baseTexture.withSuffix("_top"));
-                    final var furnaceModel = ModelTemplates.CUBE_ORIENTABLE_TOP_BOTTOM.create(
-                            block,
-                            mapping,
-                            generator.modelOutput()
-                    );
+        return ClientModel.build();
+    }
 
-                    TextureMapping mappingGlow = new TextureMapping()
-                            .put(TextureSlot.TOP, baseTexture.withSuffix("_top"))
-                            .put(TextureSlot.SIDE, baseTexture.withSuffix("_side"))
-                            .put(TextureSlot.FRONT, baseTexture.withSuffix("_front_on"))
-                            .put(TextureSlot.BOTTOM, baseTexture.withSuffix("_top"))
-                            .put(BCLModels.GLOW, baseTexture.withSuffix("_glow"));
-                    final var glowModel = BCLModels.FURNACE_GLOW.createWithSuffix(
-                            block,
-                            "_lit",
-                            mappingGlow,
-                            generator.modelOutput()
-                    );
+    @Environment(EnvType.CLIENT)
+    private static class ClientModel {
+        private static BlockModelTrait build() {
+            return ClientBlockTraits.MODEL.with(
+                    (key, block, generator) -> {
+                        final var baseTexture = TextureMapping.getBlockTexture(block);
+                        TextureMapping mapping = new TextureMapping()
+                                .put(TextureSlot.TOP, baseTexture.withSuffix("_top"))
+                                .put(TextureSlot.SIDE, baseTexture.withSuffix("_side"))
+                                .put(TextureSlot.FRONT, baseTexture.withSuffix("_front"))
+                                .put(TextureSlot.BOTTOM, baseTexture.withSuffix("_top"));
+                        final var furnaceModel = ModelTemplates.CUBE_ORIENTABLE_TOP_BOTTOM.create(
+                                block,
+                                mapping,
+                                generator.modelOutput()
+                        );
 
-                    final var prop = PropertyDispatch.initial(LIT, FACING);
-                    addRotationModels(prop, furnaceModel, false);
-                    addRotationModels(prop, glowModel, true);
+                        TextureMapping mappingGlow = new TextureMapping()
+                                .put(TextureSlot.TOP, baseTexture.withSuffix("_top"))
+                                .put(TextureSlot.SIDE, baseTexture.withSuffix("_side"))
+                                .put(TextureSlot.FRONT, baseTexture.withSuffix("_front_on"))
+                                .put(TextureSlot.BOTTOM, baseTexture.withSuffix("_top"))
+                                .put(BCLModels.GLOW, baseTexture.withSuffix("_glow"));
+                        final var glowModel = BCLModels.FURNACE_GLOW.createWithSuffix(
+                                block,
+                                "_lit",
+                                mappingGlow,
+                                generator.modelOutput()
+                        );
 
-                    generator.acceptBlockState(MultiVariantGenerator.dispatch(block).with(prop));
-                });
+                        final var prop = PropertyDispatch.initial(LIT, FACING);
+                        addRotationModels(prop, furnaceModel, false);
+                        addRotationModels(prop, glowModel, true);
+
+                        generator.acceptBlockState(MultiVariantGenerator.dispatch(block).with(prop));
+                    });
+        }
     }
 
     @Override

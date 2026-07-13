@@ -166,12 +166,17 @@ public class DebugDataItem extends Item implements ItemModelProvider, AirSelecti
     protected final ResourceLocation icon;
     public final boolean placeInAir;
 
-    public DebugDataItem(DebugEntityInteraction interaction, boolean placeInAir, ResourceLocation icon) {
-        this((DebugInteraction) interaction, placeInAir, icon);
+    public DebugDataItem(
+            ResourceKey<Item> id,
+            DebugEntityInteraction interaction,
+            boolean placeInAir,
+            ResourceLocation icon
+    ) {
+        this(id, (DebugInteraction) interaction, placeInAir, icon);
     }
 
-    public DebugDataItem(DebugInteraction interaction, boolean placeInAir, ResourceLocation icon) {
-        super(new Item.Properties().fireResistant().stacksTo(1));
+    public DebugDataItem(ResourceKey<Item> id, DebugInteraction interaction, boolean placeInAir, ResourceLocation icon) {
+        super(new Item.Properties().setId(id).fireResistant().stacksTo(1));
 
         this.interaction = interaction;
         this.icon = (icon == null ? DEFAULT_ICON : icon);
@@ -233,9 +238,10 @@ public class DebugDataItem extends Item implements ItemModelProvider, AirSelecti
         return AirSelectionItem.super.useOnAir(level, player, interactionHand);
     }
 
-    public static DebugDataItem forLootTable(ResourceKey<LootTable> table, Item icon) {
+    public static DebugDataItem forLootTable(ResourceKey<Item> id, ResourceKey<LootTable> table, Item icon) {
         ResourceLocation iconId = BuiltInRegistries.ITEM.getKey(icon);
         return new DebugDataItem(
+                id,
                 (player, entity, ctx) -> {
                     try (ProblemReporter.ScopedCollector scopedCollector = new ProblemReporter.ScopedCollector(
                             entity.problemPath(), LOGGER
@@ -256,9 +262,10 @@ public class DebugDataItem extends Item implements ItemModelProvider, AirSelecti
         );
     }
 
-    public static DebugDataItem forSpawner(Supplier<CompoundTag> tag, Item icon) {
+    public static DebugDataItem forSpawner(ResourceKey<Item> id, Supplier<CompoundTag> tag, Item icon) {
         ResourceLocation iconId = BuiltInRegistries.ITEM.getKey(icon);
         return new DebugDataItem(
+                id,
                 (player, entity, ctx) -> {
                     if (entity instanceof SpawnerBlockEntity) {
                         try (ProblemReporter.ScopedCollector scopedCollector = new ProblemReporter.ScopedCollector(
@@ -281,11 +288,13 @@ public class DebugDataItem extends Item implements ItemModelProvider, AirSelecti
     }
 
     public static DebugDataItem forSteetJigSaw(
+            ResourceKey<Item> id,
             String modID,
             ResourceKey<StructureTemplatePool> pool,
             Item icon
     ) {
         return forJigsaw(
+                id,
                 pool == null ? Pools.EMPTY : pool,
                 ResourceLocation.fromNamespaceAndPath(modID, "street"),
                 JigsawBlockEntity.JointType.ALIGNED,
@@ -296,11 +305,13 @@ public class DebugDataItem extends Item implements ItemModelProvider, AirSelecti
     }
 
     public static DebugDataItem forHouseEntranceJigSaw(
+            ResourceKey<Item> id,
             String modID,
             ResourceKey<StructureTemplatePool> pool,
             Item icon
     ) {
         return forJigsaw(
+                id,
                 pool == null ? Pools.EMPTY : pool,
                 pool == null
                         ? ResourceLocation.fromNamespaceAndPath(modID, "building_entrance")
@@ -316,11 +327,13 @@ public class DebugDataItem extends Item implements ItemModelProvider, AirSelecti
     }
 
     public static DebugDataItem forDecorationJigSaw(
+            ResourceKey<Item> id,
             String modID,
             ResourceKey<StructureTemplatePool> pool,
             Item icon
     ) {
         return forJigsaw(
+                id,
                 pool == null ? Pools.EMPTY : pool,
                 pool == null
                         ? ResourceLocation.fromNamespaceAndPath(modID, "side")
@@ -336,11 +349,13 @@ public class DebugDataItem extends Item implements ItemModelProvider, AirSelecti
     }
 
     public static DebugDataItem forStreetDecorationJigSaw(
+            ResourceKey<Item> id,
             String modID,
             ResourceKey<StructureTemplatePool> pool,
             Item icon
     ) {
         return forJigsaw(
+                id,
                 pool == null ? Pools.EMPTY : pool,
                 pool == null
                         ? ResourceLocation.fromNamespaceAndPath(modID, "bottom")
@@ -356,6 +371,7 @@ public class DebugDataItem extends Item implements ItemModelProvider, AirSelecti
     }
 
     public static DebugDataItem forJigsaw(
+            ResourceKey<Item> id,
             ResourceKey<StructureTemplatePool> pool,
             ResourceLocation connector,
             JigsawBlockEntity.JointType type,
@@ -363,10 +379,11 @@ public class DebugDataItem extends Item implements ItemModelProvider, AirSelecti
             FrontAndTop forceOrientation,
             Item icon
     ) {
-        return forJigsaw(pool, connector, connector, type, finalState, forceOrientation, icon);
+        return forJigsaw(id, pool, connector, connector, type, finalState, forceOrientation, icon);
     }
 
     public static DebugDataItem forJigsaw(
+            ResourceKey<Item> id,
             ResourceKey<StructureTemplatePool> pool,
             ResourceLocation name,
             ResourceLocation target,
@@ -377,6 +394,7 @@ public class DebugDataItem extends Item implements ItemModelProvider, AirSelecti
     ) {
         ResourceLocation iconId = BuiltInRegistries.ITEM.getKey(icon);
         return new DebugDataItem(
+                id,
                 (ctx) -> {
                     final var player = ctx.getPlayer();
                     final var level = ctx.getLevel();

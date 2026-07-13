@@ -28,7 +28,7 @@ public class PathBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
         return Combiner.combine(
                 new PathBlockTrait(),
                 BlockTraits.LOOT_TABLE.with(drops(source)),
-                ModCore.isDatagen() ? buildModel(source) : null
+                ModCore.isDatagen() ? ClientModel.build(source) : null
         );
     }
 
@@ -51,24 +51,35 @@ public class PathBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
         };
     }
 
+    /**
+     * The model-building lambda below references vanilla client-only datagen types
+     * (e.g. {@code BlockModelDefinitionGenerator}). Those types must not leak into
+     * {@link PathBlockTrait}'s own class file, since loading that class (e.g. just to
+     * call {@link #withSource}) forces the JVM to verify every method declared in it -
+     * including synthetic lambda bodies - even on a dedicated server where this branch
+     * is never taken. Keeping it in a separate class file means it is only verified if
+     * actually loaded, which only happens when {@code ModCore.isDatagen()} is true.
+     */
     @Environment(EnvType.CLIENT)
-    public static BlockModelTrait buildModel(Block source) {
-        return ClientBlockTraits.MODEL.with(
-                (key, block, generator) -> {
-                    var side = TextureMapping.getBlockTexture(block, "_side");
-                    side = ResourceLocation.fromNamespaceAndPath(
-                            side.getNamespace(), side
-                                    .getPath()
-                                    .replace("_path", "")
-                    );
+    private static class ClientModel {
+        private static BlockModelTrait build(Block source) {
+            return ClientBlockTraits.MODEL.with(
+                    (key, block, generator) -> {
+                        var side = TextureMapping.getBlockTexture(block, "_side");
+                        side = ResourceLocation.fromNamespaceAndPath(
+                                side.getNamespace(), side
+                                        .getPath()
+                                        .replace("_path", "")
+                        );
 
-                    var mapping = new TextureMapping()
-                            .put(TextureSlot.SIDE, side)
-                            .put(TextureSlot.TOP, TextureMapping.getBlockTexture(block, "_top"))
-                            .put(TextureSlot.BOTTOM, TextureMapping.getBlockTexture(source));
-                    var location = BCLModels.PATH.create(block, mapping, generator.modelOutput());
+                        var mapping = new TextureMapping()
+                                .put(TextureSlot.SIDE, side)
+                                .put(TextureSlot.TOP, TextureMapping.getBlockTexture(block, "_top"))
+                                .put(TextureSlot.BOTTOM, TextureMapping.getBlockTexture(source));
+                        var location = BCLModels.PATH.create(block, mapping, generator.modelOutput());
 
-                    generator.acceptBlockState(generator.randomTopModelVariant(block, location));
-                });
+                        generator.acceptBlockState(generator.randomTopModelVariant(block, location));
+                    });
+        }
     }
 }
