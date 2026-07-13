@@ -13,7 +13,7 @@ import net.minecraft.world.level.material.MapColor;
 import java.util.List;
 
 public class VineBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
-    private static final BlockTraitKey KEY = BlockTraitKey.ofUnique(BCLib.C, "sapling");
+    private static final BlockTraitKey KEY = BlockTraitKey.ofUnique(BCLib.C, "vine");
 
     public static List<BlockTrait<?, ?>> withDefault() {
         return withLight(0);

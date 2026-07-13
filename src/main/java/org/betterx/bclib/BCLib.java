@@ -6,6 +6,7 @@ import org.betterx.bclib.api.v3.tag.BCLBlockTags;
 import org.betterx.bclib.commands.CommandRegistry;
 import org.betterx.bclib.commands.arguments.BCLibArguments;
 import org.betterx.bclib.config.Configs;
+import org.betterx.bclib.mixin.common.ItemAccessor;
 import org.betterx.bclib.recipes.AlloyingRecipe;
 import org.betterx.bclib.recipes.AnvilRecipe;
 import org.betterx.bclib.registry.BaseBlockEntities;
@@ -19,6 +20,7 @@ import org.betterx.wover.state.api.WorldConfig;
 import org.betterx.wover.ui.api.VersionChecker;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Items;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
@@ -55,6 +57,13 @@ public class BCLib implements ModInitializer {
         Configs.save();
 
         VersionChecker.registerMod(C);
+
+        // Water Bottles are potions and vanilla does not give them a crafting-remainder item
+        // (the empty bottle) - fix that once here, no need to wait for other mods to load.
+        if (((ItemAccessor) Items.POTION).bcl_craftingRemainingItem() == null
+                || ((ItemAccessor) Items.POTION).bcl_craftingRemainingItem() == Items.AIR) {
+            ((ItemAccessor) Items.POTION).bcl_setCraftingRemainingItem(Items.GLASS_BOTTLE);
+        }
 
         if (isDatagen()) {
             WoverDataGenEntryPoint.registerAutoProvider(BCLAutoBlockTagProvider::new);

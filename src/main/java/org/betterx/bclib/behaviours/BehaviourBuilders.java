@@ -19,13 +19,25 @@ public class BehaviourBuilders {
         return createWalkablePlant(color).noCollission();
     }
 
+    /**
+     * Applies plant defaults on top of an already-configured {@code props} instance (e.g. one
+     * threaded through from a block's constructor, which already carries its registry id) instead
+     * of building a fresh one from scratch.
+     */
+    public static BlockBehaviour.Properties createPlant(BlockBehaviour.Properties props, MapColor color) {
+        return createWalkablePlant(props, color).noCollission();
+    }
+
     public static BlockBehaviour.Properties createWalkablePlant() {
         return createWalkablePlant(MapColor.PLANT);
     }
 
     public static BlockBehaviour.Properties createWalkablePlant(MapColor color) {
-        return BlockBehaviour.Properties
-                .of()
+        return createWalkablePlant(BlockBehaviour.Properties.of(), color);
+    }
+
+    public static BlockBehaviour.Properties createWalkablePlant(BlockBehaviour.Properties props, MapColor color) {
+        return props
                 .mapColor(color)
                 .noOcclusion()
                 .instabreak()
@@ -107,8 +119,7 @@ public class BehaviourBuilders {
     }
 
     public static BlockBehaviour.Properties createStaticLeaves(MapColor color, boolean flammable) {
-        final BlockBehaviour.Properties p = BlockBehaviour.Properties
-                .of()
+        final BlockBehaviour.Properties p = BlockBehaviour.Properties.of()
                 .mapColor(color)
                 .strength(0.2f)
                 .noOcclusion()
@@ -129,8 +140,7 @@ public class BehaviourBuilders {
     }
 
     public static BlockBehaviour.Properties createCactus(MapColor color, boolean flammable) {
-        final BlockBehaviour.Properties p = BlockBehaviour.Properties
-                .of()
+        final BlockBehaviour.Properties p = BlockBehaviour.Properties.of()
                 .mapColor(color)
                 .randomTicks()
                 .strength(0.4F)
@@ -160,10 +170,14 @@ public class BehaviourBuilders {
     }
 
     public static BlockBehaviour.Properties createStone(MapColor color) {
-        return BlockBehaviour.Properties.of()
-                                        .mapColor(color)
-                                        .strength(1.5F, 6.0F)
-                                        .instrument(NoteBlockInstrument.BASEDRUM);
+        return createStone(BlockBehaviour.Properties.of(), color);
+    }
+
+    public static BlockBehaviour.Properties createStone(BlockBehaviour.Properties props, MapColor color) {
+        return props
+                .mapColor(color)
+                .strength(1.5F, 6.0F)
+                .instrument(NoteBlockInstrument.BASEDRUM);
     }
 
     public static BlockBehaviour.Properties createWood() {
@@ -171,8 +185,7 @@ public class BehaviourBuilders {
     }
 
     public static BlockBehaviour.Properties createWood(MapColor color, boolean flammable) {
-        final BlockBehaviour.Properties p = BlockBehaviour.Properties
-                .of()
+        final BlockBehaviour.Properties p = BlockBehaviour.Properties.of()
                 .mapColor(color)
                 .instrument(NoteBlockInstrument.BASS)
                 .strength(2.0F)
@@ -186,8 +199,7 @@ public class BehaviourBuilders {
     }
 
     public static BlockBehaviour.Properties createSign(MapColor color, boolean flammable) {
-        final BlockBehaviour.Properties p = BlockBehaviour.Properties
-                .of()
+        final BlockBehaviour.Properties p = BlockBehaviour.Properties.of()
                 .mapColor(color)
                 .forceSolidOn()
                 .instrument(NoteBlockInstrument.BASS)
@@ -204,8 +216,7 @@ public class BehaviourBuilders {
     }
 
     public static BlockBehaviour.Properties createTrapDoor(MapColor color, boolean flammable) {
-        final BlockBehaviour.Properties p = BlockBehaviour.Properties
-                .of()
+        final BlockBehaviour.Properties p = BlockBehaviour.Properties.of()
                 .mapColor(color)
                 .instrument(NoteBlockInstrument.BASS)
                 .strength(3.0F)
@@ -218,8 +229,7 @@ public class BehaviourBuilders {
     }
 
     public static BlockBehaviour.Properties createGlass() {
-        return BlockBehaviour.Properties
-                .of()
+        return BlockBehaviour.Properties.of()
                 .instrument(NoteBlockInstrument.HAT)
                 .strength(0.3F)
                 .sound(SoundType.GLASS)
@@ -231,8 +241,7 @@ public class BehaviourBuilders {
     }
 
     public static BlockBehaviour.Properties createSnow() {
-        return BlockBehaviour.Properties
-                .of()
+        return BlockBehaviour.Properties.of()
                 .mapColor(MapColor.SNOW)
                 .requiresCorrectToolForDrops()
                 .strength(0.2F)

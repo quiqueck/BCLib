@@ -1,11 +1,14 @@
 package org.betterx.bclib.behaviours.interfaces;
 
 /**
- * Interface for blocks that can be composted.
+ * Marker interface for blocks that can be composted.
  * <p>
- * {@link org.betterx.bclib.api.v2.PostInitAPI} will add the
- * {@link org.betterx.wover.tag.api.predefined.CommonItemTags#COMPOSTABLE} tag to the items of all blocks that
- * implement this interface. It will also register the Block with the {@link org.betterx.bclib.api.v2.ComposterAPI}
+ * {@code BCLAutoItemTagProvider} adds the {@link org.betterx.wover.tag.api.predefined.CommonItemTags#COMPOSTABLE}
+ * tag to the items of all blocks that implement this interface, at datagen time.
+ * <p>
+ * The actual composting chance registered with vanilla's composter is configured separately, via
+ * {@link org.betterx.bclib.trait.block.CompostableBlockTrait} on the block's own registration -
+ * this interface's {@link #compostingChance()} is not consulted for that.
  */
 public interface BehaviourCompostable extends BlockBehaviour {
 

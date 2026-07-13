@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.material.MapColor;
 
 import java.util.function.Function;
 
@@ -36,7 +37,7 @@ public class BaseVineBlock extends AbstractVineBlock {
     ) {
         this(
                 propMod.apply(BehaviourBuilders
-                        .createPlant()
+                        .createPlant(props, MapColor.PLANT)
                         .sound(SoundType.GRASS)
                         .lightLevel((state) -> onlyBottomIsLit
                                 ? state.getValue(SHAPE) == TripleShape.BOTTOM

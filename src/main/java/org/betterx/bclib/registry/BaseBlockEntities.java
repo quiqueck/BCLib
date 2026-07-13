@@ -2,8 +2,6 @@ package org.betterx.bclib.registry;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.blockentities.BaseFurnaceBlockEntity;
-import org.betterx.bclib.blockentities.DynamicBlockEntityType;
-import org.betterx.bclib.blockentities.DynamicBlockEntityType.BlockEntitySupplier;
 import org.betterx.bclib.blocks.BaseFurnaceBlock;
 import org.betterx.bclib.furniture.entity.EntityChair;
 
@@ -17,11 +15,18 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 
 public class BaseBlockEntities {
-    public static final DynamicBlockEntityType<BaseFurnaceBlockEntity> FURNACE = registerBlockEntityType(
-            BCLib.makeID(
-                    "furnace"), BaseFurnaceBlockEntity::new
+    // No blocks are passed here - furnace-like blocks are added dynamically as they register,
+    // via BlockTraits.VALID_BLOCK_ENTITY (see Furnace.addSlotSpecificDefinitions in BetterEnd),
+    // which relies on wover's BlockEntityType mixin to accept an incrementally-extended block set.
+    public static final BlockEntityType<BaseFurnaceBlockEntity> FURNACE = Registry.register(
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            BCLib.makeID("furnace"),
+            FabricBlockEntityTypeBuilder.create(BaseFurnaceBlockEntity::new).build(null)
     );
 
     public static final EntityType<EntityChair> CHAIR = registerEntity(
@@ -41,13 +46,6 @@ public class BaseBlockEntities {
         var entity = entityBuilder.build(key);
         Registry.register(BuiltInRegistries.ENTITY_TYPE, key, entity);
         return entity;
-    }
-
-    public static <T extends BlockEntity> DynamicBlockEntityType<T> registerBlockEntityType(
-            ResourceLocation typeId,
-            BlockEntitySupplier<? extends T> supplier
-    ) {
-        return Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, typeId, new DynamicBlockEntityType<>(supplier));
     }
 
     public static void register() {

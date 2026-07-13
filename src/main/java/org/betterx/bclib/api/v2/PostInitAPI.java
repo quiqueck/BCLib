@@ -1,19 +1,13 @@
 package org.betterx.bclib.api.v2;
 
-import org.betterx.bclib.BCLib;
-import org.betterx.bclib.behaviours.interfaces.BehaviourCompostable;
-import org.betterx.bclib.blocks.BaseFurnaceBlock;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.PostInitable;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
-import org.betterx.bclib.mixin.common.ItemAccessor;
-import org.betterx.bclib.registry.BaseBlockEntities;
 
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 
 import net.fabricmc.api.EnvType;
@@ -25,6 +19,11 @@ import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.function.Consumer;
 
+// Composter-chance registration, furnace block-entity registration, and the potion crafting-
+// remainder fix used to live here too - they've been migrated to CompostableBlockTrait,
+// BlockTraits.VALID_BLOCK_ENTITY, and BCLib.onInitialize() respectively, since none of them
+// actually needed to wait for "everyone else is done"; they can run inline, at each block's own
+// registration (or, for the potion fix, immediately at BCLib's own init).
 public class PostInitAPI {
     private static List<Consumer<Boolean>> postInitFunctions = Lists.newArrayList();
     private static List<TagKey<Block>> blockTags = Lists.newArrayList();
@@ -52,11 +51,6 @@ public class PostInitAPI {
             }
         });
 
-
-        BuiltInRegistries.ITEM.forEach(item -> {
-            processItemCommon(item);
-        });
-
         if (postInitFunctions != null) {
             postInitFunctions.forEach(function -> function.accept(isClient));
             postInitFunctions = null;
@@ -76,32 +70,9 @@ public class PostInitAPI {
 
     }
 
-    private static void processItemCommon(Item item) {
-        if (item == Items.POTION && item instanceof ItemAccessor itemAccessor) {
-            // Water Bottles are potions and they do not return an empty bottle in crafting Recipes
-            // We fix this, by adding the craftingRemainingItem
-            if (itemAccessor.bcl_craftingRemainingItem() == null || itemAccessor.bcl_craftingRemainingItem() == Items.AIR) {
-                itemAccessor.bcl_setCraftingRemainingItem(Items.GLASS_BOTTLE);
-            }
-        }
-    }
-
     private static void processBlockCommon(Block block) {
-        final Item item = block.asItem();
         if (block instanceof PostInitable) {
             ((PostInitable) block).postInit();
-        }
-
-        if (block instanceof BehaviourCompostable c) {
-            if (item != null && item != Items.AIR) {
-                ComposterAPI.allowCompost(c.compostingChance(), item);
-            } else if (BCLib.isDatagen()) {
-                BCLib.LOGGER.verbose("Block " + block + " has compostable behaviour but no item!");
-            }
-        }
-
-        if (block instanceof BaseFurnaceBlock) {
-            BaseBlockEntities.FURNACE.registerBlock(block);
         }
     }
 }

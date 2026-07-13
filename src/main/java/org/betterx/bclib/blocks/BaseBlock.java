@@ -5,31 +5,27 @@ import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.wover.block.api.model.BlockModelProvider;
 import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
-import org.betterx.wover.loot.api.BlockLootProvider;
-import org.betterx.wover.loot.api.LootLookupProvider;
 
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.storage.loot.LootTable;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import java.util.function.Consumer;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Base class for a default Block.
  * <p>
  * This Block-Type will:
  * <ul>
- * 	 <li>Drop itself</li>
  * 	 <li>Automatically create an Item-Model from the Block-Model</li>
  * </ul>
+ * <p>
+ * Loot is no longer provided implicitly - register a {@code BlockTraits.LOOT_TABLE} trait
+ * at the registration site for blocks that need one.
  */
-public class BaseBlock extends Block implements BlockLootProvider, BlockModelProvider {
+public class BaseBlock extends Block implements BlockModelProvider {
     /**
      * Creates a new Block with the passed properties
      *
@@ -76,16 +72,7 @@ public class BaseBlock extends Block implements BlockLootProvider, BlockModelPro
     @Override
     @Environment(EnvType.CLIENT)
     public void provideBlockModels(WoverBlockModelGenerators generator) {
-        generator.createCubeModel(this);
-    }
-
-    @Override
-    public LootTable.Builder registerBlockLoot(
-            @NotNull ResourceLocation location,
-            @NotNull LootLookupProvider provider,
-            @NotNull ResourceKey<LootTable> tableKey
-    ) {
-        return provider.drop(this);
+        generator.createCubeModelWithFlatItem(this);
     }
 
     public static class Wood extends BaseBlock implements BehaviourWood {
