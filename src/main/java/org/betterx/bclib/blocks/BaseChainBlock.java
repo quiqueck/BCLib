@@ -7,7 +7,7 @@ import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.wover.block.api.model.BlockModelProvider;
 import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 
-import net.minecraft.client.data.models.model.ModelLocationUtils;
+import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChainBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -24,10 +24,7 @@ public abstract class BaseChainBlock extends ChainBlock implements BlockModelPro
 
     @Override
     public void provideBlockModels(WoverBlockModelGenerators generator) {
-        generator.vanillaGenerator.createAxisAlignedPillarBlockCustomModel(
-                this,
-                generator.vanillaGenerator.plainVariant(ModelLocationUtils.getModelLocation(this))
-        );
+        generator.createChainModel(this, TextureMapping.getBlockTexture(this));
     }
 
 //    @Override

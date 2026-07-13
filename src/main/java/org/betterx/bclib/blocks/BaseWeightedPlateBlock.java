@@ -62,6 +62,6 @@ public class BaseWeightedPlateBlock extends WeightedPressurePlateBlock implement
 
     @Override
     public void provideBlockModels(WoverBlockModelGenerators generator) {
-        generator.createPressurePlate(this.parent, parent);
+        generator.createPressurePlate(this.parent, this);
     }
 }
