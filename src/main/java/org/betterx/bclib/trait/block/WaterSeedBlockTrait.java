@@ -33,13 +33,23 @@ public class WaterSeedBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait
     }
 
     public static List<BlockTrait<?, ?>> withColor(MapColor color, int lightLevel) {
+        return withColor(color, lightLevel, true);
+    }
+
+    /**
+     * @param generateModel when {@code false}, the default cross block/item model is <em>not</em> attached, so
+     *                      the block can supply its own model (e.g. hand-authored art routed through
+     *                      {@code ModelTraitLibrary.externalModel()}). Every other overload defaults this to
+     *                      {@code true} to preserve the vanilla-style cross model for simple water seeds.
+     */
+    public static List<BlockTrait<?, ?>> withColor(MapColor color, int lightLevel, boolean generateModel) {
         return Combiner.of(
                 WaterPlantBlockTrait.withColor(color),
                 new WaterSeedBlockTrait(lightLevel),
                 BlockTraits.MINEABLE_WITH.needsHoe(),
                 BlockTraits.LOOT_TABLE.dropSelf(),
                 ClientBlockTraits.RENDER_LAYER.cutout(),
-                ModCore.isDatagen() ? ClientModel.build(lightLevel) : null,
+                generateModel && ModCore.isDatagen() ? ClientModel.build(lightLevel) : null,
                 CompostableBlockTrait.withDefault(),
                 BlockTraits.FLAMMABLE.withDefault()
         ).combine();

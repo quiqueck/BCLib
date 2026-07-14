@@ -186,10 +186,15 @@ public abstract class BaseChair extends AbstractChair {
         );
     }
 
-    @Override
+    /**
+     * Generates the block model for a chair, using {@code baseMaterial}/{@code clothMaterial}'s textures.
+     *
+     * @param generator The generator helper to emit the blockstate/model through
+     * @param chairBlock The chair block to generate the model for
+     */
     @Environment(EnvType.CLIENT)
-    public void provideBlockModels(WoverBlockModelGenerators generator) {
-        BCLModels.createChairBlockModel(generator, this, this.baseMaterial, this.clothMaterial);
+    public static void provideBlockModel(WoverBlockModelGenerators generator, BaseChair chairBlock) {
+        BCLModels.createChairBlockModel(generator, chairBlock, chairBlock.baseMaterial, chairBlock.clothMaterial);
     }
 
     @Override

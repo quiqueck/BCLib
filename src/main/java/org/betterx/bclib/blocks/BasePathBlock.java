@@ -2,7 +2,6 @@ package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.client.models.BCLModels;
-import org.betterx.wover.block.api.model.BlockModelProvider;
 import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 import org.betterx.wover.loot.api.BlockLootProvider;
 import org.betterx.wover.loot.api.LootLookupProvider;
@@ -26,7 +25,12 @@ import net.fabricmc.api.Environment;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BasePathBlock extends BaseBlockNotFull implements BlockLootProvider, BlockModelProvider {
+/**
+ * The block model is no longer provided implicitly - register a
+ * {@code ClientBlockTraits.MODEL.with((key, block, generator) -> BasePathBlock.provideBlockModel(generator, (BasePathBlock) block))}
+ * trait (see {@link #provideBlockModel}) at the registration site of any block that needs one.
+ */
+public abstract class BasePathBlock extends BaseBlockNotFull implements BlockLootProvider {
     private static final VoxelShape SHAPE = box(0, 0, 0, 16, 15, 16);
 
     private Block baseBlock;
@@ -38,6 +42,10 @@ public abstract class BasePathBlock extends BaseBlockNotFull implements BlockLoo
             this.baseBlock = terrain.getBaseBlock();
             terrain.setPathBlock(this);
         }
+    }
+
+    public Block getBaseBlock() {
+        return baseBlock;
     }
 
     @Override
@@ -55,10 +63,16 @@ public abstract class BasePathBlock extends BaseBlockNotFull implements BlockLoo
         return SHAPE;
     }
 
-    @Override
+    /**
+     * Generates the randomly-rotated top-variant blockstate/model for a path block, using {@code baseBlock}'s
+     * texture for the bottom face and the path block's own {@code _top}/{@code _side} textures otherwise.
+     *
+     * @param generator The generator helper to emit the blockstate/model through
+     * @param pathBlock The path block to generate the model for
+     */
     @Environment(EnvType.CLIENT)
-    public void provideBlockModels(WoverBlockModelGenerators generator) {
-        var side = TextureMapping.getBlockTexture(this, "_side");
+    public static void provideBlockModel(WoverBlockModelGenerators generator, BasePathBlock pathBlock) {
+        var side = TextureMapping.getBlockTexture(pathBlock, "_side");
         side = ResourceLocation.fromNamespaceAndPath(
                 side.getNamespace(), side
                         .getPath()
@@ -67,12 +81,11 @@ public abstract class BasePathBlock extends BaseBlockNotFull implements BlockLoo
 
         var mapping = new TextureMapping()
                 .put(TextureSlot.SIDE, side)
-                .put(TextureSlot.TOP, TextureMapping.getBlockTexture(this, "_top"))
-                .put(TextureSlot.BOTTOM, TextureMapping.getBlockTexture(baseBlock));
-        var location = BCLModels.PATH.create(this, mapping, generator.modelOutput());
+                .put(TextureSlot.TOP, TextureMapping.getBlockTexture(pathBlock, "_top"))
+                .put(TextureSlot.BOTTOM, TextureMapping.getBlockTexture(pathBlock.getBaseBlock()));
+        var location = BCLModels.PATH.create(pathBlock, mapping, generator.modelOutput());
 
-        generator.acceptBlockState(generator.randomTopModelVariant(this, location));
-
+        generator.acceptBlockState(generator.randomTopModelVariant(pathBlock, location));
     }
 
     @Override

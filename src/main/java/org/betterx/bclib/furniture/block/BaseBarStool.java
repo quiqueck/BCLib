@@ -82,9 +82,14 @@ public abstract class BaseBarStool extends AbstractChair {
         return BehaviourHelper.from(baseMaterial, (b) -> new Wood(b, clothMaterial), (b) -> new Stone(b, clothMaterial), (b) -> new Metal(b, clothMaterial));
     }
 
-    @Override
+    /**
+     * Generates the block model for a bar stool, using {@code baseMaterial}/{@code clothMaterial}'s textures.
+     *
+     * @param generator The generator helper to emit the blockstate/model through
+     * @param barStoolBlock The bar stool block to generate the model for
+     */
     @Environment(EnvType.CLIENT)
-    public void provideBlockModels(WoverBlockModelGenerators generator) {
-        BCLModels.createBarStoolBlockModel(generator, this, this.baseMaterial, this.clothMaterial);
+    public static void provideBlockModel(WoverBlockModelGenerators generator, BaseBarStool barStoolBlock) {
+        BCLModels.createBarStoolBlockModel(generator, barStoolBlock, barStoolBlock.baseMaterial, barStoolBlock.clothMaterial);
     }
 }

@@ -5,29 +5,17 @@ import org.betterx.bclib.behaviours.BehaviourHelper;
 import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
 import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
-import org.betterx.wover.block.api.model.BlockModelProvider;
-import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
-public abstract class BaseRotatedPillarBlock extends RotatedPillarBlock implements DropSelfLootProvider<BaseRotatedPillarBlock>, BlockModelProvider {
+public abstract class BaseRotatedPillarBlock extends RotatedPillarBlock implements DropSelfLootProvider<BaseRotatedPillarBlock> {
     protected BaseRotatedPillarBlock(Properties settings) {
         super(settings);
     }
 
     protected BaseRotatedPillarBlock(Block block) {
         this(Properties.ofFullCopy(block));
-    }
-
-
-    @Environment(EnvType.CLIENT)
-    @Override
-    public void provideBlockModels(WoverBlockModelGenerators generator) {
-        generator.createRotatedPillar(this);
     }
 
     public static class Wood extends BaseRotatedPillarBlock implements BehaviourWood {

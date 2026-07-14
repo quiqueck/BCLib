@@ -42,6 +42,21 @@ public class VineBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
     }
 
     public static List<BlockTrait<?, ?>> withColor(MapColor color, int lightLevel, boolean onlyBottomIsLit) {
+        return withColor(color, lightLevel, onlyBottomIsLit, true);
+    }
+
+    /**
+     * @param generateModel when {@code false}, the default cube block/item model is <em>not</em> attached, so
+     *                      the block can supply its own model (e.g. a hand-authored hanging-vine model routed
+     *                      through {@code ModelTraitLibrary.externalModel()}). Every other overload defaults
+     *                      this to {@code true} to preserve the vanilla-style cube model for simple vines.
+     */
+    public static List<BlockTrait<?, ?>> withColor(
+            MapColor color,
+            int lightLevel,
+            boolean onlyBottomIsLit,
+            boolean generateModel
+    ) {
         return Combiner.of(
                 PlantBlockTrait.withColor(color, false),
                 new VineBlockTrait(lightLevel, onlyBottomIsLit),
@@ -50,7 +65,7 @@ public class VineBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
                 BlockTraits.CLIMBABLE.withDefault(),
                 BlockTraits.LOOT_TABLE.dropWithSilktouchOrHoeOrShears(),
                 ClientBlockTraits.RENDER_LAYER.cutout(),
-                ModCore.isDatagen() ? ClientModel.build() : null,
+                generateModel && ModCore.isDatagen() ? ClientModel.build() : null,
                 CompostableBlockTrait.withDefault(),
                 BlockTraits.FLAMMABLE.withDefault()
         ).combine();

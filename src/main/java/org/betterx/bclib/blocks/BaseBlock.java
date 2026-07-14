@@ -3,29 +3,21 @@ package org.betterx.bclib.blocks;
 import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
 import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
-import org.betterx.wover.block.api.model.BlockModelProvider;
-import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.MapColor;
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 
 import java.util.function.Consumer;
 
 /**
  * Base class for a default Block.
  * <p>
- * This Block-Type will:
- * <ul>
- * 	 <li>Automatically create an Item-Model from the Block-Model</li>
- * </ul>
- * <p>
  * Loot is no longer provided implicitly - register a {@code BlockTraits.LOOT_TABLE} trait
- * at the registration site for blocks that need one.
+ * at the registration site for blocks that need one. Likewise, the block model is no longer
+ * provided implicitly - register {@code ModelTraitLibrary.cubeWithFlatItem()} (or an equivalent
+ * {@code ClientBlockTraits.MODEL} trait) at the registration site of any block that needs one.
  */
-public class BaseBlock extends Block implements BlockModelProvider {
+public class BaseBlock extends Block {
     /**
      * Creates a new Block with the passed properties
      *
@@ -67,12 +59,6 @@ public class BaseBlock extends Block implements BlockModelProvider {
     ) {
         customizeProperties.accept(settings);
         return settings;
-    }
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public void provideBlockModels(WoverBlockModelGenerators generator) {
-        generator.createCubeModelWithFlatItem(this);
     }
 
     public static class Wood extends BaseBlock implements BehaviourWood {

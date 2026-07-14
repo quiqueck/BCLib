@@ -5,8 +5,6 @@ import org.betterx.bclib.blocks.BaseBlockNotFull;
 import org.betterx.bclib.furniture.entity.EntityChair;
 import org.betterx.bclib.registry.BaseBlockEntities;
 import org.betterx.bclib.util.BlocksHelper;
-import org.betterx.wover.block.api.model.BlockModelProvider;
-import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 import org.betterx.wover.loot.api.BlockLootProvider;
 import org.betterx.wover.loot.api.LootLookupProvider;
 
@@ -31,15 +29,12 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import java.util.List;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractChair extends BaseBlockNotFull implements BlockModelProvider, BlockLootProvider {
+public abstract class AbstractChair extends BaseBlockNotFull implements BlockLootProvider {
     public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
     public final Block baseMaterial;
     protected final float height;
@@ -162,11 +157,5 @@ public abstract class AbstractChair extends BaseBlockNotFull implements BlockMod
             @NotNull ResourceKey<LootTable> tableKey
     ) {
         return provider.drop(this.asItem());
-    }
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public void provideBlockModels(WoverBlockModelGenerators generator) {
-
     }
 }

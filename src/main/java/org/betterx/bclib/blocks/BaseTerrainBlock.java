@@ -1,7 +1,5 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.wover.block.api.model.BlockModelProvider;
-import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 import org.betterx.wover.loot.api.BlockLootProvider;
 import org.betterx.wover.loot.api.LootLookupProvider;
 import org.betterx.wover.tag.api.TagManager;
@@ -30,13 +28,10 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.phys.BlockHitResult;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("deprecation")
-public class BaseTerrainBlock extends BaseBlock implements BlockLootProvider, BlockModelProvider {
+public class BaseTerrainBlock extends BaseBlock implements BlockLootProvider {
     private final Block baseBlock;
     private Block pathBlock;
 
@@ -86,12 +81,6 @@ public class BaseTerrainBlock extends BaseBlock implements BlockLootProvider, Bl
 
     public boolean canStay(BlockState state, LevelReader worldView, BlockPos pos) {
         return willSurvive(state, worldView, pos);
-    }
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public void provideBlockModels(WoverBlockModelGenerators generator) {
-        generator.createBlockTopSideBottom(getBaseBlock(), this, true);
     }
 
     @Override

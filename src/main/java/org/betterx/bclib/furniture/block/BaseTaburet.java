@@ -53,9 +53,14 @@ public abstract class BaseTaburet extends AbstractChair {
         return BehaviourHelper.from(source, Wood::new, Stone::new, Metal::new);
     }
 
-    @Override
+    /**
+     * Generates the block model for a taburet, using {@code baseMaterial}'s texture.
+     *
+     * @param generator The generator helper to emit the blockstate/model through
+     * @param taburetBlock The taburet block to generate the model for
+     */
     @Environment(EnvType.CLIENT)
-    public void provideBlockModels(WoverBlockModelGenerators generator) {
-        BCLModels.createTaburetBlockModel(generator, this, this.baseMaterial);
+    public static void provideBlockModel(WoverBlockModelGenerators generator, BaseTaburet taburetBlock) {
+        BCLModels.createTaburetBlockModel(generator, taburetBlock, taburetBlock.baseMaterial);
     }
 }

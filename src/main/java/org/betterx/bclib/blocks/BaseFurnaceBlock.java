@@ -132,6 +132,7 @@ public class BaseFurnaceBlock extends FurnaceBlock {
                         addRotationModels(prop, glowModel, true);
 
                         generator.acceptBlockState(MultiVariantGenerator.dispatch(block).with(prop));
+                        generator.delegateItemModel(block, furnaceModel);
                     });
         }
     }

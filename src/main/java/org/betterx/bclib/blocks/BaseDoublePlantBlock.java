@@ -4,8 +4,6 @@ import org.betterx.bclib.behaviours.BehaviourBuilders;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.util.BlocksHelper;
-import org.betterx.wover.block.api.model.BlockModelProvider;
-import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 import org.betterx.wover.loot.api.BlockLootProvider;
 import org.betterx.wover.loot.api.LootLookupProvider;
 
@@ -36,12 +34,9 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements RenderLayerProvider, BonemealableBlock, BlockLootProvider, BlockModelProvider {
+public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements RenderLayerProvider, BonemealableBlock, BlockLootProvider {
     private static final VoxelShape SHAPE = box(4, 2, 4, 12, 16, 12);
     public static final IntegerProperty ROTATION = org.betterx.wover.block.api.BlockProperties.ROTATION;
     public static final BooleanProperty TOP = BooleanProperty.create("top");
@@ -157,12 +152,5 @@ public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements R
             @NotNull ResourceKey<LootTable> tableKey
     ) {
         return provider.dropDoublePlantShears(this);
-    }
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public void provideBlockModels(WoverBlockModelGenerators generator) {
-        generator.createCubeModel(this);
-        generator.createFlatItem(this);
     }
 }

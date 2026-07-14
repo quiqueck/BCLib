@@ -6,8 +6,6 @@ import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
 import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.wover.block.api.BlockTagProvider;
-import org.betterx.wover.block.api.model.BlockModelProvider;
-import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 import org.betterx.wover.item.api.ItemTagProvider;
 import org.betterx.wover.tag.api.event.context.ItemTagBootstrapContext;
 import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
@@ -19,10 +17,12 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
-public abstract class BasePressurePlateBlock extends PressurePlateBlock implements BlockModelProvider, BlockTagProvider, DropSelfLootProvider<BasePressurePlateBlock> {
+/**
+ * The block model is no longer provided implicitly - register
+ * {@code ModelTraitLibrary.pressurePlate(() -> parent)} (or an equivalent {@code ClientBlockTraits.MODEL}
+ * trait) at the registration site of any block that needs one.
+ */
+public abstract class BasePressurePlateBlock extends PressurePlateBlock implements BlockTagProvider, DropSelfLootProvider<BasePressurePlateBlock> {
     private final Block parent;
 
     protected BasePressurePlateBlock(Block source, BlockSetType type) {
@@ -32,11 +32,8 @@ public abstract class BasePressurePlateBlock extends PressurePlateBlock implemen
         this.parent = source;
     }
 
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public void provideBlockModels(WoverBlockModelGenerators generator) {
-        generator.createPressurePlate(parent, this);
+    public Block getParent() {
+        return parent;
     }
 
     @Override

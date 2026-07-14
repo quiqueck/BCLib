@@ -1,6 +1,7 @@
 package org.betterx.bclib.trait.block;
 
 import org.betterx.bclib.BCLib;
+import org.betterx.bclib.blocks.BaseTerrainBlock;
 import org.betterx.bclib.client.models.BCLModels;
 import org.betterx.wover.block.api.BlockDefinition;
 import org.betterx.wover.block.api.client.trait.BlockModelTrait;
@@ -25,10 +26,19 @@ public class PathBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
     private static final BlockTraitKey KEY = BlockTraitKey.ofUnique(BCLib.C, "path");
 
     public static List<BlockTrait<?, ?>> withSource(Block source) {
+        return withSource(source, true);
+    }
+
+    /**
+     * @param generateModel when {@code false}, the default path block/item model is <em>not</em> attached, so
+     *                      the block can supply its own (e.g. a multi-variant rotated path routed through a
+     *                      dedicated model trait). Defaults to {@code true} for the standard single path model.
+     */
+    public static List<BlockTrait<?, ?>> withSource(Block source, boolean generateModel) {
         return Combiner.combine(
                 new PathBlockTrait(),
                 BlockTraits.LOOT_TABLE.with(drops(source)),
-                ModCore.isDatagen() ? ClientModel.build(source) : null
+                generateModel && ModCore.isDatagen() ? ClientModel.build(source) : null
         );
     }
 
@@ -72,13 +82,20 @@ public class PathBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
                                         .replace("_path", "")
                         );
 
+                        // A terrain block's own "bottom" is its base block (e.g. end_stone), not a
+                        // texture named after the terrain block itself - which doesn't exist on disk.
+                        var bottomSource = source instanceof BaseTerrainBlock terrain
+                                ? terrain.getBaseBlock()
+                                : source;
+
                         var mapping = new TextureMapping()
                                 .put(TextureSlot.SIDE, side)
                                 .put(TextureSlot.TOP, TextureMapping.getBlockTexture(block, "_top"))
-                                .put(TextureSlot.BOTTOM, TextureMapping.getBlockTexture(source));
+                                .put(TextureSlot.BOTTOM, TextureMapping.getBlockTexture(bottomSource));
                         var location = BCLModels.PATH.create(block, mapping, generator.modelOutput());
 
                         generator.acceptBlockState(generator.randomTopModelVariant(block, location));
+                        generator.delegateItemModel(block, location);
                     });
         }
     }
