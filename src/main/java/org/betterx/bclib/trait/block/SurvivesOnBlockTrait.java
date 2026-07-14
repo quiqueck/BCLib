@@ -1,6 +1,7 @@
 package org.betterx.bclib.trait.block;
 
 import org.betterx.bclib.BCLib;
+import org.betterx.wover.block.api.trait.BlockTrait;
 import org.betterx.wover.block.api.trait.BlockTraitKey;
 import org.betterx.wover.block.api.trait.GenericBlockTrait;
 import org.betterx.wover.block.impl.trait.BlockTraitImpl;
@@ -65,6 +66,21 @@ public class SurvivesOnBlockTrait extends BlockTraitImpl<Block, GenericBlockTrai
             return survivalBlocks.contains(state.getBlock());
         }
         return false;
+    }
+
+    /**
+     * Convenience for block classes: checks whether any {@link SurvivesOnBlockTrait} attached to
+     * {@code block} accepts {@code ground} as valid ground. Intended to be called from a vanilla
+     * {@code mayPlaceOn}/{@code canSurvive} override, replacing the old {@code SurvivesOn*} interface
+     * hierarchy. Not mod-specific - any block registered with a {@link SurvivesOnBlockTrait} can use it.
+     *
+     * @param block  the (registered) block whose survival trait(s) to consult
+     * @param ground the state of the block below / the attachment target
+     * @return {@code true} if any attached {@link SurvivesOnBlockTrait} accepts {@code ground}
+     */
+    public static boolean survivesOn(Block block, BlockState ground) {
+        return BlockTrait.runtimeTraits(block)
+                         .anyMatch(t -> t instanceof SurvivesOnBlockTrait s && s.isSurvivable(ground));
     }
 
     // Cache key for block-based traits
