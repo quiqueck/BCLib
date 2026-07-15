@@ -7,6 +7,7 @@ import org.betterx.wover.block.api.trait.BlockTraitKey;
 import org.betterx.wover.block.api.trait.GenericBlockTrait;
 import org.betterx.wover.block.impl.trait.BlockTraitImpl;
 import org.betterx.wover.events.api.WorldLifecycle;
+import org.betterx.wover.tag.api.predefined.CommonItemTags;
 
 import net.minecraft.world.level.block.Block;
 
@@ -57,6 +58,16 @@ public class CompostableBlockTrait extends BlockTraitImpl<Block, GenericBlockTra
     @Override
     public GenericBlockTrait forRuntime() {
         return this;
+    }
+
+    @Override
+    public void configure(BlockDefinition<Block, ? extends BlockDefinition<Block, ?>> definition) {
+        super.configure(definition);
+        // Tags the block's item as compostable at datagen. This used to be added by
+        // BCLAutoItemTagProvider from the BehaviourCompostable marker interface; with that interface
+        // gone, the trait itself is now responsible for the tag (the composter chance is handled in
+        // afterBlockRegistration below).
+        definition.addItemTags(CommonItemTags.COMPOSTABLE);
     }
 
     @Override

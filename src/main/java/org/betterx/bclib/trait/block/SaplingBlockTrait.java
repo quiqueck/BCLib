@@ -7,8 +7,12 @@ import org.betterx.wover.block.api.client.trait.ClientBlockTraits;
 import org.betterx.wover.block.api.trait.*;
 import org.betterx.wover.block.impl.trait.BlockTraitImpl;
 import org.betterx.wover.core.api.ModCore;
+import org.betterx.wover.tag.api.predefined.CommonBlockTags;
+import org.betterx.wover.tag.api.predefined.CommonItemTags;
 
 import net.minecraft.client.data.models.BlockModelGenerators;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.MapColor;
 
@@ -85,7 +89,9 @@ public class SaplingBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> 
     public void configure(BlockDefinition<Block, ? extends BlockDefinition<Block, ?>> definition) {
         super.configure(definition);
 
-        definition.randomTicks();
+        definition.randomTicks()
+                  .addTags(BlockTags.SAPLINGS, CommonBlockTags.SAPLINGS)
+                  .addItemTags(ItemTags.SAPLINGS, CommonItemTags.SAPLINGS);
 
         if (lightLevel > 0) {
             definition.lightLevel(state -> lightLevel);

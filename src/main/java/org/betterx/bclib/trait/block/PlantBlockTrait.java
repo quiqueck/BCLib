@@ -35,6 +35,7 @@ public class PlantBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
                 CompostableBlockTrait.withDefault(),
                 flammable ? BlockTraits.FLAMMABLE.withDefault() : null,
                 ClientBlockTraits.RENDER_LAYER.cutout(),
+                BlockTraits.MINEABLE_WITH.needsHoe(),
                 BlockTraits.LOOT_TABLE.dropSelf()
         ).combine();
     }

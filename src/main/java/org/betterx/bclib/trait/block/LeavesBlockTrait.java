@@ -8,7 +8,12 @@ import org.betterx.wover.block.api.trait.*;
 import org.betterx.wover.block.impl.trait.BlockTraitImpl;
 import org.betterx.wover.core.api.ModCore;
 
+import org.betterx.wover.tag.api.predefined.CommonBlockTags;
+import org.betterx.wover.tag.api.predefined.CommonItemTags;
+import org.betterx.wover.tag.api.predefined.MineableTags;
+
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
@@ -127,7 +132,8 @@ public class LeavesBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
                 .isViewBlocking(Blocks::never)
                 .isRedstoneConductor(Blocks::never)
                 .sound(wet ? SoundType.WET_GRASS : SoundType.GRASS)
-                .addTags(BlockTags.LEAVES);
+                .addTags(BlockTags.LEAVES, CommonBlockTags.LEAVES, MineableTags.HOE)
+                .addItemTags(ItemTags.LEAVES, CommonItemTags.LEAVES);
 
         if (lightLevel > 0) {
             definition.lightLevel(state -> lightLevel);
