@@ -13,7 +13,7 @@ import net.minecraft.world.level.material.PushReaction;
 
 import java.util.List;
 
-public class PlantBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
+public class PlantBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> implements GenericBlockTrait {
     public static final BlockTraitKey KEY = BlockTraitKey.ofUnique(BCLib.C, "plant");
 
 
@@ -51,6 +51,14 @@ public class PlantBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
     @Override
     public BlockTraitKey key() {
         return KEY;
+    }
+
+    // Stored as a runtime trait so hasRuntimeTrait(PlantBlockTrait.KEY) can identify plant-like blocks
+    // (e.g. BehaviourPlantLike.TAB_PREDICATE for the creative "Plants" tab), replacing the old
+    // BehaviourPlantLike/BehaviourLeaves interface checks.
+    @Override
+    public GenericBlockTrait forRuntime() {
+        return this;
     }
 
     @Override

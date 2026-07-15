@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 
-public class WaterPlantBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
+public class WaterPlantBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> implements GenericBlockTrait {
     public static final BlockTraitKey KEY = BlockTraitKey.ofUnique(BCLib.C, "water_plant");
 
 
@@ -39,6 +39,13 @@ public class WaterPlantBlockTrait extends BlockTraitImpl<Block, GenericBlockTrai
     @Override
     public BlockTraitKey key() {
         return KEY;
+    }
+
+    // Runtime trait so hasRuntimeTrait(WaterPlantBlockTrait.KEY) identifies water plants/seeds for the
+    // creative "Plants" tab (BehaviourPlantLike.TAB_PREDICATE), replacing the removed BehaviourWaterPlant.
+    @Override
+    public GenericBlockTrait forRuntime() {
+        return this;
     }
 
     @Override
