@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Environment(EnvType.CLIENT)
 public class ModelsHelper {
-    //TODO: @Deprecated(forRemoval = true, since = "1.21.7")
+    @Deprecated(forRemoval = true, since = "1.21.7")
     public static BlockModel fromPattern(Optional<String> pattern) {
         return pattern.map(s -> {
             StringReader reader = new StringReader(s);

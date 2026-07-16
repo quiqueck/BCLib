@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-//TODO: @Deprecated(forRemoval = true)
+@Deprecated(forRemoval = true)
 public interface RuntimeBlockModelProvider extends ItemModelProvider {
     @Environment(EnvType.CLIENT)
     default @Nullable BlockModel getBlockModel(ResourceLocation resourceLocation, BlockState blockState) {
