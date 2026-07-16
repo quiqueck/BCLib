@@ -24,6 +24,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -52,6 +53,15 @@ public abstract class BaseChair extends AbstractChair {
 
     public BaseChair(Block baseMaterial, Block clothMaterial) {
         super(baseMaterial, 10);
+        this.clothMaterial = Objects.requireNonNull(
+                clothMaterial,
+                "Chair cloth material cannot be null (" + baseMaterial.getDescriptionId() + ")"
+        );
+        this.registerDefaultState(getStateDefinition().any().setValue(FACING, Direction.NORTH).setValue(TOP, false));
+    }
+
+    public BaseChair(Block baseMaterial, Block clothMaterial, BlockBehaviour.Properties settings) {
+        super(baseMaterial, settings, 10);
         this.clothMaterial = Objects.requireNonNull(
                 clothMaterial,
                 "Chair cloth material cannot be null (" + baseMaterial.getDescriptionId() + ")"
@@ -148,6 +158,10 @@ public abstract class BaseChair extends AbstractChair {
         public Wood(Block baseMaterial, Block clothMaterial) {
             super(baseMaterial, clothMaterial);
         }
+
+        public Wood(Block baseMaterial, Block clothMaterial, BlockBehaviour.Properties settings) {
+            super(baseMaterial, clothMaterial, settings);
+        }
     }
 
     public static class Stone extends BaseChair implements BehaviourStone {
@@ -159,6 +173,10 @@ public abstract class BaseChair extends AbstractChair {
         public Stone(Block baseMaterial, Block clothMaterial) {
             super(baseMaterial, clothMaterial);
         }
+
+        public Stone(Block baseMaterial, Block clothMaterial, BlockBehaviour.Properties settings) {
+            super(baseMaterial, clothMaterial, settings);
+        }
     }
 
     public static class Metal extends BaseChair implements BehaviourMetal {
@@ -169,6 +187,10 @@ public abstract class BaseChair extends AbstractChair {
 
         public Metal(Block baseMaterial, Block clothMaterial) {
             super(baseMaterial, clothMaterial);
+        }
+
+        public Metal(Block baseMaterial, Block clothMaterial, BlockBehaviour.Properties settings) {
+            super(baseMaterial, clothMaterial, settings);
         }
     }
 
@@ -183,6 +205,15 @@ public abstract class BaseChair extends AbstractChair {
                 (b) -> new BaseChair.Wood(b, clothMaterial),
                 (b) -> new BaseChair.Stone(b, clothMaterial),
                 (b) -> new BaseChair.Metal(b, clothMaterial)
+        );
+    }
+
+    public static BaseChair from(Block baseMaterial, Block clothMaterial, BlockBehaviour.Properties settings) {
+        return BehaviourHelper.from(
+                baseMaterial,
+                (b) -> new BaseChair.Wood(b, clothMaterial, settings),
+                (b) -> new BaseChair.Stone(b, clothMaterial, settings),
+                (b) -> new BaseChair.Metal(b, clothMaterial, settings)
         );
     }
 

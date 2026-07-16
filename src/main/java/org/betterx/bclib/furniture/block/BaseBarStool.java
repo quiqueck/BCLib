@@ -11,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -27,6 +28,11 @@ public abstract class BaseBarStool extends AbstractChair {
 
     public BaseBarStool(Block baseMaterial, Block clothMaterial) {
         super(baseMaterial, 15);
+        this.clothMaterial = Objects.requireNonNull(clothMaterial, "Bar Stool cloth material cannot be null (" + baseMaterial.getDescriptionId() + ")");
+    }
+
+    public BaseBarStool(Block baseMaterial, Block clothMaterial, BlockBehaviour.Properties settings) {
+        super(baseMaterial, settings, 15);
         this.clothMaterial = Objects.requireNonNull(clothMaterial, "Bar Stool cloth material cannot be null (" + baseMaterial.getDescriptionId() + ")");
     }
 
@@ -49,6 +55,10 @@ public abstract class BaseBarStool extends AbstractChair {
         public Wood(Block baseMaterial, Block clothMaterial) {
             super(baseMaterial, clothMaterial);
         }
+
+        public Wood(Block baseMaterial, Block clothMaterial, BlockBehaviour.Properties settings) {
+            super(baseMaterial, clothMaterial, settings);
+        }
     }
 
     public static class Stone extends BaseBarStool implements BehaviourStone {
@@ -59,6 +69,10 @@ public abstract class BaseBarStool extends AbstractChair {
 
         public Stone(Block baseMaterial, Block clothMaterial) {
             super(baseMaterial, clothMaterial);
+        }
+
+        public Stone(Block baseMaterial, Block clothMaterial, BlockBehaviour.Properties settings) {
+            super(baseMaterial, clothMaterial, settings);
         }
     }
 
@@ -71,6 +85,10 @@ public abstract class BaseBarStool extends AbstractChair {
         public Metal(Block baseMaterial, Block clothMaterial) {
             super(baseMaterial, clothMaterial);
         }
+
+        public Metal(Block baseMaterial, Block clothMaterial, BlockBehaviour.Properties settings) {
+            super(baseMaterial, clothMaterial, settings);
+        }
     }
 
     @Deprecated(forRemoval = true)
@@ -80,6 +98,15 @@ public abstract class BaseBarStool extends AbstractChair {
 
     public static BaseBarStool from(Block baseMaterial, Block clothMaterial) {
         return BehaviourHelper.from(baseMaterial, (b) -> new Wood(b, clothMaterial), (b) -> new Stone(b, clothMaterial), (b) -> new Metal(b, clothMaterial));
+    }
+
+    public static BaseBarStool from(Block baseMaterial, Block clothMaterial, BlockBehaviour.Properties settings) {
+        return BehaviourHelper.from(
+                baseMaterial,
+                (b) -> new Wood(b, clothMaterial, settings),
+                (b) -> new Stone(b, clothMaterial, settings),
+                (b) -> new Metal(b, clothMaterial, settings)
+        );
     }
 
     /**

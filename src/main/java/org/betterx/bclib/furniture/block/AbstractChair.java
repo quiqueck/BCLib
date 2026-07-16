@@ -49,6 +49,17 @@ public abstract class AbstractChair extends BaseBlockNotFull implements BlockLoo
         this.baseMaterial = baseMaterial;
     }
 
+    /**
+     * Threads an already-configured (id-bearing) {@link BlockBehaviour.Properties} through to the block,
+     * instead of building a fresh (id-less) one from {@code baseMaterial}. Used by the block-registry
+     * definition system (MC 1.21.2+ requires the properties to carry the block id before construction).
+     */
+    public AbstractChair(Block baseMaterial, BlockBehaviour.Properties settings, int height) {
+        super(settings.noOcclusion());
+        this.height = (height - 3F) / 16F;
+        this.baseMaterial = baseMaterial;
+    }
+
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> stateManager) {
         stateManager.add(FACING);

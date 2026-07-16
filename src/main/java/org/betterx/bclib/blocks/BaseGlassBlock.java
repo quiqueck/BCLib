@@ -34,6 +34,18 @@ public class BaseGlassBlock extends BaseBlockNotFull implements AddMineablePicka
                         .isViewBlocking((arg1, arg2, arg3) -> false));
     }
 
+    /**
+     * Threads an already-configured (id-bearing) {@link Properties} through to the block instead of
+     * building a fresh (id-less) one from a template block.
+     */
+    public BaseGlassBlock(Properties settings, float resistance) {
+        super(settings
+                .explosionResistance(resistance)
+                .noOcclusion()
+                .isSuffocating((arg1, arg2, arg3) -> false)
+                .isViewBlocking((arg1, arg2, arg3) -> false));
+    }
+
     @Environment(EnvType.CLIENT)
     public float getShadeBrightness(BlockState state, BlockGetter view, BlockPos pos) {
         return 1.0F;

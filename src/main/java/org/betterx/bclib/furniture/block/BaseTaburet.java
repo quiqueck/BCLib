@@ -10,6 +10,7 @@ import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -26,6 +27,10 @@ public abstract class BaseTaburet extends AbstractChair {
         super(block, 9);
     }
 
+    public BaseTaburet(Block block, BlockBehaviour.Properties settings) {
+        super(block, settings, 9);
+    }
+
     @Override
     public @NotNull VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext ePos) {
         return SHAPE;
@@ -35,11 +40,19 @@ public abstract class BaseTaburet extends AbstractChair {
         public Wood(Block block) {
             super(block);
         }
+
+        public Wood(Block block, BlockBehaviour.Properties settings) {
+            super(block, settings);
+        }
     }
 
     public static class Stone extends BaseTaburet implements BehaviourStone {
         public Stone(Block block) {
             super(block);
+        }
+
+        public Stone(Block block, BlockBehaviour.Properties settings) {
+            super(block, settings);
         }
     }
 
@@ -47,10 +60,23 @@ public abstract class BaseTaburet extends AbstractChair {
         public Metal(Block block) {
             super(block);
         }
+
+        public Metal(Block block, BlockBehaviour.Properties settings) {
+            super(block, settings);
+        }
     }
 
     public static BaseTaburet from(Block source) {
         return BehaviourHelper.from(source, Wood::new, Stone::new, Metal::new);
+    }
+
+    public static BaseTaburet from(Block source, BlockBehaviour.Properties settings) {
+        return BehaviourHelper.from(
+                source,
+                b -> new Wood(b, settings),
+                b -> new Stone(b, settings),
+                b -> new Metal(b, settings)
+        );
     }
 
     /**

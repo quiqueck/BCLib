@@ -54,7 +54,16 @@ public class BehaviourBuilders {
     }
 
     public static BlockBehaviour.Properties createStaticVine(MapColor color) {
-        return createPlant(color)
+        return createStaticVine(BlockBehaviour.Properties.of(), color);
+    }
+
+    /**
+     * Applies static-vine defaults on top of an already-configured {@code props} instance (e.g. one
+     * threaded through from a block's constructor, which already carries its registry id) instead of
+     * building a fresh one from scratch.
+     */
+    public static BlockBehaviour.Properties createStaticVine(BlockBehaviour.Properties props, MapColor color) {
+        return createPlant(props, color)
                 .replaceable()
                 .noCollission()
                 .strength(0.2f)
@@ -66,8 +75,22 @@ public class BehaviourBuilders {
                 .randomTicks();
     }
 
+    public static BlockBehaviour.Properties createVine(BlockBehaviour.Properties props, MapColor color) {
+        return createStaticVine(props, color)
+                .randomTicks();
+    }
+
     public static BlockBehaviour.Properties createGrass(MapColor color) {
-        return createPlant(color)
+        return createGrass(BlockBehaviour.Properties.of(), color);
+    }
+
+    /**
+     * Applies grass defaults on top of an already-configured {@code props} instance (e.g. one threaded
+     * through from a block's constructor, which already carries its registry id) instead of building a
+     * fresh one from scratch.
+     */
+    public static BlockBehaviour.Properties createGrass(BlockBehaviour.Properties props, MapColor color) {
+        return createPlant(props, color)
                 .noCollission()
                 .noOcclusion()
                 .offsetType(BlockBehaviour.OffsetType.XZ)
@@ -119,7 +142,20 @@ public class BehaviourBuilders {
     }
 
     public static BlockBehaviour.Properties createStaticLeaves(MapColor color, boolean flammable) {
-        final BlockBehaviour.Properties p = BlockBehaviour.Properties.of()
+        return createStaticLeaves(BlockBehaviour.Properties.of(), color, flammable);
+    }
+
+    /**
+     * Applies static-leaves defaults on top of an already-configured {@code props} instance (e.g. one
+     * threaded through from a block's constructor, which already carries its registry id) instead of
+     * building a fresh one from scratch.
+     */
+    public static BlockBehaviour.Properties createStaticLeaves(
+            BlockBehaviour.Properties props,
+            MapColor color,
+            boolean flammable
+    ) {
+        final BlockBehaviour.Properties p = props
                 .mapColor(color)
                 .strength(0.2f)
                 .noOcclusion()
@@ -139,8 +175,29 @@ public class BehaviourBuilders {
         return createStaticLeaves(color, flammable).randomTicks();
     }
 
+    public static BlockBehaviour.Properties createLeaves(
+            BlockBehaviour.Properties props,
+            MapColor color,
+            boolean flammable
+    ) {
+        return createStaticLeaves(props, color, flammable).randomTicks();
+    }
+
     public static BlockBehaviour.Properties createCactus(MapColor color, boolean flammable) {
-        final BlockBehaviour.Properties p = BlockBehaviour.Properties.of()
+        return createCactus(BlockBehaviour.Properties.of(), color, flammable);
+    }
+
+    /**
+     * Applies cactus defaults on top of an already-configured {@code props} instance (e.g. one threaded
+     * through from a block's constructor, which already carries its registry id) instead of building a
+     * fresh one from scratch.
+     */
+    public static BlockBehaviour.Properties createCactus(
+            BlockBehaviour.Properties props,
+            MapColor color,
+            boolean flammable
+    ) {
+        final BlockBehaviour.Properties p = props
                 .mapColor(color)
                 .randomTicks()
                 .strength(0.4F)
@@ -158,11 +215,20 @@ public class BehaviourBuilders {
     }
 
     public static BlockBehaviour.Properties createMetal(MapColor color) {
-        return BlockBehaviour.Properties.of()
-                                        .mapColor(color)
-                                        .instrument(NoteBlockInstrument.IRON_XYLOPHONE)
-                                        .strength(5.0F, 6.0F)
-                                        .sound(SoundType.METAL);
+        return createMetal(BlockBehaviour.Properties.of(), color);
+    }
+
+    /**
+     * Applies metal defaults on top of an already-configured {@code props} instance (e.g. one threaded
+     * through from a block's constructor, which already carries its registry id) instead of building a
+     * fresh one from scratch.
+     */
+    public static BlockBehaviour.Properties createMetal(BlockBehaviour.Properties props, MapColor color) {
+        return props
+                .mapColor(color)
+                .instrument(NoteBlockInstrument.IRON_XYLOPHONE)
+                .strength(5.0F, 6.0F)
+                .sound(SoundType.METAL);
     }
 
     public static BlockBehaviour.Properties createStone() {
@@ -185,7 +251,20 @@ public class BehaviourBuilders {
     }
 
     public static BlockBehaviour.Properties createWood(MapColor color, boolean flammable) {
-        final BlockBehaviour.Properties p = BlockBehaviour.Properties.of()
+        return createWood(BlockBehaviour.Properties.of(), color, flammable);
+    }
+
+    /**
+     * Applies wood defaults on top of an already-configured {@code props} instance (e.g. one threaded
+     * through from a block's constructor, which already carries its registry id) instead of building a
+     * fresh one from scratch.
+     */
+    public static BlockBehaviour.Properties createWood(
+            BlockBehaviour.Properties props,
+            MapColor color,
+            boolean flammable
+    ) {
+        final BlockBehaviour.Properties p = props
                 .mapColor(color)
                 .instrument(NoteBlockInstrument.BASS)
                 .strength(2.0F)
