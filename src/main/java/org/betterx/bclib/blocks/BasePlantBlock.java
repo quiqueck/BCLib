@@ -2,13 +2,9 @@ package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
-import org.betterx.wover.loot.api.BlockLootProvider;
-import org.betterx.wover.loot.api.LootLookupProvider;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -20,15 +16,22 @@ import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderLayerProvider, BonemealableBlock, BlockLootProvider {
+/**
+ * Base for single-block plants.
+ * <p>
+ * Deliberately does not declare a loot table. The block's owner attaches one at registration with
+ * {@code BlockTraits.LOOT_TABLE} (historically this class implemented wover's deprecated
+ * {@code BlockLootProvider} and generated {@code dropWithSilkTouchOrShears} for every subclass, which
+ * double-generated the table for any block that also carried the trait - the two datagen providers run
+ * independently, with no filter between them).
+ */
+public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderLayerProvider, BonemealableBlock {
     private static final VoxelShape SHAPE = box(4, 0, 4, 12, 14, 12);
 
     protected BasePlantBlock(Properties settings) {
@@ -93,15 +96,5 @@ public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderL
                 new ItemStack(this)
         );
         level.addFreshEntity(item);
-    }
-
-    @Override
-    @Nullable
-    public LootTable.Builder registerBlockLoot(
-            @NotNull ResourceLocation location,
-            @NotNull LootLookupProvider provider,
-            @NotNull ResourceKey<LootTable> tableKey
-    ) {
-        return provider.dropWithSilkTouchOrShears(this);
     }
 }
