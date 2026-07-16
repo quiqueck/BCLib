@@ -44,15 +44,28 @@ public interface SurvivesOnSpecialGround extends SurvivesOn {
 
     @Environment(EnvType.CLIENT)
     static void appendHoverText(SurvivesOnSpecialGround surv, Consumer<Component> consumer) {
+        appendHoverText(surv.getSurvivableBlocksString(), surv.prefixComponent(), consumer);
+    }
+
+    /**
+     * The formatting half of {@link #appendHoverText(SurvivesOnSpecialGround, Consumer)}, split out so a
+     * caller that has the description from somewhere other than this interface - notably
+     * {@code SurvivesOnBlockTrait} - renders an identical tooltip.
+     *
+     * @param description     the comma-separated block list
+     * @param prefixComponent the translation key to wrap it in
+     * @param consumer        receives the tooltip lines
+     */
+    @Environment(EnvType.CLIENT)
+    static void appendHoverText(String description, String prefixComponent, Consumer<Component> consumer) {
         if (!Configs.CLIENT_CONFIG.survivesOnHint()) return;
         final int MAX_LINES = 7;
-        final String description = surv.getSurvivableBlocksString();
         List<String> lines = splitLines(description);
         if (lines.size() == 1) {
-            consumer.accept(Component.translatable(surv.prefixComponent(), lines.get(0))
+            consumer.accept(Component.translatable(prefixComponent, lines.get(0))
                                      .withStyle(ChatFormatting.GREEN));
         } else if (lines.size() > 1) {
-            consumer.accept(Component.translatable(surv.prefixComponent(), "").withStyle(ChatFormatting.GREEN));
+            consumer.accept(Component.translatable(prefixComponent, "").withStyle(ChatFormatting.GREEN));
             for (int i = 0; i < Math.min(lines.size(), MAX_LINES); i++) {
                 String line = lines.get(i);
                 if (i == MAX_LINES - 1 && i < lines.size() - 1) line += " ...";
