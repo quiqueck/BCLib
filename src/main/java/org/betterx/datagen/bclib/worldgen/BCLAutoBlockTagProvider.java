@@ -214,7 +214,7 @@ public class BCLAutoBlockTagProvider extends WoverTagProvider.ForBlocks implemen
             context.add(block, CommonBlockTags.WATER_PLANT);
         }
 
-        if (block instanceof BehaviourPlant || block instanceof BehaviourShearablePlant) {
+        if (block instanceof BehaviourPlant) {
             context.add(block, CommonBlockTags.PLANT);
         }
 
@@ -248,10 +248,6 @@ public class BCLAutoBlockTagProvider extends WoverTagProvider.ForBlocks implemen
 
         if (block instanceof BehaviourPortalFrame) {
             context.add(block, CommonBlockTags.NETHER_PORTAL_FRAME);
-        }
-
-        if (block instanceof BehaviourOre) {
-            context.add(block, CommonBlockTags.ORES);
         }
 
         if (block instanceof Fuel fl) {
