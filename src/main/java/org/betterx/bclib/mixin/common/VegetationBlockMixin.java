@@ -1,9 +1,11 @@
 package org.betterx.bclib.mixin.common;
 
 import org.betterx.bclib.trait.block.SurvivesOnBlockTrait;
+import org.betterx.bclib.trait.block.SurvivesOnSolidTrait;
 import org.betterx.wover.block.api.trait.BlockTrait;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.VegetationBlock;
@@ -17,7 +19,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 /**
  * Makes {@link SurvivesOnBlockTrait} self-sufficient: any {@link VegetationBlock} (plants, saplings, ...)
  * registered with a {@link SurvivesOnBlockTrait} derives its {@code mayPlaceOn}/{@code canSurvive} ground
- * check from that trait, with no per-block method override needed. Blocks without the trait fall through to
+ * check from that trait, with no per-block method override needed. A {@link SurvivesOnSolidTrait} instead
+ * lets the block survive on any sturdy solid surface. Blocks without either trait fall through to
  * vanilla behaviour (or their own {@code mayPlaceOn} override, which - being a subclass override - bypasses
  * this injection through normal virtual dispatch).
  */
@@ -31,8 +34,13 @@ public class VegetationBlockMixin {
             CallbackInfoReturnable<Boolean> cir
     ) {
         Block self = (Block) (Object) this;
-        if (BlockTrait.hasRuntimeTrait(self, SurvivesOnBlockTrait.KEY)) {
-            cir.setReturnValue(SurvivesOnBlockTrait.survivesOn(self, groundState));
+        final boolean hasBlockTrait = BlockTrait.hasRuntimeTrait(self, SurvivesOnBlockTrait.KEY);
+        final boolean hasSolidTrait = BlockTrait.hasRuntimeTrait(self, SurvivesOnSolidTrait.KEY);
+        if (hasBlockTrait || hasSolidTrait) {
+            final boolean canPlace =
+                    (hasBlockTrait && SurvivesOnBlockTrait.survivesOn(self, groundState))
+                            || (hasSolidTrait && groundState.isFaceSturdy(getter, pos, Direction.UP));
+            cir.setReturnValue(canPlace);
         }
     }
 }
