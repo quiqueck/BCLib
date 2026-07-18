@@ -5,14 +5,17 @@ import org.betterx.wover.block.api.client.trait.ClientBlockTraits;
 import org.betterx.wover.core.api.ModCore;
 
 import net.minecraft.client.data.models.BlockModelGenerators;
+import net.minecraft.client.data.models.MultiVariant;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
 import net.minecraft.client.data.models.model.ModelTemplate;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
+import net.minecraft.client.renderer.block.model.Variant;
 import net.minecraft.client.renderer.block.model.VariantMutator;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import net.fabricmc.api.EnvType;
@@ -66,8 +69,85 @@ public class TemplateModelTrait {
         return ModCore.isDatagen() ? Impl.trapdoor(templateParent, withSide) : null;
     }
 
+    /**
+     * A full-cube-shaped block whose model is a plain texture-swap child of a shared, hand-authored cube template
+     * (e.g. BetterEnd's {@code menger_sponge} fractal mesh or its {@code tint_cube}). Generates the child model
+     * ({@code {parent: <template>, textures: {texture: <block texture>}}}, plus a {@code particle} slot when the
+     * template does not resolve its own particle), the plain single-variant blockstate, and an item model delegated
+     * to that block model - matching wover's {@code externalModelDelegatedItem()} for such blocks, but with the model
+     * generated instead of hand-authored.
+     *
+     * @param templateParent the shared cube template model to parent the child model from
+     * @param withParticle   whether the template needs an explicit {@code #particle} slot (mapped to the block's own
+     *                       texture); {@code false} when the template already declares {@code "particle": "#texture"}
+     * @return the model trait, or {@code null} outside of datagen
+     */
+    public static BlockModelTrait cube(ResourceLocation templateParent, boolean withParticle) {
+        return ModCore.isDatagen() ? Impl.cube(templateParent, withParticle) : null;
+    }
+
+    /**
+     * A block whose model is a texture-swap child of a shared, hand-authored template (e.g. BetterEnd's {@code charnia}
+     * mesh) placed with a random {@code 0/90/180/270} Y rotation. Generates the child model
+     * ({@code {parent: <template>, textures: {texture: <block texture>}}}) and a single-condition blockstate whose
+     * variant is the four equally-weighted Y rotations of that model - the randomized look BetterEnd's hand-authored
+     * blockstates shipped. The item model is left as the block's hand-authored static flat model
+     * ({@code item/<name>}), matching wover's {@code externalModel()} item handling (these blocks carry a dedicated
+     * inventory icon distinct from their block texture).
+     *
+     * @param templateParent the shared template model to parent the child model from
+     * @return the model trait, or {@code null} outside of datagen
+     */
+    public static BlockModelTrait randomYRotation(ResourceLocation templateParent) {
+        return ModCore.isDatagen() ? Impl.randomYRotation(templateParent) : null;
+    }
+
     @Environment(EnvType.CLIENT)
     private static class Impl {
+        private static BlockModelTrait cube(ResourceLocation templateParent, boolean withParticle) {
+            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+                final var tex = TextureMapping.getBlockTexture(block);
+                final var mapping = new TextureMapping().put(TextureSlot.TEXTURE, tex);
+                final TextureSlot[] slots;
+                if (withParticle) {
+                    mapping.put(TextureSlot.PARTICLE, tex);
+                    slots = new TextureSlot[]{TextureSlot.PARTICLE, TextureSlot.TEXTURE};
+                } else {
+                    slots = new TextureSlot[]{TextureSlot.TEXTURE};
+                }
+                final var template = new ModelTemplate(Optional.of(templateParent), Optional.empty(), slots);
+                final var model = template.create(block, mapping, generator.modelOutput());
+
+                generator.acceptBlockState(
+                        BlockModelGenerators.createSimpleBlock(block, BlockModelGenerators.plainVariant(model))
+                );
+                generator.delegateItemModel(block, model);
+            });
+        }
+
+        private static BlockModelTrait randomYRotation(ResourceLocation templateParent) {
+            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+                final var tex = TextureMapping.getBlockTexture(block);
+                final var mapping = new TextureMapping().put(TextureSlot.TEXTURE, tex);
+                final var template = new ModelTemplate(Optional.of(templateParent), Optional.empty(), TextureSlot.TEXTURE);
+                final var model = template.create(block, mapping, generator.modelOutput());
+
+                final Variant base = BlockModelGenerators.plainModel(model);
+                final var variants = WeightedList.<Variant>builder();
+                variants.add(base, 1);
+                variants.add(base.with(BlockModelGenerators.Y_ROT_90), 1);
+                variants.add(base.with(BlockModelGenerators.Y_ROT_180), 1);
+                variants.add(base.with(BlockModelGenerators.Y_ROT_270), 1);
+                generator.acceptBlockState(
+                        BlockModelGenerators.createSimpleBlock(block, new MultiVariant(variants.build()))
+                );
+
+                // The inventory icon stays the hand-authored static flat item model (item/<name>), exactly as
+                // wover's externalModel() delegates it - these blocks ship a dedicated item texture.
+                generator.delegateItemModel(block, key.location().withPrefix("item/"));
+            });
+        }
+
         private static BlockModelTrait ladder(ResourceLocation templateParent) {
             return ClientBlockTraits.MODEL.with((key, block, generator) -> {
                 final var tex = TextureMapping.getBlockTexture(block);
