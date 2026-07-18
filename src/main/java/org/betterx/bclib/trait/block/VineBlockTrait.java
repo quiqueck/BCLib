@@ -63,6 +63,7 @@ public class VineBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
                 BlockTraits.MINEABLE_WITH.needsHoe(),
                 BlockTraits.MINEABLE_WITH.needsShears(),
                 BlockTraits.CLIMBABLE.withDefault(),
+                VegetationTagTrait.vine(),
                 BlockTraits.LOOT_TABLE.dropWithSilktouchOrHoeOrShears(),
                 ClientBlockTraits.RENDER_LAYER.cutout(),
                 generateModel && ModCore.isDatagen() ? ClientModel.build() : null,

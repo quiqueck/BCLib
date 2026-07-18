@@ -19,10 +19,10 @@ import java.util.List;
 /**
  * Marker trait that tags a block into one of the common "vegetation" families at datagen. Replaces the old
  * {@code BehaviourPlant} / {@code BehaviourSeed} / {@code BehaviourWaterPlant} / {@code BehaviourSaplingLike}
- * / {@code BehaviourLeaves} marker interfaces, which used to derive these tags via {@code instanceof}
- * scanning in {@code BCLAutoBlock/ItemTagProvider}. Add the matching factory ({@link #plant()} /
- * {@link #seed()} / {@link #waterPlant()} / {@link #sapling()} / {@link #leaves()}) to a block at
- * registration.
+ * / {@code BehaviourLeaves} / {@code BehaviourVine} marker interfaces, which used to derive these tags via
+ * {@code instanceof} scanning in {@code BCLAutoBlock/ItemTagProvider}. Add the matching factory
+ * ({@link #plant()} / {@link #seed()} / {@link #waterPlant()} / {@link #sapling()} / {@link #leaves()} /
+ * {@link #vine()}) to a block at registration.
  * <p>
  * This trait only ever adds tags - it deliberately sets no block property, so it can be added to an existing
  * block without restating it.
@@ -46,6 +46,9 @@ public class VegetationTagTrait extends BlockTraitImpl<Block, GenericBlockTrait>
     private static final VegetationTagTrait LEAVES = new VegetationTagTrait(
             List.of(BlockTags.LEAVES, CommonBlockTags.LEAVES),
             List.of(ItemTags.LEAVES, CommonItemTags.LEAVES)
+    );
+    private static final VegetationTagTrait VINE = new VegetationTagTrait(
+            List.of(CommonBlockTags.VINE), List.of()
     );
 
     /** Tags the block as {@link CommonBlockTags#PLANT} (replaces {@code BehaviourPlant}). */
@@ -79,6 +82,14 @@ public class VegetationTagTrait extends BlockTraitImpl<Block, GenericBlockTrait>
      */
     public static VegetationTagTrait leaves() {
         return LEAVES;
+    }
+
+    /**
+     * Tags the block as {@link CommonBlockTags#VINE} - exactly what the retired {@code BehaviourVine}
+     * marker contributed via the {@code instanceof BehaviourVine} scan in {@code BCLAutoBlockTagProvider}.
+     */
+    public static VegetationTagTrait vine() {
+        return VINE;
     }
 
     private final List<TagKey<Block>> blockTags;

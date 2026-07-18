@@ -1,6 +1,5 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.behaviours.interfaces.BehaviourVine;
 import org.betterx.bclib.util.BlocksHelper;
 
 import net.minecraft.core.BlockPos;
@@ -24,7 +23,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractVineBlock extends BaseBlockNotFull implements BonemealableBlock, BehaviourVine {
+public abstract class AbstractVineBlock extends BaseBlockNotFull implements BonemealableBlock {
     private static final VoxelShape VOXEL_SHAPE = box(2, 0, 2, 14, 16, 14);
     protected final int maxGrowLength;
     protected final int spaceBeneath;
