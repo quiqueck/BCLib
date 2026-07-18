@@ -1,7 +1,7 @@
 package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.behaviours.BehaviourBuilders;
-import org.betterx.bclib.interfaces.SurvivesOnBlocks;
+import org.betterx.bclib.trait.block.SurvivesOnBlockTrait;
 import org.betterx.bclib.util.BlocksHelper;
 import org.betterx.wover.loot.api.BlockLootProvider;
 import org.betterx.wover.loot.api.LootLookupProvider;
@@ -26,15 +26,14 @@ import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BaseCropBlock extends BasePlantBlock implements SurvivesOnBlocks, BlockLootProvider {
+public class BaseCropBlock extends BasePlantBlock implements BlockLootProvider {
     public static final IntegerProperty AGE = IntegerProperty.create("age", 0, 3);
     private static final VoxelShape SHAPE = box(2, 0, 2, 14, 14, 14);
 
-    private final List<Block> terrain;
+    private final SurvivesOnBlockTrait survivesOn;
     private final Item drop;
 
     public BaseCropBlock(Item drop, Block... terrain) {
@@ -48,7 +47,7 @@ public class BaseCropBlock extends BasePlantBlock implements SurvivesOnBlocks, B
     protected BaseCropBlock(BlockBehaviour.Properties properties, Item drop, Block... terrain) {
         super(properties);
         this.drop = drop;
-        this.terrain = List.of(terrain);
+        this.survivesOn = SurvivesOnBlockTrait.withBlocks(terrain);
         this.registerDefaultState(defaultBlockState().setValue(AGE, 0));
     }
 
@@ -90,13 +89,8 @@ public class BaseCropBlock extends BasePlantBlock implements SurvivesOnBlocks, B
     }
 
     @Override
-    public List<Block> getSurvivableBlocks() {
-        return terrain;
-    }
-
-    @Override
-    public boolean isTerrain(BlockState state) {
-        return SurvivesOnBlocks.super.isTerrain(state);
+    protected boolean isTerrain(BlockState state) {
+        return survivesOn.isSurvivable(state);
     }
 
     @Override
