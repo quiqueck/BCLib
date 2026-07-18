@@ -69,11 +69,6 @@ public abstract class BaseChair extends AbstractChair {
         this.registerDefaultState(getStateDefinition().any().setValue(FACING, Direction.NORTH).setValue(TOP, false));
     }
 
-    @Deprecated(forRemoval = true)
-    public BaseChair(Block baseMaterial) {
-        this(baseMaterial, Blocks.RED_WOOL);
-    }
-
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> stateManager) {
         stateManager.add(FACING, TOP);
@@ -150,11 +145,6 @@ public abstract class BaseChair extends AbstractChair {
     }
 
     public static class Wood extends BaseChair implements BehaviourWood {
-        @Deprecated(forRemoval = true)
-        public Wood(Block baseMaterial) {
-            super(baseMaterial, Blocks.RED_WOOL);
-        }
-
         public Wood(Block baseMaterial, Block clothMaterial) {
             super(baseMaterial, clothMaterial);
         }
@@ -165,11 +155,6 @@ public abstract class BaseChair extends AbstractChair {
     }
 
     public static class Stone extends BaseChair implements BehaviourStone {
-        @Deprecated(forRemoval = true)
-        public Stone(Block baseMaterial) {
-            super(baseMaterial, Blocks.RED_WOOL);
-        }
-
         public Stone(Block baseMaterial, Block clothMaterial) {
             super(baseMaterial, clothMaterial);
         }
@@ -180,11 +165,6 @@ public abstract class BaseChair extends AbstractChair {
     }
 
     public static class Metal extends BaseChair implements BehaviourMetal {
-        @Deprecated(forRemoval = true)
-        public Metal(Block baseMaterial) {
-            super(baseMaterial, Blocks.RED_WOOL);
-        }
-
         public Metal(Block baseMaterial, Block clothMaterial) {
             super(baseMaterial, clothMaterial);
         }
@@ -192,11 +172,6 @@ public abstract class BaseChair extends AbstractChair {
         public Metal(Block baseMaterial, Block clothMaterial, BlockBehaviour.Properties settings) {
             super(baseMaterial, clothMaterial, settings);
         }
-    }
-
-    @Deprecated(forRemoval = true)
-    public static BaseChair from(Block source) {
-        return BehaviourHelper.from(source, Wood::new, Stone::new, Metal::new);
     }
 
     public static BaseChair from(Block baseMaterial, Block clothMaterial) {

@@ -31,7 +31,6 @@ import net.minecraft.world.level.storage.loot.LootTable;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public class AdvancementManager {
     static class OrderedBuilder extends Advancement.Builder {
@@ -389,14 +388,6 @@ public class AdvancementManager {
         public Builder requirements(AdvancementRequirements.Strategy requirementsStrategy) {
             builder.requirements(requirementsStrategy);
             return this;
-        }
-
-        @Deprecated(forRemoval = true)
-        public Builder requirements(String[][] strings) {
-            return requirements(Arrays.stream(strings)
-                                      .map(Arrays::asList)
-                                      .map(ArrayList::new)
-                                      .collect(Collectors.toList()));
         }
 
         public Builder requirements(List<List<String>> strings) {

@@ -1,7 +1,6 @@
 package org.betterx.bclib.client.models;
 
 import org.betterx.bclib.interfaces.ItemModelProvider;
-import org.betterx.bclib.interfaces.RuntimeBlockModelProvider;
 import org.betterx.bclib.models.RecordItemModelProvider;
 
 import net.minecraft.client.data.models.MultiVariant;
@@ -13,10 +12,8 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -48,27 +45,6 @@ public class CustomModelBakery {
     }
 
     public void loadCustomModels(ResourceManager resourceManager) {
-        BuiltInRegistries.BLOCK.stream()
-                               .parallel()
-                               .filter(block -> block instanceof RuntimeBlockModelProvider)
-                               .forEach(block -> {
-                                   ResourceLocation blockID = BuiltInRegistries.BLOCK.getKey(block);
-                                   ResourceLocation storageID = ResourceLocation.fromNamespaceAndPath(
-                                           blockID.getNamespace(),
-                                           "blockstates/" + blockID.getPath() + ".json"
-                                   );
-                                   if (resourceManager.getResource(storageID).isEmpty()) {
-                                       addBlockModel(blockID, block);
-                                   }
-                                   storageID = ResourceLocation.fromNamespaceAndPath(
-                                           blockID.getNamespace(),
-                                           "models/item/" + blockID.getPath() + ".json"
-                                   );
-                                   if (resourceManager.getResource(storageID).isEmpty()) {
-                                       addItemModel(blockID, (ItemModelProvider) block);
-                                   }
-                               });
-
         BuiltInRegistries.ITEM.stream()
                               .parallel()
                               .filter(item -> item instanceof ItemModelProvider || RecordItemModelProvider.has(item))
@@ -86,23 +62,6 @@ public class CustomModelBakery {
                                       addItemModel(registryID, provider);
                                   }
                               });
-    }
-
-    private void addBlockModel(ResourceLocation blockID, Block block) {
-        RuntimeBlockModelProvider provider = (RuntimeBlockModelProvider) block;
-        ImmutableList<BlockState> states = block.getStateDefinition().getPossibleStates();
-        BlockState defaultState = block.defaultBlockState();
-        MultiVariant defaultModel = provider.getModelVariant(blockID, defaultState, models);
-
-        List<StateModelPair> stateModels = new ArrayList<>(states.size());
-
-        states.forEach(blockState -> {
-            MultiVariant model = provider.getModelVariant(blockID, blockState, models);
-            models.put(blockID, model);
-            stateModels.add(new StateModelPair(blockState, model));
-        });
-
-        blockModels.put(block, stateModels);
     }
 
     private void addItemModel(ResourceLocation itemID, ItemModelProvider provider) {

@@ -21,15 +21,6 @@ public class BaseSpawnEggItem extends SpawnEggItem implements ItemModelProvider 
         super(type, settings);
     }
 
-    /**
-     * @deprecated Use {@link #BaseSpawnEggItem(EntityType, Properties)} instead.
-     * This constructor is deprecated and will be removed in future versions.
-     */
-    @Deprecated(forRemoval = true)
-    public BaseSpawnEggItem(EntityType<? extends Mob> type, int primaryColor, int secondaryColor, Properties settings) {
-        this(type, settings);
-    }
-
     @Override
     @Environment(EnvType.CLIENT)
     public BlockModel getItemModel(ResourceLocation resourceLocation) {
