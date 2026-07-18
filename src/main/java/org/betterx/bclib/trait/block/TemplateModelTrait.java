@@ -71,6 +71,23 @@ public class TemplateModelTrait {
     }
 
     /**
+     * A trapdoor-shaped block whose model parents a shared {@code #side} template, but whose {@code #side}
+     * texture is <em>not</em> derivable from the block's own texture by an {@code _side} suffix (e.g.
+     * BetterNether's wart/willow trapdoors, which reuse nether_sakura's trapdoor mesh but bind {@code #side}
+     * to their {@code _planks}/{@code _door_side} texture). Generates the child model
+     * ({@code {parent: <template>, textures: {particle, texture, side}}} with particle/texture from the block's
+     * own texture and {@code #side} bound to {@code sideTexture}), the standard 16-variant facing/half/open
+     * blockstate, and delegates the item model to the block model.
+     *
+     * @param templateParent the shared {@code #side} trapdoor template model to parent the child model from
+     * @param sideTexture    the explicit {@code #side} texture (not an {@code _side} suffix of the block texture)
+     * @return the model trait, or {@code null} outside of datagen
+     */
+    public static BlockModelTrait trapdoor(ResourceLocation templateParent, ResourceLocation sideTexture) {
+        return ModCore.isDatagen() ? Impl.trapdoor(templateParent, sideTexture) : null;
+    }
+
+    /**
      * A full-cube-shaped block whose model is a plain texture-swap child of a shared, hand-authored cube template
      * (e.g. BetterEnd's {@code menger_sponge} fractal mesh or its {@code tint_cube}). Generates the child model
      * ({@code {parent: <template>, textures: {texture: <block texture>}}}, plus a {@code particle} slot when the
@@ -410,7 +427,29 @@ public class TemplateModelTrait {
                 }
                 final var template = new ModelTemplate(Optional.of(templateParent), Optional.empty(), slots);
                 final var model = template.create(block, mapping, generator.modelOutput());
+                acceptTrapdoorState(block, model, generator);
+            });
+        }
 
+        private static BlockModelTrait trapdoor(ResourceLocation templateParent, ResourceLocation sideTexture) {
+            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+                final var tex = TextureMapping.getBlockTexture(block);
+                final var mapping = new TextureMapping()
+                        .put(TextureSlot.PARTICLE, tex)
+                        .put(TextureSlot.TEXTURE, tex)
+                        .put(TextureSlot.SIDE, sideTexture);
+                final TextureSlot[] slots = {TextureSlot.PARTICLE, TextureSlot.TEXTURE, TextureSlot.SIDE};
+                final var template = new ModelTemplate(Optional.of(templateParent), Optional.empty(), slots);
+                final var model = template.create(block, mapping, generator.modelOutput());
+                acceptTrapdoorState(block, model, generator);
+            });
+        }
+
+        private static void acceptTrapdoorState(
+                net.minecraft.world.level.block.Block block,
+                ResourceLocation model,
+                org.betterx.wover.block.api.model.WoverBlockModelGenerators generator
+        ) {
                 // A single model rotated per facing/half/open, matching BetterNether's hand-authored
                 // trapdoor blockstate (its trapdoor is one custom mesh, not vanilla's 3 bottom/top/open models).
                 final PropertyDispatch<VariantMutator> rotation =
@@ -442,7 +481,6 @@ public class TemplateModelTrait {
                 );
 
                 generator.delegateItemModel(block, model);
-            });
         }
     }
 }
