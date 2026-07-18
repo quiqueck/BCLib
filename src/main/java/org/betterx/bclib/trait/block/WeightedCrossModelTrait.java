@@ -18,7 +18,9 @@ import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.Property;
 
+import com.mojang.math.Quadrant;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
@@ -80,8 +82,73 @@ public class WeightedCrossModelTrait {
      * @param slot    which texture slot the {@code texture} is bound to (see {@link Slot})
      * @param texture the plant texture bound into the shape
      * @param weight  the variant's weight (1 for the common equally-weighted lists)
+     * @param xRot    the blockstate variant's {@code x} rotation in degrees (0/90/180/270); {@code 0} for none
+     * @param yRot    the blockstate variant's {@code y} rotation in degrees (0/90/180/270); {@code 0} for none
      */
-    public record Layer(ResourceLocation parent, Slot slot, ResourceLocation texture, int weight) {
+    public record Layer(ResourceLocation parent, Slot slot, ResourceLocation texture, int weight, int xRot, int yRot) {
+        /**
+         * A copy of this layer carrying the given blockstate-variant rotation (degrees, each 0/90/180/270) - some
+         * seed/crystal/lotus states place the same shared shape at {@code x}/{@code y} rotations.
+         *
+         * @param x the {@code x} rotation in degrees
+         * @param y the {@code y} rotation in degrees
+         * @return the rotated layer
+         */
+        public Layer rotated(int x, int y) {
+            return new Layer(parent, slot, texture, weight, x, y);
+        }
+
+        /**
+         * A copy of this layer with the given weight (for weighted variant lists).
+         *
+         * @param w the new weight
+         * @return the re-weighted layer
+         */
+        public Layer weighted(int w) {
+            return new Layer(parent, slot, texture, w, xRot, yRot);
+        }
+    }
+
+    /**
+     * One case of a property-dispatched plant blockstate: the weighted variant list to use when the dispatched
+     * property equals {@code value}. Used by {@link #propertyDispatch(Property, List, Item)}.
+     *
+     * @param value    the property value this case selects on (an enum constant, {@link Integer} age, ...)
+     * @param variants the weighted variant list for that value
+     * @param <T>      the property's value type
+     */
+    public record Case<T extends Comparable<T>>(T value, List<Layer> variants) {
+        /** A case mapping {@code value} to a single (weight-1) variant. */
+        public static <T extends Comparable<T>> Case<T> of(T value, Layer variant) {
+            return new Case<>(value, List.of(variant));
+        }
+
+        /** A case mapping {@code value} to the given weighted variant list. */
+        public static <T extends Comparable<T>> Case<T> of(T value, List<Layer> variants) {
+            return new Case<>(value, variants);
+        }
+    }
+
+    /**
+     * One case of a two-property-dispatched plant blockstate (e.g. {@code facing} x {@code shape} for the
+     * end-lotus leaf). Used by {@link #property2Dispatch(Property, Property, List, Item)}.
+     *
+     * @param a        the first property's value
+     * @param b        the second property's value
+     * @param variants the weighted variant list for that {@code (a, b)} pair
+     * @param <A>      the first property's value type
+     * @param <B>      the second property's value type
+     */
+    public record Case2<A extends Comparable<A>, B extends Comparable<B>>(A a, B b, List<Layer> variants) {
+        /** A case mapping {@code (a, b)} to a single (weight-1) variant. */
+        public static <A extends Comparable<A>, B extends Comparable<B>> Case2<A, B> of(A a, B b, Layer variant) {
+            return new Case2<>(a, b, List.of(variant));
+        }
+
+        /** A case mapping {@code (a, b)} to the given weighted variant list. */
+        public static <A extends Comparable<A>, B extends Comparable<B>> Case2<A, B> of(A a, B b, List<Layer> variants) {
+            return new Case2<>(a, b, variants);
+        }
     }
 
     /**
@@ -159,7 +226,7 @@ public class WeightedCrossModelTrait {
      * @return the layer (weight 1)
      */
     public static Layer cross(ResourceLocation texture) {
-        return new Layer(ResourceLocation.withDefaultNamespace("block/cross"), Slot.CROSS, texture, 1);
+        return new Layer(ResourceLocation.withDefaultNamespace("block/cross"), Slot.CROSS, texture, 1, 0, 0);
     }
 
     /**
@@ -171,7 +238,7 @@ public class WeightedCrossModelTrait {
      * @return the layer (weight 1)
      */
     public static Layer crossParent(ResourceLocation parent, ResourceLocation texture) {
-        return new Layer(parent, Slot.CROSS, texture, 1);
+        return new Layer(parent, Slot.CROSS, texture, 1, 0, 0);
     }
 
     /**
@@ -183,7 +250,49 @@ public class WeightedCrossModelTrait {
      * @return the layer (weight 1)
      */
     public static Layer cropParent(ResourceLocation parent, ResourceLocation texture) {
-        return new Layer(parent, Slot.TEXTURE, texture, 1);
+        return new Layer(parent, Slot.TEXTURE, texture, 1, 0, 0);
+    }
+
+    /**
+     * A plant dispatched over a single arbitrary property (an enum like {@code TripleShape}/{@code facing}, or an
+     * {@link Integer} {@code age}): a weighted variant list - each variant optionally rotated - for each of the
+     * property's listed values. Every value the property can take MUST have a case, or vanilla's
+     * {@link MultiVariantGenerator} rejects the incomplete dispatch.
+     *
+     * @param property the property to dispatch over
+     * @param cases    one {@link Case} per property value
+     * @param item     how to generate the item model
+     * @param <T>      the property's value type
+     * @return the model trait, or {@code null} outside of datagen
+     */
+    public static <T extends Comparable<T>> BlockModelTrait propertyDispatch(
+            Property<T> property,
+            List<Case<T>> cases,
+            Item item
+    ) {
+        return ModCore.isDatagen() ? Impl.propertyDispatch(property, cases, item) : null;
+    }
+
+    /**
+     * A plant dispatched over two properties (e.g. {@code facing} x {@code shape} for the end-lotus leaf): a
+     * weighted, optionally-rotated variant list for each listed {@code (a, b)} pair. Every reachable combination
+     * MUST have a case.
+     *
+     * @param a     the first property
+     * @param b     the second property
+     * @param cases one {@link Case2} per {@code (a, b)} pair
+     * @param item  how to generate the item model
+     * @param <A>  the first property's value type
+     * @param <B>  the second property's value type
+     * @return the model trait, or {@code null} outside of datagen
+     */
+    public static <A extends Comparable<A>, B extends Comparable<B>> BlockModelTrait property2Dispatch(
+            Property<A> a,
+            Property<B> b,
+            List<Case2<A, B>> cases,
+            Item item
+    ) {
+        return ModCore.isDatagen() ? Impl.property2Dispatch(a, b, cases, item) : null;
     }
 
     @Environment(EnvType.CLIENT)
@@ -207,20 +316,42 @@ public class WeightedCrossModelTrait {
             );
         }
 
+        private static Quadrant quadrant(int degrees) {
+            return switch (((degrees % 360) + 360) % 360) {
+                case 90 -> Quadrant.R90;
+                case 180 -> Quadrant.R180;
+                case 270 -> Quadrant.R270;
+                default -> Quadrant.R0;
+            };
+        }
+
+        private static Variant variant(ResourceLocation model, Layer layer) {
+            Variant v = new Variant(model);
+            if (layer.xRot() != 0) {
+                v = v.withXRot(quadrant(layer.xRot()));
+            }
+            if (layer.yRot() != 0) {
+                v = v.withYRot(quadrant(layer.yRot()));
+            }
+            return v;
+        }
+
         private static MultiVariant variants(
                 Block block,
                 WoverBlockModelGenerators generator,
                 List<Layer> layers,
                 String statePrefix
         ) {
-            if (layers.size() == 1 && layers.get(0).weight() == 1) {
+            if (layers.size() == 1 && layers.get(0).weight() == 1
+                    && layers.get(0).xRot() == 0 && layers.get(0).yRot() == 0) {
                 return BlockModelGenerators.plainVariant(emitModel(block, generator, layers.get(0), statePrefix));
             }
             final var weighted = WeightedList.<Variant>builder();
             for (int i = 0; i < layers.size(); i++) {
                 final Layer layer = layers.get(i);
-                final ResourceLocation loc = emitModel(block, generator, layer, statePrefix + "_" + i);
-                weighted.add(BlockModelGenerators.plainModel(loc), layer.weight());
+                final ResourceLocation loc = emitModel(
+                        block, generator, layer, layers.size() == 1 ? statePrefix : statePrefix + "_" + i);
+                weighted.add(variant(loc, layer), layer.weight());
             }
             return new MultiVariant(weighted.build());
         }
@@ -263,6 +394,46 @@ public class WeightedCrossModelTrait {
                                                 .select(true, trueVariant)
                         )
                 );
+                applyItem(block, generator, item);
+            });
+        }
+
+        private static <T extends Comparable<T>> BlockModelTrait propertyDispatch(
+                Property<T> property,
+                List<Case<T>> cases,
+                Item item
+        ) {
+            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+                PropertyDispatch.C1<MultiVariant, T> dispatch = null;
+                for (Case<T> c : cases) {
+                    final MultiVariant mv = variants(
+                            block, generator, c.variants(), "_" + property.getName(c.value()));
+                    dispatch = dispatch == null
+                            ? PropertyDispatch.initial(property).select(c.value(), mv)
+                            : dispatch.select(c.value(), mv);
+                }
+                generator.acceptBlockState(MultiVariantGenerator.dispatch(block).with(dispatch));
+                applyItem(block, generator, item);
+            });
+        }
+
+        private static <A extends Comparable<A>, B extends Comparable<B>> BlockModelTrait property2Dispatch(
+                Property<A> a,
+                Property<B> b,
+                List<Case2<A, B>> cases,
+                Item item
+        ) {
+            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+                PropertyDispatch.C2<MultiVariant, A, B> dispatch = null;
+                for (Case2<A, B> c : cases) {
+                    final MultiVariant mv = variants(
+                            block, generator, c.variants(),
+                            "_" + a.getName(c.a()) + "_" + b.getName(c.b()));
+                    dispatch = dispatch == null
+                            ? PropertyDispatch.initial(a, b).select(c.a(), c.b(), mv)
+                            : dispatch.select(c.a(), c.b(), mv);
+                }
+                generator.acceptBlockState(MultiVariantGenerator.dispatch(block).with(dispatch));
                 applyItem(block, generator, item);
             });
         }
