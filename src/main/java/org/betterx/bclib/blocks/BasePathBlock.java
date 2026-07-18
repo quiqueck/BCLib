@@ -1,7 +1,7 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
 import org.betterx.bclib.client.models.BCLModels;
+import org.betterx.bclib.interfaces.tools.AddMineablePickaxe;
 import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 import org.betterx.wover.loot.api.BlockLootProvider;
 import org.betterx.wover.loot.api.LootLookupProvider;
@@ -97,7 +97,7 @@ public abstract class BasePathBlock extends BaseBlockNotFull implements BlockLoo
         return provider.dropWithSilkTouch(this, this.baseBlock, ConstantValue.exactly(1));
     }
 
-    public static class Stone extends BasePathBlock implements BehaviourStone {
+    public static class Stone extends BasePathBlock implements AddMineablePickaxe {
         public Stone(BlockBehaviour.Properties props, Block source) {
             super(props, source);
         }

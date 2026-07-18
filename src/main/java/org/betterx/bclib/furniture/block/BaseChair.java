@@ -1,10 +1,9 @@
 package org.betterx.bclib.furniture.block;
 
 import org.betterx.bclib.behaviours.BehaviourHelper;
-import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
-import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
-import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.client.models.BCLModels;
+import org.betterx.bclib.interfaces.tools.AddMineableAxe;
+import org.betterx.bclib.interfaces.tools.AddMineablePickaxe;
 import org.betterx.bclib.util.BlocksHelper;
 import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 import org.betterx.wover.loot.api.LootLookupProvider;
@@ -144,7 +143,7 @@ public abstract class BaseChair extends AbstractChair {
         return super.playerWillDestroy(world, pos, state, player);
     }
 
-    public static class Wood extends BaseChair implements BehaviourWood {
+    public static class Wood extends BaseChair implements AddMineableAxe {
         public Wood(Block baseMaterial, Block clothMaterial) {
             super(baseMaterial, clothMaterial);
         }
@@ -154,7 +153,7 @@ public abstract class BaseChair extends AbstractChair {
         }
     }
 
-    public static class Stone extends BaseChair implements BehaviourStone {
+    public static class Stone extends BaseChair implements AddMineablePickaxe {
         public Stone(Block baseMaterial, Block clothMaterial) {
             super(baseMaterial, clothMaterial);
         }
@@ -164,7 +163,7 @@ public abstract class BaseChair extends AbstractChair {
         }
     }
 
-    public static class Metal extends BaseChair implements BehaviourMetal {
+    public static class Metal extends BaseChair implements AddMineablePickaxe {
         public Metal(Block baseMaterial, Block clothMaterial) {
             super(baseMaterial, clothMaterial);
         }

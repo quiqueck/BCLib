@@ -1,9 +1,9 @@
 package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.api.v3.datagen.DropSelfLootProvider;
-import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
+import org.betterx.bclib.interfaces.tools.AddMineablePickaxe;
 
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChainBlock;
@@ -28,7 +28,7 @@ public abstract class BaseChainBlock extends ChainBlock implements RenderLayerPr
         return BCLRenderLayer.CUTOUT;
     }
 
-    public static class Metal extends BaseChainBlock implements BehaviourMetal {
+    public static class Metal extends BaseChainBlock implements AddMineablePickaxe {
 
         public Metal(MapColor color) {
             super(color);

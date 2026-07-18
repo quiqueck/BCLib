@@ -1,7 +1,6 @@
 package org.betterx.datagen.bclib.worldgen;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.behaviours.interfaces.*;
 import org.betterx.bclib.interfaces.Fuel;
 import org.betterx.bclib.interfaces.tools.*;
 import org.betterx.wover.block.api.BlockRegistry;
@@ -11,13 +10,11 @@ import org.betterx.wover.datagen.api.WoverTagProvider;
 import org.betterx.wover.tag.api.TagRegistry;
 import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
 import org.betterx.wover.tag.api.event.context.TagElementWrapper;
-import org.betterx.wover.tag.api.predefined.CommonBlockTags;
 import org.betterx.wover.tag.api.predefined.MineableTags;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 
@@ -208,18 +205,6 @@ public class BCLAutoBlockTagProvider extends WoverTagProvider.ForBlocks implemen
             if (block instanceof AddMineableHammer) {
                 context.add(block, MineableTags.HAMMER);
             }
-        }
-
-        if (block instanceof BehaviourImmobile) {
-            context.add(block, CommonBlockTags.IMMOBILE, BlockTags.DRAGON_IMMUNE);
-        }
-
-        if (block instanceof BehaviourObsidian) {
-            context.add(block, CommonBlockTags.IS_OBSIDIAN, BlockTags.DRAGON_IMMUNE, BlockTags.NEEDS_DIAMOND_TOOL);
-        }
-
-        if (block instanceof BehaviourPortalFrame) {
-            context.add(block, CommonBlockTags.NETHER_PORTAL_FRAME);
         }
 
         if (block instanceof Fuel fl) {

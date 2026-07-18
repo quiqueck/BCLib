@@ -2,9 +2,8 @@ package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.api.v3.datagen.DropSelfLootProvider;
 import org.betterx.bclib.behaviours.BehaviourHelper;
-import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
-import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
-import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
+import org.betterx.bclib.interfaces.tools.AddMineableAxe;
+import org.betterx.bclib.interfaces.tools.AddMineablePickaxe;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RotatedPillarBlock;
@@ -18,7 +17,7 @@ public abstract class BaseRotatedPillarBlock extends RotatedPillarBlock implemen
         this(Properties.ofFullCopy(block));
     }
 
-    public static class Wood extends BaseRotatedPillarBlock implements BehaviourWood {
+    public static class Wood extends BaseRotatedPillarBlock implements AddMineableAxe {
         protected final boolean flammable;
 
         public Wood(Properties settings, boolean flammable) {
@@ -31,7 +30,7 @@ public abstract class BaseRotatedPillarBlock extends RotatedPillarBlock implemen
         }
     }
 
-    public static class Stone extends BaseRotatedPillarBlock implements BehaviourStone {
+    public static class Stone extends BaseRotatedPillarBlock implements AddMineablePickaxe {
         public Stone(Properties settings) {
             super(settings);
         }
@@ -41,7 +40,7 @@ public abstract class BaseRotatedPillarBlock extends RotatedPillarBlock implemen
         }
     }
 
-    public static class Metal extends BaseRotatedPillarBlock implements BehaviourMetal {
+    public static class Metal extends BaseRotatedPillarBlock implements AddMineablePickaxe {
         public Metal(Properties settings) {
             super(settings);
         }

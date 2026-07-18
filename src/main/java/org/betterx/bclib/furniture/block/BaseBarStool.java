@@ -1,10 +1,9 @@
 package org.betterx.bclib.furniture.block;
 
 import org.betterx.bclib.behaviours.BehaviourHelper;
-import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
-import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
-import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.client.models.BCLModels;
+import org.betterx.bclib.interfaces.tools.AddMineableAxe;
+import org.betterx.bclib.interfaces.tools.AddMineablePickaxe;
 import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 
 import net.minecraft.core.BlockPos;
@@ -40,7 +39,7 @@ public abstract class BaseBarStool extends AbstractChair {
         return SHAPE;
     }
 
-    public static class Wood extends BaseBarStool implements BehaviourWood {
+    public static class Wood extends BaseBarStool implements AddMineableAxe {
         public Wood(Block baseMaterial, Block clothMaterial) {
             super(baseMaterial, clothMaterial);
         }
@@ -50,7 +49,7 @@ public abstract class BaseBarStool extends AbstractChair {
         }
     }
 
-    public static class Stone extends BaseBarStool implements BehaviourStone {
+    public static class Stone extends BaseBarStool implements AddMineablePickaxe {
         public Stone(Block baseMaterial, Block clothMaterial) {
             super(baseMaterial, clothMaterial);
         }
@@ -60,7 +59,7 @@ public abstract class BaseBarStool extends AbstractChair {
         }
     }
 
-    public static class Metal extends BaseBarStool implements BehaviourMetal {
+    public static class Metal extends BaseBarStool implements AddMineablePickaxe {
         public Metal(Block baseMaterial, Block clothMaterial) {
             super(baseMaterial, clothMaterial);
         }

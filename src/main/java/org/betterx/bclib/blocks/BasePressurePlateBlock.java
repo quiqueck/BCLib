@@ -2,9 +2,8 @@ package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.api.v3.datagen.DropSelfLootProvider;
 import org.betterx.bclib.behaviours.BehaviourHelper;
-import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
-import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
-import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
+import org.betterx.bclib.interfaces.tools.AddMineableAxe;
+import org.betterx.bclib.interfaces.tools.AddMineablePickaxe;
 import org.betterx.wover.block.api.BlockTagProvider;
 import org.betterx.wover.item.api.ItemTagProvider;
 import org.betterx.wover.tag.api.event.context.ItemTagBootstrapContext;
@@ -48,7 +47,7 @@ public abstract class BasePressurePlateBlock extends PressurePlateBlock implemen
         context.add(BlockTags.PRESSURE_PLATES, this);
     }
 
-    public static class Wood extends BasePressurePlateBlock implements BehaviourWood, ItemTagProvider {
+    public static class Wood extends BasePressurePlateBlock implements AddMineableAxe, ItemTagProvider {
         public Wood(Block source, BlockSetType type) {
             super(/*Sensitivity.EVERYTHING,*/ source, type);
         }
@@ -68,7 +67,7 @@ public abstract class BasePressurePlateBlock extends PressurePlateBlock implemen
         }
     }
 
-    public static class Stone extends BasePressurePlateBlock implements BehaviourStone {
+    public static class Stone extends BasePressurePlateBlock implements AddMineablePickaxe {
         public Stone(Block source, BlockSetType type) {
             super(/*Sensitivity.MOBS,*/ source, type);
         }
@@ -78,7 +77,7 @@ public abstract class BasePressurePlateBlock extends PressurePlateBlock implemen
         }
     }
 
-    public static class Metal extends BasePressurePlateBlock implements BehaviourMetal {
+    public static class Metal extends BasePressurePlateBlock implements AddMineablePickaxe {
         public Metal(Block source, BlockSetType type) {
             super(/*Sensitivity.MOBS,*/ source, type);
         }

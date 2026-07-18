@@ -1,9 +1,7 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.behaviours.interfaces.BehaviourGlass;
-import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
-import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
-import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
+import org.betterx.bclib.interfaces.tools.AddMineableAxe;
+import org.betterx.bclib.interfaces.tools.AddMineablePickaxe;
 import org.betterx.bclib.util.BlocksHelper;
 
 import net.minecraft.core.BlockPos;
@@ -88,25 +86,25 @@ public abstract class BaseAttachedBlock extends BaseBlockNotFull {
         return BlocksHelper.mirrorHorizontal(state, mirror, FACING);
     }
 
-    public static class Wood extends BaseAttachedBlock implements BehaviourWood {
+    public static class Wood extends BaseAttachedBlock implements AddMineableAxe {
         public Wood(Properties settings) {
             super(settings);
         }
     }
 
-    public static class Stone extends BaseAttachedBlock implements BehaviourStone {
+    public static class Stone extends BaseAttachedBlock implements AddMineablePickaxe {
         public Stone(Properties settings) {
             super(settings);
         }
     }
 
-    public static class Metal extends BaseAttachedBlock implements BehaviourMetal {
+    public static class Metal extends BaseAttachedBlock implements AddMineablePickaxe {
         public Metal(Properties settings) {
             super(settings);
         }
     }
 
-    public static class Glass extends BaseAttachedBlock implements BehaviourGlass {
+    public static class Glass extends BaseAttachedBlock implements AddMineablePickaxe {
         public Glass(Properties settings) {
             super(settings);
         }

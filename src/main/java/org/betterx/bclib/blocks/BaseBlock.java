@@ -1,8 +1,7 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
-import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
-import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
+import org.betterx.bclib.interfaces.tools.AddMineableAxe;
+import org.betterx.bclib.interfaces.tools.AddMineablePickaxe;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.MapColor;
@@ -61,19 +60,19 @@ public class BaseBlock extends Block {
         return settings;
     }
 
-    public static class Wood extends BaseBlock implements BehaviourWood {
+    public static class Wood extends BaseBlock implements AddMineableAxe {
         public Wood(Properties settings) {
             super(settings);
         }
     }
 
-    public static class Stone extends BaseBlock implements BehaviourStone {
+    public static class Stone extends BaseBlock implements AddMineablePickaxe {
         public Stone(Properties settings) {
             super(settings);
         }
     }
 
-    public static class Metal extends BaseBlock implements BehaviourMetal {
+    public static class Metal extends BaseBlock implements AddMineablePickaxe {
         public Metal(Properties settings) {
             super(settings);
         }

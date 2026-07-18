@@ -1,10 +1,9 @@
 package org.betterx.bclib.furniture.block;
 
 import org.betterx.bclib.behaviours.BehaviourHelper;
-import org.betterx.bclib.behaviours.interfaces.BehaviourMetal;
-import org.betterx.bclib.behaviours.interfaces.BehaviourStone;
-import org.betterx.bclib.behaviours.interfaces.BehaviourWood;
 import org.betterx.bclib.client.models.BCLModels;
+import org.betterx.bclib.interfaces.tools.AddMineableAxe;
+import org.betterx.bclib.interfaces.tools.AddMineablePickaxe;
 import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
 
 import net.minecraft.core.BlockPos;
@@ -36,7 +35,7 @@ public abstract class BaseTaburet extends AbstractChair {
         return SHAPE;
     }
 
-    public static class Wood extends BaseTaburet implements BehaviourWood {
+    public static class Wood extends BaseTaburet implements AddMineableAxe {
         public Wood(Block block) {
             super(block);
         }
@@ -46,7 +45,7 @@ public abstract class BaseTaburet extends AbstractChair {
         }
     }
 
-    public static class Stone extends BaseTaburet implements BehaviourStone {
+    public static class Stone extends BaseTaburet implements AddMineablePickaxe {
         public Stone(Block block) {
             super(block);
         }
@@ -56,7 +55,7 @@ public abstract class BaseTaburet extends AbstractChair {
         }
     }
 
-    public static class Metal extends BaseTaburet implements BehaviourMetal {
+    public static class Metal extends BaseTaburet implements AddMineablePickaxe {
         public Metal(Block block) {
             super(block);
         }
