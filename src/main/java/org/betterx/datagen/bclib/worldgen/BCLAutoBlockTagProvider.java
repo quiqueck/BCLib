@@ -210,10 +210,6 @@ public class BCLAutoBlockTagProvider extends WoverTagProvider.ForBlocks implemen
             }
         }
 
-        if (block instanceof BehaviourWaterPlantLike) {
-            context.add(block, CommonBlockTags.WATER_PLANT);
-        }
-
         if (block instanceof BehaviourVine) {
             context.add(block, CommonBlockTags.VINE);
         }
