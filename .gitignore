@@ -34,3 +34,4 @@ output/
 /CHANGES.md
 /src/main/generated/.cache/
 /modrinth.json
+.DS_Store
