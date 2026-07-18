@@ -1,7 +1,6 @@
 package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.behaviours.BehaviourBuilders;
-import org.betterx.bclib.behaviours.interfaces.BehaviourLeaves;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
 
@@ -9,7 +8,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 
-public class SimpleLeavesBlock extends BaseBlockNotFull implements RenderLayerProvider, BehaviourLeaves {
+public class SimpleLeavesBlock extends BaseBlockNotFull implements RenderLayerProvider {
     public SimpleLeavesBlock(MapColor color) {
         this(
                 BehaviourBuilders
@@ -34,11 +33,5 @@ public class SimpleLeavesBlock extends BaseBlockNotFull implements RenderLayerPr
     @Override
     public BCLRenderLayer getRenderLayer() {
         return BCLRenderLayer.CUTOUT;
-    }
-
-
-    @Override
-    public float compostingChance() {
-        return 0.3f;
     }
 }

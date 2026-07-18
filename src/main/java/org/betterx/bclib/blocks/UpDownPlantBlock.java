@@ -1,7 +1,6 @@
 package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.behaviours.BehaviourBuilders;
-import org.betterx.bclib.behaviours.interfaces.BehaviourPlant;
 import org.betterx.bclib.client.render.BCLRenderLayer;
 import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.interfaces.tools.AddMineableShears;
@@ -34,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
  * double-generated the table for any block that also carried the trait - the two datagen providers run
  * independently, with no filter between them).
  */
-public abstract class UpDownPlantBlock extends BaseBlockNotFull implements RenderLayerProvider, AddMineableShears, BehaviourPlant {
+public abstract class UpDownPlantBlock extends BaseBlockNotFull implements RenderLayerProvider, AddMineableShears {
     private static final VoxelShape SHAPE = box(4, 0, 4, 12, 16, 12);
 
     public UpDownPlantBlock() {

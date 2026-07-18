@@ -1,6 +1,8 @@
 package org.betterx.bclib.util;
 
-import org.betterx.bclib.behaviours.interfaces.BehaviourPlantLike;
+import org.betterx.bclib.trait.block.PlantBlockTrait;
+import org.betterx.bclib.trait.block.PlantLikeBlockTrait;
+import org.betterx.wover.block.api.trait.BlockTrait;
 import org.betterx.wover.tag.api.predefined.CommonBlockTags;
 
 import net.minecraft.core.BlockPos;
@@ -352,7 +354,9 @@ public class BlocksHelper {
 
     public static Boolean replaceableOrPlant(BlockState state) {
         final Block block = state.getBlock();
-        if (state.is(CommonBlockTags.PLANT) || state.is(CommonBlockTags.WATER_PLANT) || block instanceof BehaviourPlantLike) {
+        if (state.is(CommonBlockTags.PLANT) || state.is(CommonBlockTags.WATER_PLANT)
+                || BlockTrait.hasRuntimeTrait(block, PlantLikeBlockTrait.KEY)
+                || BlockTrait.hasRuntimeTrait(block, PlantBlockTrait.KEY)) {
             return true;
         }
         if (state.getPistonPushReaction() == PushReaction.DESTROY && block.defaultDestroyTime() == 0) return true;

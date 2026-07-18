@@ -214,28 +214,12 @@ public class BCLAutoBlockTagProvider extends WoverTagProvider.ForBlocks implemen
             context.add(block, CommonBlockTags.WATER_PLANT);
         }
 
-        if (block instanceof BehaviourPlant) {
-            context.add(block, CommonBlockTags.PLANT);
-        }
-
         if (block instanceof BehaviourVine) {
             context.add(block, CommonBlockTags.VINE);
         }
 
-        if (block instanceof BehaviourSeedLike) {
-            context.add(block, CommonBlockTags.SEEDS);
-        }
-
-        if (block instanceof BehaviourSaplingLike) {
-            context.add(block, CommonBlockTags.SAPLINGS, BlockTags.SAPLINGS);
-        }
-
         if (block instanceof BehaviourClimable c) {
             context.add(block, BlockTags.CLIMBABLE);
-        }
-
-        if (block instanceof BehaviourLeaves) {
-            context.add(block, BlockTags.LEAVES, CommonBlockTags.LEAVES);
         }
 
         if (block instanceof BehaviourImmobile) {

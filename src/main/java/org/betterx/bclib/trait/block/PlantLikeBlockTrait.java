@@ -8,8 +8,10 @@ import org.betterx.wover.block.api.trait.BlockTraits;
 import org.betterx.wover.block.api.trait.Combiner;
 import org.betterx.wover.block.api.trait.GenericBlockTrait;
 import org.betterx.wover.block.impl.trait.BlockTraitImpl;
+import org.betterx.wover.tabs.api.interfaces.CreativeTabPredicate;
 import org.betterx.wover.tag.api.predefined.CommonBlockTags;
 
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
 
 import java.util.List;
@@ -47,6 +49,20 @@ public class PlantLikeBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait
     public static final BlockTraitKey KEY = BlockTraitKey.ofUnique(BCLib.C, "plant_like");
 
     private static final PlantLikeBlockTrait INSTANCE = new PlantLikeBlockTrait();
+
+    /**
+     * Matches everything that belongs in the creative "Plants"/nature tab of BetterNether and BetterEnd.
+     * <p>
+     * Formerly {@code BehaviourPlantLike.TAB_PREDICATE}, which also matched the {@code BehaviourPlantLike}
+     * and {@code BehaviourLeaves} marker interfaces via {@code instanceof} - now that every implementor has
+     * migrated to traits, only the runtime trait lookups remain.
+     */
+    public static final CreativeTabPredicate TAB_PREDICATE = item -> item instanceof BlockItem bi
+            && (
+            BlockTrait.hasRuntimeTrait(bi.getBlock(), KEY)
+                    || BlockTrait.hasRuntimeTrait(bi.getBlock(), PlantBlockTrait.KEY)
+                    || BlockTrait.hasRuntimeTrait(bi.getBlock(), WaterPlantBlockTrait.KEY)
+    );
 
     /**
      * The bare marker, replacing a plain {@code BehaviourPlantLike}: puts the block in the creative nature

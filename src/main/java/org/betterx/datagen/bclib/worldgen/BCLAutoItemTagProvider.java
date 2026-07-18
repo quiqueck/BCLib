@@ -2,9 +2,6 @@ package org.betterx.datagen.bclib.worldgen;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.behaviours.interfaces.BehaviourCompostable;
-import org.betterx.bclib.behaviours.interfaces.BehaviourLeaves;
-import org.betterx.bclib.behaviours.interfaces.BehaviourSaplingLike;
-import org.betterx.bclib.behaviours.interfaces.BehaviourSeedLike;
 import org.betterx.wover.block.api.BlockRegistry;
 import org.betterx.wover.core.api.ModCore;
 import org.betterx.wover.datagen.api.WoverAutoProvider;
@@ -14,7 +11,6 @@ import org.betterx.wover.tag.api.event.context.ItemTagBootstrapContext;
 import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
 import org.betterx.wover.tag.api.predefined.CommonItemTags;
 
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -34,18 +30,6 @@ public class BCLAutoItemTagProvider extends WoverTagProvider.ForItems implements
 
         if (block instanceof BehaviourCompostable c) {
             context.add(item, CommonItemTags.COMPOSTABLE);
-        }
-
-        if (block instanceof BehaviourSeedLike) {
-            context.add(item, CommonItemTags.SEEDS);
-        }
-
-        if (block instanceof BehaviourSaplingLike) {
-            context.add(item, CommonItemTags.SAPLINGS, ItemTags.SAPLINGS);
-        }
-
-        if (block instanceof BehaviourLeaves) {
-            context.add(item, ItemTags.LEAVES, CommonItemTags.LEAVES);
         }
     }
 

@@ -1,4 +1,4 @@
 package org.betterx.bclib.behaviours.interfaces;
 
-public interface BehaviourWaterPlantLike extends BehaviourPlantLike {
+public interface BehaviourWaterPlantLike extends BlockBehaviour {
 }
