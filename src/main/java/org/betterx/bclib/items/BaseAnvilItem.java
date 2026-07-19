@@ -1,7 +1,6 @@
 package org.betterx.bclib.items;
 
 import org.betterx.bclib.blocks.BaseAnvilBlock;
-import org.betterx.bclib.interfaces.ItemModelProvider;
 import org.betterx.bclib.util.BCLDataComponents;
 
 import net.minecraft.network.chat.Component;
@@ -18,7 +17,7 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import java.util.Locale;
 import java.util.function.Consumer;
 
-public class BaseAnvilItem extends BlockItem implements ItemModelProvider {
+public class BaseAnvilItem extends BlockItem {
     public final static String DESTRUCTION = "destruction";
 
     public BaseAnvilItem(Block block, Properties properties) {

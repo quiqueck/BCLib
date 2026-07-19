@@ -1,15 +1,12 @@
 package org.betterx.bclib.items;
 
 import de.ambertation.wunderlib.math.Bounds;
-import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.commands.PlaceCommand;
 import org.betterx.bclib.interfaces.AirSelectionItem;
-import org.betterx.bclib.interfaces.ItemModelProvider;
 import org.betterx.bclib.util.BlocksHelper;
 import org.betterx.ui.ColorUtil;
 
 import com.mojang.logging.LogUtils;
-import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.commands.arguments.blocks.BlockStateParser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.FrontAndTop;
@@ -48,7 +45,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
 
-public class DebugDataItem extends Item implements ItemModelProvider, AirSelectionItem {
+public class DebugDataItem extends Item implements AirSelectionItem {
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final ResourceLocation DEFAULT_ICON = ResourceLocation.withDefaultNamespace("stick");
 
@@ -193,12 +190,6 @@ public class DebugDataItem extends Item implements ItemModelProvider, AirSelecti
         return true;
     }
 
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public BlockModel getItemModel(ResourceLocation resourceLocation) {
-        return ModelsHelper.createItemModel(icon);
-    }
 
     @Override
     public InteractionResult useOn(UseOnContext useOnContext) {
