@@ -17,6 +17,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 
 import net.fabricmc.api.EnvType;
@@ -92,7 +93,9 @@ public class LeavesBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
             boolean walkable
     ) {
         return Combiner.of(
-                PlantBlockTrait.withColor(color, walkable),
+                // Leaves are full/cube-ish blocks and must stay grid-aligned, so opt out of the
+                // plant X-Z offset that PlantBlockTrait now enables for standalone ground plants.
+                PlantBlockTrait.withColor(color, walkable, BlockBehaviour.OffsetType.NONE),
                 new LeavesBlockTrait(lightLevel, wet),
                 BlockTraits.MINEABLE_WITH.needsShears(),
                 saplingDropChance < 0

@@ -8,6 +8,7 @@ import org.betterx.wover.block.impl.trait.BlockTraitImpl;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 
@@ -18,15 +19,25 @@ public class PlantBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> im
 
 
     public static PlantBlockTrait withDefault() {
-        return new PlantBlockTrait(MapColor.PLANT, false);
+        return withColor(MapColor.PLANT, false);
     }
 
     public static PlantBlockTrait withColor(MapColor color) {
-        return new PlantBlockTrait(color, false);
+        return withColor(color, false);
     }
 
+    // Standalone ground-plant entry point: enables the vanilla-style random horizontal (X-Z)
+    // offset so plants don't render perfectly grid-aligned. Mirrors WaterPlantBlockTrait, which
+    // already sets OffsetType.XZ for underwater plants. Composing traits that must stay
+    // grid-aligned (leaves, vines) use the offsetType overload below to opt out.
     public static PlantBlockTrait withColor(MapColor color, boolean walkable) {
-        return new PlantBlockTrait(color, walkable);
+        return withColor(color, walkable, BlockBehaviour.OffsetType.XZ);
+    }
+
+    // Composition-facing overload: lets traits that embed PlantBlockTrait (e.g. LeavesBlockTrait,
+    // VineBlockTrait) pass OffsetType.NONE to keep their full/cube-ish blocks grid-aligned.
+    public static PlantBlockTrait withColor(MapColor color, boolean walkable, BlockBehaviour.OffsetType offsetType) {
+        return new PlantBlockTrait(color, walkable, offsetType);
     }
 
     public static List<BlockTrait<?, ?>> compostableWithColor(MapColor color, boolean walkable, boolean flammable) {
@@ -42,10 +53,12 @@ public class PlantBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> im
 
     public final MapColor color;
     public final boolean walkable;
+    public final BlockBehaviour.OffsetType offsetType;
 
-    private PlantBlockTrait(MapColor color, boolean walkable) {
+    private PlantBlockTrait(MapColor color, boolean walkable, BlockBehaviour.OffsetType offsetType) {
         this.color = color;
         this.walkable = walkable;
+        this.offsetType = offsetType;
     }
 
     @Override
@@ -69,6 +82,7 @@ public class PlantBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> im
                   .noOcclusion()
                   .instabreak()
                   .sound(SoundType.GRASS)
+                  .offsetType(offsetType)
                   .pushReaction(PushReaction.DESTROY);
 
         if (!walkable) {

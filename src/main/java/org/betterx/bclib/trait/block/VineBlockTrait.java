@@ -10,6 +10,7 @@ import org.betterx.wover.block.impl.trait.BlockTraitImpl;
 import org.betterx.wover.core.api.ModCore;
 
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 
 import net.fabricmc.api.EnvType;
@@ -58,7 +59,9 @@ public class VineBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
             boolean generateModel
     ) {
         return Combiner.of(
-                PlantBlockTrait.withColor(color, false),
+                // Vines hang against/along blocks and must stay grid-aligned, so opt out of the
+                // plant X-Z offset that PlantBlockTrait now enables for standalone ground plants.
+                PlantBlockTrait.withColor(color, false, BlockBehaviour.OffsetType.NONE),
                 new VineBlockTrait(lightLevel, onlyBottomIsLit),
                 BlockTraits.MINEABLE_WITH.needsHoe(),
                 BlockTraits.MINEABLE_WITH.needsShears(),
