@@ -62,12 +62,6 @@ public class LeavesBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
         return withColor(color, lightLevel, wet, saplingDropChance, saplingBlock, true);
     }
 
-    /**
-     * @param generateModel when {@code false}, the default cube block/item model is <em>not</em> attached, so
-     *                      the block can supply its own model (e.g. hand-authored multi-variant leaves routed
-     *                      through {@code ModelTraitLibrary.externalModel()}). Every other overload defaults
-     *                      this to {@code true} to preserve the vanilla-style cube model for simple leaves.
-     */
     public static List<BlockTrait<?, ?>> withColor(
             MapColor color,
             int lightLevel,
@@ -76,8 +70,29 @@ public class LeavesBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
             @Nullable Block saplingBlock,
             boolean generateModel
     ) {
+        return withColor(color, lightLevel, wet, saplingDropChance, saplingBlock, generateModel, true);
+    }
+
+    /**
+     * @param generateModel when {@code false}, the default cube block/item model is <em>not</em> attached, so
+     *                      the block can supply its own model (e.g. hand-authored multi-variant leaves routed
+     *                      through {@code ModelTraitLibrary.externalModel()}). Every other overload defaults
+     *                      this to {@code true} to preserve the vanilla-style cube model for simple leaves.
+     * @param walkable      when {@code true} (the default for genuine cube-shaped leaves), the block keeps solid
+     *                      collision like vanilla {@code *_leaves}. Decorative, sideways-protruding variants
+     *                      (e.g. {@code FurBlock}-based outer leaves) pass {@code false} to stay pass-through.
+     */
+    public static List<BlockTrait<?, ?>> withColor(
+            MapColor color,
+            int lightLevel,
+            boolean wet,
+            float saplingDropChance,
+            @Nullable Block saplingBlock,
+            boolean generateModel,
+            boolean walkable
+    ) {
         return Combiner.of(
-                PlantBlockTrait.withColor(color),
+                PlantBlockTrait.withColor(color, walkable),
                 new LeavesBlockTrait(lightLevel, wet),
                 BlockTraits.MINEABLE_WITH.needsShears(),
                 saplingDropChance < 0
