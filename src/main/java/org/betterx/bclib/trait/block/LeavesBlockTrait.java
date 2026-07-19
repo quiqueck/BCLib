@@ -143,7 +143,8 @@ public class LeavesBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
         super.configure(definition);
 
         definition
-                .replaceable()
+                // NOT replaceable: leaves are solid blocks, not grass-like. Marking them replaceable let a
+                // block placed against a leaf overwrite the leaf (e.g. right-clicking a leaf with stone).
                 .strength(0.2f)
                 .isValidSpawn(Blocks::ocelotOrParrot)
                 .isSuffocating(Blocks::never)
