@@ -87,6 +87,11 @@ public class PlantBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> im
 
         if (!walkable) {
             definition.noCollission();
+        } else if (offsetType != BlockBehaviour.OffsetType.NONE) {
+            // A walkable plant keeps its collision shape; a block that has both a collision shape and a
+            // non-NONE offset must be marked dynamicShape, or vanilla throws at registration:
+            // "<block> has a collision shape and an offset type, but is not marked as dynamicShape".
+            definition.dynamicShape();
         }
     }
 }
