@@ -136,7 +136,7 @@ public class DataFixerAPI {
             Consumer<Boolean> onResume
     ) {
         File levelPath = levelStorageAccess.getLevelPath(LevelResource.ROOT).toFile();
-        return fixData(levelPath, levelStorageAccess.getLevelId(), showUI, onResume);
+        return fixData(levelPath, levelStorageAccess.getLevelId(), levelStorageAccess, showUI, onResume);
     }
 
     /**
@@ -159,20 +159,37 @@ public class DataFixerAPI {
         return ps;
     }
 
-    private static void makeBackupAndShowToast(LevelStorageSource storageSource, String levelID) {
-        boolean didOpen = false;
-        try (LevelStorageSource.LevelStorageAccess access = storageSource.createAccess(levelID);) {
-            didOpen = true;
-            EditWorldScreen.makeBackupAndShowToast(access);
-        } catch (IOException ex) {
-            if (!didOpen) {
-                SystemToast.onWorldAccessFailure(Minecraft.getInstance(), levelID);
+    private static void makeBackupAndShowToast(
+            LevelStorageSource.LevelStorageAccess access,
+            String levelID
+    ) {
+        //Reuse the already opened access instead of opening a second one. Acquiring a second
+        //LevelStorageAccess for a world that is already locked by this JVM would throw an
+        //OverlappingFileLockException (a RuntimeException, not an IOException) and leave the
+        //progress screen hanging forever.
+        try {
+            if (access != null) {
+                EditWorldScreen.makeBackupAndShowToast(access);
+            } else {
+                //Defensive fallback for callers that did not provide an already open access.
+                try (LevelStorageSource.LevelStorageAccess opened =
+                             Minecraft.getInstance().getLevelSource().createAccess(levelID)) {
+                    EditWorldScreen.makeBackupAndShowToast(opened);
+                }
             }
+        } catch (Exception ex) {
+            SystemToast.onWorldAccessFailure(Minecraft.getInstance(), levelID);
             LOGGER.warn("Failed to create backup of level {}", levelID, ex);
         }
     }
 
-    private static boolean fixData(File dir, String levelID, boolean showUI, Consumer<Boolean> onResume) {
+    private static boolean fixData(
+            File dir,
+            String levelID,
+            LevelStorageSource.LevelStorageAccess access,
+            boolean showUI,
+            Consumer<Boolean> onResume
+    ) {
         MigrationProfile profile = loadProfileIfNeeded(dir);
 
         BiConsumer<Boolean, Boolean> runFixes = (createBackup, applyFixes) -> {
@@ -212,16 +229,30 @@ public class DataFixerAPI {
             }
 
             Supplier<State> runner = () -> {
-                if (createBackup) {
-                    progress.progressStage(Component.translatable("message.bclib.datafixer.progress.waitbackup"));
-                    makeBackupAndShowToast(Minecraft.getInstance().getLevelSource(), levelID);
+                //Never let an exception (IOException OR RuntimeException) escape the runner. If it
+                //did, the fixerThread would die before scheduling Minecraft.execute(...) and the
+                //progress screen would hang at 0% forever. Route any failure to the State error
+                //mechanism so the world always resumes (or shows the LevelFixErrorScreen).
+                State state = new State();
+                try {
+                    if (createBackup) {
+                        if (progress != null) {
+                            progress.progressStage(Component.translatable("message.bclib.datafixer.progress.waitbackup"));
+                        }
+                        makeBackupAndShowToast(access, levelID);
+                    }
+
+                    if (applyFixes) {
+                        return runDataFixes(levelID, dir, profile, progress);
+                    }
+                } catch (Throwable t) {
+                    BCLib.LOGGER.error("Unexpected error while fixing level " + levelID + ": " + t);
+                    t.printStackTrace();
+                    state.didFail = true;
+                    state.addError("Unexpected error while fixing world (" + t.getMessage() + ")");
                 }
 
-                if (applyFixes) {
-                    return runDataFixes(levelID, dir, profile, progress);
-                }
-
-                return new State();
+                return state;
             };
 
             if (showUI) {
