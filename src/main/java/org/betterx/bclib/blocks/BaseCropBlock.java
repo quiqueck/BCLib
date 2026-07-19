@@ -3,8 +3,6 @@ package org.betterx.bclib.blocks;
 import org.betterx.bclib.behaviours.BehaviourBuilders;
 import org.betterx.bclib.trait.block.SurvivesOnBlockTrait;
 import org.betterx.bclib.util.BlocksHelper;
-import org.betterx.wover.loot.api.BlockLootProvider;
-import org.betterx.wover.loot.api.LootLookupProvider;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
@@ -29,7 +27,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BaseCropBlock extends BasePlantBlock implements BlockLootProvider {
+public class BaseCropBlock extends BasePlantBlock {
     public static final IntegerProperty AGE = IntegerProperty.create("age", 0, 3);
     private static final VoxelShape SHAPE = box(2, 0, 2, 14, 14, 14);
 
@@ -91,21 +89,5 @@ public class BaseCropBlock extends BasePlantBlock implements BlockLootProvider {
     @Override
     protected boolean isTerrain(BlockState state) {
         return survivesOn.isSurvivable(state);
-    }
-
-    @Override
-    public @Nullable LootTable.Builder registerBlockLoot(
-            @NotNull ResourceLocation location,
-            @NotNull LootLookupProvider provider,
-            @NotNull ResourceKey<LootTable> tableKey
-    ) {
-        return provider.dropPlant(
-                this,
-                drop, UniformGenerator.between(1, 2),
-                this, UniformGenerator.between(1, 3),
-                0.571f, 3,
-                AGE, 3
-        );
-
     }
 }

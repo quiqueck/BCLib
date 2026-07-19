@@ -1,8 +1,5 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.interfaces.tools.AddMineableAxe;
-import org.betterx.bclib.interfaces.tools.AddMineablePickaxe;
-
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.MapColor;
 
@@ -46,7 +43,7 @@ public class BaseBlock extends Block {
      * It is called from Block-Contructors, to allow the augmentation of the blocks
      * preset properties.
      * <p>
-     * For example in {@link BaseLeavesBlock#BaseLeavesBlock(Block, MapColor, Consumer)}
+     * For example when a block constructor wants to augment leaf properties with a {@link Consumer}.
      *
      * @param customizeProperties A {@link Consumer} to call with the preset properties
      * @param settings            The properties as created by the Block
@@ -60,19 +57,19 @@ public class BaseBlock extends Block {
         return settings;
     }
 
-    public static class Wood extends BaseBlock implements AddMineableAxe {
+    public static class Wood extends BaseBlock {
         public Wood(Properties settings) {
             super(settings);
         }
     }
 
-    public static class Stone extends BaseBlock implements AddMineablePickaxe {
+    public static class Stone extends BaseBlock {
         public Stone(Properties settings) {
             super(settings);
         }
     }
 
-    public static class Metal extends BaseBlock implements AddMineablePickaxe {
+    public static class Metal extends BaseBlock {
         public Metal(Properties settings) {
             super(settings);
         }

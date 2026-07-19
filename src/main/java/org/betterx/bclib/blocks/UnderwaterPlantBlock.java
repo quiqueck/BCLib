@@ -1,10 +1,5 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.client.render.BCLRenderLayer;
-import org.betterx.bclib.interfaces.RenderLayerProvider;
-import org.betterx.wover.loot.api.BlockLootProvider;
-import org.betterx.wover.loot.api.LootLookupProvider;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
@@ -29,7 +24,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements RenderLayerProvider, BonemealableBlock, LiquidBlockContainer, BlockLootProvider {
+public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements BonemealableBlock, LiquidBlockContainer {
     private static final VoxelShape SHAPE = box(4, 0, 4, 12, 14, 12);
 
     public UnderwaterPlantBlock(Properties settings) {
@@ -77,11 +72,6 @@ public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements R
     }
 
     @Override
-    public BCLRenderLayer getRenderLayer() {
-        return BCLRenderLayer.CUTOUT;
-    }
-
-    @Override
     public boolean isValidBonemealTarget(LevelReader world, BlockPos pos, BlockState state) {
         return true;
     }
@@ -123,14 +113,5 @@ public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements R
     @Override
     public @NotNull FluidState getFluidState(BlockState state) {
         return Fluids.WATER.getSource(false);
-    }
-
-    @Override
-    public LootTable.Builder registerBlockLoot(
-            @NotNull ResourceLocation location,
-            @NotNull LootLookupProvider provider,
-            @NotNull ResourceKey<LootTable> tableKey
-    ) {
-        return provider.dropWithSilkTouch(this);
     }
 }

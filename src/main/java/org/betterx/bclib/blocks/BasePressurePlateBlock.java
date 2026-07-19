@@ -1,27 +1,19 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.api.v3.datagen.DropSelfLootProvider;
 import org.betterx.bclib.behaviours.BehaviourHelper;
-import org.betterx.bclib.interfaces.tools.AddMineableAxe;
-import org.betterx.bclib.interfaces.tools.AddMineablePickaxe;
-import org.betterx.wover.block.api.BlockTagProvider;
-import org.betterx.wover.item.api.ItemTagProvider;
-import org.betterx.wover.tag.api.event.context.ItemTagBootstrapContext;
-import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 
 /**
- * The block model is no longer provided implicitly - register
- * {@code ModelTraitLibrary.pressurePlate(() -> parent)} (or an equivalent {@code ClientBlockTraits.MODEL}
- * trait) at the registration site of any block that needs one.
+ * The block model, block/item tags and loot table are no longer provided implicitly - register the
+ * appropriate traits at the registration site of any block that needs them:
+ * {@code ModelTraitLibrary.pressurePlate(() -> parent)} for the model, {@code BlockTraits.BLOCK_TAG}
+ * (e.g. {@code BlockTags.PRESSURE_PLATES}, {@code BlockTags.WOODEN_PRESSURE_PLATES}) for the tags, and
+ * {@code BlockTraits.LOOT_TABLE.dropSelf()} for the loot.
  */
-public abstract class BasePressurePlateBlock extends PressurePlateBlock implements BlockTagProvider, DropSelfLootProvider<BasePressurePlateBlock> {
+public abstract class BasePressurePlateBlock extends PressurePlateBlock {
     private final Block parent;
 
     protected BasePressurePlateBlock(Block source, BlockSetType type) {
@@ -42,12 +34,7 @@ public abstract class BasePressurePlateBlock extends PressurePlateBlock implemen
         return parent;
     }
 
-    @Override
-    public void registerBlockTags(ResourceLocation location, TagBootstrapContext<Block> context) {
-        context.add(BlockTags.PRESSURE_PLATES, this);
-    }
-
-    public static class Wood extends BasePressurePlateBlock implements AddMineableAxe, ItemTagProvider {
+    public static class Wood extends BasePressurePlateBlock {
         public Wood(Block source, BlockSetType type) {
             super(/*Sensitivity.EVERYTHING,*/ source, type);
         }
@@ -55,19 +42,9 @@ public abstract class BasePressurePlateBlock extends PressurePlateBlock implemen
         public Wood(Block source, Properties settings, BlockSetType type) {
             super(source, settings, type);
         }
-
-        @Override
-        public void registerBlockTags(ResourceLocation location, TagBootstrapContext<Block> context) {
-            context.add(this, BlockTags.PRESSURE_PLATES, BlockTags.WOODEN_PRESSURE_PLATES);
-        }
-
-        @Override
-        public void registerItemTags(ResourceLocation location, ItemTagBootstrapContext context) {
-            context.add(this, ItemTags.WOODEN_PRESSURE_PLATES);
-        }
     }
 
-    public static class Stone extends BasePressurePlateBlock implements AddMineablePickaxe {
+    public static class Stone extends BasePressurePlateBlock {
         public Stone(Block source, BlockSetType type) {
             super(/*Sensitivity.MOBS,*/ source, type);
         }
@@ -77,7 +54,7 @@ public abstract class BasePressurePlateBlock extends PressurePlateBlock implemen
         }
     }
 
-    public static class Metal extends BasePressurePlateBlock implements AddMineablePickaxe {
+    public static class Metal extends BasePressurePlateBlock {
         public Metal(Block source, BlockSetType type) {
             super(/*Sensitivity.MOBS,*/ source, type);
         }

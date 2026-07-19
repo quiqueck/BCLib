@@ -1,10 +1,7 @@
 package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.client.models.BCLModels;
-import org.betterx.bclib.interfaces.tools.AddMineablePickaxe;
 import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
-import org.betterx.wover.loot.api.BlockLootProvider;
-import org.betterx.wover.loot.api.LootLookupProvider;
 
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
@@ -30,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
  * {@code ClientBlockTraits.MODEL.with((key, block, generator) -> BasePathBlock.provideBlockModel(generator, (BasePathBlock) block))}
  * trait (see {@link #provideBlockModel}) at the registration site of any block that needs one.
  */
-public abstract class BasePathBlock extends BaseBlockNotFull implements BlockLootProvider {
+public abstract class BasePathBlock extends BaseBlockNotFull {
     private static final VoxelShape SHAPE = box(0, 0, 0, 16, 15, 16);
 
     private Block baseBlock;
@@ -88,16 +85,7 @@ public abstract class BasePathBlock extends BaseBlockNotFull implements BlockLoo
         generator.acceptBlockState(generator.randomTopModelVariant(pathBlock, location));
     }
 
-    @Override
-    public LootTable.Builder registerBlockLoot(
-            @NotNull ResourceLocation location,
-            @NotNull LootLookupProvider provider,
-            @NotNull ResourceKey<LootTable> tableKey
-    ) {
-        return provider.dropWithSilkTouch(this, this.baseBlock, ConstantValue.exactly(1));
-    }
-
-    public static class Stone extends BasePathBlock implements AddMineablePickaxe {
+    public static class Stone extends BasePathBlock {
         public Stone(BlockBehaviour.Properties props, Block source) {
             super(props, source);
         }

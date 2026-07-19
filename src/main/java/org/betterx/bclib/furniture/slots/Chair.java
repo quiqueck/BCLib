@@ -80,6 +80,9 @@ public class Chair extends SlotFromDefinition {
     @Override
     protected void addSlotSpecificDefinitions(BlockSet<?> set, BlockDefinition<?, ?> def) {
         def.addTags(BlockTags.MINEABLE_WITH_AXE);
+        // The bottom-half-only self-drop loot the base class used to generate through the retired
+        // BlockLootProvider interface.
+        def.addTrait(BlockTraits.LOOT_TABLE.with((tableKey, blockKey, block, provider) -> BaseChair.chairLoot(block)));
     }
 
     @Override

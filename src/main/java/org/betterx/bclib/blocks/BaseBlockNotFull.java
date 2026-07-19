@@ -1,7 +1,5 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.interfaces.tools.AddMineableAxe;
-import org.betterx.bclib.interfaces.tools.AddMineablePickaxe;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EntityType;
@@ -25,19 +23,19 @@ public class BaseBlockNotFull extends BaseBlock {
         return false;
     }
 
-    public static class Wood extends BaseBlockNotFull implements AddMineableAxe {
+    public static class Wood extends BaseBlockNotFull {
         public Wood(Properties settings) {
             super(settings);
         }
     }
 
-    public static class Stone extends BaseBlockNotFull implements AddMineablePickaxe {
+    public static class Stone extends BaseBlockNotFull {
         public Stone(Properties settings) {
             super(settings);
         }
     }
 
-    public static class Metal extends BaseBlockNotFull implements AddMineablePickaxe {
+    public static class Metal extends BaseBlockNotFull {
         public Metal(Properties settings) {
             super(settings);
         }

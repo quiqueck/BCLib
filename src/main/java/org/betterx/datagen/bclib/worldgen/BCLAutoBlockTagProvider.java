@@ -2,7 +2,6 @@ package org.betterx.datagen.bclib.worldgen;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.interfaces.Fuel;
-import org.betterx.bclib.interfaces.tools.*;
 import org.betterx.wover.block.api.BlockRegistry;
 import org.betterx.wover.core.api.ModCore;
 import org.betterx.wover.datagen.api.WoverAutoProvider;
@@ -32,8 +31,9 @@ public class BCLAutoBlockTagProvider extends WoverTagProvider.ForBlocks implemen
     }
 
     /**
-     * The tool tags that count as "this block declares how it is mined". These are exactly the tags the
-     * {@code AddMineable*} marker interfaces above contribute; the {@code NEEDS_*_TOOL} tier tags in
+     * The tool tags that count as "this block declares how it is mined". A block is expected to add one of
+     * these tags at its registration site (through a {@code MINEABLE_WITH} trait, a plain
+     * {@code addTags(BlockTags.MINEABLE_WITH_*)}, or a tag provider); the {@code NEEDS_*_TOOL} tier tags in
      * {@link MineableTags} are deliberately not included, as they say which tier is needed, not which tool.
      */
     private static final Set<TagKey<Block>> TOOL_TAGS = Set.of(
@@ -163,58 +163,13 @@ public class BCLAutoBlockTagProvider extends WoverTagProvider.ForBlocks implemen
             Block block,
             DeclaredTools declaredTools
     ) {
-        if (!(block instanceof PreventMineableAdd)) {
-            if (block instanceof AddMineableShears) {
-                context.add(block, MineableTags.SHEARS);
-            }
-            if (block instanceof AddMineableAxe) {
-//                if (!context.contains(BlockTags.WOODEN_DOORS, block)
-//                        && !context.contains(BlockTags.WOODEN_BUTTONS, block)
-//                        && !context.contains(BlockTags.WOODEN_SLABS, block)
-//                        && !context.contains(BlockTags.WOODEN_FENCES, block)
-//                        && !context.contains(BlockTags.WOODEN_STAIRS, block)
-//                        && !context.contains(BlockTags.WOODEN_PRESSURE_PLATES, block)
-//                        && !context.contains(BlockTags.WOODEN_TRAPDOORS, block)
-//                        && !context.contains(CommonBlockTags.WOODEN_BARREL, block)
-//                        && !context.contains(CommonBlockTags.WOODEN_CHEST, block)
-//                        && !context.contains(CommonBlockTags.WOODEN_COMPOSTER, block)
-//                        && !context.contains(CommonBlockTags.WORKBENCHES, block)
-//                        && !context.contains(BlockTags.SIGNS, block)
-//                        && !context.contains(BlockTags.PLANKS, block)
-//                        && !context.contains(BlockTags.LOGS, block)
-//                        && !context.contains(BlockTags.FENCE_GATES, block)
-//                        && !context.contains(BlockTags.ALL_HANGING_SIGNS, block)
-//                        && !context.contains(CommonBlockTags.WORKBENCHES, block)
-//                        && !context.contains(org.betterx.wover.tag.api.predefined.CommonBlockTags.BOOKSHELVES, block)
-//                ) {
-                context.add(block, MineableTags.AXE);
-//                }
-            }
-            if (block instanceof AddMineablePickaxe) {
-                context.add(block, MineableTags.PICKAXE);
-            }
-            if (block instanceof AddMineableShovel) {
-                context.add(block, MineableTags.SHOVEL);
-            }
-            if (block instanceof AddMineableHoe) {
-                context.add(block, MineableTags.HOE);
-            }
-            if (block instanceof AddMineableSword) {
-                context.add(block, MineableTags.SWORD);
-            }
-            if (block instanceof AddMineableHammer) {
-                context.add(block, MineableTags.HAMMER);
-            }
-        }
-
         if (block instanceof Fuel fl) {
             FuelRegistryEvents.BUILD.register((builder, fuelContext) -> builder.add(block, fl.getFuelTime()));
         }
 
         final ResourceLocation location = BuiltInRegistries.BLOCK.getKey(block);
         if (!location.getNamespace().equals("minecraft")) {
-            if (!(block instanceof HasMinableBehaviour)
-                    && !declaredTools.declaresTool(block)
+            if (!declaredTools.declaresTool(block)
                     && block.defaultBlockState().requiresCorrectToolForDrops()) {
                 BCLib.LOGGER.error("Block " + block + "(" + block.getClass() + ")" + " has no mineable behaviour!");
             }

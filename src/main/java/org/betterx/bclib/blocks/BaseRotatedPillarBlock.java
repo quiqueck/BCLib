@@ -1,14 +1,15 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.api.v3.datagen.DropSelfLootProvider;
 import org.betterx.bclib.behaviours.BehaviourHelper;
-import org.betterx.bclib.interfaces.tools.AddMineableAxe;
-import org.betterx.bclib.interfaces.tools.AddMineablePickaxe;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 
-public abstract class BaseRotatedPillarBlock extends RotatedPillarBlock implements DropSelfLootProvider<BaseRotatedPillarBlock> {
+/**
+ * The loot table is no longer provided implicitly - register {@code BlockTraits.LOOT_TABLE.dropSelf()} at
+ * the registration site of any block that needs one.
+ */
+public abstract class BaseRotatedPillarBlock extends RotatedPillarBlock {
     protected BaseRotatedPillarBlock(Properties settings) {
         super(settings);
     }
@@ -17,7 +18,7 @@ public abstract class BaseRotatedPillarBlock extends RotatedPillarBlock implemen
         this(Properties.ofFullCopy(block));
     }
 
-    public static class Wood extends BaseRotatedPillarBlock implements AddMineableAxe {
+    public static class Wood extends BaseRotatedPillarBlock {
         protected final boolean flammable;
 
         public Wood(Properties settings, boolean flammable) {
@@ -30,7 +31,7 @@ public abstract class BaseRotatedPillarBlock extends RotatedPillarBlock implemen
         }
     }
 
-    public static class Stone extends BaseRotatedPillarBlock implements AddMineablePickaxe {
+    public static class Stone extends BaseRotatedPillarBlock {
         public Stone(Properties settings) {
             super(settings);
         }
@@ -40,7 +41,7 @@ public abstract class BaseRotatedPillarBlock extends RotatedPillarBlock implemen
         }
     }
 
-    public static class Metal extends BaseRotatedPillarBlock implements AddMineablePickaxe {
+    public static class Metal extends BaseRotatedPillarBlock {
         public Metal(Properties settings) {
             super(settings);
         }

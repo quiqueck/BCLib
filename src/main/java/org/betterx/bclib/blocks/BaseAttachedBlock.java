@@ -1,7 +1,5 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.interfaces.tools.AddMineableAxe;
-import org.betterx.bclib.interfaces.tools.AddMineablePickaxe;
 import org.betterx.bclib.util.BlocksHelper;
 
 import net.minecraft.core.BlockPos;
@@ -86,25 +84,25 @@ public abstract class BaseAttachedBlock extends BaseBlockNotFull {
         return BlocksHelper.mirrorHorizontal(state, mirror, FACING);
     }
 
-    public static class Wood extends BaseAttachedBlock implements AddMineableAxe {
+    public static class Wood extends BaseAttachedBlock {
         public Wood(Properties settings) {
             super(settings);
         }
     }
 
-    public static class Stone extends BaseAttachedBlock implements AddMineablePickaxe {
+    public static class Stone extends BaseAttachedBlock {
         public Stone(Properties settings) {
             super(settings);
         }
     }
 
-    public static class Metal extends BaseAttachedBlock implements AddMineablePickaxe {
+    public static class Metal extends BaseAttachedBlock {
         public Metal(Properties settings) {
             super(settings);
         }
     }
 
-    public static class Glass extends BaseAttachedBlock implements AddMineablePickaxe {
+    public static class Glass extends BaseAttachedBlock {
         public Glass(Properties settings) {
             super(settings);
         }

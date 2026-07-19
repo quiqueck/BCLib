@@ -1,8 +1,5 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.client.render.BCLRenderLayer;
-import org.betterx.bclib.interfaces.RenderLayerProvider;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -31,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
  * double-generated the table for any block that also carried the trait - the two datagen providers run
  * independently, with no filter between them).
  */
-public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderLayerProvider, BonemealableBlock {
+public abstract class BasePlantBlock extends BaseBlockNotFull implements BonemealableBlock {
     private static final VoxelShape SHAPE = box(4, 0, 4, 12, 14, 12);
 
     protected BasePlantBlock(Properties settings) {
@@ -69,11 +66,6 @@ public abstract class BasePlantBlock extends BaseBlockNotFull implements RenderL
         } else {
             return state;
         }
-    }
-
-    @Override
-    public BCLRenderLayer getRenderLayer() {
-        return BCLRenderLayer.CUTOUT;
     }
 
     @Override

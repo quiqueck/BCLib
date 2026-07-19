@@ -2,7 +2,6 @@ package org.betterx.bclib.util;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.interfaces.LootPoolAccessor;
-import org.betterx.bclib.interfaces.tools.*;
 import org.betterx.wover.tag.api.TagManager;
 import org.betterx.wover.tag.api.predefined.CommonItemTags;
 import org.betterx.wover.tag.api.predefined.MineableTags;
@@ -15,6 +14,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootParams;
@@ -100,25 +100,32 @@ public class LootUtil {
         if (tool == null) return false;
         if (state != null && tool.isCorrectToolForDrops(state)) return true;
 
-        if (block instanceof AddMineableAxe) {
+        // The mineable/* block tags now carry the information the AddMineable* marker interfaces used to.
+        // Query them on the block's state (the given one, or the block's default state).
+        final BlockState tagState = state != null
+                ? state
+                : (block instanceof Block b ? b.defaultBlockState() : null);
+        if (tagState == null) return false;
+
+        if (tagState.is(MineableTags.AXE)) {
             if (tool.is(ItemTags.AXES) || tool.is(ToolTags.FABRIC_AXES)) return true;
         }
-        if (block instanceof AddMineablePickaxe) {
+        if (tagState.is(MineableTags.PICKAXE)) {
             if (tool.is(ItemTags.PICKAXES) || tool.is(ToolTags.FABRIC_PICKAXES)) return true;
         }
-        if (block instanceof AddMineableHoe) {
+        if (tagState.is(MineableTags.HOE)) {
             if (tool.is(ItemTags.HOES) || tool.is(ToolTags.FABRIC_HOES)) return true;
         }
-        if (block instanceof AddMineableShovel) {
+        if (tagState.is(MineableTags.SHOVEL)) {
             if (tool.is(ItemTags.SHOVELS) || tool.is(ToolTags.FABRIC_SHOVELS)) return true;
         }
-        if (block instanceof AddMineableSword) {
+        if (tagState.is(MineableTags.SWORD)) {
             if (tool.is(ItemTags.SWORDS) || tool.is(ToolTags.FABRIC_SWORDS)) return true;
         }
-        if (block instanceof AddMineableShears) {
+        if (tagState.is(MineableTags.SHEARS)) {
             if (isShear(tool)) return true;
         }
-        if (block instanceof AddMineableHammer) {
+        if (tagState.is(MineableTags.HAMMER)) {
             return tool.is(CommonItemTags.HAMMERS);
         }
         return false;

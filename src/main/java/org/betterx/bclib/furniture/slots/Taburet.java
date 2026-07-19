@@ -72,6 +72,8 @@ public class Taburet extends SlotFromDefinition {
     @Override
     protected void addSlotSpecificDefinitions(BlockSet<?> set, BlockDefinition<?, ?> def) {
         def.addTags(BlockTags.MINEABLE_WITH_AXE);
+        // The self-drop loot the base class used to generate through the retired BlockLootProvider interface.
+        def.addTrait(BlockTraits.LOOT_TABLE.dropSelf());
     }
 
     @Override

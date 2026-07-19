@@ -1,7 +1,5 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.wover.loot.api.BlockLootProvider;
-import org.betterx.wover.loot.api.LootLookupProvider;
 import org.betterx.wover.tag.api.TagManager;
 import org.betterx.wover.tag.api.predefined.MineableTags;
 
@@ -31,7 +29,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("deprecation")
-public class BaseTerrainBlock extends BaseBlock implements BlockLootProvider {
+public class BaseTerrainBlock extends BaseBlock {
     private final Block baseBlock;
     private Block pathBlock;
 
@@ -81,15 +79,6 @@ public class BaseTerrainBlock extends BaseBlock implements BlockLootProvider {
 
     public boolean canStay(BlockState state, LevelReader worldView, BlockPos pos) {
         return willSurvive(state, worldView, pos);
-    }
-
-    @Override
-    public LootTable.Builder registerBlockLoot(
-            @NotNull ResourceLocation location,
-            @NotNull LootLookupProvider provider,
-            @NotNull ResourceKey<LootTable> tableKey
-    ) {
-        return provider.dropWithSilkTouch(this, getBaseBlock(), ConstantValue.exactly(1));
     }
 
     public static boolean willSurvive(BlockState state, LevelReader worldView, BlockPos pos) {

@@ -1,10 +1,5 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.client.render.BCLRenderLayer;
-import org.betterx.bclib.interfaces.RenderLayerProvider;
-import org.betterx.bclib.interfaces.tools.AddMineablePickaxe;
-import org.betterx.wover.loot.api.BlockLootProvider;
-import org.betterx.wover.loot.api.LootLookupProvider;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -21,7 +16,7 @@ import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BaseGlassBlock extends BaseBlockNotFull implements AddMineablePickaxe, RenderLayerProvider, BlockLootProvider {
+public class BaseGlassBlock extends BaseBlockNotFull {
     public BaseGlassBlock(Block block) {
         this(block, 0.3f);
     }
@@ -59,19 +54,5 @@ public class BaseGlassBlock extends BaseBlockNotFull implements AddMineablePicka
     @Environment(EnvType.CLIENT)
     public boolean skipRendering(BlockState state, BlockState neighbor, Direction facing) {
         return neighbor.getBlock() == this || super.skipRendering(state, neighbor, facing);
-    }
-
-    @Override
-    public BCLRenderLayer getRenderLayer() {
-        return BCLRenderLayer.TRANSLUCENT;
-    }
-
-    @Override
-    public @Nullable LootTable.Builder registerBlockLoot(
-            @NotNull ResourceLocation location,
-            @NotNull LootLookupProvider provider,
-            @NotNull ResourceKey<LootTable> tableKey
-    ) {
-        return provider.dropWithSilkTouch(this);
     }
 }

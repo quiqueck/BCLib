@@ -1,13 +1,11 @@
 package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.client.models.BCLModels;
-import org.betterx.bclib.interfaces.tools.AddMineablePickaxe;
 import org.betterx.bclib.items.BaseAnvilItem;
 import org.betterx.bclib.util.BCLDataComponents;
 import org.betterx.bclib.util.BlocksHelper;
 import org.betterx.bclib.util.LootUtil;
 import org.betterx.wover.block.api.BlockProperties;
-import org.betterx.wover.block.api.CustomBlockItemProvider;
 import org.betterx.wover.block.api.client.trait.BlockModelTrait;
 import org.betterx.wover.block.api.client.trait.ClientBlockTraits;
 import org.betterx.wover.block.api.trait.BlockTraitLookup;
@@ -21,8 +19,6 @@ import net.minecraft.client.data.models.model.TextureSlot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
@@ -48,7 +44,7 @@ import java.util.List;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BaseAnvilBlock extends AnvilBlock implements AddMineablePickaxe, CustomBlockItemProvider {
+public abstract class BaseAnvilBlock extends AnvilBlock {
     public static final IntegerProperty DESTRUCTION = BlockProperties.DESTRUCTION;
     public IntegerProperty durability;
 
@@ -118,11 +114,11 @@ public abstract class BaseAnvilBlock extends AnvilBlock implements AddMineablePi
     }
 
 
-    @Override
-    public BlockItem getCustomBlockItem(ResourceLocation blockID, Item.Properties settings) {
-        return new BaseAnvilItem(this, settings);
-    }
-
+    /**
+     * The custom {@link BaseAnvilItem} is no longer provided implicitly - register it at the block's
+     * registration site with {@code .withBlockItem((def, block) -> new BlockItemDefinition<>(def,
+     * id -> new BaseAnvilItem((BaseAnvilBlock) block, id.getProperties())))}.
+     */
     @Override
     public @NotNull List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
         int destruction = state.getValue(DESTRUCTION);

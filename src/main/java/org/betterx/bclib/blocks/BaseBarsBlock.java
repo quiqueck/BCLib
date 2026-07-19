@@ -1,8 +1,5 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.client.render.BCLRenderLayer;
-import org.betterx.bclib.interfaces.RenderLayerProvider;
-import org.betterx.bclib.interfaces.tools.AddMineablePickaxe;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
@@ -22,7 +19,7 @@ import java.util.List;
  * The block model is no longer provided implicitly - register {@code ModelTraitLibrary.bars()} (or an
  * equivalent {@code ClientBlockTraits.MODEL} trait) at the registration site of any block that needs one.
  */
-public abstract class BaseBarsBlock extends IronBarsBlock implements RenderLayerProvider, AddMineablePickaxe {
+public abstract class BaseBarsBlock extends IronBarsBlock {
     public BaseBarsBlock(Block source) {
         this(Properties.ofFullCopy(source).strength(5.0F, 6.0F).noOcclusion());
     }
@@ -43,11 +40,6 @@ public abstract class BaseBarsBlock extends IronBarsBlock implements RenderLayer
             return false;
         }
         return super.skipRendering(state, stateFrom, direction);
-    }
-
-    @Override
-    public BCLRenderLayer getRenderLayer() {
-        return BCLRenderLayer.CUTOUT;
     }
 
     public static class Metal extends BaseBarsBlock {

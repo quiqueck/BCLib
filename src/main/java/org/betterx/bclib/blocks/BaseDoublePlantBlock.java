@@ -1,11 +1,7 @@
 package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.behaviours.BehaviourBuilders;
-import org.betterx.bclib.client.render.BCLRenderLayer;
-import org.betterx.bclib.interfaces.RenderLayerProvider;
 import org.betterx.bclib.util.BlocksHelper;
-import org.betterx.wover.loot.api.BlockLootProvider;
-import org.betterx.wover.loot.api.LootLookupProvider;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -36,7 +32,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements RenderLayerProvider, BonemealableBlock, BlockLootProvider {
+public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements BonemealableBlock {
     private static final VoxelShape SHAPE = box(4, 2, 4, 12, 16, 12);
     public static final IntegerProperty ROTATION = org.betterx.wover.block.api.BlockProperties.ROTATION;
     public static final BooleanProperty TOP = BooleanProperty.create("top");
@@ -110,12 +106,6 @@ public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements R
     }
 
     @Override
-    public BCLRenderLayer getRenderLayer() {
-        return BCLRenderLayer.CUTOUT;
-    }
-
-
-    @Override
     public boolean isValidBonemealTarget(LevelReader levelReader, BlockPos blockPos, BlockState blockState) {
         return true;
     }
@@ -143,14 +133,5 @@ public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements R
         BlockState bs = this.defaultBlockState().setValue(ROTATION, rot);
         BlocksHelper.setWithoutUpdate(world, pos, bs);
         BlocksHelper.setWithoutUpdate(world, pos.above(), bs.setValue(TOP, true));
-    }
-
-    @Override
-    public LootTable.Builder registerBlockLoot(
-            @NotNull ResourceLocation location,
-            @NotNull LootLookupProvider provider,
-            @NotNull ResourceKey<LootTable> tableKey
-    ) {
-        return provider.dropDoublePlantShears(this);
     }
 }

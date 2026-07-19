@@ -2,11 +2,8 @@ package org.betterx.bclib.furniture.block;
 
 import org.betterx.bclib.behaviours.BehaviourHelper;
 import org.betterx.bclib.client.models.BCLModels;
-import org.betterx.bclib.interfaces.tools.AddMineableAxe;
-import org.betterx.bclib.interfaces.tools.AddMineablePickaxe;
 import org.betterx.bclib.util.BlocksHelper;
 import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
-import org.betterx.wover.loot.api.LootLookupProvider;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -143,7 +140,7 @@ public abstract class BaseChair extends AbstractChair {
         return super.playerWillDestroy(world, pos, state, player);
     }
 
-    public static class Wood extends BaseChair implements AddMineableAxe {
+    public static class Wood extends BaseChair {
         public Wood(Block baseMaterial, Block clothMaterial) {
             super(baseMaterial, clothMaterial);
         }
@@ -153,7 +150,7 @@ public abstract class BaseChair extends AbstractChair {
         }
     }
 
-    public static class Stone extends BaseChair implements AddMineablePickaxe {
+    public static class Stone extends BaseChair {
         public Stone(Block baseMaterial, Block clothMaterial) {
             super(baseMaterial, clothMaterial);
         }
@@ -163,7 +160,7 @@ public abstract class BaseChair extends AbstractChair {
         }
     }
 
-    public static class Metal extends BaseChair implements AddMineablePickaxe {
+    public static class Metal extends BaseChair {
         public Metal(Block baseMaterial, Block clothMaterial) {
             super(baseMaterial, clothMaterial);
         }
@@ -202,14 +199,18 @@ public abstract class BaseChair extends AbstractChair {
         BCLModels.createChairBlockModel(generator, chairBlock, chairBlock.baseMaterial, chairBlock.clothMaterial);
     }
 
-    @Override
-    public LootTable.Builder registerBlockLoot(
-            @NotNull ResourceLocation location,
-            @NotNull LootLookupProvider provider,
-            @NotNull ResourceKey<LootTable> tableKey
-    ) {
+    /**
+     * The loot a chair used to generate through the retired {@code BlockLootProvider} interface: it drops
+     * itself only from its {@code top=false} (bottom) half, so a two-tall chair does not drop twice. Attach
+     * this at the chair's registration with {@code BlockTraits.LOOT_TABLE.with((tk, bk, block, p) ->
+     * BaseChair.chairLoot(block))}.
+     *
+     * @param block the chair block the loot table is for
+     * @return the loot table builder
+     */
+    public static LootTable.Builder chairLoot(Block block) {
         var bottomShape = LootItemBlockStatePropertyCondition
-                .hasBlockStateProperties(this)
+                .hasBlockStateProperties(block)
                 .setProperties(net.minecraft.advancements.critereon.StatePropertiesPredicate.Builder
                         .properties()
                         .hasProperty(TOP, false));
@@ -218,7 +219,7 @@ public abstract class BaseChair extends AbstractChair {
                 .withPool(LootPool
                         .lootPool()
                         .setRolls(ConstantValue.exactly(1))
-                        .add(LootItem.lootTableItem(this.asItem()))
+                        .add(LootItem.lootTableItem(block.asItem()))
                         .when(bottomShape)
                 );
     }

@@ -1,6 +1,5 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.interfaces.tools.AddMineablePickaxe;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -30,7 +29,7 @@ public abstract class BaseBlockWithEntity extends BaseEntityBlock {
         return Collections.singletonList(new ItemStack(this));
     }
 
-    public static class Stone extends BaseBlockWithEntity implements AddMineablePickaxe {
+    public static class Stone extends BaseBlockWithEntity {
         public static final MapCodec<Stone> CODEC = simpleCodec(Stone::new);
 
         public Stone(Properties settings) {
