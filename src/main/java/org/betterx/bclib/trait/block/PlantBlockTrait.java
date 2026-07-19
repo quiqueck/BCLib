@@ -46,7 +46,9 @@ public class PlantBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> im
                 CompostableBlockTrait.withDefault(),
                 flammable ? BlockTraits.FLAMMABLE.withDefault() : null,
                 ClientBlockTraits.RENDER_LAYER.cutout(),
-                BlockTraits.MINEABLE_WITH.needsHoe(),
+                // Thin grass/moss/fern/crop-style insta-break plants get NO mineable tag, matching vanilla
+                // short_grass/fern/flowers/crops. (Leaves keep needsShears via LeavesBlockTrait; woody/terrain
+                // blocks keep their tags via their own MINEABLE_WITH traits.)
                 BlockTraits.LOOT_TABLE.dropSelf()
         ).combine();
     }
