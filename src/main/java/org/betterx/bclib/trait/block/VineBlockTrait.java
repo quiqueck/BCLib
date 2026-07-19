@@ -59,9 +59,9 @@ public class VineBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
             boolean generateModel
     ) {
         return Combiner.of(
-                // Vines hang against/along blocks and must stay grid-aligned, so opt out of the
-                // plant X-Z offset that PlantBlockTrait now enables for standalone ground plants.
-                PlantBlockTrait.withColor(color, false, BlockBehaviour.OffsetType.NONE),
+                // Vines get the same random X-Z offset as standalone ground plants so hanging
+                // vines don't render in perfectly grid-aligned columns.
+                PlantBlockTrait.withColor(color, false, BlockBehaviour.OffsetType.XZ),
                 new VineBlockTrait(lightLevel, onlyBottomIsLit),
                 BlockTraits.MINEABLE_WITH.needsHoe(),
                 BlockTraits.MINEABLE_WITH.needsShears(),
