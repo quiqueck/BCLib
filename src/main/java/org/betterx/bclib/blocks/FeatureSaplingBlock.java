@@ -1,7 +1,5 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.behaviours.BehaviourBuilders;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -13,7 +11,6 @@ import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SaplingBlock;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -36,28 +33,42 @@ public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfig
     }
 
     private static final VoxelShape SHAPE = Block.box(4, 0, 4, 12, 14, 12);
+    private static final VoxelShape HANGING_SHAPE = Block.box(4, 2, 4, 12, 16, 12);
     private final FeatureSupplier<F, FC> feature;
-
-    public FeatureSaplingBlock(FeatureSupplier<F, FC> featureSupplier) {
-        this(0, featureSupplier);
-    }
-
-    public FeatureSaplingBlock(int light, FeatureSupplier<F, FC> featureSupplier) {
-        this(
-                BehaviourBuilders.createPlant().randomTicks()
-                                 .noCollission()
-                                 .lightLevel(state -> light)
-                                 .sound(SoundType.GRASS),
-                featureSupplier
-        );
-    }
+    private final boolean hangsFromAbove;
 
     public FeatureSaplingBlock(
             BlockBehaviour.Properties properties,
             FeatureSupplier<F, FC> featureSupplier
     ) {
+        this(properties, featureSupplier, false);
+    }
+
+    /**
+     * @param hangsFromAbove when {@code true} the sapling attaches to the block <em>above</em> it
+     *                       (ceiling-hung, e.g. anchor-tree / nether-sakura branches) and uses a
+     *                       taller upward {@link #getShape}; when {@code false} it behaves as a normal
+     *                       ground sapling attaching to the block below. This is a construction-time
+     *                       parameter (R8): it selects the shape/attachment, which must be known before
+     *                       any world exists.
+     */
+    public FeatureSaplingBlock(
+            BlockBehaviour.Properties properties,
+            FeatureSupplier<F, FC> featureSupplier,
+            boolean hangsFromAbove
+    ) {
         super(null, properties);
         this.feature = featureSupplier;
+        this.hangsFromAbove = hangsFromAbove;
+    }
+
+    @Override
+    public boolean canSurvive(BlockState blockState, LevelReader levelReader, BlockPos blockPos) {
+        if (hangsFromAbove) {
+            final BlockPos target = blockPos.above();
+            return this.mayPlaceOn(levelReader.getBlockState(target), levelReader, target);
+        }
+        return super.canSurvive(blockState, levelReader, blockPos);
     }
 
     protected boolean growFeature(
@@ -101,6 +112,28 @@ public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfig
         }
     }
 
+    /**
+     * Grows the feature right now, skipping the {@code STAGE} step {@link #advanceTree} would spend an
+     * application on.
+     * <p>
+     * {@code performBonemeal} goes through {@code advanceTree}, so a sapling sitting at {@code STAGE 0}
+     * takes two applications to become a tree. That second click is the survival pacing; a creative
+     * player bypassing the {@link #isBonemealSuccess} roll should not still have to click twice. This is
+     * the entry point {@code BoneMealItemMixin} uses for that - {@link #doGrowFeature} itself is
+     * {@code protected}, so a mixin in another package cannot reach it.
+     *
+     * @return {@code true} if the feature placed; {@code false} leaves the sapling untouched, e.g. when
+     *         the tree has no room
+     */
+    public boolean growFeatureNow(
+            ServerLevel serverLevel,
+            BlockPos blockPos,
+            BlockState originalBlockState,
+            RandomSource randomSource
+    ) {
+        return doGrowFeature(serverLevel, blockPos, originalBlockState, randomSource);
+    }
+
     protected boolean doGrowFeature(
             ServerLevel serverLevel,
             BlockPos blockPos,
@@ -141,6 +174,6 @@ public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfig
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext ePos) {
-        return SHAPE;
+        return hangsFromAbove ? HANGING_SHAPE : SHAPE;
     }
 }

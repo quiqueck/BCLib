@@ -1,8 +1,8 @@
 package org.betterx.bclib.integration;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.wover.core.api.ModCore;
-import org.betterx.wover.tag.api.TagManager;
+import de.ambertation.wover.core.api.ModCore;
+import de.ambertation.wover.tag.api.TagManager;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;

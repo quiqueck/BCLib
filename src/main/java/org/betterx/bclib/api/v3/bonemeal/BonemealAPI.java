@@ -1,8 +1,8 @@
 package org.betterx.bclib.api.v3.bonemeal;
 
 import org.betterx.bclib.api.v3.tag.BCLBlockTags;
-import org.betterx.wover.feature.api.configured.ConfiguredFeatureKey;
-import org.betterx.wover.state.api.WorldState;
+import de.ambertation.wover.feature.api.configured.ConfiguredFeatureKey;
+import de.ambertation.wover.state.api.WorldState;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;

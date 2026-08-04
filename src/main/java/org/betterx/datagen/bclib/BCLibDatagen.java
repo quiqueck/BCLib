@@ -4,9 +4,9 @@ import org.betterx.bclib.BCLib;
 import org.betterx.datagen.bclib.advancement.BCLAdvancementDataProvider;
 import org.betterx.datagen.bclib.worldgen.BlockTagProvider;
 import org.betterx.datagen.bclib.worldgen.BoneMealBlockTagProvider;
-import org.betterx.wover.core.api.ModCore;
-import org.betterx.wover.datagen.api.PackBuilder;
-import org.betterx.wover.datagen.api.WoverDataGenEntryPoint;
+import de.ambertation.wover.core.api.ModCore;
+import de.ambertation.wover.datagen.api.PackBuilder;
+import de.ambertation.wover.datagen.api.WoverDataGenEntryPoint;
 
 import net.minecraft.core.RegistrySetBuilder;
 

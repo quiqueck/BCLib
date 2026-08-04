@@ -37,6 +37,8 @@ public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
     private static ResourceLocation ANVIL_LOCATION;
     @Unique
     private final List<AbstractWidget> bcl_buttons = Lists.newArrayList();
+    @Unique
+    private boolean bcl_nameDisabled = false;
 
     public AnvilScreenMixin(AnvilMenu handler, Inventory playerInventory, Component title, ResourceLocation texture) {
         super(handler, playerInventory, title, texture);
@@ -78,29 +80,51 @@ public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
                               .bounds(x + 154, y + 45, 15, 20)
                               .build());
 
-        bcl_buttons.forEach(this::addWidget);
+        //the bounds above are absolute screen coordinates, so the buttons need to be rendered by
+        //Screen's own renderable list. Rendering them manually from renderLabels would offset them by
+        //(leftPos, topPos), as that runs inside the translated pose of the container screen
+        //(see AbstractContainerScreen#renderContents).
+        bcl_buttons.forEach(this::addRenderableWidget);
+        bcl_syncRecipeState();
     }
 
-    @Inject(method = "renderLabels", at = @At("HEAD"))
-    protected void be_renderForeground(
+    @Inject(method = "renderBg", at = @At("HEAD"))
+    protected void be_beforeRender(
             GuiGraphics guiGraphics,
+            float partialTick,
             int mouseX,
             int mouseY,
             CallbackInfo info
     ) {
-        bcl_buttons.forEach(button -> button.render(guiGraphics, mouseX, mouseY, 0));
+        bcl_syncRecipeState();
+    }
+
+    /**
+     * The recipe count is transferred in a {@code DataSlot}, which is sent after the slot contents.
+     * So we can not rely on {@link #be_onSlotUpdate} alone and refresh the state before every frame.
+     */
+    @Unique
+    private void bcl_syncRecipeState() {
+        final int recipeCount = ((AnvilScreenHandlerExtended) menu).bcl_getRecipeCount();
+        bcl_buttons.forEach(button -> button.visible = recipeCount > 1);
+        if (recipeCount > 0) {
+            //renaming is disabled while an anvil recipe is active
+            if (!name.getValue().isEmpty()) name.setValue("");
+            name.setEditable(false);
+            bcl_nameDisabled = true;
+        } else if (bcl_nameDisabled) {
+            //restore what vanilla's slotChanged would have done
+            bcl_nameDisabled = false;
+            final ItemStack input = menu.getSlot(0).getItem();
+            name.setValue(input.isEmpty() ? "" : input.getHoverName().getString());
+            name.setEditable(!input.isEmpty());
+        }
     }
 
     @Inject(method = "slotChanged", at = @At("HEAD"), cancellable = true)
     public void be_onSlotUpdate(AbstractContainerMenu handler, int slotId, ItemStack stack, CallbackInfo info) {
-        AnvilScreenHandlerExtended anvilHandler = (AnvilScreenHandlerExtended) handler;
-        if (anvilHandler.bcl_getCurrentRecipe() != null) {
-            if (anvilHandler.bcl_getRecipes().size() > 1) {
-                bcl_buttons.forEach(button -> button.visible = true);
-            } else {
-                bcl_buttons.forEach(button -> button.visible = false);
-            }
-            name.setValue("");
+        if (((AnvilScreenHandlerExtended) handler).bcl_getRecipeCount() > 0) {
+            bcl_syncRecipeState();
             info.cancel();
         } else {
             bcl_buttons.forEach(button -> button.visible = false);

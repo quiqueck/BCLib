@@ -1,8 +1,7 @@
 package org.betterx.bclib.furniture.block;
 
-import org.betterx.bclib.behaviours.BehaviourHelper;
 import org.betterx.bclib.client.models.BCLModels;
-import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
+import de.ambertation.wover.block.api.model.WoverBlockModelGenerators;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
@@ -61,19 +60,6 @@ public abstract class BaseTaburet extends AbstractChair {
         public Metal(Block block, BlockBehaviour.Properties settings) {
             super(block, settings);
         }
-    }
-
-    public static BaseTaburet from(Block source) {
-        return BehaviourHelper.from(source, Wood::new, Stone::new, Metal::new);
-    }
-
-    public static BaseTaburet from(Block source, BlockBehaviour.Properties settings) {
-        return BehaviourHelper.from(
-                source,
-                b -> new Wood(b, settings),
-                b -> new Stone(b, settings),
-                b -> new Metal(b, settings)
-        );
     }
 
     /**

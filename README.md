@@ -144,3 +144,39 @@ In this example `2.0.6` is the BCLIb Version you are building against.
 * Clone repo
 * Run command line in folder: gradlew build
 * Mod .jar will be in ./build/libs
+
+## Release branches:
+
+`gradlew :mergeToRelease` adds the current branch's state to `release/<branch>` (override with
+`-PreleaseBranch=`) as a single commit titled `Release Version <mod_version>`, with `CHANGES.md` as
+its body. It is not a merge: the commit's only parent is the previous release commit, so the release
+branch carries no reference to the development commits and cannot be used to recover them. Nothing is
+pushed and no branch is checked out - only the release ref moves. Defined in
+`common-publish-tag.gradle`, so every BetterX repo has it.
+
+Neither `CHANGES.md` nor `mod_version` is regenerated - both routinely carry manual edits, so they are
+published verbatim, and asking for `changelog` or `nextVersion` in the same build is refused before
+anything runs.
+
+The **first** release on a branch continues from the previous version line, so it reads as a diff
+rather than as a full import of every file. That predecessor is named by `previous_release_branch` in
+`gradle.properties` (`-PpreviousRelease=` wins; `none` starts the branch parentless):
+
+| branch | parent of the first release commit |
+|---|---|
+| `release/1.21.6` | `origin/1.21.6` - the already-published tip |
+| `release/26.1` | `release/1.21.6` |
+| `release/26.2` | `release/26.1` |
+| `release/26.3` | `release/26.2` |
+
+Anchoring `release/1.21.6` at `origin/1.21.6` rather than at the local branch matters: the 1.21.6
+commits that were never pushed then reach the public branch as *content*, inside one
+`Release Version 21.8.x` commit, instead of as individual commits carrying their own messages.
+
+Every release after the first sits on the previous release commit of its own branch. The `26.x`
+development branches are never touched, and none of their commits become reachable from a release
+branch - only the tree they produced does.
+
+Everything reachable from the predecessor *does* become part of the public branch, which is intended
+for `1.21.6` but never for a `26.x` development branch. The task prints how many commits are inherited
+and how many of those `origin` has not seen yet, before anything is pushed.

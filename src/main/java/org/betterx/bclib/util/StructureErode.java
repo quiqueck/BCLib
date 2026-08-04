@@ -1,7 +1,7 @@
 package org.betterx.bclib.util;
 
 import org.betterx.bclib.interfaces.SurfaceMaterialProvider;
-import org.betterx.wover.tag.api.predefined.CommonBlockTags;
+import de.ambertation.wover.tag.api.predefined.CommonBlockTags;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;

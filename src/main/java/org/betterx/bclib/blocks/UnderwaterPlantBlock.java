@@ -1,5 +1,7 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.trait.block.SurvivesOnBlockTrait;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
@@ -24,7 +26,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements BonemealableBlock, LiquidBlockContainer {
+public class UnderwaterPlantBlock extends BaseBlockNotFull implements BonemealableBlock, LiquidBlockContainer {
     private static final VoxelShape SHAPE = box(4, 0, 4, 12, 14, 12);
 
     public UnderwaterPlantBlock(Properties settings) {
@@ -44,7 +46,14 @@ public abstract class UnderwaterPlantBlock extends BaseBlockNotFull implements B
         return isTerrain(down) && state.getFluidState().getType().equals(Fluids.WATER.getSource());
     }
 
-    protected abstract boolean isTerrain(BlockState state);
+    /**
+     * Whether {@code state} (the block below) is valid ground for this plant. Defaults to the block's
+     * {@link SurvivesOnBlockTrait}; subclasses with a non-tag-expressible rule (e.g. "any solid") override
+     * this. Runtime-only, so order-safe with traits.
+     */
+    protected boolean isTerrain(BlockState state) {
+        return SurvivesOnBlockTrait.survivesOn(this, state);
+    }
 
     @Override
     public void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource randomSource) {

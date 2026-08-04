@@ -1,7 +1,7 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.wover.tag.api.TagManager;
-import org.betterx.wover.tag.api.predefined.MineableTags;
+import de.ambertation.wover.tag.api.TagManager;
+import de.ambertation.wover.tag.api.predefined.MineableTags;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -29,7 +29,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("deprecation")
-public class BaseTerrainBlock extends BaseBlock {
+public class BaseTerrainBlock extends Block {
     private final Block baseBlock;
     private Block pathBlock;
 

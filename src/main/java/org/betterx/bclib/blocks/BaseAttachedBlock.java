@@ -4,7 +4,6 @@ import org.betterx.bclib.util.BlocksHelper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.LevelReader;
@@ -52,7 +51,16 @@ public abstract class BaseAttachedBlock extends BaseBlockNotFull {
     public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
         Direction direction = state.getValue(FACING);
         BlockPos blockPos = pos.relative(direction.getOpposite());
-        return canSupportCenter(world, blockPos, direction) || world.getBlockState(blockPos).is(BlockTags.LEAVES);
+        if (canSupportCenter(world, blockPos, direction)) return true;
+
+        // Leaves are never a supporting center (LeavesBlock.getBlockSupportShape is empty), so cube leaves
+        // need this exemption - but minecraft:leaves also holds thin decoration (FurBlock furs and
+        // *_outer_leaves) that only fills the half of its block nearest its own support; attaching to the
+        // empty half of one of those leaves this block floating half a block off what it hangs on.
+        // NOTE: canSurvive does not gate worldgen - the tree/bush features write with setWithoutUpdate - so
+        // this rule only holds for generated content because those features now run
+        // EndTreeHelper.pruneUnsupportedFur, which enforces exactly this predicate on what they placed.
+        return BlocksHelper.isCubeLeaves(world, blockPos, world.getBlockState(blockPos));
     }
 
     @Override

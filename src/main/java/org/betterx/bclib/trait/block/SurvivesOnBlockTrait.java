@@ -2,10 +2,10 @@ package org.betterx.bclib.trait.block;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.config.Configs;
-import org.betterx.wover.block.api.trait.BlockTrait;
-import org.betterx.wover.block.api.trait.BlockTraitKey;
-import org.betterx.wover.block.api.trait.GenericBlockTrait;
-import org.betterx.wover.block.impl.trait.BlockTraitImpl;
+import de.ambertation.wover.block.api.trait.BlockTrait;
+import de.ambertation.wover.block.api.trait.BlockTraitKey;
+import de.ambertation.wover.block.api.trait.GenericBlockTrait;
+import de.ambertation.wover.block.impl.trait.BlockTraitImpl;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;

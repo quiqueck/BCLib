@@ -1,8 +1,8 @@
 package org.betterx.bclib.trait.block;
 
-import org.betterx.wover.block.api.client.trait.BlockModelTrait;
-import org.betterx.wover.block.api.client.trait.ClientBlockTraits;
-import org.betterx.wover.core.api.ModCore;
+import de.ambertation.wover.block.api.client.trait.BlockModelTrait;
+import de.ambertation.wover.block.api.client.trait.ClientBlockTraits;
+import de.ambertation.wover.core.api.ModCore;
 
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.MultiVariant;
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * A weighted, multi-variant extension of wover's default log/bark model trait
- * ({@link org.betterx.wover.block.api.client.model.ModelTraitLibrary#log}/{@code bark}).
+ * ({@link de.ambertation.wover.block.api.client.model.ModelTraitLibrary#log}/{@code bark}).
  * <p>
  * wover's default log trait emits a single-variant, axis-rotated pillar (a {@code cube_column} model for the
  * vertical axis plus a {@code cube_column_horizontal} model for the horizontal axes). That loses the randomized

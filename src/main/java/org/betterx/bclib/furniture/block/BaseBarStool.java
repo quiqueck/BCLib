@@ -1,8 +1,7 @@
 package org.betterx.bclib.furniture.block;
 
-import org.betterx.bclib.behaviours.BehaviourHelper;
 import org.betterx.bclib.client.models.BCLModels;
-import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
+import de.ambertation.wover.block.api.model.WoverBlockModelGenerators;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
@@ -65,19 +64,6 @@ public abstract class BaseBarStool extends AbstractChair {
         public Metal(Block baseMaterial, Block clothMaterial, BlockBehaviour.Properties settings) {
             super(baseMaterial, clothMaterial, settings);
         }
-    }
-
-    public static BaseBarStool from(Block baseMaterial, Block clothMaterial) {
-        return BehaviourHelper.from(baseMaterial, (b) -> new Wood(b, clothMaterial), (b) -> new Stone(b, clothMaterial), (b) -> new Metal(b, clothMaterial));
-    }
-
-    public static BaseBarStool from(Block baseMaterial, Block clothMaterial, BlockBehaviour.Properties settings) {
-        return BehaviourHelper.from(
-                baseMaterial,
-                (b) -> new Wood(b, clothMaterial, settings),
-                (b) -> new Stone(b, clothMaterial, settings),
-                (b) -> new Metal(b, clothMaterial, settings)
-        );
     }
 
     /**

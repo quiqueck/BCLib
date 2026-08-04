@@ -1,6 +1,6 @@
 package org.betterx.bclib.items;
 
-import org.betterx.bclib.blocks.BaseAnvilBlock;
+import org.betterx.bclib.blocks.LeveledAnvilBlock;
 import org.betterx.bclib.util.BCLDataComponents;
 
 import net.minecraft.network.chat.Component;
@@ -34,15 +34,15 @@ public class BaseAnvilItem extends BlockItem {
 
         int destruction = anvilData.getUnsafe().getInt(DESTRUCTION).orElse(0);
         if (blockState != null) {
-            BaseAnvilBlock block = (BaseAnvilBlock) blockState.getBlock();
+            LeveledAnvilBlock block = (LeveledAnvilBlock) blockState.getBlock();
             IntegerProperty durabilityProp = block.getDurabilityProp();
             if (destruction == 0) {
-                blockState = blockState.setValue(durabilityProp, 0).setValue(BaseAnvilBlock.DESTRUCTION, 0);
+                blockState = blockState.setValue(durabilityProp, 0).setValue(LeveledAnvilBlock.DESTRUCTION, 0);
             } else {
                 int destructionValue = destruction / block.getMaxDurability();
                 int durabilityValue = destruction - destructionValue * block.getMaxDurability();
                 blockState = blockState.setValue(durabilityProp, durabilityValue)
-                                       .setValue(BaseAnvilBlock.DESTRUCTION, destructionValue);
+                                       .setValue(LeveledAnvilBlock.DESTRUCTION, destructionValue);
             }
         }
 
@@ -63,7 +63,7 @@ public class BaseAnvilItem extends BlockItem {
         @SuppressWarnings("deprecation")
         int destruction = anvilData.getUnsafe().getInt(DESTRUCTION).orElse(0);
         if (destruction > 0) {
-            BaseAnvilBlock block = (BaseAnvilBlock) ((BaseAnvilItem) itemStack.getItem()).getBlock();
+            LeveledAnvilBlock block = (LeveledAnvilBlock) ((BaseAnvilItem) itemStack.getItem()).getBlock();
             int maxValue = block.getMaxDurability() * 3;
             float damage = maxValue - destruction;
             String percents = String.format(Locale.ROOT, "%.0f%%", damage);

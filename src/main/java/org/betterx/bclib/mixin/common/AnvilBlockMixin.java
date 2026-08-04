@@ -1,6 +1,6 @@
 package org.betterx.bclib.mixin.common;
 
-import org.betterx.bclib.blocks.BaseAnvilBlock;
+import org.betterx.bclib.blocks.LeveledAnvilBlock;
 
 import net.minecraft.world.level.block.AnvilBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class AnvilBlockMixin {
     @Inject(method = "damage", at = @At("HEAD"), cancellable = true)
     private static void bclib_anvilDamage(BlockState state, CallbackInfoReturnable<BlockState> info) {
-        if (state.getBlock() instanceof BaseAnvilBlock anvil) {
+        if (state.getBlock() instanceof LeveledAnvilBlock anvil) {
             info.setReturnValue(anvil.damageAnvilFall(state));
         }
     }

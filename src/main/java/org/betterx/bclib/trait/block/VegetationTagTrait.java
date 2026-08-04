@@ -1,12 +1,12 @@
 package org.betterx.bclib.trait.block;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.wover.block.api.BlockDefinition;
-import org.betterx.wover.block.api.trait.BlockTraitKey;
-import org.betterx.wover.block.api.trait.GenericBlockTrait;
-import org.betterx.wover.block.impl.trait.BlockTraitImpl;
-import org.betterx.wover.tag.api.predefined.CommonBlockTags;
-import org.betterx.wover.tag.api.predefined.CommonItemTags;
+import de.ambertation.wover.block.api.BlockDefinition;
+import de.ambertation.wover.block.api.trait.BlockTraitKey;
+import de.ambertation.wover.block.api.trait.GenericBlockTrait;
+import de.ambertation.wover.block.impl.trait.BlockTraitImpl;
+import de.ambertation.wover.tag.api.predefined.CommonBlockTags;
+import de.ambertation.wover.tag.api.predefined.CommonItemTags;
 
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
@@ -30,25 +30,31 @@ import java.util.List;
 public class VegetationTagTrait extends BlockTraitImpl<Block, GenericBlockTrait> implements GenericBlockTrait {
     public static final BlockTraitKey KEY = BlockTraitKey.ofUnique(BCLib.C, "vegetation_tag");
 
+    // sword_efficient (WP: mineable-audit §5): vanilla gives its own plants/leaves/vines the sword mining
+    // bonus (minecraft:sword_efficient). Neither BetterEnd nor BetterNether populated it at all. Adding it
+    // here - the single shared tag lever every plant/water-plant/seed/vine/leaves registration already goes
+    // through - covers both mods' whole plant family in one place. Saplings are deliberately excluded:
+    // vanilla's own tree saplings (oak_sapling, etc.) are NOT in sword_efficient (only bamboo_sapling is,
+    // handled elsewhere), so SAPLING keeps its original tag list.
     private static final VegetationTagTrait PLANT = new VegetationTagTrait(
-            List.of(CommonBlockTags.PLANT), List.of()
+            List.of(CommonBlockTags.PLANT, BlockTags.SWORD_EFFICIENT), List.of()
     );
     private static final VegetationTagTrait SEED = new VegetationTagTrait(
-            List.of(CommonBlockTags.SEEDS), List.of(CommonItemTags.SEEDS)
+            List.of(CommonBlockTags.SEEDS, BlockTags.SWORD_EFFICIENT), List.of(CommonItemTags.SEEDS)
     );
     private static final VegetationTagTrait WATER_PLANT = new VegetationTagTrait(
-            List.of(CommonBlockTags.WATER_PLANT), List.of()
+            List.of(CommonBlockTags.WATER_PLANT, BlockTags.SWORD_EFFICIENT), List.of()
     );
     private static final VegetationTagTrait SAPLING = new VegetationTagTrait(
             List.of(BlockTags.SAPLINGS, CommonBlockTags.SAPLINGS),
             List.of(ItemTags.SAPLINGS, CommonItemTags.SAPLINGS)
     );
     private static final VegetationTagTrait LEAVES = new VegetationTagTrait(
-            List.of(BlockTags.LEAVES, CommonBlockTags.LEAVES),
+            List.of(BlockTags.LEAVES, CommonBlockTags.LEAVES, BlockTags.SWORD_EFFICIENT),
             List.of(ItemTags.LEAVES, CommonItemTags.LEAVES)
     );
     private static final VegetationTagTrait VINE = new VegetationTagTrait(
-            List.of(CommonBlockTags.VINE), List.of()
+            List.of(CommonBlockTags.VINE, BlockTags.SWORD_EFFICIENT), List.of()
     );
 
     /** Tags the block as {@link CommonBlockTags#PLANT} (replaces {@code BehaviourPlant}). */

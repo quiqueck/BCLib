@@ -2,17 +2,17 @@ package org.betterx.bclib.furniture.slots;
 
 import org.betterx.bclib.client.models.BCLModels;
 import org.betterx.bclib.furniture.block.BaseBarStool;
-import org.betterx.wover.block.api.BlockDefinition;
-import org.betterx.wover.block.api.BlockRegistry;
-import org.betterx.wover.block.api.client.trait.BlockModelTrait;
-import org.betterx.wover.block.api.client.trait.ClientBlockTraits;
-import org.betterx.wover.block.api.trait.BlockRecipeTrait;
-import org.betterx.wover.block.api.trait.BlockTraitLookup;
-import org.betterx.wover.block.api.trait.BlockTraits;
-import org.betterx.wover.recipe.api.RecipeBuilder;
-import org.betterx.wover.sets.api.blocks.BlockSet;
-import org.betterx.wover.sets.api.blocks.SlotFromDefinition;
-import org.betterx.wover.sets.api.blocks.SlotType;
+import de.ambertation.wover.block.api.BlockDefinition;
+import de.ambertation.wover.block.api.BlockRegistry;
+import de.ambertation.wover.block.api.client.trait.BlockModelTrait;
+import de.ambertation.wover.block.api.client.trait.ClientBlockTraits;
+import de.ambertation.wover.block.api.trait.BlockRecipeTrait;
+import de.ambertation.wover.block.api.trait.BlockTraitLookup;
+import de.ambertation.wover.block.api.trait.BlockTraits;
+import de.ambertation.wover.recipe.api.RecipeBuilder;
+import de.ambertation.wover.sets.api.blocks.BlockSet;
+import de.ambertation.wover.sets.api.blocks.SlotFromDefinition;
+import de.ambertation.wover.sets.api.blocks.SlotType;
 
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.tags.BlockTags;
@@ -72,10 +72,13 @@ public class BarStool extends SlotFromDefinition {
     ) {
         final Block source = set.getBlockWithFallback(sourceSlot);
         final Block clothMaterial = cloth.get();
+        // BehaviourHelper.from() retired (WP6.14): this slot is only ever used by wood sets, and every
+        // wood-set bar stool already resolved to the Wood variant (BehaviourHelper.isMetal() is frozen
+        // false, and no wood set's slab has a BASEDRUM instrument), so the choice is made explicit here.
         return registry
                 .<BaseBarStool>defineDefaultBlock(
                         name,
-                        def -> BaseBarStool.from(source, clothMaterial, def.getProperties())
+                        def -> new BaseBarStool.Wood(source, clothMaterial, def.getProperties())
                 )
                 .replacePropertiesWithCopy(source);
     }

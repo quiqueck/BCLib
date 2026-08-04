@@ -1,9 +1,9 @@
 package org.betterx.bclib.recipes;
 
 import org.betterx.bclib.util.BCLDataComponents;
-import org.betterx.wover.recipe.api.BaseRecipeBuilder;
-import org.betterx.wover.recipe.impl.BaseRecipeBuilderImpl;
-import org.betterx.wover.recipe.impl.CraftingRecipeBuilderImpl;
+import de.ambertation.wover.recipe.api.BaseRecipeBuilder;
+import de.ambertation.wover.recipe.impl.BaseRecipeBuilderImpl;
+import de.ambertation.wover.recipe.impl.CraftingRecipeBuilderImpl;
 
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
@@ -66,7 +66,7 @@ public abstract class BCLBaseRecipeBuilder<I extends BaseRecipeBuilder<I>, R ext
     }
 
     @Override
-    public void build(org.betterx.wover.recipe.api.RecipeBuilder.Context ctx) {
+    public void build(de.ambertation.wover.recipe.api.RecipeBuilder.Context ctx) {
         validate();
 
         setupAdvancementForResult();
@@ -79,7 +79,7 @@ public abstract class BCLBaseRecipeBuilder<I extends BaseRecipeBuilder<I>, R ext
         ctx.recipeOutput().accept(key, recipe, advancementHolder);
     }
 
-    protected abstract R createRecipe(org.betterx.wover.recipe.api.RecipeBuilder.Context ctx);
+    protected abstract R createRecipe(de.ambertation.wover.recipe.api.RecipeBuilder.Context ctx);
 
     @SuppressWarnings("removal")
     protected void setupAdvancementForResult() {

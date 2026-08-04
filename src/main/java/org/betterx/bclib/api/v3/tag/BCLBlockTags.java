@@ -2,7 +2,7 @@ package org.betterx.bclib.api.v3.tag;
 
 
 import org.betterx.bclib.BCLib;
-import org.betterx.wover.tag.api.TagManager;
+import de.ambertation.wover.tag.api.TagManager;
 
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;

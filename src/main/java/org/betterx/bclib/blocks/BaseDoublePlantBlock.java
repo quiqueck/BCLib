@@ -1,7 +1,8 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.behaviours.BehaviourBuilders;
+import org.betterx.bclib.trait.block.SurvivesOnBlockTrait;
 import org.betterx.bclib.util.BlocksHelper;
+import de.ambertation.wover.loot.api.LootLookupProvider;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -19,7 +20,6 @@ import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableBlock;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -32,29 +32,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements BonemealableBlock {
+public class BaseDoublePlantBlock extends BaseBlockNotFull implements BonemealableBlock {
     private static final VoxelShape SHAPE = box(4, 2, 4, 12, 16, 12);
-    public static final IntegerProperty ROTATION = org.betterx.wover.block.api.BlockProperties.ROTATION;
+    public static final IntegerProperty ROTATION = de.ambertation.wover.block.api.BlockProperties.ROTATION;
     public static final BooleanProperty TOP = BooleanProperty.create("top");
-
-    public BaseDoublePlantBlock() {
-        this(
-                BehaviourBuilders
-                        .createPlant()
-                        .sound(SoundType.GRASS)
-                        .offsetType(BlockBehaviour.OffsetType.NONE)
-        );
-    }
-
-    public BaseDoublePlantBlock(int light) {
-        this(
-                BehaviourBuilders
-                        .createPlant()
-                        .sound(SoundType.GRASS)
-                        .lightLevel((state) -> state.getValue(TOP) ? light : 0)
-                        .offsetType(BlockBehaviour.OffsetType.NONE)
-        );
-    }
 
     public BaseDoublePlantBlock(BlockBehaviour.Properties properties) {
         super(properties);
@@ -85,7 +66,20 @@ public abstract class BaseDoublePlantBlock extends BaseBlockNotFull implements B
         return state.getValue(TOP) ? down.getBlock() == this : isTerrain(down) && (up.getBlock() == this);
     }
 
-    protected abstract boolean isTerrain(BlockState state);
+    /**
+     * Whether {@code state} (the block below the bottom half) is valid ground. Defaults to the block's
+     * {@link SurvivesOnBlockTrait}; subclasses may override. Runtime-only, so order-safe with traits.
+     */
+    protected boolean isTerrain(BlockState state) {
+        return SurvivesOnBlockTrait.survivesOn(this, state);
+    }
+
+    /**
+     * Tall/double plants drop with ANY tool (like their single counterparts), not shears-only.
+     */
+    public static LootTable.Builder buildLoot(Block block, LootLookupProvider provider) {
+        return provider.dropDoublePlant(block);
+    }
 
     @Override
     protected @NotNull BlockState updateShape(

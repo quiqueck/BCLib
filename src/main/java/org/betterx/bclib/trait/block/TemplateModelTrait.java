@@ -1,8 +1,8 @@
 package org.betterx.bclib.trait.block;
 
-import org.betterx.wover.block.api.client.trait.BlockModelTrait;
-import org.betterx.wover.block.api.client.trait.ClientBlockTraits;
-import org.betterx.wover.core.api.ModCore;
+import de.ambertation.wover.block.api.client.trait.BlockModelTrait;
+import de.ambertation.wover.block.api.client.trait.ClientBlockTraits;
+import de.ambertation.wover.core.api.ModCore;
 
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.MultiVariant;
@@ -448,7 +448,7 @@ public class TemplateModelTrait {
         private static void acceptTrapdoorState(
                 net.minecraft.world.level.block.Block block,
                 ResourceLocation model,
-                org.betterx.wover.block.api.model.WoverBlockModelGenerators generator
+                de.ambertation.wover.block.api.model.WoverBlockModelGenerators generator
         ) {
                 // A single model rotated per facing/half/open, matching BetterNether's hand-authored
                 // trapdoor blockstate (its trapdoor is one custom mesh, not vanilla's 3 bottom/top/open models).

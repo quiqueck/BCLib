@@ -1,7 +1,5 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.behaviours.BehaviourBuilders;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -12,7 +10,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -32,13 +29,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class UpDownPlantBlock extends BaseBlockNotFull {
     private static final VoxelShape SHAPE = box(4, 0, 4, 12, 16, 12);
-
-    public UpDownPlantBlock() {
-        this(BehaviourBuilders
-                .createPlant()
-                .sound(SoundType.GRASS)
-        );
-    }
 
     public UpDownPlantBlock(BlockBehaviour.Properties properties) {
         super(properties);

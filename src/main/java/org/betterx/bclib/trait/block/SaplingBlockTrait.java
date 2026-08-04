@@ -1,14 +1,14 @@
 package org.betterx.bclib.trait.block;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.wover.block.api.BlockDefinition;
-import org.betterx.wover.block.api.client.trait.BlockModelTrait;
-import org.betterx.wover.block.api.client.trait.ClientBlockTraits;
-import org.betterx.wover.block.api.trait.*;
-import org.betterx.wover.block.impl.trait.BlockTraitImpl;
-import org.betterx.wover.core.api.ModCore;
-import org.betterx.wover.tag.api.predefined.CommonBlockTags;
-import org.betterx.wover.tag.api.predefined.CommonItemTags;
+import de.ambertation.wover.block.api.BlockDefinition;
+import de.ambertation.wover.block.api.client.trait.BlockModelTrait;
+import de.ambertation.wover.block.api.client.trait.ClientBlockTraits;
+import de.ambertation.wover.block.api.trait.*;
+import de.ambertation.wover.block.impl.trait.BlockTraitImpl;
+import de.ambertation.wover.core.api.ModCore;
+import de.ambertation.wover.tag.api.predefined.CommonBlockTags;
+import de.ambertation.wover.tag.api.predefined.CommonItemTags;
 
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.tags.BlockTags;
@@ -68,7 +68,10 @@ public class SaplingBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> 
                                         ? BlockModelGenerators.PlantType.EMISSIVE_NOT_TINTED
                                         : BlockModelGenerators.PlantType.NOT_TINTED
                         );
-                        generator.delegateItemModel(block);
+                        // Flat item model (item/generated), not the block's cross model: vanilla saplings
+                        // use createPlantWithDefaultItem -> registerSimpleFlatItemModel, and delegating to
+                        // the cross model instead renders the dropped/held item at full block scale.
+                        generator.createFlatItem(block);
                     })
             );
         }

@@ -1,6 +1,5 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.behaviours.BehaviourBuilders;
 import org.betterx.bclib.trait.block.SurvivesOnBlockTrait;
 import org.betterx.bclib.util.BlocksHelper;
 
@@ -14,7 +13,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -33,14 +31,6 @@ public class BaseCropBlock extends BasePlantBlock {
 
     private final SurvivesOnBlockTrait survivesOn;
     private final Item drop;
-
-    public BaseCropBlock(Item drop, Block... terrain) {
-        this(
-                BehaviourBuilders.createPlant().randomTicks().sound(SoundType.CROP).offsetType(OffsetType.XZ),
-                drop,
-                terrain
-        );
-    }
 
     protected BaseCropBlock(BlockBehaviour.Properties properties, Item drop, Block... terrain) {
         super(properties);

@@ -1,7 +1,7 @@
 package org.betterx.bclib.util;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.wover.data_components.DataComponentManager;
+import de.ambertation.wover.data_components.DataComponentManager;
 
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.item.component.CustomData;

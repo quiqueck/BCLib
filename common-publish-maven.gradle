@@ -1,0 +1,55 @@
+// Publishes to our own Ambertation maven repository.
+// Libraries only - copy-paste into every library repo, do not apply from mods.
+// Requires: the 'maven-publish' plugin, and the remapJar/sourcesJar/remapSourcesJar/
+// javadocJar tasks (the latter defined in wunderlib.gradle-equivalent files).
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            def githubName = findProperty('github_base_name') ?: project.archives_base_name
+            artifactId = project.archives_base_name
+
+            // add all the jars that should be included when publishing to maven
+            artifact(remapJar) {
+                builtBy remapJar
+            }
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
+            artifact(javadocJar) {
+                builtBy javadocJar
+            }
+
+            // Optional POM configuration
+            pom {
+                name = project.archives_base_name
+                url = "https://github.com/quiqueck/${githubName}"
+
+                licenses {
+                    license {
+                        name = 'The MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+
+                scm {
+                    connection = "scm:git:https://github.com/quiqueck/${githubName}.git"
+                    developerConnection = "scm:git:https://github.com/quiqueck/${githubName}.git"
+                    url = "https://github.com/quiqueck/${githubName}"
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            def slurper = new groovy.json.JsonSlurper()
+            def apiKey = slurper.parseText(new File(projectDir, "../AMBER_TOKEN").text)
+            name = "Ambertation"
+            url = "https://maven.ambertation.de/releases/"
+            credentials {
+                username = apiKey.username
+                password = apiKey.token
+            }
+        }
+    }
+}

@@ -1,7 +1,7 @@
 package org.betterx.bclib.api.v2;
 
 import org.betterx.bclib.integration.ModIntegration;
-import org.betterx.wover.core.api.ModCore;
+import de.ambertation.wover.core.api.ModCore;
 
 import net.fabricmc.loader.api.FabricLoader;
 

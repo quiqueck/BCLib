@@ -3,13 +3,13 @@ package org.betterx.bclib.trait.block;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.blocks.BaseTerrainBlock;
 import org.betterx.bclib.client.models.BCLModels;
-import org.betterx.wover.block.api.BlockDefinition;
-import org.betterx.wover.block.api.client.trait.BlockModelTrait;
-import org.betterx.wover.block.api.client.trait.ClientBlockTraits;
-import org.betterx.wover.block.api.trait.*;
-import org.betterx.wover.block.api.trait.behaviour.LootTableTrait;
-import org.betterx.wover.block.impl.trait.BlockTraitImpl;
-import org.betterx.wover.core.api.ModCore;
+import de.ambertation.wover.block.api.BlockDefinition;
+import de.ambertation.wover.block.api.client.trait.BlockModelTrait;
+import de.ambertation.wover.block.api.client.trait.ClientBlockTraits;
+import de.ambertation.wover.block.api.trait.*;
+import de.ambertation.wover.block.api.trait.behaviour.LootTableTrait;
+import de.ambertation.wover.block.impl.trait.BlockTraitImpl;
+import de.ambertation.wover.core.api.ModCore;
 
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
@@ -35,11 +35,14 @@ public class PathBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
      *                      dedicated model trait). Defaults to {@code true} for the standard single path model.
      */
     public static List<BlockTrait<?, ?>> withSource(Block source, boolean generateModel) {
-        return Combiner.combine(
+        return Combiner.of(
                 new PathBlockTrait(),
                 BlockTraits.LOOT_TABLE.with(drops(source)),
+                // Paths inherit reqTool=true from their terrain parent (via replacePropertiesWithCopy) but
+                // no mineable tag, which makes them unharvestable. Match the parent terrain's pickaxe tag.
+                BlockTraits.MINEABLE_WITH.needsPickAxe(),
                 generateModel && ModCore.isDatagen() ? ClientModel.build(source) : null
-        );
+        ).combine();
     }
 
     private PathBlockTrait() {

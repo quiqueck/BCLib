@@ -1,13 +1,13 @@
 package org.betterx.bclib.trait.block;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.wover.block.api.BlockDefinition;
-import org.betterx.wover.block.api.BlockProperties;
-import org.betterx.wover.block.api.client.trait.BlockModelTrait;
-import org.betterx.wover.block.api.client.trait.ClientBlockTraits;
-import org.betterx.wover.block.api.trait.*;
-import org.betterx.wover.block.impl.trait.BlockTraitImpl;
-import org.betterx.wover.core.api.ModCore;
+import de.ambertation.wover.block.api.BlockDefinition;
+import de.ambertation.wover.block.api.BlockProperties;
+import de.ambertation.wover.block.api.client.trait.BlockModelTrait;
+import de.ambertation.wover.block.api.client.trait.ClientBlockTraits;
+import de.ambertation.wover.block.api.trait.*;
+import de.ambertation.wover.block.impl.trait.BlockTraitImpl;
+import de.ambertation.wover.core.api.ModCore;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;

@@ -1,7 +1,7 @@
 package org.betterx.bclib.recipes;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.wover.config.api.DatapackConfigs;
+import de.ambertation.wover.config.api.DatapackConfigs;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;

@@ -2,6 +2,6 @@
   "parent": "block/chain",
   "textures": {
     "particle": "%modid%:block/%texture%",
-    "all": "%modid%:block/%texture%"
+    "chain": "%modid%:block/%texture%"
   }
 }

@@ -1,13 +1,16 @@
-buildscript {
-    dependencies {
-        classpath 'org.kohsuke:github-api:1.114'
-    }
-
-    repositories {
-        gradlePluginPortal()
-    }
-}
-def env = System.getenv()
+// Shared publishing helper: changelog generation, version bumping, and
+// publishing to Modrinth + CurseForge (via mod-publish-plugin).
+// Copy-paste this file identically into every library/mod repo.
+// Everything here is driven by that repo's own gradle.properties.
+//
+// Libraries additionally apply publish-maven.gradle (publishing to our
+// Ambertation maven repo). Mods do not - see the project's build.gradle.
+//
+// This includes WorldWeaver, which used to keep its own fork of this file
+// under the name helper.gradle. The only thing that fork actually needed was
+// a different set of projects for nextVersion to rewrite; that is now derived
+// from the project layout instead of hardcoded - see nextVersion below. Keep
+// it that way rather than reintroducing a per-repo variant.
 
 //from https://lowcarbrob.medium.com/android-pro-tip-generating-your-apps-changelog-from-git-inside-build-gradle-19a07533eec4
 String generateChangelog() {
@@ -78,6 +81,13 @@ task changelog() {
 def requiredDependencies = evaluate(project.required_dependencies)
 def optionalDependencies = evaluate(project.optional_dependencies)
 
+// CurseForge doesn't always use the same project slug as Modrinth, e.g. REI's
+// Modrinth slug is "rei" but its CurseForge slug is "roughly-enough-items".
+// Map those exceptions here; anything not listed is assumed to match on both.
+def curseforgeSlugOverrides = [
+    "rei": "roughly-enough-items",
+]
+
 publishMods {
     dryRun = project.hasProperty("dryRun") ? (project.property("dryRun").toString().toLowerCase() in ["true", "", "1", "yes"]) : false
     file = remapJar.archiveFile
@@ -107,17 +117,17 @@ publishMods {
             minecraftVersions.add(v)
         }
 
-        // Satisfies CurseForge's mandatory "Environment" version group
+        // CurseForge requires at least one of client/server to be set.
         client = true
         server = true
 
         displayName = "${project.archives_base_name}-${project.mod_version} ${latestVersion}"
 
         requiredDependencies.each { dep ->
-            requires(dep)
+            requires(curseforgeSlugOverrides.getOrDefault(dep, dep))
         }
         optionalDependencies.each { dep ->
-            optional(dep)
+            optional(curseforgeSlugOverrides.getOrDefault(dep, dep))
         }
     }
 
@@ -185,14 +195,29 @@ task nextVersion() {
 
         def rootFabricFile = rootProject.file("src/main/resources/fabric.mod.json")
         def rootFabricFileJson = slurper.parseText(rootFabricFile.text)
+
+        // Rewrite the manifest of every project that belongs to THIS repository and
+        // ships one: the root, plus any real subproject of it (WorldWeaver's wover-*
+        // modules - for every other repo the root is the only match).
+        //
+        // Sibling repos pulled in via includeLocalLib (BCLib/WunderLib/WorldWeaver
+        // inside a mod's build) are ordinary Gradle projects and would otherwise be
+        // caught by this loop, rewriting another repo's fabric.mod.json. They are
+        // excluded by projectDir rather than by name, so a new sibling include never
+        // needs a change here. This file is only ever applied from a repo's own root
+        // build.gradle - the *-composit.gradle files that a sibling is included with
+        // do not apply it - so rootDir is always this repository's own folder.
+        def repoRoot = project.rootDir.canonicalFile
         allprojects.each { proj ->
-            if (proj.path != ':') {
+            def projDir = proj.projectDir.canonicalFile
+            def ownedByThisRepo = projDir == repoRoot || projDir.path.startsWith(repoRoot.path + File.separator)
+            def fabricFile = proj.file("src/main/resources/fabric.mod.json")
+            if (!ownedByThisRepo || !fabricFile.exists()) {
                 println "Ignoring ${proj}"
                 return
             }
             println "Updating Version in ${proj}"
 
-            def fabricFile = proj.file("src/main/resources/fabric.mod.json")
             def fabricJson = slurper.parseText(fabricFile.text)
             fabricJson.version = updatedVersion
             fabricJson.depends.minecraft = slurper.parseText(modrinth_versions)
@@ -201,106 +226,6 @@ task nextVersion() {
             fabricJson.depends.java = rootFabricFileJson.depends.java
 
             fabricFile.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(fabricJson))
-        }
-    }
-}
-
-import org.kohsuke.github.GHReleaseBuilder
-import org.kohsuke.github.GitHub
-
-task github(dependsOn: [build, remapJar, sourcesJar, javadocJar]) {
-    group = 'publishing'
-    def slurper = new groovy.json.JsonSlurper()
-    def apiKey = new File(projectDir, "../GITHUB_TOKEN")
-
-    onlyIf {
-        apiKey.exists()
-    }
-
-    doLast {
-        apiKey = apiKey.text
-        def changes = new File(projectDir, "CHANGES.md")
-        if (changes.exists()) {
-            changes = changes.getText('UTF-8')
-        } else {
-            changes = ""
-        }
-
-        def github = GitHub.connectUsingOAuth(apiKey as String)
-        def repository = github.getRepository("quiqueck/" + archivesBaseName)
-
-        def releaseBuilder = new GHReleaseBuilder(repository, version as String)
-        releaseBuilder.name("${archivesBaseName}-${version}")
-        releaseBuilder.body(changes)
-        releaseBuilder.commitish("1.20")
-
-        def ghRelease = releaseBuilder.create()
-        ghRelease.uploadAsset(file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar"), "application/java-archive");
-        ghRelease.uploadAsset(file("${project.buildDir}/libs/${archivesBaseName}-${version}-sources.jar"), "application/java-archive");
-        ghRelease.uploadAsset(file("${project.buildDir}/libs/${archivesBaseName}-${version}-javadoc.jar"), "application/java-archive");
-
-        subprojects.each { sub ->
-            ghRelease.uploadAsset(file("${sub.buildDir}/libs/${sub.archivesBaseName}-${version}.jar"), "application/java-archive");
-            ghRelease.uploadAsset(file("${sub.buildDir}/libs/${sub.archivesBaseName}-${version}-sources.jar"), "application/java-archive");
-        }
-    }
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            def githubName = findProperty('github_base_name') ?: project.archives_base_name
-            artifactId = project.archives_base_name
-            // add all the jars that should be included when publishing to maven
-            artifact(remapJar) {
-                builtBy remapJar
-            }
-            artifact(sourcesJar) {
-                builtBy remapSourcesJar
-            }
-
-            // Optional POM configuration
-            pom {
-                name = project.archives_base_name
-                url = "https://github.com/quiqueck/${githubName}"
-
-                licenses {
-                    license {
-                        name = 'The MIT License'
-                        url = 'https://opensource.org/licenses/MIT'
-                    }
-                }
-
-                scm {
-                    connection = "scm:git:https://github.com/quiqueck/${githubName}.git"
-                    developerConnection = "scm:git:https://github.com/quiqueck/${githubName}.git"
-                    url = "https://github.com/quiqueck/${githubName}"
-                }
-
-                // Add subprojects as dependencies in the POM
-                withXml {
-                    def dependenciesNode = asNode().appendNode('dependencies')
-                    def woverNode = dependenciesNode.appendNode('dependency')
-
-                    woverNode.appendNode('artifactId', "worldweaver")
-                    woverNode.appendNode('groupId', "org.betterx")
-                    woverNode.appendNode('version', project.wover_version)
-                    woverNode.appendNode('scope', 'compile')
-                }
-            }
-        }
-    }
-    repositories {
-        maven {
-            def slurper = new groovy.json.JsonSlurper();
-            def apiKey = slurper.parseText(new File(projectDir, "../AMBER_TOKEN").text)
-            println "\nPublishing ${project.archives_base_name} to Maven..."
-            name = "Ambertation"
-            url = "https://maven.ambertation.de/releases/"
-            credentials {
-                username = apiKey.username
-                password = apiKey.token
-            }
         }
     }
 }

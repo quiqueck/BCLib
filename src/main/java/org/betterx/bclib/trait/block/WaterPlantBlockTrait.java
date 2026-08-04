@@ -1,10 +1,10 @@
 package org.betterx.bclib.trait.block;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.wover.block.api.BlockDefinition;
-import org.betterx.wover.block.api.trait.BlockTraitKey;
-import org.betterx.wover.block.api.trait.GenericBlockTrait;
-import org.betterx.wover.block.impl.trait.BlockTraitImpl;
+import de.ambertation.wover.block.api.BlockDefinition;
+import de.ambertation.wover.block.api.trait.BlockTraitKey;
+import de.ambertation.wover.block.api.trait.GenericBlockTrait;
+import de.ambertation.wover.block.impl.trait.BlockTraitImpl;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;

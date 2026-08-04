@@ -1,7 +1,5 @@
 package org.betterx.bclib.blocks;
 
-import org.betterx.bclib.behaviours.BehaviourHelper;
-
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
@@ -64,18 +62,4 @@ public abstract class BasePressurePlateBlock extends PressurePlateBlock {
         }
     }
 
-    public static BasePressurePlateBlock from(Block source, BlockSetType type) {
-        return BehaviourHelper.from(source, type,
-                Wood::new, Stone::new, Metal::new
-        );
-    }
-
-    public static BasePressurePlateBlock from(Block source, BlockSetType type, Properties settings) {
-        return BehaviourHelper.from(
-                source, type,
-                (b, t) -> new Wood(b, settings, t),
-                (b, t) -> new Stone(b, settings, t),
-                (b, t) -> new Metal(b, settings, t)
-        );
-    }
 }

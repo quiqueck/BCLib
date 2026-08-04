@@ -7,8 +7,8 @@ import org.betterx.bclib.client.gui.screens.LevelFixErrorScreen;
 import org.betterx.bclib.client.gui.screens.LevelFixErrorScreen.Listener;
 import org.betterx.bclib.client.gui.screens.ProgressScreen;
 import org.betterx.bclib.config.Configs;
-import org.betterx.wover.core.api.Logger;
-import org.betterx.wover.state.api.WorldConfig;
+import de.ambertation.wover.core.api.Logger;
+import de.ambertation.wover.state.api.WorldConfig;
 
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -353,8 +353,9 @@ public class DataFixerAPI {
 
         progress.progressStage(Component.translatable("message.bclib.datafixer.progress.reading"));
         List<File> players = getAllPlayers(dir);
+        List<File> backpacks = getAllBackpacks(dir);
         List<File> regions = getAllRegions(dir, null);
-        final int maxProgress = players.size() + regions.size() + 4;
+        final int maxProgress = players.size() + backpacks.size() + regions.size() + 4;
         progress.incAtomic(maxProgress);
 
         progress.progressStage(Component.translatable("message.bclib.datafixer.progress.players"));
@@ -365,6 +366,11 @@ public class DataFixerAPI {
         );
         players.parallelStream().forEach((file) -> {
             fixPlayer(profile, state, file.toPath(), regionStorageInfo);
+            progress.incAtomic(maxProgress);
+        });
+
+        backpacks.parallelStream().forEach((file) -> {
+            fixBackpack(profile, state, file.toPath());
             progress.incAtomic(maxProgress);
         });
 
@@ -505,6 +511,124 @@ public class DataFixerAPI {
         return _changed;
     }
 
+    /**
+     * Replaces outdated IDs at the given keys anywhere below {@code tag}.
+     * <p>
+     * Used where the shape of the data is not known up front: chunk {@code structures} nest their
+     * piece types ({@code id}) and jigsaw pool element types ({@code element_type}) at a depth that
+     * differs per structure type, and third-party container files lay their inventories out however
+     * their owning mod sees fit. Values that are not part of the replacement map are left
+     * untouched, so walking everything is safe.
+     *
+     * @param tag     The tag to inspect
+     * @param changed Set to {@code true} if anything was replaced
+     * @param keys    The keys whose string values hold a registry ID
+     */
+    private static void fixIDsRecursively(Tag tag, boolean[] changed, MigrationProfile data, String... keys) {
+        if (tag instanceof CompoundTag compound) {
+            for (String key : keys) {
+                changed[0] |= data.replaceStringFromIDs(compound, key);
+            }
+            for (String key : compound.keySet()) {
+                fixIDsRecursively(compound.get(key), changed, data, keys);
+            }
+        } else if (tag instanceof ListTag list) {
+            list.forEach(entry -> fixIDsRecursively(entry, changed, data, keys));
+        }
+    }
+
+    private static List<File> getAllBackpacks(File dir) {
+        return collectBackpacks(new File(dir, "backpacks"), new ArrayList<>());
+    }
+
+    /**
+     * Collects the backpack files below {@code dir}, recursing into sub-directories: the storage is
+     * laid out as {@code backpacks/<player-uuid>/<backpack-uuid>.dat}, so a flat listing finds
+     * nothing but directories.
+     */
+    private static List<File> collectBackpacks(File dir, List<File> list) {
+        if (!dir.exists() || !dir.isDirectory()) {
+            return list;
+        }
+        final File[] files = dir.listFiles();
+        if (files == null) {
+            return list;
+        }
+        for (File file : files) {
+            if (file.isDirectory()) {
+                collectBackpacks(file, list);
+            } else if (file.isFile() && file.getName().endsWith(".dat")) {
+                list.add(file);
+            }
+        }
+        return list;
+    }
+
+    /**
+     * Fixes the IDs in one backpack file.
+     * <p>
+     * Mods that give players extra storage (Traveler's Backpack, Bag of Holding, ...) keep it in
+     * {@code <world>/backpacks/&lt;uuid&gt;.dat} rather than in the player file, so it is missed by
+     * both {@link #getAllPlayers(File)} and {@link #getAllRegions(File, List)} - the latter only
+     * collects {@code .mca}. Item stacks stored in there kept their outdated IDs and were dropped
+     * on load. The layout is the owning mod's own, so every {@code id} below the root is
+     * considered.
+     */
+    private static void fixBackpack(MigrationProfile data, State state, Path file) {
+        try {
+            LOGGER.info("Inspecting " + file);
+
+            CompoundTag root = readNbt(file);
+            boolean[] changed = {false};
+            fixIDsRecursively(root, changed, data, "id");
+
+            if (changed[0]) {
+                LOGGER.warn("Writing '{}'", file);
+                NbtIo.writeCompressed(root, file);
+            }
+        } catch (Exception e) {
+            BCLib.LOGGER.error("Failed fixing Backpack-Data.");
+            state.addError("Failed fixing Backpack-Data in " + file.getFileName() + " (" + e.getMessage() + ")");
+            state.didFail = true;
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Applies the ID replacements and all registered {@link Patch#getBlockStatePatcher()}s to a
+     * single section palette.
+     *
+     * @param palette The block palette of the section, or {@code null} if the section has none
+     * @param states  The packed block states belonging to the palette. Chunks from 1.18 onwards
+     *                store these as a long-array instead of a list, in which case an empty list
+     *                is passed and patchers only get to inspect the palette.
+     */
+    private static void fixPalette(
+            ListTag palette,
+            ListTag states,
+            ChunkPos pos,
+            boolean[] changed,
+            MigrationProfile data,
+            State state
+    ) {
+        if (palette == null) return;
+
+        palette.forEach((blockTag) -> {
+            CompoundTag blockTagCompound = ((CompoundTag) blockTag);
+            changed[0] |= data.replaceStringFromIDs(blockTagCompound, "Name");
+        });
+
+        try {
+            changed[0] |= data.patchBlockState(palette, states);
+        } catch (PatchDidiFailException e) {
+            BCLib.LOGGER.error("Failed fixing BlockState in " + pos);
+            state.addError("Failed fixing BlockState in " + pos + " (" + e.getMessage() + ")");
+            state.didFail = true;
+            changed[0] = false;
+            e.printStackTrace();
+        }
+    }
+
     private static void fixRegion(MigrationProfile data, State state, File file, RegionStorageInfo regionStorageInfo) {
         try {
             Path path = file.toPath();
@@ -524,47 +648,76 @@ public class DataFixerAPI {
                         // }
                         input.close();
 
-                        //Checking TileEntities
-                        root.getCompound("Level")
-                            .flatMap(c -> c.getList("TileEntities"))
-                            .ifPresent(tileEntities ->
-                                    fixItemArrayWithID(tileEntities, changed, data, true));
+                        // Pre-1.18 chunks nest their content below a "Level" compound and use
+                        // capitalized keys. Since 1.18 the chunk root is flat and the keys are
+                        // lower-case. Both layouts are handled here, so worlds that were never
+                        // opened by a modern version still get fixed.
+                        final CompoundTag legacy = root.getCompound("Level").orElse(null);
 
-                        //Checking Entities
+                        //Checking BlockEntities
+                        if (legacy != null) {
+                            legacy.getList("TileEntities")
+                                  .ifPresent(tileEntities ->
+                                          fixItemArrayWithID(tileEntities, changed, data, true));
+                        }
+                        root.getList("block_entities")
+                            .ifPresent(blockEntities ->
+                                    fixItemArrayWithID(blockEntities, changed, data, true));
+
+                        //Checking Entities ("Entities" in entity-region files, "entities" in chunks)
                         root.getList("Entities")
+                            .ifPresent(entities ->
+                                    fixItemArrayWithID(entities, changed, data, true)
+                            );
+                        root.getList("entities")
                             .ifPresent(entities ->
                                     fixItemArrayWithID(entities, changed, data, true)
                             );
 
                         //Checking Block Palette
-                        ListTag sections = root
-                                .getCompound("Level")
-                                .flatMap(c -> c.getList("Sections"))
-                                .orElse(new ListTag());
+                        if (legacy != null) {
+                            legacy.getList("Sections").ifPresent(sections -> sections.forEach((tag) -> {
+                                final CompoundTag section = (CompoundTag) tag;
+                                fixPalette(
+                                        section.getList("Palette").orElse(null),
+                                        section.getList("BlockStates").orElse(new ListTag()),
+                                        pos, changed, data, state
+                                );
+                            }));
+                        }
+                        //Checking Structure starts and their (pool-)piece types
+                        if (legacy != null) {
+                            legacy.getCompound("Structures")
+                                  .ifPresent(structures -> fixIDsRecursively(structures, changed, data, "id", "element_type"));
+                        }
+                        root.getCompound("structures")
+                            .ifPresent(structures -> fixIDsRecursively(structures, changed, data, "id", "element_type"));
 
-                        sections.forEach((tag) -> {
-                            ListTag palette = ((CompoundTag) tag).getList("Palette").orElse(new ListTag());
-                            palette.forEach((blockTag) -> {
-                                CompoundTag blockTagCompound = ((CompoundTag) blockTag);
-                                changed[0] |= data.replaceStringFromIDs(blockTagCompound, "Name");
-                            });
+                        root.getList("sections").ifPresent(sections -> sections.forEach((tag) -> {
+                            final CompoundTag blockStates = ((CompoundTag) tag)
+                                    .getCompound("block_states")
+                                    .orElse(null);
+                            if (blockStates == null) return;
 
+                            // Modern chunks store the packed indices as a long-array rather than a
+                            // list, so the state patchers only receive the palette itself.
+                            fixPalette(
+                                    blockStates.getList("palette").orElse(null),
+                                    new ListTag(),
+                                    pos, changed, data, state
+                            );
+                        }));
 
-                            ((CompoundTag) tag).getList(
-                                    "BlockStates"
-                            ).ifPresent(blockStates -> {
-                                try {
-                                    changed[0] |= data.patchBlockState(palette, blockStates);
-                                } catch (PatchDidiFailException e) {
-                                    BCLib.LOGGER.error("Failed fixing BlockState in " + pos);
-                                    state.addError("Failed fixing BlockState in " + pos + " (" + e.getMessage() + ")");
-                                    state.didFail = true;
-                                    changed[0] = false;
-                                    e.printStackTrace();
-                                }
-                            });
-
-                        });
+                        //Whole-chunk patches run last, so they see the already renamed palette
+                        try {
+                            changed[0] |= data.patchChunk(root);
+                        } catch (PatchDidiFailException e) {
+                            BCLib.LOGGER.error("Failed patching chunk " + pos);
+                            state.addError("Failed patching chunk " + pos + " (" + e.getMessage() + ")");
+                            state.didFail = true;
+                            changed[0] = false;
+                            e.printStackTrace();
+                        }
 
                         if (changed[0]) {
                             LOGGER.warn("Writing '{}': {}/{}", file, x, z);
@@ -626,6 +779,29 @@ public class DataFixerAPI {
 				/*ListTag items = blockEntityTag.getList("Items", Tag.TAG_COMPOUND);
 				fixItemArrayWithID(items, changed, data, recursive);*/
             }
+        }
+
+        // Since 1.20.5 the legacy "tag" compound is replaced by item components. Nested item
+        // stacks (shulker boxes, bundles, crossbows, ...) live in there and would otherwise keep
+        // their outdated IDs and be dropped on load.
+        if (recursive) {
+            tag.getCompound("components").ifPresent(components -> {
+                // {slot, item} pairs, e.g. a shulker box carried in an inventory
+                components.getList("minecraft:container").ifPresent(container ->
+                        container.forEach(slotTag -> ((CompoundTag) slotTag)
+                                .getCompound("item")
+                                .ifPresent(item -> fixID(item, changed, data, true))));
+
+                // plain item lists
+                components.getList("minecraft:bundle_contents").ifPresent(contents ->
+                        fixItemArrayWithID(contents, changed, data, true));
+                components.getList("minecraft:charged_projectiles").ifPresent(projectiles ->
+                        fixItemArrayWithID(projectiles, changed, data, true));
+
+                // the block entity carried by a placed-block item
+                components.getCompound("minecraft:block_entity_data").ifPresent(blockEntity ->
+                        fixID(blockEntity, changed, data, true));
+            });
         }
     }
 

@@ -1,13 +1,13 @@
 package org.betterx.datagen.bclib.worldgen;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.wover.block.api.BlockRegistry;
-import org.betterx.wover.core.api.ModCore;
-import org.betterx.wover.datagen.api.WoverAutoProvider;
-import org.betterx.wover.datagen.api.WoverTagProvider;
-import org.betterx.wover.item.api.ItemRegistry;
-import org.betterx.wover.tag.api.event.context.ItemTagBootstrapContext;
-import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
+import de.ambertation.wover.block.api.BlockRegistry;
+import de.ambertation.wover.core.api.ModCore;
+import de.ambertation.wover.datagen.api.WoverAutoProvider;
+import de.ambertation.wover.datagen.api.WoverTagProvider;
+import de.ambertation.wover.item.api.ItemRegistry;
+import de.ambertation.wover.tag.api.event.context.ItemTagBootstrapContext;
+import de.ambertation.wover.tag.api.event.context.TagBootstrapContext;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;

@@ -3,10 +3,10 @@ package org.betterx.bclib.api.v2.levelgen;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
 import org.betterx.bclib.api.v2.datafixer.DataFixerAPI;
-import org.betterx.wover.core.api.ModCore;
-import org.betterx.wover.events.api.WorldLifecycle;
-import org.betterx.wover.events.api.client.ClientWorldLifecycle;
-import org.betterx.wover.events.api.types.client.BeforeClientLoadScreen;
+import de.ambertation.wover.core.api.ModCore;
+import de.ambertation.wover.events.api.WorldLifecycle;
+import de.ambertation.wover.events.api.client.ClientWorldLifecycle;
+import de.ambertation.wover.events.api.types.client.BeforeClientLoadScreen;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;

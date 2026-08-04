@@ -2,17 +2,17 @@ package org.betterx.bclib.furniture.slots;
 
 import org.betterx.bclib.client.models.BCLModels;
 import org.betterx.bclib.furniture.block.BaseTaburet;
-import org.betterx.wover.block.api.BlockDefinition;
-import org.betterx.wover.block.api.BlockRegistry;
-import org.betterx.wover.block.api.client.trait.BlockModelTrait;
-import org.betterx.wover.block.api.client.trait.ClientBlockTraits;
-import org.betterx.wover.block.api.trait.BlockRecipeTrait;
-import org.betterx.wover.block.api.trait.BlockTraitLookup;
-import org.betterx.wover.block.api.trait.BlockTraits;
-import org.betterx.wover.recipe.api.RecipeBuilder;
-import org.betterx.wover.sets.api.blocks.BlockSet;
-import org.betterx.wover.sets.api.blocks.SlotFromDefinition;
-import org.betterx.wover.sets.api.blocks.SlotType;
+import de.ambertation.wover.block.api.BlockDefinition;
+import de.ambertation.wover.block.api.BlockRegistry;
+import de.ambertation.wover.block.api.client.trait.BlockModelTrait;
+import de.ambertation.wover.block.api.client.trait.ClientBlockTraits;
+import de.ambertation.wover.block.api.trait.BlockRecipeTrait;
+import de.ambertation.wover.block.api.trait.BlockTraitLookup;
+import de.ambertation.wover.block.api.trait.BlockTraits;
+import de.ambertation.wover.recipe.api.RecipeBuilder;
+import de.ambertation.wover.sets.api.blocks.BlockSet;
+import de.ambertation.wover.sets.api.blocks.SlotFromDefinition;
+import de.ambertation.wover.sets.api.blocks.SlotType;
 
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.tags.BlockTags;
@@ -64,8 +64,11 @@ public class Taburet extends SlotFromDefinition {
             @NotNull String name
     ) {
         final Block source = set.getBlockWithFallback(sourceSlot);
+        // BehaviourHelper.from() retired (WP6.14): this slot is only ever used by wood sets, and every
+        // wood-set taburet already resolved to the Wood variant (BehaviourHelper.isMetal() is frozen false,
+        // and no wood set's slab has a BASEDRUM instrument), so the choice is made explicit here.
         return registry
-                .<BaseTaburet>defineDefaultBlock(name, def -> BaseTaburet.from(source, def.getProperties()))
+                .<BaseTaburet>defineDefaultBlock(name, def -> new BaseTaburet.Wood(source, def.getProperties()))
                 .replacePropertiesWithCopy(source);
     }
 

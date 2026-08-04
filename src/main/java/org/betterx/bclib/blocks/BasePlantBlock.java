@@ -1,5 +1,10 @@
 package org.betterx.bclib.blocks;
 
+import org.betterx.bclib.trait.block.SurvivesOnBlockTrait;
+import org.betterx.bclib.trait.block.SurvivesOnSolidTrait;
+import org.betterx.bclib.util.BlocksHelper;
+import de.ambertation.wover.block.api.trait.BlockTrait;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -28,14 +33,25 @@ import org.jetbrains.annotations.NotNull;
  * double-generated the table for any block that also carried the trait - the two datagen providers run
  * independently, with no filter between them).
  */
-public abstract class BasePlantBlock extends BaseBlockNotFull implements BonemealableBlock {
+public class BasePlantBlock extends BaseBlockNotFull implements BonemealableBlock {
     private static final VoxelShape SHAPE = box(4, 0, 4, 12, 14, 12);
 
-    protected BasePlantBlock(Properties settings) {
+    public BasePlantBlock(Properties settings) {
         super(settings);
     }
 
-    protected abstract boolean isTerrain(BlockState state);
+    /**
+     * Whether {@code state} (the block below) is valid ground for this plant. Defaults to the block's
+     * {@link SurvivesOnBlockTrait} - the same runtime check {@code VegetationBlockMixin} performs for
+     * vanilla-bush-based plants - so a plain {@code BasePlantBlock} registered with a survival trait
+     * survives on exactly those blocks. "Any solid block" is not expressible as a state test - it needs the
+     * level and position - so it is not asked of this method; that rule rides on a
+     * {@link SurvivesOnSolidTrait} and is applied by {@link #canSurvive} instead. Never consulted at
+     * construction time, so it is order-safe with respect to traits.
+     */
+    protected boolean isTerrain(BlockState state) {
+        return SurvivesOnBlockTrait.survivesOn(this, state);
+    }
 
 
     @Override
@@ -44,10 +60,19 @@ public abstract class BasePlantBlock extends BaseBlockNotFull implements Bonemea
         return SHAPE.move(vec3d.x, vec3d.y, vec3d.z);
     }
 
+    /**
+     * Ground below has to satisfy {@link #isTerrain} - or, for a plant registered with a
+     * {@link SurvivesOnSolidTrait}, simply be something a decoration can stand on. The second half is what
+     * {@code VegetationBlockMixin} does for vanilla-bush-based plants; this class is a plain {@code Block},
+     * so it never reaches that mixin and applies the marker itself.
+     */
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-        BlockState down = level.getBlockState(pos.below());
-        return isTerrain(down);
+        BlockPos downPos = pos.below();
+        BlockState down = level.getBlockState(downPos);
+        return isTerrain(down)
+                || (BlockTrait.hasRuntimeTrait(this, SurvivesOnSolidTrait.KEY)
+                        && BlocksHelper.isDecorationSupport(level, downPos, down, Direction.UP));
     }
 
     @Override

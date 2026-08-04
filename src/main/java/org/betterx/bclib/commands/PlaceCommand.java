@@ -8,7 +8,7 @@ import org.betterx.bclib.commands.arguments.Float3ArgumentType;
 import org.betterx.bclib.commands.arguments.PlacementDirections;
 import org.betterx.bclib.commands.arguments.TemplatePlacementArgument;
 import org.betterx.bclib.util.BlocksHelper;
-import org.betterx.wover.state.api.WorldState;
+import de.ambertation.wover.state.api.WorldState;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.IntegerArgumentType;

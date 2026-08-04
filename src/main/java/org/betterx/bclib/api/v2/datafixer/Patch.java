@@ -3,7 +3,7 @@ package org.betterx.bclib.api.v2.datafixer;
 import de.ambertation.wunderlib.utils.Version;
 import org.betterx.bclib.interfaces.PatchBiFunction;
 import org.betterx.bclib.interfaces.PatchFunction;
-import org.betterx.wover.core.api.ModCore;
+import de.ambertation.wover.core.api.ModCore;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -20,7 +20,7 @@ public abstract class Patch {
     /**
      * The Patch-Level derived from {@link #version}
      */
-    public final int level;
+    public final long level;
 
     /**
      * The Patch-Version string
@@ -66,8 +66,8 @@ public abstract class Patch {
      * @param modCore The ModCore of the mod you want to query
      * @return The highest Patch-Level that was found
      */
-    public static int maxPatchLevel(@NotNull ModCore modCore) {
-        return ALL.stream().filter(p -> p.modCore.equals(modCore)).mapToInt(p -> p.level).max().orElse(0);
+    public static long maxPatchLevel(@NotNull ModCore modCore) {
+        return ALL.stream().filter(p -> p.modCore.equals(modCore)).mapToLong(p -> p.level).max().orElse(0);
     }
 
     /**
@@ -111,7 +111,7 @@ public abstract class Patch {
         this.modCore = modCore;
         this.version = version;
         this.alwaysApply = alwaysApply;
-        this.level = version.toInt();
+        this.level = version.toLong();
         if (!ALL
                 .stream()
                 .filter(p -> p.modCore.equals(this.modCore))
@@ -156,7 +156,7 @@ public abstract class Patch {
 
     /**
      * Return a {@link PatchFunction} that is called with the content from the
-     * {@link org.betterx.wover.state.api.WorldConfig} for this Mod.
+     * {@link de.ambertation.wover.state.api.WorldConfig} for this Mod.
      * The function needs to return {@code true}, if changes were made to the data.
      * If an error occurs, the method should throw a {@link PatchDidiFailException}
      * <p>
@@ -165,6 +165,27 @@ public abstract class Patch {
      * @return {@code true} if changes were applied and we need to save the data
      */
     public PatchFunction<CompoundTag, Boolean> getWorldDataPatcher() {
+        return null;
+    }
+
+    /**
+     * Return a {@link PatchFunction} that is called with the root tag of every chunk in every
+     * region, after {@link #getIDReplacements()} and {@link #getBlockStatePatcher()} were applied.
+     * <p>
+     * Use this when a fix needs the chunk as a whole rather than a single palette entry, for
+     * example because it has to know <i>where</i> a block sits: the palette alone cannot say which
+     * positions use it, and creating a block entity requires coordinates. Everything that can be
+     * expressed as a plain ID or property rewrite belongs in {@link #getIDReplacements()} or
+     * {@link #getBlockStatePatcher()} instead - those are cheaper and run on the palette only.
+     * <p>
+     * The function needs to return {@code true}, if changes were made to the chunk.
+     * If an error occurs, the method should throw a {@link PatchDidiFailException}
+     * <p>
+     * The default implementation of this method returns null.
+     *
+     * @return {@code true} if changes were applied and we need to save the chunk
+     */
+    public PatchFunction<CompoundTag, Boolean> getChunkPatcher() {
         return null;
     }
 
@@ -209,7 +230,7 @@ public abstract class Patch {
     }
 
     /**
-     * Returns a list of paths where your mod stores IDs in your {@link org.betterx.wover.state.api.WorldConfig}-File.
+     * Returns a list of paths where your mod stores IDs in your {@link de.ambertation.wover.state.api.WorldConfig}-File.
      * <p>
      * {@link DataFixerAPI} will use information from the latest patch that returns a non-null-result. This list is used
      * to automatically fix changed IDs from all active patches (see {@link Patch#getIDReplacements()}
@@ -236,8 +257,8 @@ public abstract class Patch {
      * if the leaf-entry is a {@link net.minecraft.nbt.ListTag}, it is handle the same as a child <i>items</i> entry
      * of a {@link CompoundTag}.
      *
-     * @return {@code null} if nothing changes or a list of Paths in your {@link org.betterx.wover.state.api.WorldConfig}-File.
-     * Paths are dot-seperated (see {@link org.betterx.wover.state.api.WorldConfig#getCompoundTag(ModCore, String)}).
+     * @return {@code null} if nothing changes or a list of Paths in your {@link de.ambertation.wover.state.api.WorldConfig}-File.
+     * Paths are dot-seperated (see {@link de.ambertation.wover.state.api.WorldConfig#getCompoundTag(ModCore, String)}).
      */
     public List<String> getWorldDataIDPaths() {
         return null;

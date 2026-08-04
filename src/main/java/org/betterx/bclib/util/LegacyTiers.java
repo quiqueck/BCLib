@@ -1,6 +1,6 @@
 package org.betterx.bclib.util;
 
-import org.betterx.wover.tag.api.predefined.MineableTags;
+import de.ambertation.wover.tag.api.predefined.MineableTags;
 
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;

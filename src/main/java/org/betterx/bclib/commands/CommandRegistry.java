@@ -1,7 +1,7 @@
 package org.betterx.bclib.commands;
 
 import org.betterx.bclib.util.BlocksHelper;
-import org.betterx.wover.tag.api.predefined.CommonBlockTags;
+import de.ambertation.wover.tag.api.predefined.CommonBlockTags;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;

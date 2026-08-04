@@ -29,9 +29,6 @@ java {
     withSourcesJar()
 }
 
-def local_wunderlib = findProject(':wunderlib') != null
-def local_wover = findProject(':WorldWeaver') != null
-
 loom {
     accessWidenerPath = file("src/main/resources/bclib.accesswidener")
     runs {
@@ -47,7 +44,7 @@ loom {
             runDir "build/datagen"
         }
     }
-    if (local_wover || local_wunderlib) {
+    if (findProject(':WorldWeaver') != null || findProject(':wunderlib') != null) {
         enableTransitiveAccessWideners = true
     }
 }
@@ -76,19 +73,19 @@ dependencies {
 //    modCompileOnly "dev.emi:emi-fabric:${emi_version}:api"
 //    modLocalRuntime "dev.emi:emi-fabric:${emi_version}"
 
-    println "Using local WunderLib: ${local_wunderlib}"
-    if (local_wunderlib) {
-        implementation project(path: ":wunderlib", configuration: 'dev')
-    } else if (local_wover) {
-        modImplementation "de.ambertation:wunderlib:${project.wunderlib_version}"
-    }
+    // alsoInclude=false: BCLib doesn't bundle wunderlib into its own jar,
+    // just needs it on the classpath (same as WorldWeaver's own submodules).
+    gradle.modApiOrLocal(dependencies, ':wunderlib', "de.ambertation:wunderlib:${project.wunderlib_version}", false)
 
-    println "Using local WorldWeaver: ${local_wover}"
-    if (local_wover) {
+    if (findProject(':WorldWeaver') != null) {
         implementation project(path: ":WorldWeaver", configuration: 'localDev')
 
         gradle.knownWoverModules.each {
             implementation project(path: ":WorldWeaver:$it", configuration: 'dev')
+            // BCLib doesn't split its own client/common sources, so its single sourceSet needs each
+            // wover module's client output too (WorldWeaver itself now enforces the split - see
+            // common.gradle's devClient configuration).
+            implementation project(path: ":WorldWeaver:$it", configuration: 'devClient')
         }
     } else {
         modImplementation "org.betterx:worldweaver:${project.wover_version}"

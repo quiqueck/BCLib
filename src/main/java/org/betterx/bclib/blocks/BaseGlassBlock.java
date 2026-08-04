@@ -1,58 +1,26 @@
 package org.betterx.bclib.blocks;
 
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.block.TransparentBlock;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-public class BaseGlassBlock extends BaseBlockNotFull {
-    public BaseGlassBlock(Block block) {
-        this(block, 0.3f);
-    }
-
-    public BaseGlassBlock(Block block, float resistance) {
-        super(Properties.ofFullCopy(block)
-                        .explosionResistance(resistance)
-                        .noOcclusion()
-                        .isSuffocating((arg1, arg2, arg3) -> false)
-                        .isViewBlocking((arg1, arg2, arg3) -> false));
-    }
-
-    /**
-     * Threads an already-configured (id-bearing) {@link Properties} through to the block instead of
-     * building a fresh (id-less) one from a template block.
-     */
-    public BaseGlassBlock(Properties settings, float resistance) {
-        super(settings
-                .explosionResistance(resistance)
-                .noOcclusion()
-                .isSuffocating((arg1, arg2, arg3) -> false)
-                .isViewBlocking((arg1, arg2, arg3) -> false));
-    }
-
-    @Environment(EnvType.CLIENT)
-    public float getShadeBrightness(BlockState state, BlockGetter view, BlockPos pos) {
-        return 1.0F;
-    }
-
-    @Override
-    protected boolean propagatesSkylightDown(BlockState blockState) {
-        return true;
-    }
-
-    @Environment(EnvType.CLIENT)
-    public boolean skipRendering(BlockState state, BlockState neighbor, Direction facing) {
-        return neighbor.getBlock() == this || super.skipRendering(state, neighbor, facing);
+/**
+ * A translucent, non-occluding full-cube glass block.
+ * <p>
+ * Extends vanilla {@link TransparentBlock} (the same class {@code GlassBlock}/{@code StainedGlassBlock}
+ * derive from), which supplies all of the glass rendering behaviour that used to be hand-written here:
+ * full shade brightness, skylight propagation, same-block face culling ({@code skipRendering}) and an
+ * empty visual shape. The translucent render layer and silk-touch loot are supplied by traits at the
+ * registration site.
+ * <p>
+ * The constructors used to mutate the incoming {@code Properties} (an R1 violation) and applied only three
+ * of vanilla glass's five property calls, which is what let {@code isRedstoneConductor}/{@code isValidSpawn}
+ * leak in from whatever parent block the properties were copied from. The whole recipe - resistance
+ * included - now lives in {@link org.betterx.bclib.trait.block.GlassBlockTrait}, applied at the definition
+ * site. What is left here adds nothing to {@link TransparentBlock} beyond a distinct class name in the
+ * block-properties report, and is a candidate for deletion in its own right.
+ */
+public class BaseGlassBlock extends TransparentBlock {
+    public BaseGlassBlock(Properties settings) {
+        super(settings);
     }
 }

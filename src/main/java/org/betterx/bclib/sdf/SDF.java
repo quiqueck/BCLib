@@ -8,6 +8,7 @@ import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.AABB;
 
 import com.google.common.collect.Lists;
@@ -38,6 +39,19 @@ public abstract class SDF {
     }
 
     public void fillRecursive(ServerLevelAccessor world, BlockPos start) {
+        fillRecursive(world, start, null);
+    }
+
+    /**
+     * @param writeBounds when non-null, the flood-fill neither reads nor propagates through world positions
+     *                    outside these bounds - an unbounded flood only ever explores through
+     *                    {@code canReplace} positions inside the SDF's own shape, but during worldgen that
+     *                    shape can still reach past the chunks a feature may touch (a tilted/tall SDF, a
+     *                    generous {@code canReplace}), which is exactly what triggers
+     *                    {@code WorldGenRegion}'s "unsafe terrain read" warning. Passing {@code null}
+     *                    restores the original unbounded behavior.
+     */
+    public void fillRecursive(ServerLevelAccessor world, BlockPos start, BoundingBox writeBounds) {
         Map<BlockPos, PosInfo> mapWorld = Maps.newHashMap();
         Map<BlockPos, PosInfo> addInfo = Maps.newHashMap();
         Set<BlockPos> blocks = Sets.newHashSet();
@@ -53,6 +67,9 @@ public abstract class SDF {
                 for (Direction dir : Direction.values()) {
                     bPos.set(center).move(dir);
                     BlockPos wpos = bPos.offset(start);
+                    if (writeBounds != null && !writeBounds.isInside(wpos)) {
+                        continue;
+                    }
 
                     if (!blocks.contains(bPos) && canReplace.apply(world.getBlockState(wpos))) {
                         if (this.getDistance(bPos.getX(), bPos.getY(), bPos.getZ()) < 0) {
@@ -150,6 +167,21 @@ public abstract class SDF {
     }
 
     public void fillRecursiveIgnore(ServerLevelAccessor world, BlockPos start, Function<BlockState, Boolean> ignore) {
+        fillRecursiveIgnore(world, start, null, ignore);
+    }
+
+    /**
+     * @param writeBounds when non-null, the flood-fill neither reads nor propagates through world positions
+     *                    outside these bounds - see {@link #fillRecursive(ServerLevelAccessor, BlockPos,
+     *                    BoundingBox)} for why an unbounded flood is unsafe during worldgen. Passing
+     *                    {@code null} restores the original unbounded behavior.
+     */
+    public void fillRecursiveIgnore(
+            ServerLevelAccessor world,
+            BlockPos start,
+            BoundingBox writeBounds,
+            Function<BlockState, Boolean> ignore
+    ) {
         Map<BlockPos, PosInfo> mapWorld = Maps.newHashMap();
         Map<BlockPos, PosInfo> addInfo = Maps.newHashMap();
         Set<BlockPos> blocks = Sets.newHashSet();
@@ -165,6 +197,9 @@ public abstract class SDF {
                 for (Direction dir : Direction.values()) {
                     bPos.set(center).move(dir);
                     BlockPos wpos = bPos.offset(start);
+                    if (writeBounds != null && !writeBounds.isInside(wpos)) {
+                        continue;
+                    }
                     BlockState state = world.getBlockState(wpos);
                     boolean ign = ignore.apply(state);
                     if (!blocks.contains(bPos) && (ign || canReplace.apply(state))) {

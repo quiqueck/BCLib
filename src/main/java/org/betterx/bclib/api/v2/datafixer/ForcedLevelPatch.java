@@ -3,7 +3,7 @@ package org.betterx.bclib.api.v2.datafixer;
 import de.ambertation.wunderlib.utils.Version;
 import org.betterx.bclib.interfaces.PatchBiFunction;
 import org.betterx.bclib.interfaces.PatchFunction;
-import org.betterx.wover.core.api.ModCore;
+import de.ambertation.wover.core.api.ModCore;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;

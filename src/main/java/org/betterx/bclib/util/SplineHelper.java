@@ -4,12 +4,15 @@ import org.betterx.bclib.sdf.SDF;
 import org.betterx.bclib.sdf.operator.SDFUnion;
 import org.betterx.bclib.sdf.primitive.SDFLine;
 
+import de.ambertation.wover.feature.api.WriteZone;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
 import com.google.common.collect.Lists;
 import org.joml.Vector3f;
@@ -55,6 +58,54 @@ public class SplineHelper {
         float y = Mth.lerp(delta, start.y(), end.y());
         float z = Mth.lerp(delta, start.z(), end.z());
         return new Vector3f(x, y, z);
+    }
+
+    /**
+     * A copy of {@code spline} shortened so that a tube of {@code radius} around it stays inside
+     * {@code fitTo}.
+     * <p>
+     * Where a {@code writeBounds} argument <em>clips</em> - it silently drops whatever falls outside, so a
+     * branch that runs past the 3x3 chunks a feature may touch ends on a flat plane - this <em>fits</em>:
+     * the last point that still has room is pulled back along its own segment, and everything past it is
+     * dropped. {@link WriteZone#fitSegment} only ever shortens, never re-aims, so a radial fan of branches
+     * keeps its angles and loses length only on the side that has no room.
+     * <p>
+     * The result may be a single point, when even the start has no room; {@link #fillSpline} and
+     * {@link #fillSplineForce} then draw nothing, which is the honest answer. {@code spline} itself is
+     * returned unchanged (not copied) when there is nothing to fit, and is never modified.
+     *
+     * @param origin the block the spline's coordinates are relative to, same as for {@link #fillSpline}
+     * @param radius half-width of the geometry drawn around the spline; {@code 0} for a plain fill
+     */
+    public static List<Vector3f> fitSpline(
+            List<Vector3f> spline,
+            BlockPos origin,
+            WriteZone fitTo,
+            float radius
+    ) {
+        if (fitTo == null || fitTo.isUnbounded() || spline.isEmpty()) {
+            return spline;
+        }
+        final List<Vector3f> result = new ArrayList<>(spline.size());
+        Vector3f start = spline.get(0);
+        result.add(new Vector3f(start));
+        for (int i = 1; i < spline.size(); i++) {
+            final Vector3f end = spline.get(i);
+            final Vector3f fitted = fitTo.fitSegment(start, end, origin, radius);
+            if (fitted.equals(end)) {
+                result.add(fitted);
+                start = end;
+                continue;
+            }
+            // Truncated: keep the shortened segment if it is long enough to be worth drawing - a
+            // zero-length one would divide by zero in fillLine - and stop, since everything past it is
+            // outside as well.
+            if (fitted.distanceSquared(start) > 1.0E-4F) {
+                result.add(fitted);
+            }
+            break;
+        }
+        return result;
     }
 
     public static void offsetParts(List<Vector3f> spline, RandomSource random, float dx, float dy, float dz) {
@@ -131,16 +182,53 @@ public class SplineHelper {
             BlockPos pos,
             Function<BlockState, Boolean> replace
     ) {
+        return fillSpline(spline, world, state, pos, replace, null);
+    }
+
+    /**
+     * @param writeBounds when non-null, positions outside these bounds are skipped entirely (neither read
+     *                    nor written) instead of counting as "can't place here" - a branch that runs past
+     *                    the 3x3 chunks a feature may touch would otherwise abort at the boundary (or read
+     *                    unloaded terrain to decide), even though nothing out there could ever have been
+     *                    written anyway. Passing {@code null} restores the original unbounded behavior.
+     */
+    public static boolean fillSpline(
+            List<Vector3f> spline,
+            WorldGenLevel world,
+            BlockState state,
+            BlockPos pos,
+            Function<BlockState, Boolean> replace,
+            BoundingBox writeBounds
+    ) {
         Vector3f startPos = spline.get(0);
         for (int i = 1; i < spline.size(); i++) {
             Vector3f endPos = spline.get(i);
-            if (!(fillLine(startPos, endPos, world, state, pos, replace))) {
+            if (!(fillLine(startPos, endPos, world, state, pos, replace, writeBounds))) {
                 return false;
             }
             startPos = endPos;
         }
 
         return true;
+    }
+
+    /**
+     * @param fitTo when non-null, the spline is shortened to what fits inside the zone (see
+     *              {@link #fitSpline}) before it is drawn, instead of being cut off at the wall by
+     *              {@code writeBounds}. Keep passing {@code writeBounds} as well: it stays the safety net
+     *              for the block or two a rounding step can still push out. Passing {@code null} restores
+     *              the plain clipping behavior.
+     */
+    public static boolean fillSpline(
+            List<Vector3f> spline,
+            WorldGenLevel world,
+            BlockState state,
+            BlockPos pos,
+            Function<BlockState, Boolean> replace,
+            BoundingBox writeBounds,
+            WriteZone fitTo
+    ) {
+        return fillSpline(fitSpline(spline, pos, fitTo, 0), world, state, pos, replace, writeBounds);
     }
 
     public static void fillSplineForce(
@@ -150,10 +238,44 @@ public class SplineHelper {
             BlockPos pos,
             Function<BlockState, Boolean> replace
     ) {
+        fillSplineForce(spline, world, state, pos, replace, null);
+    }
+
+    /**
+     * @param fitTo when non-null, the spline is shortened to what fits inside the zone (see
+     *              {@link #fitSpline}) before it is drawn - see
+     *              {@link #fillSpline(List, WorldGenLevel, BlockState, BlockPos, Function, BoundingBox,
+     *              WriteZone)}.
+     */
+    public static void fillSplineForce(
+            List<Vector3f> spline,
+            WorldGenLevel world,
+            BlockState state,
+            BlockPos pos,
+            Function<BlockState, Boolean> replace,
+            BoundingBox writeBounds,
+            WriteZone fitTo
+    ) {
+        fillSplineForce(fitSpline(spline, pos, fitTo, 0), world, state, pos, replace, writeBounds);
+    }
+
+    /**
+     * @param writeBounds when non-null, positions outside these bounds are skipped entirely - see
+     *                    {@link #fillSpline(List, WorldGenLevel, BlockState, BlockPos, Function,
+     *                    BoundingBox)}. Passing {@code null} restores the original unbounded behavior.
+     */
+    public static void fillSplineForce(
+            List<Vector3f> spline,
+            WorldGenLevel world,
+            BlockState state,
+            BlockPos pos,
+            Function<BlockState, Boolean> replace,
+            BoundingBox writeBounds
+    ) {
         Vector3f startPos = spline.get(0);
         for (int i = 1; i < spline.size(); i++) {
             Vector3f endPos = spline.get(i);
-            fillLineForce(startPos, endPos, world, state, pos, replace);
+            fillLineForce(startPos, endPos, world, state, pos, replace, writeBounds);
             startPos = endPos;
         }
     }
@@ -165,6 +287,23 @@ public class SplineHelper {
             BlockState state,
             BlockPos pos,
             Function<BlockState, Boolean> replace
+    ) {
+        return fillLine(start, end, world, state, pos, replace, null);
+    }
+
+    /**
+     * @param writeBounds when non-null, positions outside these bounds are skipped entirely - see
+     *                    {@link #fillSpline(List, WorldGenLevel, BlockState, BlockPos, Function,
+     *                    BoundingBox)}. Passing {@code null} restores the original unbounded behavior.
+     */
+    public static boolean fillLine(
+            Vector3f start,
+            Vector3f end,
+            WorldGenLevel world,
+            BlockState state,
+            BlockPos pos,
+            Function<BlockState, Boolean> replace,
+            BoundingBox writeBounds
     ) {
         float dx = end.x() - start.x();
         float dy = end.y() - start.y();
@@ -183,22 +322,27 @@ public class SplineHelper {
         MutableBlockPos bPos = new MutableBlockPos();
         for (int i = 0; i < count; i++) {
             bPos.set(x + pos.getX(), y + pos.getY(), z + pos.getZ());
-            bState = world.getBlockState(bPos);
-            if (bState.equals(state) || replace.apply(bState)) {
-                BlocksHelper.setWithoutUpdate(world, bPos, state);
-                bPos.setY(bPos.getY() - 1);
+            if (writeBounds == null || writeBounds.isInside(bPos)) {
                 bState = world.getBlockState(bPos);
-                if (down && bState.equals(state) || replace.apply(bState)) {
+                if (bState.equals(state) || replace.apply(bState)) {
                     BlocksHelper.setWithoutUpdate(world, bPos, state);
+                    bPos.setY(bPos.getY() - 1);
+                    bState = world.getBlockState(bPos);
+                    if (down && bState.equals(state) || replace.apply(bState)) {
+                        BlocksHelper.setWithoutUpdate(world, bPos, state);
+                    }
+                } else {
+                    return false;
                 }
-            } else {
-                return false;
             }
             x += dx;
             y += dy;
             z += dz;
         }
         bPos.set(end.x() + pos.getX(), end.y() + pos.getY(), end.z() + pos.getZ());
+        if (writeBounds != null && !writeBounds.isInside(bPos)) {
+            return true;
+        }
         bState = world.getBlockState(bPos);
         if (bState.equals(state) || replace.apply(bState)) {
             BlocksHelper.setWithoutUpdate(world, bPos, state);
@@ -221,6 +365,23 @@ public class SplineHelper {
             BlockPos pos,
             Function<BlockState, Boolean> replace
     ) {
+        fillLineForce(start, end, world, state, pos, replace, null);
+    }
+
+    /**
+     * @param writeBounds when non-null, positions outside these bounds are skipped entirely - see
+     *                    {@link #fillSpline(List, WorldGenLevel, BlockState, BlockPos, Function,
+     *                    BoundingBox)}. Passing {@code null} restores the original unbounded behavior.
+     */
+    public static void fillLineForce(
+            Vector3f start,
+            Vector3f end,
+            WorldGenLevel world,
+            BlockState state,
+            BlockPos pos,
+            Function<BlockState, Boolean> replace,
+            BoundingBox writeBounds
+    ) {
         float dx = end.x() - start.x();
         float dy = end.y() - start.y();
         float dz = end.z() - start.z();
@@ -238,13 +399,15 @@ public class SplineHelper {
         MutableBlockPos bPos = new MutableBlockPos();
         for (int i = 0; i < count; i++) {
             bPos.set(x + pos.getX(), y + pos.getY(), z + pos.getZ());
-            bState = world.getBlockState(bPos);
-            if (replace.apply(bState)) {
-                BlocksHelper.setWithoutUpdate(world, bPos, state);
-                bPos.setY(bPos.getY() - 1);
+            if (writeBounds == null || writeBounds.isInside(bPos)) {
                 bState = world.getBlockState(bPos);
-                if (down && replace.apply(bState)) {
+                if (replace.apply(bState)) {
                     BlocksHelper.setWithoutUpdate(world, bPos, state);
+                    bPos.setY(bPos.getY() - 1);
+                    bState = world.getBlockState(bPos);
+                    if (down && replace.apply(bState)) {
+                        BlocksHelper.setWithoutUpdate(world, bPos, state);
+                    }
                 }
             }
             x += dx;
@@ -252,6 +415,9 @@ public class SplineHelper {
             z += dz;
         }
         bPos.set(end.x() + pos.getX(), end.y() + pos.getY(), end.z() + pos.getZ());
+        if (writeBounds != null && !writeBounds.isInside(bPos)) {
+            return;
+        }
         bState = world.getBlockState(bPos);
         if (replace.apply(bState)) {
             BlocksHelper.setWithoutUpdate(world, bPos, state);
@@ -269,6 +435,23 @@ public class SplineHelper {
             BlockPos start,
             WorldGenLevel world,
             Function<BlockState, Boolean> canReplace
+    ) {
+        return canGenerate(spline, scale, start, world, canReplace, null);
+    }
+
+    /**
+     * @param writeBounds when non-null, sample points outside these bounds are skipped (treated as
+     *                    passable) instead of being read - see {@link #canGenerate(List, BlockPos,
+     *                    WorldGenLevel, Function, BoundingBox)}. Passing {@code null} restores the original
+     *                    unbounded behavior.
+     */
+    public static boolean canGenerate(
+            List<Vector3f> spline,
+            float scale,
+            BlockPos start,
+            WorldGenLevel world,
+            Function<BlockState, Boolean> canReplace,
+            BoundingBox writeBounds
     ) {
         int count = spline.size();
         Vector3f vec = spline.get(0);
@@ -288,6 +471,7 @@ public class SplineHelper {
                 float x = Mth.lerp(lerp, x1, x2);
                 float z = Mth.lerp(lerp, z1, z2);
                 mut.set(x, py, z);
+                if (writeBounds != null && !writeBounds.isInside(mut)) continue;
                 if (!canReplace.apply(world.getBlockState(mut))) {
                     return false;
                 }
@@ -305,6 +489,23 @@ public class SplineHelper {
             BlockPos start,
             WorldGenLevel world,
             Function<BlockState, Boolean> canReplace
+    ) {
+        return canGenerate(spline, start, world, canReplace, null);
+    }
+
+    /**
+     * @param writeBounds when non-null, sample points outside these bounds are skipped (treated as
+     *                    passable) instead of being read - a branch spline can run past the 3x3 chunks a
+     *                    feature may touch, and reading unloaded terrain out there to decide "can this
+     *                    generate" is exactly the unsafe worldgen read this parameter avoids. Passing
+     *                    {@code null} restores the original unbounded behavior.
+     */
+    public static boolean canGenerate(
+            List<Vector3f> spline,
+            BlockPos start,
+            WorldGenLevel world,
+            Function<BlockState, Boolean> canReplace,
+            BoundingBox writeBounds
     ) {
         int count = spline.size();
         Vector3f vec = spline.get(0);
@@ -324,6 +525,7 @@ public class SplineHelper {
                 float x = Mth.lerp(lerp, x1, x2);
                 float z = Mth.lerp(lerp, z1, z2);
                 mut.set(x, py, z);
+                if (writeBounds != null && !writeBounds.isInside(mut)) continue;
                 if (!canReplace.apply(world.getBlockState(mut))) {
                     return false;
                 }

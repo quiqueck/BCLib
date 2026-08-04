@@ -4,9 +4,9 @@ import org.betterx.bclib.BCLib;
 import org.betterx.bclib.interfaces.AlloyingRecipeWorkstation;
 import org.betterx.bclib.interfaces.UnknownReceipBookCategory;
 import org.betterx.bclib.util.ItemStackCodec;
-import org.betterx.wover.item.api.ItemStackHelper;
-import org.betterx.wover.recipe.api.BaseRecipeBuilder;
-import org.betterx.wover.recipe.api.BaseUnlockableRecipeBuilder;
+import de.ambertation.wover.item.api.ItemStackHelper;
+import de.ambertation.wover.recipe.api.BaseRecipeBuilder;
+import de.ambertation.wover.recipe.api.BaseUnlockableRecipeBuilder;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -210,7 +210,7 @@ public class AlloyingRecipe implements Recipe<AlloyingRecipeInput>, UnknownRecei
 
         @Override
         protected AlloyingRecipe createRecipe(
-                org.betterx.wover.recipe.api.RecipeBuilder.Context ctx
+                de.ambertation.wover.recipe.api.RecipeBuilder.Context ctx
         ) {
 
             return new AlloyingRecipe(

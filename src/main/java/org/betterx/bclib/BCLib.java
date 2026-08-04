@@ -1,5 +1,6 @@
 package org.betterx.bclib;
 
+import org.betterx.bclib.api.v2.FuelValueRegistration;
 import org.betterx.bclib.api.v2.levelgen.LevelGenEvents;
 import org.betterx.bclib.api.v2.levelgen.structures.TemplatePiece;
 import org.betterx.bclib.api.v3.tag.BCLBlockTags;
@@ -13,11 +14,11 @@ import org.betterx.bclib.registry.BaseBlockEntities;
 import org.betterx.bclib.util.BCLDataComponents;
 import org.betterx.datagen.bclib.worldgen.BCLAutoBlockTagProvider;
 import org.betterx.datagen.bclib.worldgen.BCLAutoItemTagProvider;
-import org.betterx.wover.core.api.Logger;
-import org.betterx.wover.core.api.ModCore;
-import org.betterx.wover.datagen.api.WoverDataGenEntryPoint;
-import org.betterx.wover.state.api.WorldConfig;
-import org.betterx.wover.ui.api.VersionChecker;
+import de.ambertation.wover.core.api.Logger;
+import de.ambertation.wover.core.api.ModCore;
+import de.ambertation.wover.datagen.api.WoverDataGenEntryPoint;
+import de.ambertation.wover.state.api.WorldConfig;
+import de.ambertation.wover.ui.api.VersionChecker;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
@@ -43,6 +44,7 @@ public class BCLib implements ModInitializer {
     @Override
     public void onInitialize() {
         BCLibArguments.register();
+        FuelValueRegistration.register();
         LevelGenEvents.register();
         BCLDataComponents.ensureStaticInitialization();
         BaseBlockEntities.register();

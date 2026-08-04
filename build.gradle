@@ -7,4 +7,19 @@ plugins {
 }
 
 apply from: "bclib.gradle"
-apply from: "helper.gradle"
+apply from: "common-helper.gradle"
+apply from: "common-publish-maven.gradle"
+apply from: "common-publish-tag.gradle"
+
+// BCLib doesn't bundle WorldWeaver into its own jar (unlike WorldWeaver's own
+// aggregator, which embeds its wover-* submodules) - it's a genuine external
+// runtime dependency, so downstream consumers of BCLib's maven artifact need
+// it declared in the POM.
+publishing.publications.mavenJava.pom.withXml {
+    def dependenciesNode = asNode().appendNode('dependencies')
+    def woverNode = dependenciesNode.appendNode('dependency')
+    woverNode.appendNode('artifactId', "worldweaver")
+    woverNode.appendNode('groupId', "org.betterx")
+    woverNode.appendNode('version', project.wover_version)
+    woverNode.appendNode('scope', 'compile')
+}

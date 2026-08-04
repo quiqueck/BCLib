@@ -2,7 +2,8 @@ package org.betterx.bclib.mixin.common;
 
 import org.betterx.bclib.trait.block.SurvivesOnBlockTrait;
 import org.betterx.bclib.trait.block.SurvivesOnSolidTrait;
-import org.betterx.wover.block.api.trait.BlockTrait;
+import org.betterx.bclib.util.BlocksHelper;
+import de.ambertation.wover.block.api.trait.BlockTrait;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -39,7 +40,12 @@ public class VegetationBlockMixin {
         if (hasBlockTrait || hasSolidTrait) {
             final boolean canPlace =
                     (hasBlockTrait && SurvivesOnBlockTrait.survivesOn(self, groundState))
-                            || (hasSolidTrait && groundState.isFaceSturdy(getter, pos, Direction.UP));
+                            || (hasSolidTrait && BlocksHelper.isDecorationSupport(
+                            getter,
+                            pos,
+                            groundState,
+                            Direction.UP
+                    ));
             cir.setReturnValue(canPlace);
         }
     }

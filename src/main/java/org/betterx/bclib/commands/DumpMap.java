@@ -1,7 +1,7 @@
 package org.betterx.bclib.commands;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.wover.state.api.WorldState;
+import de.ambertation.wover.state.api.WorldState;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;

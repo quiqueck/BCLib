@@ -8,57 +8,45 @@ pluginManagement {
     }
 }
 
+apply from: "common-settings.gradle"
+
 // #### Custom Settings ####
 
-// Change the next line to disable local lib loading
+// Change the next line to disable local lib loading, even if the sibling folders exist
 def allowLocalLibUse = true
 
-//When true, the local lib is also used in commandline builds
-def allowLocalLibInConsoleMode = false
-
-//The path were to look for the local BCLib
-def WunderLibPath = '../WunderLib'
 def WoverPath = '../WorldWeaver'
 
-
 // #### Logic ####
-def isIDE = properties.containsKey('android.injected.invoked.from.ide')
-        || (System.getenv("XPC_SERVICE_NAME") ?: "").contains("intellij")
-        || (System.getenv("XPC_SERVICE_NAME") ?: "").contains(".idea")
-        || System.getenv("IDEA_INITIAL_DIRECTORY") != null
+includeLocalLib('wunderlib', '../WunderLib', './wunderlib-composit.gradle', allowLocalLibUse)
 
-println "IntelliJ: ${isIDE}"
-
-def WunderLibFolder = new File(WunderLibPath)
 def WoverFolder = new File(WoverPath)
-if (allowLocalLibUse && (isIDE || allowLocalLibInConsoleMode) && WunderLibFolder.exists()) {
-    println "Using local WunderLib from '${WunderLibFolder}'"
-
-    include ':wunderlib'
-    project(":wunderlib").projectDir = WunderLibFolder
-    project(':wunderlib').buildFileName = './wunderlib-composit.gradle'
-}
-
-def WoverModuleFile = new File("./wover-include.gradle")
-apply from: WoverModuleFile
-gradle.ext.set("knownWoverModules", ext.knownWoverModules)
-
-
-if (allowLocalLibUse && (isIDE || allowLocalLibInConsoleMode) && WoverFolder.exists()) {
-    println "!! Using local WorldWeaver from '${WoverFolder}'"
+if (allowLocalLibUse && WoverFolder.exists()) {
+    println "Using local WorldWeaver from '${WoverFolder}'"
+    println "If you do not want to load the local version of WorldWeaver"
+    println "either rename the folder containing it to something else,"
+    println "or set 'allowLocalLibUse' to false."
 
     include ':WorldWeaver'
     project(":WorldWeaver").projectDir = WoverFolder
     project(':WorldWeaver').buildFileName = './build.composit.gradle'
 
+    // Read WorldWeaver's own module list directly instead of keeping a
+    // separate copy here - the old copy (wover-include.gradle) had drifted
+    // out of sync with WorldWeaver's real list (missing wover-pottable-api,
+    // and wrongly listing 'wunderlib' as if it were a WorldWeaver module).
+    apply from: WoverFolder.toPath().resolve("module-include.gradle").toFile()
+    gradle.ext.set("knownWoverModules", ext.knownWoverModules)
+
     ext.knownWoverModules.each { module ->
-        def fullName = ":WorldWeaver:${module}";
-        def path = WoverFolder.toPath().resolve(module).toFile();
+        def fullName = ":WorldWeaver:${module}"
+        def path = WoverFolder.toPath().resolve(module).toFile()
 
         include fullName
         project(fullName).name = module
 
-        print(project(fullName).parent)
         println "Including module ${module} from ${path}"
     }
+} else if (allowLocalLibUse) {
+    logger.warn("WARNING: allowLocalLibUse is enabled but '${WoverFolder}' was not found - building against the published org.betterx:worldweaver Maven artifact instead.")
 }

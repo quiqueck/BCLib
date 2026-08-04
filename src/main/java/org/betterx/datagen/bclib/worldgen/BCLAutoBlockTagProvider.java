@@ -1,23 +1,20 @@
 package org.betterx.datagen.bclib.worldgen;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.interfaces.Fuel;
-import org.betterx.wover.block.api.BlockRegistry;
-import org.betterx.wover.core.api.ModCore;
-import org.betterx.wover.datagen.api.WoverAutoProvider;
-import org.betterx.wover.datagen.api.WoverTagProvider;
-import org.betterx.wover.tag.api.TagRegistry;
-import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
-import org.betterx.wover.tag.api.event.context.TagElementWrapper;
-import org.betterx.wover.tag.api.predefined.MineableTags;
+import de.ambertation.wover.block.api.BlockRegistry;
+import de.ambertation.wover.core.api.ModCore;
+import de.ambertation.wover.datagen.api.WoverAutoProvider;
+import de.ambertation.wover.datagen.api.WoverTagProvider;
+import de.ambertation.wover.tag.api.TagRegistry;
+import de.ambertation.wover.tag.api.event.context.TagBootstrapContext;
+import de.ambertation.wover.tag.api.event.context.TagElementWrapper;
+import de.ambertation.wover.tag.api.predefined.MineableTags;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
-
-import net.fabricmc.fabric.api.registry.FuelRegistryEvents;
 
 import java.util.HashSet;
 import java.util.List;
@@ -49,7 +46,7 @@ public class BCLAutoBlockTagProvider extends WoverTagProvider.ForBlocks implemen
     /**
      * Records which blocks of a {@link BlockRegistry} declared one of the {@link #TOOL_TAGS} when they were
      * registered - i.e. through {@code BlockDefinition.addTags(...)}, whether that call came from a
-     * {@link org.betterx.wover.block.api.trait.BlockTraits#MINEABLE_WITH} trait's {@code configure()}, from a
+     * {@link de.ambertation.wover.block.api.trait.BlockTraits#MINEABLE_WITH} trait's {@code configure()}, from a
      * plain {@code addTags(BlockTags.MINEABLE_WITH_AXE)}, or from a {@code BlockTagProvider}.
      * <p>
      * This is a throw-away {@link TagBootstrapContext} that only collects: it is handed to the registry's
@@ -163,9 +160,9 @@ public class BCLAutoBlockTagProvider extends WoverTagProvider.ForBlocks implemen
             Block block,
             DeclaredTools declaredTools
     ) {
-        if (block instanceof Fuel fl) {
-            FuelRegistryEvents.BUILD.register((builder, fuelContext) -> builder.add(block, fl.getFuelTime()));
-        }
+        // Fuel registration used to live here, but this method is only reachable from prepareTags, i.e. it
+        // only ever ran during a datagen run and never in a real game - so it had no runtime effect. It now
+        // lives in org.betterx.bclib.api.v2.FuelValueRegistration, registered from BCLib#onInitialize.
 
         final ResourceLocation location = BuiltInRegistries.BLOCK.getKey(block);
         if (!location.getNamespace().equals("minecraft")) {

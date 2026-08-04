@@ -3,7 +3,7 @@ package org.betterx.bclib.integration.emi;
 //import org.betterx.bclib.BCLib;
 //import org.betterx.bclib.blocks.LeveledAnvilBlock;
 //import org.betterx.bclib.interfaces.AlloyingRecipeWorkstation;
-//import org.betterx.wover.core.api.Logger;
+//import de.ambertation.wover.core.api.Logger;
 //
 //import net.minecraft.resources.ResourceLocation;
 //import net.minecraft.world.item.crafting.*;
@@ -121,7 +121,7 @@ package org.betterx.bclib.integration.emi;
 //    public static <C extends RecipeInput, T extends Recipe<C>, E extends EmiRecipe> void addAllRecipes(
 //            EmiRegistry emiRegistry,
 //            RecipeManager manager,
-//            org.betterx.wover.core.api.Logger logger,
+//            de.ambertation.wover.core.api.Logger logger,
 //            RecipeType<T> recipeType,
 //            Function<RecipeHolder<T>, E> createRecipe
 //    ) {

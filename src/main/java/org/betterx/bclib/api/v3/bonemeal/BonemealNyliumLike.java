@@ -1,6 +1,6 @@
 package org.betterx.bclib.api.v3.bonemeal;
 
-import org.betterx.wover.feature.api.FeatureUtils;
+import de.ambertation.wover.feature.api.FeatureUtils;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;

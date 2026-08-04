@@ -21,7 +21,6 @@ public class BCLibClient implements ClientModInitializer {
         DataExchangeAPI.prepareClientside();
         PostInitAPI.postInit(true);
 
-        AtlasSetManager.addSource(AtlasSetManager.VANILLA_BLOCKS, new DirectoryLister("entity/chest", "entity/chest/"));
         AtlasSetManager.addSource(AtlasSetManager.VANILLA_BLOCKS, new DirectoryLister("blocks", "blocks/"));
     }
 

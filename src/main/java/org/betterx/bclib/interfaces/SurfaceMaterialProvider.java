@@ -1,10 +1,10 @@
 package org.betterx.bclib.interfaces;
 
-import org.betterx.wover.biome.api.data.BiomeData;
-import org.betterx.wover.biome.api.data.BiomeDataRegistry;
-import org.betterx.wover.state.api.WorldState;
-import org.betterx.wover.surface.api.SurfaceRuleBuilder;
-import org.betterx.wover.tag.api.event.context.TagBootstrapContext;
+import de.ambertation.wover.biome.api.data.BiomeData;
+import de.ambertation.wover.biome.api.data.BiomeDataRegistry;
+import de.ambertation.wover.state.api.WorldState;
+import de.ambertation.wover.surface.api.SurfaceRuleBuilder;
+import de.ambertation.wover.tag.api.event.context.TagBootstrapContext;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;

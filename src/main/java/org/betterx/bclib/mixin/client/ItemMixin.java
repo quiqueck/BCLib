@@ -1,6 +1,7 @@
 package org.betterx.bclib.mixin.client;
 
 import org.betterx.bclib.trait.block.SurvivesOnBlockTrait;
+import org.betterx.bclib.trait.block.SurvivesOnSolidTrait;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
@@ -32,6 +33,7 @@ public class ItemMixin {
         // tooltip.
         if (itemStack.getItem() instanceof BlockItem blockItem) {
             SurvivesOnBlockTrait.appendHoverText(blockItem.getBlock(), consumer);
+            SurvivesOnSolidTrait.appendHoverText(blockItem.getBlock(), consumer);
         }
     }
 }

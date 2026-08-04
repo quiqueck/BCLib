@@ -2,10 +2,10 @@ package org.betterx.bclib.util;
 
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.interfaces.LootPoolAccessor;
-import org.betterx.wover.tag.api.TagManager;
-import org.betterx.wover.tag.api.predefined.CommonItemTags;
-import org.betterx.wover.tag.api.predefined.MineableTags;
-import org.betterx.wover.tag.api.predefined.ToolTags;
+import de.ambertation.wover.tag.api.TagManager;
+import de.ambertation.wover.tag.api.predefined.CommonItemTags;
+import de.ambertation.wover.tag.api.predefined.MineableTags;
+import de.ambertation.wover.tag.api.predefined.ToolTags;
 
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;

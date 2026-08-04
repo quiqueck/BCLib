@@ -2,12 +2,13 @@ package org.betterx.bclib.util;
 
 import org.betterx.bclib.trait.block.PlantBlockTrait;
 import org.betterx.bclib.trait.block.PlantLikeBlockTrait;
-import org.betterx.wover.block.api.trait.BlockTrait;
-import org.betterx.wover.tag.api.predefined.CommonBlockTags;
+import de.ambertation.wover.block.api.trait.BlockTrait;
+import de.ambertation.wover.tag.api.predefined.CommonBlockTags;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
@@ -59,6 +60,70 @@ public class BlocksHelper {
 
     public static void setWithoutUpdate(LevelAccessor world, BlockPos pos, Block block) {
         world.setBlock(pos, block.defaultBlockState(), SET_SILENT);
+    }
+
+    /**
+     * The shared "decoration" attachment rule for wall- and ceiling-placeable plants: a plant survives on
+     * {@code support} if that block is a sturdy surface on the attachment {@code face} (vanilla
+     * {@code isFaceSturdy}) OR is a <em>cube-shaped</em> block in {@link BlockTags#LEAVES}. This is the single
+     * definition of "placeable on any solid block or leaves" that {@code VegetationBlockMixin} (via
+     * {@code SurvivesOnSolidTrait}), {@code BaseWallPlantBlock} and the BetterEnd/BetterNether wall- and
+     * ceiling-plant classes all route through, so their placement rules cannot drift apart.
+     * <p>
+     * The leaves branch exists because {@code LeavesBlock.getBlockSupportShape} returns an empty shape, so
+     * even a full-cube leaf block is never face-sturdy and would fail the first test. It is deliberately
+     * limited to cube-shaped leaves via {@link #isCubeLeaves}: {@code minecraft:leaves} also holds thin,
+     * sideways-protruding decoration (BetterEnd's {@code FurBlock} furs and {@code *_outer_leaves}, which
+     * occupy only the half of their block nearest their own support), and a plant clinging to the empty half
+     * of one of those visibly floats in mid-air.
+     *
+     * @param level      the world
+     * @param supportPos the position of the attachment target ({@code support}'s position)
+     * @param support    the state of the attachment target (block the plant hangs on / clings to)
+     * @param face       the face of {@code support} the plant attaches to (e.g. {@link Direction#DOWN} for a
+     *                   ceiling hanger, the wall-plant's facing for a wall plant, {@link Direction#UP} for a
+     *                   ground decoration)
+     * @return {@code true} if {@code support} is cube-shaped leaves or presents a sturdy {@code face}
+     */
+    public static boolean isDecorationSupport(
+            BlockGetter level,
+            BlockPos supportPos,
+            BlockState support,
+            Direction face
+    ) {
+        return (support.isSolid() && support.isFaceSturdy(level, supportPos, face))
+                || isCubeLeaves(level, supportPos, support);
+    }
+
+    /**
+     * The leaves term of the decoration rule: only cube-shaped leaves count. {@link BlockTags#LEAVES} also
+     * holds thin decoration (BetterEnd's {@code FurBlock} furs / {@code *_outer_leaves}) that fills just the
+     * half of its block nearest its own support, which anything attaching to the other half would float
+     * against.
+     *
+     * @param level      the world
+     * @param supportPos the position of {@code support}
+     * @param support    the state to test
+     * @return {@code true} if {@code support} is in {@link BlockTags#LEAVES} and its outline shape is a full
+     * cube
+     */
+    public static boolean isCubeLeaves(BlockGetter level, BlockPos supportPos, BlockState support) {
+        return support.is(BlockTags.LEAVES) && isFullCube(level, supportPos, support);
+    }
+
+    /**
+     * Whether {@code state}'s outline shape fills its whole block - the "is this a full block to attach to"
+     * test used by {@link #isDecorationSupport} and {@code BaseAttachedBlock#canSurvive} for blocks that are
+     * exempted from the sturdy-face test. Uses the outline (not collision) shape, so collision-less but
+     * visually full blocks still count.
+     *
+     * @param level the world
+     * @param pos   the position of {@code state}
+     * @param state the state to test
+     * @return {@code true} if the block's outline shape is a full cube
+     */
+    public static boolean isFullCube(BlockGetter level, BlockPos pos, BlockState state) {
+        return Block.isShapeFullBlock(state.getShape(level, pos));
     }
 
     public static void setWithUpdate(LevelAccessor world, BlockPos pos, BlockState state) {

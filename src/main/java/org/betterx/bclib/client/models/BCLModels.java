@@ -3,7 +3,7 @@ package org.betterx.bclib.client.models;
 import org.betterx.bclib.BCLib;
 import static org.betterx.bclib.furniture.block.AbstractChair.FACING;
 import org.betterx.bclib.furniture.block.BaseChair;
-import org.betterx.wover.block.api.model.WoverBlockModelGenerators;
+import de.ambertation.wover.block.api.model.WoverBlockModelGenerators;
 
 import static net.minecraft.client.data.models.BlockModelGenerators.*;
 import net.minecraft.client.data.models.MultiVariant;

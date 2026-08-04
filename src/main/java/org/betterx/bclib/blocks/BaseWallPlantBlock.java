@@ -22,7 +22,7 @@ import com.google.common.collect.Maps;
 import java.util.EnumMap;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BaseWallPlantBlock extends BasePlantBlock {
+public class BaseWallPlantBlock extends BasePlantBlock {
     private static final EnumMap<Direction, VoxelShape> SHAPES = Maps.newEnumMap(ImmutableMap.of(
             Direction.NORTH, box(1, 1, 8, 15, 15, 16),
             Direction.SOUTH, box(1, 1, 0, 15, 15, 8),
@@ -31,7 +31,7 @@ public abstract class BaseWallPlantBlock extends BasePlantBlock {
     ));
     public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
 
-    protected BaseWallPlantBlock(Properties settings) {
+    public BaseWallPlantBlock(Properties settings) {
         super(settings.offsetType(OffsetType.NONE));
     }
 
@@ -55,7 +55,7 @@ public abstract class BaseWallPlantBlock extends BasePlantBlock {
     }
 
     public boolean isSupport(LevelReader world, BlockPos pos, BlockState blockState, Direction direction) {
-        return blockState.isSolid() && blockState.isFaceSturdy(world, pos, direction);
+        return BlocksHelper.isDecorationSupport(world, pos, blockState, direction);
     }
 
     @Override

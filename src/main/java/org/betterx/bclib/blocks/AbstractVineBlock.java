@@ -70,6 +70,9 @@ public abstract class AbstractVineBlock extends BaseBlockNotFull implements Bone
 
     protected boolean isSupport(BlockState state, LevelReader world, BlockPos pos) {
         BlockState up = world.getBlockState(pos.above());
+        // Deliberately the plain leaves tag, not BlocksHelper.isCubeLeaves - see BaseAttachedBlock#canSurvive:
+        // vines are generated with setWithoutUpdate, so a stricter rule here cannot prevent a vine hanging off
+        // a thin fur block, it can only delete one that already generated.
         return up.is(this) || up.is(BlockTags.LEAVES) || canSupportCenter(world, pos.above(), Direction.DOWN);
     }
 

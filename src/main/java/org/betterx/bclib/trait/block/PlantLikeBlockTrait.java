@@ -1,15 +1,15 @@
 package org.betterx.bclib.trait.block;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.wover.block.api.BlockDefinition;
-import org.betterx.wover.block.api.trait.BlockTrait;
-import org.betterx.wover.block.api.trait.BlockTraitKey;
-import org.betterx.wover.block.api.trait.BlockTraits;
-import org.betterx.wover.block.api.trait.Combiner;
-import org.betterx.wover.block.api.trait.GenericBlockTrait;
-import org.betterx.wover.block.impl.trait.BlockTraitImpl;
-import org.betterx.wover.tabs.api.interfaces.CreativeTabPredicate;
-import org.betterx.wover.tag.api.predefined.CommonBlockTags;
+import de.ambertation.wover.block.api.BlockDefinition;
+import de.ambertation.wover.block.api.trait.BlockTrait;
+import de.ambertation.wover.block.api.trait.BlockTraitKey;
+import de.ambertation.wover.block.api.trait.BlockTraits;
+import de.ambertation.wover.block.api.trait.Combiner;
+import de.ambertation.wover.block.api.trait.GenericBlockTrait;
+import de.ambertation.wover.block.impl.trait.BlockTraitImpl;
+import de.ambertation.wover.tabs.api.interfaces.CreativeTabPredicate;
+import de.ambertation.wover.tag.api.predefined.CommonBlockTags;
 
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;

@@ -4,9 +4,10 @@ package org.betterx.bclib.blocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class BaseBlockNotFull extends BaseBlock {
+public class BaseBlockNotFull extends Block {
     public BaseBlockNotFull(Properties settings) {
         super(settings);
     }
@@ -21,23 +22,5 @@ public class BaseBlockNotFull extends BaseBlock {
 
     public boolean allowsSpawning(BlockState state, BlockGetter view, BlockPos pos, EntityType<?> type) {
         return false;
-    }
-
-    public static class Wood extends BaseBlockNotFull {
-        public Wood(Properties settings) {
-            super(settings);
-        }
-    }
-
-    public static class Stone extends BaseBlockNotFull {
-        public Stone(Properties settings) {
-            super(settings);
-        }
-    }
-
-    public static class Metal extends BaseBlockNotFull {
-        public Metal(Properties settings) {
-            super(settings);
-        }
     }
 }

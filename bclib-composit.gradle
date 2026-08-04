@@ -2,7 +2,6 @@ plugins {
 	id 'idea'
 	id 'eclipse'
 	id 'fabric-loom'
-	id 'maven-publish'
 }
 
 apply from: "bclib.gradle"

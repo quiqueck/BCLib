@@ -1,10 +1,12 @@
 package org.betterx.bclib.trait.block;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.wover.block.api.BlockDefinition;
-import org.betterx.wover.block.api.client.trait.ClientBlockTraits;
-import org.betterx.wover.block.api.trait.*;
-import org.betterx.wover.block.impl.trait.BlockTraitImpl;
+import org.betterx.bclib.trait.TraitLists;
+import de.ambertation.wover.block.api.BlockDefinition;
+import de.ambertation.wover.block.api.client.trait.ClientBlockTraits;
+import de.ambertation.wover.block.api.trait.*;
+import de.ambertation.wover.block.impl.trait.BlockTraitImpl;
+import de.ambertation.wover.pottable.api.trait.PottablePlantBlockTrait;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -37,12 +39,32 @@ public class PlantBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> im
     // Composition-facing overload: lets traits that embed PlantBlockTrait (e.g. LeavesBlockTrait,
     // VineBlockTrait) pass OffsetType.NONE to keep their full/cube-ish blocks grid-aligned.
     public static PlantBlockTrait withColor(MapColor color, boolean walkable, BlockBehaviour.OffsetType offsetType) {
-        return new PlantBlockTrait(color, walkable, offsetType);
+        return withColor(color, walkable, offsetType, SoundType.GRASS, false);
+    }
+
+    // Cross-mod overload (category-traits fold): lets a caller override the sound (BetterNether's
+    // netherPlant()/makeNetherGrass() presets use SoundType.CROP, not GRASS) and opt into the
+    // "always a valid mob-spawn surface" predicate that makeNetherGrass() forces (vanilla
+    // PlantBlockTrait leaves isValidSpawn at its BlockBehaviour.Properties default). Every other
+    // overload delegates here with (GRASS, false) so existing call sites - and their goldens - are
+    // untouched.
+    public static PlantBlockTrait withColor(
+            MapColor color,
+            boolean walkable,
+            BlockBehaviour.OffsetType offsetType,
+            SoundType sound,
+            boolean validSpawnAlways
+    ) {
+        return new PlantBlockTrait(color, walkable, offsetType, sound, validSpawnAlways);
     }
 
     public static List<BlockTrait<?, ?>> compostableWithColor(MapColor color, boolean walkable, boolean flammable) {
+        return compostableWithColor(color, walkable, flammable, BlockBehaviour.OffsetType.XZ);
+    }
+
+    public static List<BlockTrait<?, ?>> compostableWithColor(MapColor color, boolean walkable, boolean flammable, BlockBehaviour.OffsetType offsetType) {
         return Combiner.of(
-                withColor(color, walkable),
+                withColor(color, walkable, offsetType),
                 CompostableBlockTrait.withDefault(),
                 flammable ? BlockTraits.FLAMMABLE.withDefault() : null,
                 ClientBlockTraits.RENDER_LAYER.cutout(),
@@ -53,14 +75,45 @@ public class PlantBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> im
         ).combine();
     }
 
+    /**
+     * BE's "ground cross-plant" micro-fold (category-traits Batch 4): the sub-core repeated 17x across
+     * {@code EndPlantBlocks}' single-cross ground plants (cave_grass, crystal_grass, shadow_plant,
+     * bushy_grass, amber_grass, jungle_grass, blooming_cooksonia, salteago, vaiolush_fern, fracturn,
+     * clawfern, globulagus, orango, aeridium, lutebus, lamellarium, inflexia) - all identical but for their
+     * {@code SurvivesOnBlockTrait} target and cross model. Bundles {@link #compostableWithColor} at
+     * {@code (MapColor.PLANT, false, true)}, {@link VegetationTagTrait#plant()} and
+     * {@link PottablePlantBlockTrait#any()}.
+     * <p>
+     * Each call site's chained {@code .offsetType(XZ)} is redundant (this trait already forces XZ via
+     * {@code withColor(color, false)}) and is dropped, not reproduced. {@code .replaceable()} is a genuine
+     * setter this bundle does not provide and must stay chained at the call site.
+     */
+    public static List<BlockTrait<?, ?>> groundCrossPlant() {
+        return TraitLists.and(
+                compostableWithColor(MapColor.PLANT, false, true),
+                VegetationTagTrait.plant(),
+                PottablePlantBlockTrait.any()
+        );
+    }
+
     public final MapColor color;
     public final boolean walkable;
     public final BlockBehaviour.OffsetType offsetType;
+    public final SoundType sound;
+    public final boolean validSpawnAlways;
 
-    private PlantBlockTrait(MapColor color, boolean walkable, BlockBehaviour.OffsetType offsetType) {
+    private PlantBlockTrait(
+            MapColor color,
+            boolean walkable,
+            BlockBehaviour.OffsetType offsetType,
+            SoundType sound,
+            boolean validSpawnAlways
+    ) {
         this.color = color;
         this.walkable = walkable;
         this.offsetType = offsetType;
+        this.sound = sound;
+        this.validSpawnAlways = validSpawnAlways;
     }
 
     @Override
@@ -83,9 +136,13 @@ public class PlantBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> im
         definition.mapColor(color)
                   .noOcclusion()
                   .instabreak()
-                  .sound(SoundType.GRASS)
+                  .sound(sound)
                   .offsetType(offsetType)
                   .pushReaction(PushReaction.DESTROY);
+
+        if (validSpawnAlways) {
+            definition.isValidSpawn((state, world, pos, type) -> true);
+        }
 
         if (!walkable) {
             definition.noCollission();

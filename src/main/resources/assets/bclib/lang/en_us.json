@@ -109,6 +109,7 @@
   "title.screen.bclib.worldgen.other": "Other Settings",
   "title.screen.bclib.worldgen.void_biome_size": "Small Island Biomes",
   "tooltip.bclib.place_on": "Survives on: %s",
+  "tooltip.bclib.place_on_solid_or_leaves": "Survives on: any solid block or leaves",
   "tooltip.bclib.place_underwater_on": "Survives under water on: %s",
   "tooltip.bclib.place_underwater": "Survives under water",
   "tooltip.bclib.place_underwater_depth": "min. depth: %d",

@@ -1,11 +1,11 @@
 package org.betterx.bclib.api.v2.advancement;
 
 
-import org.betterx.wover.complex.api.equipment.ArmorSlot;
-import org.betterx.wover.complex.api.equipment.EquipmentSet;
-import org.betterx.wover.complex.api.equipment.ToolSlot;
-import org.betterx.wover.sets.api.blocks.SlotType;
-import org.betterx.wover.sets.api.blocks.WoodenBlockSet;
+import de.ambertation.wover.complex.api.equipment.ArmorSlot;
+import de.ambertation.wover.complex.api.equipment.EquipmentSet;
+import de.ambertation.wover.complex.api.equipment.ToolSlot;
+import de.ambertation.wover.sets.api.blocks.SlotType;
+import de.ambertation.wover.sets.api.blocks.WoodenBlockSet;
 
 import net.minecraft.advancements.*;
 import net.minecraft.advancements.critereon.*;

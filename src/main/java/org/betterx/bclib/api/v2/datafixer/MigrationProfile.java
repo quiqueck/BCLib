@@ -4,8 +4,8 @@ import de.ambertation.wunderlib.utils.Version;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.interfaces.PatchBiFunction;
 import org.betterx.bclib.interfaces.PatchFunction;
-import org.betterx.wover.core.api.ModCore;
-import org.betterx.wover.state.api.WorldConfig;
+import de.ambertation.wover.core.api.ModCore;
+import de.ambertation.wover.state.api.WorldConfig;
 
 import net.minecraft.nbt.*;
 
@@ -21,6 +21,7 @@ public class MigrationProfile {
     final Map<String, String> idReplacements;
     final List<PatchFunction<CompoundTag, Boolean>> levelPatchers;
     final List<PatchBiFunction<ListTag, ListTag, Boolean>> statePatchers;
+    final List<PatchFunction<CompoundTag, Boolean>> chunkPatchers;
     final List<Patch> worldDataPatchers;
     final Map<ModCore, List<String>> worldDataIDPaths;
 
@@ -43,6 +44,7 @@ public class MigrationProfile {
         List<PatchFunction<CompoundTag, Boolean>> levelPatches = new LinkedList<>();
         List<Patch> worldDataPatches = new LinkedList<>();
         List<PatchBiFunction<ListTag, ListTag, Boolean>> statePatches = new LinkedList<>();
+        List<PatchFunction<CompoundTag, Boolean>> chunkPatches = new LinkedList<>();
         HashMap<ModCore, List<String>> worldDataIDPaths = new HashMap<>();
         for (ModCore modCore : mods) {
 
@@ -61,6 +63,8 @@ public class MigrationProfile {
                              worldDataPatches.add(patch);
                          if (patch.getBlockStatePatcher() != null)
                              statePatches.add(patch.getBlockStatePatcher());
+                         if (patch.getChunkPatcher() != null)
+                             chunkPatches.add(patch.getChunkPatcher());
                          DataFixerAPI.LOGGER.info("Applying " + patch);
                      } else {
                          DataFixerAPI.LOGGER.info("Ignoring " + patch);
@@ -73,6 +77,7 @@ public class MigrationProfile {
         this.levelPatchers = Collections.unmodifiableList(levelPatches);
         this.worldDataPatchers = Collections.unmodifiableList(worldDataPatches);
         this.statePatchers = Collections.unmodifiableList(statePatches);
+        this.chunkPatchers = Collections.unmodifiableList(chunkPatches);
     }
 
     /**
@@ -107,48 +112,20 @@ public class MigrationProfile {
                     }
                 }
 
-                if (spawnerIdx >= 0 && root.contains("blocks")) {
+                if (root.contains("blocks")) {
                     ListTag items = root.getList("blocks").orElse(new ListTag());
                     for (int idx = 0; idx < items.size(); idx++) {
                         final CompoundTag blockTag = (CompoundTag) items.get(idx);
-                        if (blockTag.contains("state") && blockTag.getInt("state")
-                                                                  .orElseThrow() == spawnerIdx && blockTag.contains(
-                                "nbt")) {
-                            CompoundTag nbt = blockTag.getCompound("nbt").orElse(null);
-                            if (nbt != null && nbt.contains("SpawnData")) {
-                                final CompoundTag entity = nbt.getCompound("SpawnData").orElse(null);
-                                if (entity != null && !entity.contains("entity")) {
-                                    CompoundTag data = new CompoundTag();
-                                    data.put("entity", entity);
-                                    nbt.put("SpawnData", data);
+                        final CompoundTag nbt = blockTag.getCompound("nbt").orElse(null);
+                        if (nbt == null) continue;
 
-                                    changed[0] = true;
-                                }
-                            }
-                            if (nbt != null && nbt.contains("SpawnPotentials")) {
-                                ListTag pots = nbt.getList("SpawnPotentials").orElse(new ListTag());
-                                for (Tag potItemIn : pots) {
-                                    final CompoundTag potItem = (CompoundTag) potItemIn;
-                                    if (potItem.contains("Weight")) {
-                                        int weight = potItem.getInt("Weight").orElse(1);
-                                        potItem.putInt("weight", weight);
-                                        potItem.remove("Weight");
+                        // A structure stores the block entity type separately from the palette, so a
+                        // renamed block entity has to be fixed here as well. Otherwise the template
+                        // fails to load with "Unknown type <id> in 'block_entity'".
+                        changed[0] |= profile.replaceStringFromIDs(nbt, "id");
 
-                                        changed[0] = true;
-                                    }
-
-                                    if (potItem.contains("Entity")) {
-                                        CompoundTag entity = potItem.getCompound("Entity").orElseThrow();
-                                        CompoundTag data = new CompoundTag();
-                                        data.put("entity", entity);
-
-                                        potItem.put("data", data);
-                                        potItem.remove("Entity");
-
-                                        changed[0] = true;
-                                    }
-                                }
-                            }
+                        if (spawnerIdx >= 0 && blockTag.getInt("state").orElse(-1) == spawnerIdx) {
+                            changed[0] |= fixSpawnerData(nbt);
                         }
                     }
                 }
@@ -161,6 +138,56 @@ public class MigrationProfile {
                 e.printStackTrace();
             }
         });
+    }
+
+    /**
+     * Brings the block entity data of a spawner up to the current layout: {@code SpawnData} gets
+     * wrapped in an {@code entity} compound, and the entries of {@code SpawnPotentials} move from
+     * {@code Weight}/{@code Entity} to {@code weight}/{@code data.entity}.
+     *
+     * @param nbt The block entity data of the spawner
+     * @return {@code true} if anything was rewritten
+     */
+    private static boolean fixSpawnerData(@NotNull CompoundTag nbt) {
+        boolean changed = false;
+
+        if (nbt.contains("SpawnData")) {
+            final CompoundTag entity = nbt.getCompound("SpawnData").orElse(null);
+            if (entity != null && !entity.contains("entity")) {
+                CompoundTag data = new CompoundTag();
+                data.put("entity", entity);
+                nbt.put("SpawnData", data);
+
+                changed = true;
+            }
+        }
+
+        if (nbt.contains("SpawnPotentials")) {
+            ListTag pots = nbt.getList("SpawnPotentials").orElse(new ListTag());
+            for (Tag potItemIn : pots) {
+                final CompoundTag potItem = (CompoundTag) potItemIn;
+                if (potItem.contains("Weight")) {
+                    int weight = potItem.getInt("Weight").orElse(1);
+                    potItem.putInt("weight", weight);
+                    potItem.remove("Weight");
+
+                    changed = true;
+                }
+
+                if (potItem.contains("Entity")) {
+                    CompoundTag entity = potItem.getCompound("Entity").orElseThrow();
+                    CompoundTag data = new CompoundTag();
+                    data.put("entity", entity);
+
+                    potItem.put("data", data);
+                    potItem.remove("Entity");
+
+                    changed = true;
+                }
+            }
+        }
+
+        return changed;
     }
 
     private static List<File> getAllNbts(File dir, List<File> list) {
@@ -232,8 +259,8 @@ public class MigrationProfile {
             DataFixerAPI.LOGGER.info(
                     "Updating Patch-Level for '{}' from {} to {}",
                     modCore,
-                    Version.fromInt(currentPatchLevel(modCore)).toString(),
-                    Version.fromInt(Patch.maxPatchLevel(modCore)).toString()
+                    Version.fromLong(currentPatchLevel(modCore)).toString(),
+                    Version.fromLong(Patch.maxPatchLevel(modCore)).toString()
             );
             if (config != null)
                 config.putString(modCore.modId, Patch.maxPatchVersion(modCore).toString());
@@ -245,8 +272,8 @@ public class MigrationProfile {
         return new Version(config.getString(modCore.modId).orElse("0.0.0"));
     }
 
-    public int currentPatchLevel(@NotNull ModCore modCore) {
-        return currentPatchVersion(modCore).toInt();
+    public long currentPatchLevel(@NotNull ModCore modCore) {
+        return currentPatchVersion(modCore).toLong();
     }
 
     public boolean hasAnyFixes() {
@@ -370,6 +397,20 @@ public class MigrationProfile {
                 WorldConfig.saveFile(entry.getKey());
             }
         }
+    }
+
+    /**
+     * Runs the registered {@link Patch#getChunkPatcher()}s over one chunk.
+     *
+     * @param root The chunk's root tag
+     * @return {@code true} if any patcher changed the chunk
+     */
+    public boolean patchChunk(CompoundTag root) throws PatchDidiFailException {
+        boolean changed = false;
+        for (PatchFunction<CompoundTag, Boolean> f : chunkPatchers) {
+            changed |= f.apply(root, this);
+        }
+        return changed;
     }
 
     public boolean patchBlockState(ListTag palette, ListTag states) throws PatchDidiFailException {
