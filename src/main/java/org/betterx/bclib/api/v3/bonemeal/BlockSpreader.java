@@ -66,7 +66,7 @@ abstract class BlockSpreader implements BonemealBlockSpreader {
         }
         WeightedStateProvider provider = new WeightedStateProvider(builder.build());
 
-        BlockState bl = provider.getState(randomSource, blockPos);
+        BlockState bl = provider.getState(serverLevel, randomSource, blockPos);
         if (bl != null) {
             serverLevel.setBlock(blockPos, bl, 3);
             return true;

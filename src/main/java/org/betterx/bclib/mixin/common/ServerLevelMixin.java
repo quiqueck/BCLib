@@ -5,8 +5,6 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.progress.ChunkProgressListener;
-import net.minecraft.world.RandomSequences;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
@@ -50,12 +48,10 @@ public abstract class ServerLevelMixin extends Level {
             ServerLevelData serverLevelData,
             ResourceKey resourceKey,
             LevelStem levelStem,
-            ChunkProgressListener chunkProgressListener,
             boolean bl,
             long l,
             List list,
             boolean bl2,
-            RandomSequences randomSequences,
             CallbackInfo ci
     ) {
         if (bclib_lastWorld != null && bclib_lastWorld.equals(levelStorageAccess.getLevelId())) {

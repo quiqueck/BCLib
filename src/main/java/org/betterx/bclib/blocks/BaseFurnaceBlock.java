@@ -16,9 +16,10 @@ import net.minecraft.client.data.models.blockstates.PropertyDispatch;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.MenuProvider;
@@ -66,7 +67,7 @@ public class BaseFurnaceBlock extends FurnaceBlock {
     @Environment(EnvType.CLIENT)
     private static void addRotationModels(
             PropertyDispatch.C2<MultiVariant, Boolean, Direction> prop,
-            ResourceLocation furnaceModel,
+            Identifier furnaceModel,
             boolean lit
     ) {
         var modelVariant = plainVariant(furnaceModel);
@@ -105,10 +106,10 @@ public class BaseFurnaceBlock extends FurnaceBlock {
                     (key, block, generator) -> {
                         final var baseTexture = TextureMapping.getBlockTexture(block);
                         TextureMapping mapping = new TextureMapping()
-                                .put(TextureSlot.TOP, baseTexture.withSuffix("_top"))
-                                .put(TextureSlot.SIDE, baseTexture.withSuffix("_side"))
-                                .put(TextureSlot.FRONT, baseTexture.withSuffix("_front"))
-                                .put(TextureSlot.BOTTOM, baseTexture.withSuffix("_top"));
+                                .put(TextureSlot.TOP, new Material(baseTexture.sprite().withSuffix("_top")))
+                                .put(TextureSlot.SIDE, new Material(baseTexture.sprite().withSuffix("_side")))
+                                .put(TextureSlot.FRONT, new Material(baseTexture.sprite().withSuffix("_front")))
+                                .put(TextureSlot.BOTTOM, new Material(baseTexture.sprite().withSuffix("_top")));
                         final var furnaceModel = ModelTemplates.CUBE_ORIENTABLE_TOP_BOTTOM.create(
                                 block,
                                 mapping,
@@ -116,11 +117,11 @@ public class BaseFurnaceBlock extends FurnaceBlock {
                         );
 
                         TextureMapping mappingGlow = new TextureMapping()
-                                .put(TextureSlot.TOP, baseTexture.withSuffix("_top"))
-                                .put(TextureSlot.SIDE, baseTexture.withSuffix("_side"))
-                                .put(TextureSlot.FRONT, baseTexture.withSuffix("_front_on"))
-                                .put(TextureSlot.BOTTOM, baseTexture.withSuffix("_top"))
-                                .put(BCLModels.GLOW, baseTexture.withSuffix("_glow"));
+                                .put(TextureSlot.TOP, new Material(baseTexture.sprite().withSuffix("_top")))
+                                .put(TextureSlot.SIDE, new Material(baseTexture.sprite().withSuffix("_side")))
+                                .put(TextureSlot.FRONT, new Material(baseTexture.sprite().withSuffix("_front_on")))
+                                .put(TextureSlot.BOTTOM, new Material(baseTexture.sprite().withSuffix("_top")))
+                                .put(BCLModels.GLOW, new Material(baseTexture.sprite().withSuffix("_glow")));
                         final var glowModel = BCLModels.FURNACE_GLOW.createWithSuffix(
                                 block,
                                 "_lit",

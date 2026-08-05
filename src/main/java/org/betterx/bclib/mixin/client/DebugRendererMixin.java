@@ -3,23 +3,15 @@ package org.betterx.bclib.mixin.client;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.interfaces.AirSelectionItem;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.ShapeRenderer;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.debug.DebugRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.gizmos.GizmoStyle;
+import net.minecraft.gizmos.Gizmos;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.CollisionContext;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -32,14 +24,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(DebugRenderer.class)
 @Environment(EnvType.CLIENT)
 public class DebugRendererMixin {
-    @Inject(method = "render", at = @At("TAIL"))
+    @Inject(method = "emitGizmos", at = @At("TAIL"))
     void bcl_render(
-            PoseStack poseStack,
             Frustum frustum,
-            MultiBufferSource.BufferSource bufferSource,
             double camX,
             double camY,
             double camZ,
+            float partialTick,
             CallbackInfo ci
     ) {
         Minecraft minecraft = Minecraft.getInstance();
@@ -52,18 +43,8 @@ public class DebugRendererMixin {
                     && blockHitResult.getType() == HitResult.Type.MISS
             ) {
                 final BlockPos pos = blockHitResult.getBlockPos();
-                final BlockState state = Blocks.DIRT.defaultBlockState();
                 final int color = airSelect.airSelectionColor();
-                final VertexConsumer consumer = bufferSource.getBuffer(RenderType.lines());
-                final Camera camera = minecraft.gameRenderer.getMainCamera();
-                final Vec3 camPos = camera.getPosition();
-
-                ShapeRenderer.renderShape(
-                        poseStack, consumer,
-                        state.getShape(minecraft.level, pos, CollisionContext.of(camera.getEntity())),
-                        pos.getX() - camPos.x(), pos.getY() - camPos.y(), pos.getZ() - camPos.z(),
-                        color
-                );
+                Gizmos.cuboid(pos, GizmoStyle.stroke(color));
             }
         }
     }

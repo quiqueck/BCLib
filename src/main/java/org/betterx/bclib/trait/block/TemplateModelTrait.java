@@ -12,10 +12,11 @@ import net.minecraft.client.data.models.model.ModelTemplate;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
-import net.minecraft.client.renderer.block.model.Variant;
-import net.minecraft.client.renderer.block.model.VariantMutator;
+import net.minecraft.client.renderer.block.dispatch.Variant;
+import net.minecraft.client.renderer.block.dispatch.VariantMutator;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
@@ -51,7 +52,7 @@ public class TemplateModelTrait {
      * @param templateParent the shared ladder template model to parent the child model from
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static BlockModelTrait ladder(ResourceLocation templateParent) {
+    public static BlockModelTrait ladder(Identifier templateParent) {
         return ModCore.isDatagen() ? Impl.ladder(templateParent) : null;
     }
 
@@ -66,7 +67,7 @@ public class TemplateModelTrait {
      *                        own {@code _side} texture); {@code false} maps every face to the block's own texture
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static BlockModelTrait trapdoor(ResourceLocation templateParent, boolean withSide) {
+    public static BlockModelTrait trapdoor(Identifier templateParent, boolean withSide) {
         return ModCore.isDatagen() ? Impl.trapdoor(templateParent, withSide) : null;
     }
 
@@ -83,7 +84,7 @@ public class TemplateModelTrait {
      * @param sideTexture    the explicit {@code #side} texture (not an {@code _side} suffix of the block texture)
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static BlockModelTrait trapdoor(ResourceLocation templateParent, ResourceLocation sideTexture) {
+    public static BlockModelTrait trapdoor(Identifier templateParent, Identifier sideTexture) {
         return ModCore.isDatagen() ? Impl.trapdoor(templateParent, sideTexture) : null;
     }
 
@@ -100,7 +101,7 @@ public class TemplateModelTrait {
      *                       texture); {@code false} when the template already declares {@code "particle": "#texture"}
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static BlockModelTrait cube(ResourceLocation templateParent, boolean withParticle) {
+    public static BlockModelTrait cube(Identifier templateParent, boolean withParticle) {
         return ModCore.isDatagen() ? Impl.cube(templateParent, withParticle) : null;
     }
 
@@ -116,7 +117,7 @@ public class TemplateModelTrait {
      * @param templateParent the shared template model to parent the child model from
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static BlockModelTrait randomYRotation(ResourceLocation templateParent) {
+    public static BlockModelTrait randomYRotation(Identifier templateParent) {
         return ModCore.isDatagen() ? Impl.randomYRotation(templateParent) : null;
     }
 
@@ -138,12 +139,12 @@ public class TemplateModelTrait {
      * @return the model trait, or {@code null} outside of datagen
      */
     public static BlockModelTrait stairs(
-            ResourceLocation templateStraight,
-            ResourceLocation templateInner,
-            ResourceLocation templateOuter,
-            ResourceLocation bottomTexture,
-            ResourceLocation topTexture,
-            ResourceLocation sideTexture
+            Identifier templateStraight,
+            Identifier templateInner,
+            Identifier templateOuter,
+            Identifier bottomTexture,
+            Identifier topTexture,
+            Identifier sideTexture
     ) {
         return ModCore.isDatagen()
                 ? Impl.stairs(templateStraight, templateInner, templateOuter, bottomTexture, topTexture, sideTexture)
@@ -165,10 +166,10 @@ public class TemplateModelTrait {
      * @return the model trait, or {@code null} outside of datagen
      */
     public static BlockModelTrait wall(
-            ResourceLocation templatePost,
-            ResourceLocation templateSide,
-            ResourceLocation templateSideTall,
-            ResourceLocation wallTexture
+            Identifier templatePost,
+            Identifier templateSide,
+            Identifier templateSideTall,
+            Identifier wallTexture
     ) {
         return ModCore.isDatagen()
                 ? Impl.wall(templatePost, templateSide, templateSideTall, wallTexture)
@@ -192,11 +193,11 @@ public class TemplateModelTrait {
      * @return the model trait, or {@code null} outside of datagen
      */
     public static BlockModelTrait fence(
-            ResourceLocation templatePost,
-            ResourceLocation templateSide,
-            ResourceLocation sideTexture,
-            ResourceLocation topTexture,
-            ResourceLocation inventoryTexture
+            Identifier templatePost,
+            Identifier templateSide,
+            Identifier sideTexture,
+            Identifier topTexture,
+            Identifier inventoryTexture
     ) {
         return ModCore.isDatagen()
                 ? Impl.fence(templatePost, templateSide, sideTexture, topTexture, inventoryTexture)
@@ -206,17 +207,17 @@ public class TemplateModelTrait {
     @Environment(EnvType.CLIENT)
     private static class Impl {
         private static BlockModelTrait fence(
-                ResourceLocation templatePost,
-                ResourceLocation templateSide,
-                ResourceLocation sideTexture,
-                ResourceLocation topTexture,
-                ResourceLocation inventoryTexture
+                Identifier templatePost,
+                Identifier templateSide,
+                Identifier sideTexture,
+                Identifier topTexture,
+                Identifier inventoryTexture
         ) {
             return ClientBlockTraits.MODEL.with((key, block, generator) -> {
                 final var mapping = new TextureMapping()
-                        .put(TextureSlot.PARTICLE, sideTexture)
-                        .put(TextureSlot.TEXTURE, sideTexture)
-                        .put(TextureSlot.TOP, topTexture);
+                        .put(TextureSlot.PARTICLE, new Material(sideTexture))
+                        .put(TextureSlot.TEXTURE, new Material(sideTexture))
+                        .put(TextureSlot.TOP, new Material(topTexture));
                 final TextureSlot[] slots = {TextureSlot.PARTICLE, TextureSlot.TEXTURE, TextureSlot.TOP};
                 final var post = new ModelTemplate(Optional.of(templatePost), Optional.of("_post"), slots)
                         .create(block, mapping, generator.modelOutput());
@@ -231,24 +232,24 @@ public class TemplateModelTrait {
 
                 // A fence's inventory icon uses a distinct (plank) texture, not the fence-side texture.
                 generator.delegateItemModel(block, ModelTemplates.FENCE_INVENTORY.create(
-                        block, new TextureMapping().put(TextureSlot.TEXTURE, inventoryTexture),
+                        block, new TextureMapping().put(TextureSlot.TEXTURE, new Material(inventoryTexture)),
                         generator.modelOutput()));
             });
         }
 
         private static BlockModelTrait stairs(
-                ResourceLocation templateStraight,
-                ResourceLocation templateInner,
-                ResourceLocation templateOuter,
-                ResourceLocation bottomTexture,
-                ResourceLocation topTexture,
-                ResourceLocation sideTexture
+                Identifier templateStraight,
+                Identifier templateInner,
+                Identifier templateOuter,
+                Identifier bottomTexture,
+                Identifier topTexture,
+                Identifier sideTexture
         ) {
             return ClientBlockTraits.MODEL.with((key, block, generator) -> {
                 final var mapping = new TextureMapping()
-                        .put(TextureSlot.BOTTOM, bottomTexture)
-                        .put(TextureSlot.TOP, topTexture)
-                        .put(TextureSlot.SIDE, sideTexture);
+                        .put(TextureSlot.BOTTOM, new Material(bottomTexture))
+                        .put(TextureSlot.TOP, new Material(topTexture))
+                        .put(TextureSlot.SIDE, new Material(sideTexture));
                 final TextureSlot[] slots = {TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE};
                 final var straight = new ModelTemplate(Optional.of(templateStraight), Optional.empty(), slots)
                         .create(block, mapping, generator.modelOutput());
@@ -276,7 +277,7 @@ public class TemplateModelTrait {
                     for (var half : net.minecraft.world.level.block.state.properties.Half.values()) {
                         final boolean top = half == net.minecraft.world.level.block.state.properties.Half.TOP;
                         for (var shape : net.minecraft.world.level.block.state.properties.StairsShape.values()) {
-                            final ResourceLocation model = switch (shape) {
+                            final Identifier model = switch (shape) {
                                 case STRAIGHT -> straight;
                                 case INNER_LEFT, INNER_RIGHT -> inner;
                                 case OUTER_LEFT, OUTER_RIGHT -> outer;
@@ -297,7 +298,7 @@ public class TemplateModelTrait {
             });
         }
 
-        private static MultiVariant stairVariant(ResourceLocation model, boolean top, int y) {
+        private static MultiVariant stairVariant(Identifier model, boolean top, int y) {
             MultiVariant mv = BlockModelGenerators.plainVariant(model);
             if (top) {
                 mv = mv.with(BlockModelGenerators.X_ROT_180);
@@ -312,13 +313,13 @@ public class TemplateModelTrait {
         }
 
         private static BlockModelTrait wall(
-                ResourceLocation templatePost,
-                ResourceLocation templateSide,
-                ResourceLocation templateSideTall,
-                ResourceLocation wallTexture
+                Identifier templatePost,
+                Identifier templateSide,
+                Identifier templateSideTall,
+                Identifier wallTexture
         ) {
             return ClientBlockTraits.MODEL.with((key, block, generator) -> {
-                final var mapping = new TextureMapping().put(TextureSlot.WALL, wallTexture);
+                final var mapping = new TextureMapping().put(TextureSlot.WALL, new Material(wallTexture));
                 final var post = new ModelTemplate(Optional.of(templatePost), Optional.of("_post"), TextureSlot.WALL)
                         .create(block, mapping, generator.modelOutput());
                 final var side = new ModelTemplate(Optional.of(templateSide), Optional.of("_side"), TextureSlot.WALL)
@@ -339,7 +340,7 @@ public class TemplateModelTrait {
             });
         }
 
-        private static BlockModelTrait cube(ResourceLocation templateParent, boolean withParticle) {
+        private static BlockModelTrait cube(Identifier templateParent, boolean withParticle) {
             return ClientBlockTraits.MODEL.with((key, block, generator) -> {
                 final var tex = TextureMapping.getBlockTexture(block);
                 final var mapping = new TextureMapping().put(TextureSlot.TEXTURE, tex);
@@ -360,7 +361,7 @@ public class TemplateModelTrait {
             });
         }
 
-        private static BlockModelTrait randomYRotation(ResourceLocation templateParent) {
+        private static BlockModelTrait randomYRotation(Identifier templateParent) {
             return ClientBlockTraits.MODEL.with((key, block, generator) -> {
                 final var tex = TextureMapping.getBlockTexture(block);
                 final var mapping = new TextureMapping().put(TextureSlot.TEXTURE, tex);
@@ -379,11 +380,11 @@ public class TemplateModelTrait {
 
                 // The inventory icon stays the hand-authored static flat item model (item/<name>), exactly as
                 // wover's externalModel() delegates it - these blocks ship a dedicated item texture.
-                generator.delegateItemModel(block, key.location().withPrefix("item/"));
+                generator.delegateItemModel(block, key.identifier().withPrefix("item/"));
             });
         }
 
-        private static BlockModelTrait ladder(ResourceLocation templateParent) {
+        private static BlockModelTrait ladder(Identifier templateParent) {
             return ClientBlockTraits.MODEL.with((key, block, generator) -> {
                 final var tex = TextureMapping.getBlockTexture(block);
                 final var mapping = new TextureMapping()
@@ -412,7 +413,7 @@ public class TemplateModelTrait {
             });
         }
 
-        private static BlockModelTrait trapdoor(ResourceLocation templateParent, boolean withSide) {
+        private static BlockModelTrait trapdoor(Identifier templateParent, boolean withSide) {
             return ClientBlockTraits.MODEL.with((key, block, generator) -> {
                 final var tex = TextureMapping.getBlockTexture(block);
                 final var mapping = new TextureMapping()
@@ -420,7 +421,7 @@ public class TemplateModelTrait {
                         .put(TextureSlot.TEXTURE, tex);
                 final TextureSlot[] slots;
                 if (withSide) {
-                    mapping.put(TextureSlot.SIDE, tex.withSuffix("_side"));
+                    mapping.put(TextureSlot.SIDE, new Material(tex.sprite().withSuffix("_side")));
                     slots = new TextureSlot[]{TextureSlot.PARTICLE, TextureSlot.TEXTURE, TextureSlot.SIDE};
                 } else {
                     slots = new TextureSlot[]{TextureSlot.PARTICLE, TextureSlot.TEXTURE};
@@ -431,13 +432,13 @@ public class TemplateModelTrait {
             });
         }
 
-        private static BlockModelTrait trapdoor(ResourceLocation templateParent, ResourceLocation sideTexture) {
+        private static BlockModelTrait trapdoor(Identifier templateParent, Identifier sideTexture) {
             return ClientBlockTraits.MODEL.with((key, block, generator) -> {
                 final var tex = TextureMapping.getBlockTexture(block);
                 final var mapping = new TextureMapping()
                         .put(TextureSlot.PARTICLE, tex)
                         .put(TextureSlot.TEXTURE, tex)
-                        .put(TextureSlot.SIDE, sideTexture);
+                        .put(TextureSlot.SIDE, new Material(sideTexture));
                 final TextureSlot[] slots = {TextureSlot.PARTICLE, TextureSlot.TEXTURE, TextureSlot.SIDE};
                 final var template = new ModelTemplate(Optional.of(templateParent), Optional.empty(), slots);
                 final var model = template.create(block, mapping, generator.modelOutput());
@@ -447,7 +448,7 @@ public class TemplateModelTrait {
 
         private static void acceptTrapdoorState(
                 net.minecraft.world.level.block.Block block,
-                ResourceLocation model,
+                Identifier model,
                 de.ambertation.wover.block.api.model.WoverBlockModelGenerators generator
         ) {
                 // A single model rotated per facing/half/open, matching BetterNether's hand-authored

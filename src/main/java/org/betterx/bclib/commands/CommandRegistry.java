@@ -40,7 +40,7 @@ public class CommandRegistry {
             Commands.CommandSelection commandSelection
     ) {
         LiteralArgumentBuilder<CommandSourceStack> bnContext = Commands.literal("bclib")
-                                                                       .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS));
+                                                                       .requires(Commands.hasPermission(Commands.LEVEL_OWNERS));
 
         bnContext = PlaceCommand.register(bnContext, commandBuildContext);
         bnContext = PrintInfo.register(bnContext);
@@ -49,22 +49,22 @@ public class CommandRegistry {
         dispatcher.register(
                 bnContext
                         .then(Commands.literal("request_garbage_collection")
-                                      .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
+                                      .requires(Commands.hasPermission(Commands.LEVEL_OWNERS))
                                       .executes(CommandRegistry::requestGC)
                         )
                         .then(Commands.literal("debug_ore")
-                                      .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
+                                      .requires(Commands.hasPermission(Commands.LEVEL_OWNERS))
                                       .then(Commands
                                               .argument("rings", IntegerArgumentType.integer(0, 8))
                                               .executes(ctx -> CommandRegistry.revealOre(ctx, IntegerArgumentType.getInteger(ctx, "rings"))))
                                       .executes((cc) -> CommandRegistry.revealOre(cc, 0))
                         )
                         .then(Commands.literal("sliceZ")
-                                      .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
+                                      .requires(Commands.hasPermission(Commands.LEVEL_OWNERS))
                                       .executes(ctx -> slice(ctx, true))
                         )
                         .then(Commands.literal("sliceX")
-                                      .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
+                                      .requires(Commands.hasPermission(Commands.LEVEL_OWNERS))
                                       .executes(ctx -> slice(ctx, false))
                         )
         );

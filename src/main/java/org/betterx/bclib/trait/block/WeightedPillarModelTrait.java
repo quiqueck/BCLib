@@ -10,8 +10,9 @@ import net.minecraft.client.data.models.model.ModelLocationUtils;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
-import net.minecraft.client.renderer.block.model.Variant;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.block.dispatch.Variant;
+import net.minecraft.client.resources.model.sprite.Material;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.level.block.Block;
 
@@ -61,8 +62,8 @@ public class WeightedPillarModelTrait {
      */
     public static BlockModelTrait log(
             int[] weights,
-            @Nullable ResourceLocation sideTexture,
-            @Nullable ResourceLocation endTexture
+            @Nullable Identifier sideTexture,
+            @Nullable Identifier endTexture
     ) {
         return ModCore.isDatagen() ? Impl.column(weights, sideTexture, endTexture, false, null) : null;
     }
@@ -80,8 +81,8 @@ public class WeightedPillarModelTrait {
     public static BlockModelTrait bark(
             Supplier<Block> logBlock,
             int[] weights,
-            @Nullable ResourceLocation sideTexture,
-            @Nullable ResourceLocation endTexture
+            @Nullable Identifier sideTexture,
+            @Nullable Identifier endTexture
     ) {
         return ModCore.isDatagen() ? Impl.column(weights, sideTexture, endTexture, true, logBlock) : null;
     }
@@ -90,30 +91,30 @@ public class WeightedPillarModelTrait {
     private static class Impl {
         private static BlockModelTrait column(
                 int[] weights,
-                @Nullable ResourceLocation sideOverride,
-                @Nullable ResourceLocation endOverride,
+                @Nullable Identifier sideOverride,
+                @Nullable Identifier endOverride,
                 boolean bark,
                 @Nullable Supplier<Block> logBlock
         ) {
             return ClientBlockTraits.MODEL.with((key, block, generator) -> {
-                final ResourceLocation side;
-                final ResourceLocation end;
+                final Identifier side;
+                final Identifier end;
                 if (sideOverride != null) {
                     side = sideOverride;
                     end = endOverride != null ? endOverride : sideOverride;
                 } else if (bark) {
-                    final var tex = TextureMapping.getBlockTexture(logBlock.get());
+                    final var tex = TextureMapping.getBlockTexture(logBlock.get()).sprite();
                     side = tex.withSuffix("_side");
                     end = tex.withSuffix("_side");
                 } else {
-                    final var tex = TextureMapping.getBlockTexture(block);
+                    final var tex = TextureMapping.getBlockTexture(block).sprite();
                     side = tex.withSuffix("_side");
                     end = tex.withSuffix("_top");
                 }
 
                 final var mapping = new TextureMapping()
-                        .put(TextureSlot.SIDE, side)
-                        .put(TextureSlot.END, end);
+                        .put(TextureSlot.SIDE, new Material(side))
+                        .put(TextureSlot.END, new Material(end));
                 final var baseModel = ModelTemplates.CUBE_COLUMN.create(block, mapping, generator.modelOutput());
 
                 final var baseLocation = ModelLocationUtils.getModelLocation(block);

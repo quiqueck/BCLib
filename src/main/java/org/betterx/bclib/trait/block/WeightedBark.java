@@ -6,7 +6,7 @@ import de.ambertation.wover.sets.api.blocks.BlockSet;
 import de.ambertation.wover.sets.api.blocks.SlotType;
 import de.ambertation.wover.sets.api.blocks.types.Bark;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -24,9 +24,9 @@ public class WeightedBark extends Bark {
     private final boolean stripable;
     private final int[] weights;
     @Nullable
-    private final ResourceLocation sideTexture;
+    private final Identifier sideTexture;
     @Nullable
-    private final ResourceLocation endTexture;
+    private final Identifier endTexture;
 
     /**
      * @param stripable whether this bark can be stripped; also selects {@code BARK} vs {@code STRIPPED_BARK} as the slot
@@ -45,8 +45,8 @@ public class WeightedBark extends Bark {
     public WeightedBark(
             boolean stripable,
             int[] weights,
-            @Nullable ResourceLocation sideTexture,
-            @Nullable ResourceLocation endTexture
+            @Nullable Identifier sideTexture,
+            @Nullable Identifier endTexture
     ) {
         super(stripable);
         this.stripable = stripable;

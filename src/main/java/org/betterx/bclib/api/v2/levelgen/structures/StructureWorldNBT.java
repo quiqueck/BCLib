@@ -6,7 +6,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -23,7 +23,7 @@ public class StructureWorldNBT extends StructureNBT {
     public static final Codec<StructureWorldNBT> CODEC =
             RecordCodecBuilder.create((instance) ->
                     instance.group(
-                                    ResourceLocation.CODEC
+                                    Identifier.CODEC
                                             .fieldOf("location")
                                             .forGetter((cfg) -> cfg.location),
 
@@ -50,7 +50,7 @@ public class StructureWorldNBT extends StructureNBT {
     public final int offsetY;
     public final float chance;
 
-    protected StructureWorldNBT(ResourceLocation location, int offsetY, StructurePlacementType type, float chance) {
+    protected StructureWorldNBT(Identifier location, int offsetY, StructurePlacementType type, float chance) {
         super(location);
         this.offsetY = offsetY;
         this.type = type;
@@ -59,12 +59,12 @@ public class StructureWorldNBT extends StructureNBT {
 
     private static final Map<String, StructureWorldNBT> READER_CACHE = Maps.newHashMap();
 
-    public static StructureWorldNBT create(ResourceLocation location, int offsetY, StructurePlacementType type) {
+    public static StructureWorldNBT create(Identifier location, int offsetY, StructurePlacementType type) {
         return create(location, offsetY, type, 1.0f);
     }
 
     public static StructureWorldNBT create(
-            ResourceLocation location,
+            Identifier location,
             int offsetY,
             StructurePlacementType type,
             float chance

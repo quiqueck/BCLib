@@ -7,7 +7,6 @@ import de.ambertation.wover.block.api.model.WoverBlockModelGenerators;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -192,7 +191,7 @@ public abstract class BaseChair extends AbstractChair {
     public static LootTable.Builder chairLoot(Block block) {
         var bottomShape = LootItemBlockStatePropertyCondition
                 .hasBlockStateProperties(block)
-                .setProperties(net.minecraft.advancements.critereon.StatePropertiesPredicate.Builder
+                .setProperties(net.minecraft.advancements.criterion.StatePropertiesPredicate.Builder
                         .properties()
                         .hasProperty(TOP, false));
         return LootTable

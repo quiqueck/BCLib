@@ -3,7 +3,7 @@ package org.betterx.bclib.util;
 import org.betterx.bclib.BCLib;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 
@@ -51,12 +51,12 @@ public class JsonFactory {
     /**
      * Loads {@link JsonObject} from resource location using Minecraft resource manager. Can be used to load JSON from resourcepacks and resources.
      *
-     * @param location {@link ResourceLocation} to JSON file
+     * @param location {@link Identifier} to JSON file
      * @return {@link JsonObject}
      */
     @Nullable
     @Environment(EnvType.CLIENT)
-    public static JsonObject getJsonObject(ResourceLocation location) {
+    public static JsonObject getJsonObject(Identifier location) {
         ResourceManager manager = Minecraft.getInstance()
                                            .getResourceManager();
         JsonObject obj = null;

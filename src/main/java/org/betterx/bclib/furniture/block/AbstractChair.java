@@ -9,7 +9,6 @@ import org.betterx.bclib.util.BlocksHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.player.Player;
@@ -76,7 +75,7 @@ public abstract class AbstractChair extends BaseBlockNotFull {
             Player player,
             BlockHitResult hit
     ) {
-        if (world.isClientSide) {
+        if (world.isClientSide()) {
             return InteractionResult.FAIL;
         } else {
             if (player.isPassenger() || player.isSpectator())
@@ -96,7 +95,7 @@ public abstract class AbstractChair extends BaseBlockNotFull {
 
             if (entity != null) {
                 float yaw = state.getValue(FACING).getOpposite().toYRot();
-                player.startRiding(entity, true);
+                player.startRiding(entity, true, true);
                 player.setYBodyRot(yaw);
                 player.setYHeadRot(yaw);
                 return InteractionResult.SUCCESS;

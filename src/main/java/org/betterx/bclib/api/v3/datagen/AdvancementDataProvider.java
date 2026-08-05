@@ -5,7 +5,7 @@ import org.betterx.bclib.api.v2.advancement.AdvancementManager;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.HolderLookup;
 
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricAdvancementProvider;
 
 import java.util.List;
@@ -17,7 +17,7 @@ public abstract class AdvancementDataProvider extends FabricAdvancementProvider 
 
     protected AdvancementDataProvider(
             List<String> modIDs,
-            FabricDataOutput output,
+            FabricPackOutput output,
             CompletableFuture<HolderLookup.Provider> registryLookup
     ) {
         super(output, registryLookup);

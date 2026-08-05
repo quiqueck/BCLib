@@ -11,8 +11,8 @@ import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
 import net.minecraft.client.data.models.model.ModelInstance;
 import net.minecraft.client.data.models.model.TextureMapping;
-import net.minecraft.client.renderer.block.model.Variant;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.block.dispatch.Variant;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -48,7 +48,7 @@ import org.jetbrains.annotations.Nullable;
  *     texture, ...}}}), de-duplicating layers that resolve to the same {@code (parent, textures)} pair,</li>
  *     <li>it generates the blockstate as the recovered (weighted) variant list - each variant optionally rotated
  *     and uv-locked - dispatched over the block's property, referencing the kept template directly (via
- *     {@link #model(ResourceLocation)}) or a generated child (via {@link #child(ResourceLocation, Map)}), and</li>
+ *     {@link #model(Identifier)}) or a generated child (via {@link #child(Identifier, Map)}), and</li>
  *     <li>it generates the flat/delegated item model the hand-authored block shipped.</li>
  * </ul>
  * The one hand-authored geometry template per family stays committed - it is the actual bespoke, {@code elements}
@@ -66,7 +66,7 @@ import org.jetbrains.annotations.Nullable;
  * Like wover's {@code ModelTraitLibrary}, every public factory returns {@code null} outside a datagen environment;
  * the client-only vanilla datagen types are only touched from {@link Impl}, which is loaded solely when
  * {@link ModCore#isDatagen()} is {@code true}. The public surface therefore stays free of client-only types
- * ({@link Layer} carries only {@link ResourceLocation}s and a texture {@link Map}).
+ * ({@link Layer} carries only {@link Identifier}s and a texture {@link Map}).
  */
 public class WeightedTemplateModelTrait {
     /**
@@ -86,9 +86,9 @@ public class WeightedTemplateModelTrait {
      * @param uvlock        whether the blockstate variant sets {@code uvlock: true}
      */
     public record Layer(
-            @Nullable ResourceLocation parent,
-            Map<String, ResourceLocation> textures,
-            @Nullable ResourceLocation explicitModel,
+            @Nullable Identifier parent,
+            Map<String, Identifier> textures,
+            @Nullable Identifier explicitModel,
             int weight,
             int xRot,
             int yRot,
@@ -119,7 +119,7 @@ public class WeightedTemplateModelTrait {
      * @param textures the slot-name&rarr;texture map to bind into the template
      * @return the layer (weight 1, no rotation, no uvlock)
      */
-    public static Layer child(ResourceLocation template, Map<String, ResourceLocation> textures) {
+    public static Layer child(Identifier template, Map<String, Identifier> textures) {
         return new Layer(template, Map.copyOf(textures), null, 1, 0, 0, false);
     }
 
@@ -130,7 +130,7 @@ public class WeightedTemplateModelTrait {
      * @param existingModel the model to reference directly
      * @return the layer (weight 1, no rotation, no uvlock)
      */
-    public static Layer model(ResourceLocation existingModel) {
+    public static Layer model(Identifier existingModel) {
         return new Layer(null, Map.of(), existingModel, 1, 0, 0, false);
     }
 
@@ -150,6 +150,30 @@ public class WeightedTemplateModelTrait {
     }
 
     /**
+     * One case of a two-property dispatch: the variant list to use when both properties equal the given pair.
+     *
+     * @param value1   the first property's value this case selects on
+     * @param value2   the second property's value this case selects on
+     * @param variants the weighted variant list for that pair
+     * @param <T1>     the first property's value type
+     * @param <T2>     the second property's value type
+     */
+    public record Case2<T1 extends Comparable<T1>, T2 extends Comparable<T2>>(
+            T1 value1,
+            T2 value2,
+            List<Layer> variants
+    ) {
+        /** A case mapping the pair {@code (value1, value2)} to the given weighted variant list. */
+        public static <T1 extends Comparable<T1>, T2 extends Comparable<T2>> Case2<T1, T2> of(
+                T1 value1,
+                T2 value2,
+                List<Layer> variants
+        ) {
+            return new Case2<>(value1, value2, variants);
+        }
+    }
+
+    /**
      * How the block's inventory item model is generated: a flat {@code item/generated} icon, an item delegated to
      * the block's own texture, an item delegated to an explicit model (the kept template), or none.
      */
@@ -158,15 +182,15 @@ public class WeightedTemplateModelTrait {
 
         private final Kind kind;
         @Nullable
-        private final ResourceLocation ref;
+        private final Identifier ref;
 
-        private Item(Kind kind, @Nullable ResourceLocation ref) {
+        private Item(Kind kind, @Nullable Identifier ref) {
             this.kind = kind;
             this.ref = ref;
         }
 
         /** A flat {@code item/generated} icon whose {@code layer0} is {@code texture} (block's own if {@code null}). */
-        public static Item flat(@Nullable ResourceLocation texture) {
+        public static Item flat(@Nullable Identifier texture) {
             return new Item(Kind.FLAT, texture);
         }
 
@@ -176,7 +200,7 @@ public class WeightedTemplateModelTrait {
         }
 
         /** An item model delegated to an explicit model - e.g. the kept template ({@code block/<name>_1}). */
-        public static Item delegatedTo(ResourceLocation model) {
+        public static Item delegatedTo(Identifier model) {
             return new Item(Kind.DELEGATE_MODEL, model);
         }
 
@@ -235,6 +259,27 @@ public class WeightedTemplateModelTrait {
         return ModCore.isDatagen() ? Impl.propertyDispatch(property, cases, item) : null;
     }
 
+    /**
+     * A template-child block dispatched over a pair of properties. Every combination of values the two properties
+     * can take MUST have a case - the blockstate is a full cross product, not a sparse map with a fallback.
+     *
+     * @param property1 the first property to dispatch over
+     * @param property2 the second property to dispatch over
+     * @param cases     one {@link Case2} per pair of property values
+     * @param item      how to generate the item model
+     * @param <T1>      the first property's value type
+     * @param <T2>      the second property's value type
+     * @return the model trait, or {@code null} outside of datagen
+     */
+    public static <T1 extends Comparable<T1>, T2 extends Comparable<T2>> BlockModelTrait propertyDispatch(
+            Property<T1> property1,
+            Property<T2> property2,
+            List<Case2<T1, T2>> cases,
+            Item item
+    ) {
+        return ModCore.isDatagen() ? Impl.propertyDispatch(property1, property2, cases, item) : null;
+    }
+
     @Environment(EnvType.CLIENT)
     private static class Impl {
         /**
@@ -245,40 +290,40 @@ public class WeightedTemplateModelTrait {
         private static final class ChildModels {
             private final Block block;
             private final WoverBlockModelGenerators generator;
-            private final ResourceLocation blockModel;
-            private final Map<String, ResourceLocation> cache = new HashMap<>();
+            private final Identifier blockModel;
+            private final Map<String, Identifier> cache = new HashMap<>();
             private int counter = 0;
 
             ChildModels(Block block, WoverBlockModelGenerators generator) {
                 this.block = block;
                 this.generator = generator;
                 // <ns>:block/<name> - the block's own model location.
-                this.blockModel = TextureMapping.getBlockTexture(block);
+                this.blockModel = TextureMapping.getBlockTexture(block).sprite();
             }
 
-            ResourceLocation resolve(Layer layer) {
+            Identifier resolve(Layer layer) {
                 if (layer.explicitModel() != null) {
                     return layer.explicitModel();
                 }
                 final String key = key(layer.parent(), layer.textures());
-                final ResourceLocation cached = cache.get(key);
+                final Identifier cached = cache.get(key);
                 if (cached != null) {
                     return cached;
                 }
-                final ResourceLocation id = blockModel.withSuffix("_t" + counter++);
+                final Identifier id = blockModel.withSuffix("_t" + counter++);
                 emit(id, layer.parent(), layer.textures());
                 cache.put(key, id);
                 return id;
             }
 
-            private void emit(ResourceLocation id, ResourceLocation parent, Map<String, ResourceLocation> textures) {
+            private void emit(Identifier id, Identifier parent, Map<String, Identifier> textures) {
                 // Emit {parent, textures} directly: the template's #slot placeholders are arbitrary names, not
                 // public TextureSlot constants, so ModelTemplate/TextureMapping can't express them.
                 final JsonObject json = new JsonObject();
                 json.addProperty("parent", parent.toString());
                 final JsonObject tex = new JsonObject();
                 // Sorted for a stable, deterministic child-model JSON.
-                for (Map.Entry<String, ResourceLocation> e : new TreeMap<>(textures).entrySet()) {
+                for (Map.Entry<String, Identifier> e : new TreeMap<>(textures).entrySet()) {
                     tex.addProperty(e.getKey(), e.getValue().toString());
                 }
                 json.add("textures", tex);
@@ -286,9 +331,9 @@ public class WeightedTemplateModelTrait {
                 generator.modelOutput().accept(id, model);
             }
 
-            private static String key(ResourceLocation parent, Map<String, ResourceLocation> textures) {
+            private static String key(Identifier parent, Map<String, Identifier> textures) {
                 final StringBuilder sb = new StringBuilder(parent.toString()).append('|');
-                for (Map.Entry<String, ResourceLocation> e : new TreeMap<>(textures).entrySet()) {
+                for (Map.Entry<String, Identifier> e : new TreeMap<>(textures).entrySet()) {
                     sb.append(e.getKey()).append('=').append(e.getValue()).append(';');
                 }
                 return sb.toString();
@@ -304,7 +349,7 @@ public class WeightedTemplateModelTrait {
             };
         }
 
-        private static Variant variant(ResourceLocation model, Layer layer) {
+        private static Variant variant(Identifier model, Layer layer) {
             Variant v = new Variant(model);
             if (layer.xRot() != 0) {
                 v = v.withXRot(quadrant(layer.xRot()));
@@ -390,6 +435,31 @@ public class WeightedTemplateModelTrait {
                     dispatch = dispatch == null
                             ? PropertyDispatch.initial(property).select(cases.get(i).value(), built.get(i))
                             : dispatch.select(cases.get(i).value(), built.get(i));
+                }
+                generator.acceptBlockState(MultiVariantGenerator.dispatch(block).with(dispatch));
+                applyItem(block, generator, item);
+            });
+        }
+
+        private static <T1 extends Comparable<T1>, T2 extends Comparable<T2>> BlockModelTrait propertyDispatch(
+                Property<T1> property1,
+                Property<T2> property2,
+                List<Case2<T1, T2>> cases,
+                Item item
+        ) {
+            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+                final ChildModels models = new ChildModels(block, generator);
+                final List<MultiVariant> built = new ArrayList<>();
+                for (Case2<T1, T2> c : cases) {
+                    built.add(variants(models, c.variants()));
+                }
+                PropertyDispatch.C2<MultiVariant, T1, T2> dispatch = null;
+                for (int i = 0; i < cases.size(); i++) {
+                    final Case2<T1, T2> c = cases.get(i);
+                    dispatch = dispatch == null
+                            ? PropertyDispatch.initial(property1, property2)
+                                              .select(c.value1(), c.value2(), built.get(i))
+                            : dispatch.select(c.value1(), c.value2(), built.get(i));
                 }
                 generator.acceptBlockState(MultiVariantGenerator.dispatch(block).with(dispatch));
                 applyItem(block, generator, item);

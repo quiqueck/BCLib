@@ -14,7 +14,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.animal.WaterAnimal;
+import net.minecraft.world.entity.animal.fish.WaterAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
@@ -58,7 +58,7 @@ public class EntityChair extends Entity {
         );
 
         if (!pushableEntities.isEmpty()) {
-            boolean free = !this.level().isClientSide && !(this.getControllingPassenger() instanceof Player);
+            boolean free = !this.level().isClientSide() && !(this.getControllingPassenger() instanceof Player);
             for (int j = 0; j < pushableEntities.size(); ++j) {
                 Entity entity = pushableEntities.get(j);
                 if (entity.hasPassenger(this)) continue;
@@ -129,12 +129,12 @@ public class EntityChair extends Entity {
     }
 
     @Override
-    public InteractionResult interact(Player player, InteractionHand interactionHand) {
+    public InteractionResult interact(Player player, InteractionHand interactionHand, Vec3 hitPos) {
         if (player.isSecondaryUseActive()) {
             return InteractionResult.PASS;
         }
 
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             return player.startRiding(this) ? InteractionResult.CONSUME : InteractionResult.PASS;
         }
         return InteractionResult.SUCCESS;

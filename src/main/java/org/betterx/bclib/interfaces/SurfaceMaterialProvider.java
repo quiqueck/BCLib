@@ -87,7 +87,7 @@ public interface SurfaceMaterialProvider {
                     .registryAccess()
                     .lookup(BiomeDataRegistry.BIOME_DATA_REGISTRY)
                     .orElseThrow()
-                    .get(biome.unwrapKey().orElseThrow().location())
+                    .get(BiomeDataRegistry.createKey(biome.unwrapKey().orElseThrow()))
                     .map(h -> h.value())
                     .orElse(null);
 

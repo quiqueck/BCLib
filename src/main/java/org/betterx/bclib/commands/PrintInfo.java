@@ -20,13 +20,13 @@ public class PrintInfo {
     public static LiteralArgumentBuilder<CommandSourceStack> register(LiteralArgumentBuilder<CommandSourceStack> bnContext) {
         return bnContext
                 .then(Commands.literal("print")
-                              .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
+                              .requires(Commands.hasPermission(Commands.LEVEL_OWNERS))
                               .then(Commands.literal("dimensions")
-                                            .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
+                                            .requires(Commands.hasPermission(Commands.LEVEL_OWNERS))
                                             .executes(PrintInfo::printDimensions)
                               )
                               .then(Commands.literal("climate")
-                                            .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
+                                            .requires(Commands.hasPermission(Commands.LEVEL_OWNERS))
                                             .executes(PrintInfo::printMapValues)
                               )
                 );
@@ -38,18 +38,18 @@ public class PrintInfo {
 
         for (var serverLevel : ctx.getSource().getLevel().getServer().getAllLevels()) {
             var generator = serverLevel.getChunkSource().getGenerator();
-            String output = "\n - " + serverLevel.dimension().location().toString() + ": " +
+            String output = "\n - " + serverLevel.dimension().identifier().toString() + ": " +
                     "\n     " + generator.toString().trim() + " " +
                     generator
                             .getBiomeSource()
                             .toString()
                             .replace("\n", "\n     ");
             var cl = ChatFormatting.LIGHT_PURPLE;
-            if (serverLevel.dimension().location().equals(Level.OVERWORLD.location()))
+            if (serverLevel.dimension().identifier().equals(Level.OVERWORLD.identifier()))
                 cl = ChatFormatting.WHITE;
-            else if (serverLevel.dimension().location().equals(Level.NETHER.location()))
+            else if (serverLevel.dimension().identifier().equals(Level.NETHER.identifier()))
                 cl = ChatFormatting.RED;
-            if (serverLevel.dimension().location().equals(Level.END.location()))
+            if (serverLevel.dimension().identifier().equals(Level.END.identifier()))
                 cl = ChatFormatting.YELLOW;
             Component dimComponent = Component.literal(output)
                                               .setStyle(Style.EMPTY.withBold(false).withColor(cl));
@@ -71,7 +71,7 @@ public class PrintInfo {
         MutableComponent result = Component
                 .literal("Samples for " + pos.toString() + " in " + serverLevel
                         .dimension()
-                        .location()
+                        .identifier()
                         .toString() + ":\n")
                 .setStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.BLUE));
         StringBuilder output = new StringBuilder();

@@ -7,10 +7,10 @@ buildscript {
         gradlePluginPortal()
     }
 }
-sourceCompatibility = JavaVersion.VERSION_21
-targetCompatibility = JavaVersion.VERSION_21
+java.sourceCompatibility = JavaVersion.VERSION_25
+java.targetCompatibility = JavaVersion.VERSION_25
 
-archivesBaseName = project.archives_base_name
+base.archivesName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
@@ -39,7 +39,29 @@ loom {
             vmArg "-Dfabric-api.datagen"
             vmArg "-Dfabric-api.datagen.output-dir=${file("src/main/generated")}"
             vmArg "-Dfabric-api.datagen.strict-validation"
-            vmArg "-Dfabric-api.datagen.modid=${archivesBaseName}"
+            vmArg "-Dfabric-api.datagen.modid=${project.archives_base_name}"
+
+            runDir "build/datagen"
+        }
+
+        // Regenerates the four vanilla-namespace audit snapshots - block_properties.json,
+        // block_registrations.json, item_registrations.json, block_shapes.txt - into the shared
+        // minecraft reference checkout that sits next to the mod repos in the workspace.
+        // Usage: "gradlew :runMinecraftAudit" (the leading colon matters, see common-settings.gradle).
+        //
+        // Deliberately not a datagen run of the mod itself: MinecraftAuditDatagen swaps the
+        // providers over to a 'minecraft' ModCore and suppresses everything else, so the only
+        // thing that lands in the output folder is those four files. strict-validation is left
+        // off on purpose - it is meant for a mod generating its own registry content, which this
+        // run does not do.
+        minecraftAudit {
+            inherit client
+            name "Minecraft Audit Data Generation"
+            vmArg "-Dfabric-api.datagen"
+            vmArg "-Dfabric-api.datagen.output-dir=${file("../minecraft/src/main/generated")}"
+            vmArg "-Dfabric-api.datagen.modid=${project.archives_base_name}"
+            // Keep in sync with MinecraftAuditDatagen.PROPERTY.
+            vmArg "-Dwover.datagen.minecraft-audit"
 
             runDir "build/datagen"
         }
@@ -49,6 +71,22 @@ loom {
     }
 }
 
+
+// The audit writes outside this repository, into a checkout that a fresh clone will not have.
+// Without this the run would quietly create an empty minecraft/src/main/generated next to the
+// repo and report success, leaving the real reference checkout untouched.
+tasks.named("runMinecraftAudit") {
+    doFirst {
+        def reference = file("../minecraft/src")
+        if (!reference.isDirectory()) {
+            throw new GradleException(
+                    "The minecraft reference checkout was not found at '${reference}'.\n" +
+                            "runMinecraftAudit writes the vanilla audit snapshots into that workspace folder;\n" +
+                            "check it out next to the mod repos before running this task."
+            )
+        }
+    }
+}
 
 sourceSets {
     main {
@@ -63,15 +101,17 @@ sourceSets {
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings loom.officialMojangMappings()
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
-    modLocalRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
+    compileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+    localRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
 
-//    modCompileOnly "dev.emi:emi-fabric:${emi_version}:api"
-//    modLocalRuntime "dev.emi:emi-fabric:${emi_version}"
+//    compileOnly "dev.emi:emi-fabric:${emi_version}:api"
+//    localRuntime "dev.emi:emi-fabric:${emi_version}"
+
+    compileOnly "mezz.jei:jei-${project.minecraft_version}-fabric-api:${project.jei_version}" // compile against the API
+    localRuntime "mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}" // run against the full jar
 
     // alsoInclude=false: BCLib doesn't bundle wunderlib into its own jar,
     // just needs it on the classpath (same as WorldWeaver's own submodules).
@@ -88,7 +128,7 @@ dependencies {
             implementation project(path: ":WorldWeaver:$it", configuration: 'devClient')
         }
     } else {
-        modImplementation "org.betterx:worldweaver:${project.wover_version}"
+        implementation "org.betterx:worldweaver:${project.wover_version}"
     }
 }
 
@@ -104,14 +144,14 @@ processResources {
 // ensure that the encoding is set to UTF-8, no matter what the system default is
 // this fixes some edge cases with special characters not displaying correctly
 // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
-    it.options.release = 21
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = "UTF-8"
+    it.options.release = 25
 }
 
 javadoc {
     options {
-        source = "17"
+        source = "25"
         encoding = "UTF-8"
         charSet = "UTF-8"
         tags = ["reason"]
@@ -149,9 +189,8 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
 }
 
-// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-// if it is present.
-// If you remove this task, sources will not be generated.
+// Loom will automatically attach sourcesJar to the "build" task if it is
+// present. If you remove this task, sources will not be generated.
 tasks.sourcesJar {
     archiveClassifier = 'sources'
     from sourceSets.main.allSource
@@ -172,10 +211,10 @@ configurations {
 }
 
 artifacts {
-    archives sourcesJar
-    archives javadocJar
     dev jar
 }
+
+tasks.assemble.dependsOn(sourcesJar, javadocJar)
 
 allprojects {
     // Allow 400 errors.

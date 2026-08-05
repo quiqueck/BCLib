@@ -1,10 +1,10 @@
 package org.betterx.bclib.api.v3.datagen;
 
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public interface DatapackRecipeBuilder {
-    ResourceLocation getId();
+    Identifier getId();
 
     default String getNamespace() {
         return this.getId().getNamespace();

@@ -10,7 +10,7 @@ import org.betterx.bclib.config.Configs;
 import de.ambertation.wover.core.api.Logger;
 import de.ambertation.wover.state.api.WorldConfig;
 
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.client.gui.screens.worldselection.EditWorldScreen;
@@ -32,6 +32,7 @@ import java.io.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -159,7 +160,7 @@ public class DataFixerAPI {
         return ps;
     }
 
-    private static void makeBackupAndShowToast(
+    private static boolean makeBackupAndShowToast(
             LevelStorageSource.LevelStorageAccess access,
             String levelID
     ) {
@@ -168,18 +169,33 @@ public class DataFixerAPI {
         //OverlappingFileLockException (a RuntimeException, not an IOException) and leave the
         //progress screen hanging forever.
         try {
-            if (access != null) {
-                EditWorldScreen.makeBackupAndShowToast(access);
-            } else {
-                //Defensive fallback for callers that did not provide an already open access.
-                try (LevelStorageSource.LevelStorageAccess opened =
-                             Minecraft.getInstance().getLevelSource().createAccess(levelID)) {
-                    EditWorldScreen.makeBackupAndShowToast(opened);
+            final LevelStorageSource.LevelStorageAccess accessToBackup = access != null
+                    ? access
+                    : Minecraft.getInstance().getLevelSource().createAccess(levelID);
+            try {
+                //EditWorldScreen#makeBackupAndShowToast opens a GenericWaitingScreen and calls
+                //Minecraft#setScreenAndShow synchronously, which renders a frame immediately and
+                //therefore requires the render thread. This method runs on the background
+                //fixerThread, so calling it directly used to throw here; the exception was
+                //swallowed by the catch below and reported as a generic "access failure" toast,
+                //while execution still fell through to apply the fixes -- silently skipping the
+                //backup the user asked for. We hop onto the main thread via the Minecraft
+                //executor to make the call, then block this background thread on the resulting
+                //future until the (now correctly scheduled) backup actually finishes.
+                Boolean success = CompletableFuture
+                        .supplyAsync(() -> accessToBackup, Minecraft.getInstance())
+                        .thenCompose(EditWorldScreen::makeBackupAndShowToast)
+                        .join();
+                return Boolean.TRUE.equals(success);
+            } finally {
+                if (access == null) {
+                    accessToBackup.close();
                 }
             }
         } catch (Exception ex) {
-            SystemToast.onWorldAccessFailure(Minecraft.getInstance(), levelID);
+            Minecraft.getInstance().execute(() -> SystemToast.onWorldAccessFailure(Minecraft.getInstance(), levelID));
             LOGGER.warn("Failed to create backup of level {}", levelID, ex);
+            return false;
         }
     }
 
@@ -239,7 +255,14 @@ public class DataFixerAPI {
                         if (progress != null) {
                             progress.progressStage(Component.translatable("message.bclib.datafixer.progress.waitbackup"));
                         }
-                        makeBackupAndShowToast(access, levelID);
+                        if (!makeBackupAndShowToast(access, levelID)) {
+                            //The user explicitly asked for a backup before patching. If it
+                            //failed, do not silently fall through and patch the world anyway --
+                            //report the failure and stop here instead.
+                            state.didFail = true;
+                            state.addError("Failed to create a backup of the world (" + levelID + "). Fixes were not applied.");
+                            return state;
+                        }
                     }
 
                     if (applyFixes) {

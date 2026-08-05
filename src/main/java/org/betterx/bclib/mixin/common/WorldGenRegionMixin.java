@@ -22,6 +22,6 @@ public class WorldGenRegionMixin {
         int x = blockPos.getX() >> 4;
         int z = blockPos.getZ() >> 4;
         WorldGenRegion region = (WorldGenRegion) (Object) this;
-        info.setReturnValue(Math.abs(x - center.getPos().x) < 2 && Math.abs(z - center.getPos().z) < 2);
+        info.setReturnValue(Math.abs(x - center.getPos().x()) < 2 && Math.abs(z - center.getPos().z()) < 2);
     }
 }

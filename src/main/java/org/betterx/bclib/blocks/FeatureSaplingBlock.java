@@ -98,6 +98,25 @@ public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfig
         else return state;
     }
 
+    /**
+     * Overridden because the inherited implementation crashes the server.
+     * <p>
+     * This class grows a {@link Feature}, not a vanilla tree, so it passes {@code null} for
+     * {@code SaplingBlock}'s {@code TreeGrower}. In 26.1 {@code SaplingBlock.isValidBonemealTarget}
+     * dereferences that field ({@code this.treeGrower.getMinimumHeight(serverLevel)}) to work out how
+     * much headroom the tree needs - so the inherited version throws a {@link NullPointerException}
+     * the moment bone meal is applied to any feature sapling, from a player or a dispenser alike, and
+     * takes the server down with it.
+     * <p>
+     * There is no height to report without a grower: the feature decides its own size at generation
+     * time and does its own room checks. Accepting any server-side position restores the behaviour
+     * these saplings had before the vanilla method started consulting the grower.
+     */
+    @Override
+    public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state) {
+        return level instanceof ServerLevel;
+    }
+
     @Override
     public boolean isBonemealSuccess(Level level, RandomSource random, BlockPos pos, BlockState state) {
         return random.nextInt(16) == 0;

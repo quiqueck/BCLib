@@ -2,7 +2,7 @@ package org.betterx.bclib.api.v2.dataexchange.handler;
 
 import org.betterx.bclib.api.v2.dataexchange.*;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -43,7 +43,7 @@ abstract public class DataExchange {
         return descriptors;
     }
 
-    public static DataHandlerDescriptor getDescriptor(ResourceLocation identifier) {
+    public static DataHandlerDescriptor getDescriptor(Identifier identifier) {
         return getInstance().descriptors.stream().filter(d -> d.equals(identifier)).findFirst().orElse(null);
     }
 

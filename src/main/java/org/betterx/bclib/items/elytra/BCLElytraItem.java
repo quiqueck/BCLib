@@ -1,7 +1,7 @@
 package org.betterx.bclib.items.elytra;
 
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Unit;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -30,7 +30,7 @@ public interface BCLElytraItem {
                          )
                          .repairable(Items.PHANTOM_MEMBRANE);
     }
-    ResourceLocation getModelTexture();
+    Identifier getModelTexture();
 
     double getMovementFactor();
 
@@ -42,7 +42,7 @@ public interface BCLElytraItem {
     static void vanillaElytraTick(LivingEntity entity, ItemStack chestStack) {
         int nextRoll = entity.getFallFlyingTicks() + 1;
 
-        if (!entity.level().isClientSide && nextRoll % 10 == 0) {
+        if (!entity.level().isClientSide() && nextRoll % 10 == 0) {
             if ((nextRoll / 10) % 2 == 0) {
                 BCLElytraUtils.onBreak.accept(entity, chestStack);
                 return;

@@ -6,7 +6,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Mirror;
@@ -24,7 +24,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class StructureHelper {
-    public static StructureTemplate readStructure(ResourceLocation resource) {
+    public static StructureTemplate readStructure(Identifier resource) {
         String ns = resource.getNamespace();
         String nm = resource.getPath();
         return readStructure("/data/" + ns + "/structure/" + nm + ".nbt");

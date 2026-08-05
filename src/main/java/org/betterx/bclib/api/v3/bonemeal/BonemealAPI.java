@@ -141,9 +141,9 @@ public class BonemealAPI {
                 .blockSpreaderForState(level, blockPos, blockState);
 
         if (spreader != null) {
-            if (spreader.isValidBonemealSpreadTarget(level, blockPos, blockState, level.isClientSide)) {
+            if (spreader.isValidBonemealSpreadTarget(level, blockPos, blockState, level.isClientSide())) {
                 if (level instanceof ServerLevel) {
-                    if (spreader.performBonemealSpread((ServerLevel) level, level.random, blockPos, blockState)) {
+                    if (spreader.performBonemealSpread((ServerLevel) level, level.getRandom(), blockPos, blockState)) {
                         itemStack.shrink(1);
                     }
                 }
@@ -158,8 +158,8 @@ public class BonemealAPI {
         if (fSpreader != null) {
             if (fSpreader.isValidBonemealTarget(level, blockPos, blockState)) {
                 if (level instanceof ServerLevel) {
-                    if (forceBonemeal || fSpreader.isBonemealSuccess(level, level.random, blockPos, blockState)) {
-                        fSpreader.performBonemeal((ServerLevel) level, level.random, blockPos, blockState);
+                    if (forceBonemeal || fSpreader.isBonemealSuccess(level, level.getRandom(), blockPos, blockState)) {
+                        fSpreader.performBonemeal((ServerLevel) level, level.getRandom(), blockPos, blockState);
                     }
                     itemStack.shrink(1);
                 }

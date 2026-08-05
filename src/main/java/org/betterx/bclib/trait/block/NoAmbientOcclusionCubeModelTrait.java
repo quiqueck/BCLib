@@ -8,7 +8,7 @@ import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.model.ModelTemplate;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -36,13 +36,13 @@ public class NoAmbientOcclusionCubeModelTrait {
      *               {@code betterend:block/cube_noshade}
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static BlockModelTrait withParent(ResourceLocation parent) {
+    public static BlockModelTrait withParent(Identifier parent) {
         return ModCore.isDatagen() ? Impl.withParent(parent) : null;
     }
 
     @Environment(EnvType.CLIENT)
     private static class Impl {
-        private static BlockModelTrait withParent(ResourceLocation parent) {
+        private static BlockModelTrait withParent(Identifier parent) {
             final ModelTemplate template = new ModelTemplate(
                     Optional.of(parent),
                     Optional.empty(),

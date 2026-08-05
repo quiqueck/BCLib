@@ -30,7 +30,7 @@ public class RecipeTraits {
     private static RecipeBuilder.Templates templatesFor(ResourceKey<Block> key, RecipeBuilder.Context context) {
         // ModCore.create(id) is cached and returns the mod's canonical instance, so this is the same
         // ModCore the mod's own recipe provider builds its Templates with (namespace == modId for both mods).
-        return new RecipeBuilder.Templates(context, ModCore.create(key.location().getNamespace()));
+        return new RecipeBuilder.Templates(context, ModCore.create(key.identifier().getNamespace()));
     }
 
     /**

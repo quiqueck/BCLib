@@ -12,7 +12,7 @@ import de.ambertation.wover.tag.api.predefined.MineableTags;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 
@@ -164,7 +164,7 @@ public class BCLAutoBlockTagProvider extends WoverTagProvider.ForBlocks implemen
         // only ever ran during a datagen run and never in a real game - so it had no runtime effect. It now
         // lives in org.betterx.bclib.api.v2.FuelValueRegistration, registered from BCLib#onInitialize.
 
-        final ResourceLocation location = BuiltInRegistries.BLOCK.getKey(block);
+        final Identifier location = BuiltInRegistries.BLOCK.getKey(block);
         if (!location.getNamespace().equals("minecraft")) {
             if (!declaredTools.declaresTool(block)
                     && block.defaultBlockState().requiresCorrectToolForDrops()) {

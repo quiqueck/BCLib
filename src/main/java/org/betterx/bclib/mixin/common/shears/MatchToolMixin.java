@@ -2,7 +2,7 @@ package org.betterx.bclib.mixin.common.shears;
 
 import de.ambertation.wover.tag.api.predefined.CommonItemTags;
 
-import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -48,7 +48,7 @@ public class MatchToolMixin {
             }
         }
         if ((bcl_isShears & BCL_SHEARS) != 0) {
-            ItemStack itemStack = lootContext.getOptionalParameter(LootContextParams.TOOL);
+            ItemStack itemStack = (ItemStack) lootContext.getOptionalParameter(LootContextParams.TOOL);
             cir.setReturnValue(itemStack != null && itemStack.is(CommonItemTags.SHEARS));
         }
     }

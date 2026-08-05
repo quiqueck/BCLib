@@ -12,7 +12,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -57,7 +57,7 @@ public class TemplatePiece extends TemplateStructurePiece {
 
     public TemplatePiece(
             StructureTemplateManager structureTemplateManager,
-            ResourceLocation resourceLocation,
+            Identifier resourceLocation,
             BlockPos centerPos,
             Rotation rotation,
             Mirror mirror,
@@ -68,7 +68,7 @@ public class TemplatePiece extends TemplateStructurePiece {
 
     public TemplatePiece(
             StructureTemplateManager structureTemplateManager,
-            ResourceLocation resourceLocation,
+            Identifier resourceLocation,
             BlockPos centerPos,
             Rotation rotation,
             Mirror mirror,
@@ -94,7 +94,7 @@ public class TemplatePiece extends TemplateStructurePiece {
                 INSTANCE,
                 compoundTag,
                 structureTemplateManager,
-                (ResourceLocation resourceLocation) -> makeSettings(compoundTag)
+                (Identifier resourceLocation) -> makeSettings(compoundTag)
         );
         this.erosion = compoundTag.getInt("E").orElse(0);
         this.cover = compoundTag.getBoolean("C").orElse(true);

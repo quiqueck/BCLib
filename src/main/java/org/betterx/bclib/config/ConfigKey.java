@@ -2,7 +2,7 @@ package org.betterx.bclib.config;
 
 import org.betterx.bclib.util.Pair;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Arrays;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +19,7 @@ public class ConfigKey {
         this.root = path.length == 0 || (path.length == 1 && path[0].isEmpty());
     }
 
-    public ConfigKey(String entry, ResourceLocation path) {
+    public ConfigKey(String entry, Identifier path) {
         this(entry, path.getNamespace(), path.getPath());
     }
 

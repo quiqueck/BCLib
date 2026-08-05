@@ -4,7 +4,7 @@ import org.betterx.bclib.client.textures.AtlasSetManager;
 
 import net.minecraft.client.renderer.texture.atlas.SpriteSource;
 import net.minecraft.client.renderer.texture.atlas.SpriteSourceList;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,7 +19,7 @@ public class AtlasSetMixin {
     private static List<SpriteSource> bcl_load(
             List<SpriteSource> list,
             ResourceManager resourceManager,
-            ResourceLocation type
+            Identifier type
     ) {
         AtlasSetManager.onLoadResources(type, list);
         return list;

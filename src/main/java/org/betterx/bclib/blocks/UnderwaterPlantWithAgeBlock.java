@@ -10,11 +10,19 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
+/**
+ * Passive growth (age-up, then {@link #grow}) runs from {@link #randomTick}, so a block registered with this
+ * class needs a random-ticking {@code Properties} to ever grow on its own - attach
+ * {@code org.betterx.bclib.trait.block.RandomTicksTrait} (or a more specific trait that already calls
+ * {@code definition.randomTicks()}, e.g. {@code WaterSeedBlockTrait}) at the registration site. This class
+ * deliberately does not flip that flag itself: constructor {@code Properties} mutation is reserved for
+ * traits, so the setting stays visible and overridable where the block is registered.
+ */
 public abstract class UnderwaterPlantWithAgeBlock extends UnderwaterPlantBlock {
     public static final IntegerProperty AGE = BlockProperties.AGE;
 
     public UnderwaterPlantWithAgeBlock(BlockBehaviour.Properties properties) {
-        super(properties.randomTicks());
+        super(properties);
     }
 
     @Override
@@ -37,9 +45,8 @@ public abstract class UnderwaterPlantWithAgeBlock extends UnderwaterPlantBlock {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
-        super.tick(state, world, pos, random);
+    public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+        super.randomTick(state, world, pos, random);
         if (isBonemealSuccess(world, random, pos, state)) {
             performBonemeal(world, random, pos, state);
         }

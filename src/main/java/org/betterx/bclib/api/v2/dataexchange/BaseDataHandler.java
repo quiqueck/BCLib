@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
@@ -20,9 +20,9 @@ import org.jetbrains.annotations.NotNull;
 public abstract class BaseDataHandler<T extends CustomPacketPayload> {
     private final boolean originatesOnServer;
     @NotNull
-    private final ResourceLocation identifier;
+    private final Identifier identifier;
 
-    protected BaseDataHandler(@NotNull ResourceLocation identifier, boolean originatesOnServer) {
+    protected BaseDataHandler(@NotNull Identifier identifier, boolean originatesOnServer) {
         this.originatesOnServer = originatesOnServer;
         this.identifier = identifier;
     }
@@ -31,7 +31,7 @@ public abstract class BaseDataHandler<T extends CustomPacketPayload> {
         return originatesOnServer;
     }
 
-    final public @NotNull ResourceLocation getIdentifier() {
+    final public @NotNull Identifier getIdentifier() {
         return identifier;
     }
 

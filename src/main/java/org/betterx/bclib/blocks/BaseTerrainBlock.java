@@ -6,7 +6,7 @@ import de.ambertation.wover.tag.api.predefined.MineableTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -56,7 +56,7 @@ public class BaseTerrainBlock extends Block {
     ) {
         if (pathBlock != null && TagManager.isToolWithMineableTag(player.getMainHandItem(), MineableTags.SHOVEL)) {
             level.playSound(player, pos, SoundEvents.SHOVEL_FLATTEN, SoundSource.BLOCKS, 1.0F, 1.0F);
-            if (!level.isClientSide) {
+            if (!level.isClientSide()) {
                 level.setBlockAndUpdate(pos, pathBlock.defaultBlockState());
                 if (!player.isCreative()) {
                     player.getMainHandItem().hurtAndBreak(
@@ -92,7 +92,7 @@ public class BaseTerrainBlock extends Block {
                     state,
                     blockState,
                     Direction.UP,
-                    blockState.getLightBlock()
+                    blockState.getLightDampening()
             );
             return i < 5;
         }

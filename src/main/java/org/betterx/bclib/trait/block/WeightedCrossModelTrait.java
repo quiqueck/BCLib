@@ -12,8 +12,9 @@ import net.minecraft.client.data.models.blockstates.PropertyDispatch;
 import net.minecraft.client.data.models.model.ModelTemplate;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
-import net.minecraft.client.renderer.block.model.Variant;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.block.dispatch.Variant;
+import net.minecraft.client.resources.model.sprite.Material;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -57,7 +58,7 @@ import org.jetbrains.annotations.Nullable;
  * Like wover's {@code ModelTraitLibrary}, every public factory returns {@code null} outside a datagen environment;
  * the client-only vanilla datagen types are only touched from {@link Impl}, which is loaded solely when
  * {@link ModCore#isDatagen()} is {@code true} (see {@link PathBlockTrait} for the same guard). The public surface
- * therefore stays free of client-only types ({@link Layer} carries only {@link ResourceLocation}s plus a
+ * therefore stays free of client-only types ({@link Layer} carries only {@link Identifier}s plus a
  * server-safe {@link Slot} enum).
  */
 public class WeightedCrossModelTrait {
@@ -85,7 +86,7 @@ public class WeightedCrossModelTrait {
      * @param xRot    the blockstate variant's {@code x} rotation in degrees (0/90/180/270); {@code 0} for none
      * @param yRot    the blockstate variant's {@code y} rotation in degrees (0/90/180/270); {@code 0} for none
      */
-    public record Layer(ResourceLocation parent, Slot slot, ResourceLocation texture, int weight, int xRot, int yRot) {
+    public record Layer(Identifier parent, Slot slot, Identifier texture, int weight, int xRot, int yRot) {
         /**
          * A copy of this layer carrying the given blockstate-variant rotation (degrees, each 0/90/180/270) - some
          * seed/crystal/lotus states place the same shared shape at {@code x}/{@code y} rotations.
@@ -158,9 +159,9 @@ public class WeightedCrossModelTrait {
     public static final class Item {
         private final boolean delegate;
         @Nullable
-        private final ResourceLocation flatTexture;
+        private final Identifier flatTexture;
 
-        private Item(boolean delegate, @Nullable ResourceLocation flatTexture) {
+        private Item(boolean delegate, @Nullable Identifier flatTexture) {
             this.delegate = delegate;
             this.flatTexture = flatTexture;
         }
@@ -172,7 +173,7 @@ public class WeightedCrossModelTrait {
          * @param texture the {@code layer0} texture, or {@code null} for the block's own texture
          * @return the item spec
          */
-        public static Item flat(@Nullable ResourceLocation texture) {
+        public static Item flat(@Nullable Identifier texture) {
             return new Item(false, texture);
         }
 
@@ -225,8 +226,8 @@ public class WeightedCrossModelTrait {
      * @param texture the plant texture
      * @return the layer (weight 1)
      */
-    public static Layer cross(ResourceLocation texture) {
-        return new Layer(ResourceLocation.withDefaultNamespace("block/cross"), Slot.CROSS, texture, 1, 0, 0);
+    public static Layer cross(Identifier texture) {
+        return new Layer(Identifier.withDefaultNamespace("block/cross"), Slot.CROSS, texture, 1, 0, 0);
     }
 
     /**
@@ -237,7 +238,7 @@ public class WeightedCrossModelTrait {
      * @param texture the plant texture
      * @return the layer (weight 1)
      */
-    public static Layer crossParent(ResourceLocation parent, ResourceLocation texture) {
+    public static Layer crossParent(Identifier parent, Identifier texture) {
         return new Layer(parent, Slot.CROSS, texture, 1, 0, 0);
     }
 
@@ -249,7 +250,7 @@ public class WeightedCrossModelTrait {
      * @param texture the plant texture
      * @return the layer (weight 1)
      */
-    public static Layer cropParent(ResourceLocation parent, ResourceLocation texture) {
+    public static Layer cropParent(Identifier parent, Identifier texture) {
         return new Layer(parent, Slot.TEXTURE, texture, 1, 0, 0);
     }
 
@@ -301,7 +302,7 @@ public class WeightedCrossModelTrait {
             return slot == Slot.CROSS ? TextureSlot.CROSS : TextureSlot.TEXTURE;
         }
 
-        private static ResourceLocation emitModel(
+        private static Identifier emitModel(
                 Block block,
                 WoverBlockModelGenerators generator,
                 Layer layer,
@@ -311,7 +312,7 @@ public class WeightedCrossModelTrait {
             final var template = new ModelTemplate(Optional.of(layer.parent()), Optional.of(suffix), texSlot);
             return template.create(
                     block,
-                    new TextureMapping().put(texSlot, layer.texture()),
+                    new TextureMapping().put(texSlot, new Material(layer.texture())),
                     generator.modelOutput()
             );
         }
@@ -325,7 +326,7 @@ public class WeightedCrossModelTrait {
             };
         }
 
-        private static Variant variant(ResourceLocation model, Layer layer) {
+        private static Variant variant(Identifier model, Layer layer) {
             Variant v = new Variant(model);
             if (layer.xRot() != 0) {
                 v = v.withXRot(quadrant(layer.xRot()));
@@ -349,7 +350,7 @@ public class WeightedCrossModelTrait {
             final var weighted = WeightedList.<Variant>builder();
             for (int i = 0; i < layers.size(); i++) {
                 final Layer layer = layers.get(i);
-                final ResourceLocation loc = emitModel(
+                final Identifier loc = emitModel(
                         block, generator, layer, layers.size() == 1 ? statePrefix : statePrefix + "_" + i);
                 weighted.add(variant(loc, layer), layer.weight());
             }

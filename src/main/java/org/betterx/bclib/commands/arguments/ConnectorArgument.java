@@ -6,9 +6,9 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.minecraft.commands.SharedSuggestionProvider;
-import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.commands.arguments.IdentifierArgument;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import org.jetbrains.annotations.NotNull;
 
-public class ConnectorArgument extends ResourceLocationArgument {
+public class ConnectorArgument extends IdentifierArgument {
     private static final Collection<String> EXAMPLES = Arrays.asList("-:building_entrance", "-:bottom", "-:street");
 
     @Override
@@ -26,11 +26,11 @@ public class ConnectorArgument extends ResourceLocationArgument {
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        ResourceLocation pool = null;
+        Identifier pool = null;
         try {
-            pool = context.getArgument(PlaceCommand.POOL, ResourceKey.class).location();
+            pool = context.getArgument(PlaceCommand.POOL, ResourceKey.class).identifier();
         } catch (Throwable t) {
-            pool = ResourceLocation.fromNamespaceAndPath("-", "");
+            pool = Identifier.fromNamespaceAndPath("-", "");
         }
         return SharedSuggestionProvider.suggest(getStrings(
                 pool.getNamespace(),

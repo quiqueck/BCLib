@@ -2,16 +2,17 @@ package org.betterx.bclib.mixin.client;
 
 import org.betterx.bclib.interfaces.AnvilScreenHandlerExtended;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.screens.inventory.AnvilScreen;
 import net.minecraft.client.gui.screens.inventory.ItemCombinerScreen;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.AnvilMenu;
@@ -34,18 +35,18 @@ public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
 
     @Shadow
     @Final
-    private static ResourceLocation ANVIL_LOCATION;
+    private static Identifier ANVIL_LOCATION;
     @Unique
     private final List<AbstractWidget> bcl_buttons = Lists.newArrayList();
     @Unique
     private boolean bcl_nameDisabled = false;
 
-    public AnvilScreenMixin(AnvilMenu handler, Inventory playerInventory, Component title, ResourceLocation texture) {
+    public AnvilScreenMixin(AnvilMenu handler, Inventory playerInventory, Component title, Identifier texture) {
         super(handler, playerInventory, title, texture);
     }
 
     @Override
-    public void renderErrorIcon(GuiGraphics guiGraphics, int i, int j) {
+    public void extractErrorIcon(GuiGraphicsExtractor guiGraphics, int i, int j) {
         if (this.bcl_hasRecipeError()) {
             guiGraphics.blit(
                     RenderPipelines.GUI_TEXTURED,
@@ -81,19 +82,18 @@ public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
                               .build());
 
         //the bounds above are absolute screen coordinates, so the buttons need to be rendered by
-        //Screen's own renderable list. Rendering them manually from renderLabels would offset them by
-        //(leftPos, topPos), as that runs inside the translated pose of the container screen
-        //(see AbstractContainerScreen#renderContents).
+        //Screen#extractRenderState. Rendering them from extractLabels would offset them by
+        //(leftPos, topPos), as that runs inside the translated pose of the container screen.
         bcl_buttons.forEach(this::addRenderableWidget);
         bcl_syncRecipeState();
     }
 
-    @Inject(method = "renderBg", at = @At("HEAD"))
+    @Inject(method = "extractBackground", at = @At("HEAD"))
     protected void be_beforeRender(
-            GuiGraphics guiGraphics,
-            float partialTick,
+            GuiGraphicsExtractor guiGraphics,
             int mouseX,
             int mouseY,
+            float a,
             CallbackInfo info
     ) {
         bcl_syncRecipeState();
@@ -144,10 +144,10 @@ public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
 
     @Intrinsic(displace = true)
     //@Override
-    public boolean bcl$mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean bcl$mouseClicked(MouseButtonEvent mouseButtonEvent, boolean bl) {
         if (minecraft != null) {
             for (AbstractWidget elem : bcl_buttons) {
-                if (elem.visible && elem.mouseClicked(mouseX, mouseY, button)) {
+                if (elem.visible && elem.mouseClicked(mouseButtonEvent, bl)) {
                     if (minecraft.gameMode != null) {
                         int i = bcl_buttons.indexOf(elem);
                         minecraft.gameMode.handleInventoryButtonClick(menu.containerId, i);
@@ -156,6 +156,6 @@ public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
                 }
             }
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(mouseButtonEvent, bl);
     }
 }

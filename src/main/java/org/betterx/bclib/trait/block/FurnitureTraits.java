@@ -58,7 +58,7 @@ public class FurnitureTraits {
                 model,
                 BlockTraits.LOOT_TABLE.dropSelf(),
                 BlockTraits.RECIPE.with((key, block, context) -> RecipeBuilder
-                        .crafting(key.location(), block)
+                        .crafting(key.identifier(), block)
                         .shape("##", "II")
                         .addMaterial('#', source)
                         .addMaterial('I', Items.STICK)
@@ -83,7 +83,7 @@ public class FurnitureTraits {
                 model,
                 BlockTraits.LOOT_TABLE.with((tableKey, blockKey, chairBlock, provider) -> BaseChair.chairLoot(chairBlock)),
                 BlockTraits.RECIPE.with((key, block, context) -> RecipeBuilder
-                        .crafting(key.location(), block)
+                        .crafting(key.identifier(), block)
                         .shape("I ", "##", "II")
                         .addMaterial('#', source)
                         .addMaterial('I', Items.STICK)
@@ -108,7 +108,7 @@ public class FurnitureTraits {
                 model,
                 BlockTraits.LOOT_TABLE.dropSelf(),
                 BlockTraits.RECIPE.with((key, block, context) -> RecipeBuilder
-                        .crafting(key.location(), block)
+                        .crafting(key.identifier(), block)
                         .shape("##", "II", "II")
                         .addMaterial('#', source)
                         .addMaterial('I', Items.STICK)

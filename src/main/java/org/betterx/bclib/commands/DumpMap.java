@@ -35,7 +35,7 @@ public class DumpMap {
     public static LiteralArgumentBuilder<CommandSourceStack> register(LiteralArgumentBuilder<CommandSourceStack> bnContext) {
         return bnContext
                 .then(Commands.literal("dump_maps")
-                              .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
+                              .requires(Commands.hasPermission(Commands.LEVEL_OWNERS))
                               .then(Commands.literal("png").executes(DumpMap::dumpImageMaps))
                               .then(Commands.literal("json").executes(DumpMap::dumpJsonMaps))
                 );
@@ -50,7 +50,7 @@ public class DumpMap {
                 .getLevelPath(LevelResource.ROOT)
                 .resolve(BCLib.C.namespace)
                 .resolve("export")
-                .resolve(serverLevel.dimension().location().getPath())
+                .resolve(serverLevel.dimension().identifier().getPath())
                 .normalize();
 
         final RandomState randomState = serverLevel.getChunkSource().randomState();
@@ -85,7 +85,7 @@ public class DumpMap {
         header.add("center", center);
         header.add("start", start);
         header.add("size", dimensions);
-        header.addProperty("dimension", serverLevel.dimension().location().toString());
+        header.addProperty("dimension", serverLevel.dimension().identifier().toString());
 
         root.add("info", header);
 
@@ -180,7 +180,7 @@ public class DumpMap {
                 .getLevelPath(LevelResource.ROOT)
                 .resolve(BCLib.C.namespace)
                 .resolve("export")
-                .resolve(serverLevel.dimension().location().getPath())
+                .resolve(serverLevel.dimension().identifier().getPath())
                 .normalize();
 
         final RandomState randomState = serverLevel.getChunkSource().randomState();

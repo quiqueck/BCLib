@@ -13,7 +13,8 @@ import de.ambertation.wover.core.api.ModCore;
 
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.resources.model.sprite.Material;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 
@@ -78,8 +79,8 @@ public class PathBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
         private static BlockModelTrait build(Block source) {
             return ClientBlockTraits.MODEL.with(
                     (key, block, generator) -> {
-                        var side = TextureMapping.getBlockTexture(block, "_side");
-                        side = ResourceLocation.fromNamespaceAndPath(
+                        var side = TextureMapping.getBlockTexture(block, "_side").sprite();
+                        side = Identifier.fromNamespaceAndPath(
                                 side.getNamespace(), side
                                         .getPath()
                                         .replace("_path", "")
@@ -92,7 +93,7 @@ public class PathBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
                                 : source;
 
                         var mapping = new TextureMapping()
-                                .put(TextureSlot.SIDE, side)
+                                .put(TextureSlot.SIDE, new Material(side))
                                 .put(TextureSlot.TOP, TextureMapping.getBlockTexture(block, "_top"))
                                 .put(TextureSlot.BOTTOM, TextureMapping.getBlockTexture(bottomSource));
                         var location = BCLModels.PATH.create(block, mapping, generator.modelOutput());

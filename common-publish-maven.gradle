@@ -1,7 +1,11 @@
 // Publishes to our own Ambertation maven repository.
-// Libraries only - copy-paste into every library repo, do not apply from mods.
-// Requires: the 'maven-publish' plugin, and the remapJar/sourcesJar/remapSourcesJar/
-// javadocJar tasks (the latter defined in wunderlib.gradle-equivalent files).
+// Libraries only - copy-paste into every library repo's 26.1 checkout, do
+// not apply from mods. Not interchangeable with the 1.21.6 copy: this Loom
+// version has no separate remap step, so the published jars are `jar`/
+// `sourcesJar` directly, not `remapJar`/`remapSourcesJar`.
+// Requires: the 'maven-publish' plugin, and the jar/sourcesJar/javadocJar
+// tasks (the latter defined in each repo's own build script - wunderlib.gradle,
+// bclib.gradle, WorldWeaver's common.gradle).
 
 publishing {
     publications {
@@ -10,11 +14,11 @@ publishing {
             artifactId = project.archives_base_name
 
             // add all the jars that should be included when publishing to maven
-            artifact(remapJar) {
-                builtBy remapJar
+            artifact(jar) {
+                builtBy jar
             }
             artifact(sourcesJar) {
-                builtBy remapSourcesJar
+                builtBy sourcesJar
             }
             artifact(javadocJar) {
                 builtBy javadocJar

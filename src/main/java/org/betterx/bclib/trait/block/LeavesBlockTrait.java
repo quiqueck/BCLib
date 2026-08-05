@@ -175,6 +175,10 @@ public class LeavesBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
         private static BlockModelTrait build() {
             return ClientBlockTraits.MODEL.with((key, block, generator) -> {
                 generator.createCubeModel(block);
+                // Leaves are cubes in the hand and in the inventory, not flat sprites: vanilla's
+                // items/oak_leaves.json delegates to block/oak_leaves, and every hand-authored leaf item
+                // model in BetterNether parents from its block model for the same reason. createFlatItem
+                // here rendered them as 2D icons.
                 generator.delegateItemModel(block);
             });
         }

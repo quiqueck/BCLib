@@ -95,7 +95,7 @@ public class BarStool extends SlotFromDefinition {
         // The recipe is built before the block exists, so the material lookup has to stay deferred
         final var source = set.recipeMaterialWithFallback(sourceSlot);
         return BlockTraits.RECIPE.with((key, block, context) -> RecipeBuilder
-                .crafting(key.location(), block)
+                .crafting(key.identifier(), block)
                 .shape("##", "II", "II")
                 .addMaterial('#', source)
                 .addMaterial('I', Items.STICK)

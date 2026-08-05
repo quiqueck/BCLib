@@ -1,5 +1,6 @@
 package org.betterx.bclib.mixin.client;
 
+import org.betterx.bclib.trait.block.DescriptionBlockTrait;
 import org.betterx.bclib.trait.block.SurvivesOnBlockTrait;
 import org.betterx.bclib.trait.block.SurvivesOnSolidTrait;
 
@@ -32,6 +33,9 @@ public class ItemMixin {
         // them, so there is no need for a block class to implement any special interface just for the
         // tooltip.
         if (itemStack.getItem() instanceof BlockItem blockItem) {
+            // Hand-written lines first: they say what the block does, which is what someone reads the
+            // tooltip for - the generated "Survives on ..." lines below are the footnote to that.
+            DescriptionBlockTrait.appendHoverText(blockItem.getBlock(), consumer);
             SurvivesOnBlockTrait.appendHoverText(blockItem.getBlock(), consumer);
             SurvivesOnSolidTrait.appendHoverText(blockItem.getBlock(), consumer);
         }

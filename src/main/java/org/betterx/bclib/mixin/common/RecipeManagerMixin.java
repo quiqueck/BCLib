@@ -39,20 +39,20 @@ public abstract class RecipeManagerMixin {
         var all = inter
                 .stream()
                 .filter((recipe) -> recipe.value().matches(recipeInput, level)).sorted((a, b) -> {
-                    if (a.id().location().getNamespace().equals(b.id().location().getNamespace())) {
-                        return a.id().location().getPath().compareTo(b.id().location().getPath());
+                    if (a.id().identifier().getNamespace().equals(b.id().identifier().getNamespace())) {
+                        return a.id().identifier().getPath().compareTo(b.id().identifier().getPath());
                     }
-                    if (a.id().location().getNamespace().equals("minecraft") && !b.id()
-                                                                                  .location()
+                    if (a.id().identifier().getNamespace().equals("minecraft") && !b.id()
+                                                                                  .identifier()
                                                                                   .getNamespace()
                                                                                   .equals("minecraft")) {
                         return 1;
-                    } else if (!a.id().location().getNamespace().equals("minecraft") && b.id().location()
+                    } else if (!a.id().identifier().getNamespace().equals("minecraft") && b.id().identifier()
                                                                                          .getNamespace()
                                                                                          .equals("minecraft")) {
                         return -1;
                     } else {
-                        return a.id().location().getNamespace().compareTo(b.id().location().getNamespace());
+                        return a.id().identifier().getNamespace().compareTo(b.id().identifier().getNamespace());
                     }
                 }).toList();
 

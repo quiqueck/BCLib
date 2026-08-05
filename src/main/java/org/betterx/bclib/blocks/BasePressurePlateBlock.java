@@ -16,14 +16,14 @@ public abstract class BasePressurePlateBlock extends PressurePlateBlock {
 
     protected BasePressurePlateBlock(Block source, BlockSetType type) {
         super(
-                type, Properties.ofFullCopy(source).noCollission().noOcclusion().strength(0.5F)
+                type, Properties.ofFullCopy(source).noCollision().noOcclusion().strength(0.5F)
         );
         this.parent = source;
     }
 
     protected BasePressurePlateBlock(Block source, Properties settings, BlockSetType type) {
         super(
-                type, settings.noCollission().noOcclusion().strength(0.5F)
+                type, settings.noCollision().noOcclusion().strength(0.5F)
         );
         this.parent = source;
     }

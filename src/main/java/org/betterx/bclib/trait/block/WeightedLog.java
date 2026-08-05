@@ -5,7 +5,7 @@ import de.ambertation.wover.block.api.trait.BlockTraitLookup;
 import de.ambertation.wover.sets.api.blocks.BlockSet;
 import de.ambertation.wover.sets.api.blocks.types.Log;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -24,9 +24,9 @@ import org.jetbrains.annotations.Nullable;
 public class WeightedLog extends Log {
     private final int[] weights;
     @Nullable
-    private final ResourceLocation sideTexture;
+    private final Identifier sideTexture;
     @Nullable
-    private final ResourceLocation endTexture;
+    private final Identifier endTexture;
 
     /**
      * @param stripable whether this log can be stripped; also selects {@code LOG} vs {@code STRIPPED_LOG} as the slot
@@ -45,8 +45,8 @@ public class WeightedLog extends Log {
     public WeightedLog(
             boolean stripable,
             int[] weights,
-            @Nullable ResourceLocation sideTexture,
-            @Nullable ResourceLocation endTexture
+            @Nullable Identifier sideTexture,
+            @Nullable Identifier endTexture
     ) {
         super(stripable);
         this.weights = weights;

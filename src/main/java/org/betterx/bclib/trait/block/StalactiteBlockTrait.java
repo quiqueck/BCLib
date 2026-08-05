@@ -17,7 +17,8 @@ import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.resources.model.sprite.Material;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 
 import net.fabricmc.api.EnvType;
@@ -53,15 +54,15 @@ public class StalactiteBlockTrait extends BlockTraitImpl<Block, GenericBlockTrai
         private static BlockModelTrait build() {
             return ClientBlockTraits.MODEL.with(
                     (key, block, generator) -> {
-                        final ResourceLocation id = TextureMapping.getBlockTexture(block);
+                        final Identifier id = TextureMapping.getBlockTexture(block).sprite();
                         final var props = PropertyDispatch.initial(IS_FLOOR, SIZE);
                         for (int size = 0; size <= 7; size++) {
                             final String suffix = "_" + size;
                             final TextureMapping mapping = new TextureMapping().put(
                                     TextureSlot.CROSS,
-                                    id.withSuffix(suffix)
+                                    new Material(id.withSuffix(suffix))
                             );
-                            final ResourceLocation modelLocation = BCLModels.CROSS_SHADED.createWithSuffix(
+                            final Identifier modelLocation = BCLModels.CROSS_SHADED.createWithSuffix(
                                     block,
                                     suffix,
                                     mapping,
@@ -72,7 +73,7 @@ public class StalactiteBlockTrait extends BlockTraitImpl<Block, GenericBlockTrai
                             props.select(false, size, model.with(X_ROT_180));
                         }
                         generator.acceptBlockState(MultiVariantGenerator.dispatch(block).with(props));
-                        generator.createFlatItem(block, TextureMapping.getItemTexture(block.asItem()));
+                        generator.createFlatItem(block, TextureMapping.getItemTexture(block.asItem()).sprite());
                     });
         }
     }

@@ -8,7 +8,7 @@ import org.betterx.bclib.util.MHelper;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.BlockItem;
@@ -295,23 +295,23 @@ public class ColorUtil {
         return MHelper.sqr(r1 - r2) + MHelper.sqr(g1 - g2) + MHelper.sqr(b1 - b2);
     }
 
-    private static final Map<ResourceLocation, Integer> colorPalette = Maps.newHashMap();
+    private static final Map<Identifier, Integer> colorPalette = Maps.newHashMap();
 
     @Environment(EnvType.CLIENT)
     public static int extractColor(Item item) {
-        ResourceLocation id = BuiltInRegistries.ITEM.getKey(item);
+        Identifier id = BuiltInRegistries.ITEM.getKey(item);
         if (id.equals(BuiltInRegistries.ITEM.getDefaultKey())) return -1;
         if (colorPalette.containsKey(id)) {
             return colorPalette.get(id);
         }
-        ResourceLocation texture;
+        Identifier texture;
         if (item instanceof BlockItem) {
-            texture = ResourceLocation.fromNamespaceAndPath(
+            texture = Identifier.fromNamespaceAndPath(
                     id.getNamespace(),
                     "textures/block/" + id.getPath() + ".png"
             );
         } else {
-            texture = ResourceLocation.fromNamespaceAndPath(
+            texture = Identifier.fromNamespaceAndPath(
                     id.getNamespace(),
                     "textures/item/" + id.getPath() + ".png"
             );
@@ -338,7 +338,7 @@ public class ColorUtil {
     }
 
     @Environment(EnvType.CLIENT)
-    public static NativeImage loadImage(ResourceLocation image, int w, int h) {
+    public static NativeImage loadImage(Identifier image, int w, int h) {
         Minecraft minecraft = Minecraft.getInstance();
         ResourceManager resourceManager = minecraft.getResourceManager();
         var imgResource = resourceManager.getResource(image);

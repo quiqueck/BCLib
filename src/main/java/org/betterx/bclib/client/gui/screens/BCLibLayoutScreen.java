@@ -5,13 +5,13 @@ import org.betterx.bclib.BCLib;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import org.jetbrains.annotations.Nullable;
 
 public abstract class BCLibLayoutScreen extends LayoutScreenWithIcon {
-    static final ResourceLocation BCLIB_LOGO_LOCATION = ResourceLocation.fromNamespaceAndPath(BCLib.MOD_ID, "icon.png");
-    static final ResourceLocation BCLIB_LOGO_WHITE_LOCATION = ResourceLocation.fromNamespaceAndPath(BCLib.MOD_ID, "icon_bright.png");
+    static final Identifier BCLIB_LOGO_LOCATION = Identifier.fromNamespaceAndPath(BCLib.MOD_ID, "icon.png");
+    static final Identifier BCLIB_LOGO_WHITE_LOCATION = Identifier.fromNamespaceAndPath(BCLib.MOD_ID, "icon_bright.png");
 
     public BCLibLayoutScreen(
             Component component

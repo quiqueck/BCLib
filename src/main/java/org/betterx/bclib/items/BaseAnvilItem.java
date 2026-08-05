@@ -32,7 +32,7 @@ public class BaseAnvilItem extends BlockItem {
 
         @SuppressWarnings("deprecation")
 
-        int destruction = anvilData.getUnsafe().getInt(DESTRUCTION).orElse(0);
+        int destruction = anvilData.copyTag().getInt(DESTRUCTION).orElse(0);
         if (blockState != null) {
             LeveledAnvilBlock block = (LeveledAnvilBlock) blockState.getBlock();
             IntegerProperty durabilityProp = block.getDurabilityProp();
@@ -58,10 +58,10 @@ public class BaseAnvilItem extends BlockItem {
             TooltipFlag tooltipFlag
     ) {
         CustomData anvilData = itemStack.getOrDefault(BCLDataComponents.ANVIL_ENTITY_DATA, CustomData.EMPTY);
-        if (!anvilData.contains(DESTRUCTION)) return;
+        if (!anvilData.copyTag().contains(DESTRUCTION)) return;
 
         @SuppressWarnings("deprecation")
-        int destruction = anvilData.getUnsafe().getInt(DESTRUCTION).orElse(0);
+        int destruction = anvilData.copyTag().getInt(DESTRUCTION).orElse(0);
         if (destruction > 0) {
             LeveledAnvilBlock block = (LeveledAnvilBlock) ((BaseAnvilItem) itemStack.getItem()).getBlock();
             int maxValue = block.getMaxDurability() * 3;

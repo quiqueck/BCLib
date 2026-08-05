@@ -202,7 +202,7 @@ public abstract class RegistrySupplier {
             final HolderLookup.RegistryLookup<T> registry = registryAccess.lookupOrThrow(key());
             return registry
                     .listElementIds()
-                    .filter(k -> modIDs == null || modIDs.contains(k.location().getNamespace()))
+                    .filter(k -> modIDs == null || modIDs.contains(k.identifier().getNamespace()))
                     .map(k -> (Holder<T>) registry.get(k).orElseThrow())
                     .toList();
         }

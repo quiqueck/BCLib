@@ -7,11 +7,11 @@ import de.ambertation.wunderlib.ui.layout.values.Value;
 import de.ambertation.wunderlib.ui.vanilla.LayoutScreen;
 import org.betterx.bclib.BCLib;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ProgressListener;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -40,7 +40,7 @@ class ProgressLogoRender extends CustomRenderComponent<ProgressLogoRender> {
 
     @Override
     protected void customRender(
-            GuiGraphics guiGraphics,
+            GuiGraphicsExtractor guiGraphics,
             int x,
             int y,
             float deltaTicks,
@@ -117,7 +117,7 @@ class ProgressLogoRender extends CustomRenderComponent<ProgressLogoRender> {
 
 public class ProgressScreen extends LayoutScreen implements ProgressListener, AtomicProgressListener {
 
-    static final ResourceLocation BCLIB_LOGO_PIXELATED_LOCATION = ResourceLocation.fromNamespaceAndPath(
+    static final Identifier BCLIB_LOGO_PIXELATED_LOCATION = Identifier.fromNamespaceAndPath(
             BCLib.MOD_ID,
             "iconpixelated.png"
     );

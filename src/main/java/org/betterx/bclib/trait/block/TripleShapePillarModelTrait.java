@@ -13,9 +13,10 @@ import net.minecraft.client.data.models.model.ModelTemplate;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
-import net.minecraft.client.renderer.block.model.Variant;
+import net.minecraft.client.renderer.block.dispatch.Variant;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
@@ -64,9 +65,9 @@ public class TripleShapePillarModelTrait {
      */
     public static BlockModelTrait log(
             EnumProperty<TripleShape> shape,
-            ResourceLocation bottomSide, ResourceLocation bottomEnd,
-            ResourceLocation blendSide, ResourceLocation blendTop, ResourceLocation blendBottom,
-            ResourceLocation topSide, ResourceLocation topEnd
+            Identifier bottomSide, Identifier bottomEnd,
+            Identifier blendSide, Identifier blendTop, Identifier blendBottom,
+            Identifier topSide, Identifier topEnd
     ) {
         return ModCore.isDatagen()
                 ? Impl.build(shape, false, bottomSide, bottomEnd, blendSide, blendTop, blendBottom, topSide, topEnd)
@@ -87,9 +88,9 @@ public class TripleShapePillarModelTrait {
      */
     public static BlockModelTrait bark(
             EnumProperty<TripleShape> shape,
-            ResourceLocation bottomAll,
-            ResourceLocation blendSide, ResourceLocation blendTop, ResourceLocation blendBottom,
-            ResourceLocation topAll
+            Identifier bottomAll,
+            Identifier blendSide, Identifier blendTop, Identifier blendBottom,
+            Identifier topAll
     ) {
         return ModCore.isDatagen()
                 ? Impl.build(shape, true, bottomAll, bottomAll, blendSide, blendTop, blendBottom, topAll, topAll)
@@ -108,7 +109,7 @@ public class TripleShapePillarModelTrait {
         }
 
         /** A single-model variant, optionally rotated by the standard axis-aligned pillar rotation. */
-        private static MultiVariant rotated(ResourceLocation model, int xRot, int yRot) {
+        private static MultiVariant rotated(Identifier model, int xRot, int yRot) {
             if (xRot == 0 && yRot == 0) {
                 return BlockModelGenerators.plainVariant(model);
             }
@@ -125,40 +126,42 @@ public class TripleShapePillarModelTrait {
         private static BlockModelTrait build(
                 EnumProperty<TripleShape> shape,
                 boolean bark,
-                ResourceLocation bottomSide, ResourceLocation bottomEnd,
-                ResourceLocation blendSide, ResourceLocation blendTop, ResourceLocation blendBottom,
-                ResourceLocation topSide, ResourceLocation topEnd
+                Identifier bottomSide, Identifier bottomEnd,
+                Identifier blendSide, Identifier blendTop, Identifier blendBottom,
+                Identifier topSide, Identifier topEnd
         ) {
             return ClientBlockTraits.MODEL.with((key, block, generator) -> {
                 final var out = generator.modelOutput();
 
                 // bottom shape == the block's own model location (so the item can delegate to it, matching the
                 // hand-authored item/<name> -> block/<name> indirection).
-                final ResourceLocation bottomModel;
-                final ResourceLocation topModel;
+                final Identifier bottomModel;
+                final Identifier topModel;
                 if (bark) {
                     bottomModel = ModelTemplates.CUBE_ALL.create(
-                            block, new TextureMapping().put(TextureSlot.ALL, bottomSide), out);
+                            block, new TextureMapping().put(TextureSlot.ALL, new Material(bottomSide)), out);
                     topModel = ModelTemplates.CUBE_ALL.createWithSuffix(
-                            block, "_top", new TextureMapping().put(TextureSlot.ALL, topSide), out);
+                            block, "_top", new TextureMapping().put(TextureSlot.ALL, new Material(topSide)), out);
                 } else {
                     bottomModel = ModelTemplates.CUBE_COLUMN.create(
                             block,
-                            new TextureMapping().put(TextureSlot.SIDE, bottomSide).put(TextureSlot.END, bottomEnd),
+                            new TextureMapping().put(TextureSlot.SIDE, new Material(bottomSide))
+                                                 .put(TextureSlot.END, new Material(bottomEnd)),
                             out);
                     topModel = ModelTemplates.CUBE_COLUMN.createWithSuffix(
                             block, "_top",
-                            new TextureMapping().put(TextureSlot.SIDE, topSide).put(TextureSlot.END, topEnd),
+                            new TextureMapping().put(TextureSlot.SIDE, new Material(topSide))
+                                                 .put(TextureSlot.END, new Material(topEnd)),
                             out);
                 }
 
                 final ModelTemplate blendTemplate = ModelTemplates.CUBE_BOTTOM_TOP;
-                final ResourceLocation blendModel = blendTemplate.createWithSuffix(
+                final Identifier blendModel = blendTemplate.createWithSuffix(
                         block, "_blend",
                         new TextureMapping()
-                                .put(TextureSlot.SIDE, blendSide)
-                                .put(TextureSlot.TOP, blendTop)
-                                .put(TextureSlot.BOTTOM, blendBottom),
+                                .put(TextureSlot.SIDE, new Material(blendSide))
+                                .put(TextureSlot.TOP, new Material(blendTop))
+                                .put(TextureSlot.BOTTOM, new Material(blendBottom)),
                         out);
 
                 // shape x axis dispatch, standard vanilla pillar rotation per axis.

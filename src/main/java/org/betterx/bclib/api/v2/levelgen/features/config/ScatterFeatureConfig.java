@@ -11,7 +11,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.util.valueproviders.IntProvider;
+import net.minecraft.util.valueproviders.IntProviders;
 import net.minecraft.util.valueproviders.UniformInt;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
@@ -82,7 +84,13 @@ public abstract class ScatterFeatureConfig implements FeatureConfiguration {
 
     public abstract boolean isValidBase(BlockState state);
 
-    public abstract BlockState createBlock(int height, int maxHeight, RandomSource random, BlockPos pos);
+    public abstract BlockState createBlock(
+            int height,
+            int maxHeight,
+            RandomSource random,
+            BlockPos pos,
+            WorldGenLevel level
+    );
 
     public static <T extends ScatterFeatureConfig> Codec<T> buildCodec(Instancer<T> instancer) {
         return RecordCodecBuilder.create((instance) -> instance
@@ -155,7 +163,7 @@ public abstract class ScatterFeatureConfig implements FeatureConfiguration {
                                 .fieldOf("grow_while_empty")
                                 .orElse(false)
                                 .forGetter((T cfg) -> cfg.growWhileFree),
-                        IntProvider.codec(0, 64)
+                        IntProviders.codec(0, 64)
                                    .fieldOf("length")
                                    .orElse(UniformInt.of(0, 3))
                                    .forGetter(cfg -> cfg.spreadCount)
@@ -420,11 +428,11 @@ public abstract class ScatterFeatureConfig implements FeatureConfiguration {
         }
 
         @Override
-        public BlockState createBlock(int height, int maxHeight, RandomSource random, BlockPos pos) {
-            if (height == 0) return this.bottomBlock.getState(random, pos);
+        public BlockState createBlock(int height, int maxHeight, RandomSource random, BlockPos pos, WorldGenLevel level) {
+            if (height == 0) return this.bottomBlock.getState(level, random, pos);
             return height == maxHeight
-                    ? this.tipBlock.getState(random, pos)
-                    : this.clusterBlock.getState(random, pos);
+                    ? this.tipBlock.getState(level, random, pos)
+                    : this.clusterBlock.getState(level, random, pos);
         }
     }
 
@@ -480,10 +488,10 @@ public abstract class ScatterFeatureConfig implements FeatureConfiguration {
         }
 
         @Override
-        public BlockState createBlock(int height, int maxHeight, RandomSource random, BlockPos pos) {
-            if (height == 0) return this.bottomBlock.getState(random, pos);
-            if (height == 1) return this.clusterBlock.getState(random, pos);
-            return this.tipBlock.getState(random, pos);
+        public BlockState createBlock(int height, int maxHeight, RandomSource random, BlockPos pos, WorldGenLevel level) {
+            if (height == 0) return this.bottomBlock.getState(level, random, pos);
+            if (height == 1) return this.clusterBlock.getState(level, random, pos);
+            return this.tipBlock.getState(level, random, pos);
         }
     }
 
@@ -538,10 +546,10 @@ public abstract class ScatterFeatureConfig implements FeatureConfiguration {
         }
 
         @Override
-        public BlockState createBlock(int height, int maxHeight, RandomSource random, BlockPos pos) {
-            if (height == maxHeight) return this.tipBlock.getState(random, pos);
-            if (height == maxHeight - 1) return this.clusterBlock.getState(random, pos);
-            return this.bottomBlock.getState(random, pos);
+        public BlockState createBlock(int height, int maxHeight, RandomSource random, BlockPos pos, WorldGenLevel level) {
+            if (height == maxHeight) return this.tipBlock.getState(level, random, pos);
+            if (height == maxHeight - 1) return this.clusterBlock.getState(level, random, pos);
+            return this.bottomBlock.getState(level, random, pos);
         }
     }
 

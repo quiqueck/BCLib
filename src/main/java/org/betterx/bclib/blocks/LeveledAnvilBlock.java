@@ -19,11 +19,12 @@ import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
@@ -97,18 +98,18 @@ public class LeveledAnvilBlock extends AnvilBlock {
         private static BlockModelTrait build() {
             return ClientBlockTraits.MODEL.with(
                     (key, block, generator) -> {
-                        final ResourceLocation id = TextureMapping.getBlockTexture(block);
+                        final Material id = TextureMapping.getBlockTexture(block);
                         final TextureMapping mapping = new TextureMapping()
-                                .put(TextureSlot.FRONT, id.withSuffix("_front"))
-                                .put(TextureSlot.BACK, id.withSuffix("_back"))
-                                .put(TextureSlot.BOTTOM, id.withSuffix("_bottom"))
-                                .put(BCLModels.PANEL, id.withSuffix("_panel"));
+                                .put(TextureSlot.FRONT, new Material(id.sprite().withSuffix("_front")))
+                                .put(TextureSlot.BACK, new Material(id.sprite().withSuffix("_back")))
+                                .put(TextureSlot.BOTTOM, new Material(id.sprite().withSuffix("_bottom")))
+                                .put(BCLModels.PANEL, new Material(id.sprite().withSuffix("_panel")));
 
                         final var prop = PropertyDispatch.initial(DESTRUCTION, FACING);
 
                         for (int d = 0; d < 3; d++) {
-                            mapping.put(TextureSlot.TOP, id.withSuffix("_top_" + d));
-                            final ResourceLocation modelLocation = BCLModels.ANVIL.createWithSuffix(
+                            mapping.put(TextureSlot.TOP, new Material(id.sprite().withSuffix("_top_" + d)));
+                            final Identifier modelLocation = BCLModels.ANVIL.createWithSuffix(
                                     block,
                                     "_" + d,
                                     mapping,
@@ -122,7 +123,7 @@ public class LeveledAnvilBlock extends AnvilBlock {
                             prop.select(d, Direction.WEST, model.with(Y_ROT_270));
                         }
                         generator.acceptBlockState(MultiVariantGenerator.dispatch(block).with(prop));
-                        generator.delegateItemModel(block, id.withSuffix("_0"));
+                        generator.delegateItemModel(block, id.sprite().withSuffix("_0"));
                     }
             );
         }
@@ -133,7 +134,7 @@ public class LeveledAnvilBlock extends AnvilBlock {
         int destruction = state.getValue(DESTRUCTION);
         int durability = state.getValue(getDurabilityProp());
         int value = destruction * getMaxDurability() + durability;
-        ItemStack tool = builder.getParameter(LootContextParams.TOOL);
+        ItemStack tool = (ItemStack) builder.getParameter(LootContextParams.TOOL);
         if (LootUtil.isCorrectTool(this, state, tool)) {
             ItemStack itemStack = new ItemStack(this);
 

@@ -5,7 +5,7 @@ import org.betterx.bclib.BCLib;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
@@ -23,7 +23,7 @@ import java.util.List;
 
 public abstract class DataHandler<T extends CustomPacketPayload> extends BaseDataHandler<T> {
     public abstract static class WithoutPayload<T extends CustomPacketPayload> extends DataHandler<T> {
-        protected WithoutPayload(ResourceLocation identifier, boolean originatesOnServer) {
+        protected WithoutPayload(Identifier identifier, boolean originatesOnServer) {
             super(identifier, originatesOnServer);
         }
 
@@ -46,7 +46,7 @@ public abstract class DataHandler<T extends CustomPacketPayload> extends BaseDat
         }
     }
 
-    protected DataHandler(ResourceLocation identifier, boolean originatesOnServer) {
+    protected DataHandler(Identifier identifier, boolean originatesOnServer) {
         super(identifier, originatesOnServer);
     }
 
@@ -114,7 +114,7 @@ public abstract class DataHandler<T extends CustomPacketPayload> extends BaseDat
 
 
     public static <T extends CustomPacketPayload> void _sendToClient(
-            ResourceLocation identifier,
+            Identifier identifier,
             MinecraftServer server,
             Collection<ServerPlayer> players,
             T payload
@@ -140,7 +140,7 @@ public abstract class DataHandler<T extends CustomPacketPayload> extends BaseDat
      */
     public abstract static class FromClient<T extends CustomPacketPayload> extends BaseDataHandler<T> {
         public abstract static class WithoutPayload<T extends CustomPacketPayload> extends FromClient<T> {
-            protected WithoutPayload(ResourceLocation identifier) {
+            protected WithoutPayload(Identifier identifier) {
                 super(identifier);
             }
 
@@ -160,7 +160,7 @@ public abstract class DataHandler<T extends CustomPacketPayload> extends BaseDat
             }
         }
 
-        protected FromClient(ResourceLocation identifier) {
+        protected FromClient(Identifier identifier) {
             super(identifier, false);
         }
 
@@ -232,7 +232,7 @@ public abstract class DataHandler<T extends CustomPacketPayload> extends BaseDat
      */
     public abstract static class FromServer<T extends CustomPacketPayload> extends BaseDataHandler<T> {
         public abstract static class WithoutPayload<T extends CustomPacketPayload> extends FromServer<T> {
-            protected WithoutPayload(ResourceLocation identifier) {
+            protected WithoutPayload(Identifier identifier) {
                 super(identifier);
             }
 
@@ -251,7 +251,7 @@ public abstract class DataHandler<T extends CustomPacketPayload> extends BaseDat
             }
         }
 
-        protected FromServer(ResourceLocation identifier) {
+        protected FromServer(Identifier identifier) {
             super(identifier, true);
         }
 

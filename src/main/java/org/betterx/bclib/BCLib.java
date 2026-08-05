@@ -20,7 +20,8 @@ import de.ambertation.wover.datagen.api.WoverDataGenEntryPoint;
 import de.ambertation.wover.state.api.WorldConfig;
 import de.ambertation.wover.ui.api.VersionChecker;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 
 import net.fabricmc.api.EnvType;
@@ -62,9 +63,9 @@ public class BCLib implements ModInitializer {
 
         // Water Bottles are potions and vanilla does not give them a crafting-remainder item
         // (the empty bottle) - fix that once here, no need to wait for other mods to load.
-        if (((ItemAccessor) Items.POTION).bcl_craftingRemainingItem() == null
-                || ((ItemAccessor) Items.POTION).bcl_craftingRemainingItem() == Items.AIR) {
-            ((ItemAccessor) Items.POTION).bcl_setCraftingRemainingItem(Items.GLASS_BOTTLE);
+        ItemStackTemplate potionRemainder = ((ItemAccessor) Items.POTION).bcl_craftingRemainingItem();
+        if (potionRemainder == null || potionRemainder.item().value() == Items.AIR) {
+            ((ItemAccessor) Items.POTION).bcl_setCraftingRemainingItem(new ItemStackTemplate(Items.GLASS_BOTTLE));
         }
 
         if (isDatagen()) {
@@ -87,8 +88,8 @@ public class BCLib implements ModInitializer {
         return FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT;
     }
 
-    public static ResourceLocation makeID(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+    public static Identifier makeID(String path) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 
 }

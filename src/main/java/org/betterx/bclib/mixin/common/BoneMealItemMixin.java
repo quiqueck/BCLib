@@ -34,7 +34,7 @@ public class BoneMealItemMixin {
         final Player player = context.getPlayer();
         if (player != null && player.isCreative()) {
             if (BonemealAPI.INSTANCE.runSpreaders(context.getItemInHand(), level, blockPos, true)) {
-                info.setReturnValue(level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER);
+                info.setReturnValue(level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER);
             }
 
             final BlockState blockState = level.getBlockState(blockPos);
@@ -50,12 +50,10 @@ public class BoneMealItemMixin {
                     // application: the vibration a sculk sensor listens for, and the growth particles
                     // and sound. Cancelling at HEAD skips them, so replay them here - gated on the grow
                     // actually happening, so a sapling with no room stays silent.
-                    // 1.21.8 emits this from the player directly; ItemStack.causeUseVibration is a
-                    // later addition.
-                    player.gameEvent(GameEvent.ITEM_INTERACT_FINISH);
+                    context.getItemInHand().causeUseVibration(player, GameEvent.ITEM_INTERACT_FINISH);
                     server.levelEvent(LevelEvent.PARTICLES_AND_SOUND_PLANT_GROWTH, blockPos, 0);
                 }
-                info.setReturnValue(level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER);
+                info.setReturnValue(level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER);
             }
         }
     }

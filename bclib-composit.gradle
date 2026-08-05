@@ -1,7 +1,7 @@
 plugins {
 	id 'idea'
 	id 'eclipse'
-	id 'fabric-loom'
+	id 'net.fabricmc.fabric-loom'
 }
 
 apply from: "bclib.gradle"

@@ -7,7 +7,6 @@ import de.ambertation.wover.loot.api.LootLookupProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -123,7 +122,7 @@ public class BaseDoublePlantBlock extends BaseBlockNotFull implements Bonemealab
 
     @Override
     public void setPlacedBy(Level world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
-        int rot = world.random.nextInt(4);
+        int rot = world.getRandom().nextInt(4);
         BlockState bs = this.defaultBlockState().setValue(ROTATION, rot);
         BlocksHelper.setWithoutUpdate(world, pos, bs);
         BlocksHelper.setWithoutUpdate(world, pos.above(), bs.setValue(TOP, true));

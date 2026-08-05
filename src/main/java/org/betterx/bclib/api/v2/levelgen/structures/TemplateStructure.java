@@ -5,7 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.QuartPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
@@ -60,7 +60,7 @@ public abstract class TemplateStructure extends Structure {
 
     protected TemplateStructure(
             StructureSettings structureSettings,
-            ResourceLocation location,
+            Identifier location,
             int offsetY,
             StructurePlacementType type,
             float chance
@@ -289,11 +289,11 @@ public abstract class TemplateStructure extends Structure {
     }
 
 
-    public record Config(ResourceLocation location, int offsetY, StructurePlacementType type, float chance) {
+    public record Config(Identifier location, int offsetY, StructurePlacementType type, float chance) {
         public static final Codec<Config> CODEC =
                 RecordCodecBuilder.create((instance) ->
                         instance.group(
-                                        ResourceLocation.CODEC
+                                        Identifier.CODEC
                                                 .fieldOf("location")
                                                 .forGetter((cfg) -> cfg.location),
 

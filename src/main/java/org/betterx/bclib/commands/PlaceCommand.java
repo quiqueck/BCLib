@@ -23,8 +23,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.IdentifierArgument;
 import net.minecraft.commands.arguments.ResourceKeyArgument;
-import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.arguments.ResourceOrTagKeyArgument;
 import net.minecraft.commands.arguments.blocks.BlockInput;
 import net.minecraft.commands.arguments.blocks.BlockStateArgument;
@@ -38,7 +38,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ProblemReporter;
@@ -89,9 +89,9 @@ class PlaceCommandBuilder {
             CommandBuildContext ctx,
             LiteralArgumentBuilder<CommandSourceStack> command
     ) {
-        final Supplier<RequiredArgumentBuilder<CommandSourceStack, ResourceLocation>> path = () -> Commands.argument(
+        final Supplier<RequiredArgumentBuilder<CommandSourceStack, Identifier>> path = () -> Commands.argument(
                 PATH,
-                ResourceLocationArgument.id()
+                IdentifierArgument.id()
         );
         final Supplier<RequiredArgumentBuilder<CommandSourceStack, PlacementDirections>> placement = () -> Commands.argument(
                 PLACEMENT,
@@ -284,7 +284,7 @@ class PlaceCommandBuilder {
             int y = pos.getY();
             int z = pos.getZ();
             for (Holder<Block> entry : blockHolders) {
-                final ResourceLocation key = entry.unwrapKey().orElseThrow().location();
+                final Identifier key = entry.unwrapKey().orElseThrow().identifier();
 
                 final Block block = entry.value();
 
@@ -404,7 +404,7 @@ class PlaceCommandBuilder {
             boolean replaceAir,
             boolean hasRecursionArg
     ) throws CommandSyntaxException {
-        final ResourceLocation id = ResourceLocationArgument.getId(ctx, PATH);
+        final Identifier id = IdentifierArgument.getId(ctx, PATH);
         final PlacementDirections searchDir = TemplatePlacementArgument.getPlacement(ctx, PLACEMENT);
         final BlockInput blockInput = hasBorderArg ? BlockStateArgument.getBlock(ctx, BORDER) : null;
         final BlockPos pos = BlockPosArgument.getLoadedBlockPos(ctx, POS);
@@ -486,7 +486,7 @@ class PlaceCommandBuilder {
             boolean replaceAir,
             boolean hasRecursionArg
     ) throws CommandSyntaxException {
-        final ResourceLocation id = ResourceLocationArgument.getId(ctx, PATH);
+        final Identifier id = IdentifierArgument.getId(ctx, PATH);
         final PlacementDirections searchDir = TemplatePlacementArgument.getPlacement(ctx, PLACEMENT);
         final BlockInput blockInput = hasBorderArg ? BlockStateArgument.getBlock(ctx, BORDER) : null;
         final BlockPos span = Float3ArgumentType.getFloat3(ctx, SPAN).toBlockPos();
@@ -529,12 +529,12 @@ class PlaceCommandBuilder {
                 ctx,
                 PlaceCommand.POOL
         );
-        ResourceLocation connector = ResourceLocationArgument.getId(ctx, CONNECTOR_NAME);
+        Identifier connector = IdentifierArgument.getId(ctx, CONNECTOR_NAME);
         if (connector.getNamespace().equals("-")) {
-            connector = ResourceLocation.fromNamespaceAndPath(
+            connector = Identifier.fromNamespaceAndPath(
                     pool
                             .key()
-                            .location()
+                            .identifier()
                             .getNamespace(), connector.getPath()
             );
         }
@@ -623,7 +623,7 @@ public class PlaceCommand {
     ) {
         final var command = Commands
                 .literal(PLACE_COMMAND)
-                .requires(commandSourceStack -> commandSourceStack.hasPermission(2));
+                .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS));
 
         new PlaceCommandBuilder().register(commandBuildContext, command);
 
@@ -691,7 +691,7 @@ public class PlaceCommand {
         return bb;
     }
 
-    private static void createControlBlocks(CommandSourceStack stack, ResourceLocation location, BoundingBox bbNBT) {
+    private static void createControlBlocks(CommandSourceStack stack, Identifier location, BoundingBox bbNBT) {
         BlockPos structureBlockPos = new BlockPos(bbNBT.minX() - 1, bbNBT.minY() - 1, bbNBT.minZ() - 1);
         BlockPos commandBlockPos = new BlockPos(bbNBT.minX() - 1, bbNBT.minY() - 1, bbNBT.minZ());
         BlockPos buttonBlockPos = new BlockPos(bbNBT.minX() - 1, bbNBT.minY(), bbNBT.minZ());
@@ -717,7 +717,10 @@ public class PlaceCommand {
             entity.setAutomatic(false);
             entity.setPowered(false);
             entity.getType().onlyOpCanSetNbt();
-            entity.getCommandBlock().shouldInformAdmins();
+            // NOTE (26.1 port): the old call here was `entity.getCommandBlock().shouldInformAdmins();` - a
+            // boolean getter whose result was discarded, i.e. already a no-op in the 1.21.6 source. The method
+            // no longer exists on BaseCommandBlock in 26.1, so the dead statement is dropped rather than
+            // replaced with a guess at intended behavior.
             entity.getCommandBlock()
                   .setCommand(
                           "fill ~1 ~1 ~"
@@ -742,7 +745,7 @@ public class PlaceCommand {
             boolean structureBlock,
             boolean replaceAir,
             boolean preFillStructureVoid,
-            ResourceLocation location,
+            Identifier location,
             Function<BlockPos, BoundingBox> getBounds,
             BiConsumer<ServerLevel, BlockPos> generate
     ) {

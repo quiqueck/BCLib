@@ -8,9 +8,9 @@ import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
-import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
+import net.fabricmc.fabric.api.client.particle.v1.ParticleProviderRegistry;
 
 public class BCLParticleType {
 
@@ -40,7 +40,7 @@ public class BCLParticleType {
     }
 
     public static <T extends ParticleOptions> ParticleType<T> register(
-            ResourceLocation location,
+            Identifier location,
             MapCodec<T> codec,
             StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec
     ) {
@@ -48,7 +48,7 @@ public class BCLParticleType {
     }
 
     public static <T extends ParticleOptions> ParticleType<T> register(
-            ResourceLocation location,
+            Identifier location,
             boolean overrideLimiter,
             MapCodec<T> codec,
             StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec
@@ -69,28 +69,28 @@ public class BCLParticleType {
         return simple(false);
     }
 
-    public static SimpleParticleType register(ResourceLocation location) {
+    public static SimpleParticleType register(Identifier location) {
         return register(location, false);
     }
 
-    public static SimpleParticleType register(ResourceLocation location, boolean overrideLimiter) {
+    public static SimpleParticleType register(Identifier location, boolean overrideLimiter) {
         return Registry.register(BuiltInRegistries.PARTICLE_TYPE, location, simple(overrideLimiter));
     }
 
     public static SimpleParticleType register(
-            ResourceLocation location,
-            ParticleFactoryRegistry.PendingParticleFactory<SimpleParticleType> provider
+            Identifier location,
+            ParticleProviderRegistry.PendingParticleProvider<SimpleParticleType> provider
     ) {
         return register(location, false, provider);
     }
 
     public static SimpleParticleType register(
-            ResourceLocation location,
+            Identifier location,
             boolean overrideLimiter,
-            ParticleFactoryRegistry.PendingParticleFactory<SimpleParticleType> provider
+            ParticleProviderRegistry.PendingParticleProvider<SimpleParticleType> provider
     ) {
         SimpleParticleType type = Registry.register(BuiltInRegistries.PARTICLE_TYPE, location, simple(overrideLimiter));
-        ParticleFactoryRegistry.getInstance().register(type, provider);
+        ParticleProviderRegistry.getInstance().register(type, provider);
         return type;
     }
 }

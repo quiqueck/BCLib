@@ -145,6 +145,32 @@ In this example `2.0.6` is the BCLIb Version you are building against.
 * Run command line in folder: gradlew build
 * Mod .jar will be in ./build/libs
 
+## Vanilla audit snapshots:
+
+`gradlew :runMinecraftAudit` regenerates the four audit files for the **vanilla** `minecraft`
+namespace and writes them into the shared reference checkout next to the mod repos, at
+`../minecraft/src/main/generated`:
+
+| File | What it records |
+|---|---|
+| `block_properties.json` | one line per block: hardness, resistance, map colour, sound, render layer, ... |
+| `block_registrations.json` | flammability and compostability, which live in side registries rather than on the block |
+| `item_registrations.json` | the equivalent for items |
+| `block_shapes.txt` | outline and collision shape per blockstate, collapsed to one line when every state agrees |
+
+These are a reference for diffing vanilla behaviour between Minecraft versions, so nothing else is
+generated during the run: the four providers are bound to a `minecraft` `ModCore` and every other
+BCLib provider is suppressed, otherwise BCLib's own tags and advancements would land in the vanilla
+checkout. The run fails if that checkout is missing rather than creating an empty one somewhere else.
+
+The switch is the `-Dwover.datagen.minecraft-audit` system property (see `MinecraftAuditDatagen`), so
+any datagen run can be flipped over to it; the Gradle task just sets the property and the output
+directory. Note that BCLib's and WorldWeaver's own mixins are loaded during the run, so this is
+vanilla as BCLib sees it.
+
+The same four files are also generated per mod, for that mod's own namespace, by each mod's normal
+`gradlew :runDatagenClient` - those land in the mod's `src/main/generated` and are committed with it.
+
 ## Release branches:
 
 `gradlew :mergeToRelease` adds the current branch's state to `release/<branch>` (override with

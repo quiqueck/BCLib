@@ -8,10 +8,10 @@ import de.ambertation.wover.recipe.impl.CraftingRecipeBuilderImpl;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementRequirements;
-import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.advancements.criterion.RecipeUnlockedTrigger;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -34,16 +34,24 @@ public abstract class BCLBaseRecipeBuilder<I extends BaseRecipeBuilder<I>, R ext
     protected RecipeOutputConsumer outputTagConsumer;
 
     private final boolean dualInput;
+    private ItemStack cachedOutput;
 
     protected BCLBaseRecipeBuilder(
-            @NotNull ResourceLocation id,
+            @NotNull Identifier id,
             @NotNull ItemLike output,
             boolean dualInput
     ) {
-        this(id, new ItemStack(output, 1), dualInput);
+        // Deliberately not this(id, new ItemStack(output, 1), dualInput): during registry bootstrap
+        // (e.g. datagen) an item's DataComponents aren't bound yet, so constructing an ItemStack this
+        // early throws. super(id, output) only reads output.asItem() - the real ItemStack is built
+        // lazily by output() below, once bootstrap has actually completed.
+        super(id, output);
+        this.advancement = Advancement.Builder.advancement();
+        this.dualInput = dualInput;
+        this.group("");
     }
 
-    protected BCLBaseRecipeBuilder(@NotNull ResourceLocation id, @NotNull ItemStack output, boolean dualInput) {
+    protected BCLBaseRecipeBuilder(@NotNull Identifier id, @NotNull ItemStack output, boolean dualInput) {
         super(id, output);
         this.advancement = Advancement.Builder.advancement();
         this.dualInput = dualInput;
@@ -73,13 +81,25 @@ public abstract class BCLBaseRecipeBuilder<I extends BaseRecipeBuilder<I>, R ext
         final AdvancementHolder advancementHolder = advancement.build(createAdvancementId());
 
         if (this.outputTagConsumer != null)
-            CustomData.update(BCLDataComponents.ANVIL_ENTITY_DATA, this.output, this.outputTagConsumer);
+            CustomData.update(BCLDataComponents.ANVIL_ENTITY_DATA, this.output(), this.outputTagConsumer);
 
         final R recipe = createRecipe(ctx);
         ctx.recipeOutput().accept(key, recipe, advancementHolder);
     }
 
     protected abstract R createRecipe(de.ambertation.wover.recipe.api.RecipeBuilder.Context ctx);
+
+    /**
+     * The output-{@link ItemStack} for this recipe. Lazily built from {@code outputItem}/{@code outputCount}
+     * (inherited from {@link BaseRecipeBuilderImpl}) and cached so that {@link #build} and {@link #createRecipe}
+     * see the exact same instance, which matters when {@link #setOutputTag} was used to attach NBT to it.
+     */
+    protected ItemStack output() {
+        if (cachedOutput == null) {
+            cachedOutput = new ItemStack(outputItem, outputCount);
+        }
+        return cachedOutput;
+    }
 
     @SuppressWarnings("removal")
     protected void setupAdvancementForResult() {
@@ -90,8 +110,8 @@ public abstract class BCLBaseRecipeBuilder<I extends BaseRecipeBuilder<I>, R ext
                 .requirements(AdvancementRequirements.Strategy.OR);
     }
 
-    protected ResourceLocation createAdvancementId() {
-        return key.location().withPrefix("recipes/" + category.getFolderName() + "/");
+    protected Identifier createAdvancementId() {
+        return key.identifier().withPrefix("recipes/" + category.getFolderName() + "/");
     }
 
     public I setPrimaryInput(ItemLike... inputs) {

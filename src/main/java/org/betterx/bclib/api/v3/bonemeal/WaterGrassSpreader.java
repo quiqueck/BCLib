@@ -50,8 +50,8 @@ public class WaterGrassSpreader extends TaggedBonemealBlockSpreader {
         int y2 = pos.getY() - 3;
         boolean result = false;
         for (byte i = 0; i < 64; i++) {
-            int x = (int) (pos.getX() + level.random.nextGaussian() * 2);
-            int z = (int) (pos.getZ() + level.random.nextGaussian() * 2);
+            int x = (int) (pos.getX() + level.getRandom().nextGaussian() * 2);
+            int z = (int) (pos.getZ() + level.getRandom().nextGaussian() * 2);
             currentPos.setX(x);
             currentPos.setZ(z);
             for (int y = y1; y >= y2; y--) {

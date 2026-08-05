@@ -54,7 +54,7 @@ public class VegetationTagTrait extends BlockTraitImpl<Block, GenericBlockTrait>
             List.of(ItemTags.LEAVES, CommonItemTags.LEAVES)
     );
     private static final VegetationTagTrait VINE = new VegetationTagTrait(
-            List.of(CommonBlockTags.VINE, BlockTags.SWORD_EFFICIENT), List.of()
+            List.of(CommonBlockTags.VINES, BlockTags.SWORD_EFFICIENT), List.of()
     );
 
     /** Tags the block as {@link CommonBlockTags#PLANT} (replaces {@code BehaviourPlant}). */
@@ -91,7 +91,7 @@ public class VegetationTagTrait extends BlockTraitImpl<Block, GenericBlockTrait>
     }
 
     /**
-     * Tags the block as {@link CommonBlockTags#VINE} - exactly what the retired {@code BehaviourVine}
+     * Tags the block as {@link CommonBlockTags#VINES} - exactly what the retired {@code BehaviourVine}
      * marker contributed via the {@code instanceof BehaviourVine} scan in {@code BCLAutoBlockTagProvider}.
      */
     public static VegetationTagTrait vine() {

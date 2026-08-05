@@ -2,8 +2,6 @@ package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.trait.block.SurvivesOnBlockTrait;
 import org.betterx.bclib.trait.block.SurvivesOnSolidTrait;
-import org.betterx.bclib.util.BlocksHelper;
-import de.ambertation.wover.block.api.trait.BlockTrait;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -71,8 +69,7 @@ public class BasePlantBlock extends BaseBlockNotFull implements BonemealableBloc
         BlockPos downPos = pos.below();
         BlockState down = level.getBlockState(downPos);
         return isTerrain(down)
-                || (BlockTrait.hasRuntimeTrait(this, SurvivesOnSolidTrait.KEY)
-                        && BlocksHelper.isDecorationSupport(level, downPos, down, Direction.UP));
+                || SurvivesOnSolidTrait.survivesOn(this, level, downPos, down, Direction.UP);
     }
 
     @Override

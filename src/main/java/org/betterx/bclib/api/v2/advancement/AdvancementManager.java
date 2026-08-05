@@ -8,7 +8,7 @@ import de.ambertation.wover.sets.api.blocks.SlotType;
 import de.ambertation.wover.sets.api.blocks.WoodenBlockSet;
 
 import net.minecraft.advancements.*;
-import net.minecraft.advancements.critereon.*;
+import net.minecraft.advancements.criterion.*;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -16,10 +16,11 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -39,9 +40,9 @@ public class AdvancementManager {
         }
     }
 
-    private static final Map<ResourceLocation, Advancement.Builder> ADVANCEMENTS = new LinkedHashMap<>();
+    private static final Map<Identifier, Advancement.Builder> ADVANCEMENTS = new LinkedHashMap<>();
 
-    public static void register(ResourceLocation id, Advancement.Builder builder) {
+    public static void register(Identifier id, Advancement.Builder builder) {
         ADVANCEMENTS.put(id, builder);
     }
 
@@ -52,10 +53,10 @@ public class AdvancementManager {
                                                                          CriteriaTriggers.IMPOSSIBLE.createCriterion(new ImpossibleTrigger.TriggerInstance())
                                                                  )
                                                                  .build(RecipeBuilder.ROOT_RECIPE_ADVANCEMENT);
-        final Map<ResourceLocation, AdvancementHolder> BUILT = new HashMap<>();
+        final Map<Identifier, AdvancementHolder> BUILT = new HashMap<>();
 
         for (var entry : ADVANCEMENTS.entrySet()) {
-            final ResourceLocation loc = entry.getKey();
+            final Identifier loc = entry.getKey();
             if (namespaces == null || namespaces.contains(loc.getNamespace())) {
                 final Advancement.Builder builder = entry.getValue();
                 final AdvancementHolder adv = builder.build(loc);
@@ -91,7 +92,7 @@ public class AdvancementManager {
             return this;
         }
 
-        public RewardsBuilder runs(ResourceLocation resourceLocation) {
+        public RewardsBuilder runs(Identifier resourceLocation) {
             builder.runs(resourceLocation);
             return this;
         }
@@ -110,21 +111,21 @@ public class AdvancementManager {
 
     public static class Builder {
         private static final ThreadLocal<DisplayBuilder> DISPLAY_BUILDER = ThreadLocal.withInitial(DisplayBuilder::new);
-        private static final ResourceLocation RECIPES_ROOT = RecipeBuilder.ROOT_RECIPE_ADVANCEMENT;
+        private static final Identifier RECIPES_ROOT = RecipeBuilder.ROOT_RECIPE_ADVANCEMENT;
 
         private final Advancement.Builder builder = new OrderedBuilder();
-        private final ResourceLocation id;
+        private final Identifier id;
         private final AdvancementType type;
         private boolean canBuild = true;
 
         @SuppressWarnings("removal")
-        private Builder(ResourceLocation id, AdvancementType type) {
-            ResourceLocation ID;
+        private Builder(Identifier id, AdvancementType type) {
+            Identifier ID;
             if (type == AdvancementType.RECIPE_DECORATIONS) {
-                ID = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "recipes/decorations/" + id.getPath());
+                ID = Identifier.fromNamespaceAndPath(id.getNamespace(), "recipes/decorations/" + id.getPath());
                 builder.parent(RECIPES_ROOT); //will be root by default
             } else if (type == AdvancementType.RECIPE_TOOL) {
-                ID = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "recipes/tools/" + id.getPath());
+                ID = Identifier.fromNamespaceAndPath(id.getNamespace(), "recipes/tools/" + id.getPath());
                 builder.parent(RECIPES_ROOT); //will be root by default
             } else {
                 ID = id;
@@ -137,11 +138,11 @@ public class AdvancementManager {
             return new Builder(builder.id, builder.type);
         }
 
-        public static Builder create(ResourceLocation id) {
+        public static Builder create(Identifier id) {
             return new Builder(id, AdvancementType.REGULAR);
         }
 
-        public static Builder create(ResourceLocation id, AdvancementType type) {
+        public static Builder create(Identifier id, AdvancementType type) {
             return new Builder(id, type);
         }
 
@@ -200,7 +201,7 @@ public class AdvancementManager {
 
         @SuppressWarnings("removal")
         @Deprecated(forRemoval = true)
-        public Builder parent(ResourceLocation resourceLocation) {
+        public Builder parent(Identifier resourceLocation) {
             builder.parent(resourceLocation);
             return this;
         }
@@ -219,7 +220,10 @@ public class AdvancementManager {
                 Component title,
                 Component description
         ) {
-            return startDisplay(new ItemStack(icon), title, description);
+            // ItemStackTemplate, not ItemStack: this can run during datagen bootstrap, before item
+            // data components are bound (see Display.icon's comment in AdvancementBuilderElements).
+            // ItemStackTemplate's constructor never reads them, unlike ItemStack's.
+            return startDisplay(new ItemStackTemplate(icon.asItem()), title, description);
         }
 
         public DisplayBuilder startDisplay(
@@ -227,10 +231,24 @@ public class AdvancementManager {
                 Component title,
                 Component description
         ) {
+            // Safe here: a caller that already holds a real ItemStack instance had to construct it
+            // (and thus already needed components bound) before it could reach this call.
+            return startDisplay(
+                    icon == null ? null : ItemStackTemplate.fromNonEmptyStack(icon),
+                    title,
+                    description
+            );
+        }
+
+        public DisplayBuilder startDisplay(
+                ItemStackTemplate icon,
+                Component title,
+                Component description
+        ) {
             if (icon == null) {
                 canBuild = false;
             } else {
-                var id = BuiltInRegistries.ITEM.getKey(icon.getItem());
+                var id = BuiltInRegistries.ITEM.getKey(icon.item().value());
                 if (id == null) {
                     canBuild = false;
                 }
@@ -247,7 +265,7 @@ public class AdvancementManager {
         public Builder awardRecipe(ItemLike... items) {
             RewardsBuilder rewardBuilder = startReward();
             for (ItemLike item : items) {
-                ResourceLocation id = BuiltInRegistries.ITEM.getKey(item.asItem());
+                Identifier id = BuiltInRegistries.ITEM.getKey(item.asItem());
                 if (id == null) continue;
                 rewardBuilder.addRecipe(ResourceKey.create(Registries.RECIPE, id));
             }
@@ -368,7 +386,7 @@ public class AdvancementManager {
         public Builder addVisitBiomesCriterion(List<Holder<Biome>> list) {
             for (Holder<Biome> holder : list) {
                 addCriterion(
-                        holder.unwrapKey().orElseThrow().location().toString(),
+                        holder.unwrapKey().orElseThrow().identifier().toString(),
                         PlayerTrigger.TriggerInstance.located(LocationPredicate.Builder.inBiome(holder))
                 );
             }
@@ -395,7 +413,7 @@ public class AdvancementManager {
             return this;
         }
 
-        public ResourceLocation build() {
+        public Identifier build() {
             AdvancementManager.register(id, this.builder);
             return this.id;
         }
@@ -411,17 +429,22 @@ public class AdvancementManager {
             return this;
         }
 
-        public DisplayBuilder background(ResourceLocation value) {
+        public DisplayBuilder background(Identifier value) {
             display.background = value;
             return this;
         }
 
         public DisplayBuilder icon(ItemLike value) {
-            display.icon = new ItemStack(value);
+            display.icon = new ItemStackTemplate(value.asItem());
             return this;
         }
 
         public DisplayBuilder icon(ItemStack value) {
+            display.icon = ItemStackTemplate.fromNonEmptyStack(value);
+            return this;
+        }
+
+        public DisplayBuilder icon(ItemStackTemplate value) {
             display.icon = value;
             return this;
         }

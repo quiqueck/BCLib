@@ -11,8 +11,6 @@ import org.jetbrains.annotations.Nullable;
 @Environment(EnvType.CLIENT)
 public interface ClientLevelAccess {
     @Nullable
-    LevelRendererAccess bcl_getLevelRenderer();
-    @Nullable
     Particle bcl_addParticle(
             ParticleOptions particleOptions,
             double x, double y, double z,
