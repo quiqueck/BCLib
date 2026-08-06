@@ -191,7 +191,7 @@ public abstract class BaseChair extends AbstractChair {
     public static LootTable.Builder chairLoot(Block block) {
         var bottomShape = LootItemBlockStatePropertyCondition
                 .hasBlockStateProperties(block)
-                .setProperties(net.minecraft.advancements.criterion.StatePropertiesPredicate.Builder
+                .setProperties(net.minecraft.advancements.predicates.StatePropertiesPredicate.Builder
                         .properties()
                         .hasProperty(TOP, false));
         return LootTable

@@ -18,7 +18,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BlockItemTags;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -77,29 +79,32 @@ public class CommandRegistry {
 
     private static final Map<Holder<Biome>, BlockState> biomeMap = new HashMap<>();
     private static int biomeMapIdx = 0;
+    // 26.2 folded the 16 per-colour Blocks constants into ColorCollection<Block> (Blocks.STAINED_GLASS,
+    // Blocks.CONCRETE, ...), the same treatment WOOL/CARPET already had; pick(DyeColor) replaces the
+    // individual fields and returns the identical blocks.
     private static final BlockState[] states = {
-            Blocks.RED_STAINED_GLASS.defaultBlockState(),
-            Blocks.BLUE_STAINED_GLASS.defaultBlockState(),
-            Blocks.YELLOW_STAINED_GLASS.defaultBlockState(),
-            Blocks.LIME_STAINED_GLASS.defaultBlockState(),
-            Blocks.PINK_STAINED_GLASS.defaultBlockState(),
-            Blocks.GREEN_STAINED_GLASS.defaultBlockState(),
-            Blocks.WHITE_STAINED_GLASS.defaultBlockState(),
-            Blocks.BLACK_STAINED_GLASS.defaultBlockState(),
-            Blocks.ORANGE_STAINED_GLASS.defaultBlockState(),
-            Blocks.LIGHT_BLUE_STAINED_GLASS.defaultBlockState()
+            Blocks.STAINED_GLASS.pick(DyeColor.RED).defaultBlockState(),
+            Blocks.STAINED_GLASS.pick(DyeColor.BLUE).defaultBlockState(),
+            Blocks.STAINED_GLASS.pick(DyeColor.YELLOW).defaultBlockState(),
+            Blocks.STAINED_GLASS.pick(DyeColor.LIME).defaultBlockState(),
+            Blocks.STAINED_GLASS.pick(DyeColor.PINK).defaultBlockState(),
+            Blocks.STAINED_GLASS.pick(DyeColor.GREEN).defaultBlockState(),
+            Blocks.STAINED_GLASS.pick(DyeColor.WHITE).defaultBlockState(),
+            Blocks.STAINED_GLASS.pick(DyeColor.BLACK).defaultBlockState(),
+            Blocks.STAINED_GLASS.pick(DyeColor.ORANGE).defaultBlockState(),
+            Blocks.STAINED_GLASS.pick(DyeColor.LIGHT_BLUE).defaultBlockState()
     };
     private static final BlockState[] states2 = {
-            Blocks.RED_CONCRETE.defaultBlockState(),
-            Blocks.BLUE_CONCRETE.defaultBlockState(),
-            Blocks.YELLOW_CONCRETE.defaultBlockState(),
-            Blocks.LIME_CONCRETE.defaultBlockState(),
-            Blocks.PINK_CONCRETE.defaultBlockState(),
-            Blocks.GREEN_CONCRETE.defaultBlockState(),
-            Blocks.WHITE_CONCRETE.defaultBlockState(),
-            Blocks.BLACK_CONCRETE.defaultBlockState(),
-            Blocks.ORANGE_CONCRETE.defaultBlockState(),
-            Blocks.LIGHT_BLUE_CONCRETE.defaultBlockState()
+            Blocks.CONCRETE.pick(DyeColor.RED).defaultBlockState(),
+            Blocks.CONCRETE.pick(DyeColor.BLUE).defaultBlockState(),
+            Blocks.CONCRETE.pick(DyeColor.YELLOW).defaultBlockState(),
+            Blocks.CONCRETE.pick(DyeColor.LIME).defaultBlockState(),
+            Blocks.CONCRETE.pick(DyeColor.PINK).defaultBlockState(),
+            Blocks.CONCRETE.pick(DyeColor.GREEN).defaultBlockState(),
+            Blocks.CONCRETE.pick(DyeColor.WHITE).defaultBlockState(),
+            Blocks.CONCRETE.pick(DyeColor.BLACK).defaultBlockState(),
+            Blocks.CONCRETE.pick(DyeColor.ORANGE).defaultBlockState(),
+            Blocks.CONCRETE.pick(DyeColor.LIGHT_BLUE).defaultBlockState()
     };
 
     private static int revealOre(CommandContext<CommandSourceStack> ctx, int chunks) throws CommandSyntaxException {
@@ -134,16 +139,20 @@ public class CommandRegistry {
 
                             state = level.getBlockState(bp);
                             if (y == 1 || !state.is(Blocks.AIR)) {
+                                // 26.2 dropped the BlockTags constants for the five ores below; the tags
+                                // themselves are unchanged and still reachable through BlockItemTags,
+                                // which is where BlockTags reads its surviving ore keys from as well
+                                // (BlockTags.GOLD_ORES is literally BlockItemTags.GOLD_ORES.block()).
                                 if (!(state.is(CommonBlockTags.NETHER_ORES)
                                         || state.is(CommonBlockTags.END_ORES)
-                                        || state.is(BlockTags.COAL_ORES)
+                                        || state.is(BlockItemTags.COAL_ORES.block())
                                         || state.is(BlockTags.COPPER_ORES)
-                                        || state.is(BlockTags.DIAMOND_ORES)
-                                        || state.is(BlockTags.EMERALD_ORES)
+                                        || state.is(BlockItemTags.DIAMOND_ORES.block())
+                                        || state.is(BlockItemTags.EMERALD_ORES.block())
                                         || state.is(BlockTags.GOLD_ORES)
                                         || state.is(BlockTags.IRON_ORES)
-                                        || state.is(BlockTags.LAPIS_ORES)
-                                        || state.is(BlockTags.REDSTONE_ORES)
+                                        || state.is(BlockItemTags.LAPIS_ORES.block())
+                                        || state.is(BlockItemTags.REDSTONE_ORES.block())
                                         || state.is(Blocks.NETHER_QUARTZ_ORE)
                                         || state.is(Blocks.NETHER_GOLD_ORE)
                                         || state.is(Blocks.ANCIENT_DEBRIS))) {
@@ -211,9 +220,9 @@ public class CommandRegistry {
         org.betterx.bclib.util.BlocksHelper.setWithoutUpdate(
                 level,
                 new BlockPos((int) pos.x, (int) pos.y, (int) pos.z),
-                Blocks.YELLOW_CONCRETE
+                Blocks.CONCRETE.pick(DyeColor.YELLOW)
         );
-        org.betterx.bclib.util.BlocksHelper.setWithoutUpdate(level, mPos, Blocks.LIGHT_BLUE_CONCRETE);
+        org.betterx.bclib.util.BlocksHelper.setWithoutUpdate(level, mPos, Blocks.CONCRETE.pick(DyeColor.LIGHT_BLUE));
         return Command.SINGLE_SUCCESS;
     }
 }

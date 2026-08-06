@@ -85,7 +85,7 @@ public class DataFixerAPI {
         } catch (IOException e) {
             BCLib.LOGGER.warn("Failed to read level {} data", levelID, e);
             SystemToast.onWorldAccessFailure(Minecraft.getInstance(), levelID);
-            Minecraft.getInstance().setScreen(null);
+            Minecraft.getInstance().gui.setScreen(null);
             return true;
         }
 
@@ -152,11 +152,11 @@ public class DataFixerAPI {
     @Environment(EnvType.CLIENT)
     private static AtomicProgressListener showProgressScreen() {
         ProgressScreen ps = new ProgressScreen(
-                Minecraft.getInstance().screen,
+                Minecraft.getInstance().gui.screen(),
                 Component.translatable("title.bclib.datafixer.progress"),
                 Component.translatable("message.bclib.datafixer.progress")
         );
-        Minecraft.getInstance().setScreen(ps);
+        Minecraft.getInstance().gui.setScreen(ps);
         return ps;
     }
 
@@ -328,9 +328,11 @@ public class DataFixerAPI {
 
     @Environment(EnvType.CLIENT)
     private static void showLevelFixErrorScreen(State state, Listener onContinue) {
+        // 26.2 moved screen management off Minecraft onto Minecraft#gui: #setScreen is now
+        // Gui#setScreen and the former Minecraft#screen field is exposed as Gui#screen().
         Minecraft.getInstance()
-                 .setScreen(new LevelFixErrorScreen(
-                         Minecraft.getInstance().screen,
+                 .gui.setScreen(new LevelFixErrorScreen(
+                         Minecraft.getInstance().gui.screen(),
                          state.getErrorMessages(),
                          onContinue
                  ));
@@ -362,7 +364,7 @@ public class DataFixerAPI {
 
     @Environment(EnvType.CLIENT)
     static void showBackupWarning(String levelID, BiConsumer<Boolean, Boolean> whenFinished) {
-        Minecraft.getInstance().setScreen(new ConfirmFixScreen(null, whenFinished::accept));
+        Minecraft.getInstance().gui.setScreen(new ConfirmFixScreen(null, whenFinished::accept));
     }
 
     private static State runDataFixes(

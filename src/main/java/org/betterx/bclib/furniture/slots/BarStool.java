@@ -131,4 +131,11 @@ public class BarStool extends SlotFromDefinition {
             ));
         }
     }
+
+    @Override
+    protected void finalizeDefinitions(BlockSet<?> set, BlockDefinition<?, ?> def) {
+        // Not a full cube (furniture), so it must not inherit the set material's sulfur cube archetype - a
+        // cube renders what it swallowed as a block model, and a bar stool inside one reads as a bug.
+        def.addTrait(BlockTraits.SULFUR_CUBE_ARCHETYPE.notSwallowable());
+    }
 }

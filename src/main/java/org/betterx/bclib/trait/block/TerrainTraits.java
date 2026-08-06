@@ -59,6 +59,10 @@ public class TerrainTraits {
                 TerrainBlockTrait.DEFAULT,
                 PottableSoilBlockTrait.DEFAULT,
                 loot(),
+                // A terrain block is its base block with a cover grown on it, and vanilla treats exactly that
+                // shape the same way: crimson_nylium and warped_nylium sit in slow_bouncy with netherrack and
+                // the rest of the stone family, not with dirt. So terrain inherits its base stone's archetype.
+                BlockTraits.SULFUR_CUBE_ARCHETYPE.slowBouncy(),
                 model
         );
     }

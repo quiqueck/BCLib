@@ -8,6 +8,7 @@ import de.ambertation.wover.block.impl.trait.BlockTraitImpl;
 import de.ambertation.wover.tag.api.predefined.CommonBlockTags;
 import de.ambertation.wover.tag.api.predefined.CommonItemTags;
 
+import net.minecraft.tags.BlockItemTags;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -46,7 +47,9 @@ public class VegetationTagTrait extends BlockTraitImpl<Block, GenericBlockTrait>
             List.of(CommonBlockTags.WATER_PLANT, BlockTags.SWORD_EFFICIENT), List.of()
     );
     private static final VegetationTagTrait SAPLING = new VegetationTagTrait(
-            List.of(BlockTags.SAPLINGS, CommonBlockTags.SAPLINGS),
+            // 26.2 moved the block half of minecraft:saplings out of BlockTags and into
+            // BlockItemTags; ItemTags.SAPLINGS stayed where it was.
+            List.of(BlockItemTags.SAPLINGS.block(), CommonBlockTags.SAPLINGS),
             List.of(ItemTags.SAPLINGS, CommonItemTags.SAPLINGS)
     );
     private static final VegetationTagTrait LEAVES = new VegetationTagTrait(
@@ -73,7 +76,7 @@ public class VegetationTagTrait extends BlockTraitImpl<Block, GenericBlockTrait>
     }
 
     /**
-     * Tags the block as {@link BlockTags#SAPLINGS}/{@link CommonBlockTags#SAPLINGS} and its item as
+     * Tags the block as {@link BlockItemTags#SAPLINGS}/{@link CommonBlockTags#SAPLINGS} and its item as
      * {@link ItemTags#SAPLINGS}/{@link CommonItemTags#SAPLINGS} - exactly what
      * {@code BehaviourSaplingLike} contributed through the two auto tag providers.
      */

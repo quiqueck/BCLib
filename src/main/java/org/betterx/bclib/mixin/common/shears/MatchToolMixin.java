@@ -2,7 +2,7 @@ package org.betterx.bclib.mixin.common.shears;
 
 import de.ambertation.wover.tag.api.predefined.CommonItemTags;
 
-import net.minecraft.advancements.criterion.ItemPredicate;
+import net.minecraft.advancements.predicates.ItemPredicate;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootContext;

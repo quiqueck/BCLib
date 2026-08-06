@@ -88,7 +88,9 @@ public class BaseTerrainBlock extends Block {
         } else if (blockState.getFluidState().getAmount() == 8) {
             return false;
         } else {
-            int i = LightEngine.getLightBlockInto(
+            // 26.2 renamed LightEngine.getLightBlockInto -> getLightDampeningInto; the signature and
+            // the body are unchanged (verified against the 26.2 jar).
+            int i = LightEngine.getLightDampeningInto(
                     state,
                     blockState,
                     Direction.UP,

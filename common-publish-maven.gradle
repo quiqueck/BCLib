@@ -1,5 +1,5 @@
 // Publishes to our own Ambertation maven repository.
-// Libraries only - copy-paste into every library repo's 26.1 checkout, do
+// Libraries only - copy-paste into every library repo's 26.2 checkout, do
 // not apply from mods. Not interchangeable with the 1.21.6 copy: this Loom
 // version has no separate remap step, so the published jars are `jar`/
 // `sourcesJar` directly, not `remapJar`/`remapSourcesJar`.

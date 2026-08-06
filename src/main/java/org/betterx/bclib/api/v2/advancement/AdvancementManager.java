@@ -7,8 +7,12 @@ import de.ambertation.wover.complex.api.equipment.ToolSlot;
 import de.ambertation.wover.sets.api.blocks.SlotType;
 import de.ambertation.wover.sets.api.blocks.WoodenBlockSet;
 
+// 26.2 split net.minecraft.advancements.criterion into .predicates (ItemPredicate,
+// LocationPredicate, StatePropertiesPredicate, ...) and .triggers (Criterion, CriterionTrigger,
+// CriteriaTriggers and every *Trigger). CriterionTriggerInstance stayed in net.minecraft.advancements.
 import net.minecraft.advancements.*;
-import net.minecraft.advancements.criterion.*;
+import net.minecraft.advancements.predicates.*;
+import net.minecraft.advancements.triggers.*;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
