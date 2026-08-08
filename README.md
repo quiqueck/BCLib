@@ -130,8 +130,9 @@ In this example `2.0.6` is the BCLIb Version you are building against.
     * Allows block to return custom model and blockstate.
 * ItemModelProvider:
     * Allows block to return custom item model.
-* CustomColorProvider:
-    * Make available to add block and item color provider.
+* ~~CustomColorProvider~~ (removed):
+    * Replaced by wover's `ClientBlockTraits.TINT` binding, which drives both the in-world block colour and the
+      generated item model's tint. Declare it as a trait instead of implementing an interface.
 * RenderLayerProvider:
     * Determine block render layer (Transparent and Translucent).
 * PostInitable:

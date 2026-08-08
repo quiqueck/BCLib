@@ -35,6 +35,9 @@ public class StalactiteBlockTrait extends BlockTraitImpl<Block, GenericBlockTrai
                 .of(BlockTraits.STONE_BLOCK)
                 .add(
                         new StalactiteBlockTrait(sourceBlock),
+                        // Stalactites inherit reqTool=true from STONE_BLOCK, but carry no loot table of their
+                        // own; without this they are simply unharvestable. They always drop themselves.
+                        BlockTraits.LOOT_TABLE.dropSelf(),
                         ClientBlockTraits.RENDER_LAYER.cutout(),
                         ModCore.isDatagen() ? ClientModel.build() : null
                 )

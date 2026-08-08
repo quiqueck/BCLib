@@ -2,6 +2,7 @@ package org.betterx.bclib.recipes;
 
 import org.betterx.bclib.BCLib;
 import de.ambertation.wover.config.api.DatapackConfigs;
+import de.ambertation.wover.recipe.api.SyncedRecipes;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -23,11 +24,20 @@ import org.jetbrains.annotations.NotNull;
 public class BCLRecipeManager {
     public static final ResourceLocation RECIPES_CONFIG_FILE = BCLib.C.id("recipes.json");
 
+    /**
+     * Registers a serializer for a custom recipe type, and makes its recipes readable on the client.
+     * <p>
+     * The sync registration is not optional here on purpose: every recipe type that goes through this
+     * method is a modded one that some GUI - the JEI/REI plugins, an in-world recipe book - has to be
+     * able to list, and without it those all come up empty against a dedicated server. See
+     * {@link SyncedRecipes} for why the client cannot read them otherwise.
+     */
     public static <C extends RecipeInput, S extends RecipeSerializer<T>, T extends Recipe<C>> S registerSerializer(
             String modID,
             String id,
             S serializer
     ) {
+        SyncedRecipes.register(serializer);
         return Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, modID + ":" + id, serializer);
     }
 

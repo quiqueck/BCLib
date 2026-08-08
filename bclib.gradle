@@ -73,6 +73,9 @@ dependencies {
 //    modCompileOnly "dev.emi:emi-fabric:${emi_version}:api"
 //    modLocalRuntime "dev.emi:emi-fabric:${emi_version}"
 
+    modCompileOnly "mezz.jei:jei-${project.minecraft_version}-fabric-api:${project.jei_version}" // compile against the API
+    modLocalRuntime "mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}" // run against the full jar
+
     // alsoInclude=false: BCLib doesn't bundle wunderlib into its own jar,
     // just needs it on the classpath (same as WorldWeaver's own submodules).
     gradle.modApiOrLocal(dependencies, ':wunderlib', "de.ambertation:wunderlib:${project.wunderlib_version}", false)

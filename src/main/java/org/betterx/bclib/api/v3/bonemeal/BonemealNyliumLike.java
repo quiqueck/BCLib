@@ -49,7 +49,14 @@ public interface BonemealNyliumLike extends BonemealableBlock {
         if (currentState.is(getHostBlock())) {
             Holder<? extends ConfiguredFeature<?, ?>> feature = getCoverFeature();
             if (feature != null) {
-                FeatureUtils.placeInWorld(feature.value(), serverLevel, blockPos.above(), randomSource, false);
+                // unchanged=true: the cover feature is a patch (wover:random_patch or
+                // minecraft:nether_forest_vegetation) and has to be placed exactly as authored, so its
+                // tries/spread scatter plants over the surrounding surface the way vanilla nylium does.
+                // With unchanged=false, FeatureUtils unwraps a RandomPatchConfiguration down to the single
+                // block feature inside it (that unwrap exists to find a GrowableFeature, e.g. a sapling's
+                // tree) and then places just that one block at blockPos.above() - which made bone meal look
+                // like it only ever grew a plant on the block that was clicked.
+                FeatureUtils.placeInWorld(feature.value(), serverLevel, blockPos.above(), randomSource, true);
             }
         }
     }

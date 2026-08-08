@@ -25,6 +25,8 @@
   "emi.category.bclib.anvil_3": "Anvil (Level III)",
   "emi.category.bclib.anvil_4": "Anvil (Level IV)",
   "emi.category.bclib.anvil_5": "Anvil (Level V)",
+  "tooltip.bclib.jei.alloying_info": "XP: %s   Time: %ss",
+  "tooltip.bclib.jei.anvil_damage": "Hammer damage: %s",
   "generator.bclib.amplified": "Ampl. & BetterX",
   "generator.bclib.large": "Large & BetterX",
   "generator.bclib.normal": "BetterX",

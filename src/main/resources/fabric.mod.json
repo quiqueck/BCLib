@@ -1,7 +1,7 @@
 {
     "schemaVersion": 1,
     "id": "bclib",
-    "version": "21.800.0",
+    "version": "21.800.1",
     "name": "BCLib",
     "description": "A library for BetterX team mods",
     "authors": [
@@ -33,6 +33,9 @@
         "emi_disabled": [
             "org.betterx.bclib.integration.emi.EMIPlugin"
         ],
+        "jei_mod_plugin": [
+            "org.betterx.bclib.integration.jei.JeiPlugin"
+        ],
         "fabric-datagen": [
             "org.betterx.datagen.bclib.BCLibDatagen"
         ]
@@ -56,8 +59,11 @@
         "wover": "21.800.x"
     },
     "breaks": {
-        "wunderlib": "<21.800.0",
-        "wover": "<21.800.0"
+        "wunderlib": "<21.800.1",
+        "wover": "<21.800.1"
+    },
+    "suggests": {
+        "jei": ">=24.0.0"
     },
     "custom": {
         "wover": {
