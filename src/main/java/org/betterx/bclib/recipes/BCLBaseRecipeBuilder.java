@@ -9,6 +9,7 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.triggers.RecipeUnlockedTrigger;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
@@ -77,7 +78,7 @@ public abstract class BCLBaseRecipeBuilder<I extends BaseRecipeBuilder<I>, R ext
     public void build(de.ambertation.wover.recipe.api.RecipeBuilder.Context ctx) {
         validate();
 
-        setupAdvancementForResult();
+        setupAdvancementForResult(ctx);
         final AdvancementHolder advancementHolder = advancement.build(createAdvancementId());
 
         if (this.outputTagConsumer != null)
@@ -101,11 +102,22 @@ public abstract class BCLBaseRecipeBuilder<I extends BaseRecipeBuilder<I>, R ext
         return cachedOutput;
     }
 
+    /**
+     * 26.3 turned recipes into the {@code minecraft:recipe} datapack registry, so
+     * {@code RecipeUnlockedTrigger#unlocked} takes a {@code Holder<Recipe<?>>} instead of a
+     * {@code ResourceKey<Recipe<?>>}. The holder is resolved from the {@code RecipeOutput} that is
+     * currently bootstrapping the registry - exactly what vanilla's own
+     * {@code RecipeUnlockAdvancementBuilder#build} does - so the (still unbound) reference for this
+     * recipe's own key resolves even though {@code accept} has not run yet.
+     */
     @SuppressWarnings("removal")
-    protected void setupAdvancementForResult() {
+    protected void setupAdvancementForResult(de.ambertation.wover.recipe.api.RecipeBuilder.Context ctx) {
         advancement
                 .parent(RecipeBuilder.ROOT_RECIPE_ADVANCEMENT)//automatically at root level
-                .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(key))
+                .addCriterion(
+                        "has_the_recipe",
+                        RecipeUnlockedTrigger.unlocked(ctx.recipeOutput().lookup(Registries.RECIPE).getOrThrow(key))
+                )
                 .rewards(net.minecraft.advancements.AdvancementRewards.Builder.recipe(key))
                 .requirements(AdvancementRequirements.Strategy.OR);
     }

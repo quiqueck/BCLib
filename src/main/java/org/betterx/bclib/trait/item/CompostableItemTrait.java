@@ -20,8 +20,9 @@ import java.util.List;
  * <p>
  * This mirrors {@link org.betterx.bclib.trait.block.CompostableBlockTrait}, but for items whose compostability
  * is intrinsic to the item itself rather than derived from a backing block (e.g. food items). It deliberately
- * does <em>not</em> register the item into vanilla's static {@link net.minecraft.world.level.block.ComposterBlock#COMPOSTABLES}
- * map - that map is populated in a class initializer for vanilla items only, so mirroring into it at world load
+ * does <em>not</em> register the item into vanilla's static {@code ComposterBlock.COMPOSTABLES}
+ * map (which 26.3 removed outright in favour of the {@code minecraft:compostable} item component)
+ * - that map was populated in a class initializer for vanilla items only, so mirroring into it at world load
  * would be invisible to datagen (no world is ever loaded there). Reading the trait at use time keeps the
  * runtime behaviour identical for players while making compostability observable to datagen oracles (which
  * read the same {@link CompostableTrait} interface uniformly across block and item traits).

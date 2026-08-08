@@ -160,9 +160,11 @@ public class BCLAutoBlockTagProvider extends WoverTagProvider.ForBlocks implemen
             Block block,
             DeclaredTools declaredTools
     ) {
-        // Fuel registration used to live here, but this method is only reachable from prepareTags, i.e. it
-        // only ever ran during a datagen run and never in a real game - so it had no runtime effect. It now
-        // lives in org.betterx.bclib.api.v2.FuelValueRegistration, registered from BCLib#onInitialize.
+        // 26.3 removed Fabric's FuelValueEvents (and vanilla's static burn-time map) in favour of the
+        // data-driven minecraft:cooking_fuel item component. The Fuel registration that used to live here
+        // moved to org.betterx.bclib.api.v2.FuelComponents, which runs from
+        // DefaultItemComponentEvents.MODIFY. It had to move anyway: this method is only reachable from
+        // prepareTags, so on 26.1 the registration only ever happened during a datagen run.
 
         final Identifier location = BuiltInRegistries.BLOCK.getKey(block);
         if (!location.getNamespace().equals("minecraft")) {

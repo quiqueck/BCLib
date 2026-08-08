@@ -1,6 +1,7 @@
 package org.betterx.bclib;
 
-import org.betterx.bclib.api.v2.FuelValueRegistration;
+import org.betterx.bclib.api.v2.FuelComponents;
+import org.betterx.bclib.api.v2.ToolBlockTransformers;
 import org.betterx.bclib.api.v2.levelgen.LevelGenEvents;
 import org.betterx.bclib.api.v2.levelgen.structures.TemplatePiece;
 import org.betterx.bclib.api.v3.tag.BCLBlockTags;
@@ -45,7 +46,8 @@ public class BCLib implements ModInitializer {
     @Override
     public void onInitialize() {
         BCLibArguments.register();
-        FuelValueRegistration.register();
+        ToolBlockTransformers.register();
+        FuelComponents.register();
         LevelGenEvents.register();
         BCLDataComponents.ensureStaticInitialization();
         BaseBlockEntities.register();

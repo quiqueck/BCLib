@@ -7,6 +7,9 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistrySetBuilder;
+// 26.3 moved RegistrySetBuilder.RegistryBootstrap out to net.minecraft.core.registries.SingleRegistryBootstrap
+// (same shape: void run(BootstrapContext<T>)); RegistrySetBuilder#add now takes that type.
+import net.minecraft.core.registries.SingleRegistryBootstrap;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.RegistryDataLoader;
 import net.minecraft.resources.ResourceKey;
@@ -83,7 +86,7 @@ public abstract class RegistrySupplier {
         public <T> void add(
                 ResourceKey<? extends Registry<T>> key,
                 Codec<T> elementCodec,
-                RegistrySetBuilder.RegistryBootstrap<T> registryBootstrap
+                SingleRegistryBootstrap<T> registryBootstrap
         ) {
             this.add(new RegistrySupplier.RegistryInfo<T>(key, elementCodec, registryBootstrap));
         }
@@ -91,7 +94,7 @@ public abstract class RegistrySupplier {
         public <T> void add(
                 ResourceKey<? extends Registry<T>> key,
                 Codec<T> elementCodec,
-                RegistrySetBuilder.RegistryBootstrap<T> registryBootstrap,
+                SingleRegistryBootstrap<T> registryBootstrap,
                 String... modIDs
         ) {
             this.add(new RegistrySupplier.RegistryInfo<T>(key, elementCodec, registryBootstrap, modIDs));
@@ -100,7 +103,7 @@ public abstract class RegistrySupplier {
         public <T> void add(
                 ResourceKey<? extends Registry<T>> key,
                 Codec<T> elementCodec,
-                RegistrySetBuilder.RegistryBootstrap<T> registryBootstrap,
+                SingleRegistryBootstrap<T> registryBootstrap,
                 List<String> modIDs
         ) {
             this.add(new RegistrySupplier.RegistryInfo<T>(key, elementCodec, registryBootstrap, modIDs));
@@ -109,7 +112,7 @@ public abstract class RegistrySupplier {
         public <T> void addUnfiltered(
                 ResourceKey<? extends Registry<T>> key,
                 Codec<T> elementCodec,
-                RegistrySetBuilder.RegistryBootstrap<T> registryBootstrap
+                SingleRegistryBootstrap<T> registryBootstrap
         ) {
             this.add(new RegistrySupplier.RegistryInfo<T>(
                     key,
@@ -122,7 +125,7 @@ public abstract class RegistrySupplier {
         public <T> void addBootstrapOnly(
                 ResourceKey<? extends Registry<T>> key,
                 Codec<T> elementCodec,
-                RegistrySetBuilder.RegistryBootstrap<T> registryBootstrap
+                SingleRegistryBootstrap<T> registryBootstrap
         ) {
             this.add(new RegistrySupplier.RegistryInfo<T>(key, elementCodec, registryBootstrap, List.of()));
         }
@@ -132,12 +135,12 @@ public abstract class RegistrySupplier {
         public static final List<String> UNFILTERED = null;
         public final RegistryDataLoader.RegistryData<T> data;
         public final List<String> modIDs;
-        public final RegistrySetBuilder.RegistryBootstrap<T> registryBootstrap;
+        public final SingleRegistryBootstrap<T> registryBootstrap;
 
         public RegistryInfo(
                 RegistryDataLoader.RegistryData<T> data,
                 List<String> modIDs,
-                RegistrySetBuilder.RegistryBootstrap<T> registryBootstrap
+                SingleRegistryBootstrap<T> registryBootstrap
         ) {
             this.data = data;
             this.modIDs = modIDs;
@@ -147,7 +150,7 @@ public abstract class RegistrySupplier {
         public RegistryInfo(
                 ResourceKey<? extends Registry<T>> key,
                 Codec<T> elementCodec,
-                RegistrySetBuilder.RegistryBootstrap<T> registryBootstrap
+                SingleRegistryBootstrap<T> registryBootstrap
         ) {
             this(
                     new RegistryDataLoader.RegistryData<>(key, elementCodec),
@@ -159,7 +162,7 @@ public abstract class RegistrySupplier {
         public RegistryInfo(
                 ResourceKey<? extends Registry<T>> key,
                 Codec<T> elementCodec,
-                RegistrySetBuilder.RegistryBootstrap<T> registryBootstrap,
+                SingleRegistryBootstrap<T> registryBootstrap,
                 String... modIDs
         ) {
             this(new RegistryDataLoader.RegistryData<>(key, elementCodec), List.of(modIDs), registryBootstrap);
@@ -168,7 +171,7 @@ public abstract class RegistrySupplier {
         public RegistryInfo(
                 ResourceKey<? extends Registry<T>> key,
                 Codec<T> elementCodec,
-                RegistrySetBuilder.RegistryBootstrap<T> registryBootstrap,
+                SingleRegistryBootstrap<T> registryBootstrap,
                 List<String> modIDs
         ) {
             this(new RegistryDataLoader.RegistryData<>(key, elementCodec), modIDs, registryBootstrap);

@@ -21,7 +21,8 @@ import java.util.List;
  * it straight off the block through {@link #chanceFor(Item)}.
  * <p>
  * This deliberately does <em>not</em> register the block into vanilla's static
- * {@link net.minecraft.world.level.block.ComposterBlock#COMPOSTABLES} map. That map is populated in a class
+ * {@code ComposterBlock.COMPOSTABLES} map (which 26.3 removed outright in favour of the
+ * {@code minecraft:compostable} item component). That map was populated in a class
  * initializer for vanilla items and was previously mirrored into at world load, but that init-time
  * registration is invisible to datagen (no world is ever loaded there), so the
  * {@code block_registrations.txt} oracle showed every modded block as non-compostable. Reading the trait at

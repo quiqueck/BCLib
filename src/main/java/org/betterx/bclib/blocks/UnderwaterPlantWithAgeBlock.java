@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BonemealSource;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -33,7 +34,13 @@ public abstract class UnderwaterPlantWithAgeBlock extends UnderwaterPlantBlock {
     public abstract void grow(WorldGenLevel world, RandomSource random, BlockPos pos);
 
     @Override
-    public void performBonemeal(ServerLevel world, RandomSource random, BlockPos pos, BlockState state) {
+    public void performBonemeal(
+            ServerLevel world,
+            RandomSource random,
+            BlockPos pos,
+            BlockState state,
+            BonemealSource bonemealSource
+    ) {
         if (random.nextInt(4) == 0) {
             int age = state.getValue(AGE);
             if (age < 3) {
@@ -47,8 +54,8 @@ public abstract class UnderwaterPlantWithAgeBlock extends UnderwaterPlantBlock {
     @Override
     public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
         super.randomTick(state, world, pos, random);
-        if (isBonemealSuccess(world, random, pos, state)) {
-            performBonemeal(world, random, pos, state);
+        if (isBonemealSuccess(world, random, pos, state, BonemealSource.INTERACTION)) {
+            performBonemeal(world, random, pos, state, BonemealSource.INTERACTION);
         }
     }
 }

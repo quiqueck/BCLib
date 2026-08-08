@@ -104,14 +104,18 @@ dependencies {
     implementation "net.fabricmc:fabric-loader:${project.loader_version}"
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    compileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
-    localRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
+    // Optional-integration mods are published against older Minecraft versions than we target, so each of
+    // them drags in an older fabric-api. Loom applies the class tweakers of every mod on the classpath to
+    // the Minecraft jar, and an older fabric-api's tweakers reference signatures that no longer exist,
+    // failing the build with "Failed to setup Minecraft". We declare the matching fabric-api ourselves
+    // above, so strip theirs. See WorldWeaver commit f1f87b7e.
+    def noFabricApi = { exclude group: "net.fabricmc.fabric-api" }
+
+    compileOnly("com.terraformersmc:modmenu:${project.modmenu_version}", noFabricApi)
+    localRuntime("com.terraformersmc:modmenu:${project.modmenu_version}", noFabricApi)
 
 //    compileOnly "dev.emi:emi-fabric:${emi_version}:api"
 //    localRuntime "dev.emi:emi-fabric:${emi_version}"
-
-    compileOnly "mezz.jei:jei-${project.minecraft_version}-fabric-api:${project.jei_version}" // compile against the API
-    localRuntime "mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}" // run against the full jar
 
     // alsoInclude=false: BCLib doesn't bundle wunderlib into its own jar,
     // just needs it on the classpath (same as WorldWeaver's own submodules).

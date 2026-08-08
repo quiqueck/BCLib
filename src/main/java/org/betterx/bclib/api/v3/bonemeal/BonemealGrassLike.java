@@ -4,15 +4,16 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BonemealSource;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
-import de.ambertation.wover.feature.impl.random.RandomPatchConfiguration;
+import de.ambertation.wover.feature.impl.random.RandomPatchFeature;
 
 import java.util.List;
 
@@ -21,7 +22,13 @@ public interface BonemealGrassLike extends BonemealableBlock {
     Block getHostBlock(); //this
 
     Holder<PlacedFeature> getCoverFeature(); //VegetationPlacements.GRASS_BONEMEAL
-    List<ConfiguredFeature<?, ?>> getFlowerFeatures();  /*serverLevel.getBiome(currentPos)
+    /**
+     * The flower features of the surrounding biome.
+     * <p>
+     * 26.3 collapsed {@code ConfiguredFeature<FC, F>} into {@link Feature}, so this used to be
+     * {@code List<ConfiguredFeature<?, ?>>}.
+     */
+    List<Feature> getFlowerFeatures();  /*serverLevel.getBiome(currentPos)
                                                                     .value()
                                                                     .getGenerationSettings()
                                                                     .getFlowerFeatures();*/
@@ -34,9 +41,10 @@ public interface BonemealGrassLike extends BonemealableBlock {
     }
 
     default boolean isValidBonemealTarget(
-            BlockGetter blockGetter,
+            LevelReader blockGetter,
             BlockPos blockPos,
-            BlockState blockState
+            BlockState blockState,
+            BonemealSource bonemealSource
     ) {
         return blockGetter.getBlockState(blockPos.above()).isAir();
     }
@@ -45,12 +53,19 @@ public interface BonemealGrassLike extends BonemealableBlock {
             Level level,
             RandomSource randomSource,
             BlockPos blockPos,
-            BlockState blockState
+            BlockState blockState,
+            BonemealSource bonemealSource
     ) {
         return true;
     }
 
-    default void performBonemeal(ServerLevel serverLevel, RandomSource random, BlockPos pos, BlockState state) {
+    default void performBonemeal(
+            ServerLevel serverLevel,
+            RandomSource random,
+            BlockPos pos,
+            BlockState state,
+            BonemealSource bonemealSource
+    ) {
         final BlockPos above = pos.above();
         final BlockState growableState = getGrowableCoverState();
 
@@ -77,19 +92,20 @@ public interface BonemealGrassLike extends BonemealableBlock {
                         serverLevel,
                         random,
                         currentPos,
-                        currentState
+                        currentState,
+                        bonemealSource
                 );
             }
 
             if (currentState.isAir()) {
                 Holder<PlacedFeature> boneFeature;
                 if (canGrowFlower(random)) {
-                    List<ConfiguredFeature<?, ?>> list = getFlowerFeatures();
+                    List<Feature> list = getFlowerFeatures();
                     if (list.isEmpty()) {
                         continue;
                     }
 
-                    boneFeature = ((RandomPatchConfiguration) list.get(0).config()).feature();
+                    boneFeature = ((RandomPatchFeature) list.get(0)).feature();
                 } else {
                     boneFeature = getCoverFeature();
                 }

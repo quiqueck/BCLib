@@ -138,7 +138,7 @@ public class PlantBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> im
                   .instabreak()
                   .sound(sound)
                   .offsetType(offsetType)
-                  .pushReaction(PushReaction.DESTROY);
+                  .pushReaction(PushReaction.POPPED);
 
         if (validSpawnAlways) {
             definition.isValidSpawn((state, world, pos, type) -> true);

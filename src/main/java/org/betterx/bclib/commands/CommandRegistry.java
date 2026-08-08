@@ -1,5 +1,6 @@
 package org.betterx.bclib.commands;
 
+import org.betterx.bclib.api.v3.tag.PrunedVanillaTags;
 import org.betterx.bclib.util.BlocksHelper;
 import de.ambertation.wover.tag.api.predefined.CommonBlockTags;
 
@@ -18,7 +19,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.BlockItemTags;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.biome.Biome;
@@ -79,7 +79,7 @@ public class CommandRegistry {
 
     private static final Map<Holder<Biome>, BlockState> biomeMap = new HashMap<>();
     private static int biomeMapIdx = 0;
-    // 26.2 folded the 16 per-colour Blocks constants into ColorCollection<Block> (Blocks.STAINED_GLASS,
+    // 26.3 folded the 16 per-colour Blocks constants into ColorCollection<Block> (Blocks.STAINED_GLASS,
     // Blocks.CONCRETE, ...), the same treatment WOOL/CARPET already had; pick(DyeColor) replaces the
     // individual fields and returns the identical blocks.
     private static final BlockState[] states = {
@@ -139,20 +139,16 @@ public class CommandRegistry {
 
                             state = level.getBlockState(bp);
                             if (y == 1 || !state.is(Blocks.AIR)) {
-                                // 26.2 dropped the BlockTags constants for the five ores below; the tags
-                                // themselves are unchanged and still reachable through BlockItemTags,
-                                // which is where BlockTags reads its surviving ore keys from as well
-                                // (BlockTags.GOLD_ORES is literally BlockItemTags.GOLD_ORES.block()).
                                 if (!(state.is(CommonBlockTags.NETHER_ORES)
                                         || state.is(CommonBlockTags.END_ORES)
-                                        || state.is(BlockItemTags.COAL_ORES.block())
+                                        || state.is(PrunedVanillaTags.COAL_ORES)
                                         || state.is(BlockTags.COPPER_ORES)
-                                        || state.is(BlockItemTags.DIAMOND_ORES.block())
-                                        || state.is(BlockItemTags.EMERALD_ORES.block())
+                                        || state.is(PrunedVanillaTags.DIAMOND_ORES)
+                                        || state.is(PrunedVanillaTags.EMERALD_ORES)
                                         || state.is(BlockTags.GOLD_ORES)
                                         || state.is(BlockTags.IRON_ORES)
-                                        || state.is(BlockItemTags.LAPIS_ORES.block())
-                                        || state.is(BlockItemTags.REDSTONE_ORES.block())
+                                        || state.is(PrunedVanillaTags.LAPIS_ORES)
+                                        || state.is(PrunedVanillaTags.REDSTONE_ORES)
                                         || state.is(Blocks.NETHER_QUARTZ_ORE)
                                         || state.is(Blocks.NETHER_GOLD_ORE)
                                         || state.is(Blocks.ANCIENT_DEBRIS))) {

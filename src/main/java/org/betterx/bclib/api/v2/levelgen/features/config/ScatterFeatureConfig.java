@@ -16,12 +16,16 @@ import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 
 import java.util.Optional;
 
-public abstract class ScatterFeatureConfig implements FeatureConfiguration {
+/**
+ * 26.3 deleted the {@code net.minecraft.world.level.levelgen.feature.configurations} package along with
+ * the empty {@code FeatureConfiguration} marker interface this class used to implement. Nothing consumed
+ * the marker (it declared no members), so the {@code implements} clause is simply dropped.
+ */
+public abstract class ScatterFeatureConfig {
     public interface Instancer<T extends ScatterFeatureConfig> extends Function15<BlockStateProvider, Optional<BlockStateProvider>, Optional<BlockStateProvider>, Optional<BlockState>, Float, Float, Float, Float, Integer, Integer, Float, Float, Float, Boolean, IntProvider, T> {
     }
 

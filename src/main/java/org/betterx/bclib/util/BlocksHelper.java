@@ -424,7 +424,7 @@ public class BlocksHelper {
                 || BlockTrait.hasRuntimeTrait(block, PlantBlockTrait.KEY)) {
             return true;
         }
-        if (state.getPistonPushReaction() == PushReaction.DESTROY && block.defaultDestroyTime() == 0) return true;
+        if (state.getPistonPushReaction() == PushReaction.POPPED && block.defaultDestroyTime() == 0) return true;
 
         if (state.getSoundType() == SoundType.GRASS
                 || state.getSoundType() == SoundType.WET_GRASS

@@ -4,6 +4,7 @@ import org.betterx.bclib.client.models.BCLModels;
 import org.betterx.bclib.util.BlocksHelper;
 import de.ambertation.wover.block.api.model.WoverBlockModelGenerators;
 
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
@@ -25,7 +26,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
+import net.minecraft.world.level.storage.loot.predicates.MatchBlock;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -183,17 +184,27 @@ public abstract class BaseChair extends AbstractChair {
      * The loot a chair used to generate through the retired {@code BlockLootProvider} interface: it drops
      * itself only from its {@code top=false} (bottom) half, so a two-tall chair does not drop twice. Attach
      * this at the chair's registration with {@code BlockTraits.LOOT_TABLE.with((tk, bk, block, p) ->
-     * BaseChair.chairLoot(block))}.
+     * BaseChair.chairLoot(p.blockLookup(), block))}.
+     * <p>
+     * 26.3 replaced {@code LootItemBlockStatePropertyCondition} with
+     * {@link MatchBlock}, whose {@code blockMatches} factory resolves the block into a
+     * {@code HolderSet} eagerly and therefore needs a {@link HolderGetter}. The emitted condition is the
+     * same {@code top=false} state test as before, only serialized as {@code minecraft:match_block}.
      *
-     * @param block the chair block the loot table is for
+     * @param blockLookup lookup used to resolve {@code block} into a holder (from
+     *                    {@code LootLookupProvider#blockLookup()})
+     * @param block       the chair block the loot table is for
      * @return the loot table builder
      */
-    public static LootTable.Builder chairLoot(Block block) {
-        var bottomShape = LootItemBlockStatePropertyCondition
-                .hasBlockStateProperties(block)
-                .setProperties(net.minecraft.advancements.predicates.StatePropertiesPredicate.Builder
-                        .properties()
-                        .hasProperty(TOP, false));
+    public static LootTable.Builder chairLoot(HolderGetter<Block> blockLookup, Block block) {
+        var bottomShape = MatchBlock
+                .blockMatches(
+                        blockLookup,
+                        block,
+                        net.minecraft.advancements.predicates.StatePropertiesPredicate.Builder
+                                .properties()
+                                .hasProperty(TOP, false)
+                );
         return LootTable
                 .lootTable()
                 .withPool(LootPool

@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 /**
  * {@code getBiome()} is deliberately <b>not</b> declared here any more. Up to 26.1 the {@code biome} field
  * held a {@code Supplier<Holder<Biome>>} that did the lazy lookup itself, so a field accessor was enough.
- * In 26.2 the field is a plain {@code Holder<Biome>} that stays {@code null} until
+ * In 26.3 the field is a plain {@code Holder<Biome>} that stays {@code null} until
  * {@code SurfaceRules.Context#getBiome()} populates it from {@code biomeGetter} - the old accessor would not
  * even have applied (Mixin rejects an {@code @Accessor} whose type does not match the field), and a
  * retyped one would hand out nulls. Use the {@code SurfaceRulesContextAccessor} in {@code wover-surface-api},

@@ -4,8 +4,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BonemealSource;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.Feature;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -22,10 +23,16 @@ public class FeatureSpreader implements BonemealNyliumLike {
     public boolean isValidBonemealTarget(
             LevelReader blockGetter,
             BlockPos blockPos,
-            BlockState blockState
+            BlockState blockState,
+            BonemealSource bonemealSource
     ) {
         return spreadableFeature != null
-                && BonemealNyliumLike.super.isValidBonemealTarget(blockGetter, blockPos, blockState);
+                && BonemealNyliumLike.super.isValidBonemealTarget(
+                blockGetter,
+                blockPos,
+                blockState,
+                bonemealSource
+        );
     }
 
     @Override
@@ -34,7 +41,7 @@ public class FeatureSpreader implements BonemealNyliumLike {
     }
 
     @Override
-    public @Nullable Holder<? extends ConfiguredFeature<?, ?>> getCoverFeature() {
+    public @Nullable Holder<Feature> getCoverFeature() {
         return spreadableFeature.getFeature();
     }
 }

@@ -1,7 +1,7 @@
 package org.betterx.bclib.api.v3.bonemeal;
 
 import org.betterx.bclib.api.v3.tag.BCLBlockTags;
-import de.ambertation.wover.feature.api.configured.ConfiguredFeatureKey;
+import de.ambertation.wover.feature.api.configured.FeatureKey;
 import de.ambertation.wover.state.api.WorldState;
 
 import net.minecraft.core.BlockPos;
@@ -12,8 +12,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BonemealSource;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.Feature;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,9 +25,20 @@ import org.jetbrains.annotations.Nullable;
 public class BonemealAPI {
     @FunctionalInterface
     public interface FeatureProvider {
+        /**
+         * 26.3 collapsed {@code ConfiguredFeature<FC, F>} into {@link Feature}, so this used to
+         * return {@code Holder<? extends ConfiguredFeature<?, ?>>}.
+         */
         @Nullable
-        Holder<? extends ConfiguredFeature<?, ?>> getFeature();
+        Holder<Feature> getFeature();
     }
+
+    /**
+     * 26.3 added a {@link BonemealSource} to every {@code BonemealableBlock} method. The spreaders
+     * are only ever driven from {@code BoneMealItem#useOn}/{@code #growCrop}, i.e. a player using
+     * the item, so {@link BonemealSource#INTERACTION} is the only value that can reach them.
+     */
+    private static final BonemealSource BONEMEAL_SOURCE = BonemealSource.INTERACTION;
 
     public static BonemealAPI INSTANCE = new BonemealAPI();
     private final Map<TagKey<Block>, BonemealBlockSpreader> taggedSpreaders;
@@ -49,7 +61,7 @@ public class BonemealAPI {
      */
     public void addSpreadableFeatures(
             Block target,
-            @NotNull ConfiguredFeatureKey<?> spreadableFeature
+            @NotNull FeatureKey<?> spreadableFeature
     ) {
         featureSpreaders.put(target, new FeatureSpreader(target, () -> spreadableFeature.getHolder(WorldState.allStageRegistryAccess())));
     }
@@ -156,10 +168,22 @@ public class BonemealAPI {
                 .featureSpreaderForState(blockState);
 
         if (fSpreader != null) {
-            if (fSpreader.isValidBonemealTarget(level, blockPos, blockState)) {
+            if (fSpreader.isValidBonemealTarget(level, blockPos, blockState, BONEMEAL_SOURCE)) {
                 if (level instanceof ServerLevel) {
-                    if (forceBonemeal || fSpreader.isBonemealSuccess(level, level.getRandom(), blockPos, blockState)) {
-                        fSpreader.performBonemeal((ServerLevel) level, level.getRandom(), blockPos, blockState);
+                    if (forceBonemeal || fSpreader.isBonemealSuccess(
+                            level,
+                            level.getRandom(),
+                            blockPos,
+                            blockState,
+                            BONEMEAL_SOURCE
+                    )) {
+                        fSpreader.performBonemeal(
+                                (ServerLevel) level,
+                                level.getRandom(),
+                                blockPos,
+                                blockState,
+                                BONEMEAL_SOURCE
+                        );
                     }
                     itemStack.shrink(1);
                 }

@@ -7,7 +7,7 @@ import de.ambertation.wover.complex.api.equipment.ToolSlot;
 import de.ambertation.wover.sets.api.blocks.SlotType;
 import de.ambertation.wover.sets.api.blocks.WoodenBlockSet;
 
-// 26.2 split net.minecraft.advancements.criterion into .predicates (ItemPredicate,
+// 26.3 split net.minecraft.advancements.criterion into .predicates (ItemPredicate,
 // LocationPredicate, StatePropertiesPredicate, ...) and .triggers (Criterion, CriterionTrigger,
 // CriteriaTriggers and every *Trigger). CriterionTriggerInstance stayed in net.minecraft.advancements.
 import net.minecraft.advancements.*;
@@ -85,8 +85,13 @@ public class AdvancementManager {
         }
 
 
-        public RewardsBuilder addLootTable(ResourceKey<LootTable> resourceLocation) {
-            builder.addLootTable(resourceLocation);
+        /**
+         * 26.3 retyped {@code AdvancementRewards.Builder#addLootTable} from
+         * {@code ResourceKey<LootTable>} to {@code Holder<LootTable>} (loot tables became a datapack
+         * registry whose rewards are resolved eagerly), so this wrapper follows.
+         */
+        public RewardsBuilder addLootTable(Holder<LootTable> lootTable) {
+            builder.addLootTable(lootTable);
             return this;
         }
 
@@ -314,13 +319,19 @@ public class AdvancementManager {
             );
         }
 
-        public <C extends RecipeInput, T extends Recipe<C>> Builder addRecipeUnlockCriterion(
+        /**
+         * 26.3 turned recipes into the {@code minecraft:recipe} datapack registry, so
+         * {@code RecipeUnlockedTrigger#unlocked} takes a {@code Holder<Recipe<?>>} rather than a
+         * {@code ResourceKey<Recipe<?>>}. A {@code RecipeHolder} only carries the key, and there is no
+         * lookup available here, so the parameter is the holder itself.
+         */
+        public Builder addRecipeUnlockCriterion(
                 String name,
-                RecipeHolder<T> recipe
+                Holder<Recipe<?>> recipe
         ) {
             return addCriterion(
                     name,
-                    RecipeUnlockedTrigger.unlocked(recipe.id())
+                    RecipeUnlockedTrigger.unlocked(recipe)
             );
         }
 

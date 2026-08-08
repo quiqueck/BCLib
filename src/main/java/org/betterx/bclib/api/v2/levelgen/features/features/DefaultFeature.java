@@ -8,15 +8,21 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
-public abstract class DefaultFeature extends Feature<NoneFeatureConfiguration> {
+/**
+ * 26.3 collapsed {@code ConfiguredFeature<FC, F>} into {@link Feature}: the whole
+ * {@code net.minecraft.world.level.levelgen.feature.configurations} package (including
+ * {@code NoneFeatureConfiguration}) is gone, {@link Feature} is a non-generic <em>interface</em> that
+ * carries its own configuration, and it declares {@code MapCodec<? extends Feature> codec()} plus
+ * {@code place(WorldGenLevel, ChunkGenerator, RandomSource, BlockPos)}.
+ * <p>
+ * This class therefore implements the interface instead of extending the old abstract class, and the
+ * codec is no longer passed to a constructor - each concrete feature supplies its own
+ * {@code codec()}. The static surface-probing helpers below are unchanged.
+ */
+public abstract class DefaultFeature implements Feature {
     public static final BlockState AIR = Blocks.AIR.defaultBlockState();
     public static final BlockState WATER = Blocks.WATER.defaultBlockState();
-
-    public DefaultFeature() {
-        super(NoneFeatureConfiguration.CODEC);
-    }
 
     public static int getYOnSurface(WorldGenLevel world, int x, int z) {
         return world.getHeight(Types.WORLD_SURFACE, x, z);

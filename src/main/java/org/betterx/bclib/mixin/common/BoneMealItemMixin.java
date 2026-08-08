@@ -43,7 +43,7 @@ public class BoneMealItemMixin {
             // actually produce the tree. Creative already skips the isBonemealSuccess roll here, so it
             // should skip that step too and grow on the one click.
             if (level instanceof ServerLevel server
-                    && blockState.getBlock() instanceof FeatureSaplingBlock<?, ?> sapling
+                    && blockState.getBlock() instanceof FeatureSaplingBlock sapling
             ) {
                 if (sapling.growFeatureNow(server, blockPos, blockState, server.getRandom())) {
                     // Both halves of the feedback vanilla's BoneMealItem.useOn emits after a successful

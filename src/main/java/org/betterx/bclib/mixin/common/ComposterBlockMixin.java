@@ -1,96 +1,108 @@
 package org.betterx.bclib.mixin.common;
 
+import org.betterx.bclib.api.v2.ComposterAPI;
 import org.betterx.bclib.trait.block.CompostableBlockTrait;
 import org.betterx.bclib.trait.item.CompostableItemTrait;
 
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.ItemLike;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.ComposterBlock;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.providers.number.ResolvableNumber;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 
 /**
  * Resolves compostability from a block's runtime {@link CompostableBlockTrait} - and, failing that, from the
- * item's own runtime {@link CompostableItemTrait} - at composter-use time instead of from vanilla's static
- * {@link ComposterBlock#COMPOSTABLES} map. Modded blocks/items are intentionally never added to that map (it
- * is only observable to datagen for vanilla items), so this wraps the three map lookups in the fill path and
- * falls back to the traits when vanilla reports the item as non-compostable.
+ * item's own runtime {@link CompostableItemTrait} or an explicit {@link ComposterAPI#allowCompost}
+ * registration - at composter-use time.
  * <p>
- * Precedence is: vanilla map first, then the block trait, then the item trait. Vanilla items are untouched:
- * the wrapped {@link Operation} runs first and, when it already resolves the item, its result is returned
- * verbatim.
+ * 26.1 gated the two fill paths on {@code ComposterBlock.COMPOSTABLES.containsKey} and read the chance from
+ * {@code COMPOSTABLES.getFloat}. 26.3 deleted that map: {@code useItemOn} and {@code insertItem} now read the
+ * {@code minecraft:compostable} item component and hand it to {@code addLayer}, which turns it into a layer
+ * count by calling {@link ResolvableNumber#getInt(LootContext, int)} on the component's {@code layers()} -
+ * for our synthetic marker (a {@link ResolvableNumber.Reference} whose key is deliberately never registered)
+ * that call falls through to its {@code 0} default. This mixin therefore hooks the two places that are the
+ * exact analogues of the old ones:
+ * <ol>
+ *     <li>the {@code ItemStack.get(DataComponents.COMPOSTABLE)} in {@code useItemOn} (player right-click) and
+ *     in {@code insertItem} (hopper / dispenser) - one call each, verified against the 26.3 jar - which is
+ *     where 26.1 asked {@code containsKey}. When vanilla has no component, BCLib substitutes a marker one for
+ *     items it knows a chance for, so all of vanilla's surrounding logic (level &lt; 7 check, sound, stat,
+ *     item consumption, {@code SUCCESS} on the client) runs exactly as it does for a vanilla compostable;</li>
+ *     <li>the {@code ResolvableNumber.getInt(LootContext, int)} call in {@code addLayer} - one call, verified
+ *     - which is where 26.1 read the chance. When that call falls back to its {@code 0} default and the value
+ *     is one of BCLib's markers, BCLib substitutes {@link ComposterAPI#runtimeLayerCount}'s roll (reproducing
+ *     {@link ComposterAPI.RuntimeCompostChance}) instead.</li>
+ * </ol>
+ * Vanilla items are untouched in both cases: the wrapped {@link Operation} runs first and, whenever it
+ * already produces a result, that result is returned verbatim.
  */
 @Mixin(ComposterBlock.class)
 public class ComposterBlockMixin {
-    // useItemOn (player right-click, runs on both sides for the SUCCESS result) and insertItem (hopper /
-    // dispenser) each gate on COMPOSTABLES.containsKey. Extend that gate so a BlockItem whose block carries
-    // the compostable trait is accepted even though it was never put into the vanilla map. Split into one
-    // handler per method (require = 1 each) so both the manual and the automated fill path are guaranteed to
-    // be patched rather than only one of them satisfying a shared require.
     @WrapOperation(
             method = "useItemOn",
             at = @At(
                     value = "INVOKE",
-                    target = "Lit/unimi/dsi/fastutil/objects/Object2FloatMap;containsKey(Ljava/lang/Object;)Z"
+                    target = "Lnet/minecraft/world/item/ItemStack;get(Lnet/minecraft/core/component/DataComponentType;)Ljava/lang/Object;"
             )
     )
-    private boolean bclib_composterContainsKeyUse(
-            Object2FloatMap<ItemLike> map,
-            Object key,
-            Operation<Boolean> original
+    private Object bclib_compostableOnUse(
+            ItemStack itemStack,
+            DataComponentType<?> componentType,
+            Operation<Object> original
     ) {
-        return bclib_containsCompostable(map, key, original);
+        return bclib_compostableOr(itemStack, componentType, original);
     }
 
     @WrapOperation(
             method = "insertItem",
             at = @At(
                     value = "INVOKE",
-                    target = "Lit/unimi/dsi/fastutil/objects/Object2FloatMap;containsKey(Ljava/lang/Object;)Z"
+                    target = "Lnet/minecraft/world/item/ItemStack;get(Lnet/minecraft/core/component/DataComponentType;)Ljava/lang/Object;"
             )
     )
-    private static boolean bclib_composterContainsKeyInsert(
-            Object2FloatMap<ItemLike> map,
-            Object key,
-            Operation<Boolean> original
+    private static Object bclib_compostableOnInsert(
+            ItemStack itemStack,
+            DataComponentType<?> componentType,
+            Operation<Object> original
     ) {
-        return bclib_containsCompostable(map, key, original);
+        return bclib_compostableOr(itemStack, componentType, original);
     }
 
-    private static boolean bclib_containsCompostable(
-            Object2FloatMap<ItemLike> map,
-            Object key,
-            Operation<Boolean> original
+    @Unique
+    private static Object bclib_compostableOr(
+            ItemStack itemStack,
+            DataComponentType<?> componentType,
+            Operation<Object> original
     ) {
-        if (original.call(map, key)) return true;
-        if (!(key instanceof Item item)) return false;
-        return CompostableBlockTrait.isCompostable(item) || CompostableItemTrait.isCompostable(item);
+        final Object vanilla = original.call(itemStack, componentType);
+        if (vanilla != null) return vanilla;
+        return ComposterAPI.runtimeCompostable(itemStack.getItem());
     }
 
-    // addItem reads the actual chance via COMPOSTABLES.getFloat (default return value -1 for absent items).
-    // When vanilla has no chance for the item, substitute the trait's chance so composting progresses.
     @WrapOperation(
-            method = "addItem",
+            method = "addLayer",
             at = @At(
                     value = "INVOKE",
-                    target = "Lit/unimi/dsi/fastutil/objects/Object2FloatMap;getFloat(Ljava/lang/Object;)F"
+                    target = "Lnet/minecraft/world/level/storage/loot/providers/number/ResolvableNumber;getInt(Lnet/minecraft/world/level/storage/loot/LootContext;I)I"
             )
     )
-    private static float bclib_composterGetFloat(
-            Object2FloatMap<ItemLike> map,
-            Object key,
-            Operation<Float> original
+    private static int bclib_runtimeLayerCount(
+            ResolvableNumber layers,
+            LootContext lootContext,
+            int fallback,
+            Operation<Integer> original
     ) {
-        final float vanilla = original.call(map, key);
-        if (vanilla >= 0.0f) return vanilla;
-        if (!(key instanceof Item item)) return vanilla;
+        final int vanilla = original.call(layers, lootContext, fallback);
+        if (vanilla != 0) return vanilla;
 
-        final float blockChance = CompostableBlockTrait.chanceFor(item);
-        if (blockChance >= 0.0f) return blockChance;
-        return CompostableItemTrait.chanceFor(item);
+        final int runtime = ComposterAPI.runtimeLayerCount(layers, lootContext);
+        return runtime >= 0 ? runtime : vanilla;
     }
 }

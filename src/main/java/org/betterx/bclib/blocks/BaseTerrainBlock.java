@@ -55,7 +55,9 @@ public class BaseTerrainBlock extends Block {
             BlockHitResult hit
     ) {
         if (pathBlock != null && TagManager.isToolWithMineableTag(player.getMainHandItem(), MineableTags.SHOVEL)) {
-            level.playSound(player, pos, SoundEvents.SHOVEL_FLATTEN, SoundSource.BLOCKS, 1.0F, 1.0F);
+            // 26.3 dropped the Holder<SoundEvent> overload of Level#playSound(Entity, BlockPos, ...);
+            // the surviving one takes a bare SoundEvent, and SoundEvents constants are Holder.Reference.
+            level.playSound(player, pos, SoundEvents.SHOVEL_FLATTEN.value(), SoundSource.BLOCKS, 1.0F, 1.0F);
             if (!level.isClientSide()) {
                 level.setBlockAndUpdate(pos, pathBlock.defaultBlockState());
                 if (!player.isCreative()) {
@@ -88,8 +90,8 @@ public class BaseTerrainBlock extends Block {
         } else if (blockState.getFluidState().getAmount() == 8) {
             return false;
         } else {
-            // 26.2 renamed LightEngine.getLightBlockInto -> getLightDampeningInto; the signature and
-            // the body are unchanged (verified against the 26.2 jar).
+            // 26.3 renamed LightEngine.getLightBlockInto -> getLightDampeningInto; the body is
+            // byte-for-byte identical (verified against the 26.3 jar).
             int i = LightEngine.getLightDampeningInto(
                     state,
                     blockState,

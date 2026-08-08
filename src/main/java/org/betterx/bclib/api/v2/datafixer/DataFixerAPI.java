@@ -328,7 +328,7 @@ public class DataFixerAPI {
 
     @Environment(EnvType.CLIENT)
     private static void showLevelFixErrorScreen(State state, Listener onContinue) {
-        // 26.2 moved screen management off Minecraft onto Minecraft#gui: #setScreen is now
+        // 26.3 moved screen management off Minecraft onto Minecraft#gui: #setScreen is now
         // Gui#setScreen and the former Minecraft#screen field is exposed as Gui#screen().
         Minecraft.getInstance()
                  .gui.setScreen(new LevelFixErrorScreen(

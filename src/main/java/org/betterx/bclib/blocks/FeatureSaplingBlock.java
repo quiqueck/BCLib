@@ -10,11 +10,10 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BonemealSource;
 import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -22,10 +21,18 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfiguration> extends SaplingBlock {
+/**
+ * 26.3 removed {@code net.minecraft.world.level.levelgen.feature.configurations} entirely and made
+ * {@link net.minecraft.world.level.levelgen.feature.Feature} a non-generic interface that carries its own
+ * configuration, so the {@code <F extends Feature<FC>, FC extends FeatureConfiguration>} type parameters
+ * name types that no longer exist. They were never used for anything - neither this class nor
+ * {@link FeatureSupplier} referenced {@code F} or {@code FC} in a signature - so both are dropped rather
+ * than replaced.
+ */
+public class FeatureSaplingBlock extends SaplingBlock {
 
     @FunctionalInterface
-    public interface FeatureSupplier<F extends Feature<FC>, FC extends FeatureConfiguration> {
+    public interface FeatureSupplier {
         boolean grow(
                 @NotNull ServerLevel level,
                 @NotNull BlockPos pos,
@@ -38,8 +45,8 @@ public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfig
     protected static final VoxelShape SHAPE = Block.box(4, 0, 4, 12, 14, 12);
     /** The shape of a sapling hanging from a ceiling. */
     protected static final VoxelShape HANGING_SHAPE = Block.box(4, 2, 4, 12, 16, 12);
-    private final FeatureSupplier<F, FC> feature;
-    private final FeatureSupplier<F, FC> megaFeature;
+    private final FeatureSupplier feature;
+    private final FeatureSupplier megaFeature;
     private final boolean hangsFromAbove;
 
     /**
@@ -68,7 +75,7 @@ public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfig
 
     public FeatureSaplingBlock(
             BlockBehaviour.Properties properties,
-            FeatureSupplier<F, FC> featureSupplier
+            FeatureSupplier featureSupplier
     ) {
         this(properties, featureSupplier, null, false);
     }
@@ -83,7 +90,7 @@ public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfig
      */
     public FeatureSaplingBlock(
             BlockBehaviour.Properties properties,
-            FeatureSupplier<F, FC> featureSupplier,
+            FeatureSupplier featureSupplier,
             boolean hangsFromAbove
     ) {
         this(properties, featureSupplier, null, hangsFromAbove);
@@ -98,8 +105,8 @@ public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfig
      */
     public FeatureSaplingBlock(
             BlockBehaviour.Properties properties,
-            FeatureSupplier<F, FC> featureSupplier,
-            FeatureSupplier<F, FC> megaFeatureSupplier,
+            FeatureSupplier featureSupplier,
+            FeatureSupplier megaFeatureSupplier,
             boolean hangsFromAbove
     ) {
         super(null, properties);
@@ -148,23 +155,34 @@ public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfig
      * Overridden because the inherited implementation crashes the server.
      * <p>
      * This class grows a {@link Feature}, not a vanilla tree, so it passes {@code null} for
-     * {@code SaplingBlock}'s {@code TreeGrower}. In 26.1 {@code SaplingBlock.isValidBonemealTarget}
-     * dereferences that field ({@code this.treeGrower.getMinimumHeight(serverLevel)}) to work out how
-     * much headroom the tree needs - so the inherited version throws a {@link NullPointerException}
-     * the moment bone meal is applied to any feature sapling, from a player or a dispenser alike, and
-     * takes the server down with it.
+     * {@code SaplingBlock}'s {@code TreeGrower}. Since 26.1 {@code SaplingBlock.isValidBonemealTarget}
+     * dereferences that field - in 26.3 twice, {@code treeGrower.canGrow(...)} and
+     * {@code treeGrower.getMinimumHeight(serverLevel)} - to work out whether the tree fits. So the
+     * inherited version throws a {@link NullPointerException} the moment bone meal is applied to any
+     * feature sapling, from a player or a dispenser alike, and takes the server down with it.
      * <p>
      * There is no height to report without a grower: the feature decides its own size at generation
      * time and does its own room checks. Accepting any server-side position restores the behaviour
      * these saplings had before the vanilla method started consulting the grower.
      */
     @Override
-    public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state) {
+    public boolean isValidBonemealTarget(
+            LevelReader level,
+            BlockPos pos,
+            BlockState state,
+            BonemealSource bonemealSource
+    ) {
         return level instanceof ServerLevel;
     }
 
     @Override
-    public boolean isBonemealSuccess(Level level, RandomSource random, BlockPos pos, BlockState state) {
+    public boolean isBonemealSuccess(
+            Level level,
+            RandomSource random,
+            BlockPos pos,
+            BlockState state,
+            BonemealSource bonemealSource
+    ) {
         return random.nextInt(16) == 0;
     }
 
@@ -340,8 +358,8 @@ public class FeatureSaplingBlock<F extends Feature<FC>, FC extends FeatureConfig
     @Override
     public void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
         super.tick(state, world, pos, random);
-        if (isBonemealSuccess(world, random, pos, state)) {
-            performBonemeal(world, random, pos, state);
+        if (isBonemealSuccess(world, random, pos, state, BonemealSource.INTERACTION)) {
+            performBonemeal(world, random, pos, state, BonemealSource.INTERACTION);
         }
     }
 

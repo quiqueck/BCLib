@@ -71,7 +71,7 @@ public class FurnitureTraits {
 
     /**
      * The trait bundle for a chair: the supplied model, the bottom-half-only self-drop loot
-     * ({@link BaseChair#chairLoot(Block)}), and the {@code "chair"}-group crafting recipe. Mirrors the traits
+     * ({@link BaseChair#chairLoot(net.minecraft.core.HolderGetter, Block)}), and the {@code "chair"}-group crafting recipe. Mirrors the traits
      * {@code registerChair} attached.
      *
      * @param source the base block the chair is built from and crafted with
@@ -81,7 +81,10 @@ public class FurnitureTraits {
     public static List<BlockTrait<?, ?>> chair(Block source, BlockModelTrait model) {
         return TraitLists.of(
                 model,
-                BlockTraits.LOOT_TABLE.with((tableKey, blockKey, chairBlock, provider) -> BaseChair.chairLoot(chairBlock)),
+                BlockTraits.LOOT_TABLE.with((tableKey, blockKey, chairBlock, provider) -> BaseChair.chairLoot(
+                        provider.blockLookup(),
+                        chairBlock
+                )),
                 BlockTraits.RECIPE.with((key, block, context) -> RecipeBuilder
                         .crafting(key.identifier(), block)
                         .shape("I ", "##", "II")

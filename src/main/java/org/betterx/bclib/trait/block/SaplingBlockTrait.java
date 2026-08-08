@@ -11,7 +11,6 @@ import de.ambertation.wover.tag.api.predefined.CommonBlockTags;
 import de.ambertation.wover.tag.api.predefined.CommonItemTags;
 
 import net.minecraft.client.data.models.BlockModelGenerators;
-import net.minecraft.tags.BlockItemTags;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.block.Block;
@@ -94,9 +93,7 @@ public class SaplingBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> 
         super.configure(definition);
 
         definition.randomTicks()
-                  // 26.2 moved the block half of minecraft:saplings out of BlockTags and into
-                  // BlockItemTags; ItemTags.SAPLINGS stayed where it was.
-                  .addTags(BlockItemTags.SAPLINGS.block(), CommonBlockTags.SAPLINGS)
+                  .addTags(BlockTags.SAPLINGS, CommonBlockTags.SAPLINGS)
                   .addItemTags(ItemTags.SAPLINGS, CommonItemTags.SAPLINGS);
 
         if (lightLevel > 0) {

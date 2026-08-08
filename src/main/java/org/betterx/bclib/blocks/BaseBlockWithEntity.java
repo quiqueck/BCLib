@@ -1,7 +1,6 @@
 package org.betterx.bclib.blocks;
 
 
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -29,16 +28,14 @@ public abstract class BaseBlockWithEntity extends BaseEntityBlock {
         return Collections.singletonList(new ItemStack(this));
     }
 
+    /**
+     * 26.3 removed block codecs entirely: {@code Block#codec()}/{@code BlockBehaviour#simpleCodec} no
+     * longer exist, because blocks are no longer described by a dispatch codec. The {@code CODEC}
+     * constant and the {@code codec()} override are therefore dropped, not replaced.
+     */
     public static class Stone extends BaseBlockWithEntity {
-        public static final MapCodec<Stone> CODEC = simpleCodec(Stone::new);
-
         public Stone(Properties settings) {
             super(settings);
-        }
-
-        @Override
-        protected MapCodec<? extends BaseEntityBlock> codec() {
-            return Stone.CODEC;
         }
     }
 }

@@ -15,11 +15,11 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 /**
  * A {@link StructureProcessor} that randomly removes blocks, to make a placed structure look ruined.
  * <p>
- * 26.2 changes reflected here:
+ * 26.3 changes reflected here:
  * <ul>
  *     <li>{@code StructureProcessor} became an <em>interface</em>, so this class implements it.</li>
  *     <li>{@code getType()} was replaced by {@code codec()}, which returns the {@link MapCodec}
- *     directly rather than a {@code KeyDispatchDataCodec} wrapper. Up to 26.1 this class returned
+ *     directly (26.3 removed {@code KeyDispatchDataCodec} throughout). Up to 26.1 this class returned
  *     {@code StructureProcessorType.RULE} - the type of an unrelated vanilla processor - which was
  *     only ever a placeholder: this processor is never serialized, it is instantiated directly in
  *     Java (BetterEnd's {@code NBTFeature.DESTRUCTION}) and it is not registered in

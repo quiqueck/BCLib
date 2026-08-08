@@ -164,7 +164,7 @@ public class StructureWorldNBT extends StructureNBT {
         final MutableBlockPos POS = new MutableBlockPos();
         int airCount = 0;
 
-        MutableBlockPos size = new MutableBlockPos().set(new BlockPos(structure.getSize()).rotate(rotation));
+        MutableBlockPos size = new MutableBlockPos().set(toBlockPos(structure.getSize()).rotate(rotation));
         size.setX(Math.abs(size.getX()) >> 1);
         size.setZ(Math.abs(size.getZ()) >> 1);
 
@@ -192,7 +192,7 @@ public class StructureWorldNBT extends StructureNBT {
         final MutableBlockPos POS = new MutableBlockPos();
         int lavaCount = 0;
 
-        MutableBlockPos size = new MutableBlockPos().set(new BlockPos(structure.getSize()).rotate(rotation));
+        MutableBlockPos size = new MutableBlockPos().set(toBlockPos(structure.getSize()).rotate(rotation));
         size.setX(Math.abs(size.getX()) >> 1);
         size.setZ(Math.abs(size.getZ()) >> 1);
 
@@ -219,7 +219,7 @@ public class StructureWorldNBT extends StructureNBT {
         final MutableBlockPos POS = new MutableBlockPos();
         int airCount = 0;
 
-        MutableBlockPos size = new MutableBlockPos().set(new BlockPos(structure.getSize()).rotate(rotation));
+        MutableBlockPos size = new MutableBlockPos().set(toBlockPos(structure.getSize()).rotate(rotation));
         size.setX(Math.abs(size.getX()) >> 1);
         size.setZ(Math.abs(size.getZ()) >> 1);
 
@@ -247,7 +247,7 @@ public class StructureWorldNBT extends StructureNBT {
         final MutableBlockPos POS = new MutableBlockPos();
         int airCount = 0;
 
-        MutableBlockPos size = new MutableBlockPos().set(new BlockPos(structure.getSize()).rotate(rotation));
+        MutableBlockPos size = new MutableBlockPos().set(toBlockPos(structure.getSize()).rotate(rotation));
         size.setX(Math.abs(size.getX()));
         size.setZ(Math.abs(size.getZ()));
 
@@ -275,5 +275,13 @@ public class StructureWorldNBT extends StructureNBT {
 
     public boolean loaded() {
         return structure != null;
+    }
+
+    /**
+     * 26.3 removed the copy constructor {@code BlockPos(Vec3i)}; {@code BlockPos.containing} only accepts a
+     * double-based {@code Position}, so the component constructor is the only remaining conversion.
+     */
+    private static BlockPos toBlockPos(net.minecraft.core.Vec3i v) {
+        return new BlockPos(v.getX(), v.getY(), v.getZ());
     }
 }

@@ -7,6 +7,7 @@ import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.sounds.AmbientLeavesBlockSoundPlayer;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -76,7 +77,16 @@ public class LeavesBlockDefinition<B extends LeavesBlock, D extends LeavesBlockD
                 registry,
                 blockName,
                 soundType,
-                (chance, def) -> new UntintedParticleLeavesBlock(chance, def.particleOptions, def.getProperties())
+                // 26.3 gave every LeavesBlock an AmbientLeavesBlockSoundPlayer. TintedParticleLeavesBlock
+                // keeps its 2-arg constructor and passes noAmbientSound() internally; the untinted one
+                // exposes the parameter, so the same value is passed explicitly here. 26.1 had no ambient
+                // leaf sounds at all, so this preserves behaviour exactly.
+                (chance, def) -> new UntintedParticleLeavesBlock(
+                        chance,
+                        def.particleOptions,
+                        AmbientLeavesBlockSoundPlayer.noAmbientSound(),
+                        def.getProperties()
+                )
         ).particleOptions(0xFF70922D).particleChance(0.1f);
     }
 

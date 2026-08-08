@@ -1,7 +1,7 @@
 {
     "schemaVersion": 1,
     "id": "bclib",
-    "version": "26.201.1",
+    "version": "26.301.0",
     "name": "BCLib",
     "description": "A library for BetterX team mods",
     "authors": [
@@ -33,9 +33,6 @@
         "emi_disabled": [
             "org.betterx.bclib.integration.emi.EMIPlugin"
         ],
-        "jei_mod_plugin": [
-            "org.betterx.bclib.integration.jei.JeiPlugin"
-        ],
         "fabric-datagen": [
             "org.betterx.datagen.bclib.BCLibDatagen"
         ]
@@ -51,17 +48,16 @@
         "fabric-api": ">=0.155.0",
         "java": ">=25",
         "minecraft": [
-            "26.2"
+            "26.3",
+            "26.3-alpha.6",
+            "26.3-snapshot-6"
         ],
-        "wunderlib": "26.201.x",
-        "wover": "26.201.x"
+        "wunderlib": "26.301.x",
+        "wover": "26.301.x"
     },
     "breaks": {
-        "wunderlib": "<26.201.0",
-        "wover": "<26.201.1"
-    },
-    "suggests": {
-        "jei": ">=29.0.0"
+        "wunderlib": "<26.301.0",
+        "wover": "<26.301.0"
     },
     "custom": {
         "wover": {

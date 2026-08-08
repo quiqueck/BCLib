@@ -58,7 +58,7 @@ public class WaterPlantBlockTrait extends BlockTraitImpl<Block, GenericBlockTrai
                 .noOcclusion()
                 .sound(SoundType.WET_GRASS)
                 .offsetType(BlockBehaviour.OffsetType.XZ)
-                .pushReaction(PushReaction.DESTROY);
+                .pushReaction(PushReaction.POPPED);
 
         if (!walkable) {
             definition.noCollission();
