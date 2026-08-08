@@ -3,7 +3,7 @@
   "minVersion": "0.8",
   "package": "org.betterx.bclib.mixin.client",
   "compatibilityLevel": "JAVA_21",
-  "client": ["AnvilScreenMixin", "AtlasSetMixin", "ClientLevelMixin", "ClientPacketListenerMixin", "DebugRendererMixin", "ItemMixin", "MinecraftMixin"],
+  "client": ["AnvilScreenMixin", "AtlasSetMixin", "ClientLevelMixin", "ClientPacketListenerMixin", "DebugRendererMixin", "ItemMixin"],
   "injectors": {
     "defaultRequire": 1
   }

@@ -74,10 +74,15 @@ public class JeiPlugin implements IModPlugin {
         List<List<AnvilRecipeDisplay>> byLevel = new ArrayList<>();
         for (int i = 0; i < anvilCategories.size(); i++) byLevel.add(new ArrayList<>());
 
+        // read the hammer tag off the connection's own registries: a client connected to a
+        // dedicated server never gets a WorldState registry access, so the no-arg
+        // AnvilRecipe.getAllHammers() would leave every anvil category empty there.
+        final Iterable<Holder<Item>> hammers = AnvilRecipe.getAllHammers(clientLevel.registryAccess());
+
         for (RecipeHolder<AnvilRecipe> recipeHolder : SyncedRecipes.allOfType(clientLevel, AnvilRecipe.TYPE)) {
             AnvilRecipe recipe = recipeHolder.value();
             int level = Math.max(0, Math.min(anvilCategories.size() - 1, recipe.getAnvilLevel()));
-            for (Holder<Item> hammer : AnvilRecipe.getAllHammers()) {
+            for (Holder<Item> hammer : hammers) {
                 if (recipe.canUse(hammer.value())) {
                     byLevel.get(level)
                            .add(new AnvilRecipeDisplay(recipeHolder.id().identifier(), recipe, hammer.value()));

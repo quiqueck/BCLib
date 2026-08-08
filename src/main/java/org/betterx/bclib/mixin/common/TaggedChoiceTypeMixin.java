@@ -38,6 +38,49 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * <p>
  * Once the surrounding Fabric API ships the fix this becomes a no-op with identical behaviour, so
  * it is safe to keep either way.
+ *
+ * <h2>Why this only covers the dimension choice type</h2>
+ * {@code TaggedChoiceType} is not only the dimension generator/biome-source choice. The same class
+ * backs the {@code entity} and {@code block_entity} references, and handing <i>those</i> a
+ * pass-through codec breaks old worlds instead of saving them. Nothing registers a modded entity or
+ * block-entity id with DFU (see the note below), so every one of ours is an unknown key here; a
+ * pass-through makes the read <i>succeed</i>, and the fixes that walk the value afterwards then
+ * fail on a choice type that has no {@code Type} for the id:
+ * <pre>
+ * Failed to read chunk [0, 0]
+ * java.lang.IllegalArgumentException: Added Pale Oak Boat and Pale Oak Chest Boat:
+ *         Unknown type bclib:chair in 'entity'
+ *         at net.minecraft.util.datafix.fixes.AddNewChoices
+ *
+ * Failed to load chunk 0,0
+ * java.lang.IllegalArgumentException: Added Creaking Heart: Unknown type bclib:furnace
+ *         in 'block_entity'
+ * </pre>
+ * The spawn chunks never finish loading and the world hangs at 100% on the loading screen. Making
+ * {@code hasType} answer {@code true} as well only moves the failure one fix along, into
+ * {@code EntityRenameFix} &rarr; {@code ExtraDataFixUtils.patchSubType}, which dereferences the
+ * missing {@code Type} directly:
+ * {@code NullPointerException: Cannot invoke "Type.all(...)" because "type" is null}. There is no
+ * way to satisfy those callers without a real {@code Type} in the choice map.
+ * <p>
+ * Restricting the workaround to choice types keyed on {@code "type"} - which is how the generator
+ * and biome-source choices are declared, and only them; content is keyed on {@code "id"} - keeps
+ * the dimension fix and leaves world content on vanilla's own path. There an unknown id simply
+ * fails the read, DFU hands the data back unfixed, and the world loads. Block entities do better
+ * still: vanilla wraps them in {@code DSL.or(BLOCK_ENTITY, remainder())} per element, an escape
+ * hatch a pass-through defeats by making the left branch match, so leaving them alone is what lets
+ * each one fall back individually.
+ *
+ * <h2>Known limitation</h2>
+ * A chunk's {@code entities} list is <i>not</i> wrapped in that {@code or(..., remainder())}, so a
+ * single modded entity makes DFU skip the whole {@code entity_chunk} - the vanilla mobs in it miss
+ * their fixes too (a 1.21 world's mobs keep {@code minecraft:generic.movement_speed} and lose their
+ * attribute modifiers on load). Fixing that properly needs the modded ids to be in the DFU schemas,
+ * and there is no point at which a mod can put them there: the schemas are built during vanilla's
+ * own static initialisation ({@code Items.<clinit>} &rarr; {@code EntityType.<clinit>} &rarr;
+ * {@code Util.fetchChoiceType} &rarr; {@code DataFixers.<clinit>}), before any mod initialiser
+ * runs, and Fabric API ships no data-fixer module. This is the same trade-off Fabric API itself
+ * takes with {@code fabric-object-builder-api-v1}'s {@code allowNoModdedDatafixers}.
  */
 // Fabric's own injector sits at the head of the same method and cancels, so this one has to be
 // applied before it to get a look at the key at all - hence the below-default priority.
@@ -47,9 +90,22 @@ public class TaggedChoiceTypeMixin<K> {
     @Final
     protected Object2ObjectMap<K, Type<?>> types;
 
+    @Shadow(remap = false)
+    public String getName() {
+        throw new AssertionError("shadow");
+    }
+
     /** The namespaces whose generator/biome-source ids this workaround covers. */
     @Unique
     private static final String[] bclib_ownNamespaces = {"bclib:", "wover:"};
+
+    /**
+     * The tag the generator and biome-source choices are keyed on. World content ({@code entity},
+     * {@code block_entity}) is keyed on {@code "id"} and must not be touched - see the class
+     * javadoc.
+     */
+    @Unique
+    private static final String bclib_dimensionChoiceTag = "type";
 
     @Inject(method = "getMapCodec", at = @At("HEAD"), cancellable = true, remap = false)
     private void bclib_passThroughOwnGenerators(
@@ -58,6 +114,7 @@ public class TaggedChoiceTypeMixin<K> {
     ) {
         // A key DFU already knows must keep its real type.
         if (key == null || types.containsKey(key)) return;
+        if (!bclib_dimensionChoiceTag.equals(getName())) return;
 
         final String id = key.toString();
         boolean ours = false;
