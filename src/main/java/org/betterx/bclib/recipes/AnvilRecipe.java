@@ -14,8 +14,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
 
 public class AnvilRecipe implements Recipe<AnvilRecipeInput>, UnknownReceipBookCategory {
@@ -110,14 +111,41 @@ public class AnvilRecipe implements Recipe<AnvilRecipeInput>, UnknownReceipBookC
         return true;
     }
 
-    public static Iterable<Holder<Item>> getAllHammers() {
-        if (WorldState.allStageRegistryAccess() == null) {
-            return List.of();
-        }
+    /**
+     * Every item in the {@link CommonItemTags#HAMMERS} tag, as seen by {@code registries}.
+     * <p>
+     * Pass the registries of whatever side is asking - {@code level.registryAccess()} or
+     * {@code player.registryAccess()} both work, on the client as well as on the server. The item
+     * tags a client receives from a server are bound onto that connection's registry access, so
+     * reading them from a level is the only lookup that is correct in singleplayer <em>and</em> on
+     * a client connected to a dedicated server.
+     *
+     * @param registries the registries to resolve the tag against, or {@code null} to fall back to
+     *                   {@link WorldState#allStageRegistryAccess()} (server-side only, see
+     *                   {@link #getAllHammers()})
+     * @return the hammers, empty if the tag is unknown here
+     */
+    public static Iterable<Holder<Item>> getAllHammers(@Nullable HolderLookup.Provider registries) {
+        if (registries == null) registries = WorldState.allStageRegistryAccess();
+        if (registries == null) return List.of();
 
-        Registry<Item> registry = WorldState.allStageRegistryAccess()
-                                            .lookupOrThrow(CommonItemTags.HAMMERS.registry());
-        return registry.getTagOrEmpty(CommonItemTags.HAMMERS);
+        return registries.lookupOrThrow(CommonItemTags.HAMMERS.registry())
+                         .get(CommonItemTags.HAMMERS)
+                         .<Iterable<Holder<Item>>>map(hammers -> hammers)
+                         .orElseGet(List::of);
+    }
+
+    /**
+     * Every hammer known to the current world, resolved against
+     * {@link WorldState#allStageRegistryAccess()}.
+     *
+     * @deprecated {@code WorldState} is only fed by server-side / world-creation code paths, so this
+     * returns an empty list on a client connected to a dedicated server. Use
+     * {@link #getAllHammers(HolderLookup.Provider)} with the registries of the level in hand.
+     */
+    @Deprecated(forRemoval = false)
+    public static Iterable<Holder<Item>> getAllHammers() {
+        return getAllHammers(WorldState.allStageRegistryAccess());
     }
 
     public static int getHammerSlot(Container c) {

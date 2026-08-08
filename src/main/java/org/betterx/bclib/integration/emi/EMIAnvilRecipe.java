@@ -45,7 +45,10 @@ package org.betterx.bclib.integration.emi;
 //    }
 //
 //    static void addAllRecipes(EmiRegistry emiRegistry, RecipeManager manager) {
-//        Iterable<Holder<Item>> hammers = AnvilRecipe.getAllHammers();
+//        // must come from the connection's registries, not WorldState - see AnvilRecipe#getAllHammers
+//        Iterable<Holder<Item>> hammers = AnvilRecipe.getAllHammers(
+//                Minecraft.getInstance().level.registryAccess()
+//        );
 //        EMIPlugin.addAllRecipes(
 //                emiRegistry, manager, BCLib.LOGGER,
 //                AnvilRecipe.TYPE,

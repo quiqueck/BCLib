@@ -7,7 +7,8 @@ import net.minecraft.world.item.Item;
 
 /**
  * One JEI display entry per (recipe, applicable hammer) pair, since a single {@link AnvilRecipe}
- * may be craftable with several different hammer items (see {@link AnvilRecipe#getAllHammers()}).
+ * may be craftable with several different hammer items (see
+ * {@link AnvilRecipe#getAllHammers(net.minecraft.core.HolderLookup.Provider)}).
  *
  * <p>{@code recipeId} is carried through (rather than just the bare {@link AnvilRecipe}) so
  * {@link AnvilCategory#getIdentifier} can give JEI a stable per-display identifier - without one,
