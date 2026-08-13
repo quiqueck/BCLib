@@ -168,6 +168,10 @@ public class StalactiteBlock extends BaseBlockNotFull implements SimpleWaterlogg
         return state.getBlock() instanceof StalactiteBlock;
     }
 
+    private Direction tipDirection(BlockState state) {
+        return state.getValue(IS_FLOOR) ? Direction.UP : Direction.DOWN;
+    }
+
     @Override
     protected @NotNull BlockState updateShape(
             BlockState state,
@@ -179,6 +183,11 @@ public class StalactiteBlock extends BaseBlockNotFull implements SimpleWaterlogg
             BlockState neighborState,
             RandomSource randomSource
     ) {
+        if (neighborDirection == tipDirection(state)
+                && !isThis(neighborState)
+                && state.getValue(SIZE) != 0) {
+            state = state.setValue(SIZE, 0);
+        }
         if (!canSurvive(state, level, pos)) {
             return Blocks.AIR.defaultBlockState();
         }

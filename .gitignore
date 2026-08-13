@@ -31,6 +31,9 @@ run-client/
 run-server/
 output/
 *.log
+# `./gradlew :test` boots a headless Fabric loader, which writes to both of these
+/logs/
+/.fabric/
 /CHANGES.md
 /src/main/generated/.cache/
 /modrinth.json

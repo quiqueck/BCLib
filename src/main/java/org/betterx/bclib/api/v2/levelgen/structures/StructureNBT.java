@@ -214,6 +214,17 @@ public class StructureNBT {
         return template;
     }
 
+    /**
+     * The loaded template, or {@code null} if it could not be read.
+     * <p>
+     * Exposed so callers can inspect what a template actually contains - block infos, block entity
+     * data - without placing it into a level.
+     */
+    @Nullable
+    public StructureTemplate getTemplate() {
+        return structure;
+    }
+
     public BlockPos getSize(Rotation rotation) {
         if (rotation == Rotation.NONE || rotation == Rotation.CLOCKWISE_180)
             return new BlockPos(structure.getSize());

@@ -276,6 +276,19 @@ public class MigrationProfile {
         return currentPatchVersion(modCore).toLong();
     }
 
+    /**
+     * Whether this profile has anything to do, i.e. whether {@code DataFixerAPI} should run at all.
+     * <p>
+     * Must name <b>every</b> kind of patcher the constructor collects. It previously omitted
+     * {@link #statePatchers} and {@link #chunkPatchers}, so a {@link Patch} that supplied only a
+     * {@link Patch#getBlockStatePatcher()} or a {@link Patch#getChunkPatcher()} was selected by the
+     * patch-level check - it even logged {@code Applying Patch{...}} - and was then silently dropped
+     * here, with {@code DataFixerAPI} reporting "Everything up to date" and never running.
+     * <p>
+     * That went unnoticed because every patch written so far also carried
+     * {@link Patch#getIDReplacements()}, which kept the profile non-empty and let their state patchers
+     * ride along. The first patch to supply <i>only</i> a chunk patcher exposed it.
+     */
     public boolean hasAnyFixes() {
         boolean hasLevelDatPatches;
         if (didRunPrePatch != false) {
@@ -284,7 +297,11 @@ public class MigrationProfile {
             hasLevelDatPatches = levelPatchers.size() > 0;
         }
 
-        return idReplacements.size() > 0 || hasLevelDatPatches || worldDataPatchers.size() > 0;
+        return idReplacements.size() > 0
+                || hasLevelDatPatches
+                || worldDataPatchers.size() > 0
+                || statePatchers.size() > 0
+                || chunkPatchers.size() > 0;
     }
 
     public String replaceStringFromIDs(@NotNull String val) {
@@ -293,9 +310,13 @@ public class MigrationProfile {
     }
 
     public boolean replaceStringFromIDs(@NotNull CompoundTag tag, @NotNull String key) {
-        if (!tag.contains(key)) return false;
+        // The key may well be present but hold something other than a registry ID: Waystones, for
+        // example, stores the UUID of a bound waystone as an int-array below "id". Since
+        // DataFixerAPI.fixIDsRecursively walks foreign data whose layout we do not know, anything
+        // that is not a string is simply not ours to replace.
+        final String val = tag.getString(key).orElse(null);
+        if (val == null) return false;
 
-        final String val = tag.getString(key).orElseThrow();
         final String replace = idReplacements.get(val);
 
         if (replace != null) {

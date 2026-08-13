@@ -1,6 +1,7 @@
 package org.betterx.bclib.trait.item;
 
 import org.betterx.bclib.BCLib;
+import de.ambertation.wover.block.api.trait.CompostTier;
 import de.ambertation.wover.block.api.trait.CompostableTrait;
 import de.ambertation.wover.item.api.ItemDefinition;
 import de.ambertation.wover.item.api.trait.GenericItemTrait;
@@ -28,20 +29,29 @@ import java.util.List;
  */
 public class CompostableItemTrait extends ItemTraitImpl.Generic implements CompostableTrait {
     public static final ItemTraitKey KEY = ItemTraitKey.ofUnique(BCLib.C, "compostable");
-    private static final CompostableItemTrait DEFAULT = new CompostableItemTrait(0.1f);
+    private static final CompostableItemTrait DEFAULT = new CompostableItemTrait(CompostTier.VERY_LOW);
 
     public static CompostableItemTrait withDefault() {
         return DEFAULT;
     }
 
+    /**
+     * @param chance the requested composting chance; snapped to the nearest {@link CompostTier}
+     */
     public static CompostableItemTrait withChance(float chance) {
-        return new CompostableItemTrait(chance);
+        return new CompostableItemTrait(CompostTier.nearest(chance));
     }
 
+    public static CompostableItemTrait withTier(CompostTier tier) {
+        return new CompostableItemTrait(tier);
+    }
+
+    public final CompostTier tier;
     public final float compostingChance;
 
-    private CompostableItemTrait(float compostingChance) {
-        this.compostingChance = compostingChance;
+    private CompostableItemTrait(CompostTier tier) {
+        this.tier = tier;
+        this.compostingChance = tier.chance;
     }
 
     @Override
@@ -57,6 +67,11 @@ public class CompostableItemTrait extends ItemTraitImpl.Generic implements Compo
     @Override
     public float compostChance() {
         return compostingChance;
+    }
+
+    @Override
+    public CompostTier compostTier() {
+        return tier;
     }
 
     @Override

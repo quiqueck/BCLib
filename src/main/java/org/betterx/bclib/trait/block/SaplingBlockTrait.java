@@ -38,10 +38,35 @@ public class SaplingBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> 
         return withColor(color, 0);
     }
 
+    /**
+     * The sapling's own behaviour on its own: random ticks, the sapling block/item tags, and the light
+     * level - without the plant properties, model, loot and compostability that
+     * {@link #withColor(MapColor, int)} bundles around it.
+     * <p>
+     * This is what makes a sapling <em>grow</em>. {@link org.betterx.bclib.blocks.FeatureSaplingBlock}
+     * does all of its growing in {@code randomTick()}, and a block that never asked for random ticks is
+     * never handed one - so a sapling registered without this still accepts bone meal and looks entirely
+     * healthy while never growing on its own. Any registration that assembles its own trait list rather
+     * than taking the {@link #withColor(MapColor, int)} bundle (BetterNether's wood-set sapling slot,
+     * which brings its own model and survival rules) has to add this, or it registers a sapling that only
+     * a player with bone meal can ever turn into a tree.
+     */
+    public static SaplingBlockTrait ticking() {
+        return ticking(0);
+    }
+
+    /**
+     * @param lightLevel the sapling's light emission; {@code 0} leaves the property untouched.
+     * @see #ticking()
+     */
+    public static SaplingBlockTrait ticking(int lightLevel) {
+        return new SaplingBlockTrait(lightLevel);
+    }
+
     public static List<BlockTrait<?, ?>> withColor(MapColor color, int lightLevel) {
         return Combiner.of(
                 PlantBlockTrait.withColor(color, false),
-                new SaplingBlockTrait(lightLevel),
+                ticking(lightLevel),
                 BlockTraits.MINEABLE_WITH.needsHoe(),
                 BlockTraits.LOOT_TABLE.dropSelf(),
                 ClientBlockTraits.RENDER_LAYER.cutout(),

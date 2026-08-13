@@ -174,6 +174,36 @@ public class WeightedTemplateModelTrait {
     }
 
     /**
+     * One case of a three-property dispatch: the variant list to use when all three properties equal the given
+     * triple.
+     *
+     * @param value1   the first property's value this case selects on
+     * @param value2   the second property's value this case selects on
+     * @param value3   the third property's value this case selects on
+     * @param variants the weighted variant list for that triple
+     * @param <T1>     the first property's value type
+     * @param <T2>     the second property's value type
+     * @param <T3>     the third property's value type
+     */
+    public record Case3<T1 extends Comparable<T1>, T2 extends Comparable<T2>, T3 extends Comparable<T3>>(
+            T1 value1,
+            T2 value2,
+            T3 value3,
+            List<Layer> variants
+    ) {
+        /** A case mapping the triple {@code (value1, value2, value3)} to the given weighted variant list. */
+        public static <T1 extends Comparable<T1>, T2 extends Comparable<T2>, T3 extends Comparable<T3>>
+        Case3<T1, T2, T3> of(
+                T1 value1,
+                T2 value2,
+                T3 value3,
+                List<Layer> variants
+        ) {
+            return new Case3<>(value1, value2, value3, variants);
+        }
+    }
+
+    /**
      * How the block's inventory item model is generated: a flat {@code item/generated} icon, an item delegated to
      * the block's own texture, an item delegated to an explicit model (the kept template), or none.
      */
@@ -278,6 +308,31 @@ public class WeightedTemplateModelTrait {
             Item item
     ) {
         return ModCore.isDatagen() ? Impl.propertyDispatch(property1, property2, cases, item) : null;
+    }
+
+    /**
+     * A template-child block dispatched over three properties. Every combination of values the three properties can
+     * take MUST have a case - the blockstate is a full cross product, not a sparse map with a fallback.
+     *
+     * @param property1 the first property to dispatch over
+     * @param property2 the second property to dispatch over
+     * @param property3 the third property to dispatch over
+     * @param cases     one {@link Case3} per triple of property values
+     * @param item      how to generate the item model
+     * @param <T1>      the first property's value type
+     * @param <T2>      the second property's value type
+     * @param <T3>      the third property's value type
+     * @return the model trait, or {@code null} outside of datagen
+     */
+    public static <T1 extends Comparable<T1>, T2 extends Comparable<T2>, T3 extends Comparable<T3>>
+    BlockModelTrait propertyDispatch(
+            Property<T1> property1,
+            Property<T2> property2,
+            Property<T3> property3,
+            List<Case3<T1, T2, T3>> cases,
+            Item item
+    ) {
+        return ModCore.isDatagen() ? Impl.propertyDispatch(property1, property2, property3, cases, item) : null;
     }
 
     @Environment(EnvType.CLIENT)
@@ -460,6 +515,33 @@ public class WeightedTemplateModelTrait {
                             ? PropertyDispatch.initial(property1, property2)
                                               .select(c.value1(), c.value2(), built.get(i))
                             : dispatch.select(c.value1(), c.value2(), built.get(i));
+                }
+                generator.acceptBlockState(MultiVariantGenerator.dispatch(block).with(dispatch));
+                applyItem(block, generator, item);
+            });
+        }
+
+        private static <T1 extends Comparable<T1>, T2 extends Comparable<T2>, T3 extends Comparable<T3>>
+        BlockModelTrait propertyDispatch(
+                Property<T1> property1,
+                Property<T2> property2,
+                Property<T3> property3,
+                List<Case3<T1, T2, T3>> cases,
+                Item item
+        ) {
+            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+                final ChildModels models = new ChildModels(block, generator);
+                final List<MultiVariant> built = new ArrayList<>();
+                for (Case3<T1, T2, T3> c : cases) {
+                    built.add(variants(models, c.variants()));
+                }
+                PropertyDispatch.C3<MultiVariant, T1, T2, T3> dispatch = null;
+                for (int i = 0; i < cases.size(); i++) {
+                    final Case3<T1, T2, T3> c = cases.get(i);
+                    dispatch = dispatch == null
+                            ? PropertyDispatch.initial(property1, property2, property3)
+                                              .select(c.value1(), c.value2(), c.value3(), built.get(i))
+                            : dispatch.select(c.value1(), c.value2(), c.value3(), built.get(i));
                 }
                 generator.acceptBlockState(MultiVariantGenerator.dispatch(block).with(dispatch));
                 applyItem(block, generator, item);
