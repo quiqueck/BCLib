@@ -130,6 +130,27 @@ dependencies {
     } else {
         implementation "org.betterx:worldweaver:${project.wover_version}"
     }
+
+    // Plain JUnit 5 unit tests (`src/test/java`, run via `./gradlew :test`). Mirrors WorldWeaver's
+    // convention (see WorldWeaver/TESTING.md): pure-logic tests that need no running world.
+    // fabric-loader-junit bootstraps a headless FabricLoader, which ModCore.create() needs.
+    testImplementation platform("org.junit:junit-bom:5.11.4")
+    testImplementation "org.junit.jupiter:junit-jupiter"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+    testImplementation "net.fabricmc:fabric-loader-junit:${project.loader_version}"
+    testImplementation sourceSets.main.output
+}
+
+// Give the test source set access to the (named/Mojmap) Minecraft classpath from `main`, so tests
+// can work with real NBT/registry types. Same wiring as WorldWeaver/common.gradle.
+sourceSets.test.compileClasspath += sourceSets.main.compileClasspath
+sourceSets.test.runtimeClasspath += sourceSets.main.runtimeClasspath
+tasks.named('test') {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+    }
 }
 
 processResources {
