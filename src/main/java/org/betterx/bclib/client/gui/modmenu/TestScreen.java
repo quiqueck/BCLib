@@ -1,6 +1,6 @@
 package org.betterx.bclib.client.gui.modmenu;
 
-import de.ambertation.wunderlib.ui.ColorHelper;
+import de.ambertation.wunderlib.utils.ColorUtilARGB32;
 import de.ambertation.wunderlib.ui.layout.components.*;
 import de.ambertation.wunderlib.ui.layout.values.Size;
 import de.ambertation.wunderlib.ui.vanilla.LayoutScreen;
@@ -77,17 +77,17 @@ public class TestScreen extends LayoutScreen {
                                                         VerticalScroll.create(page2)
                                                 ));
         rows.add(new Input(fitOrFill(), fit(), Component.literal("Input"), "0xff00ff"));
-        rows.add(new ColorSwatch(fit(), fit(), ColorHelper.LIGHT_PURPLE).centerHorizontal());
+        rows.add(new ColorSwatch(fit(), fit(), ColorUtilARGB32.LIGHT_PURPLE).centerHorizontal());
         rows.add(new ColorPicker(
                 fill(),
                 fit(),
                 Component.literal("Color"),
-                ColorHelper.GREEN
+                ColorUtilARGB32.GREEN
         ).centerHorizontal());
         rows.add(new Text(
                         fitOrFill(), fixed(20),
                         Component.literal("Some blue text")
-                ).centerHorizontal().setColor(ColorHelper.BLUE)
+                ).centerHorizontal().setColor(ColorUtilARGB32.BLUE)
         );
         rows.addHLine(fixed(32), fixed(16));
         rows.add(c);
@@ -110,7 +110,7 @@ public class TestScreen extends LayoutScreen {
                         fill(), fit(),
                         Component.literal(
                                 "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.")
-                ).setColor(ColorHelper.LIGHT_PURPLE).centerHorizontal()
+                ).setColor(ColorUtilARGB32.LIGHT_PURPLE).centerHorizontal()
         );
 
         rows.addHorizontalLine(16);

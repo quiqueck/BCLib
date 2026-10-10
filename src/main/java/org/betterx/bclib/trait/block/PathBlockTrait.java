@@ -4,9 +4,12 @@ import org.betterx.bclib.BCLib;
 import org.betterx.bclib.blocks.BaseTerrainBlock;
 import org.betterx.bclib.client.models.BCLModels;
 import de.ambertation.wover.block.api.BlockDefinition;
-import de.ambertation.wover.block.api.client.trait.BlockModelTrait;
-import de.ambertation.wover.block.api.client.trait.ClientBlockTraits;
+import de.ambertation.wover.block.api.client.model.ClientBlockModelRegistry;
+import de.ambertation.wover.block.api.client.trait.BlockModelTrait.ModelFactory;
+import de.ambertation.wover.block.api.model.BlockModelBinding;
+import de.ambertation.wover.block.api.model.ModelKey;
 import de.ambertation.wover.block.api.trait.*;
+import de.ambertation.wover.block.api.trait.BlockTrait;
 import de.ambertation.wover.block.api.trait.behaviour.LootTableTrait;
 import de.ambertation.wover.block.impl.trait.BlockTraitImpl;
 import de.ambertation.wover.core.api.ModCore;
@@ -42,7 +45,7 @@ public class PathBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
                 // Paths inherit reqTool=true from their terrain parent (via replacePropertiesWithCopy) but
                 // no mineable tag, which makes them unharvestable. Match the parent terrain's pickaxe tag.
                 BlockTraits.MINEABLE_WITH.needsPickAxe(),
-                generateModel && ModCore.isDatagen() ? ClientModel.build(source) : null
+                generateModel ? BlockModelBinding.of(MODEL, new ModelParams(source)) : null
         ).combine();
     }
 
@@ -65,6 +68,20 @@ public class PathBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
         };
     }
 
+    private record ModelParams(Block source) {
+    }
+
+    private static final ModelKey<ModelParams> MODEL = BCLModelKeys.key("path_block_trait");
+
+    /**
+     * Registers the client generators behind this class's model keys. Called from the mod's
+     * {@code wover.client.traits} entrypoint.
+     */
+    @Environment(EnvType.CLIENT)
+    public static void registerClientModels() {
+        ClientModel.register();
+    }
+
     /**
      * The model-building lambda below references vanilla client-only datagen types
      * (e.g. {@code BlockModelDefinitionGenerator}). Those types must not leak into
@@ -76,31 +93,41 @@ public class PathBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
      */
     @Environment(EnvType.CLIENT)
     private static class ClientModel {
-        private static BlockModelTrait build(Block source) {
-            return ClientBlockTraits.MODEL.with(
-                    (key, block, generator) -> {
-                        var side = TextureMapping.getBlockTexture(block, "_side").sprite();
-                        side = Identifier.fromNamespaceAndPath(
-                                side.getNamespace(), side
-                                        .getPath()
-                                        .replace("_path", "")
-                        );
+        private static void register() {
+            ClientBlockModelRegistry.register(
+                    MODEL,
+                    (key, block, generator, payload) -> buildFrom(payload).provideBlockModels(key, block, generator)
+            );
+        }
 
-                        // A terrain block's own "bottom" is its base block (e.g. end_stone), not a
-                        // texture named after the terrain block itself - which doesn't exist on disk.
-                        var bottomSource = source instanceof BaseTerrainBlock terrain
-                                ? terrain.getBaseBlock()
-                                : source;
+        private static ModelFactory buildFrom(ModelParams p) {
+            return build(p.source());
+        }
 
-                        var mapping = new TextureMapping()
-                                .put(TextureSlot.SIDE, new Material(side))
-                                .put(TextureSlot.TOP, TextureMapping.getBlockTexture(block, "_top"))
-                                .put(TextureSlot.BOTTOM, TextureMapping.getBlockTexture(bottomSource));
-                        var location = BCLModels.PATH.create(block, mapping, generator.modelOutput());
+        private static ModelFactory build(Block source) {
+            return (key, block, generator) -> {
+                var side = TextureMapping.getBlockTexture(block, "_side").sprite();
+                side = Identifier.fromNamespaceAndPath(
+                        side.getNamespace(), side
+                                .getPath()
+                                .replace("_path", "")
+                );
 
-                        generator.acceptBlockState(generator.randomTopModelVariant(block, location));
-                        generator.delegateItemModel(block, location);
-                    });
+                // A terrain block's own "bottom" is its base block (e.g. end_stone), not a
+                // texture named after the terrain block itself - which doesn't exist on disk.
+                var bottomSource = source instanceof BaseTerrainBlock terrain
+                        ? terrain.getBaseBlock()
+                        : source;
+
+                var mapping = new TextureMapping()
+                        .put(TextureSlot.SIDE, new Material(side))
+                        .put(TextureSlot.TOP, TextureMapping.getBlockTexture(block, "_top"))
+                        .put(TextureSlot.BOTTOM, TextureMapping.getBlockTexture(bottomSource));
+                var location = BCLModels.PATH.create(block, mapping, generator.modelOutput());
+
+                generator.acceptBlockState(generator.randomTopModelVariant(block, location));
+                generator.delegateItemModel(block, location);
+            };
         }
     }
 }

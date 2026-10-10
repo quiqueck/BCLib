@@ -110,6 +110,8 @@ public abstract class SDF {
                 });
             });
             infos.forEach((info) -> {
+                // A post-process may add blocks next to the shape (setBlockPos), one step past writeBounds.
+                if (writeBounds != null && !writeBounds.isInside(info.getPos())) return;
                 if (canReplace.apply(world.getBlockState(info.getPos()))) {
                     BlocksHelper.setWithoutUpdate(world, info.getPos(), info.getState());
                 }
@@ -240,6 +242,8 @@ public abstract class SDF {
                 });
             });
             infos.forEach((info) -> {
+                // A post-process may add blocks next to the shape (setBlockPos), one step past writeBounds.
+                if (writeBounds != null && !writeBounds.isInside(info.getPos())) return;
                 if (canReplace.apply(world.getBlockState(info.getPos()))) {
                     BlocksHelper.setWithoutUpdate(world, info.getPos(), info.getState());
                 }

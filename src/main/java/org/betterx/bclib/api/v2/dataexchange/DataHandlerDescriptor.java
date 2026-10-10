@@ -122,15 +122,14 @@ public class DataHandlerDescriptor<T extends DataHandlerDescriptor.PacketPayload
             ClientPlayNetworking.Context context
     ) {
         BaseDataHandler<T> h = this.INSTANCE.get();
-        try (Minecraft client = context.client()) {
-            //noinspection unchecked
-            h.receiveFromServer(
-                    client,
-                    client.getConnection(),
-                    (T) payload,
-                    context.responseSender()
-            );
-        }
+        Minecraft client = context.client();
+        //noinspection unchecked
+        h.receiveFromServer(
+                client,
+                client.getConnection(),
+                (T) payload,
+                context.responseSender()
+        );
     }
 
     void receiveFromClient(

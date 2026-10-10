@@ -2,16 +2,20 @@ package org.betterx.bclib.trait.block;
 
 import org.betterx.bclib.blocks.BaseTerrainBlock;
 import org.betterx.bclib.trait.TraitLists;
-import de.ambertation.wover.block.api.client.trait.BlockModelTrait;
-import de.ambertation.wover.block.api.client.trait.ClientBlockTraits;
+import de.ambertation.wover.block.api.client.model.ClientBlockModelRegistry;
+import de.ambertation.wover.block.api.client.trait.BlockModelTrait.ModelFactory;
+import de.ambertation.wover.block.api.model.BlockModelBinding;
+import de.ambertation.wover.block.api.model.ModelKey;
 import de.ambertation.wover.block.api.trait.BlockTrait;
 
 import net.minecraft.world.level.block.Block;
 import de.ambertation.wover.block.api.trait.BlockTraits;
-import de.ambertation.wover.core.api.ModCore;
 import de.ambertation.wover.pottable.api.trait.PottableSoilBlockTrait;
 
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import java.util.List;
 
@@ -43,7 +47,7 @@ public class TerrainTraits {
      * @return terrain + pottable-soil + silk-touch loot + default top/side/bottom model
      */
     public static List<BlockTrait<?, ?>> full() {
-        return full(ModCore.isDatagen() ? defaultModel() : null);
+        return full(BlockModelBinding.of(MODEL, null));
     }
 
     /**
@@ -79,12 +83,32 @@ public class TerrainTraits {
                 provider.dropWithSilkTouch(block, ((BaseTerrainBlock) block).getBaseBlock(), ConstantValue.exactly(1)));
     }
 
-    private static BlockModelTrait defaultModel() {
-        return ClientBlockTraits.MODEL.with(
-                (key, block, generator) -> {
-                    final var terrain = (BaseTerrainBlock) block;
-                    generator.createBlockTopSideBottom(terrain.getBaseBlock(), terrain, true);
-                }
-        );
+    private static final ModelKey<Void> MODEL = BCLModelKeys.key("terrain_traits");
+
+    /**
+     * Registers the client generators behind this class's model keys. Called from the mod's
+     * {@code wover.client.traits} entrypoint.
+     */
+    @Environment(EnvType.CLIENT)
+    public static void registerClientModels() {
+        ClientModel.register();
+    }
+
+    @Environment(EnvType.CLIENT)
+    private static class ClientModel {
+        private static void register() {
+            ClientBlockModelRegistry.register(
+                    MODEL,
+                    (key, block, generator, payload) -> defaultModel().provideBlockModels(key, block, generator)
+            );
+        }
+
+
+        private static ModelFactory defaultModel() {
+            return (key, block, generator) -> {
+                final var terrain = (BaseTerrainBlock) block;
+                generator.createBlockTopSideBottom(terrain.getBaseBlock(), terrain, true);
+            };
+        }
     }
 }

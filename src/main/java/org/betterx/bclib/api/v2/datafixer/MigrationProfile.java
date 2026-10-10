@@ -67,7 +67,7 @@ public class MigrationProfile {
                              chunkPatches.add(patch.getChunkPatcher());
                          DataFixerAPI.LOGGER.info("Applying " + patch);
                      } else {
-                         DataFixerAPI.LOGGER.info("Ignoring " + patch);
+                         DataFixerAPI.LOGGER.verbose("Ignoring " + patch);
                      }
                  });
         }

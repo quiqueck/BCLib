@@ -2,9 +2,13 @@ package org.betterx.bclib.trait.block;
 
 import org.betterx.bclib.BCLib;
 import de.ambertation.wover.block.api.BlockDefinition;
-import de.ambertation.wover.block.api.client.trait.BlockModelTrait;
-import de.ambertation.wover.block.api.client.trait.ClientBlockTraits;
+import de.ambertation.wover.block.api.client.model.ClientBlockModelRegistry;
+import de.ambertation.wover.block.api.client.trait.BlockModelTrait.ModelFactory;
+import de.ambertation.wover.block.api.render.BlockRenderTraits;
+import de.ambertation.wover.block.api.model.BlockModelBinding;
+import de.ambertation.wover.block.api.model.ModelKey;
 import de.ambertation.wover.block.api.trait.*;
+import de.ambertation.wover.block.api.trait.BlockTrait;
 import de.ambertation.wover.block.impl.trait.BlockTraitImpl;
 import de.ambertation.wover.core.api.ModCore;
 import de.ambertation.wover.tag.api.predefined.CommonBlockTags;
@@ -69,11 +73,25 @@ public class SaplingBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> 
                 ticking(lightLevel),
                 BlockTraits.MINEABLE_WITH.needsHoe(),
                 BlockTraits.LOOT_TABLE.dropSelf(),
-                ClientBlockTraits.RENDER_LAYER.cutout(),
-                ModCore.isDatagen() ? ClientModel.build(lightLevel) : null,
+                BlockRenderTraits.RENDER_LAYER.cutout(),
+                BlockModelBinding.of(MODEL, new ModelParams(lightLevel)),
                 CompostableBlockTrait.withDefault(),
                 BlockTraits.FLAMMABLE.withDefault()
         ).combine();
+    }
+
+    private record ModelParams(int lightLevel) {
+    }
+
+    private static final ModelKey<ModelParams> MODEL = BCLModelKeys.key("sapling_block_trait");
+
+    /**
+     * Registers the client generators behind this class's model keys. Called from the mod's
+     * {@code wover.client.traits} entrypoint.
+     */
+    @Environment(EnvType.CLIENT)
+    public static void registerClientModels() {
+        ClientModel.register();
     }
 
     /**
@@ -85,21 +103,30 @@ public class SaplingBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> 
      */
     @Environment(EnvType.CLIENT)
     private static class ClientModel {
-        private static BlockModelTrait build(int lightLevel) {
-            return ClientBlockTraits.MODEL.with(
-                    ((key, block, generator) -> {
-                        generator.vanillaGenerator.createCrossBlock(
-                                block,
-                                lightLevel > 0
-                                        ? BlockModelGenerators.PlantType.EMISSIVE_NOT_TINTED
-                                        : BlockModelGenerators.PlantType.NOT_TINTED
-                        );
-                        // Flat item model (item/generated), not the block's cross model: vanilla saplings
-                        // use createPlantWithDefaultItem -> registerSimpleFlatItemModel, and delegating to
-                        // the cross model instead renders the dropped/held item at full block scale.
-                        generator.createFlatItem(block);
-                    })
+        private static void register() {
+            ClientBlockModelRegistry.register(
+                    MODEL,
+                    (key, block, generator, payload) -> buildFrom(payload).provideBlockModels(key, block, generator)
             );
+        }
+
+        private static ModelFactory buildFrom(ModelParams p) {
+            return build(p.lightLevel());
+        }
+
+        private static ModelFactory build(int lightLevel) {
+            return ((key, block, generator) -> {
+                generator.vanillaGenerator.createCrossBlock(
+                        block,
+                        lightLevel > 0
+                                ? BlockModelGenerators.PlantType.EMISSIVE_NOT_TINTED
+                                : BlockModelGenerators.PlantType.NOT_TINTED
+                );
+                // Flat item model (item/generated), not the block's cross model: vanilla saplings
+                // use createPlantWithDefaultItem -> registerSimpleFlatItemModel, and delegating to
+                // the cross model instead renders the dropped/held item at full block scale.
+                generator.createFlatItem(block);
+            });
         }
     }
 

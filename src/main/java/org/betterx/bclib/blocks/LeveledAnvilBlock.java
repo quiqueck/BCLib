@@ -2,13 +2,16 @@ package org.betterx.bclib.blocks;
 
 import org.betterx.bclib.client.models.BCLModels;
 import org.betterx.bclib.items.BaseAnvilItem;
+import org.betterx.bclib.trait.block.BCLModelKeys;
 import org.betterx.bclib.util.BCLDataComponents;
 import org.betterx.bclib.util.BlocksHelper;
 import org.betterx.bclib.util.LegacyTiers;
 import org.betterx.bclib.util.LootUtil;
 import de.ambertation.wover.block.api.BlockProperties;
-import de.ambertation.wover.block.api.client.trait.BlockModelTrait;
-import de.ambertation.wover.block.api.client.trait.ClientBlockTraits;
+import de.ambertation.wover.block.api.client.model.ClientBlockModelRegistry;
+import de.ambertation.wover.block.api.client.trait.BlockModelTrait.ModelFactory;
+import de.ambertation.wover.block.api.model.BlockModelBinding;
+import de.ambertation.wover.block.api.model.ModelKey;
 import de.ambertation.wover.block.api.trait.BlockTraitLookup;
 import de.ambertation.wover.core.api.ModCore;
 import de.ambertation.wover.sets.api.blocks.BlockSet;
@@ -89,43 +92,60 @@ public class LeveledAnvilBlock extends AnvilBlock {
      * inherit the annotation from its enclosing method, so leaving it here would strand vanilla
      * client-only type references in a class file the server actually has to verify.
      */
-    public static BlockModelTrait buildModel(BlockSet<?> set, BlockTraitLookup traitLookup) {
-        return ModCore.isDatagen() ? ClientModel.build() : null;
+    public static BlockModelBinding buildModel(BlockSet<?> set, BlockTraitLookup traitLookup) {
+        return BlockModelBinding.of(MODEL, null);
+    }
+
+    private static final ModelKey<Void> MODEL = BCLModelKeys.key("leveled_anvil_block");
+
+    /**
+     * Registers the client generators behind this class's model keys. Called from the mod's
+     * {@code wover.client.traits} entrypoint.
+     */
+    @Environment(EnvType.CLIENT)
+    public static void registerClientModels() {
+        ClientModel.register();
     }
 
     @Environment(EnvType.CLIENT)
     private static class ClientModel {
-        private static BlockModelTrait build() {
-            return ClientBlockTraits.MODEL.with(
-                    (key, block, generator) -> {
-                        final Material id = TextureMapping.getBlockTexture(block);
-                        final TextureMapping mapping = new TextureMapping()
-                                .put(TextureSlot.FRONT, new Material(id.sprite().withSuffix("_front")))
-                                .put(TextureSlot.BACK, new Material(id.sprite().withSuffix("_back")))
-                                .put(TextureSlot.BOTTOM, new Material(id.sprite().withSuffix("_bottom")))
-                                .put(BCLModels.PANEL, new Material(id.sprite().withSuffix("_panel")));
-
-                        final var prop = PropertyDispatch.initial(DESTRUCTION, FACING);
-
-                        for (int d = 0; d < 3; d++) {
-                            mapping.put(TextureSlot.TOP, new Material(id.sprite().withSuffix("_top_" + d)));
-                            final Identifier modelLocation = BCLModels.ANVIL.createWithSuffix(
-                                    block,
-                                    "_" + d,
-                                    mapping,
-                                    generator.modelOutput()
-                            );
-                            final var model = plainVariant(modelLocation);
-
-                            prop.select(d, Direction.NORTH, model);
-                            prop.select(d, Direction.EAST, model.with(Y_ROT_90));
-                            prop.select(d, Direction.SOUTH, model.with(Y_ROT_180));
-                            prop.select(d, Direction.WEST, model.with(Y_ROT_270));
-                        }
-                        generator.acceptBlockState(MultiVariantGenerator.dispatch(block).with(prop));
-                        generator.delegateItemModel(block, id.sprite().withSuffix("_0"));
-                    }
+        private static void register() {
+            ClientBlockModelRegistry.register(
+                    MODEL,
+                    (key, block, generator, payload) -> build().provideBlockModels(key, block, generator)
             );
+        }
+
+
+        private static ModelFactory build() {
+            return (key, block, generator) -> {
+                final Material id = TextureMapping.getBlockTexture(block);
+                final TextureMapping mapping = new TextureMapping()
+                        .put(TextureSlot.FRONT, new Material(id.sprite().withSuffix("_front")))
+                        .put(TextureSlot.BACK, new Material(id.sprite().withSuffix("_back")))
+                        .put(TextureSlot.BOTTOM, new Material(id.sprite().withSuffix("_bottom")))
+                        .put(BCLModels.PANEL, new Material(id.sprite().withSuffix("_panel")));
+
+                final var prop = PropertyDispatch.initial(DESTRUCTION, FACING);
+
+                for (int d = 0; d < 3; d++) {
+                    mapping.put(TextureSlot.TOP, new Material(id.sprite().withSuffix("_top_" + d)));
+                    final Identifier modelLocation = BCLModels.ANVIL.createWithSuffix(
+                            block,
+                            "_" + d,
+                            mapping,
+                            generator.modelOutput()
+                    );
+                    final var model = plainVariant(modelLocation);
+
+                    prop.select(d, Direction.NORTH, model);
+                    prop.select(d, Direction.EAST, model.with(Y_ROT_90));
+                    prop.select(d, Direction.SOUTH, model.with(Y_ROT_180));
+                    prop.select(d, Direction.WEST, model.with(Y_ROT_270));
+                }
+                generator.acceptBlockState(MultiVariantGenerator.dispatch(block).with(prop));
+                generator.delegateItemModel(block, id.sprite().withSuffix("_0"));
+            };
         }
     }
 
@@ -133,7 +153,6 @@ public class LeveledAnvilBlock extends AnvilBlock {
     public @NotNull List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
         int destruction = state.getValue(DESTRUCTION);
         int durability = state.getValue(getDurabilityProp());
-        int value = destruction * getMaxDurability() + durability;
         ItemStack tool = (ItemStack) builder.getParameter(LootContextParams.TOOL);
         if (LootUtil.isCorrectTool(this, state, tool)) {
             ItemStack itemStack = new ItemStack(this);
@@ -141,7 +160,12 @@ public class LeveledAnvilBlock extends AnvilBlock {
             CustomData.update(
                     BCLDataComponents.ANVIL_ENTITY_DATA,
                     itemStack,
-                    (compoundTag) -> compoundTag.putInt(BaseAnvilItem.DESTRUCTION, value)
+                    (compoundTag) -> {
+                        // two separate keys - a combined destruction * max + durability is ambiguous, as
+                        // durability ranges 0..max inclusive
+                        compoundTag.putInt(BaseAnvilItem.DESTRUCTION, destruction);
+                        compoundTag.putInt(BaseAnvilItem.DURABILITY, durability);
+                    }
             );
 
             return Lists.newArrayList(itemStack);

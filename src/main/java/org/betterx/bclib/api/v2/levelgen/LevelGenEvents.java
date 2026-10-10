@@ -1,12 +1,9 @@
 package org.betterx.bclib.api.v2.levelgen;
 
-import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.dataexchange.DataExchangeAPI;
 import org.betterx.bclib.api.v2.datafixer.DataFixerAPI;
 import de.ambertation.wover.core.api.ModCore;
 import de.ambertation.wover.events.api.WorldLifecycle;
-import de.ambertation.wover.events.api.client.ClientWorldLifecycle;
-import de.ambertation.wover.events.api.types.client.BeforeClientLoadScreen;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -19,11 +16,14 @@ public class LevelGenEvents {
         DataExchangeAPI.prepareServerside();
     }
 
+    /**
+     * The client-side counterpart (patching a singleplayer world before its load screen) is registered by
+     * {@link org.betterx.bclib.client.ClientLevelGenEvents}, so this class never touches client-only event types.
+     */
     public static void register() {
         WorldLifecycle.WORLD_FOLDER_READY.subscribe(LevelGenEvents::beforeWorldLoad);
         WorldLifecycle.CREATED_NEW_WORLD_FOLDER.subscribe(LevelGenEvents::afterWorldCreation, 10000);
 
-        ClientWorldLifecycle.BEFORE_CLIENT_LOAD_SCREEN.subscribe(LevelGenEvents::patchExistingWorldOnClient, 10000);
         WorldLifecycle.WORLD_FOLDER_READY.subscribe(LevelGenEvents::patchExistingWorldOnServer, 10000);
         WorldLifecycle.WORLD_FOLDER_READY.subscribe(LevelGenEvents::initializeWorldConfig, 10100);
     }
@@ -39,15 +39,6 @@ public class LevelGenEvents {
                     storageAccess, false, (b) -> {
                     }
             );
-        }
-    }
-
-    private static void patchExistingWorldOnClient(
-            LevelStorageSource.LevelStorageAccess storageAccess,
-            BeforeClientLoadScreen.ContinueWith continueWith
-    ) {
-        if (!DataFixerAPI.fixData(storageAccess, BCLib.isClient(), (b) -> continueWith.loadingScreen())) {
-            continueWith.loadingScreen();
         }
     }
 

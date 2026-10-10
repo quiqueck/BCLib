@@ -6,9 +6,11 @@
   "client": [
     "AnvilScreenMixin",
     "AtlasSetMixin",
+    "AtmosphericFogEnvironmentMixin",
     "ClientLevelMixin",
     "ClientPacketListenerMixin",
     "DebugRendererMixin",
+    "FogRendererMixin",
     "ItemMixin"
   ],
   "injectors": {

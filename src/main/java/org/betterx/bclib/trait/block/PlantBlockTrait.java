@@ -1,10 +1,11 @@
 package org.betterx.bclib.trait.block;
 
+import de.ambertation.wover.block.api.render.BlockRenderTraits;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.trait.TraitLists;
 import de.ambertation.wover.block.api.BlockDefinition;
-import de.ambertation.wover.block.api.client.trait.ClientBlockTraits;
 import de.ambertation.wover.block.api.trait.*;
+import de.ambertation.wover.block.api.trait.BlockTrait;
 import de.ambertation.wover.block.impl.trait.BlockTraitImpl;
 import de.ambertation.wover.pottable.api.trait.PottablePlantBlockTrait;
 
@@ -67,7 +68,7 @@ public class PlantBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> im
                 withColor(color, walkable, offsetType),
                 CompostableBlockTrait.withDefault(),
                 flammable ? BlockTraits.FLAMMABLE.withDefault() : null,
-                ClientBlockTraits.RENDER_LAYER.cutout(),
+                BlockRenderTraits.RENDER_LAYER.cutout(),
                 // Thin grass/moss/fern/crop-style insta-break plants get NO mineable tag, matching vanilla
                 // short_grass/fern/flowers/crops. (Leaves keep needsShears via LeavesBlockTrait; woody/terrain
                 // blocks keep their tags via their own MINEABLE_WITH traits.)
