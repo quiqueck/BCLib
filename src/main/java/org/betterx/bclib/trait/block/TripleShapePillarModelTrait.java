@@ -1,7 +1,5 @@
 package org.betterx.bclib.trait.block;
 
-import de.ambertation.wover.block.api.client.trait.BlockModelTrait;
-import de.ambertation.wover.block.api.client.trait.ClientBlockTraits;
 import de.ambertation.wover.block.api.model.WoverBlockModelGenerators;
 import de.ambertation.wover.core.api.ModCore;
 
@@ -21,6 +19,10 @@ import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import de.ambertation.wover.block.api.BlockProperties.TripleShape;
+import de.ambertation.wover.block.api.client.model.ClientBlockModelRegistry;
+import de.ambertation.wover.block.api.client.trait.BlockModelTrait.ModelFactory;
+import de.ambertation.wover.block.api.model.BlockModelBinding;
+import de.ambertation.wover.block.api.model.ModelKey;
 
 import com.mojang.math.Quadrant;
 import net.fabricmc.api.EnvType;
@@ -63,15 +65,16 @@ public class TripleShapePillarModelTrait {
      * @param topEnd        the stripped end texture (top shape's top/bottom)
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static BlockModelTrait log(
+    public static BlockModelBinding log(
             EnumProperty<TripleShape> shape,
             Identifier bottomSide, Identifier bottomEnd,
             Identifier blendSide, Identifier blendTop, Identifier blendBottom,
             Identifier topSide, Identifier topEnd
     ) {
-        return ModCore.isDatagen()
-                ? Impl.build(shape, false, bottomSide, bottomEnd, blendSide, blendTop, blendBottom, topSide, topEnd)
-                : null;
+        return BlockModelBinding.of(
+                MODEL,
+                new ModelParams(shape, false, bottomSide, bottomEnd, blendSide, blendTop, blendBottom, topSide, topEnd)
+        );
     }
 
     /**
@@ -86,19 +89,65 @@ public class TripleShapePillarModelTrait {
      * @param topAll      the stripped texture (top shape - all faces + particle)
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static BlockModelTrait bark(
+    public static BlockModelBinding bark(
             EnumProperty<TripleShape> shape,
             Identifier bottomAll,
             Identifier blendSide, Identifier blendTop, Identifier blendBottom,
             Identifier topAll
     ) {
-        return ModCore.isDatagen()
-                ? Impl.build(shape, true, bottomAll, bottomAll, blendSide, blendTop, blendBottom, topAll, topAll)
-                : null;
+        return BlockModelBinding.of(
+                MODEL,
+                new ModelParams(shape, true, bottomAll, bottomAll, blendSide, blendTop, blendBottom, topAll, topAll)
+        );
+    }
+
+    private record ModelParams(
+            EnumProperty<TripleShape> shape,
+            boolean bark,
+            Identifier bottomSide,
+            Identifier bottomEnd,
+            Identifier blendSide,
+            Identifier blendTop,
+            Identifier blendBottom,
+            Identifier topSide,
+            Identifier topEnd
+    ) {
+    }
+
+    private static final ModelKey<ModelParams> MODEL = BCLModelKeys.key("triple_shape_pillar_model_trait");
+
+    /**
+     * Registers the client generators behind this class's model keys. Called from the mod's
+     * {@code wover.client.traits} entrypoint.
+     */
+    @Environment(EnvType.CLIENT)
+    public static void registerClientModels() {
+        Impl.register();
     }
 
     @Environment(EnvType.CLIENT)
     private static class Impl {
+        private static void register() {
+            ClientBlockModelRegistry.register(
+                    MODEL,
+                    (key, block, generator, payload) -> buildFrom(payload).provideBlockModels(key, block, generator)
+            );
+        }
+
+        private static ModelFactory buildFrom(ModelParams p) {
+            return build(
+                    p.shape(),
+                    p.bark(),
+                    p.bottomSide(),
+                    p.bottomEnd(),
+                    p.blendSide(),
+                    p.blendTop(),
+                    p.blendBottom(),
+                    p.topSide(),
+                    p.topEnd()
+            );
+        }
+
         private static Quadrant quadrant(int degrees) {
             return switch (((degrees % 360) + 360) % 360) {
                 case 90 -> Quadrant.R90;
@@ -123,14 +172,14 @@ public class TripleShapePillarModelTrait {
             return new MultiVariant(WeightedList.<Variant>builder().add(v, 1).build());
         }
 
-        private static BlockModelTrait build(
+        private static ModelFactory build(
                 EnumProperty<TripleShape> shape,
                 boolean bark,
                 Identifier bottomSide, Identifier bottomEnd,
                 Identifier blendSide, Identifier blendTop, Identifier blendBottom,
                 Identifier topSide, Identifier topEnd
         ) {
-            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+            return (key, block, generator) -> {
                 final var out = generator.modelOutput();
 
                 // bottom shape == the block's own model location (so the item can delegate to it, matching the
@@ -180,7 +229,7 @@ public class TripleShapePillarModelTrait {
 
                 generator.acceptBlockState(MultiVariantGenerator.dispatch(block).with(dispatch));
                 generator.delegateItemModel(block, bottomModel);
-            });
+            };
         }
     }
 }

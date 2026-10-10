@@ -3,9 +3,13 @@ package org.betterx.bclib.trait.block;
 import org.betterx.bclib.BCLib;
 import de.ambertation.wover.block.api.BlockDefinition;
 import de.ambertation.wover.block.api.BlockProperties;
-import de.ambertation.wover.block.api.client.trait.BlockModelTrait;
-import de.ambertation.wover.block.api.client.trait.ClientBlockTraits;
+import de.ambertation.wover.block.api.client.model.ClientBlockModelRegistry;
+import de.ambertation.wover.block.api.client.trait.BlockModelTrait.ModelFactory;
+import de.ambertation.wover.block.api.render.BlockRenderTraits;
+import de.ambertation.wover.block.api.model.BlockModelBinding;
+import de.ambertation.wover.block.api.model.ModelKey;
 import de.ambertation.wover.block.api.trait.*;
+import de.ambertation.wover.block.api.trait.BlockTrait;
 import de.ambertation.wover.block.impl.trait.BlockTraitImpl;
 import de.ambertation.wover.core.api.ModCore;
 
@@ -68,11 +72,22 @@ public class VineBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
                 BlockTraits.CLIMBABLE.withDefault(),
                 VegetationTagTrait.vine(),
                 BlockTraits.LOOT_TABLE.dropWithSilktouchOrHoeOrShears(),
-                ClientBlockTraits.RENDER_LAYER.cutout(),
-                generateModel && ModCore.isDatagen() ? ClientModel.build() : null,
+                BlockRenderTraits.RENDER_LAYER.cutout(),
+                generateModel ? BlockModelBinding.of(MODEL, null) : null,
                 CompostableBlockTrait.withDefault(),
                 BlockTraits.FLAMMABLE.withDefault()
         ).combine();
+    }
+
+    private static final ModelKey<Void> MODEL = BCLModelKeys.key("vine_block_trait");
+
+    /**
+     * Registers the client generators behind this class's model keys. Called from the mod's
+     * {@code wover.client.traits} entrypoint.
+     */
+    @Environment(EnvType.CLIENT)
+    public static void registerClientModels() {
+        ClientModel.register();
     }
 
     /**
@@ -84,13 +99,19 @@ public class VineBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
      */
     @Environment(EnvType.CLIENT)
     private static class ClientModel {
-        private static BlockModelTrait build() {
-            return ClientBlockTraits.MODEL.with(
-                    ((key, block, generator) -> {
-                        generator.createCubeModel(block);
-                        generator.createFlatItem(block);
-                    })
+        private static void register() {
+            ClientBlockModelRegistry.register(
+                    MODEL,
+                    (key, block, generator, payload) -> build().provideBlockModels(key, block, generator)
             );
+        }
+
+
+        private static ModelFactory build() {
+            return ((key, block, generator) -> {
+                generator.createCubeModel(block);
+                generator.createFlatItem(block);
+            });
         }
     }
 

@@ -1,5 +1,7 @@
 package org.betterx.bclib.api.v2.levelgen.structures;
 
+import de.ambertation.wover.structure.api.StructureNBT;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;

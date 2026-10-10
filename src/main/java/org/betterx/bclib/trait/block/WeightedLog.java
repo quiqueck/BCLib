@@ -1,6 +1,6 @@
 package org.betterx.bclib.trait.block;
 
-import de.ambertation.wover.block.api.client.trait.BlockModelTrait;
+import de.ambertation.wover.block.api.model.BlockModelBinding;
 import de.ambertation.wover.block.api.trait.BlockTraitLookup;
 import de.ambertation.wover.sets.api.blocks.BlockSet;
 import de.ambertation.wover.sets.api.blocks.types.Log;
@@ -56,7 +56,7 @@ public class WeightedLog extends Log {
 
     @Environment(EnvType.CLIENT)
     @Override
-    protected BlockModelTrait buildModel(BlockSet<?> set, BlockTraitLookup blockTraitLookup) {
+    protected BlockModelBinding buildModel(BlockSet<?> set, BlockTraitLookup blockTraitLookup) {
         return WeightedPillarModelTrait.log(weights, sideTexture, endTexture);
     }
 }

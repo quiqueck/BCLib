@@ -2,9 +2,13 @@ package org.betterx.bclib.trait.block;
 
 import org.betterx.bclib.BCLib;
 import de.ambertation.wover.block.api.BlockDefinition;
-import de.ambertation.wover.block.api.client.trait.BlockModelTrait;
-import de.ambertation.wover.block.api.client.trait.ClientBlockTraits;
+import de.ambertation.wover.block.api.client.model.ClientBlockModelRegistry;
+import de.ambertation.wover.block.api.client.trait.BlockModelTrait.ModelFactory;
+import de.ambertation.wover.block.api.render.BlockRenderTraits;
+import de.ambertation.wover.block.api.model.BlockModelBinding;
+import de.ambertation.wover.block.api.model.ModelKey;
 import de.ambertation.wover.block.api.trait.*;
+import de.ambertation.wover.block.api.trait.BlockTrait;
 import de.ambertation.wover.block.impl.trait.BlockTraitImpl;
 import de.ambertation.wover.core.api.ModCore;
 
@@ -128,7 +132,7 @@ public class LeavesBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
 
     /**
      * @param cutout when {@code true} (every existing overload's default, preserving today's BE behaviour),
-     *               bundles {@code ClientBlockTraits.RENDER_LAYER.cutout()}. BetterNether's four
+     *               bundles {@code BlockRenderTraits.RENDER_LAYER.cutout()}. BetterNether's four
      *               {@code staticLeaves()}-preset blocks (willow/rubeus/anchor_tree/nether_sakura) golden as
      *               {@code renderLayer=SOLID} - they're multi-part hand-authored models, not simple
      *               alpha-cutout cubes - so BN's fold passes {@code false} to leave the default (SOLID) render
@@ -154,13 +158,24 @@ public class LeavesBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
                 saplingDropChance < 0
                         ? BlockTraits.LOOT_TABLE.dropLeaves(saplingBlock)
                         : BlockTraits.LOOT_TABLE.dropLeaves(saplingDropChance, saplingBlock),
-                cutout ? ClientBlockTraits.RENDER_LAYER.cutout() : null,
+                cutout ? BlockRenderTraits.RENDER_LAYER.cutout() : null,
                 CompostableBlockTrait.withChance(0.3f),
                 // Vanilla leaves all burn/spread much faster than the generic block default (5/5) -
                 // every *_leaves entry in FireBlock uses 30/60, so match that instead of the flat default.
                 flammable ? BlockTraits.FLAMMABLE.with(30, 60) : null,
-                generateModel && ModCore.isDatagen() ? ClientModel.build() : null
+                generateModel ? BlockModelBinding.of(MODEL, null) : null
         ).combine();
+    }
+
+    private static final ModelKey<Void> MODEL = BCLModelKeys.key("leaves_block_trait");
+
+    /**
+     * Registers the client generators behind this class's model keys. Called from the mod's
+     * {@code wover.client.traits} entrypoint.
+     */
+    @Environment(EnvType.CLIENT)
+    public static void registerClientModels() {
+        ClientModel.register();
     }
 
     /**
@@ -172,15 +187,23 @@ public class LeavesBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> {
      */
     @Environment(EnvType.CLIENT)
     private static class ClientModel {
-        private static BlockModelTrait build() {
-            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+        private static void register() {
+            ClientBlockModelRegistry.register(
+                    MODEL,
+                    (key, block, generator, payload) -> build().provideBlockModels(key, block, generator)
+            );
+        }
+
+
+        private static ModelFactory build() {
+            return (key, block, generator) -> {
                 generator.createCubeModel(block);
                 // Leaves are cubes in the hand and in the inventory, not flat sprites: vanilla's
                 // items/oak_leaves.json delegates to block/oak_leaves, and every hand-authored leaf item
                 // model in BetterNether parents from its block model for the same reason. createFlatItem
                 // here rendered them as 2D icons.
                 generator.delegateItemModel(block);
-            });
+            };
         }
     }
 

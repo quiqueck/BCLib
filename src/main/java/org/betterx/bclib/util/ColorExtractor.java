@@ -1,7 +1,7 @@
 package org.betterx.bclib.util;
 
+import de.ambertation.wunderlib.utils.ColorUtilARGB32;
 
-import org.betterx.ui.ColorUtil;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -80,10 +80,10 @@ public class ColorExtractor {
         this.colors.forEach(color -> {
             int id = 0;
             int base = centers.get(0).getColor();
-            int dst = ColorUtil.colorDistance(color, base);
+            int dst = ColorUtilARGB32.colorDistance(color, base);
             for (Center center : centers) {
                 base = center.getColor();
-                int dst1 = ColorUtil.colorDistance(color, base);
+                int dst1 = ColorUtilARGB32.colorDistance(color, base);
                 if (dst1 < dst) {
                     dst = dst1;
                     id = centers.indexOf(center);

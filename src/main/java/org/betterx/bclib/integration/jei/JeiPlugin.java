@@ -1,36 +1,41 @@
 package org.betterx.bclib.integration.jei;
 
 import org.betterx.bclib.BCLib;
-import org.betterx.bclib.blocks.LeveledAnvilBlock;
-import org.betterx.bclib.interfaces.AlloyingRecipeWorkstation;
 import org.betterx.bclib.recipes.AlloyingRecipe;
 import org.betterx.bclib.recipes.AnvilRecipe;
+import org.betterx.bclib.recipes.RecipeViewerStations;
 import de.ambertation.wover.recipe.api.SyncedRecipes;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.Holder;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Registered through the {@code jei_mod_plugin} entrypoint, which only JEI (a client mod) reads - so
+ * none of the JEI classes here are ever loaded on a dedicated server.
+ * <p>
+ * The categories belong to BCLib because BCLib owns the recipe types. Workstations and anvils are
+ * found by class ({@code AlloyingRecipeWorkstation}, {@code AnvilBlock} + crafting level), so the
+ * End Stone Smelter and every BetterEnd anvil show up without the content mods registering anything.
+ */
+@Environment(EnvType.CLIENT)
 public class JeiPlugin implements IModPlugin {
-    private static final Identifier UID = BCLib.C.mk("jei_plugin");
-
-    private List<AnvilCategory> anvilCategories = List.of();
+    private static final Identifier UID = BCLib.makeID("jei_plugin");
 
     @Override
     public Identifier getPluginUid() {
@@ -39,75 +44,55 @@ public class JeiPlugin implements IModPlugin {
 
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
-        IGuiHelper guiHelper = registration.getJeiHelpers().getGuiHelper();
+        final IGuiHelper guiHelper = registration.getJeiHelpers().getGuiHelper();
 
-        List<Block> anvils = LeveledAnvilBlock.getAnvils();
-        int maxLevel = anvils.stream().mapToInt(LeveledAnvilBlock::getAnvilCraftingLevel).max().orElse(0);
-
-        List<AnvilCategory> anvilCategories = new ArrayList<>();
-        for (int level = 0; level <= maxLevel; level++) {
-            final int lvl = level;
-            Block workstation = anvils.stream()
-                                       .filter(b -> LeveledAnvilBlock.canHandle(b, lvl))
-                                       .min(Comparator.comparingInt(LeveledAnvilBlock::getAnvilCraftingLevel))
-                                       .orElse(Blocks.ANVIL);
-            anvilCategories.add(new AnvilCategory(guiHelper, level, workstation));
+        final List<Block> workstations = RecipeViewerStations.alloyingWorkstations();
+        if (!workstations.isEmpty()) {
+            registration.addRecipeCategories(new AlloyingCategory(guiHelper, workstations.getFirst()));
         }
-        this.anvilCategories = anvilCategories;
 
-        List<IRecipeCategory<?>> categories = new ArrayList<>();
-        categories.add(new AlloyingCategory(guiHelper));
-        categories.addAll(anvilCategories);
-        registration.addRecipeCategories(categories.toArray(IRecipeCategory[]::new));
+        final List<Block> anvils = RecipeViewerStations.anvilsFor(0);
+        registration.addRecipeCategories(new AnvilCategory(
+                guiHelper,
+                anvils.isEmpty() ? Blocks.ANVIL : anvils.getLast()
+        ));
     }
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        Level clientLevel = Minecraft.getInstance().level;
-        if (clientLevel == null) return;
+        final Level level = Minecraft.getInstance().level;
+        if (level == null) return;
+
+        if (!RecipeViewerStations.alloyingWorkstations().isEmpty()) {
+            registration.addRecipes(AlloyingCategory.TYPE, List.copyOf(SyncedRecipes.allOfType(level, AlloyingRecipe.TYPE)));
+        }
 
         registration.addRecipes(
-                AlloyingCategory.TYPE,
-                List.copyOf(SyncedRecipes.allOfType(clientLevel, AlloyingRecipe.TYPE))
+                AnvilCategory.TYPE,
+                SyncedRecipes.allOfType(level, AnvilRecipe.TYPE)
+                             .stream()
+                             .sorted(Comparator.<RecipeHolder<AnvilRecipe>>comparingInt(r -> r.value().getAnvilLevel())
+                                               .thenComparing(r -> r.id().identifier()))
+                             .toList()
         );
-
-        List<List<AnvilRecipeDisplay>> byLevel = new ArrayList<>();
-        for (int i = 0; i < anvilCategories.size(); i++) byLevel.add(new ArrayList<>());
-
-        // read the hammer tag off the connection's own registries: a client connected to a
-        // dedicated server never gets a WorldState registry access, so the no-arg
-        // AnvilRecipe.getAllHammers() would leave every anvil category empty there.
-        final Iterable<Holder<Item>> hammers = AnvilRecipe.getAllHammers(clientLevel.registryAccess());
-
-        for (RecipeHolder<AnvilRecipe> recipeHolder : SyncedRecipes.allOfType(clientLevel, AnvilRecipe.TYPE)) {
-            AnvilRecipe recipe = recipeHolder.value();
-            int level = Math.max(0, Math.min(anvilCategories.size() - 1, recipe.getAnvilLevel()));
-            for (Holder<Item> hammer : hammers) {
-                if (recipe.canUse(hammer.value())) {
-                    byLevel.get(level)
-                           .add(new AnvilRecipeDisplay(recipeHolder.id().identifier(), recipe, hammer.value()));
-                }
-            }
-        }
-
-        for (int level = 0; level < anvilCategories.size(); level++) {
-            registration.addRecipes(anvilCategories.get(level).getType(), byLevel.get(level));
-        }
     }
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        registration.addCraftingStation(
-                AlloyingCategory.TYPE,
-                AlloyingRecipeWorkstation.getWorkstations().toArray(new Block[0])
-        );
+        for (Block workstation : RecipeViewerStations.alloyingWorkstations()) {
+            registration.addCraftingStation(AlloyingCategory.TYPE, workstation);
+        }
 
-        List<Block> anvils = LeveledAnvilBlock.getAnvils();
-        for (AnvilCategory category : anvilCategories) {
-            Block[] catalysts = anvils.stream()
-                                       .filter(b -> LeveledAnvilBlock.canHandle(b, category.level))
-                                       .toArray(Block[]::new);
-            registration.addCraftingStation(category.getType(), catalysts);
+        // only anvils that can craft at least one of the recipes - a vanilla anvil (level I) cannot
+        // do any of BetterEnd's (level II and up)
+        final Level level = Minecraft.getInstance().level;
+        final int minLevel = level == null ? 1 : SyncedRecipes.allOfType(level, AnvilRecipe.TYPE)
+                                                              .stream()
+                                                              .mapToInt(r -> r.value().getAnvilLevel())
+                                                              .min()
+                                                              .orElse(1);
+        for (Block anvil : RecipeViewerStations.anvilsFor(minLevel)) {
+            registration.addCraftingStation(AnvilCategory.TYPE, anvil);
         }
     }
 }

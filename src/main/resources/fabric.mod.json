@@ -1,7 +1,7 @@
 {
     "schemaVersion": 1,
     "id": "bclib",
-    "version": "26.101.2",
+    "version": "26.101.3",
     "name": "BCLib",
     "description": "A library for BetterX team mods",
     "authors": [
@@ -23,6 +23,9 @@
         ],
         "client": [
             "org.betterx.bclib.client.BCLibClient"
+        ],
+        "wover.client.traits": [
+            "org.betterx.bclib.client.models.BCLibClientModels"
         ],
         "server": [
             "org.betterx.bclib.server.BCLibServer"
@@ -59,11 +62,11 @@
         "wover": "26.101.x"
     },
     "breaks": {
-        "wunderlib": "<26.101.1",
-        "wover": "<26.101.2"
+        "wunderlib": "<26.101.2",
+        "wover": "<26.101.3"
     },
     "suggests": {
-        "jei": ">=29.0.0"
+        "jei": ">=29.43.0.107"
     },
     "custom": {
         "wover": {
@@ -74,6 +77,9 @@
             }
         },
         "modmenu": {
+            "badges": [
+                "library"
+            ],
             "links": {
                 "title.link.bclib.discord": "https://discord.gg/kYuATbYbKW"
             }

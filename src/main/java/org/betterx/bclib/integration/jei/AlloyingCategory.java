@@ -1,108 +1,93 @@
 package org.betterx.bclib.integration.jei;
 
-import org.betterx.bclib.interfaces.AlloyingRecipeWorkstation;
 import org.betterx.bclib.recipes.AlloyingRecipe;
-import org.betterx.bclib.recipes.AlloyingRecipeInput;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.ItemLike;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.drawable.IDrawable;
+import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
+import mezz.jei.api.gui.placement.HorizontalAlignment;
+import mezz.jei.api.gui.placement.VerticalAlignment;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
+import mezz.jei.api.helpers.ICodecHelper;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
-import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.category.IRecipeCategory;
+import mezz.jei.api.recipe.IRecipeManager;
+import mezz.jei.api.recipe.category.AbstractRecipeCategory;
 import mezz.jei.api.recipe.types.IRecipeHolderType;
 
 import java.util.List;
-import java.util.Optional;
 
-public class AlloyingCategory implements IRecipeCategory<RecipeHolder<AlloyingRecipe>> {
+/**
+ * {@link AlloyingRecipe}s (e.g. BetterEnd's End Stone Smelter): two inputs in either order, one
+ * output, laid out like JEI's own furnace categories.
+ */
+@Environment(EnvType.CLIENT)
+public class AlloyingCategory extends AbstractRecipeCategory<RecipeHolder<AlloyingRecipe>> {
     public static final IRecipeHolderType<AlloyingRecipe> TYPE = IRecipeHolderType.create(AlloyingRecipe.TYPE);
 
     private static final int WIDTH = 100;
-    private static final int HEIGHT = 42;
+    private static final int HEIGHT = 54;
+    private static final int TEXT_COLOR = 0xFF808080;
 
-    private final IDrawable icon;
-    private final Component title;
-
-    public AlloyingCategory(IGuiHelper guiHelper) {
-        List<Block> workstations = AlloyingRecipeWorkstation.getWorkstations();
-        this.icon = guiHelper.createDrawableItemStack(AlloyingRecipeWorkstation.getWorkstationIcon());
-        this.title = workstations.isEmpty()
-                ? Component.translatable("emi.category.bclib.alloying")
-                : Component.translatable(workstations.get(0).getDescriptionId());
+    public AlloyingCategory(IGuiHelper guiHelper, ItemLike icon) {
+        super(
+                TYPE,
+                Component.translatable("category.bclib.jei.alloying"),
+                guiHelper.createDrawableItemLike(icon),
+                WIDTH,
+                HEIGHT
+        );
     }
 
     @Override
-    public IRecipeHolderType<AlloyingRecipe> getRecipeType() {
-        return TYPE;
-    }
+    public void setRecipe(IRecipeLayoutBuilder builder, RecipeHolder<AlloyingRecipe> holder, IFocusGroup focuses) {
+        final AlloyingRecipe recipe = holder.value();
+        // placementInfo() leaves out a missing second input, getIngredients() would not
+        final List<Ingredient> inputs = recipe.placementInfo().ingredients();
 
-    @Override
-    public Component getTitle() {
-        return title;
-    }
-
-    @Override
-    public int getWidth() {
-        return WIDTH;
-    }
-
-    @Override
-    public int getHeight() {
-        return HEIGHT;
-    }
-
-    @Override
-    public IDrawable getIcon() {
-        return icon;
-    }
-
-    @Override
-    public void setRecipe(
-            IRecipeLayoutBuilder builder,
-            RecipeHolder<AlloyingRecipe> recipeHolder,
-            IFocusGroup focuses
-    ) {
-        AlloyingRecipe recipe = recipeHolder.value();
-        List<Optional<Ingredient>> ingredients = recipe.getIngredients();
-
-        builder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
-               .add(ingredients.get(0).orElseThrow());
-
-        if (ingredients.size() > 1 && ingredients.get(1).isPresent()) {
-            builder.addSlot(RecipeIngredientRole.INPUT, 20, 1)
-                   .add(ingredients.get(1).get());
+        for (int i = 0; i < 2; i++) {
+            final IRecipeSlotBuilder slot = builder.addInputSlot(1 + 18 * i, 1).setStandardSlotBackground();
+            if (i < inputs.size()) slot.add(inputs.get(i));
         }
 
-        ItemStack output = recipe.assemble(new AlloyingRecipeInput(ItemStack.EMPTY));
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 78, 4)
-               .add(output);
+        builder.addOutputSlot(WIDTH - 22, 19)
+               .setOutputSlotBackground()
+               .add(recipe.assemble(null));
     }
 
     @Override
-    public void createRecipeExtras(
-            IRecipeExtrasBuilder builder,
-            RecipeHolder<AlloyingRecipe> recipeHolder,
-            IFocusGroup focuses
-    ) {
-        AlloyingRecipe recipe = recipeHolder.value();
+    public void createRecipeExtras(IRecipeExtrasBuilder builder, RecipeHolder<AlloyingRecipe> holder, IFocusGroup focuses) {
+        final AlloyingRecipe recipe = holder.value();
+        final int smeltTime = recipe.getSmeltTime();
 
-        builder.addAnimatedRecipeArrow(recipe.getSmeltTime()).setPosition(43, 2);
-        builder.addAnimatedRecipeFlame(200).setPosition(1, 20);
-        builder.addText(
-                List.of(Component.translatable(
-                        "tooltip.bclib.jei.alloying_info",
-                        recipe.experience(),
-                        recipe.getSmeltTime() / 20.0
-                )),
-                WIDTH, 9
-        ).setPosition(0, HEIGHT - 9).setColor(0xFF808080);
+        builder.addAnimatedRecipeFlame(300).setPosition(11, 20);
+        builder.addAnimatedRecipeArrow(Math.max(1, smeltTime)).setPosition(44, 18);
+
+        if (recipe.experience() > 0) {
+            builder.addText(Component.translatable("gui.jei.category.smelting.experience", recipe.experience()), WIDTH - 40, 10)
+                   .setPosition(0, 0, WIDTH, HEIGHT, HorizontalAlignment.RIGHT, VerticalAlignment.TOP)
+                   .setTextAlignment(HorizontalAlignment.RIGHT)
+                   .setColor(TEXT_COLOR);
+        }
+        if (smeltTime > 0) {
+            builder.addText(Component.translatable("gui.jei.category.smelting.time.seconds", smeltTime / 20), WIDTH - 40, 10)
+                   .setPosition(0, 0, WIDTH, HEIGHT, HorizontalAlignment.RIGHT, VerticalAlignment.BOTTOM)
+                   .setTextAlignment(HorizontalAlignment.RIGHT)
+                   .setTextAlignment(VerticalAlignment.BOTTOM)
+                   .setColor(TEXT_COLOR);
+        }
+    }
+
+    @Override
+    public Codec<RecipeHolder<AlloyingRecipe>> getCodec(ICodecHelper codecHelper, IRecipeManager recipeManager) {
+        return codecHelper.getRecipeHolderCodec();
     }
 }
