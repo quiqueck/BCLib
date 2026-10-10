@@ -1,10 +1,10 @@
 package org.betterx.bclib.items;
 
+import de.ambertation.wunderlib.utils.ColorUtilARGB32;
 import de.ambertation.wunderlib.math.Bounds;
 import org.betterx.bclib.commands.PlaceCommand;
 import org.betterx.bclib.interfaces.AirSelectionItem;
 import org.betterx.bclib.util.BlocksHelper;
-import org.betterx.ui.ColorUtil;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.commands.arguments.blocks.BlockStateParser;
@@ -200,7 +200,7 @@ public class DebugDataItem extends Item implements AirSelectionItem {
     }
 
     public static void message(Player player, String text) {
-        message(player, text, ColorUtil.GRAY);
+        message(player, text, ColorUtilARGB32.GRAY);
     }
 
     public static void message(Player player, String text, int color) {

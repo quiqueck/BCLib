@@ -1,6 +1,6 @@
 package org.betterx.bclib.trait.block;
 
-import de.ambertation.wover.block.api.client.trait.BlockModelTrait;
+import de.ambertation.wover.block.api.model.BlockModelBinding;
 import de.ambertation.wover.block.api.trait.BlockTraitLookup;
 import de.ambertation.wover.sets.api.blocks.BlockSet;
 import de.ambertation.wover.sets.api.blocks.SlotType;
@@ -57,7 +57,7 @@ public class WeightedBark extends Bark {
 
     @Environment(EnvType.CLIENT)
     @Override
-    protected BlockModelTrait buildModel(BlockSet<?> set, BlockTraitLookup blockTraitLookup) {
+    protected BlockModelBinding buildModel(BlockSet<?> set, BlockTraitLookup blockTraitLookup) {
         return WeightedPillarModelTrait.bark(
                 () -> set.getBlock(stripable ? SlotType.LOG : SlotType.STRIPPED_LOG),
                 weights,

@@ -111,7 +111,21 @@ public class StructureWorld {
     }
 
     private static final class Part {
+        // Compact block layout: (x & 15) << 28 | (z & 15) << 24 | (y & 0xFFF) << 12 | paletteIndex
+        // y is a signed 12-bit value, which covers the whole possible build height (-2032..2031)
+        private static final int PACKED_MIN_Y = -2048;
+        private static final int PACKED_MAX_Y = 2047;
+        private static final int PACKED_INDEX_MASK = 0xFFF;
+
         Map<BlockPos, BlockState> blocks = Maps.newHashMap();
+
+        private static int pack(BlockPos pos, int stateID) {
+            return (pos.getX() & 15) << 28 | (pos.getZ() & 15) << 24 | (pos.getY() & 0xFFF) << 12 | stateID;
+        }
+
+        private static BlockPos unpackPos(int value) {
+            return new BlockPos((value >>> 28) & 15, (value << 8) >> 20, (value >>> 24) & 15);
+        }
 
         public Part() {
         }
@@ -126,6 +140,18 @@ public class StructureWorld {
                 );
             }
 
+            final int[] packed = tag.getIntArray("packed").orElse(null);
+            if (packed != null) {
+                for (int value : packed) {
+                    final int stateID = value & PACKED_INDEX_MASK;
+                    if (stateID < blockStates.length) {
+                        this.blocks.put(unpackPos(value), blockStates[stateID]);
+                    }
+                }
+                return;
+            }
+
+            // Legacy format: one compound per block
             tag.getList("blocks").ifPresent(blocks -> {
                 blocks.forEach((element) -> {
                     CompoundTag block = (CompoundTag) element;
@@ -148,34 +174,55 @@ public class StructureWorld {
         }
 
         void placeChunk(ChunkAccess chunk) {
-            blocks.forEach(chunk::setBlockState);
+            blocks.forEach((pos, state) -> {
+                //ChunkAccess#setBlockState does not remove block entities, so a block a feature placed
+                //earlier (e.g. a chest or skull) would leave its block entity behind under the new block
+                final BlockState old = chunk.setBlockState(pos, state);
+                if (old != null && old.hasBlockEntity() && !old.is(state.getBlock())) {
+                    //pos is chunk-local, block entities are keyed by their world position
+                    chunk.removeBlockEntity(chunk.getPos().getBlockAt(pos.getX(), pos.getY(), pos.getZ()));
+                }
+            });
         }
 
         CompoundTag toNBT(int x, int z) {
             CompoundTag tag = new CompoundTag();
             tag.putInt("x", x);
             tag.putInt("z", z);
-            ListTag map = new ListTag();
-            tag.put("blocks", map);
             ListTag stateMap = new ListTag();
             tag.put("states", stateMap);
 
-            int[] id = new int[1];
             Map<BlockState, Integer> states = Maps.newHashMap();
-
-            blocks.forEach((pos, state) -> {
-                int stateID = states.getOrDefault(states, -1);
-                if (stateID < 0) {
-                    stateID = id[0]++;
-                    states.put(state, stateID);
-                    stateMap.add(NbtUtils.writeBlockState(state));
+            boolean canPack = true;
+            for (Map.Entry<BlockPos, BlockState> e : blocks.entrySet()) {
+                if (!states.containsKey(e.getValue())) {
+                    states.put(e.getValue(), states.size());
+                    stateMap.add(NbtUtils.writeBlockState(e.getValue()));
                 }
+                final int y = e.getKey().getY();
+                if (y < PACKED_MIN_Y || y > PACKED_MAX_Y) canPack = false;
+            }
+            if (states.size() > PACKED_INDEX_MASK + 1) canPack = false;
 
-                CompoundTag block = new CompoundTag();
-                block.put("pos", NbtHelper.writeBlockPos(pos));
-                block.putInt("state", stateID);
-                map.add(block);
-            });
+            if (canPack) {
+                // Compact format: one int per block, see pack()
+                final int[] packed = new int[blocks.size()];
+                int i = 0;
+                for (Map.Entry<BlockPos, BlockState> e : blocks.entrySet()) {
+                    packed[i++] = pack(e.getKey(), states.get(e.getValue()));
+                }
+                tag.putIntArray("packed", packed);
+            } else {
+                // Does not fit the compact layout, use the (palette-indexed) legacy format
+                ListTag map = new ListTag();
+                tag.put("blocks", map);
+                blocks.forEach((pos, state) -> {
+                    CompoundTag block = new CompoundTag();
+                    block.put("pos", NbtHelper.writeBlockPos(pos));
+                    block.putInt("state", states.get(state));
+                    map.add(block);
+                });
+            }
 
             return tag;
         }

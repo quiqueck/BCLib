@@ -15,7 +15,7 @@ public class BCLibClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-
+        ClientLevelGenEvents.register();
         ModIntegrationAPI.registerAll();
         BaseBlockEntityRenders.register();
         DataExchangeAPI.prepareClientside();

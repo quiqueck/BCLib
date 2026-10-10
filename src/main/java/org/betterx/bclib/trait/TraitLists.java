@@ -1,7 +1,7 @@
 package org.betterx.bclib.trait;
 
 import de.ambertation.wover.block.api.model.ModelTraitLibrary;
-import de.ambertation.wover.block.api.client.trait.ClientBlockTraits;
+import de.ambertation.wover.block.api.render.BlockRenderTraits;
 import de.ambertation.wover.block.api.trait.BlockTrait;
 
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import java.util.List;
  * helpers take, so a block can be handed several unrelated rules (a ground rule, a render layer, a
  * {@link ModelTraitLibrary} model) through a single list parameter.
  * <p>
- * The client-only trait builders ({@link ModelTraitLibrary}, {@link ClientBlockTraits#RENDER_LAYER}) return
+ * The client-only trait builders ({@link ModelTraitLibrary}, {@link BlockRenderTraits#RENDER_LAYER}) return
  * {@code null} outside the client/datagen, so these lists must tolerate a null element - {@link List#of}
  * would throw on one. Nulls are dropped here, so the returned lists are always null-free.
  */

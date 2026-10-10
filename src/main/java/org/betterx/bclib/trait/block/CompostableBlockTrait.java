@@ -4,6 +4,7 @@ import org.betterx.bclib.BCLib;
 import de.ambertation.wover.block.api.BlockDefinition;
 import de.ambertation.wover.block.api.trait.BlockTrait;
 import de.ambertation.wover.block.api.trait.BlockTraitKey;
+import de.ambertation.wover.block.api.trait.CompostTier;
 import de.ambertation.wover.block.api.trait.CompostableTrait;
 import de.ambertation.wover.block.api.trait.GenericBlockTrait;
 import de.ambertation.wover.block.impl.trait.BlockTraitImpl;
@@ -31,20 +32,29 @@ import java.util.List;
 public class CompostableBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait>
         implements GenericBlockTrait, CompostableTrait {
     public static final BlockTraitKey KEY = BlockTraitKey.ofUnique(BCLib.C, "compostable");
-    private static final CompostableBlockTrait DEFAULT = new CompostableBlockTrait(0.1f);
+    private static final CompostableBlockTrait DEFAULT = new CompostableBlockTrait(CompostTier.VERY_LOW);
 
     public static CompostableBlockTrait withDefault() {
         return DEFAULT;
     }
 
+    /**
+     * @param chance the requested composting chance; snapped to the nearest {@link CompostTier}
+     */
     public static CompostableBlockTrait withChance(float chance) {
-        return new CompostableBlockTrait(chance);
+        return new CompostableBlockTrait(CompostTier.nearest(chance));
     }
 
+    public static CompostableBlockTrait withTier(CompostTier tier) {
+        return new CompostableBlockTrait(tier);
+    }
+
+    public final CompostTier tier;
     public final float compostingChance;
 
-    private CompostableBlockTrait(float compostingChance) {
-        this.compostingChance = compostingChance;
+    private CompostableBlockTrait(CompostTier tier) {
+        this.tier = tier;
+        this.compostingChance = tier.chance;
     }
 
     @Override
@@ -60,6 +70,11 @@ public class CompostableBlockTrait extends BlockTraitImpl<Block, GenericBlockTra
     @Override
     public float compostChance() {
         return compostingChance;
+    }
+
+    @Override
+    public CompostTier compostTier() {
+        return tier;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package org.betterx.bclib.client.gui.screens;
 
-import de.ambertation.wunderlib.ui.ColorHelper;
+import de.ambertation.wunderlib.utils.ColorUtilARGB32;
 import de.ambertation.wunderlib.ui.layout.components.HorizontalStack;
 import de.ambertation.wunderlib.ui.layout.components.LayoutComponent;
 import de.ambertation.wunderlib.ui.layout.components.VerticalStack;
@@ -43,7 +43,7 @@ public class LevelFixErrorScreen extends BCLibLayoutScreen {
             row.addText(fit(), fit(), dash);
 
             row.addSpacer(4);
-            row.addText(fit(), fit(), Component.literal(error)).setColor(ColorHelper.RED);
+            row.addText(fit(), fit(), Component.literal(error)).setColor(ColorUtilARGB32.RED);
         }
         grid.addSpacer(8);
 

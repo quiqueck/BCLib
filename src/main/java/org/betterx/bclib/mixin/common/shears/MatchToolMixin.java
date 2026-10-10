@@ -36,18 +36,22 @@ public class MatchToolMixin {
 
     @Inject(method = "test(Lnet/minecraft/world/level/storage/loot/LootContext;)Z", at = @At("HEAD"), cancellable = true)
     private void bcl_isShears(LootContext lootContext, CallbackInfoReturnable<Boolean> cir) {
-        if ((bcl_isShears & BCL_CHECKED) == 0) {
-            bcl_isShears = BCL_CHECKED;
+        byte state = bcl_isShears;
+        if ((state & BCL_CHECKED) == 0) {
+            // compute locally and publish with a single write, so a concurrent caller never
+            // observes CHECKED without SHEARS
+            state = BCL_CHECKED;
             if (this.predicate.isPresent()) {
                 if (this.predicate.get().items().isPresent()) {
                     final var items = this.predicate.get().items().get();
                     if (items.size() == 1 && items.get(0).value() == Items.SHEARS) {
-                        bcl_isShears = (byte) (bcl_isShears | BCL_SHEARS);
+                        state = (byte) (state | BCL_SHEARS);
                     }
                 }
             }
+            bcl_isShears = state;
         }
-        if ((bcl_isShears & BCL_SHEARS) != 0) {
+        if ((state & BCL_SHEARS) != 0) {
             ItemStack itemStack = lootContext.getOptionalParameter(LootContextParams.TOOL);
             cir.setReturnValue(itemStack != null && itemStack.is(CommonItemTags.SHEARS));
         }

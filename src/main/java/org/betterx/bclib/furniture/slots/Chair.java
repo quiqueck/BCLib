@@ -2,10 +2,13 @@ package org.betterx.bclib.furniture.slots;
 
 import org.betterx.bclib.client.models.BCLModels;
 import org.betterx.bclib.furniture.block.BaseChair;
+import org.betterx.bclib.trait.block.BCLModelKeys;
 import de.ambertation.wover.block.api.BlockDefinition;
 import de.ambertation.wover.block.api.BlockRegistry;
-import de.ambertation.wover.block.api.client.trait.BlockModelTrait;
-import de.ambertation.wover.block.api.client.trait.ClientBlockTraits;
+import de.ambertation.wover.block.api.client.model.ClientBlockModelRegistry;
+import de.ambertation.wover.block.api.client.trait.BlockModelTrait.ModelFactory;
+import de.ambertation.wover.block.api.model.BlockModelBinding;
+import de.ambertation.wover.block.api.model.ModelKey;
 import de.ambertation.wover.block.api.trait.BlockRecipeTrait;
 import de.ambertation.wover.block.api.trait.BlockTraitLookup;
 import de.ambertation.wover.block.api.trait.BlockTraits;
@@ -105,8 +108,22 @@ public class Chair extends SlotFromDefinition {
 
     @Environment(EnvType.CLIENT)
     @Override
-    protected BlockModelTrait buildModel(BlockSet<?> set, BlockTraitLookup traitLookup) {
-        return ClientModel.build(set, textureSlot, cloth);
+    protected BlockModelBinding buildModel(BlockSet<?> set, BlockTraitLookup traitLookup) {
+        return BlockModelBinding.of(MODEL, new ModelParams(set, textureSlot, cloth));
+    }
+
+    private record ModelParams(BlockSet<?> set, SlotType textureSlot, Supplier<Block> cloth) {
+    }
+
+    private static final ModelKey<ModelParams> MODEL = BCLModelKeys.key("chair");
+
+    /**
+     * Registers the client generators behind this class's model keys. Called from the mod's
+     * {@code wover.client.traits} entrypoint.
+     */
+    @Environment(EnvType.CLIENT)
+    public static void registerClientModels() {
+        ClientModel.register();
     }
 
     /**
@@ -120,13 +137,24 @@ public class Chair extends SlotFromDefinition {
      */
     @Environment(EnvType.CLIENT)
     private static class ClientModel {
-        private static BlockModelTrait build(BlockSet<?> set, SlotType textureSlot, Supplier<Block> cloth) {
-            return ClientBlockTraits.MODEL.with((key, block, generator) -> BCLModels.createChairBlockModel(
+        private static void register() {
+            ClientBlockModelRegistry.register(
+                    MODEL,
+                    (key, block, generator, payload) -> buildFrom(payload).provideBlockModels(key, block, generator)
+            );
+        }
+
+        private static ModelFactory buildFrom(ModelParams p) {
+            return build(p.set(), p.textureSlot(), p.cloth());
+        }
+
+        private static ModelFactory build(BlockSet<?> set, SlotType textureSlot, Supplier<Block> cloth) {
+            return (key, block, generator) -> BCLModels.createChairBlockModel(
                     generator,
                     block,
                     set.getBlockWithFallback(textureSlot),
                     cloth.get()
-            ));
+            );
         }
     }
 }

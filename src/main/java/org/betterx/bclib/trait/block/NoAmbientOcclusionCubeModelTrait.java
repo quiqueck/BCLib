@@ -1,8 +1,9 @@
 package org.betterx.bclib.trait.block;
 
-import de.ambertation.wover.block.api.client.trait.BlockModelTrait;
-import de.ambertation.wover.block.api.client.trait.ClientBlockTraits;
-import de.ambertation.wover.core.api.ModCore;
+import de.ambertation.wover.block.api.client.model.ClientBlockModelRegistry;
+import de.ambertation.wover.block.api.client.trait.BlockModelTrait.ModelFactory;
+import de.ambertation.wover.block.api.model.BlockModelBinding;
+import de.ambertation.wover.block.api.model.ModelKey;
 
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.model.ModelTemplate;
@@ -36,19 +37,46 @@ public class NoAmbientOcclusionCubeModelTrait {
      *               {@code betterend:block/cube_noshade}
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static BlockModelTrait withParent(ResourceLocation parent) {
-        return ModCore.isDatagen() ? Impl.withParent(parent) : null;
+    public static BlockModelBinding withParent(ResourceLocation parent) {
+        return BlockModelBinding.of(MODEL_WITH_PARENT, new WithParentParams(parent));
+    }
+
+    private record WithParentParams(ResourceLocation parent) {
+    }
+
+    private static final ModelKey<WithParentParams> MODEL_WITH_PARENT =
+            BCLModelKeys.key("no_ambient_occlusion_cube_model_trait/with_parent");
+
+    /**
+     * Registers the client generators behind this class's model keys. Called from the mod's
+     * {@code wover.client.traits} entrypoint.
+     */
+    @Environment(EnvType.CLIENT)
+    public static void registerClientModels() {
+        Impl.register();
     }
 
     @Environment(EnvType.CLIENT)
     private static class Impl {
-        private static BlockModelTrait withParent(ResourceLocation parent) {
+        private static void register() {
+            ClientBlockModelRegistry.register(
+                    MODEL_WITH_PARENT,
+                    (key, block, generator, payload) -> withParentFrom(payload)
+                            .provideBlockModels(key, block, generator)
+            );
+        }
+
+        private static ModelFactory withParentFrom(WithParentParams p) {
+            return withParent(p.parent());
+        }
+
+        private static ModelFactory withParent(ResourceLocation parent) {
             final ModelTemplate template = new ModelTemplate(
                     Optional.of(parent),
                     Optional.empty(),
                     TextureSlot.TEXTURE
             );
-            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+            return (key, block, generator) -> {
                 final var mapping = new TextureMapping()
                         .put(TextureSlot.TEXTURE, TextureMapping.getBlockTexture(block));
                 final var location = template.create(block, mapping, generator.modelOutput());
@@ -57,7 +85,7 @@ public class NoAmbientOcclusionCubeModelTrait {
                         BlockModelGenerators.plainVariant(location)
                 ));
                 generator.delegateItemModel(block, location);
-            });
+            };
         }
     }
 }

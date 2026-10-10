@@ -1,7 +1,9 @@
 package org.betterx.bclib.trait.block;
 
-import de.ambertation.wover.block.api.client.trait.BlockModelTrait;
-import de.ambertation.wover.block.api.client.trait.ClientBlockTraits;
+import de.ambertation.wover.block.api.client.model.ClientBlockModelRegistry;
+import de.ambertation.wover.block.api.client.trait.BlockModelTrait.ModelFactory;
+import de.ambertation.wover.block.api.model.BlockModelBinding;
+import de.ambertation.wover.block.api.model.ModelKey;
 import de.ambertation.wover.core.api.ModCore;
 
 import net.minecraft.client.data.models.BlockModelGenerators;
@@ -51,8 +53,8 @@ public class TemplateModelTrait {
      * @param templateParent the shared ladder template model to parent the child model from
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static BlockModelTrait ladder(ResourceLocation templateParent) {
-        return ModCore.isDatagen() ? Impl.ladder(templateParent) : null;
+    public static BlockModelBinding ladder(ResourceLocation templateParent) {
+        return BlockModelBinding.of(MODEL_LADDER, new LadderParams(templateParent));
     }
 
     /**
@@ -66,8 +68,8 @@ public class TemplateModelTrait {
      *                        own {@code _side} texture); {@code false} maps every face to the block's own texture
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static BlockModelTrait trapdoor(ResourceLocation templateParent, boolean withSide) {
-        return ModCore.isDatagen() ? Impl.trapdoor(templateParent, withSide) : null;
+    public static BlockModelBinding trapdoor(ResourceLocation templateParent, boolean withSide) {
+        return BlockModelBinding.of(MODEL_TRAPDOOR_1, new Trapdoor1Params(templateParent, withSide));
     }
 
     /**
@@ -83,8 +85,8 @@ public class TemplateModelTrait {
      * @param sideTexture    the explicit {@code #side} texture (not an {@code _side} suffix of the block texture)
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static BlockModelTrait trapdoor(ResourceLocation templateParent, ResourceLocation sideTexture) {
-        return ModCore.isDatagen() ? Impl.trapdoor(templateParent, sideTexture) : null;
+    public static BlockModelBinding trapdoor(ResourceLocation templateParent, ResourceLocation sideTexture) {
+        return BlockModelBinding.of(MODEL_TRAPDOOR_2, new Trapdoor2Params(templateParent, sideTexture));
     }
 
     /**
@@ -100,8 +102,8 @@ public class TemplateModelTrait {
      *                       texture); {@code false} when the template already declares {@code "particle": "#texture"}
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static BlockModelTrait cube(ResourceLocation templateParent, boolean withParticle) {
-        return ModCore.isDatagen() ? Impl.cube(templateParent, withParticle) : null;
+    public static BlockModelBinding cube(ResourceLocation templateParent, boolean withParticle) {
+        return BlockModelBinding.of(MODEL_CUBE, new CubeParams(templateParent, withParticle));
     }
 
     /**
@@ -116,8 +118,8 @@ public class TemplateModelTrait {
      * @param templateParent the shared template model to parent the child model from
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static BlockModelTrait randomYRotation(ResourceLocation templateParent) {
-        return ModCore.isDatagen() ? Impl.randomYRotation(templateParent) : null;
+    public static BlockModelBinding randomYRotation(ResourceLocation templateParent) {
+        return BlockModelBinding.of(MODEL_RANDOM_Y_ROTATION, new RandomYRotationParams(templateParent));
     }
 
     /**
@@ -137,7 +139,7 @@ public class TemplateModelTrait {
      * @param sideTexture      the {@code side} face texture
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static BlockModelTrait stairs(
+    public static BlockModelBinding stairs(
             ResourceLocation templateStraight,
             ResourceLocation templateInner,
             ResourceLocation templateOuter,
@@ -145,9 +147,10 @@ public class TemplateModelTrait {
             ResourceLocation topTexture,
             ResourceLocation sideTexture
     ) {
-        return ModCore.isDatagen()
-                ? Impl.stairs(templateStraight, templateInner, templateOuter, bottomTexture, topTexture, sideTexture)
-                : null;
+        return BlockModelBinding.of(
+                MODEL_STAIRS,
+                new StairsParams(templateStraight, templateInner, templateOuter, bottomTexture, topTexture, sideTexture)
+        );
     }
 
     /**
@@ -164,15 +167,16 @@ public class TemplateModelTrait {
      * @param wallTexture      the {@code wall} texture bound into every template
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static BlockModelTrait wall(
+    public static BlockModelBinding wall(
             ResourceLocation templatePost,
             ResourceLocation templateSide,
             ResourceLocation templateSideTall,
             ResourceLocation wallTexture
     ) {
-        return ModCore.isDatagen()
-                ? Impl.wall(templatePost, templateSide, templateSideTall, wallTexture)
-                : null;
+        return BlockModelBinding.of(
+                MODEL_WALL,
+                new WallParams(templatePost, templateSide, templateSideTall, wallTexture)
+        );
     }
 
     /**
@@ -191,28 +195,182 @@ public class TemplateModelTrait {
      * @param inventoryTexture the {@code texture} for the {@code fence_inventory} item model
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static BlockModelTrait fence(
+    public static BlockModelBinding fence(
             ResourceLocation templatePost,
             ResourceLocation templateSide,
             ResourceLocation sideTexture,
             ResourceLocation topTexture,
             ResourceLocation inventoryTexture
     ) {
-        return ModCore.isDatagen()
-                ? Impl.fence(templatePost, templateSide, sideTexture, topTexture, inventoryTexture)
-                : null;
+        return BlockModelBinding.of(
+                MODEL_FENCE,
+                new FenceParams(templatePost, templateSide, sideTexture, topTexture, inventoryTexture)
+        );
+    }
+
+    private record FenceParams(
+            ResourceLocation templatePost,
+            ResourceLocation templateSide,
+            ResourceLocation sideTexture,
+            ResourceLocation topTexture,
+            ResourceLocation inventoryTexture
+    ) {
+    }
+
+    private static final ModelKey<FenceParams> MODEL_FENCE = BCLModelKeys.key("template_model_trait/fence");
+
+    private record StairsParams(
+            ResourceLocation templateStraight,
+            ResourceLocation templateInner,
+            ResourceLocation templateOuter,
+            ResourceLocation bottomTexture,
+            ResourceLocation topTexture,
+            ResourceLocation sideTexture
+    ) {
+    }
+
+    private static final ModelKey<StairsParams> MODEL_STAIRS = BCLModelKeys.key("template_model_trait/stairs");
+
+    private record WallParams(
+            ResourceLocation templatePost,
+            ResourceLocation templateSide,
+            ResourceLocation templateSideTall,
+            ResourceLocation wallTexture
+    ) {
+    }
+
+    private static final ModelKey<WallParams> MODEL_WALL = BCLModelKeys.key("template_model_trait/wall");
+
+    private record CubeParams(ResourceLocation templateParent, boolean withParticle) {
+    }
+
+    private static final ModelKey<CubeParams> MODEL_CUBE = BCLModelKeys.key("template_model_trait/cube");
+
+    private record RandomYRotationParams(ResourceLocation templateParent) {
+    }
+
+    private static final ModelKey<RandomYRotationParams> MODEL_RANDOM_Y_ROTATION =
+            BCLModelKeys.key("template_model_trait/random_y_rotation");
+
+    private record LadderParams(ResourceLocation templateParent) {
+    }
+
+    private static final ModelKey<LadderParams> MODEL_LADDER = BCLModelKeys.key("template_model_trait/ladder");
+
+    private record Trapdoor1Params(ResourceLocation templateParent, boolean withSide) {
+    }
+
+    private static final ModelKey<Trapdoor1Params> MODEL_TRAPDOOR_1 =
+            BCLModelKeys.key("template_model_trait/trapdoor_1");
+
+    private record Trapdoor2Params(ResourceLocation templateParent, ResourceLocation sideTexture) {
+    }
+
+    private static final ModelKey<Trapdoor2Params> MODEL_TRAPDOOR_2 =
+            BCLModelKeys.key("template_model_trait/trapdoor_2");
+
+    /**
+     * Registers the client generators behind this class's model keys. Called from the mod's
+     * {@code wover.client.traits} entrypoint.
+     */
+    @Environment(EnvType.CLIENT)
+    public static void registerClientModels() {
+        Impl.register();
     }
 
     @Environment(EnvType.CLIENT)
     private static class Impl {
-        private static BlockModelTrait fence(
+        private static void register() {
+            ClientBlockModelRegistry.register(
+                    MODEL_FENCE,
+                    (key, block, generator, payload) -> fenceFrom(payload).provideBlockModels(key, block, generator)
+            );
+            ClientBlockModelRegistry.register(
+                    MODEL_STAIRS,
+                    (key, block, generator, payload) -> stairsFrom(payload).provideBlockModels(key, block, generator)
+            );
+            ClientBlockModelRegistry.register(
+                    MODEL_WALL,
+                    (key, block, generator, payload) -> wallFrom(payload).provideBlockModels(key, block, generator)
+            );
+            ClientBlockModelRegistry.register(
+                    MODEL_CUBE,
+                    (key, block, generator, payload) -> cubeFrom(payload).provideBlockModels(key, block, generator)
+            );
+            ClientBlockModelRegistry.register(
+                    MODEL_RANDOM_Y_ROTATION,
+                    (key, block, generator, payload) -> randomYRotationFrom(payload)
+                            .provideBlockModels(key, block, generator)
+            );
+            ClientBlockModelRegistry.register(
+                    MODEL_LADDER,
+                    (key, block, generator, payload) -> ladderFrom(payload).provideBlockModels(key, block, generator)
+            );
+            ClientBlockModelRegistry.register(
+                    MODEL_TRAPDOOR_1,
+                    (key, block, generator, payload) -> trapdoor1From(payload)
+                            .provideBlockModels(key, block, generator)
+            );
+            ClientBlockModelRegistry.register(
+                    MODEL_TRAPDOOR_2,
+                    (key, block, generator, payload) -> trapdoor2From(payload)
+                            .provideBlockModels(key, block, generator)
+            );
+        }
+
+        private static ModelFactory fenceFrom(FenceParams p) {
+            return fence(
+                    p.templatePost(),
+                    p.templateSide(),
+                    p.sideTexture(),
+                    p.topTexture(),
+                    p.inventoryTexture()
+            );
+        }
+
+        private static ModelFactory stairsFrom(StairsParams p) {
+            return stairs(
+                    p.templateStraight(),
+                    p.templateInner(),
+                    p.templateOuter(),
+                    p.bottomTexture(),
+                    p.topTexture(),
+                    p.sideTexture()
+            );
+        }
+
+        private static ModelFactory wallFrom(WallParams p) {
+            return wall(p.templatePost(), p.templateSide(), p.templateSideTall(), p.wallTexture());
+        }
+
+        private static ModelFactory cubeFrom(CubeParams p) {
+            return cube(p.templateParent(), p.withParticle());
+        }
+
+        private static ModelFactory randomYRotationFrom(RandomYRotationParams p) {
+            return randomYRotation(p.templateParent());
+        }
+
+        private static ModelFactory ladderFrom(LadderParams p) {
+            return ladder(p.templateParent());
+        }
+
+        private static ModelFactory trapdoor1From(Trapdoor1Params p) {
+            return trapdoor(p.templateParent(), p.withSide());
+        }
+
+        private static ModelFactory trapdoor2From(Trapdoor2Params p) {
+            return trapdoor(p.templateParent(), p.sideTexture());
+        }
+
+        private static ModelFactory fence(
                 ResourceLocation templatePost,
                 ResourceLocation templateSide,
                 ResourceLocation sideTexture,
                 ResourceLocation topTexture,
                 ResourceLocation inventoryTexture
         ) {
-            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+            return (key, block, generator) -> {
                 final var mapping = new TextureMapping()
                         .put(TextureSlot.PARTICLE, sideTexture)
                         .put(TextureSlot.TEXTURE, sideTexture)
@@ -233,10 +391,10 @@ public class TemplateModelTrait {
                 generator.delegateItemModel(block, ModelTemplates.FENCE_INVENTORY.create(
                         block, new TextureMapping().put(TextureSlot.TEXTURE, inventoryTexture),
                         generator.modelOutput()));
-            });
+            };
         }
 
-        private static BlockModelTrait stairs(
+        private static ModelFactory stairs(
                 ResourceLocation templateStraight,
                 ResourceLocation templateInner,
                 ResourceLocation templateOuter,
@@ -244,7 +402,7 @@ public class TemplateModelTrait {
                 ResourceLocation topTexture,
                 ResourceLocation sideTexture
         ) {
-            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+            return (key, block, generator) -> {
                 final var mapping = new TextureMapping()
                         .put(TextureSlot.BOTTOM, bottomTexture)
                         .put(TextureSlot.TOP, topTexture)
@@ -294,7 +452,7 @@ public class TemplateModelTrait {
                 }
                 generator.acceptBlockState(MultiVariantGenerator.dispatch(block).with(dispatch));
                 generator.delegateItemModel(block, straight);
-            });
+            };
         }
 
         private static MultiVariant stairVariant(ResourceLocation model, boolean top, int y) {
@@ -311,13 +469,13 @@ public class TemplateModelTrait {
             return mv;
         }
 
-        private static BlockModelTrait wall(
+        private static ModelFactory wall(
                 ResourceLocation templatePost,
                 ResourceLocation templateSide,
                 ResourceLocation templateSideTall,
                 ResourceLocation wallTexture
         ) {
-            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+            return (key, block, generator) -> {
                 final var mapping = new TextureMapping().put(TextureSlot.WALL, wallTexture);
                 final var post = new ModelTemplate(Optional.of(templatePost), Optional.of("_post"), TextureSlot.WALL)
                         .create(block, mapping, generator.modelOutput());
@@ -336,11 +494,11 @@ public class TemplateModelTrait {
                 // The wall_inventory item model (wover's createWall does this via a private createInventoryModel).
                 generator.delegateItemModel(block, ModelTemplates.WALL_INVENTORY.create(
                         block, mapping, generator.modelOutput()));
-            });
+            };
         }
 
-        private static BlockModelTrait cube(ResourceLocation templateParent, boolean withParticle) {
-            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+        private static ModelFactory cube(ResourceLocation templateParent, boolean withParticle) {
+            return (key, block, generator) -> {
                 final var tex = TextureMapping.getBlockTexture(block);
                 final var mapping = new TextureMapping().put(TextureSlot.TEXTURE, tex);
                 final TextureSlot[] slots;
@@ -357,11 +515,11 @@ public class TemplateModelTrait {
                         BlockModelGenerators.createSimpleBlock(block, BlockModelGenerators.plainVariant(model))
                 );
                 generator.delegateItemModel(block, model);
-            });
+            };
         }
 
-        private static BlockModelTrait randomYRotation(ResourceLocation templateParent) {
-            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+        private static ModelFactory randomYRotation(ResourceLocation templateParent) {
+            return (key, block, generator) -> {
                 final var tex = TextureMapping.getBlockTexture(block);
                 final var mapping = new TextureMapping().put(TextureSlot.TEXTURE, tex);
                 final var template = new ModelTemplate(Optional.of(templateParent), Optional.empty(), TextureSlot.TEXTURE);
@@ -380,11 +538,11 @@ public class TemplateModelTrait {
                 // The inventory icon stays the hand-authored static flat item model (item/<name>), exactly as
                 // wover's externalModel() delegates it - these blocks ship a dedicated item texture.
                 generator.delegateItemModel(block, key.location().withPrefix("item/"));
-            });
+            };
         }
 
-        private static BlockModelTrait ladder(ResourceLocation templateParent) {
-            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+        private static ModelFactory ladder(ResourceLocation templateParent) {
+            return (key, block, generator) -> {
                 final var tex = TextureMapping.getBlockTexture(block);
                 final var mapping = new TextureMapping()
                         .put(TextureSlot.PARTICLE, tex)
@@ -409,11 +567,11 @@ public class TemplateModelTrait {
 
                 generator.vanillaGenerator.registerSimpleFlatItemModel(block);
                 generator.markItemModelProvided(block);
-            });
+            };
         }
 
-        private static BlockModelTrait trapdoor(ResourceLocation templateParent, boolean withSide) {
-            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+        private static ModelFactory trapdoor(ResourceLocation templateParent, boolean withSide) {
+            return (key, block, generator) -> {
                 final var tex = TextureMapping.getBlockTexture(block);
                 final var mapping = new TextureMapping()
                         .put(TextureSlot.PARTICLE, tex)
@@ -428,11 +586,11 @@ public class TemplateModelTrait {
                 final var template = new ModelTemplate(Optional.of(templateParent), Optional.empty(), slots);
                 final var model = template.create(block, mapping, generator.modelOutput());
                 acceptTrapdoorState(block, model, generator);
-            });
+            };
         }
 
-        private static BlockModelTrait trapdoor(ResourceLocation templateParent, ResourceLocation sideTexture) {
-            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+        private static ModelFactory trapdoor(ResourceLocation templateParent, ResourceLocation sideTexture) {
+            return (key, block, generator) -> {
                 final var tex = TextureMapping.getBlockTexture(block);
                 final var mapping = new TextureMapping()
                         .put(TextureSlot.PARTICLE, tex)
@@ -442,7 +600,7 @@ public class TemplateModelTrait {
                 final var template = new ModelTemplate(Optional.of(templateParent), Optional.empty(), slots);
                 final var model = template.create(block, mapping, generator.modelOutput());
                 acceptTrapdoorState(block, model, generator);
-            });
+            };
         }
 
         private static void acceptTrapdoorState(

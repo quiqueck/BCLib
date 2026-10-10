@@ -1,5 +1,6 @@
 package org.betterx.bclib.mixin.common;
 
+import org.betterx.bclib.trait.Compostables;
 import org.betterx.bclib.trait.block.CompostableBlockTrait;
 import org.betterx.bclib.trait.item.CompostableItemTrait;
 
@@ -23,6 +24,10 @@ import org.spongepowered.asm.mixin.injection.At;
  * Precedence is: vanilla map first, then the block trait, then the item trait. Vanilla items are untouched:
  * the wrapped {@link Operation} runs first and, when it already resolves the item, its result is returned
  * verbatim.
+ * <p>
+ * This covers the paths on {@link ComposterBlock} itself. Hoppers insert through the container returned by
+ * {@code getContainer} instead, which runs a fourth map lookup of its own - see
+ * {@link ComposterInputContainerMixin}.
  */
 @Mixin(ComposterBlock.class)
 public class ComposterBlockMixin {
@@ -68,7 +73,7 @@ public class ComposterBlockMixin {
     ) {
         if (original.call(map, key)) return true;
         if (!(key instanceof Item item)) return false;
-        return CompostableBlockTrait.isCompostable(item) || CompostableItemTrait.isCompostable(item);
+        return Compostables.isCompostable(item);
     }
 
     // addItem reads the actual chance via COMPOSTABLES.getFloat (default return value -1 for absent items).
@@ -88,9 +93,6 @@ public class ComposterBlockMixin {
         final float vanilla = original.call(map, key);
         if (vanilla >= 0.0f) return vanilla;
         if (!(key instanceof Item item)) return vanilla;
-
-        final float blockChance = CompostableBlockTrait.chanceFor(item);
-        if (blockChance >= 0.0f) return blockChance;
-        return CompostableItemTrait.chanceFor(item);
+        return Compostables.chanceFor(item);
     }
 }

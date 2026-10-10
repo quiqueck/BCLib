@@ -1,7 +1,9 @@
 package org.betterx.bclib.trait.block;
 
-import de.ambertation.wover.block.api.client.trait.BlockModelTrait;
-import de.ambertation.wover.block.api.client.trait.ClientBlockTraits;
+import de.ambertation.wover.block.api.client.model.ClientBlockModelRegistry;
+import de.ambertation.wover.block.api.client.trait.BlockModelTrait.ModelFactory;
+import de.ambertation.wover.block.api.model.BlockModelBinding;
+import de.ambertation.wover.block.api.model.ModelKey;
 import de.ambertation.wover.block.api.model.WoverBlockModelGenerators;
 import de.ambertation.wover.core.api.ModCore;
 
@@ -194,8 +196,8 @@ public class WeightedTemplateModelTrait {
      * @param item     how to generate the item model
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static BlockModelTrait simple(List<Layer> variants, Item item) {
-        return ModCore.isDatagen() ? Impl.simple(variants, item) : null;
+    public static BlockModelBinding simple(List<Layer> variants, Item item) {
+        return BlockModelBinding.of(MODEL_SIMPLE, new SimpleParams(variants, item));
     }
 
     /**
@@ -208,13 +210,16 @@ public class WeightedTemplateModelTrait {
      * @param item      how to generate the item model
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static BlockModelTrait booleanDispatch(
+    public static BlockModelBinding booleanDispatch(
             BooleanProperty property,
             List<Layer> whenFalse,
             List<Layer> whenTrue,
             Item item
     ) {
-        return ModCore.isDatagen() ? Impl.booleanDispatch(property, whenFalse, whenTrue, item) : null;
+        return BlockModelBinding.of(
+                MODEL_BOOLEAN_DISPATCH,
+                new BooleanDispatchParams(property, whenFalse, whenTrue, item)
+        );
     }
 
     /**
@@ -227,16 +232,82 @@ public class WeightedTemplateModelTrait {
      * @param <T>      the property's value type
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static <T extends Comparable<T>> BlockModelTrait propertyDispatch(
+    public static <T extends Comparable<T>> BlockModelBinding propertyDispatch(
             Property<T> property,
             List<Case<T>> cases,
             Item item
     ) {
-        return ModCore.isDatagen() ? Impl.propertyDispatch(property, cases, item) : null;
+        return BlockModelBinding.of(MODEL_PROPERTY_DISPATCH, new PropertyDispatchParams<>(property, cases, item));
+    }
+
+    private record SimpleParams(List<Layer> variants, Item item) {
+    }
+
+    private static final ModelKey<SimpleParams> MODEL_SIMPLE = BCLModelKeys.key("weighted_template_model_trait/simple");
+
+    private record BooleanDispatchParams(
+            BooleanProperty property,
+            List<Layer> whenFalse,
+            List<Layer> whenTrue,
+            Item item
+    ) {
+    }
+
+    private static final ModelKey<BooleanDispatchParams> MODEL_BOOLEAN_DISPATCH =
+            BCLModelKeys.key("weighted_template_model_trait/boolean_dispatch");
+
+    private record PropertyDispatchParams<T extends Comparable<T>>(
+            Property<T> property,
+            List<Case<T>> cases,
+            Item item
+    ) {
+    }
+
+    private static final ModelKey<PropertyDispatchParams<?>> MODEL_PROPERTY_DISPATCH =
+            BCLModelKeys.key("weighted_template_model_trait/property_dispatch");
+
+    /**
+     * Registers the client generators behind this class's model keys. Called from the mod's
+     * {@code wover.client.traits} entrypoint.
+     */
+    @Environment(EnvType.CLIENT)
+    public static void registerClientModels() {
+        Impl.register();
     }
 
     @Environment(EnvType.CLIENT)
     private static class Impl {
+        private static void register() {
+            ClientBlockModelRegistry.register(
+                    MODEL_SIMPLE,
+                    (key, block, generator, payload) -> simpleFrom(payload).provideBlockModels(key, block, generator)
+            );
+            ClientBlockModelRegistry.register(
+                    MODEL_BOOLEAN_DISPATCH,
+                    (key, block, generator, payload) -> booleanDispatchFrom(payload)
+                            .provideBlockModels(key, block, generator)
+            );
+            ClientBlockModelRegistry.register(
+                    MODEL_PROPERTY_DISPATCH,
+                    (key, block, generator, payload) -> propertyDispatchFrom(payload)
+                            .provideBlockModels(key, block, generator)
+            );
+        }
+
+        private static ModelFactory simpleFrom(SimpleParams p) {
+            return simple(p.variants(), p.item());
+        }
+
+        private static ModelFactory booleanDispatchFrom(BooleanDispatchParams p) {
+            return booleanDispatch(p.property(), p.whenFalse(), p.whenTrue(), p.item());
+        }
+
+        private static <T extends Comparable<T>> ModelFactory propertyDispatchFrom(
+                PropertyDispatchParams<T> p
+        ) {
+            return propertyDispatch(p.property(), p.cases(), p.item());
+        }
+
         /**
          * Resolves the (distinct) child models a variant list needs, de-duplicating by {@code (parent, textures)}.
          * Generated child models are named {@code <block>_t0}, {@code <block>_t1}, ... in first-seen order across
@@ -344,22 +415,22 @@ public class WeightedTemplateModelTrait {
             }
         }
 
-        private static BlockModelTrait simple(List<Layer> variants, Item item) {
-            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+        private static ModelFactory simple(List<Layer> variants, Item item) {
+            return (key, block, generator) -> {
                 final ChildModels models = new ChildModels(block, generator);
                 final MultiVariant mv = variants(models, variants);
                 generator.acceptBlockState(BlockModelGenerators.createSimpleBlock(block, mv));
                 applyItem(block, generator, item);
-            });
+            };
         }
 
-        private static BlockModelTrait booleanDispatch(
+        private static ModelFactory booleanDispatch(
                 BooleanProperty property,
                 List<Layer> whenFalse,
                 List<Layer> whenTrue,
                 Item item
         ) {
-            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+            return (key, block, generator) -> {
                 final ChildModels models = new ChildModels(block, generator);
                 final MultiVariant falseVariant = variants(models, whenFalse);
                 final MultiVariant trueVariant = variants(models, whenTrue);
@@ -371,15 +442,15 @@ public class WeightedTemplateModelTrait {
                         )
                 );
                 applyItem(block, generator, item);
-            });
+            };
         }
 
-        private static <T extends Comparable<T>> BlockModelTrait propertyDispatch(
+        private static <T extends Comparable<T>> ModelFactory propertyDispatch(
                 Property<T> property,
                 List<Case<T>> cases,
                 Item item
         ) {
-            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+            return (key, block, generator) -> {
                 final ChildModels models = new ChildModels(block, generator);
                 final List<MultiVariant> built = new ArrayList<>();
                 for (Case<T> c : cases) {
@@ -393,7 +464,7 @@ public class WeightedTemplateModelTrait {
                 }
                 generator.acceptBlockState(MultiVariantGenerator.dispatch(block).with(dispatch));
                 applyItem(block, generator, item);
-            });
+            };
         }
     }
 }

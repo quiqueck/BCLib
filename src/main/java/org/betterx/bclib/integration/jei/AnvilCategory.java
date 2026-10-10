@@ -1,109 +1,117 @@
 package org.betterx.bclib.integration.jei;
 
-import org.betterx.bclib.BCLib;
+import org.betterx.bclib.recipes.AnvilRecipe;
+import org.betterx.bclib.recipes.RecipeViewerStations;
 
-import net.minecraft.core.registries.BuiltInRegistries;
+import com.mojang.serialization.Codec;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.Level;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
+import mezz.jei.api.helpers.ICodecHelper;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
+import mezz.jei.api.recipe.IRecipeManager;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.category.IRecipeCategory;
-import mezz.jei.api.recipe.types.IRecipeType;
+import mezz.jei.api.recipe.category.AbstractRecipeCategory;
+import mezz.jei.api.recipe.types.IRecipeHolderType;
 
 import java.util.List;
 
-public class AnvilCategory implements IRecipeCategory<AnvilRecipeDisplay> {
-    private static final int WIDTH = 104;
-    private static final int HEIGHT = 42;
+/**
+ * BCLib {@link AnvilRecipe}s: material (with the count one craft consumes - the anvil picks a different
+ * result for 1 or 3 ingots) and hammer in, part out, plus the anvils that are good enough for the
+ * recipe's level and the durability the hammer loses.
+ */
+@Environment(EnvType.CLIENT)
+public class AnvilCategory extends AbstractRecipeCategory<RecipeHolder<AnvilRecipe>> {
+    public static final IRecipeHolderType<AnvilRecipe> TYPE = IRecipeHolderType.create(AnvilRecipe.TYPE);
 
-    public final int level;
-    private final IRecipeType<AnvilRecipeDisplay> type;
-    private final IDrawable icon;
-    private final Component title;
+    private static final int WIDTH = 112;
+    private static final int HEIGHT = 48;
+    private static final int TEXT_COLOR = 0xFF808080;
+    private static final String[] ROMAN = {"0", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"};
 
-    public AnvilCategory(IGuiHelper guiHelper, int level, ItemLike workstation) {
-        this.level = level;
-        this.type = IRecipeType.create(BCLib.C.mk("anvil_" + level), AnvilRecipeDisplay.class);
-        this.icon = guiHelper.createDrawableItemLike(workstation);
-        this.title = Component.translatable("emi.category.bclib.anvil_" + level);
-    }
-
-    public IRecipeType<AnvilRecipeDisplay> getType() {
-        return type;
-    }
-
-    @Override
-    public IRecipeType<AnvilRecipeDisplay> getRecipeType() {
-        return type;
-    }
-
-    @Override
-    public Component getTitle() {
-        return title;
-    }
-
-    @Override
-    public int getWidth() {
-        return WIDTH;
-    }
-
-    @Override
-    public int getHeight() {
-        return HEIGHT;
-    }
-
-    @Override
-    public IDrawable getIcon() {
-        return icon;
-    }
-
-    @Override
-    public ResourceLocation getRegistryName(AnvilRecipeDisplay display) {
-        // IRecipeCategory's default getRegistryName() only knows how to derive one from a
-        // RecipeHolder; AnvilRecipeDisplay isn't one (it pairs one AnvilRecipe with one of
-        // possibly several applicable hammers), so without this override JEI has no stable id to
-        // bookmark these recipes by. (On 26.1+ this hook is called getIdentifier(), taking and
-        // returning the renamed net.minecraft.resources.Identifier.)
-        ResourceLocation hammerId = BuiltInRegistries.ITEM.getKey(display.hammer());
-        return ResourceLocation.fromNamespaceAndPath(
-                display.recipeId().getNamespace(),
-                display.recipeId().getPath() + "/" + hammerId.getNamespace() + "_" + hammerId.getPath()
+    public AnvilCategory(IGuiHelper guiHelper, ItemLike icon) {
+        super(
+                TYPE,
+                Component.translatable("category.bclib.jei.anvil"),
+                guiHelper.createDrawableItemLike(icon),
+                WIDTH,
+                HEIGHT
         );
     }
 
-    @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, AnvilRecipeDisplay display, IFocusGroup focuses) {
-        builder.addSlot(RecipeIngredientRole.CRAFTING_STATION, 0, 4)
-               .add(new ItemStack(display.hammer()));
-
-        builder.addSlot(RecipeIngredientRole.INPUT, 21, 4)
-               .add(display.recipe().getMainIngredient())
-               .addRichTooltipCallback((view, tooltip) -> {
-                   int count = display.recipe().getInputCount();
-                   if (count > 1) {
-                       tooltip.add(Component.literal("x" + count));
-                   }
-               });
-
-        // AnvilRecipe.assemble() never reads its arguments, it just builds outputItem/outputCount.
-        ItemStack output = display.recipe().assemble(null, null);
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 82, 4)
-               .add(output);
+    static String levelName(int level) {
+        return level >= 0 && level < ROMAN.length ? ROMAN[level] : Integer.toString(level);
     }
 
     @Override
-    public void createRecipeExtras(IRecipeExtrasBuilder builder, AnvilRecipeDisplay display, IFocusGroup focuses) {
-        builder.addRecipeArrow().setPosition(45, 3);
+    public void setRecipe(IRecipeLayoutBuilder builder, RecipeHolder<AnvilRecipe> holder, IFocusGroup focuses) {
+        final AnvilRecipe recipe = holder.value();
+        final int inputCount = recipe.getInputCount();
+        final Level level = Minecraft.getInstance().level;
+
+        // the stack size is what the slot shows, so 1 vs. 3 ingots is visible without hovering
+        final List<ItemStack> materials = recipe.getMainIngredient()
+                                                .items()
+                                                .map(item -> new ItemStack(item, inputCount))
+                                                .toList();
+        builder.addInputSlot(1, 5)
+               .setStandardSlotBackground()
+               .addItemStacks(materials)
+               .addRichTooltipCallback((view, tooltip) -> tooltip.add(
+                       Component.translatable("category.bclib.jei.anvil.input_count", inputCount)
+               ));
+
+        final List<Item> hammers = RecipeViewerStations.hammersFor(
+                recipe,
+                level == null ? null : level.registryAccess()
+        );
+        builder.addInputSlot(21, 5)
+               .setStandardSlotBackground()
+               .addItemStacks(hammers.stream().map(ItemStack::new).toList())
+               .addRichTooltipCallback((view, tooltip) -> tooltip.add(
+                       Component.translatable("category.bclib.jei.anvil.damage", recipe.getDamage())
+               ));
+
+        builder.addOutputSlot(WIDTH - 22, 5)
+               .setOutputSlotBackground()
+               .add(recipe.assemble(null, null));
+
+        builder.addSlot(RecipeIngredientRole.CRAFTING_STATION, 1, 29)
+               .setStandardSlotBackground()
+               .addItemStacks(RecipeViewerStations.anvilsFor(recipe.getAnvilLevel())
+                                                  .stream()
+                                                  .map(ItemStack::new)
+                                                  .toList());
+    }
+
+    @Override
+    public void createRecipeExtras(IRecipeExtrasBuilder builder, RecipeHolder<AnvilRecipe> holder, IFocusGroup focuses) {
+        final AnvilRecipe recipe = holder.value();
+
+        builder.addRecipeArrow().setPosition(50, 5);
         builder.addText(
-                List.of(Component.translatable("tooltip.bclib.jei.anvil_damage", display.recipe().getDamage())),
-                WIDTH, 9
-        ).setPosition(0, HEIGHT - 9).setColor(0xFF808080);
+                List.of(
+                        Component.translatable("category.bclib.jei.anvil.level", levelName(recipe.getAnvilLevel())),
+                        Component.translatable("category.bclib.jei.anvil.damage", recipe.getDamage())
+                ),
+                WIDTH - 22, 20
+        ).setPosition(22, 28).setColor(TEXT_COLOR);
+    }
+
+    @Override
+    public Codec<RecipeHolder<AnvilRecipe>> getCodec(ICodecHelper codecHelper, IRecipeManager recipeManager) {
+        return codecHelper.getRecipeHolderCodec();
     }
 }
