@@ -23,6 +23,7 @@ public class StructureErode {
 
     public static void erode(WorldGenLevel world, BoundingBox bounds, int iterations, RandomSource random) {
         MutableBlockPos mut = new MutableBlockPos();
+        MutableBlockPos fall = new MutableBlockPos();
         boolean canDestruct = true;
         for (int i = 0; i < iterations; i++) {
             for (int x = bounds.minX(); x <= bounds.maxX(); x++) {
@@ -85,15 +86,19 @@ public class StructureErode {
                                 if (world.isEmptyBlock(mut.relative(dir)) && world.isEmptyBlock(mut.below()
                                                                                                    .relative(dir))) {
                                     BlocksHelper.setWithoutUpdate(world, mut, Blocks.AIR);
-                                    mut.move(dir).move(Direction.DOWN);
-                                    for (int py = mut.getY(); y >= bounds.minY() - 10; y--) {
-                                        mut.setY(py - 1);
-                                        if (!world.isEmptyBlock(mut)) {
-                                            mut.setY(py);
-                                            BlocksHelper.setWithoutUpdate(world, mut, state);
+                                    //the block slides off to the side and falls until it lands, mut stays in
+                                    //its column so the remaining columns of the box are not shifted
+                                    fall.set(mut).move(dir).move(Direction.DOWN);
+                                    for (int py = fall.getY(); py >= bounds.minY() - 10; py--) {
+                                        fall.setY(py - 1);
+                                        if (!world.isEmptyBlock(fall)) {
+                                            fall.setY(py);
+                                            BlocksHelper.setWithoutUpdate(world, fall, state);
                                             break;
                                         }
                                     }
+                                    //a block is only moved once
+                                    break;
                                 }
                             }
                             break;
@@ -131,6 +136,11 @@ public class StructureErode {
         }
     }
 
+    /**
+     * Erodes the blocks inside {@code bounds} and lets loose blocks fall down. Only reads blocks in the
+     * columns of {@code bounds} (blocks may still fall up to 10 blocks below it), so a box that stays
+     * inside the chunks a feature may access never reads outside of them.
+     */
     public static void erodeIntense(WorldGenLevel world, BoundingBox bounds, RandomSource random) {
         MutableBlockPos mut = new MutableBlockPos();
         MutableBlockPos mut2 = new MutableBlockPos();
@@ -148,13 +158,16 @@ public class StructureErode {
                             if (random.nextBoolean()) {
                                 int px = MHelper.floor(random.nextGaussian() * 2 + x + 0.5);
                                 int pz = MHelper.floor(random.nextGaussian() * 2 + z + 0.5);
-                                mut2.set(px, y, pz);
-                                while (world.getBlockState(mut2).canBeReplaced() && mut2.getY() > minY) {
-                                    mut2.setY(mut2.getY() - 1);
-                                }
-                                if (!world.getBlockState(mut2).isAir() && state.canSurvive(world, mut2)) {
-                                    mut2.setY(mut2.getY() + 1);
-                                    BlocksHelper.setWithoutUpdate(world, mut2, state);
+                                //debris that would land outside the box is simply lost
+                                if (isInsideColumns(bounds, px, pz)) {
+                                    mut2.set(px, y, pz);
+                                    while (world.getBlockState(mut2).canBeReplaced() && mut2.getY() > minY) {
+                                        mut2.setY(mut2.getY() - 1);
+                                    }
+                                    if (!world.getBlockState(mut2).isAir() && state.canSurvive(world, mut2)) {
+                                        mut2.setY(mut2.getY() + 1);
+                                        BlocksHelper.setWithoutUpdate(world, mut2, state);
+                                    }
                                 }
                             }
                         } else if (random.nextInt(8) == 0) {
@@ -182,7 +195,7 @@ public class StructureErode {
                 for (int y = bounds.minY(); y <= bounds.maxY(); y++) {
                     mut.setY(y);
                     BlockState state = world.getBlockState(mut);
-                    if (!ignore(state, world, mut) && isTerrainNear(world, mut)) {
+                    if (!ignore(state, world, mut) && isTerrainNear(world, mut, bounds)) {
                         edge.add(mut.immutable());
                     }
                 }
@@ -248,13 +261,20 @@ public class StructureErode {
                 || BlocksHelper.isInvulnerable(state, world, pos);
     }
 
-    private static boolean isTerrainNear(WorldGenLevel world, BlockPos pos) {
+    private static boolean isTerrainNear(WorldGenLevel world, BlockPos pos, BoundingBox bounds) {
         for (Direction dir : BlocksHelper.DIRECTIONS) {
-            if (world.getBlockState(pos.relative(dir)).is(CommonBlockTags.END_STONES)) {
+            final BlockPos side = pos.relative(dir);
+            //terrain below/above the box is fine to look at, the columns next to it may not be accessible
+            if (isInsideColumns(bounds, side.getX(), side.getZ()) && world.getBlockState(side)
+                                                                           .is(CommonBlockTags.END_STONES)) {
                 return true;
             }
         }
         return false;
+    }
+
+    private static boolean isInsideColumns(BoundingBox bounds, int x, int z) {
+        return x >= bounds.minX() && x <= bounds.maxX() && z >= bounds.minZ() && z <= bounds.maxZ();
     }
 
     public static void cover(WorldGenLevel world, BoundingBox bounds, RandomSource random, BlockState defaultBlock) {

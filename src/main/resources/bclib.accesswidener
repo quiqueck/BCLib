@@ -2,20 +2,11 @@ accessWidener   v1  official
 
 # Classes
 accessible class net/minecraft/server/MinecraftServer$ReloadableResources
-accessible	class	net/minecraft/world/level/levelgen/SurfaceRules$Context
-accessible	class	net/minecraft/world/level/levelgen/SurfaceRules$Condition
-accessible	class	net/minecraft/world/level/levelgen/SurfaceRules$SurfaceRule
-accessible	class	net/minecraft/world/level/levelgen/SurfaceRules$LazyXZCondition
-accessible	class	net/minecraft/world/level/levelgen/SurfaceRules$LazyCondition
-accessible	class	net/minecraft/world/level/levelgen/SurfaceRules$SequenceRuleSource
 accessible  class   net/minecraft/world/level/levelgen/presets/WorldPresets$Bootstrap
 extendable  class   net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator
 accessible  class    net/minecraft/core/registries/BuiltInRegistries$RegistryBootstrap
-accessible  class    net/minecraft/world/level/levelgen/SurfaceRules$SequenceRuleSource
 accessible  class    net/minecraft/server/dedicated/DedicatedServerProperties$WorldDimensionData
 extendable  class   net/minecraft/world/level/block/state/properties/WoodType
-accessible class net/minecraft/world/level/levelgen/SurfaceRules$BiomeConditionSource
-accessible class net/minecraft/world/level/levelgen/SurfaceRules$TestRuleSource
 #accessible class net/minecraft/world/item/crafting/Ingredient$Value
 #accessible class net/minecraft/world/item/crafting/Ingredient$TagValue
 #accessible class net/minecraft/world/item/crafting/Ingredient$ItemValue
@@ -24,12 +15,11 @@ accessible class net/minecraft/world/level/levelgen/SurfaceRules$TestRuleSource
 accessible method net/minecraft/world/level/block/entity/BlockEntityType <init> (Lnet/minecraft/world/level/block/entity/BlockEntityType$BlockEntitySupplier;Ljava/util/Set;)V
 accessible method net/minecraft/world/level/storage/loot/LootPool <init> (Ljava/util/List;Ljava/util/Optional;Ljava/util/Optional;Lnet/minecraft/core/Holder;Lnet/minecraft/core/Holder;)V
 accessible method net/minecraft/world/entity/ai/village/poi/PoiTypes register (Lnet/minecraft/core/Registry;Lnet/minecraft/resources/ResourceKey;Ljava/util/Set;II)Lnet/minecraft/world/entity/ai/village/poi/PoiType;
-accessible method net/minecraft/world/level/levelgen/SurfaceRules$SequenceRuleSource <init> (Ljava/util/List;)V
 accessible method net/minecraft/core/registries/BuiltInRegistries registerSimple (Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/core/registries/BuiltInRegistries$RegistryBootstrap;)Lnet/minecraft/core/Registry;
 # accessible method net/minecraft/world/entity/SpawnPlacements register (Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/entity/SpawnPlacements$Type;Lnet/minecraft/world/level/levelgen/Heightmap$Types;Lnet/minecraft/world/entity/SpawnPlacements$SpawnPredicate;)V
 accessible method net/minecraft/world/level/block/state/properties/WoodType register (Lnet/minecraft/world/level/block/state/properties/WoodType;)Lnet/minecraft/world/level/block/state/properties/WoodType;
 accessible method net/minecraft/world/level/levelgen/NoiseRouterData nether (Lnet/minecraft/core/HolderGetter;Lnet/minecraft/core/HolderGetter;)Lnet/minecraft/world/level/levelgen/NoiseRouter;
-accessible method net/minecraft/world/level/levelgen/NoiseRouterData slideNetherLike (Lnet/minecraft/core/HolderGetter;II)Lnet/minecraft/world/level/levelgen/DensityFunction;
+accessible method net/minecraft/world/level/levelgen/NoiseRouterData slideNetherLike (Lnet/minecraft/core/HolderGetter;II)Lnet/minecraft/world/level/levelgen/densityfunction/DensityFunction;
 accessible method net/minecraft/tags/TagEntry elementOrTag ()Lnet/minecraft/util/ExtraCodecs$TagOrElementLocation;
 accessible method net/minecraft/data/worldgen/biome/OverworldBiomes calculateSkyColor (F)I
 accessible method net/minecraft/advancements/Advancement$Builder <init> ()V

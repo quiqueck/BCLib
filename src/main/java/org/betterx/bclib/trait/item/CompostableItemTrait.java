@@ -1,6 +1,7 @@
 package org.betterx.bclib.trait.item;
 
 import org.betterx.bclib.BCLib;
+import de.ambertation.wover.block.api.trait.CompostTier;
 import de.ambertation.wover.block.api.trait.CompostableTrait;
 import de.ambertation.wover.item.api.ItemDefinition;
 import de.ambertation.wover.item.api.trait.GenericItemTrait;
@@ -9,6 +10,7 @@ import de.ambertation.wover.item.api.trait.ItemTraitKey;
 import de.ambertation.wover.item.impl.trait.ItemTraitImpl;
 import de.ambertation.wover.tag.api.predefined.CommonItemTags;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.Item;
 
 import java.util.List;
@@ -29,20 +31,29 @@ import java.util.List;
  */
 public class CompostableItemTrait extends ItemTraitImpl.Generic implements CompostableTrait {
     public static final ItemTraitKey KEY = ItemTraitKey.ofUnique(BCLib.C, "compostable");
-    private static final CompostableItemTrait DEFAULT = new CompostableItemTrait(0.1f);
+    private static final CompostableItemTrait DEFAULT = new CompostableItemTrait(CompostTier.VERY_LOW);
 
     public static CompostableItemTrait withDefault() {
         return DEFAULT;
     }
 
+    /**
+     * @param chance the requested composting chance; snapped to the nearest {@link CompostTier}
+     */
     public static CompostableItemTrait withChance(float chance) {
-        return new CompostableItemTrait(chance);
+        return new CompostableItemTrait(CompostTier.nearest(chance));
     }
 
+    public static CompostableItemTrait withTier(CompostTier tier) {
+        return new CompostableItemTrait(tier);
+    }
+
+    public final CompostTier tier;
     public final float compostingChance;
 
-    private CompostableItemTrait(float compostingChance) {
-        this.compostingChance = compostingChance;
+    private CompostableItemTrait(CompostTier tier) {
+        this.tier = tier;
+        this.compostingChance = tier.chance;
     }
 
     @Override
@@ -61,11 +72,19 @@ public class CompostableItemTrait extends ItemTraitImpl.Generic implements Compo
     }
 
     @Override
+    public CompostTier compostTier() {
+        return tier;
+    }
+
+    @Override
     public void configure(ItemDefinition<Item, ? extends ItemDefinition<Item, ?>> definition) {
         super.configure(definition);
-        // Tags the item as compostable at datagen. Mirrors CompostableBlockTrait.configure(); the composting
-        // chance itself is resolved at runtime from the trait via chanceFor below.
+        // Tags the item as compostable at datagen. Mirrors CompostableBlockTrait.configure().
         definition.addTags(CommonItemTags.COMPOSTABLE);
+        // The rate itself is the real minecraft:compostable component, which is what every vanilla
+        // composter path reads. BlockDefinition does the same for a block's item; an item trait can set it
+        // straight on its own definition.
+        definition.component(DataComponents.COMPOSTABLE, tier.asCompostableComponent());
     }
 
     /**

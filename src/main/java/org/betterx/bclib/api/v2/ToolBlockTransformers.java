@@ -3,18 +3,22 @@ package org.betterx.bclib.api.v2;
 import org.betterx.bclib.interfaces.tools.AxeCanStrip;
 
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.BlockTransformer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.component.BlockTransformerMappings;
+import net.minecraft.world.item.component.BlockTransformers;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
-import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import net.minecraft.world.level.levelgen.feature.stateproviders.CopyPropertiesProvider;
+import net.minecraft.world.level.levelgen.feature.stateproviders.RuleBasedStateProvider;
 
 import net.fabricmc.fabric.api.item.v1.DefaultItemComponentEvents;
 
@@ -38,14 +42,16 @@ import org.jetbrains.annotations.ApiStatus;
  * stripping, path-making, tilling, scraping and waxing into a single data-driven
  * {@code minecraft:block_transformer} item component. {@code BlockTransformer#transformBlock} walks
  * that component's {@link BlockTransformer.BlockTransformData} list and applies the first entry whose
- * {@link BlockPredicate} matches the clicked block.
+ * {@link BlockPredicate} matches the clicked block. Since the 26.3 release the component holds a {@link Holder}
+ * into the {@code minecraft:block_transformer} registry, and each entry's target is a (rule-based)
+ * {@code BlockStateProvider} that yields no state for blocks it does not apply to.
  * <p>
  * So the 26.3 answer is not "inject into stripping/flattening" but "append our entries to the list the
  * tool already carries". This mirrors WorldWeaver's {@code StripableBlockTransformers} (wover-sets-api),
  * which solved the same problem for its {@code StripableBlockTrait}.
  * <h2>Which items are modified</h2>
  * An item counts as an axe (resp. shovel) if its block transformer contains all of
- * {@link BlockTransformerMappings#AXE}'s (resp. {@code SHOVEL}'s) entries. That is exactly the set of
+ * vanilla's {@link BlockTransformers#AXE} (resp. {@code SHOVEL}) entries. That is exactly the set of
  * items built through {@code Item.Properties#axe}/{@code #shovel} - vanilla's plus any modded ones -
  * and because the test is "contains" rather than "equals" it keeps working when another mod has already
  * appended its own entries.
@@ -63,16 +69,16 @@ public final class ToolBlockTransformers {
             final List<BlockTransformer.BlockTransformData> axeTransforms = axeTransforms();
             if (!axeTransforms.isEmpty()) {
                 context.modify(
-                        ToolBlockTransformers::isAxe,
-                        (builder, item) -> append(builder, item, axeTransforms)
+                        ToolBlockTransformers::hasTransformer,
+                        (builder, lookup, item) -> append(builder, lookup, item, BlockTransformers.AXE, axeTransforms)
                 );
             }
 
             final List<BlockTransformer.BlockTransformData> shovelTransforms = shovelTransforms();
             if (!shovelTransforms.isEmpty()) {
                 context.modify(
-                        ToolBlockTransformers::isShovel,
-                        (builder, item) -> append(builder, item, shovelTransforms)
+                        ToolBlockTransformers::hasTransformer,
+                        (builder, lookup, item) -> append(builder, lookup, item, BlockTransformers.SHOVEL, shovelTransforms)
                 );
             }
         });
@@ -80,22 +86,26 @@ public final class ToolBlockTransformers {
 
     private static void append(
             net.minecraft.core.component.DataComponentMap.Builder builder,
+            HolderLookup.Provider lookup,
             Item item,
+            ResourceKey<BlockTransformer> reference,
             List<BlockTransformer.BlockTransformData> extra
     ) {
-        final BlockTransformer current = item.components().get(DataComponents.BLOCK_TRANSFORMER);
-        if (current == null) return;
+        final Holder<BlockTransformer> current = item.components().get(DataComponents.BLOCK_TRANSFORMER);
+        if (current == null || !carriesAllOf(current, lookup, reference)) return;
 
-        final List<BlockTransformer.BlockTransformData> merged = new ArrayList<>(current.transforms());
+        final List<BlockTransformer.BlockTransformData> merged = new ArrayList<>(current.value().transforms());
         merged.addAll(extra);
-        builder.set(DataComponents.BLOCK_TRANSFORMER, new BlockTransformer(merged));
+        // The merged list has no identity in the block_transformer registry, so it is bound as a direct
+        // holder; it serializes inline.
+        builder.set(DataComponents.BLOCK_TRANSFORMER, Holder.direct(new BlockTransformer(merged)));
     }
 
     /**
-     * One entry per {@link AxeCanStrip} block, shaped like vanilla's own strippables
-     * ({@code BlockTransformerMappings#getStrippableBlockData}): {@code matches_blocks} on the source
-     * block, a {@link CopyPropertiesProvider} onto the stripped block, and the
-     * {@code minecraft:item.axe.strip} sound.
+     * A single entry for all {@link AxeCanStrip} blocks, shaped like vanilla's own strippables
+     * ({@code BlockTransformers#axeStrippables}): a {@link RuleBasedStateProvider} that pairs
+     * {@code matches_blocks} on each source block with a {@link CopyPropertiesProvider} onto the stripped
+     * block (first match wins), and the {@code minecraft:item.axe.strip} sound.
      * <p>
      * <b>Behaviour note.</b> {@link AxeCanStrip#strippedState(BlockState)} is an arbitrary Java function
      * of the clicked state, which a serialized, client-synced component cannot express: 26.3 offers no
@@ -107,23 +117,23 @@ public final class ToolBlockTransformers {
      * - will now always yield the default state's block.
      */
     private static List<BlockTransformer.BlockTransformData> axeTransforms() {
-        final List<BlockTransformer.BlockTransformData> result = new ArrayList<>();
+        final RuleBasedStateProvider.Builder rules = RuleBasedStateProvider.builder();
+        boolean any = false;
         for (Block block : BuiltInRegistries.BLOCK) {
             if (!(block instanceof AxeCanStrip stripable)) continue;
 
             final BlockState stripped = stripable.strippedState(block.defaultBlockState());
             if (stripped == null) continue;
 
-            result.add(BlockTransformer.BlockTransformData
-                    .builder(
-                            BlockPredicate.matchesBlocks(block),
-                            new CopyPropertiesProvider(stripped.getBlock())
-                    )
-                    .sound(SoundEvents.AXE_STRIP)
-                    .build()
-            );
+            rules.ifTrueThenProvide(BlockPredicate.matchesBlocks(block), new CopyPropertiesProvider(stripped.getBlock()));
+            any = true;
         }
-        return result;
+        if (!any) return List.of();
+        return List.of(BlockTransformer.BlockTransformData
+                .builder(rules.build())
+                .sound(SoundEvents.AXE_STRIP)
+                .build()
+        );
     }
 
     /**
@@ -138,13 +148,13 @@ public final class ToolBlockTransformers {
         final List<BlockTransformer.BlockTransformData> result = new ArrayList<>();
         for (Map.Entry<Block, BlockState> e : ShovelAPI.flattenables().entrySet()) {
             result.add(BlockTransformer.BlockTransformData
-                    .builder(
+                    .builder(RuleBasedStateProvider.builder().ifTrueThenProvide(
                             BlockPredicate.allOf(
                                     BlockPredicate.matchesBlocks(e.getKey()),
                                     BlockPredicate.matchesTag(Direction.UP, BlockTags.AIR)
                             ),
-                            BlockStateProvider.simple(e.getValue())
-                    )
+                            e.getValue()
+                    ).build())
                     .sound(SoundEvents.SHOVEL_FLATTEN)
                     .disallowedFaces(List.of(Direction.DOWN))
                     .build()
@@ -153,16 +163,19 @@ public final class ToolBlockTransformers {
         return result;
     }
 
-    private static boolean isAxe(Item item) {
-        return carriesAllOf(item, BlockTransformerMappings.AXE);
+    private static boolean hasTransformer(Item item) {
+        return item.components().get(DataComponents.BLOCK_TRANSFORMER) != null;
     }
 
-    private static boolean isShovel(Item item) {
-        return carriesAllOf(item, BlockTransformerMappings.SHOVEL);
-    }
-
-    private static boolean carriesAllOf(Item item, BlockTransformer reference) {
-        final BlockTransformer transformer = item.components().get(DataComponents.BLOCK_TRANSFORMER);
-        return transformer != null && transformer.transforms().containsAll(reference.transforms());
+    private static boolean carriesAllOf(
+            Holder<BlockTransformer> transformer,
+            HolderLookup.Provider lookup,
+            ResourceKey<BlockTransformer> reference
+    ) {
+        if (transformer.is(reference)) return true;
+        return lookup.lookup(Registries.BLOCK_TRANSFORMER)
+                     .flatMap(r -> r.get(reference))
+                     .map(ref -> transformer.value().transforms().containsAll(ref.value().transforms()))
+                     .orElse(false);
     }
 }

@@ -175,6 +175,20 @@ public class FeatureSaplingBlock extends SaplingBlock {
         return level instanceof ServerLevel;
     }
 
+    /**
+     * The chance that one application of bone meal advances the sapling, the same 45% vanilla's
+     * {@link SaplingBlock} uses. Two advances make a tree (the {@code STAGE} step, then the feature), so a
+     * tree takes about 4.4 bone meal on average, like an oak.
+     */
+    public static final float BONEMEAL_SUCCESS_CHANCE = 0.45f;
+
+    /**
+     * Rolls one bone meal application, at the vanilla sapling's {@link #BONEMEAL_SUCCESS_CHANCE}.
+     * <p>
+     * Natural growth does not come through here any more - see {@link #isRandomGrowthSuccess}. Until both
+     * shared this roll, a feature sapling took bone meal at the 1-in-16 its random ticks use, which made a
+     * tree cost about 32 bone meal against vanilla's four or five.
+     */
     @Override
     public boolean isBonemealSuccess(
             Level level,
@@ -182,6 +196,23 @@ public class FeatureSaplingBlock extends SaplingBlock {
             BlockPos pos,
             BlockState state,
             BonemealSource bonemealSource
+    ) {
+        return random.nextFloat() < BONEMEAL_SUCCESS_CHANCE;
+    }
+
+    /**
+     * Whether one random tick advances the sapling. A flat 1 in 16 per tick, which is how fast these
+     * saplings have always grown on their own; subclasses change it for their soil (e.g. faster on
+     * fertile ground) without touching the bone meal odds.
+     * <p>
+     * Kept apart from {@link #isBonemealSuccess} so that making bone meal vanilla-like does not also make
+     * every sapling grow seven times faster by itself.
+     */
+    protected boolean isRandomGrowthSuccess(
+            @NotNull Level level,
+            @NotNull RandomSource random,
+            @NotNull BlockPos pos,
+            @NotNull BlockState state
     ) {
         return random.nextInt(16) == 0;
     }
@@ -358,7 +389,7 @@ public class FeatureSaplingBlock extends SaplingBlock {
     @Override
     public void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
         super.tick(state, world, pos, random);
-        if (isBonemealSuccess(world, random, pos, state, BonemealSource.INTERACTION)) {
+        if (isRandomGrowthSuccess(world, random, pos, state)) {
             performBonemeal(world, random, pos, state, BonemealSource.INTERACTION);
         }
     }

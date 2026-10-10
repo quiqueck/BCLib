@@ -282,14 +282,16 @@ public class SpawnRuleBuilder<M extends Mob> {
      * @return same {@link SpawnRuleBuilder} instance.
      */
     public SpawnRuleBuilder maxNearby(EntityType<?> selectorType, int count, int side) {
-        final Class<? extends Entity> baseClass = selectorType.getBaseClass();
         entryInstance = getFromCache(
                 "max_nearby_" + selectorType.getDescriptionId() + "_" + count + "_" + side, () -> {
                     return new SpawnRuleEntry(
                             3, (type, world, spawnReason, pos, random) -> {
                         try {
                             final AABB box = new AABB(pos).inflate(side, world.getHeight(), side);
-                            final List<?> list = world.getEntitiesOfClass(baseClass, box, (entity) -> true);
+                            // Filter by the EntityType itself: EntityType#getBaseClass() is always
+                            // Entity.class, so a class filter counted every entity of any kind
+                            // (items, other mobs, players) and blocked spawns in busy areas.
+                            final List<?> list = world.getEntities(selectorType, box, (entity) -> true);
                             return list.size() < count;
                         } catch (Exception e) {
                             return true;

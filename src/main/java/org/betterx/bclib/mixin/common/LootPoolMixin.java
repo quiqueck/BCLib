@@ -6,7 +6,8 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
+import net.minecraft.world.level.storage.loot.providers.number.floats.ContextFloatProvider;
+import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProvider;
 
 import com.google.common.collect.Lists;
 import net.minecraft.core.Holder;
@@ -24,8 +25,10 @@ import java.util.Optional;
  *     {@code minecraft:item_modifier} registries, so the {@code List<LootItemCondition> conditions}
  *     and {@code List<LootItemFunction> functions} fields collapsed into single
  *     {@code Optional<Holder<...>>} fields named {@code condition} and {@code modifier}.</li>
- *     <li>Number providers became the {@code minecraft:number_provider} registry, so {@code rolls}
- *     and {@code bonusRolls} are {@code Holder<NumberProvider>}.</li>
+ *     <li>Number providers became registries, so {@code rolls} is a {@code Holder<ContextIntProvider>}
+ *     ({@code minecraft:context_int_provider}) and {@code bonusRolls} a {@code Holder<ContextFloatProvider>}
+ *     ({@code minecraft:context_float_provider}); the 26.3 snapshots used a single
+ *     {@code minecraft:number_provider} registry for both.</li>
  *     <li>All five fields are now {@code private}, so the shadows follow (they were {@code public}
  *     in 26.1). The constructor is private too; {@code bclib.accesswidener} widens it and its
  *     descriptor is updated to match.</li>
@@ -37,10 +40,10 @@ import java.util.Optional;
 public class LootPoolMixin implements LootPoolAccessor {
     @Shadow
     @Final
-    private Holder<NumberProvider> rolls;
+    private Holder<ContextIntProvider> rolls;
     @Shadow
     @Final
-    private Holder<NumberProvider> bonusRolls;
+    private Holder<ContextFloatProvider> bonusRolls;
 
     @Shadow
     @Final

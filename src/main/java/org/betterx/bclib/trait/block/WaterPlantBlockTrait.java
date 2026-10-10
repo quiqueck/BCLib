@@ -6,6 +6,7 @@ import de.ambertation.wover.block.api.trait.BlockTraitKey;
 import de.ambertation.wover.block.api.trait.GenericBlockTrait;
 import de.ambertation.wover.block.impl.trait.BlockTraitImpl;
 
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -61,7 +62,10 @@ public class WaterPlantBlockTrait extends BlockTraitImpl<Block, GenericBlockTrai
                 .pushReaction(PushReaction.POPPED);
 
         if (!walkable) {
-            definition.noCollission();
+            // Like vanilla seagrass/kelp/sea_pickle: see PlantBlockTrait. A LiquidBlockContainer (e.g.
+            // UnderwaterPlantBlock) is asked directly and never reads the tag, so it is inert there.
+            definition.noCollission()
+                      .addTags(BlockTags.WASHED_AWAY_BY_FLUIDS);
         }
     }
 }

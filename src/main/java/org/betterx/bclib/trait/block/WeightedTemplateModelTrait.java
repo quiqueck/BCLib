@@ -1,7 +1,9 @@
 package org.betterx.bclib.trait.block;
 
-import de.ambertation.wover.block.api.client.trait.BlockModelTrait;
-import de.ambertation.wover.block.api.client.trait.ClientBlockTraits;
+import de.ambertation.wover.block.api.client.model.ClientBlockModelRegistry;
+import de.ambertation.wover.block.api.client.trait.BlockModelTrait.ModelFactory;
+import de.ambertation.wover.block.api.model.BlockModelBinding;
+import de.ambertation.wover.block.api.model.ModelKey;
 import de.ambertation.wover.block.api.model.WoverBlockModelGenerators;
 import de.ambertation.wover.core.api.ModCore;
 
@@ -174,6 +176,36 @@ public class WeightedTemplateModelTrait {
     }
 
     /**
+     * One case of a three-property dispatch: the variant list to use when all three properties equal the given
+     * triple.
+     *
+     * @param value1   the first property's value this case selects on
+     * @param value2   the second property's value this case selects on
+     * @param value3   the third property's value this case selects on
+     * @param variants the weighted variant list for that triple
+     * @param <T1>     the first property's value type
+     * @param <T2>     the second property's value type
+     * @param <T3>     the third property's value type
+     */
+    public record Case3<T1 extends Comparable<T1>, T2 extends Comparable<T2>, T3 extends Comparable<T3>>(
+            T1 value1,
+            T2 value2,
+            T3 value3,
+            List<Layer> variants
+    ) {
+        /** A case mapping the triple {@code (value1, value2, value3)} to the given weighted variant list. */
+        public static <T1 extends Comparable<T1>, T2 extends Comparable<T2>, T3 extends Comparable<T3>>
+        Case3<T1, T2, T3> of(
+                T1 value1,
+                T2 value2,
+                T3 value3,
+                List<Layer> variants
+        ) {
+            return new Case3<>(value1, value2, value3, variants);
+        }
+    }
+
+    /**
      * How the block's inventory item model is generated: a flat {@code item/generated} icon, an item delegated to
      * the block's own texture, an item delegated to an explicit model (the kept template), or none.
      */
@@ -218,8 +250,8 @@ public class WeightedTemplateModelTrait {
      * @param item     how to generate the item model
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static BlockModelTrait simple(List<Layer> variants, Item item) {
-        return ModCore.isDatagen() ? Impl.simple(variants, item) : null;
+    public static BlockModelBinding simple(List<Layer> variants, Item item) {
+        return BlockModelBinding.of(MODEL_SIMPLE, new SimpleParams(variants, item));
     }
 
     /**
@@ -232,13 +264,16 @@ public class WeightedTemplateModelTrait {
      * @param item      how to generate the item model
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static BlockModelTrait booleanDispatch(
+    public static BlockModelBinding booleanDispatch(
             BooleanProperty property,
             List<Layer> whenFalse,
             List<Layer> whenTrue,
             Item item
     ) {
-        return ModCore.isDatagen() ? Impl.booleanDispatch(property, whenFalse, whenTrue, item) : null;
+        return BlockModelBinding.of(
+                MODEL_BOOLEAN_DISPATCH,
+                new BooleanDispatchParams(property, whenFalse, whenTrue, item)
+        );
     }
 
     /**
@@ -251,12 +286,12 @@ public class WeightedTemplateModelTrait {
      * @param <T>      the property's value type
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static <T extends Comparable<T>> BlockModelTrait propertyDispatch(
+    public static <T extends Comparable<T>> BlockModelBinding propertyDispatch(
             Property<T> property,
             List<Case<T>> cases,
             Item item
     ) {
-        return ModCore.isDatagen() ? Impl.propertyDispatch(property, cases, item) : null;
+        return BlockModelBinding.of(MODEL_PROPERTY_DISPATCH_1, new PropertyDispatch1Params<>(property, cases, item));
     }
 
     /**
@@ -271,17 +306,159 @@ public class WeightedTemplateModelTrait {
      * @param <T2>      the second property's value type
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static <T1 extends Comparable<T1>, T2 extends Comparable<T2>> BlockModelTrait propertyDispatch(
+    public static <T1 extends Comparable<T1>, T2 extends Comparable<T2>> BlockModelBinding propertyDispatch(
             Property<T1> property1,
             Property<T2> property2,
             List<Case2<T1, T2>> cases,
             Item item
     ) {
-        return ModCore.isDatagen() ? Impl.propertyDispatch(property1, property2, cases, item) : null;
+        return BlockModelBinding.of(
+                MODEL_PROPERTY_DISPATCH_2,
+                new PropertyDispatch2Params<>(property1, property2, cases, item)
+        );
+    }
+
+    /**
+     * A template-child block dispatched over three properties. Every combination of values the three properties can
+     * take MUST have a case - the blockstate is a full cross product, not a sparse map with a fallback.
+     *
+     * @param property1 the first property to dispatch over
+     * @param property2 the second property to dispatch over
+     * @param property3 the third property to dispatch over
+     * @param cases     one {@link Case3} per triple of property values
+     * @param item      how to generate the item model
+     * @param <T1>      the first property's value type
+     * @param <T2>      the second property's value type
+     * @param <T3>      the third property's value type
+     * @return the model trait, or {@code null} outside of datagen
+     */
+    public static <T1 extends Comparable<T1>, T2 extends Comparable<T2>, T3 extends Comparable<T3>>
+    BlockModelBinding propertyDispatch(
+            Property<T1> property1,
+            Property<T2> property2,
+            Property<T3> property3,
+            List<Case3<T1, T2, T3>> cases,
+            Item item
+    ) {
+        return BlockModelBinding.of(
+                MODEL_PROPERTY_DISPATCH_3,
+                new PropertyDispatch3Params<>(property1, property2, property3, cases, item)
+        );
+    }
+
+    private record SimpleParams(List<Layer> variants, Item item) {
+    }
+
+    private static final ModelKey<SimpleParams> MODEL_SIMPLE = BCLModelKeys.key("weighted_template_model_trait/simple");
+
+    private record BooleanDispatchParams(
+            BooleanProperty property,
+            List<Layer> whenFalse,
+            List<Layer> whenTrue,
+            Item item
+    ) {
+    }
+
+    private static final ModelKey<BooleanDispatchParams> MODEL_BOOLEAN_DISPATCH =
+            BCLModelKeys.key("weighted_template_model_trait/boolean_dispatch");
+
+    private record PropertyDispatch1Params<T extends Comparable<T>>(
+            Property<T> property,
+            List<Case<T>> cases,
+            Item item
+    ) {
+    }
+
+    private static final ModelKey<PropertyDispatch1Params<?>> MODEL_PROPERTY_DISPATCH_1 =
+            BCLModelKeys.key("weighted_template_model_trait/property_dispatch_1");
+
+    private record PropertyDispatch2Params<T1 extends Comparable<T1>, T2 extends Comparable<T2>>(
+            Property<T1> property1,
+            Property<T2> property2,
+            List<Case2<T1, T2>> cases,
+            Item item
+    ) {
+    }
+
+    private static final ModelKey<PropertyDispatch2Params<?, ?>> MODEL_PROPERTY_DISPATCH_2 =
+            BCLModelKeys.key("weighted_template_model_trait/property_dispatch_2");
+
+    private record PropertyDispatch3Params<T1 extends Comparable<T1>, T2 extends Comparable<T2>, T3 extends Comparable<T3>>(
+            Property<T1> property1,
+            Property<T2> property2,
+            Property<T3> property3,
+            List<Case3<T1, T2, T3>> cases,
+            Item item
+    ) {
+    }
+
+    private static final ModelKey<PropertyDispatch3Params<?, ?, ?>> MODEL_PROPERTY_DISPATCH_3 =
+            BCLModelKeys.key("weighted_template_model_trait/property_dispatch_3");
+
+    /**
+     * Registers the client generators behind this class's model keys. Called from the mod's
+     * {@code wover.client.traits} entrypoint.
+     */
+    @Environment(EnvType.CLIENT)
+    public static void registerClientModels() {
+        Impl.register();
     }
 
     @Environment(EnvType.CLIENT)
     private static class Impl {
+        private static void register() {
+            ClientBlockModelRegistry.register(
+                    MODEL_SIMPLE,
+                    (key, block, generator, payload) -> simpleFrom(payload).provideBlockModels(key, block, generator)
+            );
+            ClientBlockModelRegistry.register(
+                    MODEL_BOOLEAN_DISPATCH,
+                    (key, block, generator, payload) -> booleanDispatchFrom(payload)
+                            .provideBlockModels(key, block, generator)
+            );
+            ClientBlockModelRegistry.register(
+                    MODEL_PROPERTY_DISPATCH_1,
+                    (key, block, generator, payload) -> propertyDispatch1From(payload)
+                            .provideBlockModels(key, block, generator)
+            );
+            ClientBlockModelRegistry.register(
+                    MODEL_PROPERTY_DISPATCH_2,
+                    (key, block, generator, payload) -> propertyDispatch2From(payload)
+                            .provideBlockModels(key, block, generator)
+            );
+            ClientBlockModelRegistry.register(
+                    MODEL_PROPERTY_DISPATCH_3,
+                    (key, block, generator, payload) -> propertyDispatch3From(payload)
+                            .provideBlockModels(key, block, generator)
+            );
+        }
+
+        private static ModelFactory simpleFrom(SimpleParams p) {
+            return simple(p.variants(), p.item());
+        }
+
+        private static ModelFactory booleanDispatchFrom(BooleanDispatchParams p) {
+            return booleanDispatch(p.property(), p.whenFalse(), p.whenTrue(), p.item());
+        }
+
+        private static <T extends Comparable<T>> ModelFactory propertyDispatch1From(
+                PropertyDispatch1Params<T> p
+        ) {
+            return propertyDispatch(p.property(), p.cases(), p.item());
+        }
+
+        private static <T1 extends Comparable<T1>, T2 extends Comparable<T2>> ModelFactory propertyDispatch2From(
+                PropertyDispatch2Params<T1, T2> p
+        ) {
+            return propertyDispatch(p.property1(), p.property2(), p.cases(), p.item());
+        }
+
+        private static <T1 extends Comparable<T1>, T2 extends Comparable<T2>, T3 extends Comparable<T3>> ModelFactory propertyDispatch3From(
+                PropertyDispatch3Params<T1, T2, T3> p
+        ) {
+            return propertyDispatch(p.property1(), p.property2(), p.property3(), p.cases(), p.item());
+        }
+
         /**
          * Resolves the (distinct) child models a variant list needs, de-duplicating by {@code (parent, textures)}.
          * Generated child models are named {@code <block>_t0}, {@code <block>_t1}, ... in first-seen order across
@@ -389,22 +566,22 @@ public class WeightedTemplateModelTrait {
             }
         }
 
-        private static BlockModelTrait simple(List<Layer> variants, Item item) {
-            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+        private static ModelFactory simple(List<Layer> variants, Item item) {
+            return (key, block, generator) -> {
                 final ChildModels models = new ChildModels(block, generator);
                 final MultiVariant mv = variants(models, variants);
                 generator.acceptBlockState(BlockModelGenerators.createSimpleBlock(block, mv));
                 applyItem(block, generator, item);
-            });
+            };
         }
 
-        private static BlockModelTrait booleanDispatch(
+        private static ModelFactory booleanDispatch(
                 BooleanProperty property,
                 List<Layer> whenFalse,
                 List<Layer> whenTrue,
                 Item item
         ) {
-            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+            return (key, block, generator) -> {
                 final ChildModels models = new ChildModels(block, generator);
                 final MultiVariant falseVariant = variants(models, whenFalse);
                 final MultiVariant trueVariant = variants(models, whenTrue);
@@ -416,15 +593,15 @@ public class WeightedTemplateModelTrait {
                         )
                 );
                 applyItem(block, generator, item);
-            });
+            };
         }
 
-        private static <T extends Comparable<T>> BlockModelTrait propertyDispatch(
+        private static <T extends Comparable<T>> ModelFactory propertyDispatch(
                 Property<T> property,
                 List<Case<T>> cases,
                 Item item
         ) {
-            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+            return (key, block, generator) -> {
                 final ChildModels models = new ChildModels(block, generator);
                 final List<MultiVariant> built = new ArrayList<>();
                 for (Case<T> c : cases) {
@@ -438,16 +615,16 @@ public class WeightedTemplateModelTrait {
                 }
                 generator.acceptBlockState(MultiVariantGenerator.dispatch(block).with(dispatch));
                 applyItem(block, generator, item);
-            });
+            };
         }
 
-        private static <T1 extends Comparable<T1>, T2 extends Comparable<T2>> BlockModelTrait propertyDispatch(
+        private static <T1 extends Comparable<T1>, T2 extends Comparable<T2>> ModelFactory propertyDispatch(
                 Property<T1> property1,
                 Property<T2> property2,
                 List<Case2<T1, T2>> cases,
                 Item item
         ) {
-            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+            return (key, block, generator) -> {
                 final ChildModels models = new ChildModels(block, generator);
                 final List<MultiVariant> built = new ArrayList<>();
                 for (Case2<T1, T2> c : cases) {
@@ -463,7 +640,34 @@ public class WeightedTemplateModelTrait {
                 }
                 generator.acceptBlockState(MultiVariantGenerator.dispatch(block).with(dispatch));
                 applyItem(block, generator, item);
-            });
+            };
+        }
+
+        private static <T1 extends Comparable<T1>, T2 extends Comparable<T2>, T3 extends Comparable<T3>>
+        ModelFactory propertyDispatch(
+                Property<T1> property1,
+                Property<T2> property2,
+                Property<T3> property3,
+                List<Case3<T1, T2, T3>> cases,
+                Item item
+        ) {
+            return (key, block, generator) -> {
+                final ChildModels models = new ChildModels(block, generator);
+                final List<MultiVariant> built = new ArrayList<>();
+                for (Case3<T1, T2, T3> c : cases) {
+                    built.add(variants(models, c.variants()));
+                }
+                PropertyDispatch.C3<MultiVariant, T1, T2, T3> dispatch = null;
+                for (int i = 0; i < cases.size(); i++) {
+                    final Case3<T1, T2, T3> c = cases.get(i);
+                    dispatch = dispatch == null
+                            ? PropertyDispatch.initial(property1, property2, property3)
+                                              .select(c.value1(), c.value2(), c.value3(), built.get(i))
+                            : dispatch.select(c.value1(), c.value2(), c.value3(), built.get(i));
+                }
+                generator.acceptBlockState(MultiVariantGenerator.dispatch(block).with(dispatch));
+                applyItem(block, generator, item);
+            };
         }
     }
 }

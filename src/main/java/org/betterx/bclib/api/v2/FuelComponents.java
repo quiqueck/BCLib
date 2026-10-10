@@ -12,7 +12,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.component.CookingFuel;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
+import net.minecraft.world.level.storage.loot.providers.number.floats.ContextFloatProvider;
+import net.minecraft.world.level.storage.loot.providers.number.floats.ContextFloatProviders;
+import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProvider;
 
 import net.fabricmc.fabric.api.item.v1.DefaultItemComponentEvents;
 
@@ -26,14 +28,16 @@ import org.jetbrains.annotations.ApiStatus;
  * <p>
  * 26.3 removed Fabric's {@code FuelValueEvents} and vanilla's static burn-time map, replacing both with
  * the data-driven {@code minecraft:cooking_fuel} item component ({@link CookingFuel}), whose
- * {@code burnTime}/{@code speedMultiplier} are {@link ResourceKey}s into the new
- * {@code minecraft:number_provider} datapack registry. This is the same change WorldWeaver's
+ * {@code burnTime}/{@code speedMultiplier} are {@link ResourceKey}s into the new number provider
+ * datapack registries ({@code minecraft:context_int_provider} for the burn time,
+ * {@code minecraft:context_float_provider} for the speed multiplier; a single
+ * {@code minecraft:number_provider} registry in the 26.3 snapshots). This is the same change WorldWeaver's
  * {@code FuelBlockTrait} adapted to (commit {@code edfd33f5}).
  * <p>
  * Because a burn time is now a registry reference rather than an {@code int}, {@link Fuel#getFuelTime()}'s
  * value is matched against vanilla's own built-in {@code cooking/time_*} providers, each of which carries
- * exactly one tick value (verified against the 26.3 jar's
- * {@code data/minecraft/number_provider/cooking/*.json}). A block asking for a tick count vanilla has no
+ * exactly one tick value (verified against the 26.3 release's
+ * {@code ContextIntProviders#bootstrap}). A block asking for a tick count vanilla has no
  * provider for is reported and left without the component, rather than a new registry entry being
  * bootstrapped - exactly the restriction WorldWeaver's {@code FuelBlockTrait#withTicks} took.
  * <p>
@@ -53,9 +57,9 @@ public final class FuelComponents {
      * {@code on_false} value; {@code on_true} is the halved blast-furnace/smoker value, which
      * {@code speed_default} accounts for separately).
      */
-    private static final Map<Integer, ResourceKey<NumberProvider>> VANILLA_BURN_TIMES = new HashMap<>();
+    private static final Map<Integer, ResourceKey<ContextIntProvider>> VANILLA_BURN_TIMES = new HashMap<>();
 
-    private static final ResourceKey<NumberProvider> SPEED_DEFAULT = provider("cooking/speed_default");
+    private static final ResourceKey<ContextFloatProvider> SPEED_DEFAULT = ContextFloatProviders.COOKING_DEFAULT_SPEED_MULTIPLIER;
 
     static {
         VANILLA_BURN_TIMES.put(50, provider("cooking/time_bamboo"));
@@ -73,8 +77,8 @@ public final class FuelComponents {
         VANILLA_BURN_TIMES.put(20000, provider("cooking/time_lava_bucket"));
     }
 
-    private static ResourceKey<NumberProvider> provider(String path) {
-        return ResourceKey.create(Registries.NUMBER_PROVIDER, Identifier.withDefaultNamespace(path));
+    private static ResourceKey<ContextIntProvider> provider(String path) {
+        return ResourceKey.create(Registries.CONTEXT_INT_PROVIDER, Identifier.withDefaultNamespace(path));
     }
 
     /**
@@ -98,11 +102,11 @@ public final class FuelComponents {
             if (!(block instanceof Fuel fuel)) continue;
 
             final int ticks = fuel.getFuelTime();
-            final ResourceKey<NumberProvider> burnTime = VANILLA_BURN_TIMES.get(ticks);
+            final ResourceKey<ContextIntProvider> burnTime = VANILLA_BURN_TIMES.get(ticks);
             if (burnTime == null) {
                 BCLib.LOGGER.error(
                         "Block " + block + " asks for a burn time of " + ticks + " ticks, but 26.3 expresses"
-                                + " fuel as a reference into minecraft:number_provider and vanilla ships no"
+                                + " fuel as a reference into minecraft:context_int_provider and vanilla ships no"
                                 + " provider with that value. The block will not be a furnace fuel."
                 );
                 continue;

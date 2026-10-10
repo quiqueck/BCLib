@@ -27,7 +27,7 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.predicates.MatchBlock;
-import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -209,7 +209,7 @@ public abstract class BaseChair extends AbstractChair {
                 .lootTable()
                 .withPool(LootPool
                         .lootPool()
-                        .setRolls(ConstantValue.exactly(1))
+                        .setRolls(ContextIntProviders.exactly(1))
                         .add(LootItem.lootTableItem(block.asItem()))
                         .when(bottomShape)
                 );

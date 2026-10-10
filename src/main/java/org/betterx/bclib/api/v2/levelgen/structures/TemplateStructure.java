@@ -1,5 +1,7 @@
 package org.betterx.bclib.api.v2.levelgen.structures;
 
+import de.ambertation.wover.structure.api.StructureNBT;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
@@ -36,11 +38,11 @@ public abstract class TemplateStructure extends Structure {
                 context
                         .chunkGenerator()
                         .getBiomeSource()
+                        .createUncachedResolver(context.randomState())
                         .getNoiseBiome(
                                 QuartPos.fromBlock(blockPos.getX()),
                                 QuartPos.fromBlock(blockPos.getY()),
-                                QuartPos.fromBlock(blockPos.getZ()),
-                                context.randomState().sampler()
+                                QuartPos.fromBlock(blockPos.getZ())
                         )
         );
     }
@@ -246,11 +248,11 @@ public abstract class TemplateStructure extends Structure {
 
         Holder<Biome> holder = ctx.chunkGenerator()
                                   .getBiomeSource()
+                                  .createUncachedResolver(ctx.randomState())
                                   .getNoiseBiome(
                                           QuartPos.fromBlock(x),
                                           QuartPos.fromBlock(randomY),
-                                          QuartPos.fromBlock(z),
-                                          ctx.randomState().sampler()
+                                          QuartPos.fromBlock(z)
                                   );
         if (!ctx.validBiome().test(holder)) {
             return false;

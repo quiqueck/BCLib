@@ -1,13 +1,15 @@
 package org.betterx.bclib.trait.block;
 
+import de.ambertation.wover.block.api.render.BlockRenderTraits;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.trait.TraitLists;
 import de.ambertation.wover.block.api.BlockDefinition;
-import de.ambertation.wover.block.api.client.trait.ClientBlockTraits;
 import de.ambertation.wover.block.api.trait.*;
+import de.ambertation.wover.block.api.trait.BlockTrait;
 import de.ambertation.wover.block.impl.trait.BlockTraitImpl;
 import de.ambertation.wover.pottable.api.trait.PottablePlantBlockTrait;
 
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -67,7 +69,7 @@ public class PlantBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> im
                 withColor(color, walkable, offsetType),
                 CompostableBlockTrait.withDefault(),
                 flammable ? BlockTraits.FLAMMABLE.withDefault() : null,
-                ClientBlockTraits.RENDER_LAYER.cutout(),
+                BlockRenderTraits.RENDER_LAYER.cutout(),
                 // Thin grass/moss/fern/crop-style insta-break plants get NO mineable tag, matching vanilla
                 // short_grass/fern/flowers/crops. (Leaves keep needsShears via LeavesBlockTrait; woody/terrain
                 // blocks keep their tags via their own MINEABLE_WITH traits.)
@@ -145,7 +147,12 @@ public class PlantBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> im
         }
 
         if (!walkable) {
-            definition.noCollission();
+            // 26.3 lets a fluid flow into (and wash away) a block only if it is in this tag - up to 26.2 every
+            // block that did not blocksMotion() qualified. Vanilla lists all of its non-colliding plants
+            // (grass, flowers, saplings, crops, mushrooms, fungi, roots, vines, ...) but none of the colliding
+            // ones (cactus, bamboo, leaves), so a walkable plant stays out, exactly as on 26.2.
+            definition.noCollission()
+                      .addTags(BlockTags.WASHED_AWAY_BY_FLUIDS);
         } else if (offsetType != BlockBehaviour.OffsetType.NONE) {
             // A walkable plant keeps its collision shape; a block that has both a collision shape and a
             // non-NONE offset must be marked dynamicShape, or vanilla throws at registration:

@@ -1,7 +1,9 @@
 package org.betterx.bclib.trait.block;
 
-import de.ambertation.wover.block.api.client.trait.BlockModelTrait;
-import de.ambertation.wover.block.api.client.trait.ClientBlockTraits;
+import de.ambertation.wover.block.api.client.model.ClientBlockModelRegistry;
+import de.ambertation.wover.block.api.client.trait.BlockModelTrait.ModelFactory;
+import de.ambertation.wover.block.api.model.BlockModelBinding;
+import de.ambertation.wover.block.api.model.ModelKey;
 import de.ambertation.wover.core.api.ModCore;
 
 import net.minecraft.client.data.models.BlockModelGenerators;
@@ -60,12 +62,12 @@ public class WeightedPillarModelTrait {
      *                    texture
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static BlockModelTrait log(
+    public static BlockModelBinding log(
             int[] weights,
             @Nullable Identifier sideTexture,
             @Nullable Identifier endTexture
     ) {
-        return ModCore.isDatagen() ? Impl.column(weights, sideTexture, endTexture, false, null) : null;
+        return BlockModelBinding.of(MODEL_COLUMN, new ColumnParams(weights, sideTexture, endTexture, false, null));
     }
 
     /**
@@ -78,25 +80,56 @@ public class WeightedPillarModelTrait {
      * @param endTexture  optional explicit end texture; {@code null} uses the log block's {@code _side}
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static BlockModelTrait bark(
+    public static BlockModelBinding bark(
             Supplier<Block> logBlock,
             int[] weights,
             @Nullable Identifier sideTexture,
             @Nullable Identifier endTexture
     ) {
-        return ModCore.isDatagen() ? Impl.column(weights, sideTexture, endTexture, true, logBlock) : null;
+        return BlockModelBinding.of(MODEL_COLUMN, new ColumnParams(weights, sideTexture, endTexture, true, logBlock));
+    }
+
+    private record ColumnParams(
+            int[] weights,
+            @Nullable Identifier sideOverride,
+            @Nullable Identifier endOverride,
+            boolean bark,
+            @Nullable Supplier<Block> logBlock
+    ) {
+    }
+
+    private static final ModelKey<ColumnParams> MODEL_COLUMN = BCLModelKeys.key("weighted_pillar_model_trait/column");
+
+    /**
+     * Registers the client generators behind this class's model keys. Called from the mod's
+     * {@code wover.client.traits} entrypoint.
+     */
+    @Environment(EnvType.CLIENT)
+    public static void registerClientModels() {
+        Impl.register();
     }
 
     @Environment(EnvType.CLIENT)
     private static class Impl {
-        private static BlockModelTrait column(
+        private static void register() {
+            ClientBlockModelRegistry.register(
+                    MODEL_COLUMN,
+                    (key, block, generator, payload) -> columnFrom(payload).provideBlockModels(key, block, generator)
+            );
+        }
+
+        private static ModelFactory columnFrom(ColumnParams p) {
+            return column(p.weights(), p.sideOverride(), p.endOverride(), p.bark(), p.logBlock());
+        }
+
+        private static ModelFactory column(
                 int[] weights,
                 @Nullable Identifier sideOverride,
                 @Nullable Identifier endOverride,
                 boolean bark,
                 @Nullable Supplier<Block> logBlock
         ) {
-            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+            return (key, block, generator) -> {
                 final Identifier side;
                 final Identifier end;
                 if (sideOverride != null) {
@@ -132,7 +165,7 @@ public class WeightedPillarModelTrait {
                         new MultiVariant(weighted.build())
                 ));
                 generator.delegateItemModel(block, baseModel);
-            });
+            };
         }
     }
 }

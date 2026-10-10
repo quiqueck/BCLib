@@ -1,7 +1,9 @@
 package org.betterx.bclib.trait.block;
 
-import de.ambertation.wover.block.api.client.trait.BlockModelTrait;
-import de.ambertation.wover.block.api.client.trait.ClientBlockTraits;
+import de.ambertation.wover.block.api.client.model.ClientBlockModelRegistry;
+import de.ambertation.wover.block.api.client.trait.BlockModelTrait.ModelFactory;
+import de.ambertation.wover.block.api.model.BlockModelBinding;
+import de.ambertation.wover.block.api.model.ModelKey;
 import de.ambertation.wover.block.api.model.WoverBlockModelGenerators;
 import de.ambertation.wover.core.api.ModCore;
 
@@ -196,8 +198,8 @@ public class WeightedCrossModelTrait {
      * @param item     how to generate the item model
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static BlockModelTrait simple(List<Layer> variants, Item item) {
-        return ModCore.isDatagen() ? Impl.simple(variants, item) : null;
+    public static BlockModelBinding simple(List<Layer> variants, Item item) {
+        return BlockModelBinding.of(MODEL_SIMPLE, new SimpleParams(variants, item));
     }
 
     /**
@@ -211,13 +213,16 @@ public class WeightedCrossModelTrait {
      * @param item      how to generate the item model
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static BlockModelTrait booleanDispatch(
+    public static BlockModelBinding booleanDispatch(
             BooleanProperty property,
             List<Layer> whenFalse,
             List<Layer> whenTrue,
             Item item
     ) {
-        return ModCore.isDatagen() ? Impl.booleanDispatch(property, whenFalse, whenTrue, item) : null;
+        return BlockModelBinding.of(
+                MODEL_BOOLEAN_DISPATCH,
+                new BooleanDispatchParams(property, whenFalse, whenTrue, item)
+        );
     }
 
     /**
@@ -266,12 +271,12 @@ public class WeightedCrossModelTrait {
      * @param <T>      the property's value type
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static <T extends Comparable<T>> BlockModelTrait propertyDispatch(
+    public static <T extends Comparable<T>> BlockModelBinding propertyDispatch(
             Property<T> property,
             List<Case<T>> cases,
             Item item
     ) {
-        return ModCore.isDatagen() ? Impl.propertyDispatch(property, cases, item) : null;
+        return BlockModelBinding.of(MODEL_PROPERTY_DISPATCH, new PropertyDispatchParams<>(property, cases, item));
     }
 
     /**
@@ -287,17 +292,105 @@ public class WeightedCrossModelTrait {
      * @param <B>  the second property's value type
      * @return the model trait, or {@code null} outside of datagen
      */
-    public static <A extends Comparable<A>, B extends Comparable<B>> BlockModelTrait property2Dispatch(
+    public static <A extends Comparable<A>, B extends Comparable<B>> BlockModelBinding property2Dispatch(
             Property<A> a,
             Property<B> b,
             List<Case2<A, B>> cases,
             Item item
     ) {
-        return ModCore.isDatagen() ? Impl.property2Dispatch(a, b, cases, item) : null;
+        return BlockModelBinding.of(MODEL_PROPERTY2_DISPATCH, new Property2DispatchParams<>(a, b, cases, item));
+    }
+
+    private record SimpleParams(List<Layer> variants, Item item) {
+    }
+
+    private static final ModelKey<SimpleParams> MODEL_SIMPLE = BCLModelKeys.key("weighted_cross_model_trait/simple");
+
+    private record BooleanDispatchParams(
+            BooleanProperty property,
+            List<Layer> whenFalse,
+            List<Layer> whenTrue,
+            Item item
+    ) {
+    }
+
+    private static final ModelKey<BooleanDispatchParams> MODEL_BOOLEAN_DISPATCH =
+            BCLModelKeys.key("weighted_cross_model_trait/boolean_dispatch");
+
+    private record PropertyDispatchParams<T extends Comparable<T>>(
+            Property<T> property,
+            List<Case<T>> cases,
+            Item item
+    ) {
+    }
+
+    private static final ModelKey<PropertyDispatchParams<?>> MODEL_PROPERTY_DISPATCH =
+            BCLModelKeys.key("weighted_cross_model_trait/property_dispatch");
+
+    private record Property2DispatchParams<A extends Comparable<A>, B extends Comparable<B>>(
+            Property<A> a,
+            Property<B> b,
+            List<Case2<A, B>> cases,
+            Item item
+    ) {
+    }
+
+    private static final ModelKey<Property2DispatchParams<?, ?>> MODEL_PROPERTY2_DISPATCH =
+            BCLModelKeys.key("weighted_cross_model_trait/property2_dispatch");
+
+    /**
+     * Registers the client generators behind this class's model keys. Called from the mod's
+     * {@code wover.client.traits} entrypoint.
+     */
+    @Environment(EnvType.CLIENT)
+    public static void registerClientModels() {
+        Impl.register();
     }
 
     @Environment(EnvType.CLIENT)
     private static class Impl {
+        private static void register() {
+            ClientBlockModelRegistry.register(
+                    MODEL_SIMPLE,
+                    (key, block, generator, payload) -> simpleFrom(payload).provideBlockModels(key, block, generator)
+            );
+            ClientBlockModelRegistry.register(
+                    MODEL_BOOLEAN_DISPATCH,
+                    (key, block, generator, payload) -> booleanDispatchFrom(payload)
+                            .provideBlockModels(key, block, generator)
+            );
+            ClientBlockModelRegistry.register(
+                    MODEL_PROPERTY_DISPATCH,
+                    (key, block, generator, payload) -> propertyDispatchFrom(payload)
+                            .provideBlockModels(key, block, generator)
+            );
+            ClientBlockModelRegistry.register(
+                    MODEL_PROPERTY2_DISPATCH,
+                    (key, block, generator, payload) -> property2DispatchFrom(payload)
+                            .provideBlockModels(key, block, generator)
+            );
+        }
+
+        private static ModelFactory simpleFrom(SimpleParams p) {
+            return simple(p.variants(), p.item());
+        }
+
+        private static ModelFactory booleanDispatchFrom(BooleanDispatchParams p) {
+            return booleanDispatch(p.property(), p.whenFalse(), p.whenTrue(), p.item());
+        }
+
+        private static <T extends Comparable<T>> ModelFactory propertyDispatchFrom(
+                PropertyDispatchParams<T> p
+        ) {
+            return propertyDispatch(p.property(), p.cases(), p.item());
+        }
+
+        private static <A extends Comparable<A>, B extends Comparable<B>> ModelFactory property2DispatchFrom(
+                Property2DispatchParams<A, B> p
+        ) {
+            return property2Dispatch(p.a(), p.b(), p.cases(), p.item());
+        }
+
         private static TextureSlot slot(Slot slot) {
             return slot == Slot.CROSS ? TextureSlot.CROSS : TextureSlot.TEXTURE;
         }
@@ -371,21 +464,21 @@ public class WeightedCrossModelTrait {
             }
         }
 
-        private static BlockModelTrait simple(List<Layer> variants, Item item) {
-            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+        private static ModelFactory simple(List<Layer> variants, Item item) {
+            return (key, block, generator) -> {
                 final MultiVariant mv = variants(block, generator, variants, "");
                 generator.acceptBlockState(BlockModelGenerators.createSimpleBlock(block, mv));
                 applyItem(block, generator, item);
-            });
+            };
         }
 
-        private static BlockModelTrait booleanDispatch(
+        private static ModelFactory booleanDispatch(
                 BooleanProperty property,
                 List<Layer> whenFalse,
                 List<Layer> whenTrue,
                 Item item
         ) {
-            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+            return (key, block, generator) -> {
                 final MultiVariant falseVariant = variants(block, generator, whenFalse, "_false");
                 final MultiVariant trueVariant = variants(block, generator, whenTrue, "_true");
                 generator.acceptBlockState(
@@ -396,15 +489,15 @@ public class WeightedCrossModelTrait {
                         )
                 );
                 applyItem(block, generator, item);
-            });
+            };
         }
 
-        private static <T extends Comparable<T>> BlockModelTrait propertyDispatch(
+        private static <T extends Comparable<T>> ModelFactory propertyDispatch(
                 Property<T> property,
                 List<Case<T>> cases,
                 Item item
         ) {
-            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+            return (key, block, generator) -> {
                 PropertyDispatch.C1<MultiVariant, T> dispatch = null;
                 for (Case<T> c : cases) {
                     final MultiVariant mv = variants(
@@ -415,16 +508,16 @@ public class WeightedCrossModelTrait {
                 }
                 generator.acceptBlockState(MultiVariantGenerator.dispatch(block).with(dispatch));
                 applyItem(block, generator, item);
-            });
+            };
         }
 
-        private static <A extends Comparable<A>, B extends Comparable<B>> BlockModelTrait property2Dispatch(
+        private static <A extends Comparable<A>, B extends Comparable<B>> ModelFactory property2Dispatch(
                 Property<A> a,
                 Property<B> b,
                 List<Case2<A, B>> cases,
                 Item item
         ) {
-            return ClientBlockTraits.MODEL.with((key, block, generator) -> {
+            return (key, block, generator) -> {
                 PropertyDispatch.C2<MultiVariant, A, B> dispatch = null;
                 for (Case2<A, B> c : cases) {
                     final MultiVariant mv = variants(
@@ -436,7 +529,7 @@ public class WeightedCrossModelTrait {
                 }
                 generator.acceptBlockState(MultiVariantGenerator.dispatch(block).with(dispatch));
                 applyItem(block, generator, item);
-            });
+            };
         }
     }
 }

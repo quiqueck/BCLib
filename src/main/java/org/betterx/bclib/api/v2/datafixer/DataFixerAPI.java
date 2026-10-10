@@ -50,6 +50,10 @@ public class DataFixerAPI {
     static class State {
         public boolean didFail = false;
         protected ArrayList<String> errors = new ArrayList<>();
+        //Every rewrite is only logged at debug level, the summary reports these totals instead.
+        //Files and regions are fixed in parallel streams, hence the atomics.
+        final AtomicInteger rewrittenFiles = new AtomicInteger();
+        final AtomicInteger rewrittenChunks = new AtomicInteger();
 
         public void addError(String s) {
             errors.add(s);
@@ -344,6 +348,15 @@ public class DataFixerAPI {
             return null;
         }
 
+        //A dedicated server fires WORLD_FOLDER_READY before it creates a new world, so the folder has no
+        //level.dat yet. There is nothing to patch, and CREATED_NEW_WORLD_FOLDER marks every patch as
+        //applied right after. Running the fixer here used to fail on the missing level.dat and log it
+        //as an error on every fresh server.
+        if (!new File(levelBaseDir, "level.dat").exists() && !new File(levelBaseDir, "level.dat_old").exists()) {
+            LOGGER.info("No level.dat in {}, new world, nothing to patch", levelBaseDir);
+            return null;
+        }
+
         MigrationProfile profile = getMigrationProfile();
         profile.runPrePatches(levelBaseDir);
 
@@ -382,6 +395,14 @@ public class DataFixerAPI {
         List<File> regions = getAllRegions(dir, null);
         final int maxProgress = players.size() + backpacks.size() + regions.size() + 4;
         progress.incAtomic(maxProgress);
+        //The individual files are only logged at debug level. A large (pre-generated) world has
+        //thousands of region files, and the logger name is not part of the production log layout,
+        //so the summary carries an explicit prefix to make clear who is reading the region files.
+        final long startTime = Util.getMillis();
+        LOGGER.info(
+                "[BCLib] Inspecting {} player, {} backpack and {} region files in {} for world patches",
+                players.size(), backpacks.size(), regions.size(), dir
+        );
 
         progress.progressStage(Component.translatable("message.bclib.datafixer.progress.players"));
         RegionStorageInfo regionStorageInfo = new RegionStorageInfo(
@@ -425,6 +446,14 @@ public class DataFixerAPI {
             WorldConfig.saveFile(BCLib.C);
         }
         progress.incAtomic(maxProgress);
+        LOGGER.info(
+                "[BCLib] Finished inspecting {} files in {}s, rewrote {} chunks and {} files{}",
+                players.size() + backpacks.size() + regions.size() + 1,
+                (Util.getMillis() - startTime) / 1000,
+                state.rewrittenChunks.get(),
+                state.rewrittenFiles.get(),
+                state.didFail ? " with errors, the world patches will be retried on the next start" : ""
+        );
 
         progress.stop();
 
@@ -438,7 +467,7 @@ public class DataFixerAPI {
             RegionStorageInfo regionStorageInfo
     ) {
         try {
-            LOGGER.info("Inspecting level.dat in " + levelBaseDir);
+            LOGGER.debug("Inspecting level.dat in {}", levelBaseDir);
 
             //load the level (could already contain patches applied by patchLevelDat)
             CompoundTag level = profile.getLevelDat(levelBaseDir);
@@ -457,7 +486,8 @@ public class DataFixerAPI {
             }
 
             if (changed[0]) {
-                LOGGER.warn("Writing '{}'", profile.getLevelDatPath());
+                LOGGER.debug("Writing '{}'", profile.getLevelDatPath());
+                state.rewrittenFiles.incrementAndGet();
                 NbtIo.writeCompressed(level, profile.getLevelDatPath());
             }
         } catch (Exception e) {
@@ -470,14 +500,15 @@ public class DataFixerAPI {
 
     private static void fixPlayer(MigrationProfile data, State state, Path file, RegionStorageInfo regionStorageInfo) {
         try {
-            LOGGER.info("Inspecting " + file);
+            LOGGER.debug("Inspecting {}", file);
 
             CompoundTag player = readNbt(file);
             boolean[] changed = {false};
             fixPlayerNbt(player, changed, data);
 
             if (changed[0]) {
-                LOGGER.warn("Writing '{}'", file);
+                LOGGER.debug("Writing '{}'", file);
+                state.rewrittenFiles.incrementAndGet();
                 NbtIo.writeCompressed(player, file);
             }
         } catch (Exception e) {
@@ -601,14 +632,15 @@ public class DataFixerAPI {
      */
     private static void fixBackpack(MigrationProfile data, State state, Path file) {
         try {
-            LOGGER.info("Inspecting " + file);
+            LOGGER.debug("Inspecting {}", file);
 
             CompoundTag root = readNbt(file);
             boolean[] changed = {false};
             fixIDsRecursively(root, changed, data, "id");
 
             if (changed[0]) {
-                LOGGER.warn("Writing '{}'", file);
+                LOGGER.debug("Writing '{}'", file);
+                state.rewrittenFiles.incrementAndGet();
                 NbtIo.writeCompressed(root, file);
             }
         } catch (Exception e) {
@@ -638,6 +670,13 @@ public class DataFixerAPI {
     ) {
         if (palette == null) return;
 
+        // Minecraft 26.3 (data version 5006, BlockStateFieldNamesFix) renamed the block state fields to
+        // {id, properties} and writes a state without properties as a bare id string. The id replacements
+        // and every registered state patcher are written against the legacy {Name, Properties} compound,
+        // so chunks saved by 26.3 are converted to that shape for the duration of the fix and converted
+        // back afterwards. Older chunks keep the legacy shape: vanilla's datafixer renames them on load.
+        final boolean modernFormat = toLegacyPalette(palette);
+
         palette.forEach((blockTag) -> {
             CompoundTag blockTagCompound = ((CompoundTag) blockTag);
             changed[0] |= data.replaceStringFromIDs(blockTagCompound, "Name");
@@ -652,13 +691,62 @@ public class DataFixerAPI {
             changed[0] = false;
             e.printStackTrace();
         }
+
+        if (modernFormat) toModernPalette(palette);
+    }
+
+    /**
+     * Rewrites 26.3-format palette entries (a bare id string, or {@code {id, properties}}) into the legacy
+     * {@code {Name, Properties}} compound in place.
+     *
+     * @return {@code true} if any entry was in the 26.3 format
+     */
+    private static boolean toLegacyPalette(ListTag palette) {
+        boolean modern = false;
+        for (int i = 0; i < palette.size(); i++) {
+            final Tag entry = palette.get(i);
+            if (entry instanceof StringTag(String id)) {
+                final CompoundTag legacy = new CompoundTag();
+                legacy.putString("Name", id);
+                palette.set(i, legacy);
+                modern = true;
+            } else if (entry instanceof CompoundTag compound && !compound.contains("Name") && compound.contains("id")) {
+                final CompoundTag legacy = new CompoundTag();
+                legacy.putString("Name", compound.getStringOr("id", ""));
+                compound.getCompound("properties").ifPresent(props -> legacy.put("Properties", props));
+                palette.set(i, legacy);
+                modern = true;
+            }
+        }
+        return modern;
+    }
+
+    /**
+     * Inverse of {@link #toLegacyPalette(ListTag)}: writes every entry back in the 26.3 format, as a bare id
+     * string when the state has no properties.
+     */
+    private static void toModernPalette(ListTag palette) {
+        for (int i = 0; i < palette.size(); i++) {
+            if (!(palette.get(i) instanceof CompoundTag legacy) || !legacy.contains("Name")) continue;
+            final String id = legacy.getStringOr("Name", "");
+            final CompoundTag props = legacy.getCompound("Properties").orElse(null);
+            if (props == null || props.isEmpty()) {
+                palette.set(i, StringTag.valueOf(id));
+            } else {
+                final CompoundTag modern = new CompoundTag();
+                modern.putString("id", id);
+                modern.put("properties", props);
+                palette.set(i, modern);
+            }
+        }
     }
 
     private static void fixRegion(MigrationProfile data, State state, File file, RegionStorageInfo regionStorageInfo) {
         try {
             Path path = file.toPath();
-            LOGGER.info("Inspecting " + path);
+            LOGGER.debug("Inspecting {}", path);
             boolean[] changed = new boolean[1];
+            int rewrittenChunks = 0;
             RegionFile region = new RegionFile(regionStorageInfo, path, path.getParent(), true);
 
             for (int x = 0; x < 32; x++) {
@@ -667,6 +755,12 @@ public class DataFixerAPI {
                     changed[0] = false;
                     if (region.hasChunk(pos) && !state.didFail) {
                         DataInputStream input = region.getChunkDataInputStream(pos);
+                        //A chunk can be allocated in the header but still be unreadable (truncated,
+                        //missing stream, ...). RegionFile already logged why, and vanilla treats it
+                        //as a missing chunk, so there is nothing for us to fix. Failing the region
+                        //instead meant the patch level was never saved and a dedicated server
+                        //re-inspected the entire world on every start.
+                        if (input == null) continue;
                         CompoundTag root = NbtIo.read(input);
                         // if ((root.toString().contains("betternether:chest") || root.toString().contains("bclib:chest"))) {
                         //   NbtIo.write(root, new File(file.toString() + "-" + x + "-" + z + ".nbt"));
@@ -745,7 +839,8 @@ public class DataFixerAPI {
                         }
 
                         if (changed[0]) {
-                            LOGGER.warn("Writing '{}': {}/{}", file, x, z);
+                            LOGGER.debug("Writing '{}': {}/{}", file, x, z);
+                            rewrittenChunks++;
                             // NbtIo.write(root, new File(file.toString() + "-" + x + "-" + z + "-changed.nbt"));
                             DataOutputStream output = region.getChunkDataOutputStream(pos);
                             NbtIo.write(root, output);
@@ -755,6 +850,10 @@ public class DataFixerAPI {
                 }
             }
             region.close();
+            if (rewrittenChunks > 0) {
+                state.rewrittenFiles.incrementAndGet();
+                state.rewrittenChunks.addAndGet(rewrittenChunks);
+            }
         } catch (Exception e) {
             BCLib.LOGGER.error("Failed fixing Region.");
             state.addError("Failed fixing Region in " + file.getName() + " (" + e.getMessage() + ")");

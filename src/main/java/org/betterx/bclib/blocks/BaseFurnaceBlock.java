@@ -3,10 +3,12 @@ package org.betterx.bclib.blocks;
 import org.betterx.bclib.blockentities.BaseFurnaceBlockEntity;
 import org.betterx.bclib.client.models.BCLModels;
 import org.betterx.bclib.registry.BaseBlockEntities;
-import de.ambertation.wover.block.api.client.trait.BlockModelTrait;
-import de.ambertation.wover.block.api.client.trait.ClientBlockTraits;
+import org.betterx.bclib.trait.block.BCLModelKeys;
+import de.ambertation.wover.block.api.client.model.ClientBlockModelRegistry;
+import de.ambertation.wover.block.api.client.trait.BlockModelTrait.ModelFactory;
+import de.ambertation.wover.block.api.model.BlockModelBinding;
+import de.ambertation.wover.block.api.model.ModelKey;
 import de.ambertation.wover.block.api.trait.BlockTraitLookup;
-import de.ambertation.wover.core.api.ModCore;
 import de.ambertation.wover.sets.api.blocks.BlockSet;
 
 import static net.minecraft.client.data.models.BlockModelGenerators.*;
@@ -95,47 +97,65 @@ public class BaseFurnaceBlock extends FurnaceBlock {
      * inherit the annotation from its enclosing method, so leaving it here would strand vanilla
      * client-only type references in a class file the server actually has to verify.
      */
-    public static BlockModelTrait buildModel(BlockSet<?> set, BlockTraitLookup traitLookup) {
-        return ModCore.isDatagen() ? ClientModel.build() : null;
+    public static BlockModelBinding buildModel(BlockSet<?> set, BlockTraitLookup traitLookup) {
+        return BlockModelBinding.of(MODEL, null);
+    }
+
+    private static final ModelKey<Void> MODEL = BCLModelKeys.key("base_furnace_block");
+
+    /**
+     * Registers the client generators behind this class's model keys. Called from the mod's
+     * {@code wover.client.traits} entrypoint.
+     */
+    @Environment(EnvType.CLIENT)
+    public static void registerClientModels() {
+        ClientModel.register();
     }
 
     @Environment(EnvType.CLIENT)
     private static class ClientModel {
-        private static BlockModelTrait build() {
-            return ClientBlockTraits.MODEL.with(
-                    (key, block, generator) -> {
-                        final var baseTexture = TextureMapping.getBlockTexture(block);
-                        TextureMapping mapping = new TextureMapping()
-                                .put(TextureSlot.TOP, new Material(baseTexture.sprite().withSuffix("_top")))
-                                .put(TextureSlot.SIDE, new Material(baseTexture.sprite().withSuffix("_side")))
-                                .put(TextureSlot.FRONT, new Material(baseTexture.sprite().withSuffix("_front")))
-                                .put(TextureSlot.BOTTOM, new Material(baseTexture.sprite().withSuffix("_top")));
-                        final var furnaceModel = ModelTemplates.CUBE_ORIENTABLE_TOP_BOTTOM.create(
-                                block,
-                                mapping,
-                                generator.modelOutput()
-                        );
+        private static void register() {
+            ClientBlockModelRegistry.register(
+                    MODEL,
+                    (key, block, generator, payload) -> build().provideBlockModels(key, block, generator)
+            );
+        }
 
-                        TextureMapping mappingGlow = new TextureMapping()
-                                .put(TextureSlot.TOP, new Material(baseTexture.sprite().withSuffix("_top")))
-                                .put(TextureSlot.SIDE, new Material(baseTexture.sprite().withSuffix("_side")))
-                                .put(TextureSlot.FRONT, new Material(baseTexture.sprite().withSuffix("_front_on")))
-                                .put(TextureSlot.BOTTOM, new Material(baseTexture.sprite().withSuffix("_top")))
-                                .put(BCLModels.GLOW, new Material(baseTexture.sprite().withSuffix("_glow")));
-                        final var glowModel = BCLModels.FURNACE_GLOW.createWithSuffix(
-                                block,
-                                "_lit",
-                                mappingGlow,
-                                generator.modelOutput()
-                        );
 
-                        final var prop = PropertyDispatch.initial(LIT, FACING);
-                        addRotationModels(prop, furnaceModel, false);
-                        addRotationModels(prop, glowModel, true);
+        private static ModelFactory build() {
+            return (key, block, generator) -> {
+                final var baseTexture = TextureMapping.getBlockTexture(block);
+                TextureMapping mapping = new TextureMapping()
+                        .put(TextureSlot.TOP, new Material(baseTexture.sprite().withSuffix("_top")))
+                        .put(TextureSlot.SIDE, new Material(baseTexture.sprite().withSuffix("_side")))
+                        .put(TextureSlot.FRONT, new Material(baseTexture.sprite().withSuffix("_front")))
+                        .put(TextureSlot.BOTTOM, new Material(baseTexture.sprite().withSuffix("_top")));
+                final var furnaceModel = ModelTemplates.CUBE_ORIENTABLE_TOP_BOTTOM.create(
+                        block,
+                        mapping,
+                        generator.modelOutput()
+                );
 
-                        generator.acceptBlockState(MultiVariantGenerator.dispatch(block).with(prop));
-                        generator.delegateItemModel(block, furnaceModel);
-                    });
+                TextureMapping mappingGlow = new TextureMapping()
+                        .put(TextureSlot.TOP, new Material(baseTexture.sprite().withSuffix("_top")))
+                        .put(TextureSlot.SIDE, new Material(baseTexture.sprite().withSuffix("_side")))
+                        .put(TextureSlot.FRONT, new Material(baseTexture.sprite().withSuffix("_front_on")))
+                        .put(TextureSlot.BOTTOM, new Material(baseTexture.sprite().withSuffix("_top")))
+                        .put(BCLModels.GLOW, new Material(baseTexture.sprite().withSuffix("_glow")));
+                final var glowModel = BCLModels.FURNACE_GLOW.createWithSuffix(
+                        block,
+                        "_lit",
+                        mappingGlow,
+                        generator.modelOutput()
+                );
+
+                final var prop = PropertyDispatch.initial(LIT, FACING);
+                addRotationModels(prop, furnaceModel, false);
+                addRotationModels(prop, glowModel, true);
+
+                generator.acceptBlockState(MultiVariantGenerator.dispatch(block).with(prop));
+                generator.delegateItemModel(block, furnaceModel);
+            };
         }
     }
 

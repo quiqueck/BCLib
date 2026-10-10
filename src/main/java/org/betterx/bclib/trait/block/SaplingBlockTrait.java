@@ -2,9 +2,13 @@ package org.betterx.bclib.trait.block;
 
 import org.betterx.bclib.BCLib;
 import de.ambertation.wover.block.api.BlockDefinition;
-import de.ambertation.wover.block.api.client.trait.BlockModelTrait;
-import de.ambertation.wover.block.api.client.trait.ClientBlockTraits;
+import de.ambertation.wover.block.api.client.model.ClientBlockModelRegistry;
+import de.ambertation.wover.block.api.client.trait.BlockModelTrait.ModelFactory;
+import de.ambertation.wover.block.api.render.BlockRenderTraits;
+import de.ambertation.wover.block.api.model.BlockModelBinding;
+import de.ambertation.wover.block.api.model.ModelKey;
 import de.ambertation.wover.block.api.trait.*;
+import de.ambertation.wover.block.api.trait.BlockTrait;
 import de.ambertation.wover.block.impl.trait.BlockTraitImpl;
 import de.ambertation.wover.core.api.ModCore;
 import de.ambertation.wover.tag.api.predefined.CommonBlockTags;
@@ -37,17 +41,56 @@ public class SaplingBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> 
         return withColor(color, 0);
     }
 
+    /**
+     * The sapling's own behaviour on its own: random ticks, the sapling block/item tags, and the light
+     * level - without the plant properties, model, loot and compostability that
+     * {@link #withColor(MapColor, int)} bundles around it.
+     * <p>
+     * This is what makes a sapling <em>grow</em>. {@link org.betterx.bclib.blocks.FeatureSaplingBlock}
+     * does all of its growing in {@code randomTick()}, and a block that never asked for random ticks is
+     * never handed one - so a sapling registered without this still accepts bone meal and looks entirely
+     * healthy while never growing on its own. Any registration that assembles its own trait list rather
+     * than taking the {@link #withColor(MapColor, int)} bundle (BetterNether's wood-set sapling slot,
+     * which brings its own model and survival rules) has to add this, or it registers a sapling that only
+     * a player with bone meal can ever turn into a tree.
+     */
+    public static SaplingBlockTrait ticking() {
+        return ticking(0);
+    }
+
+    /**
+     * @param lightLevel the sapling's light emission; {@code 0} leaves the property untouched.
+     * @see #ticking()
+     */
+    public static SaplingBlockTrait ticking(int lightLevel) {
+        return new SaplingBlockTrait(lightLevel);
+    }
+
     public static List<BlockTrait<?, ?>> withColor(MapColor color, int lightLevel) {
         return Combiner.of(
                 PlantBlockTrait.withColor(color, false),
-                new SaplingBlockTrait(lightLevel),
+                ticking(lightLevel),
                 BlockTraits.MINEABLE_WITH.needsHoe(),
                 BlockTraits.LOOT_TABLE.dropSelf(),
-                ClientBlockTraits.RENDER_LAYER.cutout(),
-                ModCore.isDatagen() ? ClientModel.build(lightLevel) : null,
+                BlockRenderTraits.RENDER_LAYER.cutout(),
+                BlockModelBinding.of(MODEL, new ModelParams(lightLevel)),
                 CompostableBlockTrait.withDefault(),
                 BlockTraits.FLAMMABLE.withDefault()
         ).combine();
+    }
+
+    private record ModelParams(int lightLevel) {
+    }
+
+    private static final ModelKey<ModelParams> MODEL = BCLModelKeys.key("sapling_block_trait");
+
+    /**
+     * Registers the client generators behind this class's model keys. Called from the mod's
+     * {@code wover.client.traits} entrypoint.
+     */
+    @Environment(EnvType.CLIENT)
+    public static void registerClientModels() {
+        ClientModel.register();
     }
 
     /**
@@ -59,21 +102,30 @@ public class SaplingBlockTrait extends BlockTraitImpl<Block, GenericBlockTrait> 
      */
     @Environment(EnvType.CLIENT)
     private static class ClientModel {
-        private static BlockModelTrait build(int lightLevel) {
-            return ClientBlockTraits.MODEL.with(
-                    ((key, block, generator) -> {
-                        generator.vanillaGenerator.createCrossBlock(
-                                block,
-                                lightLevel > 0
-                                        ? BlockModelGenerators.PlantType.EMISSIVE_NOT_TINTED
-                                        : BlockModelGenerators.PlantType.NOT_TINTED
-                        );
-                        // Flat item model (item/generated), not the block's cross model: vanilla saplings
-                        // use createPlantWithDefaultItem -> registerSimpleFlatItemModel, and delegating to
-                        // the cross model instead renders the dropped/held item at full block scale.
-                        generator.createFlatItem(block);
-                    })
+        private static void register() {
+            ClientBlockModelRegistry.register(
+                    MODEL,
+                    (key, block, generator, payload) -> buildFrom(payload).provideBlockModels(key, block, generator)
             );
+        }
+
+        private static ModelFactory buildFrom(ModelParams p) {
+            return build(p.lightLevel());
+        }
+
+        private static ModelFactory build(int lightLevel) {
+            return ((key, block, generator) -> {
+                generator.vanillaGenerator.createCrossBlock(
+                        block,
+                        lightLevel > 0
+                                ? BlockModelGenerators.PlantType.EMISSIVE_NOT_TINTED
+                                : BlockModelGenerators.PlantType.NOT_TINTED
+                );
+                // Flat item model (item/generated), not the block's cross model: vanilla saplings
+                // use createPlantWithDefaultItem -> registerSimpleFlatItemModel, and delegating to
+                // the cross model instead renders the dropped/held item at full block scale.
+                generator.createFlatItem(block);
+            });
         }
     }
 

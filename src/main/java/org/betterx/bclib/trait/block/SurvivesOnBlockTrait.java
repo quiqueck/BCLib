@@ -108,6 +108,13 @@ public class SurvivesOnBlockTrait extends BlockTraitImpl<Block, GenericBlockTrai
      * @return the description, or an empty string if the trait resolves to nothing
      */
     public String getSurvivableBlocksString() {
+        return survivableBlockNames().sorted(Comparator.naturalOrder()).collect(Collectors.joining(", "));
+    }
+
+    /**
+     * The distinct display names of the blocks this trait accepts, unsorted.
+     */
+    private Stream<String> survivableBlockNames() {
         final Stream<Block> blocks;
         if (survivalTag != null) {
             blocks = BuiltInRegistries.BLOCK
@@ -118,7 +125,7 @@ public class SurvivesOnBlockTrait extends BlockTraitImpl<Block, GenericBlockTrai
         } else if (survivalBlocks != null) {
             blocks = survivalBlocks.stream();
         } else {
-            return "";
+            return Stream.empty();
         }
 
         return blocks
@@ -128,26 +135,28 @@ public class SurvivesOnBlockTrait extends BlockTraitImpl<Block, GenericBlockTrai
                     if (stack.has(DataComponents.CUSTOM_NAME)) return stack.getHoverName().getString();
                     return block.getName().getString();
                 })
-                .distinct()
-                .sorted(Comparator.naturalOrder())
-                .collect(Collectors.joining(", "));
+                .distinct();
     }
 
     /**
      * Appends the "can be placed on ..." tooltip for every {@link SurvivesOnBlockTrait} attached to
      * {@code block}, so a block does not have to implement any special interface just to get it. Traits
-     * are OR-ed by {@link #survivesOn}, so their descriptions are concatenated.
+     * are OR-ed by {@link #survivesOn}, so their blocks are merged into one sorted list.
      *
      * @param block    the (registered) block whose survival trait(s) to describe
      * @param consumer receives the tooltip lines
      */
     @Environment(EnvType.CLIENT)
     public static void appendHoverText(Block block, Consumer<Component> consumer) {
+        // One list over all traits rather than one list per trait strung together: a plant with several
+        // soil rules (e.g. netherrack + soul ground + mycelium) otherwise showed several separately sorted
+        // runs, with blocks two rules share (farmland) listed twice.
         final String description = BlockTrait
                 .runtimeTraits(block)
                 .filter(t -> t instanceof SurvivesOnBlockTrait)
-                .map(t -> ((SurvivesOnBlockTrait) t).getSurvivableBlocksString())
-                .filter(s -> !s.isEmpty())
+                .flatMap(t -> ((SurvivesOnBlockTrait) t).survivableBlockNames())
+                .distinct()
+                .sorted(Comparator.naturalOrder())
                 .collect(Collectors.joining(", "));
         if (description.isEmpty()) return;
         appendHoverText(description, "tooltip.bclib.place_on", consumer);

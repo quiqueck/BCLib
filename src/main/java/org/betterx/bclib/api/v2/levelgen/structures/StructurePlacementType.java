@@ -5,6 +5,8 @@ import net.minecraft.util.StringRepresentable;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Locale;
+
 public enum StructurePlacementType implements StringRepresentable {
     FLOOR, WALL, CEIL, LAVA, UNDER;
 
@@ -16,6 +18,6 @@ public enum StructurePlacementType implements StringRepresentable {
 
     @Override
     public @NotNull String getSerializedName() {
-        return this.name().toLowerCase();
+        return this.name().toLowerCase(Locale.ROOT);
     }
 }

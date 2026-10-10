@@ -2,7 +2,6 @@ package org.betterx.bclib.trait.block;
 
 import org.betterx.bclib.furniture.block.BaseChair;
 import org.betterx.bclib.trait.TraitLists;
-import de.ambertation.wover.block.api.client.trait.BlockModelTrait;
 import de.ambertation.wover.block.api.trait.BlockTrait;
 import de.ambertation.wover.block.api.trait.BlockTraits;
 import de.ambertation.wover.recipe.api.RecipeBuilder;
@@ -53,7 +52,7 @@ public class FurnitureTraits {
      * @param model  the model trait for this taburet
      * @return model + self-drop loot + taburet recipe
      */
-    public static List<BlockTrait<?, ?>> taburet(Block source, BlockModelTrait model) {
+    public static List<BlockTrait<?, ?>> taburet(Block source, BlockTrait<Block, ?> model) {
         return TraitLists.of(
                 model,
                 BlockTraits.LOOT_TABLE.dropSelf(),
@@ -78,7 +77,7 @@ public class FurnitureTraits {
      * @param model  the model trait for this chair
      * @return model + chair loot + chair recipe
      */
-    public static List<BlockTrait<?, ?>> chair(Block source, BlockModelTrait model) {
+    public static List<BlockTrait<?, ?>> chair(Block source, BlockTrait<Block, ?> model) {
         return TraitLists.of(
                 model,
                 BlockTraits.LOOT_TABLE.with((tableKey, blockKey, chairBlock, provider) -> BaseChair.chairLoot(
@@ -106,7 +105,7 @@ public class FurnitureTraits {
      * @param model  the model trait for this bar stool
      * @return model + self-drop loot + bar stool recipe
      */
-    public static List<BlockTrait<?, ?>> barStool(Block source, BlockModelTrait model) {
+    public static List<BlockTrait<?, ?>> barStool(Block source, BlockTrait<Block, ?> model) {
         return TraitLists.of(
                 model,
                 BlockTraits.LOOT_TABLE.dropSelf(),

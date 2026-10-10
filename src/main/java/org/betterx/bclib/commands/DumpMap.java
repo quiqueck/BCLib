@@ -16,6 +16,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.levelgen.RandomState;
+import net.minecraft.world.level.levelgen.densityfunction.SamplerContext;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.phys.Vec3;
 
@@ -54,7 +55,7 @@ public class DumpMap {
                 .normalize();
 
         final RandomState randomState = serverLevel.getChunkSource().randomState();
-        final Climate.Sampler sampler = randomState.sampler();
+        final Climate.Sampler sampler = randomState.createClimateSampler(SamplerContext.EMPTY_UNCACHED);
         int x = QuartPos.fromBlock((int) pos.x);
         int z = QuartPos.fromBlock((int) pos.z);
         int minHeight = QuartPos.fromBlock(serverLevel.getMinY());
@@ -184,7 +185,7 @@ public class DumpMap {
                 .normalize();
 
         final RandomState randomState = serverLevel.getChunkSource().randomState();
-        final Climate.Sampler sampler = randomState.sampler();
+        final Climate.Sampler sampler = randomState.createClimateSampler(SamplerContext.EMPTY_UNCACHED);
         int x = QuartPos.fromBlock((int) pos.x);
         int y = QuartPos.fromBlock((int) pos.y);
         int z = QuartPos.fromBlock((int) pos.z);

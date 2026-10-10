@@ -1,6 +1,6 @@
 package org.betterx.bclib.client.gui.screens;
 
-import de.ambertation.wunderlib.ui.ColorHelper;
+import de.ambertation.wunderlib.utils.ColorUtilARGB32;
 import de.ambertation.wunderlib.ui.layout.components.*;
 import de.ambertation.wunderlib.ui.layout.values.Rectangle;
 import de.ambertation.wunderlib.ui.layout.values.Value;
@@ -219,7 +219,7 @@ public class ProgressScreen extends LayoutScreen implements ProgressListener, At
         VerticalStack textCol = contentRow.addColumn(fit(), fit()).setDebugName("textCol").centerVertical();
         textCol.addText(fit(), fit(), description);
         textCol.addSpacer(4);
-        progress = textCol.addText(fit(), fit(), getProgressComponent()).setColor(ColorHelper.GRAY);
+        progress = textCol.addText(fit(), fit(), getProgressComponent()).setColor(ColorUtilARGB32.GRAY);
 
 
         grid.addSpacer(20);
