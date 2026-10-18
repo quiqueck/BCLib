@@ -68,6 +68,7 @@ public class BlocksHelper {
     }
 
     public static int upRay(LevelAccessor world, BlockPos pos, int maxDist) {
+        pos = GenerationArea.clamp(world, pos);
         int length = 0;
         for (int j = 1; j < maxDist && (world.isEmptyBlock(pos.above(j))); j++) {
             length++;
@@ -76,6 +77,7 @@ public class BlocksHelper {
     }
 
     public static int downRay(LevelAccessor world, BlockPos pos, int maxDist) {
+        pos = GenerationArea.clamp(world, pos);
         int length = 0;
         for (int j = 1; j < maxDist && (world.isEmptyBlock(pos.below(j))); j++) {
             length++;
@@ -85,7 +87,7 @@ public class BlocksHelper {
 
     public static int downRayRep(LevelAccessor world, BlockPos pos, int maxDist) {
         final MutableBlockPos POS = TL_POS.get();
-        POS.set(pos);
+        POS.set(GenerationArea.clamp(world, pos));
         for (int j = 1; j < maxDist && (world.getBlockState(POS)).canBeReplaced(); j++) {
             POS.setY(POS.getY() - 1);
         }
@@ -95,7 +97,7 @@ public class BlocksHelper {
     public static int raycastSqr(LevelAccessor world, BlockPos pos, int dx, int dy, int dz, int maxDist) {
         final MutableBlockPos POS = TL_POS.get();
         POS.set(pos);
-        for (int j = 1; j < maxDist && (world.getBlockState(POS)).canBeReplaced(); j++) {
+        for (int j = 1; j < maxDist && GenerationArea.contains(world, POS) && (world.getBlockState(POS)).canBeReplaced(); j++) {
             POS.move(dx, dy, dz);
         }
         return (int) pos.distSqr(POS);

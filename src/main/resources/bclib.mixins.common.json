@@ -7,13 +7,13 @@
     "AnvilBlockMixin", "AnvilMenuMixin", "BiomeGenerationSettingsAccessor", "BiomeMixin", "BiomeSourceMixin",
     "BoneMealItemMixin", "ChunkGeneratorAccessor", "ChunkGeneratorMixin", "ChunkGeneratorsMixin",
     "ComposterBlockAccessor", "CraftingMenuMixin", "DiggerItemMixin", "EnchantingTableBlockMixin", "ItemStackMixin",
-    "LayerLightSectionStorageMixin", "LootPoolMixin", "MissingDimensionFixMixin", "MobSpawnSettingsAccessor",
+    "LayerLightSectionStorageMixin", "LootPoolMixin", "MissingDimensionFixMixin", "MobSpawnSettingsAccessor", "NetherBiomeDataMixin",
     "NoiseBasedChunkGeneratorMixin", "PistonBaseBlockMixin", "PoiTypeMixin", "PortalShapeMixin",
     "PotionBrewingAccessor", "RecipeManagerMixin", "RecipeMixin", "RegistryDataLoaderMixin", "ServerLevelMixin",
-    "ShovelItemAccessor", "SurfaceRulesContextAccessor", "TheEndBiomesMixin", "V2551Mixin", "V2832Mixin",
+    "ShovelItemAccessor", "SurfaceRulesContextAccessor", "TheEndBiomesMixin", "V2551Mixin", "V2832Mixin", "VanillaRegistriesLookupMixin",
     "WorldGenRegionMixin", "boat.BoatItemMixin", "boat.BoatMixin", "boat.ChestBoatMixin", "elytra.LivingEntityMixin",
-    "shears.BeehiveBlockMixin", "shears.DiggingEnchantmentMixin", "shears.ItemPredicateBuilderMixin",
-    "shears.MushroomCowMixin", "shears.PumpkinBlockMixin", "shears.SheepMixin", "shears.SnowGolemMixin",
+    "shears.BeehiveBlockMixin", "shears.DiggingEnchantmentMixin", "shears.ItemPredicateAccessor",
+    "shears.MatchToolMixin", "shears.MushroomCowMixin", "shears.PumpkinBlockMixin", "shears.SheepMixin", "shears.SnowGolemMixin",
     "shears.TripWireBlockMixin", "signs.BlockEntityTypeMixin"
   ],
   "injectors": {

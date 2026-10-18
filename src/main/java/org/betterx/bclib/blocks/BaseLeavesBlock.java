@@ -22,6 +22,9 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import com.google.common.collect.Lists;
 
 import java.util.Collections;
@@ -113,6 +116,7 @@ public class BaseLeavesBlock extends LeavesBlock implements BlockModelProvider, 
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public BlockModel getItemModel(ResourceLocation resourceLocation) {
         return getBlockModel(resourceLocation, defaultBlockState());
     }

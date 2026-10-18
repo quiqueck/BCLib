@@ -61,7 +61,11 @@ public class VersionChecker implements Runnable {
     public static void startCheck(boolean isClient) {
         if (versionChecker == null && isClient) {
             if (Configs.CLIENT_CONFIG.checkVersions() && Configs.CLIENT_CONFIG.didShowWelcomeScreen()) {
-                versionChecker = new Thread(isClient ? new VersionCheckerClient() : new VersionChecker());
+                // No `isClient ? new VersionCheckerClient() : new VersionChecker()` here: merging the two
+                // types makes the verifier load the client-only class on a dedicated server as soon as
+                // this class is used, which Fabric Loader refuses. Handed over as a Runnable it is not
+                // loaded until this (client-only) branch actually runs.
+                versionChecker = new Thread(new VersionCheckerClient());
                 versionChecker.start();
             }
         }

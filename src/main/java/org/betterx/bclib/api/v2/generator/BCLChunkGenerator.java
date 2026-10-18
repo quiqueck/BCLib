@@ -1,6 +1,8 @@
 package org.betterx.bclib.api.v2.generator;
 
 import org.betterx.bclib.BCLib;
+import org.betterx.bclib.api.v2.generator.config.BCLEndBiomeSourceConfig;
+import org.betterx.bclib.api.v2.generator.config.BCLNetherBiomeSourceConfig;
 import org.betterx.bclib.api.v2.levelgen.LevelGenUtil;
 import org.betterx.bclib.interfaces.NoiseGeneratorSettingsProvider;
 import org.betterx.bclib.mixin.common.ChunkGeneratorAccessor;
@@ -151,7 +153,12 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
             if (loadedChunkGenerator instanceof NoiseGeneratorSettingsProvider noiseProvider) {
                 if (referenceGenerator instanceof NoiseGeneratorSettingsProvider referenceProvider) {
                     final BiomeSource bs;
-                    if (referenceGenerator.getBiomeSource() instanceof MergeableBiomeSource mbs) {
+                    if (keepsStoredBiomeSourceSettings(
+                            referenceGenerator.getBiomeSource(),
+                            loadedChunkGenerator.getBiomeSource()
+                    ) && loadedChunkGenerator.getBiomeSource() instanceof MergeableBiomeSource lbs) {
+                        bs = lbs.mergeWithBiomeSource(loadedChunkGenerator.getBiomeSource());
+                    } else if (referenceGenerator.getBiomeSource() instanceof MergeableBiomeSource mbs) {
                         bs = mbs.mergeWithBiomeSource(loadedChunkGenerator.getBiomeSource());
                     } else {
                         bs = referenceGenerator.getBiomeSource();
@@ -175,6 +182,26 @@ public class BCLChunkGenerator extends NoiseBasedChunkGenerator implements Resto
         );
     }
 
+
+    /**
+     * An existing world keeps the End/Nether settings stored with its dimensions in level.dat (quiqueck/BCLib#160).
+     * The world's stored preset only takes over when level.dat holds no settings of its own (it then decodes to
+     * the defaults, e.g. worlds from old versions) or when the biome source itself was replaced.
+     *
+     * @param reference the biome source of the world's stored preset
+     * @param loaded    the biome source loaded from level.dat
+     * @return true if the settings of {@code loaded} must be kept
+     */
+    public static boolean keepsStoredBiomeSourceSettings(BiomeSource reference, BiomeSource loaded) {
+        if (reference == null || loaded == null || reference.getClass() != loaded.getClass()) return false;
+        if (loaded instanceof BCLibEndBiomeSource end) {
+            return !BCLEndBiomeSourceConfig.DEFAULT.sameConfig(end.getTogetherConfig());
+        }
+        if (loaded instanceof BCLibNetherBiomeSource nether) {
+            return !BCLNetherBiomeSourceConfig.DEFAULT.sameConfig(nether.getTogetherConfig());
+        }
+        return false;
+    }
 
     public static NoiseGeneratorSettings amplifiedNether(BootstapContext<NoiseGeneratorSettings> bootstapContext) {
         HolderGetter<DensityFunction> densityGetter = bootstapContext.lookup(Registries.DENSITY_FUNCTION);

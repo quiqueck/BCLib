@@ -46,6 +46,12 @@ public class DataFixerAPI {
     static class State {
         public boolean didFail = false;
         protected ArrayList<String> errors = new ArrayList<>();
+        //Every rewrite and every skipped chunk is only logged at debug level (or once by RegionFile),
+        //the summary reports these totals instead. Files and regions are fixed in parallel streams.
+        final AtomicInteger rewrittenFiles = new AtomicInteger();
+        final AtomicInteger rewrittenChunks = new AtomicInteger();
+        final AtomicInteger skippedChunks = new AtomicInteger();
+        final AtomicInteger skippedRegions = new AtomicInteger();
 
         public void addError(String s) {
             errors.add(s);
@@ -302,6 +308,13 @@ public class DataFixerAPI {
         List<File> regions = getAllRegions(dir, null);
         final int maxProgress = players.size() + regions.size() + 4;
         progress.incAtomic(maxProgress);
+        //The individual files are only logged at debug level. A large (pre-generated) world has
+        //thousands of region files, so we only log a summary before and after the work.
+        final long startTime = Util.getMillis();
+        LOGGER.info(
+                "BCLib is inspecting {} player and {} region files in {} for world patches",
+                players.size(), regions.size(), dir
+        );
 
         progress.progressStage(Component.translatable("message.bclib.datafixer.progress.players"));
         players.parallelStream().forEach((file) -> {
@@ -335,6 +348,16 @@ public class DataFixerAPI {
             WorldConfig.saveFile(BCLib.MOD_ID);
         }
         progress.incAtomic(maxProgress);
+        LOGGER.info(
+                "Finished inspecting {} files in {}s, rewrote {} chunks and {} files, skipped {} unreadable chunks and {} unreadable region files{}",
+                players.size() + regions.size() + 1,
+                (Util.getMillis() - startTime) / 1000,
+                state.rewrittenChunks.get(),
+                state.rewrittenFiles.get(),
+                state.skippedChunks.get(),
+                state.skippedRegions.get(),
+                state.didFail ? " with errors, the world patches will be retried on the next start" : ""
+        );
 
         progress.stop();
 
@@ -343,7 +366,7 @@ public class DataFixerAPI {
 
     private static void fixLevel(MigrationProfile profile, State state, File levelBaseDir) {
         try {
-            LOGGER.info("Inspecting level.dat in " + levelBaseDir);
+            LOGGER.debug("Inspecting level.dat in {}", levelBaseDir);
 
             //load the level (could already contain patches applied by patchLevelDat)
             CompoundTag level = profile.getLevelDat(levelBaseDir);
@@ -362,7 +385,8 @@ public class DataFixerAPI {
             }
 
             if (changed[0]) {
-                LOGGER.warning("Writing '{}'", profile.getLevelDatFile());
+                LOGGER.debug("Writing '{}'", profile.getLevelDatFile());
+                state.rewrittenFiles.incrementAndGet();
                 NbtIo.writeCompressed(level, profile.getLevelDatFile());
             }
         } catch (Exception e) {
@@ -375,14 +399,15 @@ public class DataFixerAPI {
 
     private static void fixPlayer(MigrationProfile data, State state, File file) {
         try {
-            LOGGER.info("Inspecting " + file);
+            LOGGER.debug("Inspecting {}", file);
 
             CompoundTag player = readNbt(file);
             boolean[] changed = {false};
             fixPlayerNbt(player, changed, data);
 
             if (changed[0]) {
-                LOGGER.warning("Writing '{}'", file);
+                LOGGER.debug("Writing '{}'", file);
+                state.rewrittenFiles.incrementAndGet();
                 NbtIo.writeCompressed(player, file);
             }
         } catch (Exception e) {
@@ -436,21 +461,44 @@ public class DataFixerAPI {
     private static void fixRegion(MigrationProfile data, State state, File file) {
         try {
             Path path = file.toPath();
-            LOGGER.info("Inspecting " + path);
+            LOGGER.debug("Inspecting {}", path);
             boolean[] changed = new boolean[1];
-            RegionFile region = new RegionFile(path, path.getParent(), true);
+            int rewrittenChunks = 0;
+            final RegionFile region;
+            try {
+                region = new RegionFile(path, path.getParent(), true);
+            } catch (IOException e) {
+                //A region file that can not even be opened can not contain anything we could fix. Failing
+                //here would mean the patch level is never recorded and the whole world gets inspected again
+                //on every start (quiqueck/BCLib#146).
+                LOGGER.warning("Skipping unreadable region file {} ({})", path, e.getMessage());
+                state.skippedRegions.incrementAndGet();
+                return;
+            }
 
             for (int x = 0; x < 32; x++) {
                 for (int z = 0; z < 32; z++) {
                     ChunkPos pos = new ChunkPos(x, z);
                     changed[0] = false;
                     if (region.hasChunk(pos) && !state.didFail) {
-                        DataInputStream input = region.getChunkDataInputStream(pos);
-                        CompoundTag root = NbtIo.read(input);
-                        // if ((root.toString().contains("betternether:chest") || root.toString().contains("bclib:chest"))) {
-                        //   NbtIo.write(root, new File(file.toString() + "-" + x + "-" + z + ".nbt"));
-                        // }
-                        input.close();
+                        //A chunk can be allocated in the header but still be unreadable (truncated, missing
+                        //stream, unknown compression, corrupt data, ...). Vanilla treats it as a missing chunk,
+                        //so there is nothing for us to fix. Failing the region instead meant the patch level
+                        //was never saved and a dedicated server re-inspected the entire world on every start
+                        //(quiqueck/BCLib#146).
+                        final CompoundTag root;
+                        try (DataInputStream input = region.getChunkDataInputStream(pos)) {
+                            //RegionFile already logged why it returned null
+                            root = input == null ? null : NbtIo.read(input);
+                        } catch (IOException | RuntimeException e) {
+                            LOGGER.warning("Skipping unreadable chunk {} in {} ({})", pos, path, e.getMessage());
+                            state.skippedChunks.incrementAndGet();
+                            continue;
+                        }
+                        if (root == null) {
+                            state.skippedChunks.incrementAndGet();
+                            continue;
+                        }
 
                         //Checking TileEntities
                         ListTag tileEntities = root.getCompound("Level")
@@ -489,7 +537,8 @@ public class DataFixerAPI {
                         });
 
                         if (changed[0]) {
-                            LOGGER.warning("Writing '{}': {}/{}", file, x, z);
+                            LOGGER.debug("Writing '{}': {}/{}", file, x, z);
+                            rewrittenChunks++;
                             // NbtIo.write(root, new File(file.toString() + "-" + x + "-" + z + "-changed.nbt"));
                             DataOutputStream output = region.getChunkDataOutputStream(pos);
                             NbtIo.write(root, output);
@@ -499,6 +548,10 @@ public class DataFixerAPI {
                 }
             }
             region.close();
+            if (rewrittenChunks > 0) {
+                state.rewrittenFiles.incrementAndGet();
+                state.rewrittenChunks.addAndGet(rewrittenChunks);
+            }
         } catch (Exception e) {
             BCLib.LOGGER.error("Failed fixing Region.");
             state.addError("Failed fixing Region in " + file.getName() + " (" + e.getMessage() + ")");

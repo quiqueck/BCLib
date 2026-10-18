@@ -72,12 +72,14 @@ public class BehaviourHelper {
     ) {
         if (metalSupplier != null && BehaviourHelper.isMetal(source))
             return metalSupplier.apply(source);
+        // Obsidian has to be checked before stone: obsidian blocks use the BASEDRUM instrument, so
+        // isStone() matches them too and they would lose their obsidian behaviour (and tags).
+        if (obsidianSupplier != null && BehaviourHelper.isObsidian(source))
+            return obsidianSupplier.apply(source);
         if (stoneSupplier != null && BehaviourHelper.isStone(source))
             return stoneSupplier.apply(source);
         if (glassSupplier != null && BehaviourHelper.isGlass(source))
             return glassSupplier.apply(source);
-        if (obsidianSupplier != null && BehaviourHelper.isObsidian(source))
-            return obsidianSupplier.apply(source);
 
 
         if (woodSupplier != null)

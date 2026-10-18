@@ -8,6 +8,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -19,6 +21,26 @@ import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Nullable;
 
 public class ItemUtil {
+    /**
+     * Creates a new {@link FoodProperties} instance with the same values as {@code source}. Items must never share a
+     * FoodProperties instance (neither with each other nor with vanilla's {@link net.minecraft.world.food.Foods}
+     * constants), because mods that adjust food values per item (e.g. IguanaTweaks Reborn) would otherwise change
+     * several items at once.
+     */
+    public static FoodProperties copyFoodProperties(FoodProperties source) {
+        if (source == null) return null;
+        FoodProperties.Builder builder = new FoodProperties.Builder()
+                .nutrition(source.getNutrition())
+                .saturationMod(source.getSaturationModifier());
+        if (source.isMeat()) builder.meat();
+        if (source.canAlwaysEat()) builder.alwaysEat();
+        if (source.isFastFood()) builder.fast();
+        for (var effect : source.getEffects()) {
+            builder.effect(new MobEffectInstance(effect.getFirst()), effect.getSecond());
+        }
+        return builder.build();
+    }
+
     @Nullable
     public static ItemStack fromStackString(String stackString) {
         if (stackString == null || stackString.equals("")) {

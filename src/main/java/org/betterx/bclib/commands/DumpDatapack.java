@@ -168,7 +168,8 @@ public class DumpDatapack {
                 Registries.DIMENSION_TYPE.location(),
                 new Dumper<>((DimensionType v) -> DimensionType.DIRECT_CODEC)
         );
-        DUMPERS.put(BCLBiomeRegistry.BCL_BIOMES_REGISTRY.location(), new Dumper<>((BCLBiome v) -> v.codec().codec()));
+        // use the dispatching codec, so the files contain the "type" key that datapacks need to load them
+        DUMPERS.put(BCLBiomeRegistry.BCL_BIOMES_REGISTRY.location(), new Dumper<>((BCLBiome v) -> BiomeData.CODEC));
         DUMPERS.put(
                 SurfaceRuleRegistry.SURFACE_RULES_REGISTRY.location(),
                 new Dumper<>((AssignedSurfaceRule v) -> AssignedSurfaceRule.CODEC)

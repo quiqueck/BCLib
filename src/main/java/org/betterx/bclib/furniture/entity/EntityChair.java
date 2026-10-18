@@ -37,7 +37,11 @@ public class EntityChair extends Entity {
 
     @Override
     public void tick() {
-        if (this.level().getBlockState(this.blockPosition()).getBlock() instanceof AbstractChair)
+        // Only the server decides whether the seat is gone. The server spawns the seat while the chair block is
+        // being placed, so a client can receive (and tick) the seat before the block update arrives. Discarding it
+        // client-side then left that player unable to see themselves seated (quiqueck/BetterEnd#353).
+        if (this.level().isClientSide
+                || this.level().getBlockState(this.blockPosition()).getBlock() instanceof AbstractChair)
             localTick();
         else {
             BCLib.LOGGER.info("Chair Block was deleted -> ejecting");

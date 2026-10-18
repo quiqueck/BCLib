@@ -3,6 +3,8 @@ package org.betterx.bclib.config;
 import org.betterx.bclib.BCLib;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 
+import net.minecraft.resources.ResourceLocation;
+
 import java.util.*;
 
 public class BiomesConfig extends PathConfig {
@@ -79,15 +81,31 @@ public class BiomesConfig extends PathConfig {
                                    .toList();
     }
 
+    /**
+     * All biomes excluded for a biome source whose default type is {@code type}. The exclude lists are keyed by the
+     * parent types ({@code END}, {@code NETHER}), so a source of type {@code END_LAND} uses the {@code END} list.
+     */
     public List<String> getExcludeMatching(BiomeAPI.BiomeType type) {
         return getBiomeExcludeMap().entrySet()
                                    .stream()
-                                   .filter(e -> e.getKey().is(type))
+                                   .filter(e -> type.is(e.getKey()))
                                    .map(e -> e.getValue())
                                    .flatMap(Collection::stream)
                                    .toList();
     }
 
+
+    /**
+     * @return true if the biome is listed in any {@code force_exclude} list. Used to keep excluded biomes out of the
+     * sub-biomes and edges of other biomes (e.g. {@code minecraft:end_highlands} is a sub-biome of the midlands).
+     */
+    public boolean isExcluded(ResourceLocation biome) {
+        final String id = biome.toString();
+        for (List<String> list : getBiomeExcludeMap().values()) {
+            if (list.contains(id)) return true;
+        }
+        return false;
+    }
 
     public Map<BiomeAPI.BiomeType, List<String>> getBiomeIncludeMap() {
         if (BIOME_INCLUDE_LIST == null) {

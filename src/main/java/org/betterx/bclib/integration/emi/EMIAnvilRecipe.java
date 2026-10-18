@@ -5,6 +5,7 @@ import org.betterx.bclib.recipes.AnvilRecipe;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -37,12 +38,14 @@ public class EMIAnvilRecipe implements EmiRecipe {
                 EmiIngredient.of(recipe.getMainIngredient(), recipe.getInputCount()),
                 EmiIngredient.of(Ingredient.of(hammer))
         );
-        this.output = List.of(EmiStack.of(recipe.getResultItem(Minecraft.getInstance().level.registryAccess())));
+        this.output = List.of(EmiStack.of(recipe.getResultItem(registryAccess())));
         this.category = EMIPlugin.getAnvilCategoryForLevel(recipe.getAnvilLevel());
     }
 
     static void addAllRecipes(EmiRegistry emiRegistry, RecipeManager manager) {
-        Iterable<Holder<Item>> hammers = AnvilRecipe.getAllHammers();
+        // the hammers must come from the registries of the world we are in (on a client connected to a
+        // dedicated server the item tags only exist on the connection), not the server-side global ones
+        Iterable<Holder<Item>> hammers = AnvilRecipe.getAllHammers(registryAccess());
         EMIPlugin.addAllRecipes(
                 emiRegistry, manager, BCLib.LOGGER,
                 AnvilRecipe.TYPE,
@@ -52,6 +55,13 @@ public class EMIAnvilRecipe implements EmiRecipe {
                                        .toList(),
                 EMIAnvilRecipe::new
         );
+    }
+
+    private static @Nullable RegistryAccess registryAccess() {
+        final Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.level != null) return minecraft.level.registryAccess();
+        if (minecraft.getConnection() != null) return minecraft.getConnection().registryAccess();
+        return null;
     }
 
     @Override

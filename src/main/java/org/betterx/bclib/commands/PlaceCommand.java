@@ -1,10 +1,8 @@
 package org.betterx.bclib.commands;
 
 import de.ambertation.wunderlib.math.Bounds;
-import de.ambertation.wunderlib.math.Float3;
 import org.betterx.bclib.api.v2.levelgen.structures.StructureNBT;
 import org.betterx.bclib.commands.arguments.ConnectorArgument;
-import org.betterx.bclib.commands.arguments.Float3ArgumentType;
 import org.betterx.bclib.commands.arguments.PlacementDirections;
 import org.betterx.bclib.commands.arguments.TemplatePlacementArgument;
 import org.betterx.bclib.util.BlocksHelper;
@@ -59,7 +57,9 @@ class PlaceCommandBuilder {
     public static final String PLACEMENT = "placement";
     public static final String POS = "pos";
     public static final String RECURSION_DEPTH = "recursion_depth";
-    public static final String SPAN = "span";
+    public static final String SPAN_X = "span_x";
+    public static final String SPAN_Y = "span_y";
+    public static final String SPAN_Z = "span_z";
     public static final String BORDER = "border";
     public static final String ADD_CONTROLL_BLOCKS = "controller";
     public static final String FILL_VOID = "replaceair";
@@ -77,10 +77,10 @@ class PlaceCommandBuilder {
                 PATH,
                 ResourceLocationArgument.id()
         );
-        final Supplier<RequiredArgumentBuilder<CommandSourceStack, PlacementDirections>> placement = () -> Commands.argument(
+        final Supplier<RequiredArgumentBuilder<CommandSourceStack, String>> placement = () -> Commands.argument(
                 PLACEMENT,
                 TemplatePlacementArgument.templatePlacement()
-        );
+        ).suggests(TemplatePlacementArgument::suggest);
         final Supplier<RequiredArgumentBuilder<CommandSourceStack, Coordinates>> pos = () -> Commands.argument(
                 POS,
                 BlockPosArgument.blockPos()
@@ -89,7 +89,7 @@ class PlaceCommandBuilder {
                 RECURSION_DEPTH,
                 IntegerArgumentType.integer(0, 16)
         );
-        final Function<Boolean, RequiredArgumentBuilder<CommandSourceStack, PlacementDirections>> placeIt = (hasRecursionArg) -> placement
+        final Function<Boolean, RequiredArgumentBuilder<CommandSourceStack, String>> placeIt = (hasRecursionArg) -> placement
                 .get()
                 .then(
                         addOptionalsAndExecute(
@@ -110,11 +110,18 @@ class PlaceCommandBuilder {
                 path.get().then(
                         placement.get().then(
                                 pos.get().then(
-                                        addOptionalsAndExecute(
-                                                ctx,
-                                                Commands.argument(SPAN, Float3ArgumentType.int3(0, 64)),
-                                                false,
-                                                PlaceCommandBuilder::placeEmpty
+                                        Commands.argument(SPAN_X, IntegerArgumentType.integer(0, 64)).then(
+                                                Commands.argument(SPAN_Y, IntegerArgumentType.integer(0, 64)).then(
+                                                        addOptionalsAndExecute(
+                                                                ctx,
+                                                                Commands.argument(
+                                                                        SPAN_Z,
+                                                                        IntegerArgumentType.integer(0, 64)
+                                                                ),
+                                                                false,
+                                                                PlaceCommandBuilder::placeEmpty
+                                                        )
+                                                )
                                         )
                                 )
                         )
@@ -130,7 +137,7 @@ class PlaceCommandBuilder {
 
         final var jigsawTree = Commands.literal(JIGSAW).then(
                 Commands.argument(PlaceCommand.POOL, ResourceKeyArgument.key(Registries.TEMPLATE_POOL)).then(
-                        Commands.argument(CONNECTOR_NAME, ConnectorArgument.id())
+                        Commands.argument(CONNECTOR_NAME, ConnectorArgument.id()).suggests(ConnectorArgument::suggest)
                                 .then(replace.get()
                                              .then(rotate.get()
                                                          .then(pos.get()
@@ -236,6 +243,12 @@ class PlaceCommandBuilder {
         final BlockPos pos = BlockPosArgument.getLoadedBlockPos(ctx, POS);
         final int recursionDepth = hasRecursionArg ? IntegerArgumentType.getInteger(ctx, RECURSION_DEPTH) : 1;
         final List<StructureNBT> structures = StructureNBT.createResourcesFrom(id, recursionDepth);
+        if (structures != null && searchDir.dir == null) {
+            //"at" has no direction to lay out several templates side by side, they would all overlap
+            ctx.getSource().sendFailure(Component.literal("'at' places a single template; use northOf, eastOf, southOf, westOf, above or below for a folder")
+                                                 .setStyle(Style.EMPTY.withColor(ChatFormatting.RED)));
+            return -1;
+        }
         if (structures != null) {
             Bounds b = Bounds.of(pos);
             Bounds all = Bounds.of(pos);
@@ -313,12 +326,16 @@ class PlaceCommandBuilder {
         final ResourceLocation id = ResourceLocationArgument.getId(ctx, PATH);
         final PlacementDirections searchDir = TemplatePlacementArgument.getPlacement(ctx, PLACEMENT);
         final BlockInput blockInput = hasBorderArg ? BlockStateArgument.getBlock(ctx, BORDER) : null;
-        final BlockPos span = Float3ArgumentType.getFloat3(ctx, SPAN).toBlockPos();
+        final BlockPos span = new BlockPos(
+                IntegerArgumentType.getInteger(ctx, SPAN_X),
+                IntegerArgumentType.getInteger(ctx, SPAN_Y),
+                IntegerArgumentType.getInteger(ctx, SPAN_Z)
+        );
 
         return PlaceCommand.placeBlocks(
                 ctx.getSource(),
                 BlockPosArgument.getLoadedBlockPos(ctx, POS),
-                searchDir == null || searchDir.dir == Float3.ZERO ? null : searchDir.dir.toBlockPos(),
+                searchDir.getOffset(),
                 blockInput,
                 controlBlocks,
                 replaceAir,

@@ -17,10 +17,8 @@ import org.betterx.bclib.api.v3.tag.BCLBlockTags;
 import org.betterx.bclib.blocks.signs.BaseHangingSignBlock;
 import org.betterx.bclib.blocks.signs.BaseSignBlock;
 import org.betterx.bclib.commands.CommandRegistry;
-import org.betterx.bclib.commands.arguments.BCLibArguments;
 import org.betterx.bclib.complexmaterials.BCLWoodTypeWrapper;
 import org.betterx.bclib.config.Configs;
-import org.betterx.bclib.config.PathConfig;
 import org.betterx.bclib.networking.VersionChecker;
 import org.betterx.bclib.recipes.AlloyingRecipe;
 import org.betterx.bclib.recipes.AnvilRecipe;
@@ -69,7 +67,6 @@ public class BCLib implements ModInitializer {
     @Override
     public void onInitialize() {
         WorldsTogether.onInitialize();
-        BCLibArguments.register();
         PresetsRegistry.register();
         LevelGenEvents.register();
         BlockPredicates.ensureStaticInitialization();
@@ -140,7 +137,7 @@ public class BCLib implements ModInitializer {
     public static BaseHangingSignBlock TEST_HANGING_SIGN = null;
 
     private static void testObjects() {
-        var bockReg = new BlockRegistry(new PathConfig(MOD_ID, "test"));
+        var bockReg = new BlockRegistry();
         bockReg.register(
                 makeID("test_sign"),
                 TEST_SIGN

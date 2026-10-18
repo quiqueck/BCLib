@@ -5,6 +5,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
@@ -108,13 +109,26 @@ public class StructureWorld {
     }
 
     private static final class Part {
+        // Compact block layout: (x & 15) << 28 | (z & 15) << 24 | (y & 0xFFF) << 12 | paletteIndex
+        // y is a signed 12-bit value, which covers the whole possible build height (-2032..2031)
+        private static final int PACKED_MIN_Y = -2048;
+        private static final int PACKED_MAX_Y = 2047;
+        private static final int PACKED_INDEX_MASK = 0xFFF;
+
         Map<BlockPos, BlockState> blocks = Maps.newHashMap();
+
+        private static int pack(BlockPos pos, int stateID) {
+            return (pos.getX() & 15) << 28 | (pos.getZ() & 15) << 24 | (pos.getY() & 0xFFF) << 12 | stateID;
+        }
+
+        private static BlockPos unpackPos(int value) {
+            return new BlockPos((value >>> 28) & 15, (value << 8) >> 20, (value >>> 24) & 15);
+        }
 
         public Part() {
         }
 
         public Part(CompoundTag tag) {
-            ListTag map = tag.getList("blocks", 10);
             ListTag map2 = tag.getList("states", 10);
             BlockState[] states = new BlockState[map2.size()];
             for (int i = 0; i < states.length; i++) {
@@ -124,6 +138,18 @@ public class StructureWorld {
                 );
             }
 
+            if (tag.contains("packed", Tag.TAG_INT_ARRAY)) {
+                for (int value : tag.getIntArray("packed")) {
+                    final int stateID = value & PACKED_INDEX_MASK;
+                    if (stateID < states.length) {
+                        blocks.put(unpackPos(value), states[stateID]);
+                    }
+                }
+                return;
+            }
+
+            // Legacy format: one compound per block
+            ListTag map = tag.getList("blocks", 10);
             map.forEach((element) -> {
                 CompoundTag block = (CompoundTag) element;
                 BlockPos pos = NbtUtils.readBlockPos(block.getCompound("pos"));
@@ -148,27 +174,40 @@ public class StructureWorld {
             CompoundTag tag = new CompoundTag();
             tag.putInt("x", x);
             tag.putInt("z", z);
-            ListTag map = new ListTag();
-            tag.put("blocks", map);
             ListTag stateMap = new ListTag();
             tag.put("states", stateMap);
 
-            int[] id = new int[1];
             Map<BlockState, Integer> states = Maps.newHashMap();
-
-            blocks.forEach((pos, state) -> {
-                int stateID = states.getOrDefault(states, -1);
-                if (stateID < 0) {
-                    stateID = id[0]++;
-                    states.put(state, stateID);
-                    stateMap.add(NbtUtils.writeBlockState(state));
+            boolean canPack = true;
+            for (Map.Entry<BlockPos, BlockState> e : blocks.entrySet()) {
+                if (!states.containsKey(e.getValue())) {
+                    states.put(e.getValue(), states.size());
+                    stateMap.add(NbtUtils.writeBlockState(e.getValue()));
                 }
+                final int y = e.getKey().getY();
+                if (y < PACKED_MIN_Y || y > PACKED_MAX_Y) canPack = false;
+            }
+            if (states.size() > PACKED_INDEX_MASK + 1) canPack = false;
 
-                CompoundTag block = new CompoundTag();
-                block.put("pos", NbtUtils.writeBlockPos(pos));
-                block.putInt("state", stateID);
-                map.add(block);
-            });
+            if (canPack) {
+                // Compact format: one int per block, see pack()
+                final int[] packed = new int[blocks.size()];
+                int i = 0;
+                for (Map.Entry<BlockPos, BlockState> e : blocks.entrySet()) {
+                    packed[i++] = pack(e.getKey(), states.get(e.getValue()));
+                }
+                tag.putIntArray("packed", packed);
+            } else {
+                // Does not fit the compact layout, use the (palette-indexed) legacy format
+                ListTag map = new ListTag();
+                tag.put("blocks", map);
+                blocks.forEach((pos, state) -> {
+                    CompoundTag block = new CompoundTag();
+                    block.put("pos", NbtUtils.writeBlockPos(pos));
+                    block.putInt("state", states.get(state));
+                    map.add(block);
+                });
+            }
 
             return tag;
         }

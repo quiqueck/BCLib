@@ -2,6 +2,7 @@ package org.betterx.bclib.api.v2.generator;
 
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiome;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
+import org.betterx.bclib.config.Configs;
 import org.betterx.bclib.util.WeighTree;
 import org.betterx.bclib.util.WeightedList;
 import org.betterx.worlds.together.world.event.WorldBootstrap;
@@ -54,6 +55,7 @@ public class BiomePicker {
     }
 
     private boolean isAllowed(BCLBiome b) {
+        if (Configs.BIOMES_CONFIG.isExcluded(b.getID())) return false;
         if (allowedBiomes == null) return true;
         return allowedBiomes.contains(b.getID().toString());
     }

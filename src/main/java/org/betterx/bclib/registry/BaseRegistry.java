@@ -18,6 +18,10 @@ public abstract class BaseRegistry<T> {
     private static final Map<String, List<Item>> MOD_BLOCK_ITEMS = Maps.newHashMap();
     private static final Map<String, List<Block>> MOD_BLOCKS = Maps.newHashMap();
     private static final Map<String, List<Item>> MOD_ITEMS = Maps.newHashMap();
+    /**
+     * @deprecated Blocks and items can no longer be disabled in a config. BCLib no longer reads it.
+     */
+    @Deprecated
     protected final PathConfig config;
 
     protected BaseRegistry(PathConfig config) {

@@ -1,6 +1,7 @@
 package org.betterx.bclib.api.v2.levelgen.features.features;
 
 import org.betterx.bclib.util.BlocksHelper;
+import org.betterx.bclib.util.GenerationArea;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.WorldGenLevel;
@@ -18,20 +19,22 @@ public abstract class DefaultFeature extends Feature<NoneFeatureConfiguration> {
         super(NoneFeatureConfiguration.CODEC);
     }
 
+    // Height lookups outside the generation area (the 3x3 chunks around the chunk being decorated) use the nearest
+    // column inside it: other worldgen threads may be generating the chunks further away.
     public static int getYOnSurface(WorldGenLevel world, int x, int z) {
-        return world.getHeight(Types.WORLD_SURFACE, x, z);
+        return GenerationArea.getHeight(world, Types.WORLD_SURFACE, x, z);
     }
 
     public static int getYOnSurfaceWG(WorldGenLevel world, int x, int z) {
-        return world.getHeight(Types.WORLD_SURFACE_WG, x, z);
+        return GenerationArea.getHeight(world, Types.WORLD_SURFACE_WG, x, z);
     }
 
     public static BlockPos getPosOnSurface(WorldGenLevel world, BlockPos pos) {
-        return world.getHeightmapPos(Types.WORLD_SURFACE, pos);
+        return new BlockPos(pos.getX(), getYOnSurface(world, pos.getX(), pos.getZ()), pos.getZ());
     }
 
     public static BlockPos getPosOnSurfaceWG(WorldGenLevel world, BlockPos pos) {
-        return world.getHeightmapPos(Types.WORLD_SURFACE_WG, pos);
+        return new BlockPos(pos.getX(), getYOnSurfaceWG(world, pos.getX(), pos.getZ()), pos.getZ());
     }
 
     public static BlockPos getPosOnSurfaceRaycast(WorldGenLevel world, BlockPos pos) {

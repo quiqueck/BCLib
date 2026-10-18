@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
@@ -39,6 +40,25 @@ public class WorldBootstrap {
 
     public static RegistryAccess getLastRegistryAccess() {
         return LAST_REGISTRY_ACCESS;
+    }
+
+    private static Supplier<RegistryAccess> CLIENT_REGISTRY_ACCESS = () -> null;
+
+    /**
+     * Installed by the client entrypoint: the registries of the level the client is currently in
+     * (they come from the connection, so they are also correct when playing on a dedicated server,
+     * where {@link #getLastRegistryAccess()} is {@code null} on the client).
+     */
+    public static void setClientRegistryAccessProvider(Supplier<RegistryAccess> provider) {
+        CLIENT_REGISTRY_ACCESS = provider == null ? () -> null : provider;
+    }
+
+    /**
+     * @return the registries of the level the client is in, or {@code null} on a dedicated server or
+     * when the client is not in a world
+     */
+    public static RegistryAccess getClientRegistryAccess() {
+        return CLIENT_REGISTRY_ACCESS.get();
     }
 
     private static byte WARN_COUNT_GLOBAL_REGISTRY = 0;
@@ -142,6 +162,11 @@ public class WorldBootstrap {
             boolean result = false;
             if (levelStorageAccess.getLevelPath(LevelResource.LEVEL_DATA_FILE).toFile().exists()) {
                 try {
+                    //The patcher reads the recorded patch level from the world config (data/bclib.nbt). On a
+                    //dedicated server the patches run before setupWorld loads that config, so every start saw
+                    //patch level 0.0.0 and re-inspected the whole world (quiqueck/BCLib#146). The client
+                    //already loads it first (InGUI.setupLoadedWorld).
+                    Helpers.initializeWorldConfig(levelStorageAccess, false);
                     result = WorldEventsImpl.PATCH_WORLD.applyPatches(levelStorageAccess, null);
                 } catch (Exception e) {
                     WorldsTogether.LOGGER.error("Failed to initialize data in world", e);
@@ -216,9 +241,13 @@ public class WorldBootstrap {
         ) {
             try {
                 var levelStorageAccess = levelSource.createAccess(levelID);
+                //The registries of this world are only created later, when the integrated server loads it
+                //(WorldLoader), so its stored dimensions can not be decoded yet - reading them here only went
+                //to the global registry (null or the one of the previously loaded world) and logged errors.
+                //The stored dimensions are read with the world's registries in enforceInLayeredRegistry.
                 WorldBootstrap.setupWorld(
                         levelStorageAccess,
-                        TogetherWorldPreset.loadWorldDimensions(),
+                        Map.of(),
                         false, false
                 );
                 levelStorageAccess.close();

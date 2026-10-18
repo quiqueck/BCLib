@@ -149,8 +149,13 @@ public class TogetherWorldPreset extends WorldPreset {
     private static DimensionsWrapper DEFAULT_DIMENSIONS_WRAPPER = null;
 
     public static @NotNull Map<ResourceKey<LevelStem>, ChunkGenerator> loadWorldDimensions() {
+        final RegistryAccess registryAccess = WorldBootstrap.getLastRegistryAccess();
+        if (registryAccess == null) {
+            //nothing can be decoded without registries - and do not cache an empty default
+            WorldsTogether.LOGGER.warning("Unable to load the world dimensions, the registries are not ready yet.");
+            return new HashMap<>();
+        }
         try {
-            final RegistryAccess registryAccess = WorldBootstrap.getLastRegistryAccessOrElseBuiltin();
             final RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
             if (DEFAULT_DIMENSIONS_WRAPPER == null) {
                 DEFAULT_DIMENSIONS_WRAPPER = new DimensionsWrapper(TogetherWorldPreset.getDimensionsMap(WorldPresets.getDEFAULT()));

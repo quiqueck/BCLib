@@ -183,13 +183,13 @@ public class SplineHelper {
         MutableBlockPos bPos = new MutableBlockPos();
         for (int i = 0; i < count; i++) {
             bPos.set(x + pos.getX(), y + pos.getY(), z + pos.getZ());
-            bState = world.getBlockState(bPos);
+            bState = GenerationArea.getBlockState(world, bPos);
             if (bState.equals(state) || replace.apply(bState)) {
-                BlocksHelper.setWithoutUpdate(world, bPos, state);
+                setInArea(world, bPos, state);
                 bPos.setY(bPos.getY() - 1);
-                bState = world.getBlockState(bPos);
+                bState = GenerationArea.getBlockState(world, bPos);
                 if (down && bState.equals(state) || replace.apply(bState)) {
-                    BlocksHelper.setWithoutUpdate(world, bPos, state);
+                    setInArea(world, bPos, state);
                 }
             } else {
                 return false;
@@ -199,13 +199,13 @@ public class SplineHelper {
             z += dz;
         }
         bPos.set(end.x() + pos.getX(), end.y() + pos.getY(), end.z() + pos.getZ());
-        bState = world.getBlockState(bPos);
+        bState = GenerationArea.getBlockState(world, bPos);
         if (bState.equals(state) || replace.apply(bState)) {
-            BlocksHelper.setWithoutUpdate(world, bPos, state);
+            setInArea(world, bPos, state);
             bPos.setY(bPos.getY() - 1);
-            bState = world.getBlockState(bPos);
+            bState = GenerationArea.getBlockState(world, bPos);
             if (down && bState.equals(state) || replace.apply(bState)) {
-                BlocksHelper.setWithoutUpdate(world, bPos, state);
+                setInArea(world, bPos, state);
             }
             return true;
         } else {
@@ -238,13 +238,13 @@ public class SplineHelper {
         MutableBlockPos bPos = new MutableBlockPos();
         for (int i = 0; i < count; i++) {
             bPos.set(x + pos.getX(), y + pos.getY(), z + pos.getZ());
-            bState = world.getBlockState(bPos);
+            bState = GenerationArea.getBlockState(world, bPos);
             if (replace.apply(bState)) {
-                BlocksHelper.setWithoutUpdate(world, bPos, state);
+                setInArea(world, bPos, state);
                 bPos.setY(bPos.getY() - 1);
-                bState = world.getBlockState(bPos);
+                bState = GenerationArea.getBlockState(world, bPos);
                 if (down && replace.apply(bState)) {
-                    BlocksHelper.setWithoutUpdate(world, bPos, state);
+                    setInArea(world, bPos, state);
                 }
             }
             x += dx;
@@ -252,13 +252,13 @@ public class SplineHelper {
             z += dz;
         }
         bPos.set(end.x() + pos.getX(), end.y() + pos.getY(), end.z() + pos.getZ());
-        bState = world.getBlockState(bPos);
+        bState = GenerationArea.getBlockState(world, bPos);
         if (replace.apply(bState)) {
-            BlocksHelper.setWithoutUpdate(world, bPos, state);
+            setInArea(world, bPos, state);
             bPos.setY(bPos.getY() - 1);
-            bState = world.getBlockState(bPos);
+            bState = GenerationArea.getBlockState(world, bPos);
             if (down && replace.apply(bState)) {
-                BlocksHelper.setWithoutUpdate(world, bPos, state);
+                setInArea(world, bPos, state);
             }
         }
     }
@@ -288,7 +288,7 @@ public class SplineHelper {
                 float x = Mth.lerp(lerp, x1, x2);
                 float z = Mth.lerp(lerp, z1, z2);
                 mut.set(x, py, z);
-                if (!canReplace.apply(world.getBlockState(mut))) {
+                if (!canReplace.apply(GenerationArea.getBlockState(world, mut))) {
                     return false;
                 }
             }
@@ -324,7 +324,7 @@ public class SplineHelper {
                 float x = Mth.lerp(lerp, x1, x2);
                 float z = Mth.lerp(lerp, z1, z2);
                 mut.set(x, py, z);
-                if (!canReplace.apply(world.getBlockState(mut))) {
+                if (!canReplace.apply(GenerationArea.getBlockState(world, mut))) {
                     return false;
                 }
             }
@@ -382,6 +382,13 @@ public class SplineHelper {
     public static void offset(List<Vector3f> spline, Vector3f offset) {
         for (Vector3f v : spline) {
             v.set(offset.x() + v.x(), offset.y() + v.y(), offset.z() + v.z());
+        }
+    }
+
+    // positions outside the generation area belong to chunks other worldgen threads may be working on
+    private static void setInArea(WorldGenLevel world, BlockPos pos, BlockState state) {
+        if (GenerationArea.contains(world, pos)) {
+            BlocksHelper.setWithoutUpdate(world, pos, state);
         }
     }
 }

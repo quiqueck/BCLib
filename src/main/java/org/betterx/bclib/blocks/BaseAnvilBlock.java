@@ -5,6 +5,7 @@ import org.betterx.bclib.client.models.ModelsHelper;
 import org.betterx.bclib.client.models.PatternsHelper;
 import org.betterx.bclib.interfaces.BlockModelProvider;
 import org.betterx.bclib.interfaces.CustomItemProvider;
+import org.betterx.bclib.interfaces.TagProvider;
 import org.betterx.bclib.interfaces.tools.AddMineablePickaxe;
 import org.betterx.bclib.items.BaseAnvilItem;
 import org.betterx.bclib.util.BlocksHelper;
@@ -14,6 +15,9 @@ import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -44,7 +48,7 @@ import java.util.Optional;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseAnvilBlock extends AnvilBlock implements AddMineablePickaxe, BlockModelProvider, CustomItemProvider {
+public abstract class BaseAnvilBlock extends AnvilBlock implements AddMineablePickaxe, BlockModelProvider, CustomItemProvider, TagProvider {
     public static final IntegerProperty DESTRUCTION = BlockProperties.DESTRUCTION;
     public IntegerProperty durability;
 
@@ -102,6 +106,13 @@ public abstract class BaseAnvilBlock extends AnvilBlock implements AddMineablePi
     }
 
     @Override
+    public void addTags(List<TagKey<Block>> blockTags, List<TagKey<Item>> itemTags) {
+        // keep custom anvils in the vanilla tags, other mods (and vanilla behaviour) key on them
+        blockTags.add(BlockTags.ANVIL);
+        itemTags.add(ItemTags.ANVIL);
+    }
+
+    @Override
     public BlockItem getCustomItem(ResourceLocation blockID, Item.Properties settings) {
         return new BaseAnvilItem(this, settings);
     }
@@ -111,11 +122,13 @@ public abstract class BaseAnvilBlock extends AnvilBlock implements AddMineablePi
     public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
         int destruction = state.getValue(DESTRUCTION);
         int durability = state.getValue(getDurabilityProp());
-        int value = destruction * getMaxDurability() + durability;
         ItemStack tool = builder.getParameter(LootContextParams.TOOL);
         if (LootUtil.isCorrectTool(this, state, tool)) {
             ItemStack itemStack = new ItemStack(this);
-            itemStack.getOrCreateTag().putInt(BaseAnvilItem.DESTRUCTION, value);
+            // two separate keys - a combined destruction * max + durability is ambiguous, as durability
+            // ranges 0..max inclusive
+            itemStack.getOrCreateTag().putInt(BaseAnvilItem.DESTRUCTION, destruction);
+            itemStack.getOrCreateTag().putInt(BaseAnvilItem.DURABILITY, durability);
             return Lists.newArrayList(itemStack);
         }
         return Collections.emptyList();

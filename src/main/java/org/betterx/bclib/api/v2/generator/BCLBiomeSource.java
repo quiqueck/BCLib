@@ -123,7 +123,10 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
             return null;
         }
 
-        final Set<Holder<Biome>> allBiomes = new HashSet<>();
+        // LinkedHashSet, not HashSet: this set is what possibleBiomes() returns, and the ChunkGenerator builds the
+        // per-step feature order (and with it the random seed of every feature) from its iteration order. Holder
+        // hashes by identity, so a HashSet changed that order (and where features generate) on every start.
+        final Set<Holder<Biome>> allBiomes = new LinkedHashSet<>();
         final Map<BiomeAPI.BiomeType, List<String>> includeMap = Configs.BIOMES_CONFIG.getBiomeIncludeMap();
         final List<String> excludeList = Configs.BIOMES_CONFIG.getExcludeMatching(exclusionListType);
         final Registry<Biome> biomes = access.registryOrThrow(Registries.BIOME);
@@ -136,7 +139,7 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
                 .toList();
 
         for (Map.Entry<ResourceKey<Biome>, Biome> biomeEntry : sortedList) {
-            if (excludeList.contains(biomeEntry.getKey().location())) continue;
+            if (excludeList.contains(biomeEntry.getKey().location().toString())) continue;
 
             BiomeAPI.BiomeType type = BiomeAPI.BiomeType.NONE;
             boolean foundBCLBiome = false;
@@ -230,7 +233,7 @@ public abstract class BCLBiomeSource extends BiomeSource implements BiomeSourceW
                 ResourceKey<Biome> key = possibleBiome.unwrapKey().orElse(null);
                 if (key != null) {
                     //skip over all biomes that were excluded in the config
-                    if (excludeList.contains(key.location())) continue;
+                    if (excludeList.contains(key.location().toString())) continue;
 
                     //this is a biome that has no type entry => create a new one for the default type of this registry
                     if (!BCLBiomeRegistry.hasBiome(key, bclBiomes)) {

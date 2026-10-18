@@ -28,6 +28,9 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
@@ -145,6 +148,7 @@ public class BaseOreBlock extends DropExperienceBlock implements BlockModelProvi
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public BlockModel getItemModel(ResourceLocation resourceLocation) {
         return getBlockModel(resourceLocation, defaultBlockState());
     }

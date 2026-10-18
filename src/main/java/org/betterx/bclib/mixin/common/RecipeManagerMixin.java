@@ -14,6 +14,7 @@ import net.minecraft.world.level.Level;
 import com.google.gson.JsonElement;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -44,24 +45,33 @@ public abstract class RecipeManagerMixin {
             Level level,
             CallbackInfoReturnable<Optional<T>> cir
     ) {
-        var inter = this.byType(recipeType);
-        var all = inter.values().stream().filter((recipe) -> recipe.matches(container, level)).sorted((a, b) -> {
-            if (a.getId().getNamespace().equals(b.getId().getNamespace())) {
-                return a.getId().getPath().compareTo(b.getId().getPath());
+        // Called every tick by furnaces and modded machines, so pick the best match in a single pass
+        // instead of collecting and sorting all matches (#225).
+        T best = null;
+        for (T recipe : this.<C, T>byType(recipeType).values()) {
+            if ((best == null || bcl_compare(recipe, best) < 0) && recipe.matches(container, level)) {
+                best = recipe;
             }
-            if (a.getId().getNamespace().equals("minecraft") && !b.getId().getNamespace().equals("minecraft")) {
-                return 1;
-            } else if (!a.getId().getNamespace().equals("minecraft") && b.getId().getNamespace().equals("minecraft")) {
-                return -1;
-            } else {
-                return a.getId().getNamespace().compareTo(b.getId().getNamespace());
-            }
-        }).toList();
-
-        if (all.size() > 1) {
-            cir.setReturnValue(Optional.of(all.get(0)));
         }
+        cir.setReturnValue(Optional.ofNullable(best));
+    }
 
+    // Non-minecraft recipes win over minecraft ones, otherwise ordered by namespace and path
+    @Unique
+    private static int bcl_compare(Recipe<?> a, Recipe<?> b) {
+        final ResourceLocation idA = a.getId();
+        final ResourceLocation idB = b.getId();
+        final String nsA = idA.getNamespace();
+        final String nsB = idB.getNamespace();
+        if (nsA.equals(nsB)) {
+            return idA.getPath().compareTo(idB.getPath());
+        }
+        final boolean vanillaA = nsA.equals("minecraft");
+        final boolean vanillaB = nsB.equals("minecraft");
+        if (vanillaA != vanillaB) {
+            return vanillaA ? 1 : -1;
+        }
+        return nsA.compareTo(nsB);
     }
 
 }

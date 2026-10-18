@@ -1,5 +1,6 @@
 package org.betterx.bclib.api.v3.datagen;
 
+import org.betterx.bclib.util.Pair;
 import org.betterx.worlds.together.tag.v3.TagRegistry;
 
 import net.minecraft.core.HolderLookup;
@@ -11,7 +12,10 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import org.jetbrains.annotations.Nullable;
@@ -81,23 +85,48 @@ public class TagDataProvider<T> extends FabricTagProvider<T> {
 
     @Override
     protected void addTags(HolderLookup.Provider arg) {
+        final Map<TagKey<T>, List<Pair<ResourceLocation, TagEntry>>> elementsByTag = new HashMap<>();
+        final Map<TagKey<T>, List<Pair<TagKey<T>, TagEntry>>> tagsByTag = new HashMap<>();
+
         tagRegistry.forEachEntry((tag, locs, tags) -> {
             if (!forceWrite.contains(tag) && locs.isEmpty() && tags.isEmpty()) return;
+            elementsByTag.put(tag, locs);
+            tagsByTag.put(tag, tags);
+        }, (tag, loc) -> forceWrite.contains(tag) || shouldAdd(tag.location()) || this.shouldAdd(loc));
 
+        // A tag that references a tag nobody defines fails to load as a whole ("Couldn't load tag ... as it is
+        // missing following references"), which e.g. left #minecraft:mineable/axe empty and made axes slow.
+        // So every referenced tag in one of our namespaces is written as well (empty if it has no entries), and
+        // references to tags of other mods are optional, as we cannot know if they are present.
+        final Set<TagKey<T>> written = new HashSet<>(elementsByTag.keySet());
+        tagsByTag.values().forEach(tags -> tags.forEach(pair -> {
+            final ResourceLocation id = pair.first.location();
+            if (!isOptional(pair.second) && !ResourceLocation.DEFAULT_NAMESPACE.equals(id.getNamespace()) && shouldAdd(id))
+                written.add(pair.first);
+        }));
+
+        for (TagKey<T> tag : written) {
             final FabricTagProvider<T>.FabricTagBuilder builder = getOrCreateTagBuilder(tag);
 
-            locs.sort(Comparator.comparing(a -> a.first.toString()));
-            tags.sort(Comparator.comparing(a -> a.first.location().toString()));
-
-            locs.forEach(pair -> {
+            final List<Pair<ResourceLocation, TagEntry>> locs = elementsByTag.getOrDefault(tag, List.of());
+            final List<Pair<TagKey<T>, TagEntry>> tags = tagsByTag.getOrDefault(tag, List.of());
+            locs.stream().sorted(Comparator.comparing(a -> a.first.toString())).forEach(pair -> {
                 if (isOptional(pair.second)) builder.addOptional(pair.first);
                 else builder.add(pair.first);
             });
-            
-            tags.forEach(pair -> {
-                if (isOptional(pair.second)) builder.addOptionalTag(pair.first);
+
+            tags.stream().sorted(Comparator.comparing(a -> a.first.location().toString())).forEach(pair -> {
+                if (isOptional(pair.second) || !isKnownTag(pair.first, written)) builder.addOptionalTag(pair.first);
                 else builder.forceAddTag(pair.first);
             });
-        }, (tag, loc) -> forceWrite.contains(tag) || shouldAdd(tag.location()) || this.shouldAdd(loc));
+        }
+    }
+
+    /**
+     * Whether a referenced tag is guaranteed to exist at runtime: Either we write it ourselves, or it is a
+     * vanilla tag.
+     */
+    protected boolean isKnownTag(TagKey<T> tag, Set<TagKey<T>> written) {
+        return written.contains(tag) || ResourceLocation.DEFAULT_NAMESPACE.equals(tag.location().getNamespace());
     }
 }

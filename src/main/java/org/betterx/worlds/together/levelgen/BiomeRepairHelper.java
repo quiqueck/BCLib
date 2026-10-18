@@ -1,5 +1,6 @@
 package org.betterx.worlds.together.levelgen;
 
+import org.betterx.bclib.api.v2.generator.BCLChunkGenerator;
 import org.betterx.bclib.api.v2.levelgen.biomes.BCLBiomeRegistry;
 import org.betterx.bclib.api.v2.levelgen.biomes.BiomeAPI;
 import org.betterx.worlds.together.biomesource.BiomeSourceWithConfig;
@@ -60,7 +61,11 @@ class BiomeRepairHelper {
                     );
                     didRepair = true;
                 } else if (loadedChunkGenerator.getBiomeSource() instanceof BiomeSourceWithConfig lodedSource) {
-                    if (referenceGenerator.getBiomeSource() instanceof BiomeSourceWithConfig refSource) {
+                    if (referenceGenerator.getBiomeSource() instanceof BiomeSourceWithConfig refSource
+                            && !BCLChunkGenerator.keepsStoredBiomeSourceSettings(
+                            referenceGenerator.getBiomeSource(),
+                            loadedChunkGenerator.getBiomeSource()
+                    )) {
                         if (!refSource.getTogetherConfig().sameConfig(lodedSource.getTogetherConfig())) {
                             lodedSource.setTogetherConfig(refSource.getTogetherConfig());
                         }

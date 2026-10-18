@@ -8,6 +8,7 @@ import org.betterx.bclib.items.BaseSpawnEggItem;
 import org.betterx.bclib.items.ModelProviderItem;
 import org.betterx.bclib.models.RecordItemModelProvider;
 import org.betterx.bclib.recipes.SmithingTemplates;
+import org.betterx.bclib.util.ItemUtil;
 import org.betterx.worlds.together.tag.v3.TagManager;
 
 import net.minecraft.core.BlockSource;
@@ -29,6 +30,14 @@ import net.minecraft.world.level.block.DispenserBlock;
 import java.util.List;
 
 public class ItemRegistry extends BaseRegistry<Item> {
+    public ItemRegistry() {
+        super(null);
+    }
+
+    /**
+     * @deprecated Items can no longer be disabled in a config, the config is no longer read. Use {@link #ItemRegistry()}.
+     */
+    @Deprecated
     public ItemRegistry(PathConfig config) {
         super(config);
     }
@@ -37,9 +46,6 @@ public class ItemRegistry extends BaseRegistry<Item> {
         RecordItem item = BaseDiscItem.create(power, sound, BehaviourBuilders.createDisc(), lengthInSeconds);
         if (item != null) {
             RecordItemModelProvider.add(item);
-            if (!config.getBoolean("musicDiscs", itemId.getPath(), true)) {
-                return item;
-            }
             register(itemId, item);
             TagManager.ITEMS.add(ItemTags.MUSIC_DISCS, item);
         }
@@ -66,19 +72,12 @@ public class ItemRegistry extends BaseRegistry<Item> {
 
     @Override
     public Item register(ResourceLocation itemId, Item item) {
-        if (!config.getBoolean("items", itemId.getPath(), true)) {
-            return item;
-        }
-
         registerItem(itemId, item);
 
         return item;
     }
 
     public Item registerTool(ResourceLocation itemId, Item item) {
-        if (!config.getBoolean("tools", itemId.getPath(), true)) {
-            return item;
-        }
         registerItem(itemId, item);
 
         return item;
@@ -86,10 +85,6 @@ public class ItemRegistry extends BaseRegistry<Item> {
 
     public Item registerEgg(ResourceLocation itemId, EntityType<? extends Mob> type, int background, int dots) {
         SpawnEggItem item = new BaseSpawnEggItem(type, background, dots, makeItemSettings());
-
-        if (!config.getBoolean("spawnEggs", itemId.getPath(), true)) {
-            return item;
-        }
 
         DefaultDispenseItemBehavior behavior = new DefaultDispenseItemBehavior() {
             public ItemStack execute(BlockSource pointer, ItemStack stack) {
@@ -121,11 +116,11 @@ public class ItemRegistry extends BaseRegistry<Item> {
     }
 
     public Item registerFood(ResourceLocation itemId, FoodProperties foodComponent) {
-        return register(itemId, new ModelProviderItem(makeItemSettings().food(foodComponent)));
+        return register(itemId, new ModelProviderItem(makeItemSettings().food(ItemUtil.copyFoodProperties(foodComponent))));
     }
 
     public Item registerDrink(ResourceLocation itemId, FoodProperties foodComponent) {
-        return register(itemId, new BaseDrinkItem(makeItemSettings().stacksTo(1).food(foodComponent)));
+        return register(itemId, new BaseDrinkItem(makeItemSettings().stacksTo(1).food(ItemUtil.copyFoodProperties(foodComponent))));
     }
 
     public Item registerDrink(ResourceLocation itemId, int hunger, float saturation) {
@@ -141,10 +136,12 @@ public class ItemRegistry extends BaseRegistry<Item> {
         }
     }
 
+    /**
+     * @deprecated Items can no longer be disabled per category in a config, {@code category} is ignored.
+     */
+    @Deprecated
     public Item register(ResourceLocation itemId, Item item, String category) {
-        if (config.getBoolean(category, itemId.getPath(), true)) {
-            registerItem(itemId, item);
-        }
+        registerItem(itemId, item);
         return item;
     }
 }

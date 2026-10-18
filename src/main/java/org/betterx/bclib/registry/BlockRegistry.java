@@ -1,6 +1,5 @@
 package org.betterx.bclib.registry;
 
-import org.betterx.bclib.BCLib;
 import org.betterx.bclib.config.PathConfig;
 import org.betterx.bclib.interfaces.CustomItemProvider;
 
@@ -15,16 +14,20 @@ import net.minecraft.world.level.block.Block;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 
 public class BlockRegistry extends BaseRegistry<Block> {
+    public BlockRegistry() {
+        super(null);
+    }
+
+    /**
+     * @deprecated Blocks can no longer be disabled in a config, the config is no longer read. Use {@link #BlockRegistry()}.
+     */
+    @Deprecated
     public BlockRegistry(PathConfig config) {
         super(config);
     }
 
     @Override
     public Block register(ResourceLocation id, Block block) {
-        if (!config.getBooleanRoot(id.getNamespace(), true)) {
-            BCLib.LOGGER.warning("Block " + id + " disabled");
-            return block;
-        }
         block = Registry.register(BuiltInRegistries.BLOCK, id, block);
 
         BlockItem item = null;
@@ -48,9 +51,6 @@ public class BlockRegistry extends BaseRegistry<Block> {
     }
 
     public Block registerBlockOnly(ResourceLocation id, Block block) {
-        if (!config.getBooleanRoot(id.getNamespace(), true)) {
-            return block;
-        }
         getModBlocks(id.getNamespace()).add(block);
         return Registry.register(BuiltInRegistries.BLOCK, id, block);
     }

@@ -455,11 +455,23 @@ public class BiomeAPI {
      * @return {@link BCLBiome} or {@code BiomeAPI.EMPTY_BIOME}.
      */
     public static BCLBiome getRenderBiome(Biome biome) {
+        return getRenderBiome(biome, WorldBootstrap.getClientRegistryAccess());
+    }
+
+    /**
+     * Get {@link BCLBiome} from biome on client.
+     *
+     * @param biome - {@link Biome} from client world.
+     * @param acc   - the registries of the client world the biome belongs to
+     * @return {@link BCLBiome} or {@code BiomeAPI.EMPTY_BIOME}.
+     */
+    public static BCLBiome getRenderBiome(Biome biome, @Nullable RegistryAccess acc) {
         BCLBiome endBiome = InternalBiomeAPI.CLIENT.get(biome);
         if (endBiome == null) {
-            var acc = WorldBootstrap.getLastRegistryAccessOrElseBuiltin();
             if (acc != null) {
-                final Registry<BCLBiome> reg = BCLBiomeRegistry.registryOrNull();
+                final Registry<BCLBiome> reg = acc
+                        .registry(BCLBiomeRegistry.BCL_BIOMES_REGISTRY)
+                        .orElseGet(BCLBiomeRegistry::registryOrNull);
                 ResourceLocation id = acc
                         .registryOrThrow(Registries.BIOME)
                         .getKey(biome);

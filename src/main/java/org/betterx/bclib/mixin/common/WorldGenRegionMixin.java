@@ -1,7 +1,9 @@
 package org.betterx.bclib.mixin.common;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.WorldGenRegion;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.ChunkAccess;
 
 import org.spongepowered.asm.mixin.Final;
@@ -17,11 +19,21 @@ public class WorldGenRegionMixin {
     @Shadow
     private ChunkAccess center;
 
+    @Final
+    @Shadow
+    private int writeRadiusCutoff;
+
+    /**
+     * Refuses writes outside the region's write radius without vanilla's "Detected setBlock in a far chunk" error
+     * (large features may reach past it). Everything else, including the build height check, stays vanilla.
+     */
     @Inject(method = "ensureCanWrite", at = @At("HEAD"), cancellable = true)
-    private void be_alterBlockCheck(BlockPos blockPos, CallbackInfoReturnable<Boolean> info) {
-        int x = blockPos.getX() >> 4;
-        int z = blockPos.getZ() >> 4;
-        WorldGenRegion region = (WorldGenRegion) (Object) this;
-        info.setReturnValue(Math.abs(x - center.getPos().x) < 2 && Math.abs(z - center.getPos().z) < 2);
+    private void bcl_silentlyRefuseFarWrites(BlockPos blockPos, CallbackInfoReturnable<Boolean> info) {
+        final ChunkPos cPos = center.getPos();
+        final int dx = Math.abs(SectionPos.blockToSectionCoord(blockPos.getX()) - cPos.x);
+        final int dz = Math.abs(SectionPos.blockToSectionCoord(blockPos.getZ()) - cPos.z);
+        if (dx > writeRadiusCutoff || dz > writeRadiusCutoff) {
+            info.setReturnValue(false);
+        }
     }
 }

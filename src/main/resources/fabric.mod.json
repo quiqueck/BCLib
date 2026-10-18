@@ -1,75 +1,75 @@
 {
-  "schemaVersion": 1,
-  "id": "bclib",
-  "version": "3.0.15",
-  "name": "BCLib",
-  "description": "A library for BetterX team mods",
-  "authors": [
-    "Quiqueck",
-    "paulevs",
-    "Bulldog83"
-  ],
-  "contact": {
-    "homepage": "https://modrinth.com/mod/bclib",
-    "issues": "https://github.com/quiqueck/bclib/issues",
-    "sources": "https://github.com/quiqueck/bclib"
-  },
-  "license": "MIT (CC BY-NC-SA 4.0 for some Assets)",
-  "icon": "assets/bclib/icon.png",
-  "environment": "*",
-  "entrypoints": {
-    "main": [
-      "org.betterx.bclib.BCLib"
+    "schemaVersion": 1,
+    "id": "bclib",
+    "version": "3.0.15",
+    "name": "BCLib",
+    "description": "A library for BetterX team mods",
+    "authors": [
+        "Quiqueck",
+        "paulevs",
+        "Bulldog83"
     ],
-    "client": [
-      "org.betterx.bclib.client.BCLibClient"
-    ],
-    "server": [
-      "org.betterx.bclib.server.BCLibServer"
-    ],
-    "modmenu": [
-      "org.betterx.bclib.integration.modmenu.ModMenuEntryPoint"
-    ],
-    "emi": [
-      "org.betterx.bclib.integration.emi.EMIPlugin"
-    ],
-    "fabric-datagen": [
-      "org.betterx.datagen.bclib.BCLibDatagen"
-    ]
-  },
-  "accessWidener": "bclib.accesswidener",
-  "mixins": [
-    "together.mixins.common.json",
-    "together.mixins.client.json",
-    "ui.mixins.client.json",
-    "bclib.mixins.common.json",
-    "bclib.mixins.client.json"
-  ],
-  "depends": {
-    "fabricloader": ">=0.14.21",
-    "fabric": ">=0.83.0",
-    "minecraft": [
-      "1.20",
-      "1.20.1"
-    ],
-    "wunderlib": "1.1.x"
-  },
-  "breaks": {
-    "wunderlib": "<1.1.2",
-    "emi": "<1.0.0",
-    "fabric-api": "0.86.0"
-  },
-  "custom": {
-    "bclib": {
-      "downloads": {
-        "modrinth": "https://modrinth.com/mod/bclib",
-        "curseforge": "https://www.curseforge.com/minecraft/mc-mods/bclib"
-      }
+    "contact": {
+        "homepage": "https://modrinth.com/mod/bclib",
+        "issues": "https://github.com/quiqueck/bclib/issues",
+        "sources": "https://github.com/quiqueck/bclib"
     },
-    "modmenu": {
-      "links": {
-        "title.link.bclib.discord": "https://discord.gg/kYuATbYbKW"
-      }
+    "license": "MIT (CC BY-NC-SA 4.0 for some Assets)",
+    "icon": "assets/bclib/icon.png",
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "org.betterx.bclib.BCLib"
+        ],
+        "client": [
+            "org.betterx.bclib.client.BCLibClient"
+        ],
+        "server": [
+            "org.betterx.bclib.server.BCLibServer"
+        ],
+        "modmenu": [
+            "org.betterx.bclib.integration.modmenu.ModMenuEntryPoint"
+        ],
+        "emi": [
+            "org.betterx.bclib.integration.emi.EMIPlugin"
+        ],
+        "fabric-datagen": [
+            "org.betterx.datagen.bclib.BCLibDatagen"
+        ]
+    },
+    "accessWidener": "bclib.accesswidener",
+    "mixins": [
+        "together.mixins.common.json",
+        "together.mixins.client.json",
+        "ui.mixins.client.json",
+        "bclib.mixins.common.json",
+        "bclib.mixins.client.json"
+    ],
+    "depends": {
+        "fabricloader": ">=0.14.21",
+        "fabric": ">=0.83.0",
+        "minecraft": [
+            "1.20",
+            "1.20.1"
+        ],
+        "wunderlib": "1.1.x"
+    },
+    "breaks": {
+        "wunderlib": "<1.1.5",
+        "emi": "<1.0.0",
+        "fabric-api": "0.86.0"
+    },
+    "custom": {
+        "bclib": {
+            "downloads": {
+                "modrinth": "https://modrinth.com/mod/bclib",
+                "curseforge": "https://www.curseforge.com/minecraft/mc-mods/bclib"
+            }
+        },
+        "modmenu": {
+            "links": {
+                "title.link.bclib.discord": "https://discord.gg/kYuATbYbKW"
+            }
+        }
     }
-  }
 }

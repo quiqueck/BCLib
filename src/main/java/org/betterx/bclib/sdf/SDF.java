@@ -2,6 +2,7 @@ package org.betterx.bclib.sdf;
 
 import org.betterx.bclib.api.v2.levelgen.structures.StructureWorld;
 import org.betterx.bclib.util.BlocksHelper;
+import org.betterx.bclib.util.GenerationArea;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
@@ -54,7 +55,7 @@ public abstract class SDF {
                     bPos.set(center).move(dir);
                     BlockPos wpos = bPos.offset(start);
 
-                    if (!blocks.contains(bPos) && canReplace.apply(world.getBlockState(wpos))) {
+                    if (!blocks.contains(bPos) && canReplace.apply(GenerationArea.getBlockState(world, wpos))) {
                         if (this.getDistance(bPos.getX(), bPos.getY(), bPos.getZ()) < 0) {
                             BlockState state = getBlockState(wpos);
                             PosInfo.create(mapWorld, addInfo, wpos).setState(state);
@@ -81,7 +82,9 @@ public abstract class SDF {
                 });
             });
             infos.forEach((info) -> {
-                BlocksHelper.setWithoutUpdate(world, info.getPos(), info.getState());
+                if (GenerationArea.contains(world, info.getPos())) {
+                    BlocksHelper.setWithoutUpdate(world, info.getPos(), info.getState());
+                }
             });
 
             infos.clear();
@@ -93,7 +96,8 @@ public abstract class SDF {
                 });
             });
             infos.forEach((info) -> {
-                if (canReplace.apply(world.getBlockState(info.getPos()))) {
+                if (GenerationArea.contains(world, info.getPos())
+                        && canReplace.apply(world.getBlockState(info.getPos()))) {
                     BlocksHelper.setWithoutUpdate(world, info.getPos(), info.getState());
                 }
             });
@@ -111,7 +115,7 @@ public abstract class SDF {
                 mut.setX(x);
                 for (int z = (int) box.minZ; z <= box.maxZ; z++) {
                     mut.setZ(z);
-                    if (canReplace.apply(world.getBlockState(mut))) {
+                    if (canReplace.apply(GenerationArea.getBlockState(world, mut))) {
                         BlockPos fpos = mut.subtract(center);
                         if (this.getDistance(fpos.getX(), fpos.getY(), fpos.getZ()) < 0) {
                             PosInfo.create(mapWorld, addInfo, mut.immutable()).setState(getBlockState(mut));
@@ -130,7 +134,9 @@ public abstract class SDF {
                 });
             });
             infos.forEach((info) -> {
-                BlocksHelper.setWithoutUpdate(world, info.getPos(), info.getState());
+                if (GenerationArea.contains(world, info.getPos())) {
+                    BlocksHelper.setWithoutUpdate(world, info.getPos(), info.getState());
+                }
             });
 
             infos.clear();
@@ -142,7 +148,8 @@ public abstract class SDF {
                 });
             });
             infos.forEach((info) -> {
-                if (canReplace.apply(world.getBlockState(info.getPos()))) {
+                if (GenerationArea.contains(world, info.getPos())
+                        && canReplace.apply(world.getBlockState(info.getPos()))) {
                     BlocksHelper.setWithoutUpdate(world, info.getPos(), info.getState());
                 }
             });
@@ -165,7 +172,7 @@ public abstract class SDF {
                 for (Direction dir : Direction.values()) {
                     bPos.set(center).move(dir);
                     BlockPos wpos = bPos.offset(start);
-                    BlockState state = world.getBlockState(wpos);
+                    BlockState state = GenerationArea.getBlockState(world, wpos);
                     boolean ign = ignore.apply(state);
                     if (!blocks.contains(bPos) && (ign || canReplace.apply(state))) {
                         if (this.getDistance(bPos.getX(), bPos.getY(), bPos.getZ()) < 0) {
@@ -193,7 +200,9 @@ public abstract class SDF {
                 });
             });
             infos.forEach((info) -> {
-                BlocksHelper.setWithoutUpdate(world, info.getPos(), info.getState());
+                if (GenerationArea.contains(world, info.getPos())) {
+                    BlocksHelper.setWithoutUpdate(world, info.getPos(), info.getState());
+                }
             });
 
             infos.clear();
@@ -205,7 +214,8 @@ public abstract class SDF {
                 });
             });
             infos.forEach((info) -> {
-                if (canReplace.apply(world.getBlockState(info.getPos()))) {
+                if (GenerationArea.contains(world, info.getPos())
+                        && canReplace.apply(world.getBlockState(info.getPos()))) {
                     BlocksHelper.setWithoutUpdate(world, info.getPos(), info.getState());
                 }
             });
@@ -285,7 +295,7 @@ public abstract class SDF {
                 for (Direction dir : Direction.values()) {
                     bPos.set(center).move(dir);
                     BlockPos wpos = bPos.offset(start);
-                    BlockState state = world.getBlockState(wpos);
+                    BlockState state = GenerationArea.getBlockState(world, wpos);
                     if (!blocks.contains(wpos) && canReplace.apply(state)) {
                         if (this.getDistance(bPos.getX(), bPos.getY(), bPos.getZ()) < 0) {
                             add.add(bPos.immutable());

@@ -1,16 +1,7 @@
-buildscript {
-    dependencies {
-        classpath 'org.kohsuke:github-api:1.114'
-    }
+java.sourceCompatibility = JavaVersion.VERSION_17
+java.targetCompatibility = JavaVersion.VERSION_17
 
-    repositories {
-        gradlePluginPortal()
-    }
-}
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
-
-archivesBaseName = project.archives_base_name
+base.archivesName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
@@ -24,7 +15,9 @@ repositories {
     maven { url 'https://maven.terraformersmc.com' }
 }
 
-def local_wunderlib = findProject(':WunderLib') != null
+java {
+    withSourcesJar()
+}
 
 loom {
     accessWidenerPath = file("src/main/resources/bclib.accesswidener")
@@ -66,14 +59,8 @@ dependencies {
     modCompileOnly "dev.emi:emi-fabric:${emi_version}:api"
     modLocalRuntime "dev.emi:emi-fabric:${emi_version}"
 
-    println "Using local WunderLib: ${local_wunderlib}"
-    if (local_wunderlib) {
-        implementation project(path: ":WunderLib", configuration: 'dev')
-        include project(path: ":WunderLib", configuration: 'dev')
-    } else {
-        modApi "com.github.quiqueck:WunderLib:${project.wunderlib_version}"
-        include "com.github.quiqueck:WunderLib:${project.wunderlib_version}"
-    }
+    // 1.20 BCLib bundles WunderLib into its own jar (unlike 1.21.6+), so alsoInclude stays true.
+    gradle.modApiOrLocal(dependencies, ':wunderlib', "com.github.quiqueck:WunderLib:${project.wunderlib_version}")
 }
 
 processResources {
@@ -106,7 +93,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
 // if it is present.
 // If you remove this task, sources will not be generated.
-task sourcesJar(type: Jar, dependsOn: classes) {
+tasks.sourcesJar {
     archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }
@@ -116,71 +103,18 @@ jar {
     from "LICENSE.ASSETS"
 }
 
-artifacts {
-    archives sourcesJar
-    archives javadocJar
-}
-
-def env = System.getenv()
-
-import org.kohsuke.github.GHReleaseBuilder
-import org.kohsuke.github.GitHub
-
-task release(dependsOn: [remapJar, sourcesJar, javadocJar]) {
-    onlyIf {
-        env.GITHUB_TOKEN
-    }
-
-    doLast {
-        def github = GitHub.connectUsingOAuth(env.GITHUB_TOKEN as String)
-        def repository = github.getRepository("quiqueck/BCLib")
-
-        def releaseBuilder = new GHReleaseBuilder(repository, version as String)
-        releaseBuilder.name("${archivesBaseName}-${version}")
-        releaseBuilder.body("A changelog can be found at https://github.com/quiqueck/BCLib/commits")
-        releaseBuilder.commitish("main")
-
-        def ghRelease = releaseBuilder.create()
-        ghRelease.uploadAsset(file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar"), "application/java-archive");
-        ghRelease.uploadAsset(file("${project.buildDir}/libs/${archivesBaseName}-${version}-sources.jar"), "application/java-archive");
-        ghRelease.uploadAsset(file("${project.buildDir}/libs/${archivesBaseName}-${version}-javadoc.jar"), "application/java-archive");
-    }
-}
-
-// configure the maven publication
-publishing {
-    publications {
-        gpr(MavenPublication) {
-            artifactId archivesBaseName
-            artifact(remapJar) {
-                builtBy remapJar
-            }
-            artifact(sourcesJar) {
-                builtBy remapSourcesJar
-            }
-        }
-    }
-
-    // select the repositories you want to publish to
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/quiqueck/bclib")
-            credentials {
-                username = env.GITHUB_USER
-                password = env.GITHUB_TOKEN
-            }
-        }
-    }
-}
-
 configurations {
     dev {
-        canBeResolved = false
-        canBeConsumed = true
+        transitive true
+        canBeConsumed true
+        canBeResolved false
+        extendsFrom api
     }
 }
 
 artifacts {
     dev jar
 }
+
+// Gradle 9 dropped the `archives` configuration - build the extra jars with assemble instead.
+tasks.assemble.dependsOn(sourcesJar, javadocJar)

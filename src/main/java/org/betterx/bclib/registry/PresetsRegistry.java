@@ -14,7 +14,11 @@ public class PresetsRegistry {
     public static ResourceKey<WorldPreset> BCL_WORLD_17 = WorldPresets.createKey(BCLib.makeID("legacy_17"));
 
     public static void register() {
-        if (Configs.CLIENT_CONFIG.forceBetterXPreset())
+        //a dedicated server only listens to its own server.json, never to client.json (quiqueck/BCLib#160)
+        final boolean useBetterX = BCLib.isClient()
+                ? Configs.CLIENT_CONFIG.forceBetterXPreset()
+                : Configs.SERVER_CONFIG.forceBetterXPreset();
+        if (useBetterX)
             WorldPresets.setDEFAULT(BCL_WORLD);
         else
             WorldPresets.setDEFAULT(net.minecraft.world.level.levelgen.presets.WorldPresets.NORMAL);

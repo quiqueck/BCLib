@@ -6,7 +6,6 @@ import org.betterx.bclib.util.ItemUtil;
 import org.betterx.worlds.together.tag.v3.CommonItemTags;
 import org.betterx.worlds.together.world.event.WorldBootstrap;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
@@ -30,13 +29,12 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import com.google.gson.JsonObject;
 
+import java.util.List;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory {
     public final static String GROUP = "smithing";
@@ -103,10 +101,34 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
         return this.output.copy();
     }
 
-    public static Iterable<Holder<Item>> getAllHammers() {
-        Registry<Item> registry = WorldBootstrap.getLastRegistryAccessOrElseBuiltin()
-                                                .registryOrThrow(CommonItemTags.HAMMERS.registry());
+    /**
+     * Every item in the {@link CommonItemTags#HAMMERS} tag, as seen by {@code registries}.
+     * <p>
+     * Pass the registries of whatever side is asking - {@code level.registryAccess()} works on the
+     * client as well as on the server. The item tags a client receives from a server are only known
+     * to that connection, so reading them from the level in hand is the only lookup that is correct
+     * in singleplayer <em>and</em> on a client connected to a dedicated server.
+     *
+     * @param registries the registries to resolve the tag against, or {@code null} to fall back to
+     *                   the registries of the running server (server-side only)
+     * @return the hammers, empty if the tag is unknown here
+     */
+    public static Iterable<Holder<Item>> getAllHammers(@Nullable RegistryAccess registries) {
+        if (registries == null) registries = WorldBootstrap.getLastRegistryAccess();
+        if (registries == null) return List.of();
+
+        Registry<Item> registry = registries.registryOrThrow(CommonItemTags.HAMMERS.registry());
         return registry.getTagOrEmpty(CommonItemTags.HAMMERS);
+    }
+
+    /**
+     * @deprecated Only works where a server is running (it reads the server's registries, so it is
+     * empty on a client connected to a dedicated server). Use {@link #getAllHammers(RegistryAccess)}
+     * with the registries of the level in hand.
+     */
+    @Deprecated(forRemoval = false)
+    public static Iterable<Holder<Item>> getAllHammers() {
+        return getAllHammers(null);
     }
 
     public static int getHammerSlot(Container c) {
@@ -144,7 +166,7 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
                 return ItemStack.EMPTY;
             }
         }
-        return this.assemble(craftingInventory, Minecraft.getInstance().level.registryAccess());
+        return this.assemble(craftingInventory, player.level().registryAccess());
     }
 
     public boolean checkHammerDurability(Container craftingInventory, Player player) {
@@ -209,7 +231,6 @@ public class AnvilRecipe implements Recipe<Container>, UnknownReceipBookCategory
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
     public boolean canCraftInDimensions(int width, int height) {
         return true;
     }

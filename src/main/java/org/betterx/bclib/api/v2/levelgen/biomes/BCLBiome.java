@@ -19,6 +19,7 @@ import net.minecraft.world.level.biome.Climate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -324,15 +325,15 @@ public class BCLBiome implements BiomeData {
         Registry<BCLBiome> reg = acc.registry(BCLBiomeRegistry.BCL_BIOMES_REGISTRY).orElse(null);
         if (reg == null) reg = BCLBiomeRegistry.BUILTIN_BCL_BIOMES;
 
-        for (Map.Entry<ResourceKey<BCLBiome>, BCLBiome> entry : reg.entrySet()) {
-            BCLBiome b = entry.getValue();
-            if (
-                    this.biomeID.equals(entry.getValue().biomeParent)
-                            && !entry.getValue().isEdgeBiome()
-            ) {
-                subbiomes.add(b, b.settings.genChance);
-            }
-        }
+        // Registry#entrySet() iterates a HashMap keyed by ResourceKey, which hashes by identity, so its order changes
+        // on every start. The order decides which weight range (and thus which map cells) each sub-biome gets, so
+        // sort by id to pick the same sub-biomes after a restart.
+        reg.entrySet()
+           .stream()
+           .map(Map.Entry::getValue)
+           .filter(b -> this.biomeID.equals(b.biomeParent) && !b.isEdgeBiome())
+           .sorted(Comparator.comparing(b -> b.biomeID.toString()))
+           .forEach(b -> subbiomes.add(b, b.settings.genChance));
 
         return subbiomes;
     }
