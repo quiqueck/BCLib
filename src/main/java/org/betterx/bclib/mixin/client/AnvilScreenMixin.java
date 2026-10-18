@@ -9,7 +9,6 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.screens.inventory.AnvilScreen;
 import net.minecraft.client.gui.screens.inventory.ItemCombinerScreen;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -27,14 +26,11 @@ import java.util.List;
 
 @Mixin(AnvilScreen.class)
 @Implements(@Interface(iface = ContainerEventHandler.class, prefix = "bcl$"))
-public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
+public abstract class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
 
     @Shadow
     private EditBox name;
 
-    @Shadow
-    @Final
-    private static ResourceLocation ANVIL_LOCATION;
     @Unique
     private final List<AbstractWidget> bcl_buttons = Lists.newArrayList();
     @Unique
@@ -42,30 +38,6 @@ public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
 
     public AnvilScreenMixin(AnvilMenu handler, Inventory playerInventory, Component title, ResourceLocation texture) {
         super(handler, playerInventory, title, texture);
-    }
-
-    @Override
-    public void renderErrorIcon(GuiGraphics guiGraphics, int i, int j) {
-        if (this.bcl_hasRecipeError()) {
-            guiGraphics.blit(
-                    RenderPipelines.GUI_TEXTURED,
-                    ANVIL_LOCATION,
-                    i + 65,
-                    j + 46,
-                    0,
-                    this.imageWidth,
-                    0,
-                    28,
-                    21,
-                    256,
-                    256
-            );
-        }
-    }
-
-    @Unique
-    private boolean bcl_hasRecipeError() {
-        return false;
     }
 
     @Inject(method = "subInit", at = @At("TAIL"))
