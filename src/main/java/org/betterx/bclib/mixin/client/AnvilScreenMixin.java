@@ -26,30 +26,15 @@ import java.util.List;
 
 @Mixin(AnvilScreen.class)
 @Implements(@Interface(iface = ContainerEventHandler.class, prefix = "bcl$"))
-public class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
+public abstract class AnvilScreenMixin extends ItemCombinerScreen<AnvilMenu> {
 
     @Shadow
     private EditBox name;
 
-    @Shadow
-    @Final
-    private static ResourceLocation ANVIL_LOCATION;
     private final List<AbstractWidget> be_buttons = Lists.newArrayList();
 
     public AnvilScreenMixin(AnvilMenu handler, Inventory playerInventory, Component title, ResourceLocation texture) {
         super(handler, playerInventory, title, texture);
-    }
-
-    @Override
-    public void renderErrorIcon(GuiGraphics guiGraphics, int i, int j) {
-        if (this.bcl_hasRecipeError()) {
-            guiGraphics.blit(ANVIL_LOCATION, i + 65, j + 46, this.imageWidth, 0, 28, 21);
-        }
-    }
-
-    private boolean bcl_hasRecipeError() {
-        //TODO: 1.19.4 check error conditions
-        return false;
     }
 
     @Inject(method = "subInit", at = @At("TAIL"))
