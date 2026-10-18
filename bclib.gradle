@@ -111,7 +111,11 @@ dependencies {
 //    localRuntime "dev.emi:emi-fabric:${emi_version}"
 
     compileOnly "mezz.jei:jei-${project.minecraft_version}-fabric-api:${project.jei_version}" // compile against the API
-    localRuntime "mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}" // run against the full jar
+    localRuntime("mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}") { // run against the full jar
+        // JEI declares its own (newer) fabric-loader; letting it win on the runtime classpath puts two
+        // loader versions next to each other on the test classpath and fabric-loader-junit refuses to start.
+        exclude group: "net.fabricmc", module: "fabric-loader"
+    }
 
     // alsoInclude=false: BCLib doesn't bundle wunderlib into its own jar,
     // just needs it on the classpath (same as WorldWeaver's own submodules).

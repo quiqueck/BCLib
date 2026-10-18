@@ -267,9 +267,14 @@ public class MHelper {
         return new Vector3f(vx, 0, vz);
     }
 
+    /**
+     * Returns the 26 neighbour offsets in random order. Every call gets its own array: shuffling the shared
+     * one in place is not thread-safe under parallel worldgen and can lose entries for good.
+     */
     public static Vec3i[] getOffsets(RandomSource random) {
-        shuffle(RANDOM_OFFSETS, random);
-        return RANDOM_OFFSETS;
+        final Vec3i[] offsets = RANDOM_OFFSETS.clone();
+        shuffle(offsets, random);
+        return offsets;
     }
 
     static {
