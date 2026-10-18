@@ -19,20 +19,42 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-import java.util.EnumMap;
+import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 
 public class BaseWallPlantBlock extends BasePlantBlock {
-    private static final EnumMap<Direction, VoxelShape> SHAPES = Maps.newEnumMap(ImmutableMap.of(
-            Direction.NORTH, box(1, 1, 8, 15, 15, 16),
-            Direction.SOUTH, box(1, 1, 0, 15, 15, 8),
-            Direction.WEST, box(8, 1, 1, 16, 15, 15),
-            Direction.EAST, box(0, 1, 1, 8, 15, 15)
-    ));
+    private static final Map<Direction, VoxelShape> DEFAULT_SHAPES = createShapes(1, 8);
     public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
 
+    private final Map<Direction, VoxelShape> shapes;
+
     public BaseWallPlantBlock(Properties settings) {
+        this(settings, DEFAULT_SHAPES);
+    }
+
+    /**
+     * @param shapes the outline per {@link #FACING}, see {@link #createShapes(int, int)}
+     */
+    public BaseWallPlantBlock(Properties settings, Map<Direction, VoxelShape> shapes) {
         super(settings.offsetType(OffsetType.NONE));
+        this.shapes = shapes;
+    }
+
+    /**
+     * Outlines for a plant attached to the wall behind it.
+     *
+     * @param inset gap (in pixels) between the outline and the block's top, bottom and sides
+     * @param depth how far (in pixels) the outline sticks out of the wall
+     * @return the outline per {@link #FACING}
+     */
+    public static Map<Direction, VoxelShape> createShapes(int inset, int depth) {
+        final int max = 16 - inset;
+        return Maps.newEnumMap(ImmutableMap.of(
+                Direction.NORTH, box(inset, inset, 16 - depth, max, max, 16),
+                Direction.SOUTH, box(inset, inset, 0, max, max, depth),
+                Direction.WEST, box(16 - depth, inset, inset, 16, max, max),
+                Direction.EAST, box(0, inset, inset, depth, max, max)
+        ));
     }
 
 
@@ -43,7 +65,7 @@ public class BaseWallPlantBlock extends BasePlantBlock {
 
     @Override
     public @NotNull VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext ePos) {
-        return SHAPES.get(state.getValue(FACING));
+        return shapes.get(state.getValue(FACING));
     }
 
     @Override
