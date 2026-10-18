@@ -154,6 +154,11 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu implements AnvilSc
             } else {
                 bcl_currentRecipe = null;
             }
+        } else if (bcl_getRecipeCount() > 0) {
+            //The client has no access to the recipes, so vanilla would clear the result the server sent for the
+            //active BCL recipe whenever an input slot is updated. The server does not resend an unchanged
+            //result (e.g. the next craft of the same recipe after a take), so the client would show an empty slot.
+            info.cancel();
         }
     }
 
