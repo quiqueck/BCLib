@@ -13,6 +13,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.NoiseColumn;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -108,6 +109,16 @@ public abstract class TemplateStructure extends Structure {
 
     protected boolean cover(RandomSource rnd) {
         return false;
+    }
+
+    /**
+     * A block of the template of which one is always replaced by air, so the structure never generates whole (the
+     * frame of a ruined portal). Erosion can break more of them; this one is broken in any case.
+     *
+     * @return the block, or {@code null} if nothing has to break
+     */
+    protected Block alwaysBroken() {
+        return null;
     }
 
     @Override
@@ -216,6 +227,8 @@ public abstract class TemplateStructure extends Structure {
 
         int erosion = erosion(ctx.random());
         boolean cover = cover(ctx.random());
+        final Block broken = alwaysBroken();
+        final int brokenIndex = broken == null ? 0 : ctx.random().nextInt(Integer.MAX_VALUE);
         // if (!structure.canGenerate(ctx.chunkGenerator()., centerPos))
         return Optional.of(new GenerationStub(
                 centerPos,
@@ -233,7 +246,9 @@ public abstract class TemplateStructure extends Structure {
                                         mirror,
                                         halfSize,
                                         erosion,
-                                        cover
+                                        cover,
+                                        broken,
+                                        brokenIndex
                                 ))
         ));
 

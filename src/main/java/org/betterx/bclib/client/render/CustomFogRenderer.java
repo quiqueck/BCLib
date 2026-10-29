@@ -42,6 +42,10 @@ public class CustomFogRenderer {
     private static final float MIN_END_FACTOR = 0.5F;
     // Fog start as a fraction of the fog end, as in the pre-26.x renderer
     private static final float START_FACTOR = 0.25F;
+    // In the End the fog start moves from START_FACTOR (full haze) out to this fraction of the fog end (no haze),
+    // so a low density leaves only a thin band at the render distance. The haze is the same value that drives the
+    // fog layer of BetterEnd's sky (density - 1, clamped to 0..1), so terrain and sky fade in and out together.
+    private static final float THIN_START_FACTOR = 0.7F;
     // Vanilla's world-fog clamp while a boss bar requests it (see AtmosphericFogEnvironment)
     private static final float BOSS_FOG_START = 10.0F;
     private static final float BOSS_FOG_END = 96.0F;
@@ -69,6 +73,7 @@ public class CustomFogRenderer {
         if (!hasBiomeData && !isForcedDimension(level)) return;
         atmosphericApplied = true;
         atmosphericDensity = density;
+        blendFogColorToSkyHorizon(fog, level, density);
 
         float vanillaStart = fog.environmentalStart;
         float vanillaEnd = fog.environmentalEnd;
@@ -82,7 +87,7 @@ public class CustomFogRenderer {
         float end = Math.min(vanillaEnd, renderDistance) * endFactor(density);
         if (end >= vanillaEnd) return;
 
-        float start = end * START_FACTOR;
+        float start = end * startFactor(level, density);
         // keep vanilla's rain thickening (negative start), but never start later than vanilla does
         start = vanillaStart > 0 ? Math.min(start, vanillaStart) : start + vanillaStart;
         if (Minecraft.getInstance().gui.getBossOverlay().shouldCreateWorldFog()) {
@@ -94,6 +99,27 @@ public class CustomFogRenderer {
         fog.environmentalEnd = end;
         fog.skyEnd = Math.min(fog.skyEnd, end);
         fog.cloudEnd = Math.min(fog.cloudEnd, end);
+    }
+
+    /**
+     * Where the haze is thin the terrain fog fades into the sky's horizon colour instead of the biome's fog colour,
+     * so the band at the render distance does not stand out against the sky.
+     */
+    private static void blendFogColorToSkyHorizon(FogData fog, Level level, float density) {
+        if (level.dimension() != Level.END || !BackgroundInfo.hasSkyHorizonColor) return;
+        final float t = 1 - Mth.clamp(density - 1, 0, 1);
+        if (t <= 0) return;
+        fog.color.set(
+                Mth.lerp(t, fog.color.x(), BackgroundInfo.skyHorizonRed),
+                Mth.lerp(t, fog.color.y(), BackgroundInfo.skyHorizonGreen),
+                Mth.lerp(t, fog.color.z(), BackgroundInfo.skyHorizonBlue),
+                fog.color.w()
+        );
+    }
+
+    private static float startFactor(Level level, float density) {
+        if (level.dimension() != Level.END) return START_FACTOR;
+        return Mth.lerp(Mth.clamp(density - 1, 0, 1), THIN_START_FACTOR, START_FACTOR);
     }
 
     private static float endFactor(float density) {

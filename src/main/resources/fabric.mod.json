@@ -1,7 +1,7 @@
 {
     "schemaVersion": 1,
     "id": "bclib",
-    "version": "26.101.4",
+    "version": "26.101.5",
     "name": "BCLib",
     "description": "A library for BetterX team mods",
     "authors": [
@@ -63,7 +63,7 @@
     },
     "breaks": {
         "wunderlib": "<26.101.3",
-        "wover": "<26.101.4"
+        "wover": "<26.101.5"
     },
     "suggests": {
         "jei": ">=29.43.0.107"
