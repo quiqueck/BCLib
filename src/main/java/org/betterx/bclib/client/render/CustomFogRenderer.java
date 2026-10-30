@@ -24,6 +24,12 @@ public class CustomFogRenderer {
     private static final MutableBlockPos MUT_POS = new MutableBlockPos();
     private static final float[] FOG_DENSITY = new float[8];
     private static final int GRID_SIZE = 32;
+    // Fog start as a fraction of the fog end
+    private static final float START_FACTOR = 0.25F;
+    // In the End the fog start moves from START_FACTOR (full haze) out to this fraction of the fog end (no haze),
+    // so a low density leaves only a thin band at the render distance. The haze is the same value that drives the
+    // fog layer of BetterEnd's sky (density - 1, clamped to 0..1), so terrain and sky fade in and out together.
+    private static final float THIN_START_FACTOR = 0.7F;
     private static float fogStart = 0;
     private static float fogEnd = 192;
 
@@ -61,8 +67,8 @@ public class CustomFogRenderer {
             fogStart = viewDistance * 0.05F / fog;
             fogEnd = Math.min(viewDistance, 192.0F) * 0.5F / fog;
         } else {
-            fogStart = viewDistance * 0.25F / fog; // In vanilla - 0
             fogEnd = viewDistance / fog;
+            fogStart = fogEnd * startFactor(entity.level(), fog); // In vanilla - 0
         }
 
         if (entity instanceof LivingEntity) {
@@ -88,6 +94,20 @@ public class CustomFogRenderer {
         RenderSystem.setShaderFogEnd(fogEnd);
 
         return true;
+    }
+
+    private static float startFactor(Level level, float density) {
+        if (level.dimension() != Level.END) return START_FACTOR;
+        return Mth.lerp(Mth.clamp(density - 1, 0, 1), THIN_START_FACTOR, START_FACTOR);
+    }
+
+    /**
+     * How much of the sky's horizon colour the End's fog takes on: where the haze is thin the terrain fog fades into
+     * the sky instead of the biome's fog colour, so the band at the render distance does not stand out against it.
+     */
+    public static float skyHorizonBlend(Level level) {
+        if (level.dimension() != Level.END || !BackgroundInfo.hasSkyHorizonColor) return 0;
+        return 1 - Mth.clamp(BackgroundInfo.fogDensity - 1, 0, 1);
     }
 
     private static boolean thickFog(boolean thickFog, Level level) {

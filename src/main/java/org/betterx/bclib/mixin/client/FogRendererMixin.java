@@ -6,6 +6,7 @@ import org.betterx.bclib.util.BackgroundInfo;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -50,6 +51,13 @@ public class FogRendererMixin {
                 fogGreen *= 4;
                 fogBlue *= 4;
             }
+        }
+
+        final float horizon = CustomFogRenderer.skyHorizonBlend(world);
+        if (horizon > 0) {
+            fogRed = Mth.lerp(horizon, fogRed, BackgroundInfo.skyHorizonRed);
+            fogGreen = Mth.lerp(horizon, fogGreen, BackgroundInfo.skyHorizonGreen);
+            fogBlue = Mth.lerp(horizon, fogBlue, BackgroundInfo.skyHorizonBlue);
         }
 
         BackgroundInfo.fogColorRed = fogRed;

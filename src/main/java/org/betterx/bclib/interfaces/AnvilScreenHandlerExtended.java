@@ -28,7 +28,7 @@ public interface AnvilScreenHandlerExtended {
         if (recipes.size() < 2) return;
         AnvilRecipe current = bcl_getCurrentRecipe();
         int i = recipes.indexOf(current) - 1;
-        if (i <= 0) {
+        if (i < 0) {
             i = recipes.size() - 1;
         }
         bcl_updateCurrentRecipe(recipes.get(i));
