@@ -18,6 +18,8 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
@@ -34,6 +36,8 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 public class TemplatePiece extends TemplateStructurePiece {
     private final int erosion;
     private final boolean cover;
+    private final Block broken;
+    private final int brokenIndex;
     public static final StructurePieceType INSTANCE = setTemplatePieceId(
             TemplatePiece::new,
             "template_piece"
@@ -76,6 +80,25 @@ public class TemplatePiece extends TemplateStructurePiece {
             int erosion,
             boolean cover
     ) {
+        this(structureTemplateManager, resourceLocation, centerPos, rotation, mirror, halfSize, erosion, cover, null, 0);
+    }
+
+    /**
+     * @param broken      a block of the template of which one is always replaced by air, or {@code null}
+     * @param brokenIndex which of those blocks it is (taken modulo their number)
+     */
+    public TemplatePiece(
+            StructureTemplateManager structureTemplateManager,
+            ResourceLocation resourceLocation,
+            BlockPos centerPos,
+            Rotation rotation,
+            Mirror mirror,
+            BlockPos halfSize,
+            int erosion,
+            boolean cover,
+            Block broken,
+            int brokenIndex
+    ) {
         super(
                 INSTANCE,
                 0,
@@ -87,6 +110,8 @@ public class TemplatePiece extends TemplateStructurePiece {
         );
         this.erosion = erosion;
         this.cover = cover;
+        this.broken = broken;
+        this.brokenIndex = brokenIndex;
     }
 
     public TemplatePiece(StructureTemplateManager structureTemplateManager, CompoundTag compoundTag) {
@@ -98,6 +123,11 @@ public class TemplatePiece extends TemplateStructurePiece {
         );
         this.erosion = compoundTag.getInt("E").orElse(0);
         this.cover = compoundTag.getBoolean("C").orElse(true);
+        this.broken = compoundTag.getString("B")
+                                 .map(ResourceLocation::tryParse)
+                                 .flatMap(BuiltInRegistries.BLOCK::getOptional)
+                                 .orElse(null);
+        this.brokenIndex = compoundTag.getInt("BI").orElse(0);
 
     }
 
@@ -144,6 +174,10 @@ public class TemplatePiece extends TemplateStructurePiece {
         tag.putInt("RZ", this.placeSettings.getRotationPivot().getZ());
         tag.putInt("E", this.erosion);
         tag.putBoolean("C", this.cover);
+        if (this.broken != null) {
+            tag.putString("B", BuiltInRegistries.BLOCK.getKey(this.broken).toString());
+            tag.putInt("BI", this.brokenIndex);
+        }
     }
 
     @Override
@@ -155,6 +189,24 @@ public class TemplatePiece extends TemplateStructurePiece {
             BoundingBox boundingBox
     ) {
 
+    }
+
+    /**
+     * Replaces the chosen one of the {@link #broken} blocks by air when it lies in the chunk being generated. The
+     * choice is made from all of them, not only the ones in this chunk, so exactly one breaks across all chunks.
+     */
+    private void breakOne(WorldGenLevel world, BoundingBox chunkBox) {
+        if (broken == null) return;
+        final var all = this.template.filterBlocks(
+                this.templatePosition,
+                this.placeSettings.copy().setBoundingBox(null),
+                broken
+        );
+        if (all.isEmpty()) return;
+        final BlockPos pos = all.get(Math.floorMod(brokenIndex, all.size())).pos();
+        if (chunkBox.isInside(pos) && world.getBlockState(pos).is(broken)) {
+            BlocksHelper.setWithoutUpdate(world, pos, Blocks.AIR);
+        }
     }
 
     @Override
@@ -186,6 +238,7 @@ public class TemplatePiece extends TemplateStructurePiece {
             }
         }
         super.postProcess(world, structureManager, chunkGenerator, random, boundingBox, chunkPos, blockPos);
+        breakOne(world, boundingBox);
         BoundingBox bounds = BoundingBox.fromCorners(
                 new Vec3i(
                         boundingBox.minX(),
