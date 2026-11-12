@@ -1,7 +1,7 @@
 {
     "schemaVersion": 1,
     "id": "bclib",
-    "version": "3.0.17",
+    "version": "3.0.18",
     "name": "BCLib",
     "description": "A library for BetterX team mods",
     "authors": [
@@ -46,7 +46,7 @@
         "bclib.mixins.client.json"
     ],
     "depends": {
-        "fabricloader": ">=0.14.21",
+        "fabricloader": ">=0.15.0",
         "fabric": ">=0.83.0",
         "minecraft": [
             "1.20",
