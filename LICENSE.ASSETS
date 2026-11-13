@@ -1,3 +1,18 @@
+ASSET LICENSE - BCLib
+Notice dated 2026-10-30
+
+1. SCOPE
+
+The MIT License set out in the file LICENSE applies solely to the source code of
+this repository. It does not extend to the Assets. "Assets" means all textures,
+images, icons, models, animations, sounds and music contained in or distributed
+with this repository or the software built from it, including the screenshots in
+.github/assets. This license governs the Assets with effect from the date stated
+above.
+
+
+2. ASSETS LICENSED UNDER CC BY-NC-SA 4.0
+
 Some of our Assets (see List below) is licensed under CC BY-NC-SA 4.0
 See https://creativecommons.org/licenses/by-nc-sa/4.0/ for Details.
 
@@ -12,3 +27,58 @@ The following Files are distributed under this License:
  * src/main/resources/assets/bclib/icon_betternether.png
  * src/main/resources/assets/bclib/icon_bright.png
  * src/main/resources/assets/bclib/icon_updater.png
+
+
+3. RESERVATION OF RIGHTS
+
+All Assets other than those listed in Section 2 are the property of their respective authors,
+who reserve all rights therein. Except as expressly permitted by this license, no
+Asset may be copied, extracted, modified, redistributed or otherwise used without
+the prior written permission of its author.
+
+
+4. PERMITTED USES
+
+Subject to the conditions of this Section, and to the extent that Quiqueck (Team
+BetterX) (the "Licensor") holds the necessary rights, permission is hereby granted,
+free of charge, to use and redistribute the Assets UNMODIFIED, as part of the
+official release files of Team BetterX (the .jar files published by the Licensor on
+Modrinth, CurseForge, GitHub Releases or the Licensor's Maven repository at
+maven.ambertation.de), provided that the Assets remain bundled therewith:
+ (a) in modpacks, server packs and similar bundles; and
+ (b) on servers and in services, including commercial and monetized ones.
+This permission extends to the Assets listed in Section 2 insofar as the
+NonCommercial condition of that license would otherwise preclude such use.
+This permission does not extend to the extraction of Assets, to their use on a
+stand-alone basis, or to their use in other mods or in forks or other derivative
+works of this repository.
+
+
+5. VIDEOS, STREAMS AND SCREENSHOTS
+
+Subject to the same limitation as to the Licensor's rights, permission is hereby
+granted to display, record, stream and capture screenshots of the Assets as they
+appear during gameplay, and to publish, distribute and monetize the resulting
+works on any platform without further permission. Attribution to the mod is
+appreciated but not required. This permission does not extend to the publication
+of the Asset files themselves (such as extracted textures, models or audio) or of
+soundtracks on a stand-alone basis. Music by third parties remains subject to its
+authors' licenses and may be flagged automatically by platforms.
+
+
+6. THIRD-PARTY MATERIAL
+
+Music and sounds created by third parties remain the property of their respective
+creators and are used under the terms of their own licenses. Nothing in this
+license relicenses such material.
+
+
+7. AUTHORS
+
+The Assets listed below under the name of an author were created by that author. The
+license of the Assets listed in Section 2 is governed by that Section.
+Where no author is listed below for an Asset, its author is Quiqueck (Team
+BetterX).
+
+Author: paulevs (paulevsGitch)
+ * src/main/resources/assets/bclib/icon.png

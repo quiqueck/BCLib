@@ -1,209 +1,148 @@
-[![](https://jitpack.io/v/quiqueck/BCLib.svg)](https://jitpack.io/#quiqueck/BCLib)
+<div align="center">
 
 # BCLib
 
-BCLib is a library mod for BetterX team mods, developed for Fabric, MC 1.21
+**The shared library behind BetterNether and BetterEnd: world generation, block and content helpers for Fabric mods.**
 
-## Importing:
+[![Modrinth downloads](https://img.shields.io/modrinth/dt/bclib?logo=modrinth&label=Modrinth&color=1bd96a&style=for-the-badge)](https://modrinth.com/mod/bclib)
+[![CurseForge downloads](https://img.shields.io/curseforge/dt/495191?logo=curseforge&label=CurseForge&color=f16436&style=for-the-badge)](https://www.curseforge.com/minecraft/mc-mods/bclib)
+[![Fabric for Minecraft](https://img.shields.io/badge/Fabric-1.20.1_%7C_1.21.6--8_%7C_26.x-62b47a?style=for-the-badge)](https://modrinth.com/mod/bclib/versions)
 
-You can easily include BCLib into your own mod by adding the following to your `build.gradle`:
+</div>
 
-```
+**BCLib** is a library mod for [Fabric](https://fabricmc.net/) that powers the Team BetterX mods
+[BetterNether](https://github.com/quiqueck/BetterNether) and [BetterEnd](https://github.com/quiqueck/BetterEnd).
+Players only need to install it when a mod asks for it; on its own it adds no content to the game. From Minecraft
+1.21.6 on, BCLib builds on [WorldWeaver](https://github.com/quiqueck/WorldWeaver), which is gradually taking over its
+world generation features.
+
+## Download
+
+The latest Fabric release for each supported Minecraft version (the badges update automatically):
+
+| Minecraft | Modrinth | CurseForge |
+|:--|:--|:--|
+| **26.3** | [![Modrinth 26.3](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.modrinth.com%2Fv2%2Fproject%2Fbclib%2Fversion%3Fgame_versions%3D%255B%252226.3%2522%255D%26loaders%3D%255B%2522fabric%2522%255D&query=%24%5B0%5D.version_number&label=Modrinth&color=1bd96a&logo=modrinth&logoColor=white)](https://modrinth.com/mod/bclib/versions?g=26.3&l=fabric) | [![CurseForge 26.3](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.modrinth.com%2Fv2%2Fproject%2Fbclib%2Fversion%3Fgame_versions%3D%255B%252226.3%2522%255D%26loaders%3D%255B%2522fabric%2522%255D&query=%24%5B0%5D.version_number&label=CurseForge&color=f16436&logo=curseforge&logoColor=white)](https://www.curseforge.com/minecraft/mc-mods/bclib/files/all?version=26.3&gameVersionTypeId=4) |
+| **26.2** | [![Modrinth 26.2](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.modrinth.com%2Fv2%2Fproject%2Fbclib%2Fversion%3Fgame_versions%3D%255B%252226.2%2522%255D%26loaders%3D%255B%2522fabric%2522%255D&query=%24%5B0%5D.version_number&label=Modrinth&color=1bd96a&logo=modrinth&logoColor=white)](https://modrinth.com/mod/bclib/versions?g=26.2&l=fabric) | [![CurseForge 26.2](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.modrinth.com%2Fv2%2Fproject%2Fbclib%2Fversion%3Fgame_versions%3D%255B%252226.2%2522%255D%26loaders%3D%255B%2522fabric%2522%255D&query=%24%5B0%5D.version_number&label=CurseForge&color=f16436&logo=curseforge&logoColor=white)](https://www.curseforge.com/minecraft/mc-mods/bclib/files/all?version=26.2&gameVersionTypeId=4) |
+| **26.1 – 26.1.2** | [![Modrinth 26.1 – 26.1.2](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.modrinth.com%2Fv2%2Fproject%2Fbclib%2Fversion%3Fgame_versions%3D%255B%252226.1%2522%252C%252226.1.1%2522%252C%252226.1.2%2522%255D%26loaders%3D%255B%2522fabric%2522%255D&query=%24%5B0%5D.version_number&label=Modrinth&color=1bd96a&logo=modrinth&logoColor=white)](https://modrinth.com/mod/bclib/versions?g=26.1.2&l=fabric) | [![CurseForge 26.1 – 26.1.2](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.modrinth.com%2Fv2%2Fproject%2Fbclib%2Fversion%3Fgame_versions%3D%255B%252226.1%2522%252C%252226.1.1%2522%252C%252226.1.2%2522%255D%26loaders%3D%255B%2522fabric%2522%255D&query=%24%5B0%5D.version_number&label=CurseForge&color=f16436&logo=curseforge&logoColor=white)](https://www.curseforge.com/minecraft/mc-mods/bclib/files/all?version=26.1.2&gameVersionTypeId=4) |
+| **1.21.6 – 1.21.8** | [![Modrinth 1.21.6 – 1.21.8](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.modrinth.com%2Fv2%2Fproject%2Fbclib%2Fversion%3Fgame_versions%3D%255B%25221.21.6%2522%252C%25221.21.7%2522%252C%25221.21.8%2522%255D%26loaders%3D%255B%2522fabric%2522%255D&query=%24%5B0%5D.version_number&label=Modrinth&color=1bd96a&logo=modrinth&logoColor=white)](https://modrinth.com/mod/bclib/versions?g=1.21.8&l=fabric) | [![CurseForge 1.21.6 – 1.21.8](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.modrinth.com%2Fv2%2Fproject%2Fbclib%2Fversion%3Fgame_versions%3D%255B%25221.21.6%2522%252C%25221.21.7%2522%252C%25221.21.8%2522%255D%26loaders%3D%255B%2522fabric%2522%255D&query=%24%5B0%5D.version_number&label=CurseForge&color=f16436&logo=curseforge&logoColor=white)](https://www.curseforge.com/minecraft/mc-mods/bclib/files/all?version=1.21.8&gameVersionTypeId=4) |
+| **1.20 – 1.20.1** | [![Modrinth 1.20 – 1.20.1](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.modrinth.com%2Fv2%2Fproject%2Fbclib%2Fversion%3Fgame_versions%3D%255B%25221.20%2522%252C%25221.20.1%2522%255D%26loaders%3D%255B%2522fabric%2522%255D&query=%24%5B0%5D.version_number&label=Modrinth&color=1bd96a&logo=modrinth&logoColor=white)](https://modrinth.com/mod/bclib/versions?g=1.20.1&l=fabric) | [![CurseForge 1.20 – 1.20.1](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.modrinth.com%2Fv2%2Fproject%2Fbclib%2Fversion%3Fgame_versions%3D%255B%25221.20%2522%252C%25221.20.1%2522%255D%26loaders%3D%255B%2522fabric%2522%255D&query=%24%5B0%5D.version_number&label=CurseForge&color=f16436&logo=curseforge&logoColor=white)](https://www.curseforge.com/minecraft/mc-mods/bclib/files/all?version=1.20.1&gameVersionTypeId=4) |
+
+**Required:** [Fabric API](https://modrinth.com/mod/fabric-api) and [WorldWeaver](https://modrinth.com/mod/worldweaver)
+(1.21.6 and newer).
+
+## Add BCLib to your project
+
+Add our maven repository and the dependency to your `build.gradle`:
+
+```groovy
 repositories {
-    ...
     maven { url 'https://maven.ambertation.de/releases' }
 }
-```
 
-```
 dependencies {
-    ...
-    modImplementation "org.betterx:bclib:${project.bclib_version}"
+    // Minecraft 26.x (Loom 1.17+ no longer has the mod* configurations)
+    api "org.betterx:bclib:${project.bclib_version}"
+    // Minecraft 1.21.x and older:
+    // modImplementation "org.betterx:bclib:${project.bclib_version}"
 }
 ```
 
-You should also add a dependency to `fabirc.mod.json`. BCLib uses Semantic versioning, so adding the dependcy as follows
-should respect that and ensure that your mod is not loaded with an incompatible version of BCLib:
+Then declare the dependency in your `fabric.mod.json`. BCLib uses semantic versioning, so matching the minor version
+keeps your mod from loading with an incompatible BCLib:
 
-```
+<!-- mod-task:deps:start -->
+
+```json
 "depends": {
-  ...
-  "bclib": "2.0.x"
+  "bclib": "26.302.x"
 },
 "breaks": {
-  "bclib": "<2.0.6"
+  "bclib": "<26.302.2"
 }
 ```
 
-In this example `2.0.6` is the BCLIb Version you are building against.
+In this example `26.302.2` is the BCLib version you build against.
 
-## Features:
+<!-- mod-task:deps:end -->
 
-### Rendering
+## Features
 
-* Emissive textures (with _e suffix)
-    * Can be applied to Solid and Transparent blocks;
-    * Can be changed/added with resourcepacks;
-    * Incompatible with Sodium and Canvas (just will be not rendered);
-    * Incompatible with Iris shaders (Iris without shaders works fine).
-* Procedural block and item models (from paterns or from code);
-* Block render interfaces.
+World generation, biomes, structures, material sets and block models have moved to
+[WorldWeaver](https://github.com/quiqueck/WorldWeaver). BCLib keeps the content-level building blocks that BetterNether
+and BetterEnd share:
 
-### API:
+### Blocks and items
 
-* Simple Mod Integration API:
-    * Get mod inner methods, classes and objects on runtime.
-* Structure Features API:
-    * Sructure Features with automatical registration, Helpers and math stuff.
-* World Data API:
-    * World fixers for comfortable migration between mod versions when content was removed;
-    * Support for Block name changes and Tile Entities (WIP).
-* Bonemeal API:
-    * Add custom spreadable blocks;
-    * Add custom plants grow with weight, biomes and other checks;
-    * Custom underwater plants.
-* Features API:
-    * Features with automatical registration, Helpers and math.
-* Biome API:
-    * Biome wrapper around MC biomes;
-    * Custom biome data storage;
-    * Custom fog density.
-* Tag API:
-    * Pre-builded set of tags;
-    * Dynamical tag registration with code;
-    * Adding blocks and items into tags at runtime.
+* Base classes for plants (with age, double, underwater, up/down, wall-attached), vines, stalactites, terrain blocks,
+  saplings that grow features, furnaces, glass, pressure plates and anvils with levels.
+* Furniture: chairs, taburets and bar stools you can sit on.
+* Elytra API for custom elytra items.
+* Music discs, fuel, compostables, and shovel/tool block transformations (`ComposterAPI`, `FuelComponents`,
+  `ShovelAPI`, `ToolBlockTransformers`).
 
-### Libs:
+### Recipes
 
-* Spline library (simple):
-    * Helper to create simple splines as set of points;
-    * Some basic operation with splines;
-    * Converting splines to SDF.
-* Recipe manager:
-    * Register recipes from code with configs and ingredients check.
-* Noise library:
-    * Voronoi noise and Open Simplex Noise.
-* Math library:
-    * Many basic math functions that are missing in MC.
-* SDF library:
-    * Implementation of Signed Distance Functions;
-    * Different SDF Operations and Primitives;
-    * Different materials for SDF Primitives;
-    * Block post-processing;
-    * Feature generation using SDF.
+* Anvil (hammer) recipes and alloying recipes, with JEI and EMI categories.
+* `BCLRecipeBuilder` to register recipes from code.
 
-### Helpers And Utils:
+### APIs
 
-* Custom surface builders.
-* Translation helper:
-    * Generates translation template.
-* Weighted list:
-    * A list of objects by weight;
-* Weighted Tree:
-    * Fast approach for big weight structures;
-* Block helper:
-    * Some useful functions to operate with blocks;
+* **Bonemeal API** – custom spreadable blocks and plants that grow from bonemeal, with spreaders for End Stone,
+  Netherrack, nylium-like and water-grass blocks.
+* **World fixers** (`DataFixerAPI`, `MigrationProfile`) – migrate worlds between mod versions when blocks or items are
+  renamed or removed. Players are asked to make a backup first.
+* **Data exchange** – client/server handshake and data sync.
+* **Advancements** – builders for advancements and their datagen.
+* **Spawning** – `SpawnRuleBuilder` for entity spawn rules.
+* **Mod integration** – access other mods' classes and objects at runtime.
+* **Tags** – pre-built block tags (`BCLBlockTags`).
+* **Datagen** – providers for block loot tables, loot drops and advancements.
 
-### Complex Materials
+### Libraries
 
-* Utility classes used for mass content generation (wooden blocks, stone blocks, etc.);
-* Contains a set of defined blocks, items, recipes and tags;
-* Can be modified before mods startup (will add new block type for all instances in all mods);
-* All inner blocks and items are Patterned (will have auto-generated models with ability to override them with resource
-  packs or mod resources).
+* **SDF library** – signed distance functions with primitives, operators and materials, used to generate features.
+* **Noise** – Open Simplex noise.
+* **Splines** – simple spline helper that can be turned into an SDF.
+* **Helpers** – `BlocksHelper`, `MHelper`, `WeightedList`, `ColorExtractor`, `NbtHelper` and more.
 
-### Pre-Defined Blocks and Items:
+### Client
 
-* Most basic blocks from MC;
-* Automatic item & block model generation;
+* Custom fog density per biome.
+* A world-fix progress and confirmation screen.
 
-### Configs:
+## Building from source
 
-* Custom config system based on Json;
-* Hierarchical configs;
-* Different entry types;
-* Only-changes saves.
+You need JDK 25 for the 26.x branches (JDK 21 for 1.21.x, JDK 17 for 1.20.1).
 
-### Interfaces:
+```bash
+git clone https://github.com/quiqueck/BCLib.git
+cd BCLib
+./gradlew build
+```
 
-* BlockModelProvider:
-    * Allows block to return custom model and blockstate.
-* ItemModelProvider:
-    * Allows block to return custom item model.
-* ~~CustomColorProvider~~ (removed):
-    * Replaced by wover's `ClientBlockTraits.TINT` binding, which drives both the in-world block colour and the
-      generated item model's tint. Declare it as a trait instead of implementing an interface.
-* RenderLayerProvider:
-    * Determine block render layer (Transparent and Translucent).
-* PostInitable:
-    * Allows block to init something after all mods are loaded.
-* CustomItemProvider:
-    * Allows block to change its registered item (example - signs, water lilies).
+The mod jar is written to `build/libs`. Each Minecraft version has its own release branch: `release/26.3`, `release/26.2`, `release/26.1`, `release/1.21.6` and `release/1.20` (1.20.1).
 
-## Building:
+## Credits and license
 
-* Clone repo
-* Run command line in folder: gradlew build
-* Mod .jar will be in ./build/libs
+BCLib was created by paulevs and is maintained by
+[Quiqueck](https://github.com/quiqueck) and Team BetterX. The original repository is archived; all development happens here.
+The source code is licensed under the [MIT License](LICENSE).
 
-## Vanilla audit snapshots:
+**Assets (2026-10-30).** Assets (textures, images, models, music and sounds) are not covered by the MIT License.
+They are governed by [LICENSE.ASSETS](LICENSE.ASSETS), which also lists their authors: unless stated otherwise, they
+are All Rights Reserved, and a listed subset is licensed under CC BY-NC-SA 4.0 (attribution: Team BetterX).
+As long as they stay unmodified and bundled with the official mod release, you may use them in modpacks and on
+servers (commercial and non-commercial ones). You may also show them in videos, streams and screenshots.
 
-`gradlew :runMinecraftAudit` regenerates the four audit files for the **vanilla** `minecraft`
-namespace and writes them into the shared reference checkout next to the mod repos, at
-`../minecraft/src/main/generated`:
+## AI Usage
 
-| File | What it records |
-|---|---|
-| `block_properties.json` | one line per block: hardness, resistance, map colour, sound, render layer, ... |
-| `block_registrations.json` | flammability and compostability, which live in side registries rather than on the block |
-| `item_registrations.json` | the equivalent for items |
-| `block_shapes.txt` | outline and collision shape per blockstate, collapsed to one line when every state agrees |
+The ideas and the design of our APIs are human-made: we come up with the concepts, guide every design decision and implement the code. We use agentic AI as a tool for the following tasks:
 
-These are a reference for diffing vanilla behaviour between Minecraft versions, so nothing else is
-generated during the run: the four providers are bound to a `minecraft` `ModCore` and every other
-BCLib provider is suppressed, otherwise BCLib's own tags and advancements would land in the vanilla
-checkout. The run fails if that checkout is missing rather than creating an empty one somewhere else.
+- tooling and automation,
+- code review,
+- proofreading and writing documentation (code comments and this README),
+- boilerplate work, including migrating the codebase to new Minecraft versions,
+- many of our automated tests.
 
-The switch is the `-Dwover.datagen.minecraft-audit` system property (see `MinecraftAuditDatagen`), so
-any datagen run can be flipped over to it; the Gradle task just sets the property and the output
-directory. Note that BCLib's and WorldWeaver's own mixins are loaded during the run, so this is
-vanilla as BCLib sees it.
-
-The same four files are also generated per mod, for that mod's own namespace, by each mod's normal
-`gradlew :runDatagenClient` - those land in the mod's `src/main/generated` and are committed with it.
-
-## Release branches:
-
-`gradlew :mergeToRelease` adds the current branch's state to `release/<branch>` (override with
-`-PreleaseBranch=`) as a single commit titled `Release Version <mod_version>`, with `CHANGES.md` as
-its body. It is not a merge: the commit's only parent is the previous release commit, so the release
-branch carries no reference to the development commits and cannot be used to recover them. Nothing is
-pushed and no branch is checked out - only the release ref moves. Defined in
-`common-publish-tag.gradle`, so every BetterX repo has it.
-
-Neither `CHANGES.md` nor `mod_version` is regenerated - both routinely carry manual edits, so they are
-published verbatim, and asking for `changelog` or `nextVersion` in the same build is refused before
-anything runs.
-
-The **first** release on a branch continues from the previous version line, so it reads as a diff
-rather than as a full import of every file. That predecessor is named by `previous_release_branch` in
-`gradle.properties` (`-PpreviousRelease=` wins; `none` starts the branch parentless):
-
-| branch | parent of the first release commit |
-|---|---|
-| `release/1.21.6` | `origin/1.21.6` - the already-published tip |
-| `release/26.1` | `release/1.21.6` |
-| `release/26.2` | `release/26.1` |
-| `release/26.3` | `release/26.2` |
-
-Anchoring `release/1.21.6` at `origin/1.21.6` rather than at the local branch matters: the 1.21.6
-commits that were never pushed then reach the public branch as *content*, inside one
-`Release Version 21.8.x` commit, instead of as individual commits carrying their own messages.
-
-Every release after the first sits on the previous release commit of its own branch. The `26.x`
-development branches are never touched, and none of their commits become reachable from a release
-branch - only the tree they produced does.
-
-Everything reachable from the predecessor *does* become part of the public branch, which is intended
-for `1.21.6` but never for a `26.x` development branch. The task prints how many commits are inherited
-and how many of those `origin` has not seen yet, before anything is pushed.
+Everything the AI generates is reviewed and, where needed, edited by us before it is released. We also playtest every release ourselves.
